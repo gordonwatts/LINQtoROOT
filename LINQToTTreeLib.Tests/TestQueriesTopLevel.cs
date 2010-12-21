@@ -1,0 +1,173 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Pex.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Statements;
+using System.Linq.Expressions;
+
+namespace LINQToTTreeLib.Tests
+{
+    public class ntup
+    {
+        public int run;
+    }
+    /// <summary>
+    /// Test top level queires of various sorts!
+    /// </summary>
+    [TestClass, PexClass]
+    public partial class TestQueriesTopLevel
+    {
+        [TestInitialize]
+        public void TestInit()
+        {
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
+        [TestMethod]
+        public void TestSingleTopLevelQuery()
+        {
+            var q = new QueriableDummy<ntup>();
+            var result = from d in q
+                         select d;
+            var c = result.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+
+            /// Return type is correct
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult.ResultValue, "Expected a result from the count!");
+            Assert.IsInstanceOfType(DummyQueryExectuor.FinalResult.ResultValue, typeof(VarInteger), "integer return type expected");
+
+            var res = DummyQueryExectuor.FinalResult;
+
+            ///
+            /// We should be booking "d" as a variable that hangs out for a while
+            /// 
+
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "expected one variable declared");
+            Assert.AreEqual("(*d)", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
+
+            ///
+            /// Now, take a lok at the statements and make sure that we see them all correctly.
+            ///
+
+            Assert.AreEqual(1, res.CodeBody.Statements.Count(), "incorrect # of statements");
+            var statement = res.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(statement, typeof(StatementIncrementInteger), "count should be incrementing an integer!");
+            Assert.AreEqual(DummyQueryExectuor.FinalResult.ResultValue, (statement as StatementIncrementInteger).Integer, "The variable should match");
+        }
+
+        [TestMethod]
+        public void TestTakeSkip()
+        {
+            var q = new QueriableDummy<ntup>();
+            var result = from d in q
+                         select d;
+            var c = result.Take(1).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            var e = result.Skip(1).Count();
+        }
+
+        [TestMethod]
+        public void TestWhere()
+        {
+            var q = new QueriableDummy<ntup>();
+            var r = from d in q
+                    where d.run > 10
+                    select d;
+            var c = r.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "Expect a single declared variable");
+
+            ///
+            /// We expect a single top level statement
+            /// 
+
+            Assert.AreEqual(1, res.CodeBody.Statements.Count(), "only single statement expected");
+            var ifStatement = res.CodeBody.Statements.First() as StatementFilter;
+            Assert.IsNotNull(ifStatement, "if statement isn't an if statement!");
+            Assert.AreEqual("((int)(*d).run)>((int)10)", ifStatement.TestExpression.RawValue, "incorrect if statement");
+
+            ///
+            /// Finally, the count statement should be down here!
+            /// 
+
+            Assert.AreEqual(1, ifStatement.Statements.Count(), "expected a single statement inside the if statemenet!");
+            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementIncrementInteger), "incorrect if statement");
+        }
+
+        [TestMethod]
+        public void TestWhereTwoClauses()
+        {
+            var q = new QueriableDummy<ntup>();
+            var r = from d in q
+                    where d.run > 10 && d.run < 100
+                    select d;
+            var c = r.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "Expect a single declared variable");
+
+            ///
+            /// We expect a single top level statement
+            /// 
+
+            var ifStatement = res.CodeBody.Statements.First() as StatementFilter;
+            Assert.IsNotNull(ifStatement, "if statement isn't an if statement!");
+            Assert.AreEqual("((bool)((int)(*d).run)>((int)10))&&((bool)((int)(*d).run)<((int)100))", ifStatement.TestExpression.RawValue, "incorrect if statement");
+        }
+
+        [TestMethod]
+        public void TestSimpleAggregate()
+        {
+            var q = new QueriableDummy<ntup>();
+            var r = from d in q
+                    select d;
+            var c = r.Aggregate(1, (count, n) => count + 1);
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            /// For this there should be one statement - the addition statement for the variable.
+
+            Assert.AreEqual(1, res.CodeBody.Statements.Count(), "not right number of statements coming back!");
+            Assert.IsInstanceOfType(res.CodeBody.Statements.First(), typeof(StatementAssign), "Assignment doesn't seem to be there");
+
+            var assignment = res.CodeBody.Statements.First() as StatementAssign;
+            StringBuilder bld = new StringBuilder();
+            bld.AppendFormat("((int){0})+((int)1)", assignment.ResultVariable.RawValue, "bad assignment!");
+            Assert.AreEqual(bld.ToString(), assignment.Expression.RawValue, "expression is incorrect");
+        }
+
+        [TestMethod]
+        public void TestAggregateWithHistogram()
+        {
+            var q = new QueriableDummy<ntup>();
+            var r = from d in q
+                    select d;
+            var c = r.AggregateNoReturn(new ROOTNET.NTH1F("dude", "put a fork in it", 10, 0.0, 20.0), (h1, n1) => h1.Fill(n1.run));
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            Assert.AreEqual(res.ResultValue.Type, typeof(ROOTNET.NTH1F), "incorrect result type came back!");
+        }
+    }
+}

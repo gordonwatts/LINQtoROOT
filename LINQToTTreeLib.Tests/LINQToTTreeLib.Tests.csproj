@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B4D4BD10-53CD-42BE-9174-876F117D245C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LINQToTTreeLib.Tests</RootNamespace>
+    <AssemblyName>LINQToTTreeLib.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="libCoreWrapper">
+      <HintPath>..\..\ROOT.NET Wrappers\Release\libCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libHistWrapper">
+      <HintPath>..\..\ROOT.NET Wrappers\Release\libHistWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.Pex.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.Pex.Linq, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Remotion.Data.Linq">
+      <HintPath>..\RemotionRelinq_1.13.41.0\net-3.5\bin\release\Remotion.Data.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WrapperPlumbingLibrary">
+      <HintPath>..\..\ROOT.NET Wrappers\Release\WrapperPlumbingLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LinqToTTreeInterfacesLib\LinqToTTreeInterfacesLib.csproj">
+      <Project>{802DBA06-8779-4024-A899-4D0293F75695}</Project>
+      <Name>LinqToTTreeInterfacesLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LINQToTTreeLib\LINQToTTreeLib.csproj">
+      <Project>{A1A955AD-BC56-4413-92BC-581C35A78522}</Project>
+      <Name>LINQToTTreeLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeContextTest.Add.g.cs">
+      <DependentUpon>CodeContextTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CodeContextTest.Constructor.g.cs">
+      <DependentUpon>CodeContextTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CodeContextTest.cs" />
+    <Compile Include="CodeContextTest.GetReplacement.g.cs">
+      <DependentUpon>CodeContextTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CodeContextTest.TestRoundTrip.g.cs">
+      <DependentUpon>CodeContextTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DummyQueryExectuor.cs" />
+    <Compile Include="ExpressionVisitorMethodCallTests.cs" />
+    <Compile Include="ExpressionVisitorTest.cs" />
+    <Compile Include="ExpressionVisitorTest.GetExpression.g.cs">
+      <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExpressionVisitorTest.TestConstantExpression.g.cs">
+      <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Factories\ConstantExpressionFactory.cs" />
+    <Compile Include="Factories\GeneratedCodeFactory.cs" />
+    <Compile Include="Factories\MethodCallExpressionFactory.cs" />
+    <Compile Include="Factories\SkipResultOperatorFactory.cs" />
+    <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
+    <Compile Include="Factories\StatementInlineBlockFactory.cs" />
+    <Compile Include="Factories\TakeResultOperatorFactory.cs" />
+    <Compile Include="FileUtilsTest.cs" />
+    <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
+      <DependentUpon>FileUtilsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileUtilsTest.MakeSureFileNotUpdated.g.cs">
+      <DependentUpon>FileUtilsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileUtilsTest.WriteTextIfNotDuplicate.g.cs">
+      <DependentUpon>FileUtilsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.Add.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.AddCompound.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.AddCompoundStatementTest.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.Constructor.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.cs" />
+    <Compile Include="GeneratedCodeTest.SetResult.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.TestAddTransfer.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.TestChangeScope.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MEFUtilities.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\PexAssemblyInfo.cs" />
+    <Compile Include="QueriableDummy.cs" />
+    <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
+      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QVResultOperatorsTest.cs" />
+    <Compile Include="QVResultOperatorsTest.TestForGoodReturn.g.cs">
+      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QVResultOperatorsTest.TestLookupNothing.g.cs">
+      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QVResultOperatorsTest.TestLookupTwice.g.cs">
+      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROAggregateTest.cs" />
+    <Compile Include="ResultOperators\TakeSkipOperatorsTest.cs" />
+    <Compile Include="ResultOperators\TakeSkipOperatorsTest.ProcessResultOperator.g.cs">
+      <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\TestCount.cs" />
+    <Compile Include="ROCountTest.CanHandle.g.cs">
+      <DependentUpon>ROCountTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ROCountTest.cs" />
+    <Compile Include="ROCountTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROCountTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
+      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementIncrementIntegerTest.cs" />
+    <Compile Include="Statements\StatementInlineBlockTest.Add.g.cs">
+      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.Constructor.g.cs">
+      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.cs" />
+    <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
+      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestQueriesGreaterLevels.cs" />
+    <Compile Include="TestQueriesTopLevel.cs" />
+    <Compile Include="TypeHandlerHelpersTest.cs" />
+    <Compile Include="TypeHandlerHelpersTest.ProcessConstantReference.g.cs">
+      <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
+      <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
+      <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.cs" />
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessConstantReference.g.cs">
+      <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.cs" />
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessConstantReference.g.cs">
+      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessMethodCall.g.cs">
+      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
+      <DependentUpon>ValSimpleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\ValSimpleTest.Constructor2.g.cs">
+      <DependentUpon>ValSimpleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\ValSimpleTest.cs" />
+    <Compile Include="Variables\ValSimpleTest.TestCTorWithType.g.cs">
+      <DependentUpon>ValSimpleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VarObjectTest.Constructor.g.cs">
+      <DependentUpon>VarObjectTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VarObjectTest.cs" />
+    <Compile Include="Variables\VarSimpleTest.Constructor.g.cs">
+      <DependentUpon>VarSimpleTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VarSimpleTest.cs" />
+    <Compile Include="Variables\VarUtilsTest.AsCastString.g.cs">
+      <DependentUpon>VarUtilsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VarUtilsTest.AsCPPType.g.cs">
+      <DependentUpon>VarUtilsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VarUtilsTest.CastToType.g.cs">
+      <DependentUpon>VarUtilsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VarUtilsTest.cs" />
+    <Compile Include="Variables\VarUtilsTest.IsPointerType.g.cs">
+      <DependentUpon>VarUtilsTest.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Moles Include="LINQToTTreeLib.moles" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
