@@ -160,5 +160,27 @@ namespace TTreeParser
 
             return p.Length;
         }
+
+        /// <summary>
+        /// Translate the exploded guy into a C# declaration
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        internal static string TranslateToCSharp(IDecl r)
+        {
+            if (r is RegularDecl)
+            {
+                return (r as RegularDecl).Type;
+            }
+
+            var t = r as TemplateInfo;
+            if (t.TemplateName != "vector")
+            {
+                throw new NotImplementedException("Don't know how to deal with anything but a vector right now!");
+            }
+
+            var argTrans = TranslateToCSharp(t.Arguments[0]);
+            return argTrans + "[]";
+        }
     }
 }

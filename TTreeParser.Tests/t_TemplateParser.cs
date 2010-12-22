@@ -228,5 +228,37 @@ namespace TTreeParser.Tests
 
             Assert.AreEqual("int", arg000.Type, "bad type for innermost template");
         }
+
+        [TestMethod]
+        public void TranslateToCSharpSimple()
+        {
+            var r = TemplateParser.ParseForTemplates("int");
+            var p = TemplateParser.TranslateToCSharp(r);
+            Assert.AreEqual("int", p, "bad simple translation");
+        }
+
+        [TestMethod]
+        public void TranslateToCSharpSimpleVector()
+        {
+            var r = TemplateParser.ParseForTemplates("vector<int>");
+            var p = TemplateParser.TranslateToCSharp(r);
+            Assert.AreEqual("int[]", p, "bad simple translation");
+        }
+
+        [TestMethod]
+        public void TranslateToCSharpSimpleVectorWithAllocator()
+        {
+            var r = TemplateParser.ParseForTemplates("vector<int,allocator<int> >");
+            var p = TemplateParser.TranslateToCSharp(r);
+            Assert.AreEqual("int[]", p, "bad simple translation");
+        }
+
+        [TestMethod]
+        public void TranslateToCSharpSimpleNestedVector()
+        {
+            var r = TemplateParser.ParseForTemplates("vector<vector<int> >");
+            var p = TemplateParser.TranslateToCSharp(r);
+            Assert.AreEqual("int[][]", p, "bad simple translation");
+        }
     }
 }
