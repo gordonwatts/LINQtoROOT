@@ -41,7 +41,14 @@
     <Reference Include="libHistWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libHistWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libRIOWrapper">
+      <HintPath>..\..\ROOT.NET Wrappers\Release\libRIOWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreeWrapper">
+      <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -61,6 +68,10 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WrapperPlumbingLibrary">
       <HintPath>..\..\ROOT.NET Wrappers\Release\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
@@ -78,6 +89,14 @@
     <ProjectReference Include="..\LINQToTTreeLib\LINQToTTreeLib.csproj">
       <Project>{A1A955AD-BC56-4413-92BC-581C35A78522}</Project>
       <Name>LINQToTTreeLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TTreeDataModel\TTreeDataModel.csproj">
+      <Project>{3F0367B8-C970-4134-8FC6-944400C00F71}</Project>
+      <Name>TTreeDataModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TTreeParser\TTreeParser.csproj">
+      <Project>{69E634CA-6F0D-4363-9522-F19896E27E02}</Project>
+      <Name>TTreeParser</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +228,7 @@
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
     </Compile>
