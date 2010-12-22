@@ -56,6 +56,7 @@
     <Compile Include="ParseTFile.cs" />
     <Compile Include="ParseTTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TemplateParser.cs" />
     <Compile Include="TypeDefTranslator.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
