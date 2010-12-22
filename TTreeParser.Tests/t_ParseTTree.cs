@@ -14,7 +14,7 @@ namespace LINQToTTreeLib.Tests
     ///This is a test class for ParseTTreeTest and is intended
     ///to contain all ParseTTreeTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestClass]
     public class ParseTTreeTest
     {
 
@@ -85,7 +85,7 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void GenerateClassesTestSingleBasicType()
         {
-            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly("GenerateClassesTestSingleBasicType.root", 5);
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
 
@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void GenerateClassesTestTLorentzVector()
         {
-            var t = TTreeParserCPPTests.CreateTrees.CreateWithTLZOnly("GenerateClassesTestTLorentzVector.root", 5);
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithTLZOnly(5);
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
 
@@ -151,19 +151,51 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void GenerateClassesTestVectorIntAndDoubleAndShort()
         {
-            Assert.Inconclusive();
+            var t = TTreeParserCPPTests.CreateTrees.CreateVectorTree();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
+
+            string[] possibleTypes = new string[] {
+                "int[]",
+                "double[]",
+                // "short[]", // Not known to root dictionary by default.
+                "bool[]"
+                //"float[]"  // Weird - it doesn't work either.
+            };
+
+            Assert.IsTrue(result[0].Items.All(i => possibleTypes.Contains(i.ItemType)), "Some responses not correct!");
+            Assert.AreEqual(possibleTypes.Length, result[0].Items.Select(i => i.ItemType).Distinct().Count(), "Incorrect number of branches found!");
         }
 
         [TestMethod]
         public void GenerateClassesTestVectorVector()
         {
-            Assert.Inconclusive();
+            var t = TTreeParserCPPTests.CreateTrees.CreateVectorVectorTree();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
+            Assert.AreEqual(1, result[0].Items.Count(), "incorrect # of items found for this guy");
+
+            Assert.AreEqual("double[][]", result[0].Items.First().ItemType, "improper double vector type!");
         }
 
         [TestMethod]
         public void GenerateClassesTestListOfLeaves()
         {
-            Assert.Inconclusive();
+            var t = TTreeParserCPPTests.CreateTrees.CreateListOfLeavesTree();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
+            Assert.AreEqual(3, result[0].Items.Count(), "incorrect # of items found for this guy");
+
+            string[] leafTypes = new string[] { "int", "float", "double" };
+
+            Assert.IsTrue(result[0].Items.All(i => leafTypes.Contains(i.ItemType)), "bad item type in the list!");
+            Assert.AreEqual(leafTypes.Length, result[0].Items.Select(l => l.ItemType).Distinct().Count(), "Bad # of differen tytpes");
         }
     }
 }

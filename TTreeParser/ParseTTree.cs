@@ -57,15 +57,8 @@ namespace TTreeParser
                 {
                     foreach (var leaf in branch.GetListOfLeaves().AsEnumerable().Cast<ROOTNET.Interface.NTLeaf>())
                     {
-                        if (leaf is ROOTNET.Interface.NTLeafElement)
-                        {
-                            ExtractMultiLeafItem(container, leaf as ROOTNET.Interface.NTLeafElement);
-                        }
-                        else
-                        {
-                            IClassItem toAdd = ExtractSimpleItem(leaf);
-                            container.Add(toAdd);
-                        }
+                        IClassItem toAdd = ExtractSimpleItem(leaf);
+                        container.Add(toAdd);
                     }
                 }
                 else
@@ -79,16 +72,6 @@ namespace TTreeParser
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// This is one of those split classes - split only in leaves. So it has sub-leaves. We have to dip down into
-        /// that and parse those. :(
-        /// </summary>
-        /// <param name="container"></param>
-        /// <param name="leaf"></param>
-        private void ExtractMultiLeafItem(ROOTClassShell container, ROOTNET.Interface.NTLeafElement leaf)
-        {
         }
 
         /// <summary>
@@ -113,7 +96,6 @@ namespace TTreeParser
             }
         }
 
-        private Regex templateParameterFinder = new Regex("(?<tclass>\\w+)\\<(?<types>.*)\\>$");
         /// <summary>
         /// This is a plane root class. Do the extraction!
         /// </summary>
@@ -121,16 +103,31 @@ namespace TTreeParser
         /// <returns></returns>
         private IEnumerable<ROOTClassShell> ExtractROOTTemplateClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch)
         {
-            var m = templateParameterFinder.Match(branch.GetClassName());
-            if (!m.Success)
-                throw new ArgumentException("Couldn't parse '" + branch.GetClassName() + "' for template objects!");
-            var templateArgClass = m.Groups["types"].Value.Trim();
-            var templateClass = m.Groups["tclass"].Value.Trim();
+            ///
+            /// Currently only setup to deal with some very specific types of vectors!
+            /// 
 
-            if (templateArgClass.Contains("<"))
+            var parsedMatch = TemplateParser.ParseForTemplates(branch.GetClassName()) as TemplateParser.TemplateInfo;
+            if (parsedMatch == null)
             {
-                throw new NotImplementedException("Can't do nested template classes yet");
+                throw new InvalidOperationException("Can't parse a template, but that is the only thing we can do!");
             }
+
+            if (parsedMatch.TemplateName != "vector")
+                throw new NotImplementedException("We can't deal with a template other than a vector: " + branch.GetClassName() + ".");
+
+            if (!(parsedMatch.Arguments[0] is TemplateParser.RegularDecl))
+            {
+                throw new NotImplementedException("We can't deal with nested templates: " + branch.GetClassName() + ".");
+            }
+
+            var templateArgClass = (parsedMatch.Arguments[0] as TemplateParser.RegularDecl).Type;
+
+            ///
+            /// Add a new item into the container
+            /// 
+
+            container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), branch.PRName));
 
             ///
             /// Now that we have parsed out the name of the template class and the sub-class we are going to be calling this
@@ -158,19 +155,6 @@ namespace TTreeParser
 
             yield return result;
 
-            ///
-            /// Put a reference into the container that we are adding items to so that it appears! :-)
-            /// 
-
-            if (templateClass == "vector")
-            {
-                container.Add(new ItemVector(result));
-            }
-            else
-            {
-                throw new NotImplementedException("Can't deal with template class of type '" + templateArgClass + "'");
-            }
-
 #if false
             ///
             /// Look at the class layout... This is totally useless! :-)
@@ -188,13 +172,21 @@ namespace TTreeParser
         }
 
         /// <summary>
-        /// There is a template in here... so we will have to do something "special" for it.
+        /// There is a plain class that needs to be extracted. We usually end up here becuase it is a split class of
+        /// some sort. For now, we will assume it is a real root class.
         /// </summary>
         /// <param name="branch"></param>
         /// <returns></returns>
         private IEnumerable<ROOTClassShell> ExtractROOTPlainClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch)
         {
-            throw new NotImplementedException();
+            if (!branch.GetClassName().StartsWith("T"))
+            {
+                throw new NotImplementedException("This should be a root class but doesn't look like it (doesn't start with T), giving up: " + branch.GetClassName());
+            }
+
+            container.Add(new ItemROOTClass(branch.PRName, branch.GetClassName()));
+
+            return Enumerable.Empty<ROOTClassShell>();
         }
 
         /// <summary>
@@ -206,9 +198,23 @@ namespace TTreeParser
         private IClassItem ExtractSimpleItem(ROOTNET.Interface.NTLeaf leaf)
         {
             string className = TypeDefTranslator.ResolveTypedef(leaf.PRTypeName);
-            var c = leaf.GetLeafCount();
-            IClassItem toAdd = null;
 
+            ///
+            /// First, see if this is a template of some sort.
+            /// 
+
+            var result = TemplateParser.ParseForTemplates(className);
+            if (result is TemplateParser.TemplateInfo)
+            {
+                return ExtractTemplateItem (leaf, result as TemplateParser.TemplateInfo);
+            }
+
+            ///
+            /// Ok - so it is a single "object" or similar. So we need to look at it and figure
+            /// out how to deal with it. It could be a root object or just an "int"
+            ///
+
+            IClassItem toAdd = null;
             if (IsROOTClass(className))
             {
                 toAdd = new ItemROOTClass(leaf.PRName, className);
@@ -223,6 +229,35 @@ namespace TTreeParser
                 throw new InvalidOperationException("Unknown type - cant' translate '" + className + "'.");
             }
             return toAdd;
+        }
+
+        /// <summary>
+        /// We are going to deal with a template of some sort for a simple item. At the moment we can deal only
+        /// with simple STL's...
+        /// </summary>
+        /// <param name="leaf"></param>
+        /// <param name="templateInfo"></param>
+        /// <returns></returns>
+        private IClassItem ExtractTemplateItem(ROOTNET.Interface.NTLeaf leaf, TemplateParser.TemplateInfo templateInfo)
+        {
+            if (templateInfo.TemplateName == "vector")
+            {
+                return new ItemVector(TemplateParser.TranslateToCSharp(templateInfo), leaf.PRName);
+            }
+            else
+            {
+                throw new NotImplementedException("We rae not able to handle template classes other than vector: '" + templateInfo.TemplateName + "'");
+            }
+        }
+
+        /// <summary>
+        /// Return true if this is a vector we are dealing with.
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        private bool IsSimpleVector(string className)
+        {
+            return className.StartsWith("vector<");
         }
 
         /// <summary>

@@ -6,20 +6,23 @@ using System.Text;
 namespace TTreeDataModel
 {
     /// <summary>
-    /// An item that references a ROOT class that is a vector.
+    /// An item that references some sort of a STL vector. This is a STL vector, not a C styl earray.
+    /// This is important because you can do things like ask for the "size()" of the thing, how we deal
+    /// with those things have to be kept seperate!
     /// </summary>
     public class ItemVector : IClassItem
     {
-        private ROOTClassShell result;
+        private string _vectorType;
 
-        public ItemVector(ROOTClassShell result)
+        public ItemVector(string vectorCSDecl, string vectorName)
         {
             // TODO: Complete member initialization
-            this.result = result;
+            _vectorType = vectorCSDecl;
+            ItemType = vectorCSDecl;
+            Name = vectorName;
+
         }
-        public string ItemType
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string ItemType { get; private set; }
+        public string Name { get; private set; }
     }
 }
