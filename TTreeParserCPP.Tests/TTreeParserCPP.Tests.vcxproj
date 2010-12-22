@@ -73,16 +73,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libCoreWrapper.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=1.0.3956.3364, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=1.0.4008.1636, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
