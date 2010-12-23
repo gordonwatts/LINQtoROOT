@@ -124,11 +124,32 @@ namespace TTreeParser
             var templateArgClass = (parsedMatch.Arguments[0] as TemplateParser.RegularDecl).Type;
 
             ///
+            /// Now we take a look at the class. This class must be known by ROOT - it just is not reliably possible
+            /// to re-build a class from the TTree/TLeaf structure, unforunately (except under very limited circumstances).
+            /// To that end, check to see if the class is a stub...
+            /// 
+
+            var classInfo = ROOTNET.NTClass.GetClass(templateArgClass);
+            if (classInfo.PRListOfBases == null)
+            {
+                /// Hopefully this check isn't too fragile!!
+                throw new NotImplementedException("ROOT doesn't know about the class '" + templateArgClass + "' so it can't be parsed");
+            }
+
+            ///
             /// Add a new item into the container
             /// 
 
             container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), branch.PRName));
 
+            ///
+            /// If this is a ROOT class (like TLorentzVector) then we are done.
+            /// 
+
+            return Enumerable.Empty<ROOTClassShell>();
+
+#if false
+            /// Code below was are (busted) attempt at using the TBranch/TLeaf structure to parse out a class
             ///
             /// Now that we have parsed out the name of the template class and the sub-class we are going to be calling this
             /// mess, we can go after the actual guys. This object could be sub-classed. However, we can't really tell b/c it
@@ -154,6 +175,7 @@ namespace TTreeParser
             }
 
             yield return result;
+#endif
 
 #if false
             ///

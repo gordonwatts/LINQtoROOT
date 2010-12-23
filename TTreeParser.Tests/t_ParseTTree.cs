@@ -131,6 +131,18 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(NotImplementedException))]
+        public void GenerateClassesTestNoClassInfo()
+        {
+            /// There are some classes in here that ROOT dosen't know about - so we
+            /// need to detect that and "bomb".
+            var f = new ROOTNET.NTFile("../../../TTreeParser.Tests/ComplexNtupleTestInput.root", "READ");
+            var t = f.Get("btag") as ROOTNET.Interface.NTTree;
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+        }
+
+        [TestMethod]
         public void GenerateClassesTestComplexUnknownObjects()
         {
             var f = new ROOTNET.NTFile("../../../TTreeParser.Tests/ComplexNtupleTestInput.root", "READ");
@@ -166,10 +178,10 @@ namespace LINQToTTreeLib.Tests
                 }
             }
 
+            CheckSerialization(result, "GenerateClassesTestComplexUnknownObjects");
             /// There should be 3 classes in there!
             Assert.AreEqual(3, result.Length, "incorrect # of classes parsed");
 
-            CheckSerialization(result, "GenerateClassesTestComplexUnknownObjects");
         }
 
         [TestMethod]
@@ -227,5 +239,21 @@ namespace LINQToTTreeLib.Tests
 
             CheckSerialization(result, "GenerateClassesTestListOfLeaves");
         }
+
+#if false
+        /// This test - the vector<TLZ> doesn't seem to be a known dictionary!
+        [TestMethod]
+        public void GenerateClassesTestListOfTLZ()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithTLZVector();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "Only the top level class was expected");
+            Assert.AreEqual(1, result[0].Items.Count(), "only one TLZ should have been in there");
+            var i = result[0].Items.First();
+            Assert.AreEqual("TLorentzVector[]", i.ItemType, "incorrect item type for vector of tlz");
+        }
+#endif
     }
 }

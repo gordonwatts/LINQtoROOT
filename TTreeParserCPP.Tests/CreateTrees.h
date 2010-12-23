@@ -66,6 +66,21 @@ namespace TTreeParserCPPTests {
 			return gcnew ROOTNET::NTTree(t);
 		}
 
+		/// Create a tree with some number of TLZ's.
+		static ROOTNET::NTTree ^CreateWithTLZVector()
+		{
+			vector<TLorentzVector> bogus;
+			TLorentzVector v;
+
+			TTree *t = new TTree("dude", "left field");
+			/// Shoot - doesn't seem to know about this either! :(
+
+			t->Branch ("myvectoroftlz", &bogus);
+			int n = t->GetListOfBranches()->GetEntries();
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
 		/// Create a tree with some number of vector's in it.
 		static ROOTNET::NTTree ^CreateVectorTree()
 		{
