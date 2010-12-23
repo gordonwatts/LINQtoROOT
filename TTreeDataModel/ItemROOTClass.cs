@@ -7,11 +7,9 @@ namespace TTreeDataModel
 {
     public class ItemROOTClass : IClassItem
     {
-        private string _name;
-
         public ItemROOTClass(string p, string className)
         {
-            this._name = p;
+            Name = p;
             ItemType = "ROOTNET.Interface.N" + className;
         }
 
@@ -21,5 +19,6 @@ namespace TTreeDataModel
 
 
         public override string ItemType {get; set;}
+        public override string Name { get; set; }
     }
 }

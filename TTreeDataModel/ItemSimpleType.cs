@@ -7,12 +7,10 @@ namespace TTreeDataModel
 {
     public class ItemSimpleType : IClassItem
     {
-        private string _name;
-
         public ItemSimpleType(string name, string itemtype)
         {
             // TODO: Complete member initialization
-            this._name = name;
+            Name = name;
 
             switch (itemtype)
             {
@@ -48,5 +46,6 @@ namespace TTreeDataModel
         /// Return the type of this guy
         /// </summary>
         public override string ItemType {get; set; }
+        public override string Name { get; set; }
     }
 }

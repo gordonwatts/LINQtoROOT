@@ -15,5 +15,10 @@ namespace TTreeDataModel
         /// Get the item type (in the .NET world).
         /// </summary>
         abstract public string ItemType { get; set;}
+
+        /// <summary>
+        /// Get/Set the name of the member!
+        /// </summary>
+        abstract public string Name { get; set; }
     }
 }

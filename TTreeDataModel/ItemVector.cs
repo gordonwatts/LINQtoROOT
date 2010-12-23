@@ -30,6 +30,6 @@ namespace TTreeDataModel
         }
 
         public override string ItemType { get; set; }
-        public string Name { get; set; }
+        public override string Name { get; set; }
     }
 }
