@@ -38,8 +38,15 @@ namespace TTreeDataModel
         }
 
         /// <summary>
+        /// Ctor for serialization
+        /// </summary>
+        public ItemSimpleType()
+        {
+        }
+
+        /// <summary>
         /// Return the type of this guy
         /// </summary>
-        public string ItemType {get; private set; }
+        public override string ItemType {get; set; }
     }
 }

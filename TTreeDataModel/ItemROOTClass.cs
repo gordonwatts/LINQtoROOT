@@ -15,6 +15,11 @@ namespace TTreeDataModel
             ItemType = "ROOTNET.Interface.N" + className;
         }
 
-        public string ItemType {get; private set; }
+        public ItemROOTClass()
+        {
+        }
+
+
+        public override string ItemType {get; set;}
     }
 }

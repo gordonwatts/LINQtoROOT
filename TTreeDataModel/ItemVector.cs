@@ -20,9 +20,16 @@ namespace TTreeDataModel
             _vectorType = vectorCSDecl;
             ItemType = vectorCSDecl;
             Name = vectorName;
-
         }
-        public string ItemType { get; private set; }
-        public string Name { get; private set; }
+
+        /// <summary>
+        /// Create an empty item vector
+        /// </summary>
+        public ItemVector()
+        {
+        }
+
+        public override string ItemType { get; set; }
+        public string Name { get; set; }
     }
 }

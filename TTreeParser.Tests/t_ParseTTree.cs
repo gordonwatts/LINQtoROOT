@@ -5,6 +5,8 @@ using ROOTNET.Interface;
 using System.Collections.Generic;
 using System.Linq;
 using TTreeDataModel;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -17,8 +19,6 @@ namespace LINQToTTreeLib.Tests
     [TestClass]
     public class ParseTTreeTest
     {
-
-
         private TestContext testContextInstance;
 
         /// <summary>
@@ -80,6 +80,24 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, result.Length, "Expected only the top level class");
             Assert.AreEqual("dude", result[0].Name, "class name incorrect");
             Assert.AreEqual(0, result[0].Items.Count(), "empty tree...");
+
+            CheckSerialization(result, "GenerateClassesEmptyTree");
+        }
+
+        /// <summary>
+        /// Check to make sure that we can serialize everything.
+        /// </summary>
+        /// <param name="result"></param>
+        private void CheckSerialization(ROOTClassShell[] result, string testName)
+        {
+            FileInfo outputFile = new FileInfo(testName + ".xml");
+            XmlSerializer xmlTrans = new XmlSerializer(typeof(ROOTClassShell[]));
+
+            using (var writer = outputFile.CreateText())
+            {
+                xmlTrans.Serialize(writer, result);
+                writer.Close();
+            }
         }
 
         [TestMethod]
@@ -93,6 +111,8 @@ namespace LINQToTTreeLib.Tests
             var item = result[0];
             Assert.AreEqual(5, item.Items.Count(), "Expected 5 items in there");
             Assert.IsTrue(item.Items.All(i => i.ItemType == "int"), "Not everything is an int!");
+
+            CheckSerialization(result, "GenerateClassesTestSingleBasicType");
         }
 
         [TestMethod]
@@ -106,6 +126,8 @@ namespace LINQToTTreeLib.Tests
             var item = result[0];
             Assert.AreEqual(5, item.Items.Count(), "Expected 5 items in there");
             Assert.IsTrue(item.Items.All(i => i.ItemType == "ROOTNET.Interface.NTLorentzVector"), "Not everything is a TLZ!");
+
+            CheckSerialization(result, "GenerateClassesTestTLorentzVector");
         }
 
         [TestMethod]
@@ -146,6 +168,8 @@ namespace LINQToTTreeLib.Tests
 
             /// There should be 3 classes in there!
             Assert.AreEqual(3, result.Length, "incorrect # of classes parsed");
+
+            CheckSerialization(result, "GenerateClassesTestComplexUnknownObjects");
         }
 
         [TestMethod]
@@ -167,6 +191,8 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsTrue(result[0].Items.All(i => possibleTypes.Contains(i.ItemType)), "Some responses not correct!");
             Assert.AreEqual(possibleTypes.Length, result[0].Items.Select(i => i.ItemType).Distinct().Count(), "Incorrect number of branches found!");
+
+            CheckSerialization(result, "GenerateClassesTestVectorIntAndDoubleAndShort");
         }
 
         [TestMethod]
@@ -180,6 +206,8 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, result[0].Items.Count(), "incorrect # of items found for this guy");
 
             Assert.AreEqual("double[][]", result[0].Items.First().ItemType, "improper double vector type!");
+
+            CheckSerialization(result, "GenerateClassesTestVectorVector");
         }
 
         [TestMethod]
@@ -196,6 +224,8 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsTrue(result[0].Items.All(i => leafTypes.Contains(i.ItemType)), "bad item type in the list!");
             Assert.AreEqual(leafTypes.Length, result[0].Items.Select(l => l.ItemType).Distinct().Count(), "Bad # of differen tytpes");
+
+            CheckSerialization(result, "GenerateClassesTestListOfLeaves");
         }
     }
 }

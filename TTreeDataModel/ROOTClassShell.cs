@@ -18,14 +18,21 @@ namespace TTreeDataModel
         }
 
         /// <summary>
+        /// To allow for serialization
+        /// </summary>
+        public ROOTClassShell()
+        {
+        }
+
+        /// <summary>
         /// Get the name of the class we represent
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Return all the items in this class
         /// </summary>
-        public IEnumerable<IClassItem> Items { get { return _items; } }
+        public List<IClassItem> Items { get { return _items; } }
 
         /// <summary>
         /// Add an item to this class.
