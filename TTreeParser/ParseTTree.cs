@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using TTreeDataModel;
-using System.Text.RegularExpressions;
 
 namespace TTreeParser
 {
@@ -24,7 +22,7 @@ namespace TTreeParser
             /// The outlying class is going to be called by the name of the tree.
             /// 
 
-            var masterClass = new ROOTClassShell(tree.PRName);
+            var masterClass = new ROOTClassShell(tree.Name);
 
             foreach (var c in ExtractClassesFromBranchList(masterClass, tree.GetListOfBranches().AsEnumerable().Cast<ROOTNET.Interface.NTBranch>()))
             {
@@ -53,7 +51,7 @@ namespace TTreeParser
                 /// sub leaves on it? The key question to ask is how many sub-branches are there here?
                 /// 
 
-                if (branch.PRListOfBranches.PREntries == 0)
+                if (branch.ListOfBranches.Entries == 0)
                 {
                     foreach (var leaf in branch.GetListOfLeaves().AsEnumerable().Cast<ROOTNET.Interface.NTLeaf>())
                     {
@@ -130,7 +128,7 @@ namespace TTreeParser
             /// 
 
             var classInfo = ROOTNET.NTClass.GetClass(templateArgClass);
-            if (classInfo.PRListOfBases == null)
+            if (classInfo.ListOfBases == null)
             {
                 /// Hopefully this check isn't too fragile!!
                 throw new NotImplementedException("ROOT doesn't know about the class '" + templateArgClass + "' so it can't be parsed");
@@ -140,7 +138,7 @@ namespace TTreeParser
             /// Add a new item into the container
             /// 
 
-            container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), branch.PRName));
+            container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), branch.Name));
 
             ///
             /// If this is a ROOT class (like TLorentzVector) then we are done.
@@ -206,7 +204,7 @@ namespace TTreeParser
                 throw new NotImplementedException("This should be a root class but doesn't look like it (doesn't start with T), giving up: " + branch.GetClassName());
             }
 
-            container.Add(new ItemROOTClass(branch.PRName, branch.GetClassName()));
+            container.Add(new ItemROOTClass(branch.Name, branch.GetClassName()));
 
             return Enumerable.Empty<ROOTClassShell>();
         }
@@ -219,7 +217,7 @@ namespace TTreeParser
         /// <returns></returns>
         private IClassItem ExtractSimpleItem(ROOTNET.Interface.NTLeaf leaf)
         {
-            string className = TypeDefTranslator.ResolveTypedef(leaf.PRTypeName);
+            string className = TypeDefTranslator.ResolveTypedef(leaf.TypeName);
 
             ///
             /// First, see if this is a template of some sort.
@@ -228,7 +226,7 @@ namespace TTreeParser
             var result = TemplateParser.ParseForTemplates(className);
             if (result is TemplateParser.TemplateInfo)
             {
-                return ExtractTemplateItem (leaf, result as TemplateParser.TemplateInfo);
+                return ExtractTemplateItem(leaf, result as TemplateParser.TemplateInfo);
             }
 
             ///
@@ -239,11 +237,11 @@ namespace TTreeParser
             IClassItem toAdd = null;
             if (IsROOTClass(className))
             {
-                toAdd = new ItemROOTClass(leaf.PRName, className);
+                toAdd = new ItemROOTClass(leaf.Name, className);
             }
             else
             {
-                toAdd = new ItemSimpleType(leaf.PRName, className);
+                toAdd = new ItemSimpleType(leaf.Name, className);
             }
 
             if (toAdd == null)
@@ -264,7 +262,7 @@ namespace TTreeParser
         {
             if (templateInfo.TemplateName == "vector")
             {
-                return new ItemVector(TemplateParser.TranslateToCSharp(templateInfo), leaf.PRName);
+                return new ItemVector(TemplateParser.TranslateToCSharp(templateInfo), leaf.Name);
             }
             else
             {

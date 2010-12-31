@@ -73,16 +73,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\libCoreWrapper.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\libTreeWrapper.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\lib\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=1.0.4008.1636, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=1.0.4017.847, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\root\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
