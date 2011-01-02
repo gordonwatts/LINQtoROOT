@@ -1,21 +1,16 @@
 // <copyright file="ROCountTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 
 using System;
-using LINQToTTreeLib;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LinqToTTreeInterfacesLib;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq;
-using Microsoft.Pex.Framework.Exceptions;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.Pex.Framework.Using;
 using System.Linq;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Moles;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Using;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib
 {
@@ -79,9 +74,9 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void ProcessResultOperator133()
         {
-            SGeneratedCode sGeneratedCode;
+            GeneratedCode sGeneratedCode;
             IVariable iVariable;
-            sGeneratedCode = new SGeneratedCode();
+            sGeneratedCode = new GeneratedCode();
             ROCount s0 = new ROCount();
             CountResultOperator s1 = new CountResultOperator();
             iVariable = this.ProcessResultOperator
@@ -93,9 +88,9 @@ namespace LINQToTTreeLib
         [ExpectedException(typeof(ArgumentNullException))]
         public void ProcessResultOperatorThrowsArgumentNullException395()
         {
-            SGeneratedCode sGeneratedCode;
+            GeneratedCode sGeneratedCode;
             IVariable iVariable;
-            sGeneratedCode = new SGeneratedCode();
+            sGeneratedCode = new GeneratedCode();
             ROCount s0 = new ROCount();
             iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
                                                    (QueryModel)null, (IGeneratedCode)sGeneratedCode);

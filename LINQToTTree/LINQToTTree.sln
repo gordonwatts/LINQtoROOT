@@ -3,20 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleLINQToTTreeFeasability", "SimpleLINQToTTreeFeasability\SimpleLINQToTTreeFeasability.csproj", "{E5D05BBE-56EE-45C1-9A18-B965910F4EE2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NTupleSourceCode", "NTupleSourceCode", "{30409F03-B2DF-4110-AE02-0E3F88B0C53D}"
-	ProjectSection(SolutionItems) = preProject
-		NTupleSource\BasicPlotMaker.cpp = NTupleSource\BasicPlotMaker.cpp
-		NTupleSource\BasicPlotMaker.h = NTupleSource\BasicPlotMaker.h
-		NTupleSource\BTagJet.cpp = NTupleSource\BTagJet.cpp
-		NTupleSource\BTagJet.h = NTupleSource\BTagJet.h
-		NTupleSource\FlowOutputObject.cpp = NTupleSource\FlowOutputObject.cpp
-		NTupleSource\FlowOutputObject.h = NTupleSource\FlowOutputObject.h
-		NTupleSource\MuonInBJet.cpp = NTupleSource\MuonInBJet.cpp
-		NTupleSource\MuonInBJet.h = NTupleSource\MuonInBJet.h
-		NTupleSource\Utils.cpp = NTupleSource\Utils.cpp
-		NTupleSource\Utils.h = NTupleSource\Utils.h
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSimpleLINQToTTreeFeasability", "TestSimpleLINQToTTreeFeasability\TestSimpleLINQToTTreeFeasability.csproj", "{AAE13870-C8BC-4E8C-A6E0-5ACA05A9E825}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A6EE159-F508-458E-82A5-95A79B6DEBC5}"

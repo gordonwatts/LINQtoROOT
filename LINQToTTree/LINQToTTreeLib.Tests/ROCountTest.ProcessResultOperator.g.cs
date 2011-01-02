@@ -11,65 +11,62 @@
 // </auto-generated>
 using System;
 using LinqToTTreeInterfacesLib;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
-using Microsoft.Pex.Framework.Exceptions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Moles;
 
 namespace LINQToTTreeLib
 {
     public partial class ROCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException778()
-{
-    IVariable iVariable;
-    ROCount s0 = new ROCount();
-    iVariable = this.ProcessResultOperator
-                    (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedCode)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException703()
-{
-    SGeneratedCode sGeneratedCode;
-    IVariable iVariable;
-    sGeneratedCode = new SGeneratedCode();
-    ROCount s0 = new ROCount();
-    iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null, 
-                                           (QueryModel)null, (IGeneratedCode)sGeneratedCode);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-public void ProcessResultOperator13301()
-{
-    SGeneratedCode sGeneratedCode;
-    IVariable iVariable;
-    sGeneratedCode = new SGeneratedCode();
-    ROCount s0 = new ROCount();
-    CountResultOperator s1 = new CountResultOperator();
-    iVariable = this.ProcessResultOperator
-                    (s0, s1, (QueryModel)null, (IGeneratedCode)sGeneratedCode);
-    Assert.IsNotNull((object)iVariable);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException21()
-{
-    GeneratedCode generatedCode;
-    IVariable iVariable;
-    generatedCode = GeneratedCodeFactory.Create();
-    ROCount s0 = new ROCount();
-    iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null, 
-                                           (QueryModel)null, (IGeneratedCode)generatedCode);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ProcessResultOperatorThrowsArgumentNullException778()
+        {
+            IVariable iVariable;
+            ROCount s0 = new ROCount();
+            iVariable = this.ProcessResultOperator
+                            (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedCode)null);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ProcessResultOperatorThrowsArgumentNullException703()
+        {
+            GeneratedCode sGeneratedCode;
+            IVariable iVariable;
+            sGeneratedCode = new GeneratedCode();
+            ROCount s0 = new ROCount();
+            iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
+                                                   (QueryModel)null, (IGeneratedCode)sGeneratedCode);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        public void ProcessResultOperator13301()
+        {
+            GeneratedCode sGeneratedCode;
+            IVariable iVariable;
+            sGeneratedCode = new GeneratedCode();
+            ROCount s0 = new ROCount();
+            CountResultOperator s1 = new CountResultOperator();
+            iVariable = this.ProcessResultOperator
+                            (s0, s1, (QueryModel)null, (IGeneratedCode)sGeneratedCode);
+            Assert.IsNotNull((object)iVariable);
+            Assert.IsNotNull((object)s0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ProcessResultOperatorThrowsArgumentNullException21()
+        {
+            GeneratedCode generatedCode;
+            IVariable iVariable;
+            generatedCode = GeneratedCodeFactory.Create();
+            ROCount s0 = new ROCount();
+            iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
+                                                   (QueryModel)null, (IGeneratedCode)generatedCode);
+        }
     }
 }

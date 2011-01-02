@@ -10,52 +10,51 @@
 // </auto-generated>
 using System;
 using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Statements.Moles;
-using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
+using Microsoft.Pex.Framework.Generated;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException701()
-{
-    GeneratedCode generatedCode;
-    generatedCode = GeneratedCodeFactory.Create();
-    this.Add(generatedCode, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Add149()
-{
-    GeneratedCode generatedCode;
-    SStatementIncrementInteger sStatementIncrementInteger;
-    generatedCode = GeneratedCodeFactory.Create();
-    VarInteger s0 = new VarInteger();
-    sStatementIncrementInteger = new SStatementIncrementInteger(s0);
-    this.Add(generatedCode, (IStatement)sStatementIncrementInteger);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.IsNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Add703()
-{
-    GeneratedCode generatedCode;
-    StatementIncrementInteger statementIncrementInteger;
-    generatedCode = GeneratedCodeFactory.Create();
-    VarInteger s0 = new VarInteger();
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(s0);
-    this.Add(generatedCode, (IStatement)statementIncrementInteger);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.IsNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(GeneratedCodeTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AddThrowsArgumentNullException701()
+        {
+            GeneratedCode generatedCode;
+            generatedCode = GeneratedCodeFactory.Create();
+            this.Add(generatedCode, (IStatement)null);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(GeneratedCodeTest))]
+        public void Add149()
+        {
+            GeneratedCode generatedCode;
+            StatementIncrementInteger sStatementIncrementInteger;
+            generatedCode = GeneratedCodeFactory.Create();
+            VarInteger s0 = new VarInteger();
+            sStatementIncrementInteger = new StatementIncrementInteger(s0);
+            this.Add(generatedCode, (IStatement)sStatementIncrementInteger);
+            Assert.IsNotNull((object)generatedCode);
+            Assert.IsNull(generatedCode.ResultValue);
+            Assert.IsNotNull(generatedCode.CodeBody);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(GeneratedCodeTest))]
+        public void Add703()
+        {
+            GeneratedCode generatedCode;
+            StatementIncrementInteger statementIncrementInteger;
+            generatedCode = GeneratedCodeFactory.Create();
+            VarInteger s0 = new VarInteger();
+            statementIncrementInteger = StatementIncrementIntegerFactory.Create(s0);
+            this.Add(generatedCode, (IStatement)statementIncrementInteger);
+            Assert.IsNotNull((object)generatedCode);
+            Assert.IsNull(generatedCode.ResultValue);
+            Assert.IsNotNull(generatedCode.CodeBody);
+        }
     }
 }

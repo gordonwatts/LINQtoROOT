@@ -1,17 +1,15 @@
-﻿using TTreeParser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using ROOTNET.Interface;
-using System.Collections.Generic;
-using System.Linq;
-using TTreeDataModel;
+﻿using System;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TTreeDataModel;
+using TTreeParser;
 
 namespace LINQToTTreeLib.Tests
 {
-    
-    
+
+
     /// <summary>
     ///This is a test class for ParseTTreeTest and is intended
     ///to contain all ParseTTreeTest Unit Tests
@@ -142,6 +140,9 @@ namespace LINQToTTreeLib.Tests
             var result = p.GenerateClasses(t).ToArray();
         }
 
+#if false
+        /// This test relyies on having the ntuple stuff translated, something we are doing in the
+        /// demos now, not here in the actual test cases - where we do everything ad-hoc.
         [TestMethod]
         public void GenerateClassesTestComplexUnknownObjects()
         {
@@ -183,6 +184,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(3, result.Length, "incorrect # of classes parsed");
 
         }
+#endif
 
         [TestMethod]
         public void GenerateClassesTestVectorIntAndDoubleAndShort()

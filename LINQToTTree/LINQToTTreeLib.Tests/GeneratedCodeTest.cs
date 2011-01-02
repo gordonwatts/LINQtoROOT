@@ -1,17 +1,14 @@
 // <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Using;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Statements.Moles;
-using System.Collections.Generic;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Using;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib
 {
