@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NTupleWrappers", "NTupleWra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoJetShapes", "DemoJetShapes\DemoJetShapes.csproj", "{D79BBEDC-59DC-4D76-8154-BA2A51A72278}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GenerateNtupleXMLSpec", "GenerateNtupleXMLSpec\GenerateNtupleXMLSpec.vcxproj", "{CB6FA748-F8C3-4CAA-9852-C41F6195915B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -50,6 +52,16 @@ Global
 		{D79BBEDC-59DC-4D76-8154-BA2A51A72278}.Release|Win32.ActiveCfg = Release|x86
 		{D79BBEDC-59DC-4D76-8154-BA2A51A72278}.Release|x86.ActiveCfg = Release|x86
 		{D79BBEDC-59DC-4D76-8154-BA2A51A72278}.Release|x86.Build.0 = Release|x86
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Debug|Win32.Build.0 = Debug|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Debug|x86.ActiveCfg = Debug|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|Win32.ActiveCfg = Release|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|Win32.Build.0 = Release|Win32
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
