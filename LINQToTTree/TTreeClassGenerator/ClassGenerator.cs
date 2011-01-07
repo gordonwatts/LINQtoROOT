@@ -103,10 +103,15 @@ namespace TTreeClassGenerator
                     output.WriteLine("  class {0}", cls.Name);
                     output.WriteLine("  {");
 
+                    /// These fields will never be set or accessed - so we turn off some warnings the compiler will generate.
+                    output.WriteLine("#pragma warning disable 0649");
+
                     foreach (var item in cls.Items)
                     {
                         WriteItem(item, output);
                     }
+
+                    output.WriteLine("#pragma warning restore 0649");
 
                     output.WriteLine("  }"); // End of the class
                 }
