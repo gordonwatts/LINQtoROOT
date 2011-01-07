@@ -141,6 +141,24 @@ namespace LINQToTTreeLib.Tests
             CheckSerialization(result, "GenerateClassesTestTLorentzVector");
         }
 
+#if false
+        /// Commented out b/c it causes a DLL to be kept in.
+        [TestMethod]
+        public void GenerateClassWithCustomROOTClass()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateCustomROOTClassTree();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "should only be top level class");
+            var item = result[0];
+            Assert.AreEqual(1, item.Items.Count, "Incorrect number of leaves detected");
+            var leaf = item.Items[0];
+            Assert.IsInstanceOfType(leaf, typeof(ItemROOTClass), "leaf should be a root class!");
+            Assert.AreEqual("ROOTNET.Interface.NATestRootClass", leaf.ItemType, "bad item type");
+        }
+#endif
+
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
         public void GenerateClassesTestNoClassInfo()

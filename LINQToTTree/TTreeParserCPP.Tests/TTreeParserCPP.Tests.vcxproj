@@ -56,7 +56,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libCore.lib;libTree.lib;libPhysics.lib</AdditionalDependencies>
+      <AdditionalDependencies>libCore.lib;libTree.lib;libPhysics.lib;libCint.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -86,8 +86,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cintcode.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CreateTrees.h" />
+    <ClInclude Include="ATestRootClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />

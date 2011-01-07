@@ -21,6 +21,12 @@
     <ClInclude Include="CreateTrees.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ATestRootClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cintcode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp">

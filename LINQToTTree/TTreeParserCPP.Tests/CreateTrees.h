@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ATestRootClass.h"
+
 #include <string>
 #include <sstream>
 #include <vector>
@@ -81,6 +83,20 @@ namespace TTreeParserCPPTests {
 
 			return gcnew ROOTNET::NTTree(t);
 		}
+
+#ifdef notyet
+		/// Create a tree with custom ROOT class
+		static ROOTNET::NTTree ^CreateCustomROOTClassTree()
+		{
+			ATestRootClass bogus;
+
+			TTree *t = new TTree("dude", "left field");
+
+			t->Branch ("test", &bogus);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+#endif
 
 		/// Create a tree with some number of TLZ's.
 		static ROOTNET::NTTree ^CreateWithTLZVector()
