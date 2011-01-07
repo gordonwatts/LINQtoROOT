@@ -19,7 +19,7 @@ ClassCSFile = $(DemoJetShapesDir)\ntupleDataModel.cs
 
 all: $(ClassCSFile)
 
-$(DemoJetShapesDir)\ntuple.ntupom : $(SolutionDir)\output.root $(ConverterImage) $(NtupleDLLs)
+$(DemoJetShapesDir)\ntuple.ntupom : $(SolutionDir)\output.root $(ConverterImage) $(NtupleDLLs) $(ConverterImage)
 	$(ConverterImage) $(NtupleDLLs) $(SolutionDir)\output.root -o $(DemoJetShapesDir)\ntuple.ntupom
 
 $(ClassCSFile) : $(DemoJetShapesDir)\ntuple.ntupom $(ClassConverterImage)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace TTreeParser
@@ -77,7 +76,7 @@ namespace TTreeParser
             /// 
 
             var t = new TemplateInfo(m.Groups["tclass"].Value, args);
-            
+
             return t;
         }
 
@@ -98,7 +97,9 @@ namespace TTreeParser
                 {
                     result.Add(toParse);
                     toParse = "";
-                } else {
+                }
+                else
+                {
                     result.Add(toParse.Substring(0, locationOfNextGoodComma));
                     toParse = toParse.Substring(locationOfNextGoodComma + 1).Trim();
                 }
@@ -123,7 +124,7 @@ namespace TTreeParser
                 }
                 else if (toParse[index] == '<')
                 {
-                    index += FindMatchingClosingBraket(toParse.Substring(index+1));
+                    index += FindMatchingClosingBraket(toParse.Substring(index + 1));
                 }
                 index += 1;
             }
@@ -150,7 +151,7 @@ namespace TTreeParser
 
                 if (p[index] == '<')
                 {
-                    index += FindMatchingClosingBraket(p.Substring(index+1));
+                    index += FindMatchingClosingBraket(p.Substring(index + 1));
                 }
                 else
                 {
@@ -170,7 +171,12 @@ namespace TTreeParser
         {
             if (r is RegularDecl)
             {
-                return (r as RegularDecl).Type;
+                var typ = (r as RegularDecl).Type;
+                if (ROOTNET.NTClass.GetClass(typ) != null)
+                {
+                    typ = "ROOTNET.Interface.N" + typ;
+                }
+                return typ;
             }
 
             var t = r as TemplateInfo;

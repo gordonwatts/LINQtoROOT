@@ -34,6 +34,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="libCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libPhysicsWrapper">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libPhysicsWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="LINQToTTreeLib">
       <HintPath>..\..\LINQToROOT\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
     </Reference>
@@ -44,6 +50,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WrapperPlumbingLibrary, Version=1.0.4017.847, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ntupleDataModel.cs" />
@@ -54,6 +63,12 @@
     <None Include="ntuple.ntupom">
       <Generator>cmd.exe</Generator>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NTupleWrappers\NTupleWrappers.vcxproj">
+      <Project>{0B7F2486-B72D-4B47-85B5-0329BB9C03AB}</Project>
+      <Name>NTupleWrappers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
