@@ -114,6 +114,19 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void GenerateClassesTestBadNameEvent()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntName("event");
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            var item = result[0];
+            var first = item.Items[0];
+            var st = first as ItemSimpleType;
+            Assert.AreEqual("event_", st.Name, "Specialized name not correct");
+        }
+
+        [TestMethod]
         public void GenerateClassesTestTLorentzVector()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateWithTLZOnly(5);

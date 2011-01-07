@@ -15,6 +15,7 @@ using std::ostringstream;
 using std::vector;
 
 using namespace System;
+using namespace System::Runtime::InteropServices;
 
 namespace TTreeParserCPPTests {
 			struct stuff
@@ -49,7 +50,22 @@ namespace TTreeParserCPPTests {
 
 			return gcnew ROOTNET::NTTree(t);
 		}
+		static ROOTNET::NTTree ^CreateWithIntName(String ^leaf_name)
+		{
+			int bogus;
 
+			TTree *t = new TTree("dude", "left field");
+
+			char *native_string = (char *)Marshal::StringToHGlobalAnsi(leaf_name).ToPointer();
+			string name (native_string);
+			Marshal::FreeHGlobal(IntPtr((void *)native_string));
+			t->Branch (name.c_str(), &bogus);
+			bogus = 10;
+			t->Fill();
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+		
 		/// Create a tree with some number of TLZ's.
 		static ROOTNET::NTTree ^CreateWithTLZOnly(int numberOfTLZ)
 		{

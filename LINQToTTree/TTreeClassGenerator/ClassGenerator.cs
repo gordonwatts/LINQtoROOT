@@ -100,15 +100,15 @@ namespace TTreeClassGenerator
 
                 foreach (var cls in classSpec)
                 {
-                    output.WriteLine("class {0}", cls.Name);
-                    output.WriteLine("{");
+                    output.WriteLine("  class {0}", cls.Name);
+                    output.WriteLine("  {");
 
                     foreach (var item in cls.Items)
                     {
                         WriteItem(item, output);
                     }
 
-                    output.WriteLine("}"); // End of the class
+                    output.WriteLine("  }"); // End of the class
                 }
 
                 ///
@@ -132,7 +132,7 @@ namespace TTreeClassGenerator
                 throw new ArgumentNullException("item - can't have a null item in an ntuple!");
 
             string t = item.ItemType;
-            output.WriteLine("    public {0};", t);
+            output.WriteLine("    public {0} {1};", t, item.Name);
         }
 
         /// <summary>

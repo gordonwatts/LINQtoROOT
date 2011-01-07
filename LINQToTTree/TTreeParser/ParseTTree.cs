@@ -234,14 +234,16 @@ namespace TTreeParser
             /// out how to deal with it. It could be a root object or just an "int"
             ///
 
+            var ln = NormalizeLeafName(leaf.Name);
+
             IClassItem toAdd = null;
             if (IsROOTClass(className))
             {
-                toAdd = new ItemROOTClass(leaf.Name, className);
+                toAdd = new ItemROOTClass(ln, className);
             }
             else
             {
-                toAdd = new ItemSimpleType(leaf.Name, className);
+                toAdd = new ItemSimpleType(ln, className);
             }
 
             if (toAdd == null)
@@ -249,6 +251,18 @@ namespace TTreeParser
                 throw new InvalidOperationException("Unknown type - cant' translate '" + className + "'.");
             }
             return toAdd;
+        }
+
+        /// <summary>
+        /// It is possible to use C# reserved keywords as leaf names. We have to alter them.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private string NormalizeLeafName(string p)
+        {
+            if (p == "event")
+                return "event_";
+            return p;
         }
 
         /// <summary>
