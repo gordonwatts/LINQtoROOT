@@ -8,15 +8,19 @@
 DemoJetShapesDir = ..\DemoJetShapes
 SolutionDir = ..
 ConverterImage = ..\..\LINQToTTree\CmdTFileParser\bin\Debug\CmdTFileParser.exe
+ClassConverterImage = ..\..\LINQToTTree\CmdGenerateLINQClasses\bin\Debug\CmdGenerateLINQClasses.exe
 NtupleDLLs = ..\NtupleClasses\MuonInBJet_cpp.dll ..\NtupleClasses\BTagJet_cpp.dll
+
+ClassCSFile = $(DemoJetShapesDir)\ntupleDataModel.cs
 
 #
 # Rules
 #
 
-all: $(DemoJetShapesDir)\ntuple.ntupom
+all: $(ClassCSFile)
 
 $(DemoJetShapesDir)\ntuple.ntupom : $(SolutionDir)\output.root $(ConverterImage) $(NtupleDLLs)
 	$(ConverterImage) $(NtupleDLLs) $(SolutionDir)\output.root -o $(DemoJetShapesDir)\ntuple.ntupom
 
-	
+$(ClassCSFile) : $(DemoJetShapesDir)\ntuple.ntupom $(ClassConverterImage)
+	$(ClassConverterImage) $(DemoJetShapesDir)\ntuple.ntupom $(ClassCSFile)
