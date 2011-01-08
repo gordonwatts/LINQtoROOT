@@ -103,7 +103,7 @@ namespace TTreeClassGenerator
 
                 foreach (var cls in classSpec)
                 {
-                    output.WriteLine("  class {0}", cls.Name);
+                    output.WriteLine("  public class {0}", cls.Name);
                     output.WriteLine("  {");
 
                     /// These fields will never be set or accessed - so we turn off some warnings the compiler will generate.
