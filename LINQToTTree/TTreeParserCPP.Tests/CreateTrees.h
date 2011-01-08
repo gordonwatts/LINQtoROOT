@@ -52,6 +52,22 @@ namespace TTreeParserCPPTests {
 
 			return gcnew ROOTNET::NTTree(t);
 		}
+
+		static ROOTNET::NTTree ^CreateOneIntTree(int numberOfEntries)
+		{
+			int bogus;
+
+			TTree *t = new TTree("dude", "left field");
+
+			t->Branch ("run", &bogus);
+			bogus = 10;
+			for (int i = 0; i < numberOfEntries; i++) {
+				t->Fill();
+			}
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
 		static ROOTNET::NTTree ^CreateWithIntName(String ^leaf_name)
 		{
 			int bogus;

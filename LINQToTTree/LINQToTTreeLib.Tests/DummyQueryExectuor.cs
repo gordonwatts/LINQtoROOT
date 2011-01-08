@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Remotion.Data.Linq;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.Utils;
+using Remotion.Data.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -27,6 +24,8 @@ namespace LINQToTTreeLib.Tests
 
         public static bool GlobalInitalized = false;
 
+        public static QueryModel LastQueryModel { get; private set; }
+
         /// <summary>
         /// The only thing that we are going to *even* allow!
         /// </summary>
@@ -35,6 +34,8 @@ namespace LINQToTTreeLib.Tests
         /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
+            LastQueryModel = queryModel;
+
             Result = new GeneratedCode();
 
             if (!GlobalInitalized)

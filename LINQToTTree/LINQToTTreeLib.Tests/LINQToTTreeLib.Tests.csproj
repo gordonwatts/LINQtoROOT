@@ -93,6 +93,10 @@
       <Project>{3F0367B8-C970-4134-8FC6-944400C00F71}</Project>
       <Name>TTreeDataModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TTreeParserCPP.Tests\TTreeParserCPP.Tests.vcxproj">
+      <Project>{967E302F-C718-44B4-A6C5-93B87C786E57}</Project>
+      <Name>TTreeParserCPP.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TTreeParser\TTreeParser.csproj">
       <Project>{69E634CA-6F0D-4363-9522-F19896E27E02}</Project>
       <Name>TTreeParser</Name>

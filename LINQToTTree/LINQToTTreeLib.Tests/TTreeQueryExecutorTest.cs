@@ -2,6 +2,8 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,6 +16,19 @@ namespace LINQToTTreeLib
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     public partial class TTreeQueryExecutorTest
     {
+        [TestInitialize]
+        public void TestInit()
+        {
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         [PexMethod]
         public TTreeQueryExecutor Constructor(int rootFileIndex, string treeName)
         {
@@ -40,6 +55,61 @@ namespace LINQToTTreeLib
             TTreeQueryExecutor target = new TTreeQueryExecutor(rootFile, treeName);
             return target;
             // TODO: add assertions to method TTreeQueryExecutorTest.Constructor(FileInfo, String)
+        }
+
+        /// <summary>
+        /// Dirt simply test ntuple. Actually matches one that exists on disk.
+        /// </summary>
+        public class TestNtupe
+        {
+            int run;
+        }
+
+        /// <summary>
+        /// Test out a simple result operator.
+        /// </summary>
+        [TestMethod]
+        public void TestSimpleReultOperator()
+        {
+            int numberOfIter = 10;
+
+            var rootFile = CreateFileOfInt(numberOfIter);
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            var exe = new TTreeQueryExecutor(rootFile, "dude");
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        private FileInfo CreateFileOfInt(int numberOfIter)
+        {
+            string filename = "intonly_" + numberOfIter.ToString() + ".root";
+            FileInfo result = new FileInfo(filename);
+            if (result.Exists)
+                return result;
+
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
+            var tree = TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter);
+            f.Write();
+            f.Close();
+            result.Refresh();
+            return result;
         }
     }
 }

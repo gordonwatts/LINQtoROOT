@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Reflection;
 using Remotion.Data.Linq;
 
 namespace LINQToTTreeLib
@@ -10,8 +13,15 @@ namespace LINQToTTreeLib
     /// </summary>
     public class TTreeQueryExecutor : IQueryExecutor
     {
-        private FileInfo rootFile;
-        private string treeName;
+        /// <summary>
+        /// The root file that this exector operates on
+        /// </summary>
+        private FileInfo _rootFile;
+
+        /// <summary>
+        /// The tree name that in the root file that this guy operates on.
+        /// </summary>
+        private string _treeName;
 
         /// <summary>
         /// We are going to be executing over a particular file and tree
@@ -33,8 +43,8 @@ namespace LINQToTTreeLib
             if (string.IsNullOrWhiteSpace(treeName))
                 throw new ArgumentException("The tree name must be valid");
 
-            this.rootFile = rootFile;
-            this.treeName = treeName;
+            _rootFile = rootFile;
+            _treeName = treeName;
         }
 
         /// <summary>
@@ -60,12 +70,55 @@ namespace LINQToTTreeLib
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
             ///
+            /// The query visitor is what we will use to scan the actual guys
+            /// 
+
+            var result = new GeneratedCode();
+            var qv = new QueryVisitor(result);
+
+            ///
+            /// We have to init everything - which means using MEF!
+            /// 
+
+            Init();
+
+            CompositionBatch b = new CompositionBatch();
+            b.AddPart(qv);
+            _gContainer.Compose(b);
+
+            ///
             /// Parse the query
             /// 
 
-
+            qv.VisitQueryModel(queryModel);
 
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// When the class has been initalized, we set this to true. Make sure we run MEF.
+        /// </summary>
+        static CompositionContainer _gContainer = null;
+
+        /// <summary>
+        /// Run init for this class.
+        /// </summary>
+        private void Init()
+        {
+            if (_gContainer != null)
+                return;
+
+            ///
+            /// Get MEF setup with everything in our assembly.
+            /// 
+
+            AggregateCatalog aggCat = new AggregateCatalog();
+            aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
+            _gContainer = new CompositionContainer(aggCat);
+            ExpressionVisitor.TypeHandlers = new TypeHandlers.TypeHandlerCache();
+            CompositionBatch b = new CompositionBatch();
+            b.AddPart(ExpressionVisitor.TypeHandlers);
+            _gContainer.Compose(b);
         }
 
         /// <summary>
