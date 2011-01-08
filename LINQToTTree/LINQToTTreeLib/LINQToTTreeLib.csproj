@@ -55,6 +55,7 @@
     <Compile Include="GeneratedCode.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueriableTTree.cs" />
     <Compile Include="QueryVisitor.cs" />
     <Compile Include="ResultOperators\ROAggregate.cs" />
     <Compile Include="ResultOperators\ROCount.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Statements\StatementInlineBlock.cs" />
     <Compile Include="Statements\StatementLoopOnVector.cs" />
     <Compile Include="Statements\StatementSimpleStatement.cs" />
+    <Compile Include="TTreeQueryExecutor.cs" />
     <Compile Include="TypeHandlers\ROOT\ROOTObjectValue.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHandlerROOT.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCache.cs" />

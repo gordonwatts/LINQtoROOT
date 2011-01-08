@@ -91,6 +91,9 @@ namespace TTreeClassGenerator
                 output.WriteLine("//");
                 output.WriteLine();
 
+                output.WriteLine("using System.IO;");
+                output.WriteLine("using LINQToTTreeLib;");
+
                 output.WriteLine();
                 output.WriteLine("namespace {0} {{", namespaceName);
 
@@ -114,6 +117,18 @@ namespace TTreeClassGenerator
                     output.WriteLine("#pragma warning restore 0649");
 
                     output.WriteLine("  }"); // End of the class
+
+                    ///
+                    /// Next, write out the queriable classes so we can actually do the queires
+                    /// against the trees!
+                    /// 
+
+                    output.WriteLine("  class Queryable{0} : QueriableTTree<{0}>", cls.Name);
+                    output.WriteLine("  {");
+                    output.WriteLine("    public Queryable{0} (FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
+                    output.WriteLine("              : base (rootFile, treeName)");
+                    output.WriteLine("    {}");
+                    output.WriteLine("  }");
                 }
 
                 ///
