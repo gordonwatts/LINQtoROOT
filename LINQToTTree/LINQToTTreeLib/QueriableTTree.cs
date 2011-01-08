@@ -38,6 +38,5 @@ namespace LINQToTTreeLib
         {
             ///(this.Provider as DefaultQueryProvider).ExpressionTreeParser.NodeTypeRegistry.Register(xxx.SupportedMethods, typeof(xxx));
         }
-
     }
 }

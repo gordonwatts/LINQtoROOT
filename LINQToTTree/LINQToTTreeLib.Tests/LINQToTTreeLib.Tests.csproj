@@ -206,6 +206,10 @@
     </Compile>
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
+    <Compile Include="TTreeQueryExecutorTest.Constructor.g.cs">
+      <DependentUpon>TTreeQueryExecutorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TTreeQueryExecutorTest.cs" />
     <Compile Include="TypeHandlerHelpersTest.cs" />
     <Compile Include="TypeHandlerHelpersTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
