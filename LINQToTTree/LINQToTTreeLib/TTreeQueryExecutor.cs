@@ -29,6 +29,12 @@ namespace LINQToTTreeLib
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Execute a scalar result
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryModel"></param>
+        /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
             throw new NotImplementedException();
