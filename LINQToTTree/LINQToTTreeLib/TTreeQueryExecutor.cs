@@ -92,13 +92,19 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(queryModel);
 
-            throw new NotImplementedException();
+            return default(T);
         }
 
         /// <summary>
         /// When the class has been initalized, we set this to true. Make sure we run MEF.
         /// </summary>
         static CompositionContainer _gContainer = null;
+
+        /// <summary>
+        /// The location where we put temp files we need to build against, etc. and then
+        /// ship off and run... No perm stuff here (so no results, etc.).
+        /// </summary>
+        public static DirectoryInfo TempDirectory = null;
 
         /// <summary>
         /// Run init for this class.
@@ -119,6 +125,22 @@ namespace LINQToTTreeLib
             CompositionBatch b = new CompositionBatch();
             b.AddPart(ExpressionVisitor.TypeHandlers);
             _gContainer.Compose(b);
+
+            ///
+            /// A directory where we can store all of the temp files we need to create
+            /// 
+
+            TempDirectory = new DirectoryInfo(Path.GetTempPath() + "\\LINQToROOT");
+            if (!TempDirectory.Exists)
+            {
+                TempDirectory.Create();
+                TempDirectory.Refresh();
+            }
+            var cf = new DirectoryInfo(TempDirectory.FullName + "\\CommonFiles");
+            if (!cf.Exists)
+            {
+                cf.Create();
+            }
         }
 
         /// <summary>

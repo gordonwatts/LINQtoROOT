@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Remotion.Data.Linq;
 using System.ComponentModel.Composition;
-using LINQToTTreeLib.Utils;
-using Remotion.Data.Linq.Clauses;
-using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
+using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses;
 
 namespace LINQToTTreeLib
 {
@@ -33,8 +30,10 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Keep all the operators we know about hanging around!
         /// </summary>
+#pragma warning disable 649
         [Import]
         QVResultOperators _operators;
+#pragma warning restore 649
 
         /// <summary>
         /// We need to process a result operator.

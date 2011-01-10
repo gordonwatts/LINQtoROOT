@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel.Composition;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Utils
@@ -16,8 +15,10 @@ namespace LINQToTTreeLib.Utils
         /// <summary>
         /// The list of valid result operators!
         /// </summary>
+#pragma warning disable 649
         [ImportMany(typeof(IQVResultOperator))]
         IEnumerable<IQVResultOperator> Operators;
+#pragma warning restore 649
 
         /// <summary>
         /// Keep track of the result operators that we've already looked at for

@@ -92,6 +92,34 @@ namespace LINQToTTreeLib
             Assert.AreEqual(numberOfIter, result);
         }
 
+        [TestMethod]
+        public void TestTempDirectoryLocationAndEmptying()
+        {
+            var rootFile = CreateFileOfInt(1);
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            var exe = new TTreeQueryExecutor(rootFile, "dude");
+            int result = exe.ExecuteScalar<int>(query);
+
+            DirectoryInfo dir = TTreeQueryExecutor.TempDirectory;
+            dir.Refresh();
+            Assert.IsTrue(dir.Exists, "Temp directory doesn't exist");
+            Assert.AreEqual(0, dir.EnumerateFiles().Count(), "Expected no spare files in there!");
+            Assert.AreEqual(1, dir.EnumerateDirectories().Count(), "Incorrect # of subdirectories");
+            Assert.AreEqual("CommonFiles", dir.GetDirectories()[0].Name, "incorrect name of single existing directory");
+        }
+
         /// <summary>
         /// Create an output int file... unique so we don't have to regenerate...
         /// </summary>
