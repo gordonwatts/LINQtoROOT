@@ -92,7 +92,21 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(queryModel);
 
+            ///
+            /// If we got back from that without an error, it is time to assemble the files and templates
+            /// 
+
+            AssembleAndLoadTemplates();
+
             return default(T);
+        }
+
+        /// <summary>
+        /// Scan for the templates and the main files we are supposed to be loading.
+        /// </summary>
+        private void AssembleAndLoadTemplates()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
