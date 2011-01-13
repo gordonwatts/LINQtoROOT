@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TTreeDataModel;
 
@@ -28,8 +29,81 @@ namespace TTreeParser
             {
                 yield return c;
             }
-            yield return masterClass;
 
+            ///
+            /// Last thing we need to do is create a proxy for the class.
+            /// 
+
+            FileInfo f = MakeProxy(tree);
+            masterClass.NtupleProxyPath = f.FullName;
+
+            ///
+            /// Return the master class
+            /// 
+
+            yield return masterClass;
+        }
+
+        /// <summary>
+        /// Get/Set where we shoudl generate the proxy files. Normally, it is the current directory.
+        /// </summary>
+        public DirectoryInfo ProxyGenerationLocation { get; set; }
+
+        /// <summary>
+        /// Generate a proxy for the tree. This involves making the proxy and then putting in the proper
+        /// text substitutions for later processing by our framework. Some ugly text hacking!
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        private FileInfo MakeProxy(ROOTNET.Interface.NTTree tree)
+        {
+            ///
+            /// First create the proxy. We have to create a darn temp macro name for that.
+            /// 
+
+            var oldDir = Environment.CurrentDirectory;
+            var createItDir = new DirectoryInfo(Environment.CurrentDirectory);
+            if (ProxyGenerationLocation != null)
+                createItDir = ProxyGenerationLocation;
+            FileInfo macroFile = new FileInfo(createItDir + @"\junk_macro_parsettree_" + tree.Name + ".C");
+            FileInfo result = null;
+            try
+            {
+                ///
+                /// We can only use local directories
+                /// 
+
+                if (ProxyGenerationLocation != null)
+                    Environment.CurrentDirectory = ProxyGenerationLocation.FullName;
+
+                using (var writer = macroFile.CreateText())
+                {
+                    writer.WriteLine("void {0} () {{}}", Path.GetFileNameWithoutExtension(macroFile.Name));
+                    writer.Close();
+                }
+
+                result = new FileInfo("ntuple_" + tree.Name + ".h");
+                tree.MakeProxy(Path.GetFileNameWithoutExtension(result.Name), macroFile.Name, null, "nohist");
+            }
+            finally
+            {
+
+                ///
+                /// Go back to where we were
+                /// 
+
+                Environment.CurrentDirectory = oldDir;
+            }
+
+            ///
+            /// Next, add the proper things and remove some stuff
+            /// 
+
+            ///
+            /// Return the location of the cpp file
+            /// 
+
+            return result;
         }
 
         /// <summary>
