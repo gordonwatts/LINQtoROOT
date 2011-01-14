@@ -14,6 +14,11 @@ namespace TTreeParser
     public class ParseTFile
     {
         /// <summary>
+        /// Where should the proxy be generated?
+        /// </summary>
+        public DirectoryInfo ProxyGenerationLocation { get; set; }
+
+        /// <summary>
         /// Return all trees that are in a given directory
         /// </summary>
         /// <param name="dir"></param>
@@ -21,6 +26,7 @@ namespace TTreeParser
         public IEnumerable<ROOTClassShell> ParseTDirectory(ROOTNET.Interface.NTDirectory dir)
         {
             var converter = new ParseTTree();
+            converter.ProxyGenerationLocation = ProxyGenerationLocation;
 
             foreach (var key in dir.ListOfKeys.Cast<ROOTNET.Interface.NTKey>())
             {

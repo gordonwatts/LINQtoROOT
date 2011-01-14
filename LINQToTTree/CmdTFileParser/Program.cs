@@ -25,6 +25,7 @@ namespace CmdTFileParser
             List<FileInfo> libraries = new List<FileInfo>();
             string specialFile = "";
             FileInfo outputFile = new FileInfo("ntupleinfo.ntupom");
+            DirectoryInfo outputDir = new DirectoryInfo(".");
             bool doExistanceCheck = true;
 
             foreach (var arg in args)
@@ -33,6 +34,23 @@ namespace CmdTFileParser
                 {
                     specialFile = "o";
                     doExistanceCheck = false;
+                    continue;
+                }
+
+                if (arg == "-d")
+                {
+                    specialFile = "outD";
+                    doExistanceCheck = false;
+                    continue;
+                }
+
+                if (specialFile == "outD")
+                {
+                    DirectoryInfo inf = new DirectoryInfo(arg);
+                    if (!inf.Exists)
+                        inf.Create();
+                    outputDir = inf;
+                    specialFile = null;
                     continue;
                 }
 
@@ -99,6 +117,8 @@ namespace CmdTFileParser
             /// 
 
             var converter = new TTreeParser.ParseTFile();
+            converter.ProxyGenerationLocation = outputDir;
+
             var rootClassList = from f in rootFiles
                                 from c in converter.ParseFile(f)
                                 select c;
