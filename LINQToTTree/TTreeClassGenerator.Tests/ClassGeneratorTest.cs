@@ -116,7 +116,9 @@ namespace TTreeClassGenerator
                 objCollect = objs.ToArray();
             }
 
-            target.GenerateClasss(objCollect, outputCSFile, nameSName);
+            NtupleTreeInfo info = new NtupleTreeInfo() { Classes = objCollect };
+
+            target.GenerateClasss(info, outputCSFile, nameSName);
         }
 
         [TestMethod]

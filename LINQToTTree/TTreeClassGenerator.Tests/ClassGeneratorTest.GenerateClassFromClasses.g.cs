@@ -9,89 +9,145 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TTreeClassGenerator
 {
     public partial class ClassGeneratorTest
     {
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException301()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 0, (string)null, 0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException72()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, (string)null, 0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException741()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 0, (string)null, 1);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException535()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 0, (string)null, 2);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException415()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, (string)null, 3);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException719()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, (string)null, 7);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException412()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "", 0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GenerateClassFromClassesThrowsArgumentException850()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "\0", 0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GenerateClassFromClassesThrowsArgumentException475()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "9", 0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GenerateClassFromClassesThrowsArgumentException298()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "\0\0", 0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        public void GenerateClassFromClasses1()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "i", 1);
+            Assert.IsNotNull((object)s0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void GenerateClassFromClassesThrowsArgumentException101()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "\u0100\0", 1);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException373()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "\u0100", 2);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException582()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "\u0100\u0100", 2);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException476()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "q\u0100", 2);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ClassGeneratorTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GenerateClassFromClassesThrowsArgumentNullException124()
+        {
+            ClassGenerator s0 = new ClassGenerator();
+            this.GenerateClassFromClasses(s0, 1, "\u0100\u0100\u0100", 2);
+        }
 [TestMethod]
 [PexGeneratedBy(typeof(ClassGeneratorTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException301()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 0, (string)null, 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException72()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, (string)null, 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException741()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 0, (string)null, 1);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException535()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 0, (string)null, 2);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException415()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, (string)null, 3);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException719()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, (string)null, 7);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException412()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "", 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void GenerateClassFromClassesThrowsArgumentException850()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "\0", 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void GenerateClassFromClassesThrowsArgumentException475()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "9", 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException116()
+public void GenerateClassFromClassesThrowsArgumentNullException74101()
 {
     ClassGenerator s0 = new ClassGenerator();
     this.GenerateClassFromClasses(s0, 1, "\u0100", 0);
@@ -99,66 +155,10 @@ public void GenerateClassFromClassesThrowsArgumentNullException116()
 [TestMethod]
 [PexGeneratedBy(typeof(ClassGeneratorTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void GenerateClassFromClassesThrowsArgumentException298()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "\0\0", 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-public void GenerateClassFromClasses1()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "i", 1);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void GenerateClassFromClassesThrowsArgumentException101()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "\u0100\0", 1);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException619()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "\u01001", 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void GenerateClassFromClassesThrowsArgumentException669()
+public void GenerateClassFromClassesThrowsArgumentException420()
 {
     ClassGenerator s0 = new ClassGenerator();
     this.GenerateClassFromClasses(s0, 1, "\u0100\u0100\0", 1);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException373()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "\u0100", 2);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException582()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "\u0100\u0100", 2);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClassFromClassesThrowsArgumentNullException476()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClassFromClasses(s0, 1, "q\u0100", 2);
 }
     }
 }

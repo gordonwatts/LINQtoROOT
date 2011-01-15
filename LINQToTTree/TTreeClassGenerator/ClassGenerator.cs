@@ -49,7 +49,7 @@ namespace TTreeClassGenerator
         /// <param name="classSpec"></param>
         /// <param name="outputCSFile"></param>
         /// <param name="namespaceName"></param>
-        public void GenerateClasss(ROOTClassShell[] classSpec, FileInfo outputCSFile, string namespaceName)
+        public void GenerateClasss(NtupleTreeInfo classSpec, FileInfo outputCSFile, string namespaceName)
         {
             ///
             /// Parameter checks
@@ -69,6 +69,9 @@ namespace TTreeClassGenerator
             if (classSpec == null)
                 throw new ArgumentNullException("classSpec");
 
+            if (classSpec.Classes == null)
+                throw new ArgumentNullException("classSpec.Classes");
+
             ///
             /// Ok, open the output file
             /// 
@@ -83,7 +86,7 @@ namespace TTreeClassGenerator
                 output.WriteLine("// Automatically Generated File - do not modify!");
                 output.WriteLine("// Generated on {0} by TTreeClassGenerator::ClassGenerator", DateTime.Now);
                 output.WriteLine("// Translated ntuple classes");
-                foreach (var cls in classSpec)
+                foreach (var cls in classSpec.Classes)
                 {
                     output.WriteLine("// - ntuple {0}", cls.Name);
                 }
@@ -101,7 +104,7 @@ namespace TTreeClassGenerator
                 /// Now, write something out for each class
                 /// 
 
-                foreach (var cls in classSpec)
+                foreach (var cls in classSpec.Classes)
                 {
                     output.WriteLine("  public class {0}", cls.Name);
                     output.WriteLine("  {");
@@ -160,12 +163,12 @@ namespace TTreeClassGenerator
         /// </summary>
         /// <param name="inputXMLFile"></param>
         /// <returns></returns>
-        private ROOTClassShell[] LoadFromXMLFile(FileInfo inputXMLFile)
+        private NtupleTreeInfo LoadFromXMLFile(FileInfo inputXMLFile)
         {
-            XmlSerializer x = new XmlSerializer(typeof(ROOTClassShell[]));
+            XmlSerializer x = new XmlSerializer(typeof(NtupleTreeInfo));
             using (var reader = inputXMLFile.OpenText())
             {
-                var result = x.Deserialize(reader) as ROOTClassShell[];
+                var result = x.Deserialize(reader) as NtupleTreeInfo;
                 reader.Close();
                 return result;
             }
