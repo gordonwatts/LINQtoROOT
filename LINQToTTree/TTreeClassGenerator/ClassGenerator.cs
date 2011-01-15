@@ -145,13 +145,13 @@ namespace TTreeClassGenerator
 
                     output.WriteLine("  public static class {0}_info", cls.Name);
                     output.WriteLine("  {");
-                    output.WriteLine("    public static string _gProxyFile=\"" + cls.NtupleProxyPath + "\";");
+                    output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
                     output.WriteLine("    public static string[] _gObjectFiles= {");
                     foreach (var item in classSpec.ClassImplimintationFiles)
                     {
-                        output.WriteLine("      \"" + item + "\",");
+                        output.WriteLine("      @\"" + item + "\",");
                     }
-                    output.WriteLine("    }");
+                    output.WriteLine("    };");
                     output.WriteLine("  }"); // End of the class
 
                     ///
