@@ -72,6 +72,22 @@ namespace TTreeClassGenerator
             if (classSpec.Classes == null)
                 throw new ArgumentNullException("classSpec.Classes");
 
+            foreach (var c in classSpec.Classes)
+            {
+                if (c.NtupleProxyPath == null)
+                    throw new ArgumentNullException("Class '" + c.Name + "' has no ntuple proxy. Can't generate a class for it.");
+                if (!File.Exists(c.NtupleProxyPath))
+                    throw new ArgumentNullException("Class '" + c.Name + "'s ntuple proxy does not exist at " + c.NtupleProxyPath + ". Can't generate a class for it.");
+            }
+
+            foreach (var c in classSpec.ClassImplimintationFiles)
+            {
+                if (c == null)
+                    throw new ArgumentNullException("Class support files can't be null");
+                if (!File.Exists(c))
+                    throw new ArgumentException("Can't fine class support file '" + c + "'.");
+            }
+
             ///
             /// Ok, open the output file
             /// 
@@ -119,6 +135,23 @@ namespace TTreeClassGenerator
 
                     output.WriteLine("#pragma warning restore 0649");
 
+                    output.WriteLine("  }"); // End of the class
+
+                    ///
+                    /// Write out the info class that contains everything needed to process this.
+                    /// We could use attribute programing here, but that takes more code at the other
+                    /// end, so until there is a real reason, we'll do it this way.
+                    /// 
+
+                    output.WriteLine("  public static class {0}_info", cls.Name);
+                    output.WriteLine("  {");
+                    output.WriteLine("    public static string _gProxyFile=\"" + cls.NtupleProxyPath + "\";");
+                    output.WriteLine("    public static string[] _gObjectFiles= {");
+                    foreach (var item in classSpec.ClassImplimintationFiles)
+                    {
+                        output.WriteLine("      \"" + item + "\",");
+                    }
+                    output.WriteLine("    }");
                     output.WriteLine("  }"); // End of the class
 
                     ///
