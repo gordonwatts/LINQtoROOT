@@ -15,7 +15,7 @@ namespace LINQToTTreeLib
         /// input ROOT file and the tree name we need to find in that root file.
         /// </summary>
         public QueriableTTree(FileInfo rootFile, string treeName)
-            : base(new TTreeQueryExecutor(rootFile, treeName))
+            : base(new TTreeQueryExecutor(rootFile, treeName, typeof(T)))
         {
             DefineExtraOperators();
         }

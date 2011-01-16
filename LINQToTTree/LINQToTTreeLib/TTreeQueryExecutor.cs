@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Remotion.Data.Linq;
 
@@ -24,11 +25,21 @@ namespace LINQToTTreeLib
         private string _treeName;
 
         /// <summary>
+        /// The header file make by the MakeProxy macro.
+        /// </summary>
+        private FileInfo _proxyFile;
+
+        /// <summary>
+        /// Extra objects we might need to load
+        /// </summary>
+        private FileInfo[] _extraComponentFiles;
+
+        /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
         /// <param name="rootFile"></param>
         /// <param name="treeName"></param>
-        public TTreeQueryExecutor(FileInfo rootFile, string treeName)
+        public TTreeQueryExecutor(FileInfo rootFile, string treeName, Type baseNtupleObject)
         {
             ///
             /// Basic checks
@@ -42,6 +53,50 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("The tree must have a valid name");
             if (string.IsNullOrWhiteSpace(treeName))
                 throw new ArgumentException("The tree name must be valid");
+            if (baseNtupleObject == null)
+                throw new ArgumentNullException("baseNtupleObject");
+
+            ///
+            /// Make sure the object we are using is correct, and that it has non-null values
+            /// for the things passed in. We do this now so we don't have to have checks later on.
+            /// 
+
+            if (baseNtupleObject.GetField("_gProxyFile") == null)
+                throw new ArgumentException("_gProxyFile - object is not a member of " + baseNtupleObject.ToString());
+            if (baseNtupleObject.GetField("_gObjectFiles") == null)
+                throw new ArgumentException("_gObjectFiles - object is not a member of " + baseNtupleObject.ToString());
+
+            var proxyFileName = baseNtupleObject.GetField("_gProxyFile").GetValue(null) as string;
+            if (string.IsNullOrWhiteSpace(proxyFileName))
+                throw new ArgumentException("_gProxyFile - points to a null file - must be a real file");
+            _proxyFile = new FileInfo(proxyFileName);
+            if (!File.Exists(proxyFileName))
+                throw new FileNotFoundException("_gProxyFile - '" + proxyFileName + "' was not found.");
+
+            var extraFiles = baseNtupleObject.GetField("_gObjectFiles").GetValue(null) as string[];
+            if (extraFiles == null)
+            {
+                _extraComponentFiles = new FileInfo[0];
+            }
+            else
+            {
+                _extraComponentFiles = (from spath in extraFiles
+                                        select new FileInfo(spath)).ToArray();
+            }
+            var badfiles = from f in _extraComponentFiles
+                           where !f.Exists
+                           select f;
+            string bad = "";
+            foreach (var badf in badfiles)
+            {
+                bad = bad + "'" + badf.FullName + "' ";
+            }
+            if (bad.Length != 0)
+                throw new ArgumentException("Extra component files were missing: " + bad + "");
+
+            ///
+            /// Save the values
+            /// 
 
             _rootFile = rootFile;
             _treeName = treeName;
@@ -106,7 +161,10 @@ namespace LINQToTTreeLib
         /// </summary>
         private void AssembleAndLoadTemplates()
         {
-            throw new NotImplementedException();
+            ///
+            /// First, go after the common items/classes.
+            /// 
+
         }
 
         /// <summary>

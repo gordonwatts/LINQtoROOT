@@ -21,6 +21,7 @@ namespace LINQToTTreeLib
         {
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
+            ntuple.Reset();
         }
 
         [TestCleanup]
@@ -29,8 +30,8 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
-        [PexMethod]
-        public TTreeQueryExecutor Constructor(int rootFileIndex, string treeName)
+        [PexMethod, PexAllowedException(typeof(FileNotFoundException))]
+        public TTreeQueryExecutor Constructor(int rootFileIndex, int ntupleProxyIndex, int ntupleExtraIndex, string treeName)
         {
             FileInfo rootFile;
             switch (rootFileIndex)
@@ -52,7 +53,76 @@ namespace LINQToTTreeLib
                     break;
             }
 
-            TTreeQueryExecutor target = new TTreeQueryExecutor(rootFile, treeName);
+            FileInfo proxyFile = new FileInfo("Constructor_Test\\bogus.cpp");
+            if (proxyFile.Directory.Exists)
+                proxyFile.Directory.Delete(true);
+            proxyFile.Directory.Create();
+            switch (ntupleProxyIndex)
+            {
+                case 0:
+                    ntuple._gProxyFile = "";
+                    break;
+
+                case 1:
+                    ntuple._gProxyFile = proxyFile.FullName;
+                    break;
+
+                case 2:
+                    using (var w = proxyFile.CreateText())
+                    {
+                        w.Close();
+                    }
+                    ntuple._gProxyFile = proxyFile.FullName;
+                    break;
+
+                default:
+                    ntuple._gProxyFile = "";
+                    break;
+            }
+
+            FileInfo extraFile = new FileInfo("Constructor_Test\\extra.cpp");
+            switch (ntupleExtraIndex)
+            {
+                case 0:
+                    ntuple._gObjectFiles = new string[0];
+                    break;
+
+                case 1:
+                    ntuple._gObjectFiles = new string[] { extraFile.FullName };
+                    break;
+
+                case 2:
+                    using (var w = extraFile.CreateText())
+                    {
+                        w.Close();
+                    }
+                    ntuple._gObjectFiles = new string[] { extraFile.FullName };
+                    break;
+
+                default:
+                    ntuple._gObjectFiles = new string[0];
+                    break;
+            }
+
+
+            TTreeQueryExecutor target = new TTreeQueryExecutor(rootFile, treeName, typeof(ntuple));
+
+            Assert.IsNotNull(rootFile, "rootfile can't be null here");
+            rootFile.Refresh();
+            Assert.IsTrue(rootFile.Exists, "root file must exist");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(ntuple._gProxyFile), "proxy must be there");
+            Assert.IsTrue(File.Exists(ntuple._gProxyFile), "proxy file must exist");
+            if (ntuple._gObjectFiles != null)
+            {
+                Assert.IsTrue(ntuple._gObjectFiles.All(f => File.Exists(f)), "extra files must all exist");
+            }
+
+            ///
+            /// Some post-tests to make sure things are "good".
+            /// 
+
+
+
             return target;
             // TODO: add assertions to method TTreeQueryExecutorTest.Constructor(FileInfo, String)
         }
@@ -66,10 +136,42 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Test out a simple result operator.
+        /// Ntuple with nothing in it - proxy and obj files missing.
+        /// </summary>
+        public class ntuple_nothing
+        {
+
+        }
+
+        /// <summary>
+        /// Ntuple with a proxy guy
+        /// </summary>
+        public class ntuple_with_proxy
+        {
+            public static string _gProxyFile = @"C:\Users\gwatts\Documents\ATLAS\Code\LINQtoROOT\DemosAndTests\GenerateNtupleXMLSpec\ntuple_btag.h";
+        }
+
+        /// <summary>
+        /// Ntuple with emptys for everything.
+        /// </summary>
+        public class ntuple
+        {
+            public static string _gProxyFile = "";
+            public static string[] _gObjectFiles = { };
+
+            internal static void Reset()
+            {
+                _gProxyFile = "";
+                _gObjectFiles = new string[0];
+            }
+        }
+
+        /// <summary>
+        /// Test out a simple result base ntuple object base.
         /// </summary>
         [TestMethod]
-        public void TestSimpleReultOperator()
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestSimpleReultOperatorNtupleEmptyObj()
         {
             int numberOfIter = 10;
 
@@ -87,9 +189,165 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(rootFile, "dude");
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple_nothing));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
+        }
+
+        /// <summary>
+        /// Test out a simple result base ntuple object base.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestSimpleReultOperatorNtupleWithProxy()
+        {
+            int numberOfIter = 10;
+
+            var rootFile = CreateFileOfInt(numberOfIter);
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple_with_proxy));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        /// <summary>
+        /// Test out a simple result base ntuple object base.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestSimpleReultOperatorNtupleOkButNothingInit()
+        {
+            int numberOfIter = 10;
+
+            var rootFile = CreateFileOfInt(numberOfIter);
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        /// <summary>
+        /// Test out a simple result base ntuple object base.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FileNotFoundException))]
+        public void TestSimpleReultOperatorNtupleOkButBogusProxyPath()
+        {
+            int numberOfIter = 10;
+
+            var rootFile = CreateFileOfInt(numberOfIter);
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = "junk.cppxdude";
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        /// <summary>
+        /// Test out a simple result operator.
+        /// </summary>
+        [TestMethod]
+        public void TestSimpleReultOperator()
+        {
+            int numberOfIter = 10;
+
+            var rootFile = CreateFileOfInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude", "TestSimpleReultOperator");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        /// <summary>
+        /// Given the root file and the root-tuple name, generate a proxy file 
+        /// </summary>
+        /// <param name="rootFile"></param>
+        /// <returns></returns>
+        private FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName, string subdir)
+        {
+            ///
+            /// First, load up the TTree
+            /// 
+
+            var tfile = new ROOTNET.NTFile(rootFile.FullName, "READ");
+            var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
+            Assert.IsNotNull(tree, "Tree couldn't be found");
+
+            ///
+            /// Create the proxy sub-dir if not there already, and put the dummy macro in there
+            /// 
+
+            var d = new DirectoryInfo(subdir);
+            if (!d.Exists)
+                d.Create();
+            using (var w = File.CreateText(d.FullName + "\\junk.C"))
+            {
+                w.Write("void junk() {}");
+                w.Close();
+            }
+
+            ///
+            /// Create the macro proxy now
+            /// 
+
+            tree.MakeProxy(subdir + "\\scanner", subdir + "\\junk.C");
+
+            return new FileInfo(d.FullName + "\\scanner.h");
         }
 
         [TestMethod]
@@ -109,7 +367,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(rootFile, "dude");
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
 
             DirectoryInfo dir = TTreeQueryExecutor.TempDirectory;
