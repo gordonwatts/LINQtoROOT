@@ -293,7 +293,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude", "TestSimpleReultOperator");
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with
@@ -318,7 +318,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="rootFile"></param>
         /// <returns></returns>
-        private FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName, string subdir)
+        private FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName)
         {
             ///
             /// First, load up the TTree
@@ -332,12 +332,9 @@ namespace LINQToTTreeLib
             /// Create the proxy sub-dir if not there already, and put the dummy macro in there
             /// 
 
-            var d = new DirectoryInfo(subdir);
-            if (!d.Exists)
-                d.Create();
-            using (var w = File.CreateText(d.FullName + "\\junk.C"))
+            using (var w = File.CreateText("junk.C"))
             {
-                w.Write("void junk() {}");
+                w.Write("int junk() {return 10.0;}");
                 w.Close();
             }
 
@@ -345,9 +342,8 @@ namespace LINQToTTreeLib
             /// Create the macro proxy now
             /// 
 
-            tree.MakeProxy(subdir + "\\scanner", subdir + "\\junk.C");
-
-            return new FileInfo(d.FullName + "\\scanner.h");
+            tree.MakeProxy("scanner", "junk.C");
+            return new FileInfo("scanner.h");
         }
 
         [TestMethod]

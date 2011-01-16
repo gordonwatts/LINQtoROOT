@@ -5,3 +5,7 @@
 /// Uses the Velociy template engine.
 ///
 \#include "$baseClassInclude"
+
+class query : public $baseClassName
+{
+};

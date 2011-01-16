@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Data.Linq;
@@ -127,17 +128,17 @@ namespace LINQToTTreeLib
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
             ///
+            /// We have to init everything - which means using MEF!
+            /// 
+
+            Init();
+
+            ///
             /// The query visitor is what we will use to scan the actual guys
             /// 
 
             var result = new GeneratedCode();
             var qv = new QueryVisitor(result);
-
-            ///
-            /// We have to init everything - which means using MEF!
-            /// 
-
-            Init();
 
             CompositionBatch b = new CompositionBatch();
             b.AddPart(qv);
@@ -193,13 +194,11 @@ namespace LINQToTTreeLib
         {
             var gSystem = ROOTNET.NTSystem.gSystem;
 
-            /// Load and keep it here.
             var result = gSystem.CompileMacro(templateRunner.FullName, "k");
 
             /// This should never happen - but we are depending on so many different things to go right here!
             if (result != 1)
                 throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "'");
-
         }
 
         /// <summary>
@@ -236,6 +235,7 @@ namespace LINQToTTreeLib
 
             var context = new VelocityContext();
             context.Put("baseClassInclude", proxyFileName);
+            context.Put("baseClassName", proxyObjectName);
 
             ///
             /// Now do it!
@@ -245,6 +245,7 @@ namespace LINQToTTreeLib
             using (var writer = ourSelector.CreateText())
             {
                 eng.Evaluate(context, writer, null, template);
+                writer.Close();
             }
 
             return ourSelector;
@@ -274,6 +275,47 @@ namespace LINQToTTreeLib
         {
             var queryDirectory = GetQueryDirectory();
             _proxyFile.CopyTo(queryDirectory.FullName + "\\" + _proxyFile.Name);
+
+            ///
+            /// Next, if there are any include files we need to move
+            /// 
+
+            var includeFiles = FindIncludeFiles(_proxyFile);
+            var goodIncludeFiles = from f in includeFiles
+                                   let full = new FileInfo(_proxyFile.DirectoryName + "\\" + f)
+                                   where full.Exists
+                                   select full;
+
+            foreach (var item in goodIncludeFiles)
+            {
+                item.CopyTo(queryDirectory.FullName + "\\" + item.Name);
+            }
+        }
+
+        /// <summary>
+        /// Return the include files that we find in this guy.
+        /// </summary>
+        /// <param name="_proxyFile"></param>
+        /// <returns></returns>
+        private IEnumerable<string> FindIncludeFiles(FileInfo _proxyFile)
+        {
+            Regex reg = new Regex("#include \"(?<file>[^\"]+)\"");
+            using (var reader = _proxyFile.OpenText())
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line == null)
+                        continue;
+
+                    var m = reg.Match(line);
+                    if (m.Success)
+                    {
+                        var s = m.Groups["file"].Value;
+                        yield return s;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -341,6 +383,12 @@ namespace LINQToTTreeLib
             {
                 cf.Create();
             }
+
+            ///
+            /// Finally, force ROOT to do what it needs to do
+            /// 
+
+            ROOTNET.NTROOT.gROOT.ProcessLine("");
         }
 
         /// <summary>
