@@ -181,9 +181,33 @@ namespace LINQToTTreeLib
         /// <param name="tSelectorClassName">Name of the TSelector object</param>
         private void RunNtupleQuery(string tSelectorClassName)
         {
+            ///
+            /// Create a new TSelector to run
+            /// 
+
             var cls = ROOTNET.NTClass.GetClass(tSelectorClassName);
             if (cls == null)
                 throw new InvalidOperationException("Unable to load class '" + tSelectorClassName + "' - can't run ntuple query");
+
+            var selector = cls.New() as ROOTNET.Interface.NTSelector;
+
+            ///
+            /// Fetch out the tree now
+            /// 
+
+            var rf = new ROOTNET.NTFile(_rootFile.FullName, "READ");
+            if (!rf.IsOpen())
+                throw new InvalidOperationException("Unable to open file '" + _rootFile.FullName + "' with root's TFiel!");
+            var tree = rf.Get(_treeName) as ROOTNET.Interface.NTTree;
+            if (tree == null)
+                throw new InvalidOperationException("Unable to find tree '" + _treeName + "' in file '" + _rootFile.FullName + "'.");
+
+            ///
+            /// Finally, run the whole thing
+            /// 
+
+            var result = tree.Process(selector);
+
         }
 
         /// <summary>
