@@ -483,5 +483,23 @@ namespace LINQToTTreeLib
             result.Refresh();
             return result;
         }
+
+        [TestMethod]
+        public void TestLoadingOfExtraObject()
+        {
+            Assert.Inconclusive("Make sure that an independent object is loaded");
+        }
+
+        [TestMethod]
+        public void TestQueryCleanup()
+        {
+            Assert.Inconclusive("Make sure that no temp files are left over for a successful query");
+        }
+
+        [TestMethod]
+        public void TestDualQueries()
+        {
+            Assert.Inconclusive("Make sure one query after another doesn't fail - due to global name space, etc.");
+        }
     }
 }

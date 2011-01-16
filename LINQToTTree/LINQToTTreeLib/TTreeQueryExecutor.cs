@@ -5,6 +5,8 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using NVelocity;
+using NVelocity.App;
 using Remotion.Data.Linq;
 
 namespace LINQToTTreeLib
@@ -151,20 +153,146 @@ namespace LINQToTTreeLib
             /// If we got back from that without an error, it is time to assemble the files and templates
             /// 
 
-            AssembleAndLoadTemplates();
+            AssembleAndLoadExtraObjects();
+
+            ///
+            /// Now that those are loaded, we need to go after the
+            /// proxy. We create a new file which is dependent on the
+            /// one we have been given.
+            /// 
+
+            CopyToQueryDirectory(_proxyFile);
+            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name));
+            CompileAndLoad(templateRunner);
+
+            ///
+            /// Fantastic! Now we need to run the object!
+            /// 
+
+            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name));
 
             return default(T);
         }
 
         /// <summary>
-        /// Scan for the templates and the main files we are supposed to be loading.
+        /// We actually run the query!
         /// </summary>
-        private void AssembleAndLoadTemplates()
+        /// <param name="tSelectorClassName">Name of the TSelector object</param>
+        private void RunNtupleQuery(string tSelectorClassName)
+        {
+            var cls = ROOTNET.NTClass.GetClass(tSelectorClassName);
+            if (cls == null)
+                throw new InvalidOperationException("Unable to load class '" + tSelectorClassName + "' - can't run ntuple query");
+        }
+
+        /// <summary>
+        /// Compile and load a file
+        /// </summary>
+        /// <param name="templateRunner"></param>
+        private void CompileAndLoad(FileInfo templateRunner)
+        {
+            var gSystem = ROOTNET.NTSystem.gSystem;
+
+            /// Load and keep it here.
+            var result = gSystem.CompileMacro(templateRunner.FullName, "k");
+
+            /// This should never happen - but we are depending on so many different things to go right here!
+            if (result != 1)
+                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "'");
+
+        }
+
+        /// <summary>
+        /// If there are some extra files we need to be loading, go after them here.
+        /// </summary>
+        private void AssembleAndLoadExtraObjects()
         {
             ///
             /// First, go after the common items/classes.
             /// 
 
+        }
+
+        /// <summary>
+        /// Write out the TSelector file derived from the already existing query. This now includes all the code we need
+        /// in order to actually run the thing! Use the template to do it.
+        /// </summary>
+        /// <param name="p"></param>
+        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName)
+        {
+            ///
+            /// Get the template engine all setup
+            /// 
+
+            VelocityEngine eng = new VelocityEngine();
+            eng.Init();
+
+            string template;
+            using (var reader = File.OpenText(TemplateDirectory("TSelectorTemplate.cxx")))
+            {
+                template = reader.ReadToEnd();
+                reader.Close();
+            }
+
+            var context = new VelocityContext();
+            context.Put("baseClassInclude", proxyFileName);
+
+            ///
+            /// Now do it!
+            /// 
+
+            var ourSelector = new FileInfo(GetQueryDirectory() + "\\query.cxx");
+            using (var writer = ourSelector.CreateText())
+            {
+                eng.Evaluate(context, writer, null, template);
+            }
+
+            return ourSelector;
+
+        }
+
+        /// <summary>
+        /// We have some templates we use to run. Find them!
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private string TemplateDirectory(string templateName)
+        {
+            return Path.GetDirectoryName(Assembly.GetCallingAssembly().Location) + "\\Templates\\" + templateName;
+        }
+
+        /// <summary>
+        /// Get/Set the directory where we create our local query info. Defaults to the users' temp directory.
+        /// </summary>
+        public static DirectoryInfo QueryCreationDirectory = new DirectoryInfo(Path.GetTempPath() + "\\LINQToTTree");
+
+        /// <summary>
+        /// Copy a file to a directory that contains files for this query.
+        /// </summary>
+        /// <param name="_proxyFile"></param>
+        private void CopyToQueryDirectory(FileInfo _proxyFile)
+        {
+            var queryDirectory = GetQueryDirectory();
+            _proxyFile.CopyTo(queryDirectory.FullName + "\\" + _proxyFile.Name);
+        }
+
+        /// <summary>
+        /// The local query
+        /// </summary>
+        private DirectoryInfo _queryDirectory;
+
+        /// <summary>
+        /// Get the directory for the current query in progress.
+        /// </summary>
+        /// <returns></returns>
+        private DirectoryInfo GetQueryDirectory()
+        {
+            if (_queryDirectory == null)
+            {
+                _queryDirectory = new DirectoryInfo(QueryCreationDirectory.FullName + "\\" + Path.GetRandomFileName());
+                _queryDirectory.Create();
+            }
+            return _queryDirectory;
         }
 
         /// <summary>
