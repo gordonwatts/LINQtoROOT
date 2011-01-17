@@ -8,25 +8,40 @@
 
 class query : public $baseClassName
 {
+public:
+	/// So there is some init that CINT will know about
+	/// (I don't know why this is required, but it is).
+	query()
+	{
+	}
+
 	/// Called when we are starting a run
-	void query::SlaveBegin(TTree*)
+	void SlaveBegin(TTree*)
 	{
 	}
 
 	/// Called when we are closign the file and shutting down on the slave
-	void query::SlaveTerminate()
+	void SlaveTerminate()
 	{
 	}
 
 	/// Called with all plots at hand
-	void query::Terminate()
+	void Terminate()
 	{
 	}
 
 	/// Called to process an entry
-	bool query::Process(Long64_t entry)
+	bool Process(Long64_t entry)
 	{
-		$baseClassName::Process(entry);
+		///
+		/// Get to the proper entry
+		///
+
+		fDirector.SetReadEntry(entry);
+
+		///
+		/// Always return true - we want to go onto the next entry, afterall.
+		///
 
 		return true;
 	}
