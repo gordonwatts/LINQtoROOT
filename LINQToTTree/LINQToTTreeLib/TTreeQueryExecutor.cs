@@ -412,7 +412,7 @@ namespace LINQToTTreeLib
             /// Finally, force ROOT to do what it needs to do
             /// 
 
-            ROOTNET.NTROOT.gROOT.ProcessLine("");
+            ROOTNET.NTROOT.gROOT.ProcessLineSync("");
         }
 
         /// <summary>

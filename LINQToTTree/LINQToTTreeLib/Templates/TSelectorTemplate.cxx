@@ -16,13 +16,15 @@ public:
 	}
 
 	/// Called when we are starting a run
-	void SlaveBegin(TTree*)
+	void SlaveBegin(TTree *t)
 	{
+		$baseClassName::SlaveBegin(t);
 	}
 
 	/// Called when we are closign the file and shutting down on the slave
 	void SlaveTerminate()
 	{
+		$baseClassName::SlaveTerminate();
 	}
 
 	/// Called with all plots at hand

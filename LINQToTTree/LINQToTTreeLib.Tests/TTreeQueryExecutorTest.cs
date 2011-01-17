@@ -342,7 +342,7 @@ namespace LINQToTTreeLib
             /// Create the macro proxy now
             /// 
 
-            tree.MakeProxy("scanner", "junk.C");
+            tree.MakeProxy("scanner", "junk.C", null, "nohist");
             return new FileInfo("scanner.h");
         }
 
