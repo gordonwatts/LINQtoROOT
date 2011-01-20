@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables
@@ -11,35 +8,19 @@ namespace LINQToTTreeLib.Variables
     /// </summary>
     public class VarInteger : IVariable
     {
-        public string RawValue
+        public VarInteger()
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            VariableName = VarUtils.CreateUniqueVariableName("anint");
         }
+        public string RawValue { get; private set; }
 
         public Type Type
         {
             get { return typeof(int); }
         }
 
-        public string VariableName
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string VariableName { get; private set; }
 
-
-        public IValue InitialValue
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public IValue InitialValue { get; set; }
     }
 }

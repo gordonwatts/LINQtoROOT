@@ -163,7 +163,7 @@ namespace LINQToTTreeLib
             /// 
 
             CopyToQueryDirectory(_proxyFile);
-            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name));
+            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), result);
             CompileAndLoad(templateRunner);
 
             ///
@@ -241,7 +241,7 @@ namespace LINQToTTreeLib
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
         /// <param name="p"></param>
-        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName)
+        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, GeneratedCode code)
         {
             ///
             /// Get the template engine all setup
@@ -260,6 +260,7 @@ namespace LINQToTTreeLib
             var context = new VelocityContext();
             context.Put("baseClassInclude", proxyFileName);
             context.Put("baseClassName", proxyObjectName);
+            context.Put("ResultVariable", TranslateVariable(code.ResultValue));
 
             ///
             /// Now do it!
@@ -274,6 +275,48 @@ namespace LINQToTTreeLib
 
             return ourSelector;
 
+        }
+
+        public class VarInfo
+        {
+            public string VariableName { get; set; }
+            public string VariableType { get; set; } // C++ type
+        }
+
+        /// <summary>
+        /// Trnaslate the variable type/name into something for our output code.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable)
+        {
+            var result = new VarInfo();
+            result.VariableName = iVariable.VariableName;
+
+            result.VariableType = TranslateType(iVariable.Type.Name);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Simple and well known type translations.
+        /// </summary>
+        private static Dictionary<string, string> gTypeTranslations = new Dictionary<string, string>()
+        {
+            {"Int32", "int"}
+        };
+
+        /// <summary>
+        /// Translate teh .NET type into the C++ type.
+        /// </summary>
+        /// <param name="netTypeName"></param>
+        /// <returns></returns>
+        private string TranslateType(string netTypeName)
+        {
+            if (gTypeTranslations.ContainsKey(netTypeName))
+                return gTypeTranslations[netTypeName];
+
+            throw new NotImplementedException("Unkown type to translate");
         }
 
         /// <summary>

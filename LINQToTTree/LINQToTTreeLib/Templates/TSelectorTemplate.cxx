@@ -47,4 +47,11 @@ public:
 
 		return true;
 	}
+
+private:
+	/// Here are the variables that hold things we need to keep around
+	/// between entries of the ntuple. So things like the result that has
+	/// to be filled on each entry.
+
+	$ResultVariable.VariableType $ResultVariable.VariableName;
 };
