@@ -30,6 +30,10 @@ namespace LINQToTTreeLib
 
         public class SimpleStatement : IStatement
         {
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class CompoundStatement : IStatementCompound
@@ -43,6 +47,11 @@ namespace LINQToTTreeLib
             public void Add(IStatement statement)
             {
                 _list.Add(statement);
+            }
+
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
             }
         }
 

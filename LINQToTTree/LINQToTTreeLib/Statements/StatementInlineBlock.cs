@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -57,6 +56,42 @@ namespace LINQToTTreeLib.Statements
         public IEnumerable<IVariable> DeclaredVariables
         {
             get { return _variables; }
+        }
+
+        /// <summary>
+        /// Return this translated to code, inside curly braced. First variable decl and then the statements.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> CodeItUp()
+        {
+            var goodVars = (from v in _variables
+                            where v.Declare
+                            select v).ToArray();
+
+            if (_statements.Count > 0 || goodVars.Length > 0)
+            {
+                yield return "{";
+
+                foreach (var v in goodVars)
+                {
+                    string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.VariableName;
+                    if (v.InitialValue != null)
+                    {
+                        varDecl = varDecl + "=" + v.InitialValue.RawValue;
+                    }
+                    varDecl += ";";
+                    yield return varDecl;
+                }
+
+                var sublines = from s in _statements
+                               from l in s.CodeItUp()
+                               select l;
+                foreach (var l in sublines)
+                {
+                    yield return "  " + l;
+                }
+                yield return "}";
+            }
         }
     }
 }

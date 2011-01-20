@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using LinqToTTreeInterfacesLib;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Data.Linq;
@@ -261,6 +262,7 @@ namespace LINQToTTreeLib
             context.Put("baseClassInclude", proxyFileName);
             context.Put("baseClassName", proxyObjectName);
             context.Put("ResultVariable", TranslateVariable(code.ResultValue));
+            context.Put("ProcessStatements", TranslateStatements(code.CodeBody));
 
             ///
             /// Now do it!
@@ -277,10 +279,25 @@ namespace LINQToTTreeLib
 
         }
 
+        /// <summary>
+        /// Translate the incoming statements into something that can be send to the C++ compiler.
+        /// </summary>
+        /// <param name="statements"></param>
+        /// <returns></returns>
+        private IEnumerable<string> TranslateStatements(IStatement statements)
+        {
+            return statements.CodeItUp();
+        }
+
+        /// <summary>
+        /// Helper var that we send off to the macro processor. We have to massage to get from our internal rep into
+        /// somethign that can be used directly by the C++ code.
+        /// </summary>
         public class VarInfo
         {
             public string VariableName { get; set; }
             public string VariableType { get; set; } // C++ type
+            public string InitialValue { get; set; }
         }
 
         /// <summary>
@@ -293,30 +310,11 @@ namespace LINQToTTreeLib
             var result = new VarInfo();
             result.VariableName = iVariable.VariableName;
 
-            result.VariableType = TranslateType(iVariable.Type.Name);
+            result.VariableType = Variables.VarUtils.AsCPPType(iVariable.Type);
+
+            result.InitialValue = iVariable.InitialValue.RawValue;
 
             return result;
-        }
-
-        /// <summary>
-        /// Simple and well known type translations.
-        /// </summary>
-        private static Dictionary<string, string> gTypeTranslations = new Dictionary<string, string>()
-        {
-            {"Int32", "int"}
-        };
-
-        /// <summary>
-        /// Translate teh .NET type into the C++ type.
-        /// </summary>
-        /// <param name="netTypeName"></param>
-        /// <returns></returns>
-        private string TranslateType(string netTypeName)
-        {
-            if (gTypeTranslations.ContainsKey(netTypeName))
-                return gTypeTranslations[netTypeName];
-
-            throw new NotImplementedException("Unkown type to translate");
         }
 
         /// <summary>

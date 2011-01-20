@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -11,5 +8,11 @@ namespace LinqToTTreeInterfacesLib
     /// </summary>
     public interface IStatement
     {
+        /// <summary>
+        /// Generate the C++ code. If, eventually, we want to make this lang agnostic, we need
+        /// to pass in an object that is responsible for changing info into statements...
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<string> CodeItUp();
     }
 }

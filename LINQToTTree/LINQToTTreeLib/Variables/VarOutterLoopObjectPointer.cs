@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables
@@ -16,10 +13,11 @@ namespace LINQToTTreeLib.Variables
         {
             VariableName = varName;
             Type = type;
-            RawValue = "(*" + VariableName + ")";
+            RawValue = "(*this)";
+            Declare = false;
         }
 
-        public string RawValue {get; private set; }
+        public string RawValue { get; private set; }
         public Type Type { get; private set; }
         public string VariableName { get; private set; }
 
@@ -35,5 +33,7 @@ namespace LINQToTTreeLib.Variables
                 throw new NotImplementedException();
             }
         }
+
+        public bool Declare { get; set; }
     }
 }

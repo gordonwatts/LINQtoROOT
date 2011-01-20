@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -17,5 +14,10 @@ namespace LINQToTTreeLib.Statements
             Line = line;
         }
         public string Line { get; private set; }
+
+        public IEnumerable<string> CodeItUp()
+        {
+            yield return Line;
+        }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LINQToTTreeLib.Variables;
 using LinqToTTreeInterfacesLib;
-using System.Diagnostics;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -29,5 +26,14 @@ namespace LINQToTTreeLib.Statements
         /// The integer we will increment.
         /// </summary>
         public VarInteger Integer { get; private set; }
+
+        /// <summary>
+        /// Return code to increment an integer
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> CodeItUp()
+        {
+            yield return Integer.RawValue + "++;";
+        }
     }
 }

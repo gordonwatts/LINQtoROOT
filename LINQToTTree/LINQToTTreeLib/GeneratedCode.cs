@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 
@@ -18,7 +16,7 @@ namespace LINQToTTreeLib
             CurrentScopePointer = CodeBody;
             CurrentDeclarationScopePointer = CodeBody;
         }
-        
+
         /// <summary>
         /// The final result of this query.
         /// </summary>
@@ -115,12 +113,14 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Get the list of variables that need to be transfered over the wire.
         /// </summary>
-        public IEnumerable<IVariable> VariablesToTransfer { get {return _variablesToTransfer;} }
+        public IEnumerable<IVariable> VariablesToTransfer { get { return _variablesToTransfer; } }
 
         private List<IVariable> _variablesToTransfer = new List<IVariable>();
         /// <summary>
-        /// Some variables need to be shipped over the wire. This is where we
-        /// keep track of those.
+        /// Some variables need to be shipped over the wire to PROOF or the version of root that is
+        /// actually doing the work. This is where we
+        /// keep track of those. This is as opposed to the "result" which is going to come back
+        /// to the source with what we need in it.
         /// </summary>
         /// <param name="v"></param>
         public void AddTransfered(IVariable v)

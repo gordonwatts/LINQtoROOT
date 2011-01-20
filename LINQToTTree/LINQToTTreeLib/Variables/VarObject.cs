@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables
@@ -26,6 +23,19 @@ namespace LINQToTTreeLib.Variables
         public Type Type { get; private set; }
 
 
-        public IValue InitialValue {get; set; }
+        public IValue InitialValue { get; set; }
+
+
+        public bool Declare
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

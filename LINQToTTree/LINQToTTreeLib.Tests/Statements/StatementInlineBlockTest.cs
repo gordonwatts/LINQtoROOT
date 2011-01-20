@@ -1,15 +1,13 @@
 // <copyright file="StatementInlineBlockTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Generated;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Using;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -133,6 +131,7 @@ namespace LINQToTTreeLib.Statements
             Assert.IsNotNull(statementInlineBlock.Statements);
             Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
         }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void AddThrowsArgumentNullException313()
@@ -140,6 +139,56 @@ namespace LINQToTTreeLib.Statements
             StatementInlineBlock statementInlineBlock;
             statementInlineBlock = StatementInlineBlockFactory.Create();
             this.Add(statementInlineBlock, (IStatement)null);
+        }
+
+        [TestMethod]
+        public void TestCodeItUp()
+        {
+            StatementInlineBlock b = new StatementInlineBlock();
+            Assert.AreEqual(0, b.CodeItUp().Count(), "Expect nothing for an empty inline block");
+        }
+
+        [TestMethod]
+        public void TestSimpleCodeing()
+        {
+            StatementInlineBlock b = new StatementInlineBlock();
+            b.Add(new StatementSimpleStatement("junk;"));
+            var r = b.CodeItUp().ToArray();
+            Assert.AreEqual(3, r.Length, "incorrect number of lines");
+            Assert.AreEqual("{", r[0], "open bracket");
+            Assert.AreEqual("}", r[2], "close bracket");
+            Assert.AreEqual("  junk;", r[1], "statement");
+        }
+
+        [TestMethod]
+        public void TestSimpleVariableCoding()
+        {
+            StatementInlineBlock b = new StatementInlineBlock();
+            b.Add(new VarInteger());
+            var r = b.CodeItUp().ToArray();
+            Assert.AreEqual(3, r.Length, "incorrect number of lines");
+            Assert.AreEqual("{", r[0], "open bracket");
+            Assert.AreEqual("}", r[2], "close bracket");
+            Assert.IsTrue(r[1].EndsWith("=0;"));
+        }
+
+        [TestMethod]
+        public void TestSimpleVariableCodingNoDecl()
+        {
+            StatementInlineBlock b = new StatementInlineBlock();
+            b.Add(new VarInteger() { Declare = false });
+            var r = b.CodeItUp().ToArray();
+            Assert.AreEqual(0, r.Length, "# of statements");
+        }
+
+        [TestMethod]
+        public void TestSimpleVariableCodingNoDeclAndDecl()
+        {
+            StatementInlineBlock b = new StatementInlineBlock();
+            b.Add(new VarInteger() { Declare = false });
+            b.Add(new VarInteger());
+            var r = b.CodeItUp().ToArray();
+            Assert.AreEqual(3, r.Length, "# of statements");
         }
     }
 }

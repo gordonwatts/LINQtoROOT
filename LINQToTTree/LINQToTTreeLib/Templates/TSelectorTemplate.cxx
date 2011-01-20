@@ -19,6 +19,10 @@ public:
 	void SlaveBegin(TTree *t)
 	{
 		$baseClassName::SlaveBegin(t);
+
+		/// Init the variables that we are going to be carrying along with us.
+		$ResultVariable.VariableName = $ResultVariable.InitialValue;
+
 	}
 
 	/// Called when we are closign the file and shutting down on the slave
@@ -40,6 +44,14 @@ public:
 		///
 
 		fDirector.SetReadEntry(entry);
+
+		///
+		/// Run the processing code
+		///
+
+#foreach($s in $ProcessStatements)
+		$s
+#end
 
 		///
 		/// Always return true - we want to go onto the next entry, afterall.

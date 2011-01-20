@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -25,5 +23,14 @@ namespace LINQToTTreeLib.Statements
         /// Get the expression that we will be making things equiv to!
         /// </summary>
         public IValue Expression { get; private set; }
+
+        /// <summary>
+        /// Return code for this statement
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> CodeItUp()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

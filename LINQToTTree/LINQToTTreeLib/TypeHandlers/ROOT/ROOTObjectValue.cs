@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 
@@ -28,10 +25,29 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         }
         public string RawValue { get; private set; }
 
-        public Type Type {get; private set; }
+        public Type Type { get; private set; }
 
         public string VariableName { get; private set; }
 
         public IValue InitialValue { get; set; }
+
+
+        public bool Declare
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+
+        bool IVariable.Declare
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

@@ -16,5 +16,10 @@ namespace LinqToTTreeInterfacesLib
         /// be set to default(int), whatever that is!
         /// </summary>
         IValue InitialValue { get; set; }
+
+        /// <summary>
+        /// Should this variable be declared in a statement block, or is it implicit in some way?
+        /// </summary>
+        bool Declare { get; set; }
     }
 }
