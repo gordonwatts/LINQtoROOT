@@ -378,7 +378,7 @@ namespace LINQToTTreeLib
                     return destFile;
                 }
             }
-            sourceFile.CopyTo(destFile.FullName);
+            sourceFile.CopyTo(destFile.FullName, true);
 
             ///
             /// Next, if there are any include files we need to move
@@ -392,7 +392,7 @@ namespace LINQToTTreeLib
 
             foreach (var item in goodIncludeFiles)
             {
-                item.CopyTo(destDirectory.FullName + "\\" + item.Name);
+                CopyToDirectory(item, destDirectory);
             }
 
             ///
@@ -509,11 +509,7 @@ namespace LINQToTTreeLib
             /// Finally, make sure TApplication has been started. It will init a bunch of stuff
             /// 
 
-            //if (ROOTNET.NTApplication.gApplication == null)
-            //{
-            var app = new ROOTNET.NTApplication("LINQToTTree", new int[] { 0 }, new string[] { });
-            //}
-            ///ROOTNET.NTROOT.gROOT.ProcessLineSync("");
+            ROOTNET.NTApplication.CreateApplication();
         }
 
         /// <summary>
