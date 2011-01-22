@@ -5,6 +5,7 @@
 /// Uses the Velociy template engine.
 ///
 \#include "$baseClassInclude"
+\#include "FlowOutputObject.h"
 
 class query : public $baseClassName
 {
