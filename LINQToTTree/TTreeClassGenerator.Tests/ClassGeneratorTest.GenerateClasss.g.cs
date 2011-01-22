@@ -17,37 +17,5 @@ namespace TTreeClassGenerator
 {
     public partial class ClassGeneratorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClasssThrowsArgumentNullException970()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClasss(s0, 0, 0, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void GenerateClasssThrowsArgumentException450()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClasss(s0, 1, 0, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GenerateClasssThrowsArgumentNullException144()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClasss(s0, 0, 1, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ClassGeneratorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void GenerateClasssThrowsArgumentException275()
-{
-    ClassGenerator s0 = new ClassGenerator();
-    this.GenerateClasss(s0, 1, 1, (string)null);
-}
     }
 }

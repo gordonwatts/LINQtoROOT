@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -54,9 +55,32 @@ namespace TTreeClassGenerator
         public void GenerateClassFromClasses(
             [PexAssumeUnderTest]ClassGenerator target,
             int outputChoice,
+            int numExtraFiles,
+            int numExtraFilesToCreate,
+            int extraFileIndexNull,
+            int proxyPathChoice,
             string nameSName,
             int NumObjectCollection)
         {
+            if (numExtraFiles < 0
+                || numExtraFilesToCreate < 0
+                || extraFileIndexNull < 0
+                || outputChoice < 0
+                || proxyPathChoice < 0
+                || NumObjectCollection < 0)
+                return;
+
+            ///
+            /// Kill off the directory we might have left behind from a previous run, and create a new one.
+            /// 
+
+            DirectoryInfo testDir = new DirectoryInfo(".\\GenerateClassFromClasses");
+            if (testDir.Exists)
+            {
+                testDir.Delete(true);
+            }
+            testDir.Create();
+
             ///
             /// Setup the input stuff so Pex can play
             /// 
@@ -64,7 +88,7 @@ namespace TTreeClassGenerator
             FileInfo outputCSFile;
             if (outputChoice == 1)
             {
-                outputCSFile = new FileInfo("output.cs");
+                outputCSFile = new FileInfo(testDir.FullName + "\\output.cs");
             }
             else
             {
@@ -85,7 +109,7 @@ namespace TTreeClassGenerator
                     for (int j = 0; j < i; j++)
                     {
                         IClassItem item = null;
-                        switch (j % 4)
+                        switch (NumObjectCollection % 4)
                         {
                             case 0:
                                 item = null;
@@ -113,11 +137,133 @@ namespace TTreeClassGenerator
                     objs.Add(rcs);
                 }
 
+                if (NumObjectCollection > 0)
+                {
+                    if (proxyPathChoice == 1)
+                    {
+                        var proxyFile = new FileInfo(testDir.FullName + "\\GenerateClassFromClasses_" + proxyPathChoice.ToString() + ".h");
+                        using (var w = proxyFile.CreateText())
+                        {
+                            w.WriteLine("hi");
+                            w.Close();
+                        }
+                        objs[0].NtupleProxyPath = proxyFile.FullName;
+                    }
+
+                    if (proxyPathChoice == 2)
+                    {
+                        var proxyFile = new FileInfo(testDir.FullName + "\\GenerateClassFromClasses_" + proxyPathChoice.ToString() + ".h");
+                        objs[0].NtupleProxyPath = proxyFile.FullName;
+                    }
+
+                    if (proxyPathChoice == 3)
+                    {
+                        var proxyFile = new FileInfo(testDir.FullName + "\\GenerateClassFromClasses_" + proxyPathChoice.ToString() + ".h");
+                        using (var w = proxyFile.CreateText())
+                        {
+                            w.WriteLine("hi");
+                            w.Close();
+                        }
+                        foreach (var item in objs)
+                        {
+                            item.NtupleProxyPath = proxyFile.FullName;
+                        }
+                    }
+                }
                 objCollect = objs.ToArray();
             }
 
-            target.GenerateClasss(objCollect, outputCSFile, nameSName);
+            ///
+            /// Create the final object, and any extra files needed!
+            /// 
+
+            NtupleTreeInfo info = new NtupleTreeInfo() { Classes = objCollect };
+
+            info.ClassImplimintationFiles = (from c in Enumerable.Range(0, numExtraFiles)
+                                             let f = new FileInfo(testDir.FullName + "\\GenerateClassFromClasses_extra_" + c.ToString() + ".cpp")
+                                             select f.FullName
+                                                 ).ToArray();
+
+            int maxFilesToCreate = numExtraFilesToCreate > numExtraFiles ? numExtraFiles : numExtraFilesToCreate;
+            for (int i = 0; i < maxFilesToCreate; i++)
+            {
+                using (var w = File.CreateText(info.ClassImplimintationFiles[i]))
+                {
+                    w.WriteLine();
+                    w.Close();
+                }
+            }
+
+            if (extraFileIndexNull < numExtraFiles)
+            {
+                info.ClassImplimintationFiles[extraFileIndexNull] = null;
+            }
+
+            ///
+            /// Ok, do the investigation
+            /// 
+
+            target.GenerateClasss(info, outputCSFile, nameSName);
+
+            Assert.IsFalse(info.Classes.Any(c => c.NtupleProxyPath == null), "No null proxy paths allowed");
+            Assert.IsFalse(info.Classes.Any(c => !File.Exists(c.NtupleProxyPath)), "proxy files must exist");
+
+            Assert.IsFalse(info.ClassImplimintationFiles.Any(c => c == null), "no null implementation files allowed");
+            Assert.IsFalse(info.ClassImplimintationFiles.Any(c => !File.Exists(c)), "all implimntation files must exist");
+
+            /// Check that all the ntuple proxy guys and the temp file guys appear in the file
+
+            foreach (var item in info.Classes)
+            {
+                Assert.IsTrue(FindInFile(outputCSFile, item.NtupleProxyPath), "Could not find the proxy path '" + item.NtupleProxyPath + "'");
+            }
+            foreach (var item in info.ClassImplimintationFiles)
+            {
+                Assert.IsTrue(FindInFile(outputCSFile, item), "coul dnot find impl file '" + item + "'");
+            }
         }
+
+        [TestMethod]
+        public void TestOutputTestFiles()
+        {
+            GenerateClassFromClasses(new ClassGenerator(),
+                1, // Output choice
+                2, // Number of extra files
+                2, // number of extra files to create
+                10, // Null file index
+                3, // Proxy path choice
+                "junk", // Namespace
+                2 // # of output objects to create
+                );
+        }
+
+        /// <summary>
+        /// Search through the file for some text line.
+        /// </summary>
+        /// <param name="outputCSFile"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private bool FindInFile(FileInfo outputCSFile, string p)
+        {
+            return (from l in LinesInFile(outputCSFile)
+                    where l.Contains(p)
+                    select l).Any();
+        }
+
+        private IEnumerable<string> LinesInFile(FileInfo f)
+        {
+            using (var reader = f.OpenText())
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line != null)
+                        yield return line;
+                }
+                reader.Close();
+            }
+        }
+
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]

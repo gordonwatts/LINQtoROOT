@@ -49,7 +49,7 @@ namespace TTreeClassGenerator
         /// <param name="classSpec"></param>
         /// <param name="outputCSFile"></param>
         /// <param name="namespaceName"></param>
-        public void GenerateClasss(ROOTClassShell[] classSpec, FileInfo outputCSFile, string namespaceName)
+        public void GenerateClasss(NtupleTreeInfo classSpec, FileInfo outputCSFile, string namespaceName)
         {
             ///
             /// Parameter checks
@@ -69,6 +69,25 @@ namespace TTreeClassGenerator
             if (classSpec == null)
                 throw new ArgumentNullException("classSpec");
 
+            if (classSpec.Classes == null)
+                throw new ArgumentNullException("classSpec.Classes");
+
+            foreach (var c in classSpec.Classes)
+            {
+                if (c.NtupleProxyPath == null)
+                    throw new ArgumentNullException("Class '" + c.Name + "' has no ntuple proxy. Can't generate a class for it.");
+                if (!File.Exists(c.NtupleProxyPath))
+                    throw new ArgumentNullException("Class '" + c.Name + "'s ntuple proxy does not exist at " + c.NtupleProxyPath + ". Can't generate a class for it.");
+            }
+
+            foreach (var c in classSpec.ClassImplimintationFiles)
+            {
+                if (c == null)
+                    throw new ArgumentNullException("Class support files can't be null");
+                if (!File.Exists(c))
+                    throw new ArgumentException("Can't fine class support file '" + c + "'.");
+            }
+
             ///
             /// Ok, open the output file
             /// 
@@ -83,7 +102,7 @@ namespace TTreeClassGenerator
                 output.WriteLine("// Automatically Generated File - do not modify!");
                 output.WriteLine("// Generated on {0} by TTreeClassGenerator::ClassGenerator", DateTime.Now);
                 output.WriteLine("// Translated ntuple classes");
-                foreach (var cls in classSpec)
+                foreach (var cls in classSpec.Classes)
                 {
                     output.WriteLine("// - ntuple {0}", cls.Name);
                 }
@@ -101,7 +120,7 @@ namespace TTreeClassGenerator
                 /// Now, write something out for each class
                 /// 
 
-                foreach (var cls in classSpec)
+                foreach (var cls in classSpec.Classes)
                 {
                     output.WriteLine("  public class {0}", cls.Name);
                     output.WriteLine("  {");
@@ -116,6 +135,23 @@ namespace TTreeClassGenerator
 
                     output.WriteLine("#pragma warning restore 0649");
 
+                    output.WriteLine("  }"); // End of the class
+
+                    ///
+                    /// Write out the info class that contains everything needed to process this.
+                    /// We could use attribute programing here, but that takes more code at the other
+                    /// end, so until there is a real reason, we'll do it this way.
+                    /// 
+
+                    output.WriteLine("  public static class {0}_info", cls.Name);
+                    output.WriteLine("  {");
+                    output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
+                    output.WriteLine("    public static string[] _gObjectFiles= {");
+                    foreach (var item in classSpec.ClassImplimintationFiles)
+                    {
+                        output.WriteLine("      @\"" + item + "\",");
+                    }
+                    output.WriteLine("    };");
                     output.WriteLine("  }"); // End of the class
 
                     ///
@@ -160,12 +196,12 @@ namespace TTreeClassGenerator
         /// </summary>
         /// <param name="inputXMLFile"></param>
         /// <returns></returns>
-        private ROOTClassShell[] LoadFromXMLFile(FileInfo inputXMLFile)
+        private NtupleTreeInfo LoadFromXMLFile(FileInfo inputXMLFile)
         {
-            XmlSerializer x = new XmlSerializer(typeof(ROOTClassShell[]));
+            XmlSerializer x = new XmlSerializer(typeof(NtupleTreeInfo));
             using (var reader = inputXMLFile.OpenText())
             {
-                var result = x.Deserialize(reader) as ROOTClassShell[];
+                var result = x.Deserialize(reader) as NtupleTreeInfo;
                 reader.Close();
                 return result;
             }

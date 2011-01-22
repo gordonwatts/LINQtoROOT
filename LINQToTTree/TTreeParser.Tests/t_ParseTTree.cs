@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -34,36 +36,6 @@ namespace LINQToTTreeLib.Tests
                 testContextInstance = value;
             }
         }
-
-        #region Additional test attributes
-        // 
-        //You can use the following additional attributes as you write your tests:
-        //
-        //Use ClassInitialize to run code before running the first test in the class
-        //[ClassInitialize()]
-        //public static void MyClassInitialize(TestContext testContext)
-        //{
-        //}
-        //
-        //Use ClassCleanup to run code after all tests in a class have run
-        //[ClassCleanup()]
-        //public static void MyClassCleanup()
-        //{
-        //}
-        //
-        //Use TestInitialize to run code before running each test
-        //[TestInitialize()]
-        //public void MyTestInitialize()
-        //{
-        //}
-        //
-        //Use TestCleanup to run code after each test has run
-        //[TestCleanup()]
-        //public void MyTestCleanup()
-        //{
-        //}
-        //
-        #endregion
 
         /// <summary>
         /// Make sure if the Tree is stupid that we get back something stupid! :-)
@@ -288,5 +260,114 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("TLorentzVector[]", i.ItemType, "incorrect item type for vector of tlz");
         }
 #endif
+        [TestMethod]
+        public void TestBasicProxyGeneration()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            FileInfo fhpp = new FileInfo("ntuple_dude.h");
+
+            Assert.IsTrue(fhpp.Exists, "check for hpp file existance");
+
+            Assert.AreEqual(fhpp.FullName, result[0].NtupleProxyPath, "ntuple proxy path incorrect");
+        }
+
+        [TestMethod]
+        public void TestBasicProxyGenerationSpecial()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
+
+            var p = new ParseTTree();
+            DirectoryInfo newdir = new DirectoryInfo("./TestBasicProxyGenerationSpecial");
+            if (!newdir.Exists)
+                newdir.Create();
+
+            p.ProxyGenerationLocation = newdir;
+
+            var result = p.GenerateClasses(t).ToArray();
+
+            FileInfo fhpp = new FileInfo(newdir.FullName + "\\ntuple_dude.h");
+
+            Assert.IsTrue(fhpp.Exists, "check for hpp file existance");
+
+            Assert.AreEqual(fhpp.FullName, result[0].NtupleProxyPath, "ntuple proxy path incorrect");
+        }
+
+        /// <summary>
+        /// WARNING - you must start devenv in a vs 2010 command line window so that "cl" is availible.
+        /// </summary>
+        [TestMethod]
+        public void TestProxyBuild()
+        {
+            /// Make sure the header file that gets generated is basically "ok" for use. These are simple tests.
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+            FileInfo fhpp = new FileInfo("ntuple_dude.h");
+
+            FileInfo cfile = new FileInfo("TestProxyBuild.C");
+            using (var writer = cfile.CreateText())
+            {
+                writer.WriteLine("#include \"ntuple_dude.h\"");
+                writer.Close();
+            }
+
+            var compile = ROOTNET.NTSystem.gSystem.CompileMacro("TestProxyBuild.C");
+            Assert.AreEqual(1, compile, "compile error for built macro - make sure that cl is a good command by starting devenv with vs command line!!");
+        }
+
+        [TestMethod]
+        public void TestProxyGenerationContents()
+        {
+            /// Make sure the header file that gets generated is basically "ok" for use. These are simple tests.
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+            FileInfo fhpp = new FileInfo("ntuple_dude.h");
+
+            //Assert.IsFalse(CheckForLineContaining(fhpp, "junk_macro_parsettree.C"), "Checking for junk_macro in the file");
+        }
+
+        /// <summary>
+        /// Check to see if this file contains a certian string in any of its lines.
+        /// </summary>
+        /// <param name="fhpp"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private bool CheckForLineContaining(FileInfo fhpp, string lineContents)
+        {
+            var found = from l in ReadFileLines(fhpp)
+                        where l.Contains(lineContents)
+                        select l;
+
+            Trace.WriteLine("Looking for string '" + lineContents + "'");
+            bool foundIt = false;
+            foreach (var item in found)
+            {
+                foundIt = true;
+                Trace.WriteLine("  " + item);
+            }
+            return foundIt;
+        }
+
+        /// <summary>
+        /// IEnumerable line reader
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        private IEnumerable<string> ReadFileLines(FileInfo f)
+        {
+            using (var reader = f.OpenText())
+            {
+                while (!reader.EndOfStream)
+                {
+                    var l = reader.ReadLine();
+                    if (l != null)
+                        yield return l;
+                }
+            }
+        }
     }
 }

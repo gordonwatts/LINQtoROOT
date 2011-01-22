@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinqToTTreeInterfacesLib;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -14,8 +13,10 @@ namespace LINQToTTreeLib.TypeHandlers
     [Export]
     public class TypeHandlerCache
     {
+#pragma warning disable 649
         [ImportMany]
         IEnumerable<ITypeHandler> _handlers;
+#pragma warning restore 649
 
         /// <summary>
         /// Process the constant reference
@@ -63,8 +64,8 @@ namespace LINQToTTreeLib.TypeHandlers
                 throw new InvalidOperationException("TypeHandlerCache has not been initalized via MEF!");
 
             var h = (from t in _handlers
-                    where t.CanHandle(type)
-                    select t).First();
+                     where t.CanHandle(type)
+                     select t).First();
             return h;
         }
     }

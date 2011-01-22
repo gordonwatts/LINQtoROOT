@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using TTreeDataModel;
 
 namespace CmdTFileParser
 {
@@ -24,6 +25,7 @@ namespace CmdTFileParser
             List<FileInfo> libraries = new List<FileInfo>();
             string specialFile = "";
             FileInfo outputFile = new FileInfo("ntupleinfo.ntupom");
+            DirectoryInfo outputDir = new DirectoryInfo(".");
             bool doExistanceCheck = true;
 
             foreach (var arg in args)
@@ -32,6 +34,23 @@ namespace CmdTFileParser
                 {
                     specialFile = "o";
                     doExistanceCheck = false;
+                    continue;
+                }
+
+                if (arg == "-d")
+                {
+                    specialFile = "outD";
+                    doExistanceCheck = false;
+                    continue;
+                }
+
+                if (specialFile == "outD")
+                {
+                    DirectoryInfo inf = new DirectoryInfo(arg);
+                    if (!inf.Exists)
+                        inf.Create();
+                    outputDir = inf;
+                    specialFile = null;
                     continue;
                 }
 
@@ -76,10 +95,30 @@ namespace CmdTFileParser
             }
 
             ///
+            /// Next, we need to find all the classes that are in those libraries,
+            /// and then figure out where the location of the classes is.
+            /// 
+
+            var loadedNames = (from s in libraries
+                               select Path.GetFileNameWithoutExtension(s.Name)).ToArray();
+
+            var usedClasses = from cls in ROOTNET.NTROOT.gROOT.ListOfClasses.Cast<ROOTNET.Interface.NTClass>()
+                              let shared = cls.SharedLibs
+                              where shared != null
+                              let name = Path.GetFileNameWithoutExtension(shared.Split().First())
+                              where loadedNames.Contains(name)
+                              select cls;
+
+            var sourcefiles = from cls in usedClasses
+                              select cls.GetImplFileName();
+
+            ///
             /// And now process the root files!
             /// 
 
             var converter = new TTreeParser.ParseTFile();
+            converter.ProxyGenerationLocation = outputDir;
+
             var rootClassList = from f in rootFiles
                                 from c in converter.ParseFile(f)
                                 select c;
@@ -94,10 +133,11 @@ namespace CmdTFileParser
             /// Write out the output xml file now
             /// 
 
-            XmlSerializer xmlout = new XmlSerializer(typeof(TTreeDataModel.ROOTClassShell[]));
+            NtupleTreeInfo results = new NtupleTreeInfo() { Classes = allClasses, ClassImplimintationFiles = sourcefiles.ToArray() };
+            XmlSerializer xmlout = new XmlSerializer(typeof(NtupleTreeInfo));
             using (var output = outputFile.CreateText())
             {
-                xmlout.Serialize(output, allClasses);
+                xmlout.Serialize(output, results);
                 output.Close();
             }
         }
