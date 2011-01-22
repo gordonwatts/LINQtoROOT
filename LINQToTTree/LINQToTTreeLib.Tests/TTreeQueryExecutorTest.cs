@@ -195,7 +195,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Test out a simple result base ntuple object base.
+        /// Test out a simple result base ntuple object base and null proxy file base.
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
