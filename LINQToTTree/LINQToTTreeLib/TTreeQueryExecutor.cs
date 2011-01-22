@@ -232,9 +232,26 @@ namespace LINQToTTreeLib
         private void AssembleAndLoadExtraObjects()
         {
             ///
-            /// First, go after the common items/classes.
+            /// First, do the files that are part of our infrastructure.
             /// 
 
+            var f = CopyToCommonDirectory(GetInfrastructureFile("FlowOutputObject.cpp"));
+            CompileAndLoad(f);
+        }
+
+        /// <summary>
+        /// We are responsible for finding a given file in the infrastructure directory. We go boom if
+        /// we can't file the file.
+        /// </summary>
+        /// <param name="filename">The name (including extension) of the file to find</param>
+        /// <returns></returns>
+        private FileInfo GetInfrastructureFile(string filename)
+        {
+            string baseDir = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
+            var f = new FileInfo(baseDir + "\\InfrastructureSourceFiles\\" + filename);
+            if (!f.Exists)
+                throw new FileNotFoundException("Unable to find infrastructure source file '" + f.FullName + "'");
+            return f;
         }
 
         /// <summary>
@@ -335,26 +352,65 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Copy a file to a directory that contains files for this query.
         /// </summary>
-        /// <param name="_proxyFile"></param>
-        private void CopyToQueryDirectory(FileInfo _proxyFile)
+        /// <param name="sourceFile"></param>
+        private FileInfo CopyToQueryDirectory(FileInfo sourceFile)
         {
-            var queryDirectory = GetQueryDirectory();
-            _proxyFile.CopyTo(queryDirectory.FullName + "\\" + _proxyFile.Name);
+            return CopyToDirectory(sourceFile, GetQueryDirectory());
+        }
+
+        /// <summary>
+        /// Copies a source file to a directory. Also copies over any "valid" includes we can find.
+        /// </summary>
+        /// <param name="sourceFile"></param>
+        /// <param name="destDirectory"></param>
+        private FileInfo CopyToDirectory(FileInfo sourceFile, DirectoryInfo destDirectory)
+        {
+            ///
+            /// See if the dest file is already there. If so, don't copy over
+            /// 
+
+            FileInfo destFile = new FileInfo(destDirectory.FullName + "\\" + sourceFile.Name);
+            if (destFile.Exists)
+            {
+                if (destFile.LastWriteTime >= sourceFile.LastWriteTime
+                    && destFile.Length == sourceFile.Length)
+                {
+                    return destFile;
+                }
+            }
+            sourceFile.CopyTo(destFile.FullName);
 
             ///
             /// Next, if there are any include files we need to move
             /// 
 
-            var includeFiles = FindIncludeFiles(_proxyFile);
+            var includeFiles = FindIncludeFiles(sourceFile);
             var goodIncludeFiles = from f in includeFiles
-                                   let full = new FileInfo(_proxyFile.DirectoryName + "\\" + f)
+                                   let full = new FileInfo(sourceFile.DirectoryName + "\\" + f)
                                    where full.Exists
                                    select full;
 
             foreach (var item in goodIncludeFiles)
             {
-                item.CopyTo(queryDirectory.FullName + "\\" + item.Name);
+                item.CopyTo(destDirectory.FullName + "\\" + item.Name);
             }
+
+            ///
+            /// Return what we know!
+            /// 
+
+            destFile.Refresh();
+            return destFile;
+        }
+
+        /// <summary>
+        /// Copy this source file (along with any includes in it) to
+        /// our common area.
+        /// </summary>
+        /// <param name="sourceFile"></param>
+        private FileInfo CopyToCommonDirectory(FileInfo sourceFile)
+        {
+            return CopyToDirectory(sourceFile, CommonSourceDirectory());
         }
 
         /// <summary>
@@ -443,7 +499,7 @@ namespace LINQToTTreeLib
                 TempDirectory.Create();
                 TempDirectory.Refresh();
             }
-            var cf = new DirectoryInfo(TempDirectory.FullName + "\\CommonFiles");
+            var cf = CommonSourceDirectory();
             if (!cf.Exists)
             {
                 cf.Create();
@@ -458,6 +514,15 @@ namespace LINQToTTreeLib
             var app = new ROOTNET.NTApplication("LINQToTTree", new int[] { 0 }, new string[] { });
             //}
             ///ROOTNET.NTROOT.gROOT.ProcessLineSync("");
+        }
+
+        /// <summary>
+        /// Generate the common directory. Called only after the temp directory has been created!!
+        /// </summary>
+        /// <returns></returns>
+        private DirectoryInfo CommonSourceDirectory()
+        {
+            return new DirectoryInfo(TempDirectory.FullName + "\\CommonFiles");
         }
 
         /// <summary>
