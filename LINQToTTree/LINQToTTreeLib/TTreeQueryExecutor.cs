@@ -450,10 +450,14 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// Finally, force ROOT to do what it needs to do
+            /// Finally, make sure TApplication has been started. It will init a bunch of stuff
             /// 
 
-            ROOTNET.NTROOT.gROOT.ProcessLineSync("");
+            //if (ROOTNET.NTApplication.gApplication == null)
+            //{
+            var app = new ROOTNET.NTApplication("LINQToTTree", new int[] { 0 }, new string[] { });
+            //}
+            ///ROOTNET.NTROOT.gROOT.ProcessLineSync("");
         }
 
         /// <summary>
