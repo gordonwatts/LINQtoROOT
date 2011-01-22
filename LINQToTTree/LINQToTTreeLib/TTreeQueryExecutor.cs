@@ -295,9 +295,16 @@ namespace LINQToTTreeLib
         /// </summary>
         public class VarInfo
         {
-            public string VariableName { get; set; }
-            public string VariableType { get; set; } // C++ type
-            public string InitialValue { get; set; }
+            private IVariable _iVariable;
+
+            public VarInfo(IVariable iVariable)
+            {
+                // TODO: Complete member initialization
+                this._iVariable = iVariable;
+            }
+            public string VariableName { get { return _iVariable.VariableName; } }
+            public string VariableType { get { return Variables.VarUtils.AsCPPType(_iVariable.Type); } } // C++ type
+            public string InitialValue { get { return _iVariable.InitialValue.RawValue; } }
         }
 
         /// <summary>
@@ -307,14 +314,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable)
         {
-            var result = new VarInfo();
-            result.VariableName = iVariable.VariableName;
-
-            result.VariableType = Variables.VarUtils.AsCPPType(iVariable.Type);
-
-            result.InitialValue = iVariable.InitialValue.RawValue;
-
-            return result;
+            return new VarInfo(iVariable);
         }
 
         /// <summary>
