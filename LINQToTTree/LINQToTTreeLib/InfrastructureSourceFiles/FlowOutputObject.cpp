@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 // System include(s):
-#include <string.h>
+#include <string>
 
 // STL include(s):
 #include <vector>
@@ -48,9 +48,9 @@ ClassImp( FlowOutputObject );
  *             make sure that this is unique
  */
 FlowOutputObject::FlowOutputObject( TObject* object, const char* name,
-                            const char* path )
+							const char* path )
    : TNamed( name, "PlotFramework flow output object" ), m_object( object ),
-     m_path( path ) {
+	 m_path( path ) {
 
 }
 
@@ -117,38 +117,38 @@ Int_t FlowOutputObject::Merge( TCollection* coll ) {
    TObject* obj = 0;
    while( ( obj = next() ) ) {
 
-      //
-      // See if it is an SCycleOutput object itself:
-      //
-      FlowOutputObject* sobj = dynamic_cast< FlowOutputObject* >( obj );
-      if( ! sobj ) {
+	  //
+	  // See if it is an SCycleOutput object itself:
+	  //
+	  FlowOutputObject* sobj = dynamic_cast< FlowOutputObject* >( obj );
+	  if( ! sobj ) {
 		  cout << "ERROR: Attempt to merage " << obj->ClassName() << " into " << this->ClassName() << "! Not!" << endl;
 		  continue;
-      }
+	  }
 
-      //
-      // See if it holds the same kind of object as this output object:
-      //
+	  //
+	  // See if it holds the same kind of object as this output object:
+	  //
 
 	  TObject* mobj = sobj->GetObject();
-      if( ! mobj ) continue;
-      if( strcmp( mobj->ClassName(), this->GetObject()->ClassName() ) ) {
-         cout << "ERROR: Trying to merge \"" << mobj->ClassName()
-                       << "\" object into \"" << this->GetObject()->ClassName() << endl;
-         continue;
-      }
+	  if( ! mobj ) continue;
+	  if( strcmp( mobj->ClassName(), this->GetObject()->ClassName() ) ) {
+		 cout << "ERROR: Trying to merge \"" << mobj->ClassName()
+					   << "\" object into \"" << this->GetObject()->ClassName() << endl;
+		 continue;
+	  }
 
-      //
-      // If everything is fine, add it to the list of objects to merge:
-      //
-      list.Add( mobj );
+	  //
+	  // If everything is fine, add it to the list of objects to merge:
+	  //
+	  list.Add( mobj );
    }
 
    //
    // Stop if the list is empty:
    //
    if( list.IsEmpty() ) {
-      return 0;
+	  return 0;
    }
 
    //
@@ -157,9 +157,9 @@ Int_t FlowOutputObject::Merge( TCollection* coll ) {
    TMethodCall mergeMethod;
    mergeMethod.InitWithPrototype( this->GetObject()->IsA(), "Merge", "TCollection*" );
    if( ! mergeMethod.IsValid() ) {
-      cout << "ERROR: Object type \"" << this->GetObject()->ClassName()
-                    << "\" doesn't support merging" << endl;
-      return 0;
+	  cout << "ERROR: Object type \"" << this->GetObject()->ClassName()
+					<< "\" doesn't support merging" << endl;
+	  return 0;
    }
 
    //
@@ -188,7 +188,7 @@ Int_t FlowOutputObject::Merge( TCollection* coll ) {
  *     object in it.
  */
 Int_t FlowOutputObject::Write( const char* name, Int_t option,
-                           Int_t bufsize ) const {
+						   Int_t bufsize ) const {
 
    // Nothing to be done with no object:
    if( ! m_object ) return -1;
@@ -206,48 +206,48 @@ Int_t FlowOutputObject::Write( const char* name, Int_t option,
    TObject* original_obj;
    if( ( original_obj = outDir->Get( m_object->GetName() ) ) ) {
 
-      //
-      // Check that it's the same type as the object that we want to save:
-      //
-      if( strcmp( original_obj->ClassName(), m_object->ClassName() ) ) {
-         cout << "ERROR: Object in file (\"" << original_obj->ClassName()
-                       << "\") is not the same type as the object in memory (\""
-                       << m_object->ClassName() << "\")" << endl;
-         return 0;
-      }
+	  //
+	  // Check that it's the same type as the object that we want to save:
+	  //
+	  if( strcmp( original_obj->ClassName(), m_object->ClassName() ) ) {
+		 cout << "ERROR: Object in file (\"" << original_obj->ClassName()
+					   << "\") is not the same type as the object in memory (\""
+					   << m_object->ClassName() << "\")" << endl;
+		 return 0;
+	  }
 
-      //
-      // Try to merge the new object into the old one:
-      //
-      TMethodCall mergeMethod;
-      mergeMethod.InitWithPrototype( original_obj->IsA(), "Merge", "TCollection*" );
-      if( ! mergeMethod.IsValid() ) {
-         cout << "ERROR: Object type \"" << original_obj->ClassName()
-                       << "\" doesn't support merging" << endl;
-         return 0;
-      }
+	  //
+	  // Try to merge the new object into the old one:
+	  //
+	  TMethodCall mergeMethod;
+	  mergeMethod.InitWithPrototype( original_obj->IsA(), "Merge", "TCollection*" );
+	  if( ! mergeMethod.IsValid() ) {
+		 cout << "ERROR: Object type \"" << original_obj->ClassName()
+					   << "\" doesn't support merging" << endl;
+		 return 0;
+	  }
 
-      //
-      // Remember the key of this object, to be able to remove it after the merging:
-      //
-      TKey* oldKey = outDir->GetKey( m_object->GetName() );
+	  //
+	  // Remember the key of this object, to be able to remove it after the merging:
+	  //
+	  TKey* oldKey = outDir->GetKey( m_object->GetName() );
 
-      //
-      // Execute the merging:
-      //
-      TList list;
-      list.Add( m_object );
-      mergeMethod.SetParam( ( Long_t ) &list );
-      mergeMethod.Execute( original_obj );
+	  //
+	  // Execute the merging:
+	  //
+	  TList list;
+	  list.Add( m_object );
+	  mergeMethod.SetParam( ( Long_t ) &list );
+	  mergeMethod.Execute( original_obj );
 
-      //
-      // Remove the old object from the file:
-      //
-      oldKey->Delete();
-      delete oldKey;
+	  //
+	  // Remove the old object from the file:
+	  //
+	  oldKey->Delete();
+	  delete oldKey;
 
-      // Return gracefully:
-      return 1;
+	  // Return gracefully:
+	  return 1;
 
    }
 
@@ -273,7 +273,7 @@ Int_t FlowOutputObject::Write( const char* name, Int_t option,
 }
 
 Int_t FlowOutputObject::Write( const char* name, Int_t option,
-                           Int_t bufsize ) {
+						   Int_t bufsize ) {
 
    return const_cast< const FlowOutputObject* >( this )->Write( name, option, bufsize );
 }
@@ -291,35 +291,35 @@ TDirectory* FlowOutputObject::MakeDirectory( const TString& path ) const {
    TDirectory* dir = 0;
    if( ! ( dir = gDirectory->GetDirectory( path ) ) ) {
 
-      //
-      // Break up the path name at the slashes:
-      //
-      TObjArray* directories = path.Tokenize( "/" );
+	  //
+	  // Break up the path name at the slashes:
+	  //
+	  TObjArray* directories = path.Tokenize( "/" );
 
-      //
-      // Create each necessary directory:
-      //
-      dir = gDirectory;
-      TDirectory* tempDir = 0;
-      for( Int_t i = 0; i < directories->GetSize(); ++i ) {
+	  //
+	  // Create each necessary directory:
+	  //
+	  dir = gDirectory;
+	  TDirectory* tempDir = 0;
+	  for( Int_t i = 0; i < directories->GetSize(); ++i ) {
 
-         TObjString* path_element = dynamic_cast< TObjString* >( directories->At( i ) );
-         if( ! path_element ) continue;
-         if( path_element->GetString() == "" ) continue;
+		 TObjString* path_element = dynamic_cast< TObjString* >( directories->At( i ) );
+		 if( ! path_element ) continue;
+		 if( path_element->GetString() == "" ) continue;
 
-         if( ! ( tempDir = dir->GetDirectory( path_element->GetString() ) ) ) {
-            if( ! ( tempDir = dir->mkdir( path_element->GetString(), "dummy title" ) ) ) {
-               cout << "ERROR: Couldn't create directory: " << path
-                     << " in the output file!" << endl;
+		 if( ! ( tempDir = dir->GetDirectory( path_element->GetString() ) ) ) {
+			if( ! ( tempDir = dir->mkdir( path_element->GetString(), "dummy title" ) ) ) {
+			   cout << "ERROR: Couldn't create directory: " << path
+					 << " in the output file!" << endl;
 			   return 0;
-            }
-         }
-         dir = tempDir;
+			}
+		 }
+		 dir = tempDir;
 
-      }
+	  }
 
-      // Delete the object created by TString::Tokenize(...):
-      delete directories;
+	  // Delete the object created by TString::Tokenize(...):
+	  delete directories;
 
    }
 

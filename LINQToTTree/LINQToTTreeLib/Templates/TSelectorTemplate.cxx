@@ -7,6 +7,14 @@
 \#include "$baseClassInclude"
 \#include "FlowOutputObject.h"
 
+#foreach($f in $IncludeFiles)
+\#include "$f"
+#end
+
+\#include <string>
+
+using std::string;
+
 class query : public $baseClassName
 {
 public:
@@ -30,6 +38,10 @@ public:
 	void SlaveTerminate()
 	{
 		$baseClassName::SlaveTerminate();
+
+#foreach($s in $SlaveTerminateStatements)
+		$s
+#end
 	}
 
 	/// Called with all plots at hand
@@ -67,4 +79,26 @@ private:
 	/// to be filled on each entry.
 
 	$ResultVariable.VariableType $ResultVariable.VariableName;
+
+	/// Store an object to send back. We encase it in a FlowObject because the list
+	/// of objects that goes back is "flat" and FlowObject holds onto
+	/// a tag that tells us where this should be stored later. Helps!
+	void Book(TObject *o)
+	{
+		string objName("");
+		if (o->InheritsFrom("TNamed")) {
+			TNamed *n = static_cast<TNamed*>(o);
+			objName = n->GetName();
+		} else {
+			objName = o->ClassName();
+		}
+
+		///
+		/// If this is a replacement, then boom!
+		///
+
+		if (dynamic_cast<TObject*> (GetOutputList()->FindObject(objName.c_str())) == 0) {
+			GetOutputList()->Add(new FlowOutputObject(o, objName.c_str(), ""));
+		}
+	}
 };

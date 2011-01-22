@@ -80,6 +80,7 @@
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
+    <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
     <Compile Include="Variables\VarObject.cs" />
     <Compile Include="Variables\VarOutterLoopObjectPointer.cs" />
     <Compile Include="Variables\VarSimple.cs" />
@@ -97,10 +98,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="InfrastructureSourceFiles\FlowOutputObject.cpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InfrastructureSourceFiles\FlowOutputObject.h">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Templates\TSelectorTemplate.cxx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

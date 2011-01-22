@@ -255,6 +255,11 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Keep track of all include files we need to pull in. Ugly - because it is global.
+        /// </summary>
+        private List<string> _includeFiles = new List<string>();
+
+        /// <summary>
         /// Write out the TSelector file derived from the already existing query. This now includes all the code we need
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
@@ -280,6 +285,8 @@ namespace LINQToTTreeLib
             context.Put("baseClassName", proxyObjectName);
             context.Put("ResultVariable", TranslateVariable(code.ResultValue));
             context.Put("ProcessStatements", TranslateStatements(code.CodeBody));
+            context.Put("SlaveTerminateStatements", TranslateFinalizingVariables(code.ResultValue));
+            context.Put("IncludeFiles", _includeFiles);
 
             ///
             /// Now do it!
@@ -294,6 +301,37 @@ namespace LINQToTTreeLib
 
             return ourSelector;
 
+        }
+
+        /// <summary>
+        /// MEF list of guys that can help us save and load up variables.
+        /// </summary>
+#pragma warning disable 0649
+        [ImportMany]
+        IEnumerable<IVariableSaver> _varSaverList;
+#pragma warning restore 0649
+
+        /// <summary>
+        /// Given a variable that has to be transmitted back accross the wire,
+        /// generate the statements that are required to make sure that it goes there!
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable)
+        {
+            var saver = (from s in _varSaverList
+                         where s.CanHandle(iVariable)
+                         select s).FirstOrDefault();
+            if (saver == null)
+                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.GetType().Name);
+
+            foreach (var f in saver.IncludeFiles(iVariable))
+            {
+                if (!_includeFiles.Contains(f))
+                    _includeFiles.Add(f);
+            }
+
+            return saver.SaveToFile(iVariable);
         }
 
         /// <summary>
@@ -487,6 +525,7 @@ namespace LINQToTTreeLib
             ExpressionVisitor.TypeHandlers = new TypeHandlers.TypeHandlerCache();
             CompositionBatch b = new CompositionBatch();
             b.AddPart(ExpressionVisitor.TypeHandlers);
+            b.AddPart(this);
             _gContainer.Compose(b);
 
             ///
@@ -499,10 +538,21 @@ namespace LINQToTTreeLib
                 TempDirectory.Create();
                 TempDirectory.Refresh();
             }
+
+            ///
+            /// Next the common source files. Make sure that the include files passed to the old compiler has
+            /// this common file directory in there!
+            /// 
+
             var cf = CommonSourceDirectory();
             if (!cf.Exists)
             {
                 cf.Create();
+            }
+
+            if (!ROOTNET.NTSystem.gSystem.IncludePath.Contains(cf.FullName))
+            {
+                ROOTNET.NTSystem.gSystem.AddIncludePath("-I\"" + cf.FullName + "\"");
             }
 
             ///
