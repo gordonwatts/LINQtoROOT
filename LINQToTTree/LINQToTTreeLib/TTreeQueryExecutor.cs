@@ -173,7 +173,44 @@ namespace LINQToTTreeLib
 
             RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name));
 
-            return default(T);
+            ///
+            /// Last job, extract all the variables!
+            /// 
+
+            return ExtractResult<T>(result.ResultValue);
+        }
+
+        /// <summary>
+        /// Extract the value for iVariable from the results file.
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        private T ExtractResult<T>(IVariable iVariable)
+        {
+            ///
+            /// Open the file, if it isn't there something very serious has gone wrong.
+            /// 
+
+            var file = ROOTNET.NTFile.Open("plots.root");
+            if (!file.IsOpen())
+                throw new FileNotFoundException("Unable to find the output file from the ROOT run!");
+
+            ///
+            /// Load the object and try to extract whatever info we need to from it
+            /// 
+
+            try
+            {
+                var o = file.Get(iVariable.RawValue);
+                var s = GetVariableSaver(iVariable);
+                return s.LoadResult<T>(iVariable, o);
+            }
+            finally
+            {
+                file.Close();
+            }
+
         }
 
         /// <summary>
@@ -300,7 +337,6 @@ namespace LINQToTTreeLib
             }
 
             return ourSelector;
-
         }
 
         /// <summary>
@@ -319,11 +355,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable)
         {
-            var saver = (from s in _varSaverList
-                         where s.CanHandle(iVariable)
-                         select s).FirstOrDefault();
-            if (saver == null)
-                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.GetType().Name);
+            var saver = GetVariableSaver(iVariable);
 
             foreach (var f in saver.IncludeFiles(iVariable))
             {
@@ -332,6 +364,21 @@ namespace LINQToTTreeLib
             }
 
             return saver.SaveToFile(iVariable);
+        }
+
+        /// <summary>
+        /// Find a saver for a particular variable.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        private IVariableSaver GetVariableSaver(IVariable iVariable)
+        {
+            var saver = (from s in _varSaverList
+                         where s.CanHandle(iVariable)
+                         select s).FirstOrDefault();
+            if (saver == null)
+                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.GetType().Name);
+            return saver;
         }
 
         /// <summary>

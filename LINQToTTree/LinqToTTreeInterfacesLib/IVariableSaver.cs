@@ -23,6 +23,20 @@ namespace LinqToTTreeInterfacesLib
         /// <returns></returns>
         IEnumerable<string> SaveToFile(IVariable iVariable);
 
+        /// <summary>
+        /// Return the include files that this saver needs loaded into the query script
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
         IEnumerable<string> IncludeFiles(IVariable iVariable);
+
+        /// <summary>
+        /// Given an object, translate the result to the item we are going to be saving.
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="iVariable"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj);
     }
 }

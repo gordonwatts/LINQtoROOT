@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using LinqToTTreeInterfacesLib;
 
@@ -30,8 +31,8 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public IEnumerable<string> SaveToFile(IVariable iVariable)
         {
-            yield return "TH1I *" + iVariable.RawValue + "_hist = new TH1I(\"" + iVariable.RawValue + "\", \"var transport\", 1, 0.0, 1.0);";
-            yield return iVariable.RawValue + "_hist->Fill(1.0, " + iVariable.RawValue + ");";
+            yield return "TH1F *" + iVariable.RawValue + "_hist = new TH1F(\"" + iVariable.RawValue + "\", \"var transport\", 1, 0.0, 1.0);";
+            yield return iVariable.RawValue + "_hist->SetBinContent(1, " + iVariable.RawValue + ");";
             yield return "Book(" + iVariable.RawValue + "_hist);";
         }
 
@@ -43,6 +44,23 @@ namespace LINQToTTreeLib.Variables.Savers
         public IEnumerable<string> IncludeFiles(IVariable iVariable)
         {
             yield return "TH1I.h";
+        }
+
+        /// <summary>
+        /// We need to load the variable saver back in.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="iVariable"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj)
+        {
+            var intHist = obj as ROOTNET.Interface.NTH1;
+            if (intHist == null)
+                throw new InvalidOperationException("Object of type '" + obj.ClassName() + "' is not an integer histogram, which is what we were expecting for this result!");
+
+            object result = (int)intHist.GetBinContent(1);
+            return (T)result;
         }
     }
 }

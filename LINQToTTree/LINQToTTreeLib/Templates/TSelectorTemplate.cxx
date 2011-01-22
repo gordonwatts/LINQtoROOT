@@ -10,6 +10,7 @@
 #foreach($f in $IncludeFiles)
 \#include "$f"
 #end
+\#include <TFile.h>
 
 \#include <string>
 
@@ -47,6 +48,19 @@ public:
 	/// Called with all plots at hand
 	void Terminate()
 	{
+		string outputRootFilename ("plots.root");
+		TFile *output = new TFile(outputRootFilename.c_str(), "RECREATE");
+
+		TIter next (GetOutputList());
+		TObject *o;
+		while ((o = next.Next())) {
+			if (o->InheritsFrom("FlowOutputObject")) {
+				o->Write();
+			}
+		}
+		output->Write();
+		output->Close();
+		delete output;
 	}
 
 	/// Called to process an entry
