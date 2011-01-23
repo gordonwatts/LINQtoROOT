@@ -132,7 +132,9 @@ namespace LINQToTTreeLib
         /// </summary>
         public class TestNtupe
         {
+#pragma warning disable 0169
             int run;
+#pragma warning restore 0169
         }
 
         /// <summary>

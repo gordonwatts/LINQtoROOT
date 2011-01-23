@@ -43,7 +43,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public IEnumerable<string> IncludeFiles(IVariable iVariable)
         {
-            yield return "TH1I.h";
+            yield return "TH1F.h";
         }
 
         /// <summary>

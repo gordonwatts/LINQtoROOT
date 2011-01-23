@@ -1,12 +1,9 @@
 // <copyright file="VarUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using Microsoft.Pex.Framework.Using;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -19,7 +16,9 @@ namespace LINQToTTreeLib.Variables
     {
         class freak
         {
+#pragma warning disable 0169
             int _bogus;
+#pragma warning restore 0169
         };
 
         /// <summary>Test stub for AsCPPType(Type)</summary>
@@ -113,7 +112,9 @@ namespace LINQToTTreeLib.Variables
 
         class ntup
         {
+#pragma warning disable 0649
             public int bogus;
+#pragma warning restore 0649
         };
 
         [TestMethod]

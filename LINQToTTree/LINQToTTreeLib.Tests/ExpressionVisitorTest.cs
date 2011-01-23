@@ -1,20 +1,18 @@
 // <copyright file="ExpressionVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib;
+using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.Pex.Framework.Using;
-using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Clauses;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.TypeHandlers.ROOT;
-using LINQToTTreeLib.TypeHandlers;
+using Remotion.Data.Linq.Clauses.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -77,7 +75,7 @@ namespace LINQToTTreeLib
             var t = new TypeHandlerCache();
             MEFUtilities.Compose(t);
             ExpressionVisitor.TypeHandlers = t;
-            
+
             foreach (var expr in ConstantExpressionTestCases)
             {
                 Variables.VarUtils._variableNameCounter = 0;
@@ -109,7 +107,7 @@ namespace LINQToTTreeLib
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="((int)10)/((int)20)"}
         };
 
-        public void TestBinaryExpressionCase (BinaryExpressionTestCase c)
+        public void TestBinaryExpressionCase(BinaryExpressionTestCase c)
         {
             var e = Expression.MakeBinary(c.BinaryType, c.LHS, c.RHS);
             GeneratedCode g = new GeneratedCode();
@@ -165,8 +163,8 @@ namespace LINQToTTreeLib
 
         public class DummyQueryReference : IQuerySource
         {
-            public string  ItemName {get; set;}
-            public Type  ItemType {get; set;}
+            public string ItemName { get; set; }
+            public Type ItemType { get; set; }
         };
 
         [TestMethod]
@@ -192,13 +190,15 @@ namespace LINQToTTreeLib
 
         class ntup
         {
+#pragma warning disable 0169
             int run;
+#pragma warning restore 0169
         }
 
         [TestMethod]
         public void TestMember()
         {
-            var e = Expression.Field(Expression.Variable(typeof(ntup),"d"), "run");
+            var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "run");
             GeneratedCode gc = new GeneratedCode();
             var r = ExpressionVisitor.GetExpression(e, gc);
             CheckGeneratedCodeEmpty(gc);
