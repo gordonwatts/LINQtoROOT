@@ -362,6 +362,13 @@ namespace LINQToTTreeLib
             var query = DummyQueryExectuor.LastQueryModel;
 
             ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            ntuple._gProxyFile = proxyFile.FullName;
+
+            ///
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
