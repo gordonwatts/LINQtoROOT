@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, res.CodeBody.Statements.Count(), "only single statement expected");
             var ifStatement = res.CodeBody.Statements.First() as StatementFilter;
             Assert.IsNotNull(ifStatement, "if statement isn't an if statement!");
-            Assert.AreEqual("((int)(*d).run)>((int)10)", ifStatement.TestExpression.RawValue, "incorrect if statement");
+            Assert.AreEqual("((int)(*this).run)>((int)10)", ifStatement.TestExpression.RawValue, "incorrect if statement");
 
             ///
             /// Finally, the count statement should be down here!
@@ -128,7 +128,7 @@ namespace LINQToTTreeLib.Tests
 
             var ifStatement = res.CodeBody.Statements.First() as StatementFilter;
             Assert.IsNotNull(ifStatement, "if statement isn't an if statement!");
-            Assert.AreEqual("((bool)((int)(*d).run)>((int)10))&&((bool)((int)(*d).run)<((int)100))", ifStatement.TestExpression.RawValue, "incorrect if statement");
+            Assert.AreEqual("((bool)((int)(*this).run)>((int)10))&&((bool)((int)(*this).run)<((int)100))", ifStatement.TestExpression.RawValue, "incorrect if statement");
         }
 
         [TestMethod]
