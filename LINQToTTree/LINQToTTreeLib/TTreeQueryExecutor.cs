@@ -177,7 +177,16 @@ namespace LINQToTTreeLib
             /// Last job, extract all the variables!
             /// 
 
-            return ExtractResult<T>(result.ResultValue);
+            var final = ExtractResult<T>(result.ResultValue);
+
+            ///
+            /// Ok, we are all done. Try to unload everything now.
+            /// 
+
+            UnloadAllModules();
+            GetQueryDirectory().Delete(true);
+
+            return final;
         }
 
         /// <summary>
@@ -245,8 +254,12 @@ namespace LINQToTTreeLib
             /// 
 
             var result = tree.Process(selector);
-
         }
+
+        /// <summary>
+        /// Keep track of all modules that we've loaded
+        /// </summary>
+        private List<string> _loadedModuleNames = new List<string>();
 
         /// <summary>
         /// Compile and load a file
@@ -261,6 +274,43 @@ namespace LINQToTTreeLib
             /// This should never happen - but we are depending on so many different things to go right here!
             if (result != 1)
                 throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - make sure command 'cl' is defined!!!");
+
+            _loadedModuleNames.Add(templateRunner.Name.Replace(".", "_"));
+        }
+
+        /// <summary>
+        /// Unload all modules that we've loaded. This should have root release the lock on everything.
+        /// </summary>
+        private void UnloadAllModules()
+        {
+            ///
+            /// The library names are a simple "_" replacement. However, the full path must be given to the
+            /// unload function. To avoid any issues we just scan the library list that ROOT has right now, find the
+            /// ones we care about, and unload them. In general this is not a good idea, so when there are random
+            /// crashes this might be a good place to come first! :-)
+            /// 
+
+            var gSystem = ROOTNET.NTSystem.gSystem;
+            var libraries = gSystem.Libraries.Split(' ');
+            _loadedModuleNames.Reverse();
+
+            var full_lib_names = from m in _loadedModuleNames
+                                 from l in libraries
+                                 where l.Contains(m)
+                                 select l;
+
+            ///
+            /// Now that we have them, unload them. Since repeated unloading
+            /// cases erorr messages to the concole, clear the list so we don't
+            /// make a mistake later.
+            /// 
+
+            foreach (var m in full_lib_names)
+            {
+                gSystem.Unload(m);
+            }
+
+            _loadedModuleNames.Clear();
         }
 
         /// <summary>
