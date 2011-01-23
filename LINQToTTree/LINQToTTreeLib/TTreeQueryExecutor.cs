@@ -260,7 +260,7 @@ namespace LINQToTTreeLib
 
             /// This should never happen - but we are depending on so many different things to go right here!
             if (result != 1)
-                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "'");
+                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - make sure command 'cl' is defined!!!");
         }
 
         /// <summary>
