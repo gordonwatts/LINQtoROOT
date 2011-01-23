@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Remotion.Data.Linq.Parsing;
-using LinqToTTreeInterfacesLib;
+using System.ComponentModel.Composition;
 using System.Linq.Expressions;
-using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
+using System.Text;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
-using System.Reflection;
-using System.ComponentModel.Composition;
-using LINQToTTreeLib.TypeHandlers;
+using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
+using Remotion.Data.Linq.Parsing;
 
 namespace LINQToTTreeLib
 {
@@ -180,7 +177,7 @@ namespace LINQToTTreeLib
             {
                 return base.VisitBinaryExpression(expression);
             }
-            
+
             ///
             /// Run the expression
             /// 
@@ -245,7 +242,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            _expr.Append(expression.ReferencedQuerySource.ItemName);
+            _expr.Append(_codeContext.GetReplacement(expression.ReferencedQuerySource.ItemName, expression.ReferencedQuerySource.ItemType).RawValue);
             _exprType = expression.ReferencedQuerySource.ItemType;
 
             return expression;

@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.Variables
         {
             VariableName = varName;
             Type = type;
-            RawValue = "(*this)";
+            RawValue = "this";
             Declare = false;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
@@ -19,12 +20,21 @@ namespace LINQToTTreeLib
         private GeneratedCode _codeEnv;
 
         /// <summary>
+        /// Keep track of the code context
+        /// </summary>
+        private ICodeContext _codeContext;
+
+        /// <summary>
         /// Create a new visitor and add our code to the current spot we are in the "code".
         /// </summary>
         /// <param name="code"></param>
-        public QueryVisitor(GeneratedCode code)
+        public QueryVisitor(GeneratedCode code, ICodeContext context = null)
         {
             _codeEnv = code;
+            _codeContext = context;
+            if (_codeContext == null)
+                _codeContext = new CodeContext();
+
         }
 
         /// <summary>
@@ -68,7 +78,14 @@ namespace LINQToTTreeLib
             /// For the main clause we will just define the variable as "this".
             /// 
 
-            _codeEnv.Add(new VarOutterLoopObjectPointer(fromClause.ItemName, fromClause.ItemType));
+            var outter = new VarOutterLoopObjectPointer(fromClause.ItemName, fromClause.ItemType);
+            _codeEnv.Add(outter);
+
+            ///
+            /// This is a variable replacement we will have to be doing, so register it for later replacement
+            /// 
+
+            _codeContext.Add(outter.VariableName, outter);
         }
 
         /// <summary>
@@ -84,7 +101,7 @@ namespace LINQToTTreeLib
             /// generalized when we loop over more than just a "std::vector".
             /// 
 
-            var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv);
+            var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext);
             _codeEnv.Add(new StatementLoopOnVector(arrayToIterateOver, fromClause.ItemName));
         }
 
@@ -96,7 +113,7 @@ namespace LINQToTTreeLib
         /// <param name="index"></param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            _codeEnv.Add(new Statements.StatementFilter(ExpressionVisitor.GetExpression(whereClause.Predicate, _codeEnv)));
+            _codeEnv.Add(new Statements.StatementFilter(ExpressionVisitor.GetExpression(whereClause.Predicate, _codeEnv, _codeContext)));
         }
     }
 }

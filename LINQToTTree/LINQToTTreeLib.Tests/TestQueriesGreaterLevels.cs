@@ -1,10 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -63,7 +61,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "expected one variable declared");
-            Assert.AreEqual("(*d)", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
+            Assert.AreEqual("this", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
 
             ///
             /// Now, take a lok at the statements and make sure that we see them all correctly. This first guy should be the
@@ -74,7 +72,7 @@ namespace LINQToTTreeLib.Tests
             Assert.IsInstanceOfType(res.CodeBody.Statements.First(), typeof(StatementLoopOnVector), "loop missing!");
 
             var loop = res.CodeBody.Statements.First() as StatementLoopOnVector;
-            Assert.AreEqual("(*d).other", loop.VectorToLoopOver.RawValue, "vector that will be looped over is not specified correctly");
+            Assert.AreEqual("(*this).other", loop.VectorToLoopOver.RawValue, "vector that will be looped over is not specified correctly");
 
             ///
             /// And below that should be one statement that does the incrementing
@@ -109,7 +107,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "expected one variable declared");
-            Assert.AreEqual("(*d)", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
+            Assert.AreEqual("this", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
 
             ///
             /// Now, take a lok at the statements and make sure that we see them all correctly. This first guy should be the
@@ -120,7 +118,7 @@ namespace LINQToTTreeLib.Tests
             Assert.IsInstanceOfType(res.CodeBody.Statements.First(), typeof(StatementLoopOnVector), "loop missing!");
 
             var loop = res.CodeBody.Statements.First() as StatementLoopOnVector;
-            Assert.AreEqual("(*d).other", loop.VectorToLoopOver.RawValue, "vector that will be looped over is not specified correctly");
+            Assert.AreEqual("(*this).other", loop.VectorToLoopOver.RawValue, "vector that will be looped over is not specified correctly");
 
             ///
             /// Second level down...

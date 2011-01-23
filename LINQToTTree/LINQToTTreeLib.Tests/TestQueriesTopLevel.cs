@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -54,7 +51,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "expected one variable declared");
-            Assert.AreEqual("(*d)", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
+            Assert.AreEqual("this", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
 
             ///
             /// Now, take a lok at the statements and make sure that we see them all correctly.
