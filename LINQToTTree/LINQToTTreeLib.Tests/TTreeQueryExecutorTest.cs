@@ -383,25 +383,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual("CommonFiles", dir.GetDirectories()[0].Name, "incorrect name of single existing directory");
         }
 
-        [TestMethod]
-        public void TestLoadingCommonFiles()
-        {
-            /// Create a common C++ object that can be loaded and checked for.
-            var d = PrepNonSpaceDir("TestLoadingCommonFiles");
-            var f = CreateCommonObject("TestLoadingCommonFilesObj", d);
-
-            ///
-            /// Run a simple query - but fool it against another ntuple
-            /// 
-
-            var rootFile = CreateFileOfInt(1);
-            var q = new QueriableDummy<TestNtupe>();
-            var dude = q.Count();
-            var query = DummyQueryExectuor.LastQueryModel;
-
-            Assert.Inconclusive();
-        }
-
         /// <summary>
         /// Prepare/create a common directory that we can use that has no spaces in the name!
         /// </summary>
@@ -490,12 +471,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestLoadingOfExtraObject()
-        {
-            Assert.Inconclusive("Make sure that an independent object is loaded");
-        }
-
-        [TestMethod]
         public void TestQueryCleanup()
         {
             int numberOfIter = 10;
@@ -546,6 +521,79 @@ namespace LINQToTTreeLib
         public void TestDualQueries()
         {
             Assert.Inconclusive("Make sure one query after another doesn't fail - due to global name space, etc.");
+        }
+
+        [TestMethod]
+        public void TestLoadingOfExtraObject()
+        {
+            Assert.Inconclusive("Make sure that an independent object is loaded");
+        }
+
+        [TestMethod]
+        public void TestLoadingCommonFiles()
+        {
+            /// Create a common C++ object that can be loaded and checked for.
+            var d = PrepNonSpaceDir("TestLoadingCommonFiles");
+            string fnamebase = "TestLoadingCommonFilesObj";
+            var f = CreateCommonObject(fnamebase, d);
+
+            ///
+            /// Run a simple query - but fool it against another ntuple
+            /// 
+
+            var rootFile = CreateFileOfInt(1);
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// First, make sure to clear out the common area. We are relying on the fact that we know
+            /// where the common area is for this step.
+            /// 
+
+            var commonArea = new DirectoryInfo(@"C:\Users\gwatts\AppData\Local\Temp\LINQToROOT\CommonFiles");
+            if (commonArea.Exists)
+            {
+                var filesToKill = (from fd in commonArea.EnumerateFiles()
+                                   where fd.Name.Contains(fnamebase)
+                                   select fd).ToArray();
+                foreach (var theFile in filesToKill)
+                {
+                    theFile.Delete();
+                }
+            }
+
+            ///
+            /// Setup all the files we will have to have!
+            /// 
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            ntuple._gProxyFile = proxyFile.FullName;
+            ntuple._gObjectFiles = new string[] { f.FullName };
+
+            ///
+            /// Now run
+            /// 
+
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+
+            Assert.AreEqual(1, result, "The result should have run correctly.");
+
+            ///
+            /// Next, see if we can find the files in the common area.
+            /// 
+
+            commonArea.Refresh();
+            Assert.IsTrue(commonArea.Exists, "The common build area doesn't exist currently");
+            var filesFromOurObj = (from fd in commonArea.EnumerateFiles()
+                                   where fd.Name.Contains(fnamebase)
+                                   select fd).ToArray();
+            Assert.IsTrue(filesFromOurObj.Length > 0, "no files from our common object");
         }
     }
 }
