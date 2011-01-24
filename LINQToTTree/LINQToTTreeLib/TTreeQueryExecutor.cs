@@ -324,6 +324,16 @@ namespace LINQToTTreeLib
 
             var f = CopyToCommonDirectory(GetInfrastructureFile("FlowOutputObject.cpp"));
             CompileAndLoad(f);
+
+            ///
+            /// Next, build any files that are required to build run this ntuple
+            /// 
+
+            foreach (var fd in _extraComponentFiles)
+            {
+                var output = CopyToCommonDirectory(fd);
+                CompileAndLoad(output);
+            }
         }
 
         /// <summary>
