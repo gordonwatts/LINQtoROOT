@@ -135,7 +135,9 @@ namespace LINQToTTreeLib
             Init();
 
             ///
-            /// The query visitor is what we will use to scan the actual guys
+            /// The query visitor is what we will use to scan the actual guys.
+            /// The funny MEF logic is to make sure that if we are called twice we
+            /// don't re-compose this object.
             /// 
 
             var result = new GeneratedCode();
@@ -143,6 +145,8 @@ namespace LINQToTTreeLib
 
             CompositionBatch b = new CompositionBatch();
             b.AddPart(qv);
+            if (_varSaverList == null)
+                b.AddPart(this);
             _gContainer.Compose(b);
 
             ///
@@ -433,6 +437,9 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private IVariableSaver GetVariableSaver(IVariable iVariable)
         {
+            if (_varSaverList == null)
+                throw new InvalidOperationException("The list of variable saver objects is null - was MEF correctly initalized!?");
+
             var saver = (from s in _varSaverList
                          where s.CanHandle(iVariable)
                          select s).FirstOrDefault();
@@ -632,7 +639,6 @@ namespace LINQToTTreeLib
             ExpressionVisitor.TypeHandlers = new TypeHandlers.TypeHandlerCache();
             CompositionBatch b = new CompositionBatch();
             b.AddPart(ExpressionVisitor.TypeHandlers);
-            b.AddPart(this);
             _gContainer.Compose(b);
 
             ///
