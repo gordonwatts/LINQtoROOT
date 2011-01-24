@@ -287,8 +287,11 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSimpleResultOperator()
         {
-            int numberOfIter = 10;
+            RunSimpleCountResult(10);
+        }
 
+        private void RunSimpleCountResult(int numberOfIter)
+        {
             var rootFile = CreateFileOfInt(numberOfIter);
 
             ///
@@ -520,13 +523,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestDualQueries()
         {
-            Assert.Inconclusive("Make sure one query after another doesn't fail - due to global name space, etc.");
-        }
-
-        [TestMethod]
-        public void TestLoadingOfExtraObject()
-        {
-            Assert.Inconclusive("Make sure that an independent object is loaded");
+            RunSimpleCountResult(10);
+            RunSimpleCountResult(20);
         }
 
         [TestMethod]
