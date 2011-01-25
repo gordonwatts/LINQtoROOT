@@ -81,7 +81,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=1.0.4040.2285, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4040.37330, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
