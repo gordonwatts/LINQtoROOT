@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Variables.Savers;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Data.Linq;
@@ -145,7 +146,7 @@ namespace LINQToTTreeLib
 
             CompositionBatch b = new CompositionBatch();
             b.AddPart(qv);
-            if (_varSaverList == null)
+            if (_cppTranslator == null)
                 b.AddPart(this);
             _gContainer.Compose(b);
 
@@ -194,6 +195,22 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Do the work of translating the code into C++
+        /// </summary>
+#pragma warning disable 0649
+        [Import]
+        private CPPTranslator _cppTranslator;
+#pragma warning restore 0649
+
+        /// <summary>
+        /// Keep track of the variable i/o code.
+        /// </summary>
+#pragma warning disable 0649
+        [Import]
+        private VariableSaverManager _varSaver;
+#pragma warning restore 0649
+
+        /// <summary>
         /// Extract the value for iVariable from the results file.
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -216,7 +233,7 @@ namespace LINQToTTreeLib
             try
             {
                 var o = file.Get(iVariable.RawValue);
-                var s = GetVariableSaver(iVariable);
+                var s = _varSaver.Get(iVariable);
                 return s.LoadResult<T>(iVariable, o);
             }
             finally
@@ -356,11 +373,6 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Keep track of all include files we need to pull in. Ugly - because it is global.
-        /// </summary>
-        private List<string> _includeFiles = new List<string>();
-
-        /// <summary>
         /// Write out the TSelector file derived from the already existing query. This now includes all the code we need
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
@@ -384,17 +396,22 @@ namespace LINQToTTreeLib
             var context = new VelocityContext();
             context.Put("baseClassInclude", proxyFileName);
             context.Put("baseClassName", proxyObjectName);
-            context.Put("IncludeFiles", _includeFiles);
 
             ///
             /// Now translate all the code we are looking at
             /// 
 
-            var trans = TranslateGeneratedCode(code);
+            var trans = _cppTranslator.TranslateGeneratedCode(code);
             foreach (var item in trans)
             {
                 context.Put(item.Key, item.Value);
             }
+
+            ///
+            /// Output all the include files, from everywhere we have managed to collect them.
+            /// 
+
+            context.Put("IncludeFiles", _cppTranslator.IncludeFiles);
 
             ///
             /// Now do it!
@@ -408,104 +425,6 @@ namespace LINQToTTreeLib
             }
 
             return ourSelector;
-        }
-
-        /// <summary>
-        /// Do the code translation itself.
-        /// </summary>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        private Dictionary<string, object> TranslateGeneratedCode(GeneratedCode code)
-        {
-            Dictionary<string, object> result = new Dictionary<string, object>();
-            result["ResultVariable"] = TranslateVariable(code.ResultValue);
-            result["ProcessStatements"] = TranslateStatements(code.CodeBody);
-            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValue);
-
-            return result;
-        }
-
-        /// <summary>
-        /// MEF list of guys that can help us save and load up variables.
-        /// </summary>
-#pragma warning disable 0649
-        [ImportMany]
-        IEnumerable<IVariableSaver> _varSaverList;
-#pragma warning restore 0649
-
-        /// <summary>
-        /// Given a variable that has to be transmitted back accross the wire,
-        /// generate the statements that are required to make sure that it goes there!
-        /// </summary>
-        /// <param name="iVariable"></param>
-        /// <returns></returns>
-        private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable)
-        {
-            var saver = GetVariableSaver(iVariable);
-
-            foreach (var f in saver.IncludeFiles(iVariable))
-            {
-                if (!_includeFiles.Contains(f))
-                    _includeFiles.Add(f);
-            }
-
-            return saver.SaveToFile(iVariable);
-        }
-
-        /// <summary>
-        /// Find a saver for a particular variable.
-        /// </summary>
-        /// <param name="iVariable"></param>
-        /// <returns></returns>
-        private IVariableSaver GetVariableSaver(IVariable iVariable)
-        {
-            if (_varSaverList == null)
-                throw new InvalidOperationException("The list of variable saver objects is null - was MEF correctly initalized!?");
-
-            var saver = (from s in _varSaverList
-                         where s.CanHandle(iVariable)
-                         select s).FirstOrDefault();
-            if (saver == null)
-                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.GetType().Name);
-            return saver;
-        }
-
-        /// <summary>
-        /// Translate the incoming statements into something that can be send to the C++ compiler.
-        /// </summary>
-        /// <param name="statements"></param>
-        /// <returns></returns>
-        private IEnumerable<string> TranslateStatements(IStatement statements)
-        {
-            return statements.CodeItUp();
-        }
-
-        /// <summary>
-        /// Helper var that we send off to the macro processor. We have to massage to get from our internal rep into
-        /// somethign that can be used directly by the C++ code.
-        /// </summary>
-        public class VarInfo
-        {
-            private IVariable _iVariable;
-
-            public VarInfo(IVariable iVariable)
-            {
-                // TODO: Complete member initialization
-                this._iVariable = iVariable;
-            }
-            public string VariableName { get { return _iVariable.VariableName; } }
-            public string VariableType { get { return Variables.VarUtils.AsCPPType(_iVariable.Type); } } // C++ type
-            public string InitialValue { get { return _iVariable.InitialValue.RawValue; } }
-        }
-
-        /// <summary>
-        /// Trnaslate the variable type/name into something for our output code.
-        /// </summary>
-        /// <param name="iVariable"></param>
-        /// <returns></returns>
-        private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable)
-        {
-            return new VarInfo(iVariable);
         }
 
         /// <summary>

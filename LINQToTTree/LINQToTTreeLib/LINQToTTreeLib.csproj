@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeContext.cs" />
+    <Compile Include="CPPTranslator.cs" />
     <Compile Include="ExpressionVisitor.cs" />
     <Compile Include="GeneratedCode.cs" />
     <Compile Include="Helpers.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
     <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
+    <Compile Include="Variables\Savers\VariableSaverManager.cs" />
     <Compile Include="Variables\VarObject.cs" />
     <Compile Include="Variables\VarOutterLoopObjectPointer.cs" />
     <Compile Include="Variables\VarSimple.cs" />
