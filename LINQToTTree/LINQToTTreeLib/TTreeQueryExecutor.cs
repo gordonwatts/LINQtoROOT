@@ -384,10 +384,17 @@ namespace LINQToTTreeLib
             var context = new VelocityContext();
             context.Put("baseClassInclude", proxyFileName);
             context.Put("baseClassName", proxyObjectName);
-            context.Put("ResultVariable", TranslateVariable(code.ResultValue));
-            context.Put("ProcessStatements", TranslateStatements(code.CodeBody));
-            context.Put("SlaveTerminateStatements", TranslateFinalizingVariables(code.ResultValue));
             context.Put("IncludeFiles", _includeFiles);
+
+            ///
+            /// Now translate all the code we are looking at
+            /// 
+
+            var trans = TranslateGeneratedCode(code);
+            foreach (var item in trans)
+            {
+                context.Put(item.Key, item.Value);
+            }
 
             ///
             /// Now do it!
@@ -401,6 +408,21 @@ namespace LINQToTTreeLib
             }
 
             return ourSelector;
+        }
+
+        /// <summary>
+        /// Do the code translation itself.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        private Dictionary<string, object> TranslateGeneratedCode(GeneratedCode code)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            result["ResultVariable"] = TranslateVariable(code.ResultValue);
+            result["ProcessStatements"] = TranslateStatements(code.CodeBody);
+            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValue);
+
+            return result;
         }
 
         /// <summary>
