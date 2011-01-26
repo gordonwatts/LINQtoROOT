@@ -133,7 +133,7 @@ namespace LINQToTTreeLib
         public class TestNtupe
         {
 #pragma warning disable 0169
-            int run;
+            public int run;
 #pragma warning restore 0169
         }
 
@@ -592,6 +592,36 @@ namespace LINQToTTreeLib
                                    where fd.Name.Contains(fnamebase)
                                    select fd).ToArray();
             Assert.IsTrue(filesFromOurObj.Length > 0, "no files from our common object");
+        }
+
+        [TestMethod]
+        public void TestInitalizerWithROOTVariable()
+        {
+            const int numberOfIter = 25;
+            var rootFile = CreateFileOfInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.AggregateNoReturn(new ROOTNET.NTH1F("hi", "title", 2, 0.0, 2.0), (h, n) => h.Fill(n.run));
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<ROOTNET.NTH1>(query);
+            Assert.AreEqual(result.Entries, numberOfIter);
         }
     }
 }
