@@ -76,7 +76,7 @@
     <Compile Include="Statements\StatementLoopOnVector.cs" />
     <Compile Include="Statements\StatementSimpleStatement.cs" />
     <Compile Include="TTreeQueryExecutor.cs" />
-    <Compile Include="TypeHandlers\ROOT\ROOTObjectValue.cs" />
+    <Compile Include="TypeHandlers\ROOT\ROOTObjectVariable.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHandlerROOT.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCache.cs" />
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
