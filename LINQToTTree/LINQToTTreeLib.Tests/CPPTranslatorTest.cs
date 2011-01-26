@@ -95,20 +95,20 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestTranslateWithObjectInitialValue()
         {
-            Assert.Inconclusive("not ready yet");
-            CPPTranslator target = new CPPTranslator();
+            /// This is an object we have to load from the input list - make sure we call our template method to do it!
 
-            ROOTObjectValue vobj = new ROOTObjectValue(new ROOTNET.NTH1F("hi", "title", 10, 0.0, 10.0));
-            VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
+            CPPTranslator target = new CPPTranslator();
+            var vObj = new ROOTObjectValue(new ROOTNET.NTH1F("hi", "title", 10, 0.0, 10.0));
+
             GeneratedCode code = new GeneratedCode();
-            code.SetResult(vInt);
+            code.SetResult(vObj);
 
             var r = TranslateGeneratedCode(target, code);
 
             Assert.IsTrue(r.ContainsKey("ResultVariable"), "Result variable is missing");
             Assert.IsInstanceOfType(r["ResultVariable"], typeof(CPPTranslator.VarInfo), "bad type for the result variable");
             var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
-            Assert.AreEqual("2", rv.InitialValue, "initial value");
+            Assert.AreEqual("LoadFromInputList<TH1F>(\"" + vObj.RawValue + "\")", rv.InitialValue, "initial value");
         }
     }
 }
