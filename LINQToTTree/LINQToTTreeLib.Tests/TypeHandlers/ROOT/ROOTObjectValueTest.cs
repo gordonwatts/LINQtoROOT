@@ -9,7 +9,7 @@ using ROOTNET.Interface;
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
     /// <summary>This class contains parameterized unit tests for ROOTObjectValue</summary>
-    [PexClass(typeof(ROOTObjectValue))]
+    [PexClass(typeof(ROOTObjectVariable))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
@@ -17,10 +17,10 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
     {
         /// <summary>Test stub for .ctor(NTObject)</summary>
         [PexMethod]
-        internal ROOTObjectValue Constructor<T>([PexAssumeNotNull] T nTObject)
+        internal ROOTObjectVariable Constructor<T>([PexAssumeNotNull] T nTObject)
             where T : NTObject
         {
-            ROOTObjectValue target = new ROOTObjectValue(nTObject);
+            ROOTObjectVariable target = new ROOTObjectVariable(nTObject);
 
             StringBuilder expected = new StringBuilder();
             expected.AppendFormat("LoadFromInputList<{0}>(\"{1}\")", typeof(T).Name.Substring(1), target.VariableName);
@@ -31,7 +31,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
         /// <summary>Test stub for get_Declare()</summary>
         [PexMethod]
-        internal bool DeclareGet([PexAssumeUnderTest]ROOTObjectValue target)
+        internal bool DeclareGet([PexAssumeUnderTest]ROOTObjectVariable target)
         {
             bool result = target.Declare;
             Assert.IsTrue(result, "declare is false");
@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         [TestMethod]
         public void TestSimpleDeclare()
         {
-            DeclareGet(new ROOTObjectValue(new ROOTNET.NTObject()));
+            DeclareGet(new ROOTObjectVariable(new ROOTNET.NTObject()));
         }
 
         [TestMethod]

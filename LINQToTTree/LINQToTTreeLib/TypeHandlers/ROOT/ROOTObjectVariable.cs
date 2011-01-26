@@ -9,11 +9,11 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
     /// Hold onto a variable that represents a root object. This is actually used only once - when we start up - this
     /// is an object that we ship over the wire!
     /// </summary>
-    class ROOTObjectValue : IVariable
+    class ROOTObjectVariable : IVariable
     {
         private ROOTNET.Interface.NTObject _valueToUse;
 
-        public ROOTObjectValue(ROOTNET.Interface.NTObject nTObject)
+        public ROOTObjectVariable(ROOTNET.Interface.NTObject nTObject)
         {
             if (nTObject == null)
                 throw new ArgumentNullException("nTObject");

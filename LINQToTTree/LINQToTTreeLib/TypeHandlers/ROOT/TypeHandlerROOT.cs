@@ -38,7 +38,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <returns></returns>
         public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv)
         {
-            var val = new ROOTObjectValue(expr.Value as ROOTNET.Interface.NTObject);
+            var val = new ROOTObjectVariable(expr.Value as ROOTNET.Interface.NTObject);
             codeEnv.AddTransfered(val);
             return val;
         }

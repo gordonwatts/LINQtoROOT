@@ -98,7 +98,7 @@ namespace LINQToTTreeLib
             /// This is an object we have to load from the input list - make sure we call our template method to do it!
 
             CPPTranslator target = new CPPTranslator();
-            var vObj = new ROOTObjectValue(new ROOTNET.NTH1F("hi", "title", 10, 0.0, 10.0));
+            var vObj = new ROOTObjectVariable(new ROOTNET.NTH1F("hi", "title", 10, 0.0, 10.0));
 
             GeneratedCode code = new GeneratedCode();
             code.SetResult(vObj);

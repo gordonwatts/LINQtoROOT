@@ -168,8 +168,8 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(res.ResultValue.Type, typeof(ROOTNET.NTH1F), "incorrect result type came back!");
             var varToTrans = res.VariablesToTransfer.ToArray();
             Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
-            Assert.IsInstanceOfType(varToTrans[0], typeof(ROOTObjectValue), "bad object type to transfer");
-            var ro = varToTrans[0] as ROOTObjectValue;
+            Assert.IsInstanceOfType(varToTrans[0], typeof(ROOTObjectVariable), "bad object type to transfer");
+            var ro = varToTrans[0] as ROOTObjectVariable;
             Assert.AreEqual(res.ResultValue.InitialValue.RawValue, ro.VariableName, "variable name for initial values doen't match");
         }
     }
