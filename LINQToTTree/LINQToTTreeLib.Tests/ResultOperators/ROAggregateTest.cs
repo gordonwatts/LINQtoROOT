@@ -1,9 +1,12 @@
 // <copyright file="ROAggregateTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.TypeHandlers.ROOT;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -49,6 +52,7 @@ namespace LINQToTTreeLib.ResultOperators
         public class ntup
         {
             public int run;
+            public IEnumerable<int> vals;
         }
 
         [TestMethod]
@@ -99,6 +103,33 @@ namespace LINQToTTreeLib.ResultOperators
             ROAggregate processor = new ROAggregate();
             GeneratedCode gc = new GeneratedCode();
             var result = ProcessResultOperator(processor, agg, null, gc);
+        }
+
+        /// <summary>
+        /// Test to see if we can pick up a ang with some ROOT object as an initial value. Make sure that
+        /// the value is going to come back, make sure the initial value is set right. Everything else is, I hope,
+        /// set in other place.
+        /// 
+        /// We use the relinq infrastructure to build the test here. Otherwise this is just oo hard!
+        /// </summary>
+        [TestMethod]
+        public void TestWithInitialValueObject()
+        {
+            var q = new QueriableDummy<ntup>();
+            var r = from d in q
+                    select d;
+            var c = r.AggregateNoReturn(new ROOTNET.NTH1F("dude", "put a fork in it", 10, 0.0, 20.0), (h1, n1) => h1.Fill(n1.run));
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            Assert.AreEqual(res.ResultValue.Type, typeof(ROOTNET.NTH1F), "incorrect result type came back!");
+
+            var varToTrans = res.VariablesToTransfer.ToArray();
+            Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
+            Assert.IsInstanceOfType(varToTrans[0], typeof(ROOTObjectVariable), "bad object type to transfer");
+            var ro = varToTrans[0] as ROOTObjectVariable;
+            Assert.AreEqual(res.ResultValue.InitialValue.RawValue, ro.VariableName, "variable name for initial values doen't match");
         }
     }
 }
