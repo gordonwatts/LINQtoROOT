@@ -132,7 +132,6 @@ namespace LINQToTTreeLib
             var st = (r["ProcessStatements"] as IEnumerable<string>).ToArray();
             Assert.AreEqual(5, st.Length, "incorrect number of statements");
             Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initalization");
-
         }
     }
 }
