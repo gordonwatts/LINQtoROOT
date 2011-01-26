@@ -1,8 +1,8 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables.Savers;
 namespace LINQToTTreeLib
 {
     /// <summary>
@@ -20,6 +20,9 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public Dictionary<string, object> TranslateGeneratedCode(GeneratedCode code)
         {
+            if (code == null)
+                throw new ArgumentNullException("code");
+
             Dictionary<string, object> result = new Dictionary<string, object>();
             result["ResultVariable"] = TranslateVariable(code.ResultValue);
             result["ProcessStatements"] = TranslateStatements(code.CodeBody);
@@ -57,7 +60,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Translate the incoming statements into something that can be send to the C++ compiler.
+        /// Translate the incoming statements into somethiRawng that can be send to the C++ compiler.
         /// </summary>
         /// <param name="statements"></param>
         /// <returns></returns>
@@ -71,7 +74,7 @@ namespace LINQToTTreeLib
         /// </summary>
 #pragma warning disable 0649
         [Import]
-        private VariableSaverManager _saver;
+        private IVariableSaverManager _saver;
 #pragma warning restore 0649
 
         /// <summary>

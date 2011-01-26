@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables.Savers;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Data.Linq;
@@ -207,7 +206,7 @@ namespace LINQToTTreeLib
         /// </summary>
 #pragma warning disable 0649
         [Import]
-        private VariableSaverManager _varSaver;
+        private IVariableSaverManager _varSaver;
 #pragma warning restore 0649
 
         /// <summary>

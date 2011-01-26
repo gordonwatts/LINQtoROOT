@@ -6,8 +6,8 @@ using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
-    [Export(typeof(VariableSaverManager))]
-    public class VariableSaverManager
+    [Export(typeof(IVariableSaverManager))]
+    public class VariableSaverManager : IVariableSaverManager
     {
         /// <summary>
         /// MEF list of guys that can help us save and load up variables.
@@ -24,6 +24,8 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public IVariableSaver Get(IVariable iVariable)
         {
+            if (iVariable == null)
+                throw new ArgumentNullException("iVariable can't be null");
             if (_varSaverList == null)
                 throw new InvalidOperationException("The list of variable saver objects is null - was MEF correctly initalized!?");
 
