@@ -1,6 +1,7 @@
 // <copyright file="CPPTranslatorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
@@ -109,6 +110,29 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(r["ResultVariable"], typeof(CPPTranslator.VarInfo), "bad type for the result variable");
             var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
             Assert.AreEqual("LoadFromInputList<TH1F>(\"" + vObj.RawValue + "\")", rv.InitialValue, "initial value");
+        }
+
+        [TestMethod]
+        public void TestObjectInitalizerInInnerBlock()
+        {
+            CPPTranslator target = new CPPTranslator();
+            VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
+            GeneratedCode code = new GeneratedCode();
+            code.SetResult(vInt);
+
+            var innerBlock = new StatementInlineBlock();
+            VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+            innerBlock.Add(vInt2);
+            code.Add(innerBlock);
+
+            var r = TranslateGeneratedCode(target, code);
+
+            Assert.IsTrue(r.ContainsKey("ProcessStatements"), "ProcessStatements missing");
+            Assert.IsInstanceOfType(r["ProcessStatements"], typeof(IEnumerable<string>), "bad processing statements type");
+            var st = (r["ProcessStatements"] as IEnumerable<string>).ToArray();
+            Assert.AreEqual(5, st.Length, "incorrect number of statements");
+            Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initalization");
+
         }
     }
 }
