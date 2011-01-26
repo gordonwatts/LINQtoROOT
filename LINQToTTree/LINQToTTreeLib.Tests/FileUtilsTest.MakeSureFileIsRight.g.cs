@@ -17,23 +17,29 @@ namespace LINQToTTreeLib.Utils
 {
     public partial class FileUtilsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileIsRight24()
-{
-    this.MakeSureFileIsRight("");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileIsRight92()
-{
-    this.MakeSureFileIsRight("\0\0");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileIsRight811()
-{
-    this.MakeSureFileIsRight((string)null);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(FileUtilsTest))]
+        public void MakeSureFileIsRight811()
+        {
+            this.MakeSureFileIsRight((string)null);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(FileUtilsTest))]
+        public void MakeSureFileIsRight24()
+        {
+            this.MakeSureFileIsRight("");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(FileUtilsTest))]
+        public void MakeSureFileIsRight750()
+        {
+            this.MakeSureFileIsRight("\0");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(FileUtilsTest))]
+        public void MakeSureFileIsRight92()
+        {
+            this.MakeSureFileIsRight("\0\0");
+        }
     }
 }

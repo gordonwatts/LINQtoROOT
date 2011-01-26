@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Variables
 [TestMethod]
 [PexGeneratedBy(typeof(ValSimpleTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestCTorWithTypeThrowsArgumentNullException617()
+public void TestCTorWithTypeThrowsArgumentNullException206()
 {
     ValSimple valSimple;
     valSimple = this.TestCTorWithType((string)null, (Type)null);
@@ -27,7 +27,7 @@ public void TestCTorWithTypeThrowsArgumentNullException617()
 [TestMethod]
 [PexGeneratedBy(typeof(ValSimpleTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestCTorWithTypeThrowsArgumentNullException49()
+public void TestCTorWithTypeThrowsArgumentNullException774()
 {
     ValSimple valSimple;
     valSimple = this.TestCTorWithType("", (Type)null);

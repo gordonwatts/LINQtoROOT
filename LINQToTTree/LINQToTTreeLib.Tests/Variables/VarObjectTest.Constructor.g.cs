@@ -16,13 +16,5 @@ namespace LINQToTTreeLib.Variables
 {
     public partial class VarObjectTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(VarObjectTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException597()
-{
-    VarObject varObject;
-    varObject = this.Constructor((Type)null);
-}
     }
 }

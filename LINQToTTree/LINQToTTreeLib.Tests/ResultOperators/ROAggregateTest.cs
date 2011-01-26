@@ -1,16 +1,14 @@
 // <copyright file="ROAggregateTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.ResultOperators;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
-using System.Linq.Expressions;
-using System.Linq;
-using System.Text;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -31,7 +29,10 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode)</summary>
+#if false
+        /// TODO: Get working around pex!
         [PexMethod]
+#endif
         public IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROAggregate target,
             AggregateFromSeedResultOperator resultOperator,
@@ -89,7 +90,7 @@ namespace LINQToTTreeLib.ResultOperators
         [ExpectedException(typeof(NotImplementedException))]
         public void TestWithAgPostSelector()
         {
-            Expression<Func<int,int>> selector = cnt => cnt*2;
+            Expression<Func<int, int>> selector = cnt => cnt * 2;
             AggregateFromSeedResultOperator agg = new AggregateFromSeedResultOperator(Expression.Constant(1),
                 Expression.Lambda(Expression.MakeBinary(ExpressionType.Add, Expression.Parameter(typeof(int), "count"), Expression.Constant(1)),
                 Expression.Parameter(typeof(int), "count")),

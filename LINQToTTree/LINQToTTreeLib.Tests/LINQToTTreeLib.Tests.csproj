@@ -116,6 +116,16 @@
     <Compile Include="CodeContextTest.TestRoundTrip.g.cs">
       <DependentUpon>CodeContextTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="CPPTranslatorTest.Constructor.g.cs">
+      <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CPPTranslatorTest.cs" />
+    <Compile Include="CPPTranslatorTest.IncludeFilesGet.g.cs">
+      <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CPPTranslatorTest.TranslateGeneratedCode.g.cs">
+      <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
     <Compile Include="ExpressionVisitorMethodCallTests.cs" />
     <Compile Include="ExpressionVisitorTest.cs" />
@@ -126,6 +136,7 @@
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Factories\ConstantExpressionFactory.cs" />
+    <Compile Include="Factories\CPPTranslatorFactory.cs" />
     <Compile Include="Factories\GeneratedCodeFactory.cs" />
     <Compile Include="Factories\MethodCallExpressionFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
@@ -181,7 +192,13 @@
     <Compile Include="QVResultOperatorsTest.TestLookupTwice.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\ROAggregateTest.CanHandle.g.cs">
+      <DependentUpon>ROAggregateTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\ROAggregateTest.cs" />
+    <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
+      <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.cs" />
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.ProcessResultOperator.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
@@ -236,6 +253,7 @@
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
     <Compile Include="t_TypeDefTranslator.cs" />
+    <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
     </Compile>

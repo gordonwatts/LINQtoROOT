@@ -20,8 +20,19 @@ namespace LINQToTTreeLib
     {
 [TestMethod]
 [PexGeneratedBy(typeof(CodeContextTest))]
+public void Add773()
+{
+    CodeContext codeContext;
+    VarInteger varInteger;
+    codeContext = new CodeContext();
+    varInteger = new VarInteger();
+    this.Add(codeContext, "\0", (IValue)varInteger);
+    Assert.IsNotNull((object)codeContext);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CodeContextTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException979()
+public void AddThrowsArgumentNullException102()
 {
     CodeContext codeContext;
     codeContext = new CodeContext();
@@ -30,7 +41,7 @@ public void AddThrowsArgumentNullException979()
 [TestMethod]
 [PexGeneratedBy(typeof(CodeContextTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException545()
+public void AddThrowsArgumentNullException532()
 {
     CodeContext codeContext;
     codeContext = new CodeContext();
@@ -39,22 +50,13 @@ public void AddThrowsArgumentNullException545()
 [TestMethod]
 [PexGeneratedBy(typeof(CodeContextTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddThrowsArgumentException561()
+public void AddThrowsArgumentException961()
 {
     CodeContext codeContext;
+    VarInteger varInteger;
     codeContext = new CodeContext();
-    VarInteger s0 = new VarInteger();
-    this.Add(codeContext, "", (IValue)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CodeContextTest))]
-public void Add748()
-{
-    CodeContext codeContext;
-    codeContext = new CodeContext();
-    VarInteger s0 = new VarInteger();
-    this.Add(codeContext, "\0", (IValue)s0);
-    Assert.IsNotNull((object)codeContext);
+    varInteger = new VarInteger();
+    this.Add(codeContext, "", (IValue)varInteger);
 }
     }
 }

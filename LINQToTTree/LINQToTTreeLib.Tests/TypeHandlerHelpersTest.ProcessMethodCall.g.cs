@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessMethodCallThrowsArgumentNullException230()
+public void ProcessMethodCallThrowsArgumentNullException314()
 {
     Expression expression;
     TypeHandlerHelpers s0 = new TypeHandlerHelpers();
@@ -33,7 +33,7 @@ public void ProcessMethodCallThrowsArgumentNullException230()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessMethodCallThrowsNotImplementedException935()
+public void ProcessMethodCallThrowsNotImplementedException662()
 {
     MethodCallExpression methodCallExpression;
     Expression expression;

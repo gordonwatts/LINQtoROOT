@@ -17,5 +17,23 @@ namespace LINQToTTreeLib.Variables
 {
     public partial class VarUtilsTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(VarUtilsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AsCastStringThrowsArgumentNullException82()
+{
+    string s;
+    s = this.AsCastString((IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(VarUtilsTest))]
+public void AsCastString984()
+{
+    VarInteger varInteger;
+    string s;
+    varInteger = new VarInteger();
+    s = this.AsCastString((IValue)varInteger);
+    Assert.AreEqual<string>("((int)anint_38)", s);
+}
     }
 }

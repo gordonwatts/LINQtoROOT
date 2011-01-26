@@ -20,25 +20,28 @@ namespace LINQToTTreeLib
     {
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer218()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException694()
 {
+    VarInteger varInteger;
     GeneratedCode generatedCode;
-    generatedCode = GeneratedCodeFactory.Create();
-    VarInteger s0 = new VarInteger();
-    this.TestAddTransfer(generatedCode, (IVariable)s0);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.IsNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    this.TestAddTransfer(generatedCode, (IVariable)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException404()
+public void TestAddTransfer208()
 {
+    VarInteger varInteger;
     GeneratedCode generatedCode;
-    generatedCode = GeneratedCodeFactory.Create();
-    this.TestAddTransfer(generatedCode, (IVariable)null);
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    this.TestAddTransfer(generatedCode, (IVariable)varInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
 }
     }
 }

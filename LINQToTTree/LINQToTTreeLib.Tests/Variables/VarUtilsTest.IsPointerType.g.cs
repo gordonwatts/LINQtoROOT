@@ -17,13 +17,5 @@ namespace LINQToTTreeLib.Variables
 {
     public partial class VarUtilsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void IsPointerTypeThrowsArgumentNullException265()
-{
-    bool b;
-    b = this.IsPointerType((Type)null);
-}
     }
 }

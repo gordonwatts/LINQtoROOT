@@ -66,7 +66,7 @@ namespace LINQToTTreeLib
         {
             GeneratedCode generatedCode;
             IVariable iVariable;
-            generatedCode = GeneratedCodeFactory.Create();
+            generatedCode = GeneratedCodeFactory.Create(new VarInteger());
             ROCount s0 = new ROCount();
             iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
                                                    (QueryModel)null, (IGeneratedCode)generatedCode);

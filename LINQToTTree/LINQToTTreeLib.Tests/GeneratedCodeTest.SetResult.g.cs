@@ -20,24 +20,28 @@ namespace LINQToTTreeLib
     {
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void SetResultThrowsArgumentNullException376()
+public void SetResult347()
 {
+    VarInteger varInteger;
     GeneratedCode generatedCode;
-    generatedCode = GeneratedCodeFactory.Create();
-    this.SetResult(generatedCode, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void SetResult130()
-{
-    GeneratedCode generatedCode;
-    generatedCode = GeneratedCodeFactory.Create();
-    VarInteger s0 = new VarInteger();
-    this.SetResult(generatedCode, (IVariable)s0);
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    this.SetResult(generatedCode, (IVariable)varInteger);
     Assert.IsNotNull((object)generatedCode);
     Assert.IsNotNull(generatedCode.ResultValue);
     Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException576()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    this.SetResult(generatedCode, (IVariable)null);
 }
     }
 }

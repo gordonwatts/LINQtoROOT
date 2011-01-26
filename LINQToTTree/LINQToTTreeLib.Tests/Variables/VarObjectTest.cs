@@ -1,21 +1,23 @@
 // <copyright file="VarObjectTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Variables
 {
     /// <summary>This class contains parameterized unit tests for VarObject</summary>
+#if false
     [PexClass(typeof(VarObject))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
+#endif
     [TestClass]
     public partial class VarObjectTest
     {
         /// <summary>Test stub for .ctor(Type)</summary>
+#if false
+        /// Pex can't analyze this guy.
         [PexMethod]
+#endif
         internal VarObject Constructor(Type type)
         {
             VarObject target = new VarObject(type);

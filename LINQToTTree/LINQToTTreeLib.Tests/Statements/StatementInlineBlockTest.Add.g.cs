@@ -20,15 +20,6 @@ namespace LINQToTTreeLib.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException724()
-{
-    StatementInlineBlock statementInlineBlock;
-    statementInlineBlock = StatementInlineBlockFactory.Create();
-    this.Add(statementInlineBlock, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
 public void Add47203()
 {
     StatementInlineBlock statementInlineBlock;
@@ -40,24 +31,34 @@ public void Add47203()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void Add676()
+{
+    StatementInlineBlock statementInlineBlock;
+    VarInteger varInteger;
+    statementInlineBlock = StatementInlineBlockFactory.Create();
+    varInteger = new VarInteger();
+    this.Add(statementInlineBlock, (IVariable)varInteger);
+    Assert.IsNotNull((object)statementInlineBlock);
+    Assert.IsNotNull(statementInlineBlock.Statements);
+    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException936()
+public void AddThrowsArgumentNullException298()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock = StatementInlineBlockFactory.Create();
+    this.Add(statementInlineBlock, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException517()
 {
     StatementInlineBlock statementInlineBlock;
     statementInlineBlock = StatementInlineBlockFactory.Create();
     this.Add(statementInlineBlock, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void Add80301()
-{
-    StatementInlineBlock statementInlineBlock;
-    statementInlineBlock = StatementInlineBlockFactory.Create();
-    VarInteger s0 = new VarInteger();
-    this.Add(statementInlineBlock, (IVariable)s0);
-    Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
 }
     }
 }

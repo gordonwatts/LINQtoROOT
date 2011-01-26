@@ -19,5 +19,21 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIncrementIntegerTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
+public void Constructor74601()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = new VarInteger();
+    statementIncrementInteger = this.Constructor(varInteger);
+    Assert.IsNotNull((object)statementIncrementInteger);
+    Assert.IsNotNull(statementIncrementInteger.Integer);
+    Assert.AreEqual<string>("anint_36", statementIncrementInteger.Integer.RawValue);
+    Assert.AreEqual<string>
+        ("anint_36", statementIncrementInteger.Integer.VariableName);
+    Assert.IsNotNull(statementIncrementInteger.Integer.InitialValue);
+    Assert.AreEqual<bool>(true, statementIncrementInteger.Integer.Declare);
+}
     }
 }

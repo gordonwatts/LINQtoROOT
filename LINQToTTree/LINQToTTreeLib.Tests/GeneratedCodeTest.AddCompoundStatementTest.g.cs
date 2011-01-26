@@ -17,35 +17,35 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void AddCompoundStatementTestThrowsArgumentNullException980()
-        {
-            this.AddCompoundStatementTest((IStatement)null);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void AddCompoundStatementTest441()
-        {
-            GeneratedCodeTest.SimpleStatement s0 = new GeneratedCodeTest.SimpleStatement();
-            this.AddCompoundStatementTest((IStatement)s0);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void AddCompoundStatementTest516()
-        {
-            GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
-            compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
-            this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void AddCompoundStatementTest51601()
-        {
-            GeneratedCodeTest.CompoundStatement compoundStatement;
-            compoundStatement = new GeneratedCodeTest.CompoundStatement();
-            this.AddCompoundStatementTest((IStatement)compoundStatement);
-        }
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest441()
+{
+    GeneratedCodeTest.SimpleStatement s0 = new GeneratedCodeTest.SimpleStatement();
+    this.AddCompoundStatementTest((IStatement)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest516()
+{
+    GeneratedCodeTest.CompoundStatement compoundStatement;
+    compoundStatement = new GeneratedCodeTest.CompoundStatement();
+    this.AddCompoundStatementTest((IStatement)compoundStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest51601()
+{
+    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
+    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
+    this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddCompoundStatementTestThrowsArgumentNullException809()
+{
+    this.AddCompoundStatementTest((IStatement)null);
+}
     }
 }

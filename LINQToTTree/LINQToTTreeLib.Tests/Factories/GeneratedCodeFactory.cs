@@ -1,7 +1,5 @@
-using System;
-using Microsoft.Pex.Framework;
-using LINQToTTreeLib;
 using LinqToTTreeInterfacesLib;
+using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib
 {
@@ -10,9 +8,12 @@ namespace LINQToTTreeLib
     {
         /// <summary>A factory for LINQToTTreeLib.GeneratedCode instances</summary>
         [PexFactoryMethod(typeof(GeneratedCode))]
-        public static GeneratedCode Create()
+        public static GeneratedCode Create(IVariable result)
         {
             GeneratedCode generatedCode = new GeneratedCode();
+
+            generatedCode.SetResult(result);
+
             return generatedCode;
         }
     }

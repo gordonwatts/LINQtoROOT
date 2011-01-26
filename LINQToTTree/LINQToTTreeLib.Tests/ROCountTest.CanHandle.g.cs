@@ -10,33 +10,33 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Data.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib
 {
     public partial class ROCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-public void CanHandle66501()
-{
-    bool b;
-    ROCount s0 = new ROCount();
-    b = this.CanHandle(s0, (Type)null);
-    Assert.AreEqual<bool>(false, b);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-public void CanHandle10601()
-{
-    bool b;
-    ROCount s0 = new ROCount();
-    b = this.CanHandle(s0, typeof(CountResultOperator));
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)s0);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        public void CanHandle66501()
+        {
+            bool b;
+            ROCount s0 = new ROCount();
+            b = this.CanHandle(s0, (Type)null);
+            Assert.AreEqual<bool>(false, b);
+            Assert.IsNotNull((object)s0);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        public void CanHandle10601()
+        {
+            bool b;
+            ROCount s0 = new ROCount();
+            b = this.CanHandle(s0, typeof(CountResultOperator));
+            Assert.AreEqual<bool>(true, b);
+            Assert.IsNotNull((object)s0);
+        }
     }
 }

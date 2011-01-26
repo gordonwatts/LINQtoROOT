@@ -20,7 +20,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(CodeContextTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void GetReplacementThrowsArgumentNullException70()
+public void GetReplacementThrowsArgumentNullException69()
 {
     CodeContext codeContext;
     IValue iValue;
@@ -30,7 +30,7 @@ public void GetReplacementThrowsArgumentNullException70()
 [TestMethod]
 [PexGeneratedBy(typeof(CodeContextTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void GetReplacementThrowsArgumentNullException348()
+public void GetReplacementThrowsArgumentNullException854()
 {
     CodeContext codeContext;
     IValue iValue;

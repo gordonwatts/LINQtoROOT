@@ -16,13 +16,5 @@ namespace LINQToTTreeLib.Variables
 {
     public partial class VarUtilsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void AsCPPTypeThrowsArgumentNullException302()
-{
-    string s;
-    s = this.AsCPPType((Type)null);
-}
     }
 }

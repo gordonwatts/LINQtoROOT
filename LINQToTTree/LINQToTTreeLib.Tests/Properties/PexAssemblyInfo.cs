@@ -12,6 +12,8 @@ using Remotion.Data.Linq.Clauses.ResultOperators;
 using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib;
+using Microsoft.Pex.Framework.Suppression;
+using System.Runtime.CompilerServices;
 
 // Microsoft.Pex.Framework.Settings
 [assembly: PexAssemblySettings(TestFramework = "VisualStudioUnitTest")]
@@ -44,3 +46,7 @@ using LINQToTTreeLib;
 [assembly: PexUseType(typeof(StatementIncrementInteger))]
 [assembly: PexInstrumentAssembly("Remotion.Data.Linq")]
 [assembly: PexUseType(typeof(GeneratedCode))]
+[assembly: PexSuppressUninstrumentedMethodFromType(typeof(ConditionalWeakTable<,>))]
+[assembly: PexSuppressStaticFieldStore("System.ComponentModel.Composition.ContractNameServices", "typeIdentityCache")]
+[assembly: PexSuppressStaticFieldStore("System.Linq.EmptyEnumerable`1", "instance")]
+[assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.MEFUtilities", "_batch")]
