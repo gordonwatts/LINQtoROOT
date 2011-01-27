@@ -113,9 +113,13 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Get the list of variables that need to be transfered over the wire.
         /// </summary>
-        public IEnumerable<IVariable> VariablesToTransfer { get { return _variablesToTransfer; } }
+        public IEnumerable<KeyValuePair<string, object>> VariablesToTransfer { get { return _variablesToTransfer; } }
 
-        private List<IVariable> _variablesToTransfer = new List<IVariable>();
+        /// <summary>
+        /// Hold onto the list of items that we will have to send over the wire
+        /// </summary>
+        private Dictionary<string, object> _variablesToTransfer = new Dictionary<string, object>();
+
         /// <summary>
         /// Some variables need to be shipped over the wire to PROOF or the version of root that is
         /// actually doing the work. This is where we
@@ -123,12 +127,14 @@ namespace LINQToTTreeLib
         /// to the source with what we need in it.
         /// </summary>
         /// <param name="v"></param>
-        public void AddTransfered(IVariable v)
+        public void AddTransfered(string name, object val)
         {
-            if (v == null)
-                throw new ArgumentNullException("v");
+            if (val == null)
+                throw new ArgumentNullException("val");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("name");
 
-            _variablesToTransfer.Add(v);
+            _variablesToTransfer[name] = val;
         }
     }
 }

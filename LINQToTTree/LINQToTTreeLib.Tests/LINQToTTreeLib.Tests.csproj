@@ -238,7 +238,7 @@
     <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="TypeHandlers\ROOT\ROOTObjectValueTest.cs" />
+    <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValueTest.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
     </Compile>

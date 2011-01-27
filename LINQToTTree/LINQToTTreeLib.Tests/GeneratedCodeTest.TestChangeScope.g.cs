@@ -19,47 +19,5 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestChangeScope877()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
-    this.TestChangeScope(generatedCode, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestChangeScope114()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    this.TestChangeScope(generatedCode, (IStatement)statementIncrementInteger);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestChangeScopeThrowsArgumentNullException936()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    this.TestChangeScope(generatedCode, (IStatement)null);
-}
     }
 }

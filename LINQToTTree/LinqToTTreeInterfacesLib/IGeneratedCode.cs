@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -27,7 +23,7 @@ namespace LinqToTTreeInterfacesLib
         /// (for example, a ROOT object that needs to be written to a TFile).
         /// </summary>
         /// <param name="v"></param>
-        void AddTransfered(IVariable v);
+        void AddTransfered(string key, object value);
 
         /// <summary>
         /// Returns the outter most coding block

@@ -5,7 +5,6 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -91,25 +90,6 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(r["ResultVariable"], typeof(CPPTranslator.VarInfo), "bad type for the result variable");
             var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
             Assert.AreEqual("2", rv.InitialValue, "initial value");
-        }
-
-        [TestMethod]
-        public void TestTranslateWithObjectInitialValue()
-        {
-            /// This is an object we have to load from the input list - make sure we call our template method to do it!
-
-            CPPTranslator target = new CPPTranslator();
-            var vObj = new ROOTObjectVariable(new ROOTNET.NTH1F("hi", "title", 10, 0.0, 10.0));
-
-            GeneratedCode code = new GeneratedCode();
-            code.SetResult(vObj);
-
-            var r = TranslateGeneratedCode(target, code);
-
-            Assert.IsTrue(r.ContainsKey("ResultVariable"), "Result variable is missing");
-            Assert.IsInstanceOfType(r["ResultVariable"], typeof(CPPTranslator.VarInfo), "bad type for the result variable");
-            var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
-            Assert.AreEqual("LoadFromInputList<TH1F>(\"" + vObj.RawValue + "\")", rv.InitialValue, "initial value");
         }
 
         [TestMethod]

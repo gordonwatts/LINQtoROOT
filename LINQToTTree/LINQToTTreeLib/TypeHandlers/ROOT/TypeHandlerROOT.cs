@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel.Composition;
+using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
-using System.Linq.Expressions;
-using System.ComponentModel.Composition;
 using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
@@ -38,8 +36,26 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <returns></returns>
         public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv)
         {
-            var val = new ROOTObjectVariable(expr.Value as ROOTNET.Interface.NTObject);
-            codeEnv.AddTransfered(val);
+            ///
+            /// The value is a reference that will do the loading.
+            /// 
+
+            var rootObject = expr.Value as ROOTNET.Interface.NTObject;
+            var varNameForTransport = rootObject.GetType().CreateUniqueVariableName();
+            var CPPType = rootObject.GetType().AsCPPType();
+
+            var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType);
+
+            ///
+            /// Next we need to make sure this root object will be queued for sending accross the wire.
+            /// 
+
+            codeEnv.AddTransfered(varNameForTransport, rootObject);
+
+            ///
+            /// Done. Return the guy for later use.
+            /// 
+
             return val;
         }
 

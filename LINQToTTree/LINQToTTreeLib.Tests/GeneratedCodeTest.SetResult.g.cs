@@ -18,30 +18,5 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void SetResult347()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    this.SetResult(generatedCode, (IVariable)varInteger);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void SetResultThrowsArgumentNullException576()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    this.SetResult(generatedCode, (IVariable)null);
-}
     }
 }

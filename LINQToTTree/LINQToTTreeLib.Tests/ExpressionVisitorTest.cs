@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
@@ -55,7 +56,9 @@ namespace LINQToTTreeLib
             var r = GetExpression(myTest.expr, g);
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(myTest.ExpectedType, r.Type, "Type incorrect");
-            Assert.AreEqual(myTest.ExpectedValue, r.RawValue, "Raw value is incorrect");
+            Regex reg = new Regex(myTest.ExpectedValue);
+            var m = reg.Match(r.RawValue);
+            Assert.IsTrue(m.Success, "Raw value is incorrect (expected:" + myTest.ExpectedValue + " actual:" + r.RawValue + ")");
         }
 
         public static List<ConstantTestTemplate> ConstantExpressionTestCases = new List<ConstantTestTemplate>()
@@ -65,7 +68,7 @@ namespace LINQToTTreeLib
             new ConstantTestTemplate(){ ExpectedType=typeof(double), ExpectedValue="10", expr = Expression.Constant((double)10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="true", expr = Expression.Constant(true)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="false", expr = Expression.Constant(false)},
-            new ConstantTestTemplate(){ ExpectedType=typeof(ROOTNET.NTH1F), ExpectedValue="NTH1F_1", expr = Expression.Constant(new ROOTNET.NTH1F("hi", "there", 10, 0.0, 20.0))}
+            new ConstantTestTemplate(){ ExpectedType=typeof(ROOTNET.NTH1F), ExpectedValue="LoadFromInputList\\<TH1F\\>\\(\"NTH1F_.+\"\\)", expr = Expression.Constant(new ROOTNET.NTH1F("hi", "there", 10, 0.0, 20.0))}
         };
 
         [TestMethod]

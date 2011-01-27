@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.TypeHandlers.ROOT;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,6 +21,19 @@ namespace LINQToTTreeLib.ResultOperators
     [TestClass]
     public partial class ROAggregateTest
     {
+        [TestInitialize]
+        public void TestInit()
+        {
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         public bool CanHandle([PexAssumeUnderTest]ROAggregate target, Type resultOperatorType)
@@ -127,9 +139,9 @@ namespace LINQToTTreeLib.ResultOperators
 
             var varToTrans = res.VariablesToTransfer.ToArray();
             Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
-            Assert.IsInstanceOfType(varToTrans[0], typeof(ROOTObjectVariable), "bad object type to transfer");
-            var ro = varToTrans[0] as ROOTObjectVariable;
-            Assert.AreEqual(res.ResultValue.InitialValue.RawValue, ro.VariableName, "variable name for initial values doen't match");
+            Assert.IsInstanceOfType(varToTrans[0], typeof(KeyValuePair<string, object>), "bad object type to transfer");
+            var ro = (KeyValuePair<string, object>)varToTrans[0];
+            Assert.IsTrue(res.ResultValue.InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + res.ResultValue.InitialValue.RawValue + ")");
         }
     }
 }
