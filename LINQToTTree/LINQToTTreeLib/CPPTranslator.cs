@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Variables;
+
 namespace LINQToTTreeLib
 {
     /// <summary>
@@ -50,12 +52,18 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Trnaslate the variable type/name into something for our output code.
+        /// Trnaslate the variable type/name into something for our output code. If this variable requires an
+        /// include file, then we need to make sure it goes in here!
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
         private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable)
         {
+            if (iVariable.Type.IsROOTClass())
+            {
+                _includeFiles.Add(iVariable.Type.Name.Substring(1) + ".h");
+            }
+
             return new VarInfo(iVariable);
         }
 

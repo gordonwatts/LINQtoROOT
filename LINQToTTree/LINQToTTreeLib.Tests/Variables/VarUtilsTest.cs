@@ -47,8 +47,8 @@ namespace LINQToTTreeLib.Variables
         [TestMethod]
         public void TestCPPTypeROOT()
         {
-            Assert.AreEqual("TString", AsCPPType(typeof(ROOTNET.NTString)), "root tstring incorrect");
-            Assert.AreEqual("TString", AsCPPType(typeof(ROOTNET.Interface.NTString)), "root tstring interface incorrect");
+            Assert.AreEqual("TString*", AsCPPType(typeof(ROOTNET.NTString)), "root tstring incorrect");
+            Assert.AreEqual("TString*", AsCPPType(typeof(ROOTNET.Interface.NTString)), "root tstring interface incorrect");
         }
 
         /// <summary>Test stub for AsCastString(IValue)</summary>

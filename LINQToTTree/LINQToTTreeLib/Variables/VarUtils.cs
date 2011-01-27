@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 
@@ -90,11 +88,11 @@ namespace LINQToTTreeLib.Variables
 
             if (t.FullName.StartsWith("ROOTNET.N"))
             {
-                return t.FullName.Substring(9);
+                return t.FullName.Substring(9) + "*";
             }
             if (t.FullName.StartsWith("ROOTNET.Interface.N"))
             {
-                return t.FullName.Substring(19);
+                return t.FullName.Substring(19) + "*";
             }
 
             ///
@@ -128,6 +126,27 @@ namespace LINQToTTreeLib.Variables
         {
             _variableNameCounter += 1;
             return varbasename + "_" + _variableNameCounter.ToString();
+        }
+
+        /// <summary>
+        /// Figure out if this is a root class or not!
+        /// </summary>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        public static bool IsROOTClass(this string className)
+        {
+            var c = ROOTNET.NTClass.GetClass(className);
+            return c != null;
+        }
+
+        /// <summary>
+        /// Returns true if this type is a ROOT class
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static bool IsROOTClass(this Type t)
+        {
+            return t.Name.Substring(1).IsROOTClass();
         }
     }
 }

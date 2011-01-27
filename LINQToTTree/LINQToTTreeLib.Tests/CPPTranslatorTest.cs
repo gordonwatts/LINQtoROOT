@@ -113,5 +113,26 @@ namespace LINQToTTreeLib
             Assert.AreEqual(5, st.Length, "incorrect number of statements");
             Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initalization");
         }
+
+        [TestMethod]
+        public void TestObjectPointer()
+        {
+            CPPTranslator target = new CPPTranslator();
+            VarObject obj = new VarObject(typeof(ROOTNET.NTH1F));
+            GeneratedCode code = new GeneratedCode();
+            code.SetResult(obj);
+
+            var r = TranslateGeneratedCode(target, code);
+
+            var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
+            Assert.AreEqual("TH1F*", rv.VariableType, "type is not right");
+            var inFiles = target.IncludeFiles.ToArray();
+            foreach (var item in inFiles)
+            {
+                Console.WriteLine("include file '{0}'", item);
+            }
+
+            Assert.IsTrue(inFiles.Contains("TH1F.h"), "Missing include file");
+        }
     }
 }
