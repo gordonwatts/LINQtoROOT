@@ -255,6 +255,7 @@
     </Compile>
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
+    <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
     <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
     </Compile>

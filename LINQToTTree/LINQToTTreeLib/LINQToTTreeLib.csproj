@@ -84,6 +84,7 @@
     <Compile Include="Utils\QVResultOperators.cs" />
     <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
     <Compile Include="Variables\Savers\VariableSaverManager.cs" />
+    <Compile Include="Variables\Savers\SaveVarObject.cs" />
     <Compile Include="Variables\VarObject.cs" />
     <Compile Include="Variables\VarOutterLoopObjectPointer.cs" />
     <Compile Include="Variables\VarSimple.cs" />
