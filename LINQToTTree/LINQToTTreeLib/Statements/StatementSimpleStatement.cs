@@ -11,7 +11,9 @@ namespace LINQToTTreeLib.Statements
     {
         public StatementSimpleStatement(string line)
         {
-            Line = line;
+            Line = line.Trim();
+            if (Line.EndsWith(";"))
+                Line = Line.Substring(0, Line.Length - 1);
         }
         public string Line { get; private set; }
 
