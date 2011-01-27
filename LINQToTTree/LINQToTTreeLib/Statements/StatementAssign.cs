@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -14,6 +13,7 @@ namespace LINQToTTreeLib.Statements
             ResultVariable = accumulator;
             Expression = funcResolved;
         }
+
         /// <summary>
         /// The guy that will be set.
         /// </summary>
@@ -30,7 +30,11 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            throw new NotImplementedException();
+            var result = ResultVariable.RawValue;
+            var setTo = Expression.RawValue;
+
+            if (result != setTo)
+                yield return result + "=" + setTo + ";";
         }
     }
 }
