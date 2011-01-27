@@ -59,7 +59,7 @@ namespace LINQToTTreeLib
                 throw new InvalidOperationException("LINQToTTree can't translate the operator '" + resultOperator.ToString() + "'");
             }
 
-            var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv);
+            var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext);
             if (result != null)
             {
                 _codeEnv.SetResult(result);

@@ -1,18 +1,17 @@
 // <copyright file="TakeSkipOperatorsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.ResultOperators;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework.Using;
-using LINQToTTreeLib.Tests;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -52,8 +51,9 @@ namespace LINQToTTreeLib.ResultOperators
             IGeneratedCode codeEnv
         )
         {
+            CodeContext c = new CodeContext();
             IVariable result
-               = target.ProcessResultOperator(resultOperator, queryModel, codeEnv);
+               = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c);
 
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will

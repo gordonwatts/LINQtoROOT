@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinqToTTreeInterfacesLib;
 using System.ComponentModel.Composition;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using Remotion.Data.Linq.Clauses;
+using LinqToTTreeInterfacesLib;
 using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses;
+using Remotion.Data.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -36,7 +33,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator (ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext)
         {
             ///
             /// First, do data normalization

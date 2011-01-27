@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel.Composition;
 using LinqToTTreeInterfacesLib;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq;
-using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
+using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses;
+using Remotion.Data.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -35,7 +32,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext context)
         {
             ///
             /// Basic code checks
@@ -79,9 +76,9 @@ namespace LINQToTTreeLib.ResultOperators
             /// accumulator - the other arguments have all been replaced with subqueryexpressions and the like!
             /// 
 
-            CodeContext cc = new CodeContext();
-            cc.Add(a.Func.Parameters[0].Name, accumulator);
-            var funcResolved = ExpressionVisitor.GetExpression(a.Func.Body, _codeEnv, cc);
+            var p1 = context.Add(a.Func.Parameters[0].Name, accumulator);
+            var funcResolved = ExpressionVisitor.GetExpression(a.Func.Body, _codeEnv, context);
+            p1.Pop();
 
             _codeEnv.Add(new StatementAssign(accumulator, funcResolved));
 

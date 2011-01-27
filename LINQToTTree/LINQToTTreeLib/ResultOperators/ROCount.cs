@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinqToTTreeInterfacesLib;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using System.Diagnostics;
 using System.ComponentModel.Composition;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
+using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses;
+using Remotion.Data.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib
 {
@@ -37,7 +33,7 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext)
         {
             if (codeEnv == null)
                 throw new ArgumentNullException("CodeEnv must not be null!");

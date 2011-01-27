@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel.Composition;
 using LinqToTTreeInterfacesLib;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq;
-using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
+using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses;
+using Remotion.Data.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -38,7 +35,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext)
         {
             ///
             /// Quick checks to make sure
@@ -74,11 +71,11 @@ namespace LINQToTTreeLib.ResultOperators
             if (skip != null)
             {
                 comparison = StatementIfOnCount.ComparisonOperator.GreaterThan;
-                comparisonValue = ExpressionVisitor.GetExpression(skip.Count, codeEnv);
+                comparisonValue = ExpressionVisitor.GetExpression(skip.Count, codeEnv, codeContext);
             }
             else
             {
-                comparisonValue = ExpressionVisitor.GetExpression(take.Count, codeEnv);
+                comparisonValue = ExpressionVisitor.GetExpression(take.Count, codeEnv, codeContext);
             }
 
             codeEnv.Add(new StatementIfOnCount(counter, comparisonValue, comparison));

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinqToTTreeInterfacesLib;
-using System.Linq.Expressions;
-using System.Diagnostics;
 using System.ComponentModel.Composition;
+using System.Linq;
+using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -40,6 +38,7 @@ namespace LINQToTTreeLib.TypeHandlers
 
         /// <summary>
         /// If one of the helper functions needs to be parsed, we end up here.
+        /// Note: this is a bit tricky, and, worse, this is not tested (too complex :-)).
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="result"></param>
@@ -67,14 +66,19 @@ namespace LINQToTTreeLib.TypeHandlers
                 var lambdaParameters = (parameterSpec.GetValue(action, null) as IEnumerable<ParameterExpression>).ToArray();
 
                 ///
-                /// Next, do the lambda expression
+                /// Next, do the lambda expression. Order of p1 and p2 is b/c we should make sure that it happens
+                /// before any parameters are replaced!
                 /// 
 
                 var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context);
-                context.Add(lambdaParameters[0].Name, returnedValue);
-                context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context));
+                var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context));
+                var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
 
                 var statementBody = ExpressionVisitor.GetExpression(action, gc, context);
+
+                p2.Pop();
+                p1.Pop();
+
                 gc.Add(new Statements.StatementSimpleStatement(statementBody.RawValue));
 
                 ///

@@ -1,14 +1,12 @@
 // <copyright file="QVResultOperatorsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 
 using System;
-using LINQToTTreeLib.Utils;
+using System.ComponentModel.Composition;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Tests;
-using LinqToTTreeInterfacesLib;
-using System.ComponentModel.Composition;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -47,7 +45,7 @@ namespace LINQToTTreeLib.Utils
             }
 
 
-            public IVariable ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Data.Linq.QueryModel queryModel, IGeneratedCode _codeEnv)
+            public IVariable ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Data.Linq.QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext codeContext)
             {
                 throw new NotImplementedException();
             }

@@ -29,7 +29,8 @@ namespace LINQToTTreeLib
             IGeneratedCode codeEnv
         )
         {
-            IVariable result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv);
+            CodeContext c = new CodeContext();
+            IVariable result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c);
             Assert.AreEqual(1, codeEnv.CodeBody.Statements.Count(), "Expected an added statement!");
             Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.First(), typeof(StatementIncrementInteger), "Statement to inc the integer must have been done!");
             Assert.IsInstanceOfType(result, typeof(VarInteger), "Expected to be calculating an integer");

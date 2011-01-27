@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -19,6 +16,6 @@ namespace LinqToTTreeInterfacesLib
         /// <returns></returns>
         bool CanHandle(Type resultOperatorType);
 
-        IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv);
+        IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext);
     }
 }
