@@ -1,7 +1,6 @@
 // <copyright file="CodeContextTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +23,35 @@ namespace LINQToTTreeLib
         )
         {
             target.Add(varName, replacementName);
+            Assert.AreEqual(replacementName, target.GetReplacement(varName, replacementName.Type), "value didn't come out correctly");
             // TODO: add assertions to method CodeContextTest.Add(CodeContext, String, IValue)
+        }
+
+        /// <summary>
+        /// Test for poping variables off and on.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="varName"></param>
+        /// <param name="replacement1"></param>
+        /// <param name="replacement2"></param>
+        [PexMethod]
+        public void AddWithPop([PexAssumeUnderTest]CodeContext target,
+           [PexAssumeNotNull] string varName, [PexAssumeNotNull]IValue replacement1, [PexAssumeNotNull]IValue replacement2)
+        {
+            target.Add(varName, replacement1);
+            Assert.AreEqual(replacement1, target.GetReplacement(varName, replacement1.Type), "value didn't come out correctly");
+            var r = target.Add(varName, replacement2);
+            Assert.AreEqual(replacement2, target.GetReplacement(varName, replacement2.Type), "value didn't come out correctly for 2nd replacement");
+            r.Pop();
+            Assert.AreEqual(replacement1, target.GetReplacement(varName, replacement1.Type), "pop didn't come out correctly");
+        }
+
+        [TestMethod]
+        public void TestPop()
+        {
+            var replacement1 = new Variables.ValSimple("freakout", typeof(int));
+            var replacement2 = new Variables.ValSimple("stuff", typeof(string));
+            AddWithPop(new CodeContext(), "bogus", replacement1, replacement2);
         }
 
         /// <summary>Test stub for .ctor()</summary>
@@ -50,10 +77,10 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod]
-        [PexAssertReachEventually("all", StopWhenAllReached=true)]
+        [PexAssertReachEventually("all", StopWhenAllReached = true)]
         public IValue TestRoundTrip([PexAssumeUnderTest]CodeContext target,
             string varName,
-            [PexAssumeNotNull] string replName, 
+            [PexAssumeNotNull] string replName,
             [PexAssumeNotNull] Type t)
         {
             var r1 = target.GetReplacement(varName, t);
