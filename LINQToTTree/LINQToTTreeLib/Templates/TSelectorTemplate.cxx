@@ -115,4 +115,24 @@ private:
 			GetOutputList()->Add(new FlowOutputObject(o, objName.c_str(), ""));
 		}
 	}
+
+	///
+	/// Load from the input list a name of some item
+	///
+	template<class T>
+	T LoadFromInputList(const std::string &name)
+	{
+		if (fInput == 0) {
+			std::cout << "Unable to load (object '" << name << "') from the input list - the list is null!" << std::endl;
+			throw std::exception(("Unable to load from input list the object called '" + name + "'.").c_str());
+		}
+
+		T result = static_cast<T>(fInput->FindObject(name.c_str()));
+		if (result == 0) {
+			std::cout << "Unable to find object '" << name << "' in the input list!" << std::endl;
+			throw std::exception(("Unable to load object '" + name + "' from the input list - not found!").c_str());
+		}
+
+		return result;
+	}
 };

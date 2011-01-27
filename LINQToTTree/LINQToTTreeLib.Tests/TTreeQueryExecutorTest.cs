@@ -620,7 +620,7 @@ namespace LINQToTTreeLib
 
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
-            var result = exe.ExecuteScalar<ROOTNET.NTH1>(query);
+            var result = exe.ExecuteScalar<ROOTNET.Interface.NTH1F>(query);
             Assert.AreEqual(result.Entries, numberOfIter);
         }
     }

@@ -175,7 +175,7 @@ namespace LINQToTTreeLib
             /// Fantastic! Now we need to run the object!
             /// 
 
-            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name));
+            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), result.VariablesToTransfer);
 
             ///
             /// Last job, extract all the variables!
@@ -246,7 +246,7 @@ namespace LINQToTTreeLib
         /// We actually run the query!
         /// </summary>
         /// <param name="tSelectorClassName">Name of the TSelector object</param>
-        private void RunNtupleQuery(string tSelectorClassName)
+        private void RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad)
         {
             ///
             /// Create a new TSelector to run
@@ -268,6 +268,21 @@ namespace LINQToTTreeLib
             var tree = rf.Get(_treeName) as ROOTNET.Interface.NTTree;
             if (tree == null)
                 throw new InvalidOperationException("Unable to find tree '" + _treeName + "' in file '" + _rootFile.FullName + "'.");
+
+            ///
+            /// If there are any objects we need to send to the selector, then send them on now
+            /// 
+
+            var objInputList = new ROOTNET.NTList();
+            foreach (var item in variablesToLoad)
+            {
+                var obj = item.Value as ROOTNET.Interface.NTNamed;
+                if (obj == null)
+                    throw new InvalidOperationException("Can only deal with named objects");
+                obj.SetName(item.Key);
+                objInputList.Add(obj);
+            }
+            selector.InputList = objInputList;
 
             ///
             /// Finally, run the whole thing

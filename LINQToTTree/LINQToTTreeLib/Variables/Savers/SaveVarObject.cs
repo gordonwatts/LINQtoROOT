@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
@@ -60,6 +61,9 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj)
         {
+            if (obj == null)
+                throw new ArgumentNullException("Obj cannot be null");
+
             return (T)obj;
         }
     }
