@@ -17,7 +17,7 @@ namespace LINQToTTreeLib.Statements
 
         public IEnumerable<string> CodeItUp()
         {
-            yield return Line;
+            yield return Line + ";";
         }
     }
 }
