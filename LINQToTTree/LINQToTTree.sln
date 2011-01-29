@@ -3,6 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A6EE159-F508-458E-82A5-95A79B6DEBC5}"
 	ProjectSection(SolutionItems) = preProject
+		Code Coverage.testsettings = Code Coverage.testsettings
 		LINQToTTree.vsmdi = LINQToTTree.vsmdi
 		Local.testsettings = Local.testsettings
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings

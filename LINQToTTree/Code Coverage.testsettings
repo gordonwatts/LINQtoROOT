@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestSettings name="Code Coverage" id="886f75ba-35cb-45fc-aa05-e596311df0a6" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Description>These are default test settings for a local test run, with code coverage gathering turned on</Description>
+  <Execution>
+    <TestTypeSpecific>
+      <UnitTestRunConfig testTypeId="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b">
+        <AssemblyResolution>
+          <TestDirectory useLoadContext="true" />
+        </AssemblyResolution>
+      </UnitTestRunConfig>
+    </TestTypeSpecific>
+    <AgentRule name="LocalMachineDefaultRole">
+      <DataCollectors>
+        <DataCollector uri="datacollector://microsoft/CodeCoverage/1.0" assemblyQualifiedName="Microsoft.VisualStudio.TestTools.CodeCoverage.CoveragePlugIn, Microsoft.VisualStudio.QualityTools.Plugins.CodeCoverage, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" friendlyName="Code Coverage">
+          <Configuration>
+            <CodeCoverage xmlns="">
+              <Regular>
+                <CodeCoverageItem binaryFile="LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll" pdbFile="LINQToTTreeLib\bin\Debug\LINQToTTreeLib.pdb" />
+                <CodeCoverageItem binaryFile="TTreeClassGenerator\bin\Debug\TTreeClassGenerator.dll" pdbFile="TTreeClassGenerator\bin\Debug\TTreeClassGenerator.pdb" />
+                <CodeCoverageItem binaryFile="TTreeParser\bin\Debug\TTreeParser.dll" pdbFile="TTreeParser\bin\Debug\TTreeParser.pdb" />
+              </Regular>
+            </CodeCoverage>
+          </Configuration>
+        </DataCollector>
+      </DataCollectors>
+    </AgentRule>
+  </Execution>
+</TestSettings>
