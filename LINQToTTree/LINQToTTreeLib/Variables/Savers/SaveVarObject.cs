@@ -64,9 +64,7 @@ namespace LINQToTTreeLib.Variables.Savers
             if (obj == null)
                 throw new ArgumentNullException("Obj cannot be null");
 
-            ROOTNET.NTDirectory.gDirectory.List.Remove(obj);
-
-            return (T)obj;
+            return (T)obj.Clone();
         }
     }
 }

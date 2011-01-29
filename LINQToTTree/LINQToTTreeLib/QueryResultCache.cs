@@ -90,9 +90,10 @@ namespace LINQToTTreeLib
         /// <param name="o"></param>
         public void CacheItem(FileInfo sourceFile, QueryModel qm, ROOTNET.Interface.NTObject o)
         {
+            var osaver = o.Clone();
             var rootFile = GetROOTCacheFile(sourceFile, qm, true);
             var trf = new ROOTNET.NTFile(rootFile.FullName, "RECREATE");
-            o.Write();
+            osaver.Write();
             trf.Write();
             trf.Close();
         }
