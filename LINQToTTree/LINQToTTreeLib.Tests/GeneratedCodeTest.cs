@@ -150,7 +150,7 @@ namespace LINQToTTreeLib
         public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, string name, object val)
         {
             int count = target.VariablesToTransfer.Count();
-            target.AddTransfered(name, val);
+            target.QueueForTransfer(name, val);
             Assert.IsNotNull(target.VariablesToTransfer.Last());
             Assert.AreEqual(count + 1, target.VariablesToTransfer.Count());
         }

@@ -127,7 +127,7 @@ namespace LINQToTTreeLib
         /// to the source with what we need in it.
         /// </summary>
         /// <param name="v"></param>
-        public void AddTransfered(string name, object val)
+        public void QueueForTransfer(string name, object val)
         {
             if (val == null)
                 throw new ArgumentNullException("val");

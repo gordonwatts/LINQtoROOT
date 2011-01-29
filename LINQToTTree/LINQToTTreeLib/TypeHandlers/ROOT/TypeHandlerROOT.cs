@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             /// Next we need to make sure this root object will be queued for sending accross the wire.
             /// 
 
-            codeEnv.AddTransfered(varNameForTransport, rootObject);
+            codeEnv.QueueForTransfer(varNameForTransport, rootObject);
 
             ///
             /// Done. Return the guy for later use.

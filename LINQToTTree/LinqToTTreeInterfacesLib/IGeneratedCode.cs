@@ -23,7 +23,7 @@ namespace LinqToTTreeInterfacesLib
         /// (for example, a ROOT object that needs to be written to a TFile).
         /// </summary>
         /// <param name="v"></param>
-        void AddTransfered(string key, object value);
+        void QueueForTransfer(string key, object value);
 
         /// <summary>
         /// Returns the outter most coding block
