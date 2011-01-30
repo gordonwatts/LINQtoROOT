@@ -22,6 +22,11 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
             ntuple.Reset();
+
+            /// Get the path for the other nutple guy correct!
+            DirectoryInfo projectDir = new DirectoryInfo(Environment.CurrentDirectory + @"\..\..\..\..");
+            ntuple_with_proxy._gProxyFile = projectDir.FullName + @"\DemosAndTests\GenerateNtupleXMLSpec\ntuple_btag.h";
+            Assert.IsTrue(File.Exists(ntuple_with_proxy._gProxyFile), "Proxy file we are using for testing isn't around!");
         }
 
         [TestCleanup]
@@ -549,7 +554,7 @@ namespace LINQToTTreeLib
             /// where the common area is for this step.
             /// 
 
-            var commonArea = new DirectoryInfo(@"C:\Users\gwatts\AppData\Local\Temp\LINQToROOT\CommonFiles");
+            var commonArea = new DirectoryInfo(System.Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Temp\LINQToROOT\CommonFiles");
             if (commonArea.Exists)
             {
                 var filesToKill = (from fd in commonArea.EnumerateFiles()
