@@ -33,6 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
@@ -54,9 +57,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=1.0.4017.847, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
-    </Reference>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4040.37330, Culture=neutral, processorArchitecture=x86" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ntupleDataModel.cs" />
@@ -75,6 +76,10 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(SolutionDir)\..\LINQToTTree\LINQToTTreeLib\bin\Debug\InfrastructureSourceFiles" ".\InfrastructureSourceFiles\"
+xcopy "$(SolutionDir)\..\LINQToTTree\LINQToTTreeLib\bin\Debug\Templates" ".\Templates\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
