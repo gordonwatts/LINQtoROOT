@@ -41,7 +41,8 @@
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libPhysicsWrapper.dll</HintPath>
     </Reference>
     <Reference Include="LINQToTTreeLib">
-      <HintPath>..\..\LINQToROOT\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
+      <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Remotion.Data.Linq, Version=1.13.41.2, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\..\LINQToTTree\RemotionRelinq_1.13.41.0\net-3.5\bin\debug\Remotion.Data.Linq.dll</HintPath>
