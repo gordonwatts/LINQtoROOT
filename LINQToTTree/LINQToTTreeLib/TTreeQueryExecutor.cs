@@ -320,7 +320,12 @@ namespace LINQToTTreeLib
             /// Finally, run the whole thing
             /// 
 
-            var result = tree.Process(selector);
+            {
+                var f = new ROOTNET.NTFile(_rootFiles[0].FullName, "READ");
+                var t = f.Get(_treeName) as ROOTNET.Interface.NTTree;
+                t.Process(selector);
+            }
+            //var result = tree.Process(selector);
         }
 
         /// <summary>
@@ -525,6 +530,7 @@ namespace LINQToTTreeLib
 
             var includeFiles = FindIncludeFiles(sourceFile);
             var goodIncludeFiles = from f in includeFiles
+                                   where !Path.IsPathRooted(f)
                                    let full = new FileInfo(sourceFile.DirectoryName + "\\" + f)
                                    where full.Exists
                                    select full;
