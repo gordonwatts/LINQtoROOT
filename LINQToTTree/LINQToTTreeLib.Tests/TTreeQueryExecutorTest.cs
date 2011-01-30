@@ -105,7 +105,7 @@ namespace LINQToTTreeLib
             }
 
 
-            TTreeQueryExecutor target = new TTreeQueryExecutor(rootFile, treeName, typeof(ntuple));
+            TTreeQueryExecutor target = new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(ntuple));
 
             Assert.IsNotNull(rootFile, "rootfile can't be null here");
             rootFile.Refresh();
@@ -191,7 +191,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple_nothing));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple_nothing));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -219,7 +219,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple_with_proxy));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple_with_proxy));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -247,7 +247,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -276,7 +276,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = "junk.cppxdude";
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -313,7 +313,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -375,7 +375,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
 
             DirectoryInfo dir = TTreeQueryExecutor.TempDirectory;
@@ -507,7 +507,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
 
@@ -577,7 +577,7 @@ namespace LINQToTTreeLib
             /// Now run
             /// 
 
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
 
             Assert.AreEqual(1, result, "The result should have run correctly.");
@@ -619,7 +619,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(rootFile, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<ROOTNET.Interface.NTH1F>(query);
             Assert.AreEqual(result.Entries, numberOfIter);
         }

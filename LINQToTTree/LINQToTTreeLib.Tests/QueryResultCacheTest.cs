@@ -41,7 +41,7 @@ namespace LINQToTTreeLib
             NTObject o
         )
         {
-            target.CacheItem(_rootFile, qm, o);
+            target.CacheItem(new FileInfo[] { _rootFile }, qm, o);
             // TODO: add assertions to method QueryResultCacheTest.CacheItem(QueryResultCache, FileInfo, QueryModel, NTObject)
         }
 
@@ -55,7 +55,7 @@ namespace LINQToTTreeLib
             IVariableSaver varSaver
         )
         {
-            var result = target.Lookup<T>(_rootFile, queryModel, varSaver, null);
+            var result = target.Lookup<T>(new FileInfo[] { _rootFile }, queryModel, varSaver, null);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
             // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
@@ -187,7 +187,7 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(f, query, h);
+            q.CacheItem(new FileInfo[] { f }, query, h);
 
             var r = Lookup<int>(q, f, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
@@ -205,7 +205,7 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(f, query, h);
+            q.CacheItem(new FileInfo[] { f }, query, h);
 
             /// Modify the file
 

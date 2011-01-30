@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using NVelocity;
@@ -19,9 +20,9 @@ namespace LINQToTTreeLib
     public class TTreeQueryExecutor : IQueryExecutor
     {
         /// <summary>
-        /// The root file that this exector operates on
+        /// The root files that this exector operates on
         /// </summary>
-        private FileInfo _rootFile;
+        private FileInfo[] _rootFiles;
 
         /// <summary>
         /// The tree name that in the root file that this guy operates on.
@@ -41,18 +42,39 @@ namespace LINQToTTreeLib
         /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
-        /// <param name="rootFile"></param>
+        /// <param name="rootFiles"></param>
         /// <param name="treeName"></param>
-        public TTreeQueryExecutor(FileInfo rootFile, string treeName, Type baseNtupleObject)
+        public TTreeQueryExecutor(FileInfo[] rootFiles, string treeName, Type baseNtupleObject)
         {
             ///
             /// Basic checks
             /// 
 
-            if (rootFile == null)
+            if (rootFiles == null)
                 throw new ArgumentNullException("Must have good root file");
-            if (!rootFile.Exists)
-                throw new ArgumentException("File '" + rootFile.FullName + "' not found");
+
+            var nullFiles = (from f in rootFiles
+                             where f == null
+                             select f).ToArray();
+            if (nullFiles.Length > 0)
+            {
+                throw new ArgumentNullException("Null FileInfo passed to LINKToTTree");
+            }
+
+            var badFiles = (from f in rootFiles
+                            where !f.Exists
+                            select f).ToArray();
+            if (badFiles.Length > 0)
+            {
+                StringBuilder bld = new StringBuilder();
+                bld.Append("The following file(s) do not exist and so can't be processed: ");
+                foreach (var f in badFiles)
+                {
+                    bld.AppendFormat("{0} ", f.FullName);
+                }
+                throw new FileNotFoundException(bld.ToString());
+
+            }
             if (treeName == null)
                 throw new ArgumentNullException("The tree must have a valid name");
             if (string.IsNullOrWhiteSpace(treeName))
@@ -102,7 +124,7 @@ namespace LINQToTTreeLib
             /// Save the values
             /// 
 
-            _rootFile = rootFile;
+            _rootFiles = rootFiles;
             _treeName = treeName;
         }
 
@@ -161,7 +183,7 @@ namespace LINQToTTreeLib
             /// Next, see if we have a cache for this
             /// 
 
-            var cacheHit = _cache.Lookup<T>(_rootFile, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
+            var cacheHit = _cache.Lookup<T>(_rootFiles, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
             if (cacheHit.Item1)
                 return cacheHit.Item2;
 
@@ -242,7 +264,7 @@ namespace LINQToTTreeLib
             try
             {
                 var o = file.Get(iVariable.RawValue);
-                _cache.CacheItem(_rootFile, qm, o);
+                _cache.CacheItem(_rootFiles, qm, o);
                 var s = _varSaver.Get(iVariable);
                 return s.LoadResult<T>(iVariable, o);
             }
@@ -270,15 +292,14 @@ namespace LINQToTTreeLib
             var selector = cls.New() as ROOTNET.Interface.NTSelector;
 
             ///
-            /// Fetch out the tree now
+            /// Create the chain and load file files into it.
             /// 
 
-            var rf = new ROOTNET.NTFile(_rootFile.FullName, "READ");
-            if (!rf.IsOpen())
-                throw new InvalidOperationException("Unable to open file '" + _rootFile.FullName + "' with root's TFiel!");
-            var tree = rf.Get(_treeName) as ROOTNET.Interface.NTTree;
-            if (tree == null)
-                throw new InvalidOperationException("Unable to find tree '" + _treeName + "' in file '" + _rootFile.FullName + "'.");
+            var tree = new ROOTNET.NTChain(_treeName);
+            foreach (var f in _rootFiles)
+            {
+                tree.Add(f.FullName);
+            }
 
             ///
             /// If there are any objects we need to send to the selector, then send them on now
