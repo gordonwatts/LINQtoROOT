@@ -1,6 +1,7 @@
 // <copyright file="TypeHandlerReplacementCallTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -170,6 +171,8 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         public class ParseTest
         {
             static public double sin(double x) { return x; }
+            static public double cos(double x) { return x; }
+            static public double tan(double x) { return x; }
             static public double f1(int x, int y) { return x; }
             static public double f2(double x, double y) { return x; }
         }
@@ -229,7 +232,49 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [TestMethod]
         public void TestIncludes()
         {
-            Assert.Inconclusive("Some mathes should have include files!");
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArg", "noArg", null, new string[] { "cmath" });
+
+            var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
+            IValue result = null;
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+
+            Assert.AreEqual(1, gc.IncludeFiles.Count(), "# include files");
+            Assert.AreEqual("cmath", gc.IncludeFiles.First(), "include filename");
+        }
+
+        [TestMethod]
+        public void TestParseInclude()
+        {
+            StringBuilder bld = new StringBuilder();
+            bld.AppendLine("include: cmath1 cmath3");
+            bld.AppendLine("ParseTest sin(System.Double) => freak(double)");
+            bld.AppendLine("include: cmath2");
+            bld.AppendLine("ParseTest cos(System.Double) => cos(double)");
+            bld.AppendLine("include: ");
+            bld.AppendLine("ParseTest tan(System.Double) => tan(double)");
+            var target = new TypeHandlerReplacementCall();
+            target.Parse(new StringReader(bld.ToString()));
+
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            IValue result = null;
+
+            var e0 = Expression.Call(null, typeof(ParseTest).GetMethod("tan"), new Expression[] { Expression.Constant((double)10.3) });
+            Assert.AreEqual(0, gc.IncludeFiles.Count(), "# include files after none should have been added");
+
+            var e1 = Expression.Call(null, typeof(ParseTest).GetMethod("cos"), new Expression[] { Expression.Constant((double)10.3) });
+            ProcessMethodCall(target, e1, out result, gc, context);
+            Assert.AreEqual(1, gc.IncludeFiles.Count(), "# include files");
+            Assert.AreEqual("cmath2", gc.IncludeFiles.First(), "include filename");
+
+            var e2 = Expression.Call(null, typeof(ParseTest).GetMethod("sin"), new Expression[] { Expression.Constant((double)10.3) });
+            ProcessMethodCall(target, e2, out result, gc, context);
+            Assert.AreEqual(3, gc.IncludeFiles.Count(), "# include files");
+            Assert.IsTrue(gc.IncludeFiles.Contains("cmath1"), "cmath1 missing");
+            Assert.IsTrue(gc.IncludeFiles.Contains("cmath2"), "cmath1 missing");
+            Assert.IsTrue(gc.IncludeFiles.Contains("cmath3"), "cmath1 missing");
         }
     }
 }

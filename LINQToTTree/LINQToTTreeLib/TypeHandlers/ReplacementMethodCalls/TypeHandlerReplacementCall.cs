@@ -55,6 +55,11 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                 /// Arguments to the method
                 /// </summary>
                 public MechodArg[] Arguments { get; set; }
+
+                /// <summary>
+                /// Returns a list of include files that this type will need when it is translated.
+                /// </summary>
+                public string[] IncludeFiles { get; set; }
             }
 
             /// <summary>
@@ -94,7 +99,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
             foreach (var kt in gSetTypes)
             {
-                _knownTypes.Add(kt);
+                Merge(kt);
             }
         }
 
@@ -174,6 +179,15 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             result = new ValSimple(rawValue.ToString(), expr.Type);
 
             ///
+            /// Include files
+            /// 
+
+            foreach (var ifile in method.theMethod.IncludeFiles)
+            {
+                gc.AddIncludeFile(ifile);
+            }
+
+            ///
             /// We aren't re-writing this expression, so just return it.
             /// 
 
@@ -190,7 +204,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         /// Add a known type to the list. Args is (.net type/cpp type)
         /// </summary>
         /// <param name="typeName"></param>
-        public static void AddMethod(string typeName, string methodName, string cppMethodName, Tuple<string, string>[] args = null)
+        public static void AddMethod(string typeName, string methodName, string cppMethodName, Tuple<string, string>[] args = null, string[] includeFiles = null)
         {
             var kt = new KnownTypeInfo() { Name = typeName };
             var ourArgs = new KnownTypeInfo.MechodArg[0];
@@ -202,7 +216,13 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                                CPPType = t.Item2
                            }).ToArray();
 
-            kt.Methods = new KnownTypeInfo.MethodInfo[] { new KnownTypeInfo.MethodInfo() { Name = methodName, CPPName = cppMethodName, Arguments = ourArgs } };
+            var incfiles = includeFiles;
+            if (incfiles == null)
+            {
+                incfiles = new string[0];
+            }
+
+            kt.Methods = new KnownTypeInfo.MethodInfo[] { new KnownTypeInfo.MethodInfo() { Name = methodName, CPPName = cppMethodName, Arguments = ourArgs, IncludeFiles = incfiles } };
             gSetTypes.Add(kt);
         }
 
@@ -235,8 +255,20 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             /// 
 
             Regex funcFinder = new Regex("(?<class>[^\\s]+)\\s+(?<netfunc>[^\\s\\(]+)\\s*\\((?<netargs>[^\\)]+)\\)\\s*=>\\s*(?<cppfunc>[^\\s\\(]+)\\s*\\((?<cppargs>[^\\)]+)\\)");
+            string[] includfiles = new string[0];
+
             foreach (var line in goodLines)
             {
+                if (line.StartsWith("include:"))
+                {
+                    var files = from l in line.Substring(8).Split(' ')
+                                let lstuff = l.Trim()
+                                where !string.IsNullOrWhiteSpace(lstuff)
+                                select l;
+                    includfiles = files.ToArray();
+                    continue;
+                }
+
                 var m = funcFinder.Match(line);
                 if (!m.Success)
                     throw new InvalidDataException("Unable to interpret line '" + line + "'");
@@ -260,7 +292,8 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                     Methods = new KnownTypeInfo.MethodInfo[] {new KnownTypeInfo.MethodInfo() {
                          Name = m.Groups["netfunc"].Value,
                          CPPName = m.Groups["cppfunc"].Value,
-                         Arguments = (from a in netargs.Zip(cppargs, (n, c) => new KnownTypeInfo.MechodArg() { CPPType = c, Type = n}) select a).ToArray()
+                         Arguments = (from a in netargs.Zip(cppargs, (n, c) => new KnownTypeInfo.MechodArg() { CPPType = c, Type = n}) select a).ToArray(),
+                         IncludeFiles = includfiles
                      }
                      }
                 };
