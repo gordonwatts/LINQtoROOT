@@ -101,6 +101,31 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             {
                 Merge(kt);
             }
+
+            ///
+            /// Look for local files
+            /// 
+
+            Parse(new DirectoryInfo("."));
+            Parse(new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Config"));
+        }
+
+        /// <summary>
+        /// Parsae all mapping files in a directory.
+        /// </summary>
+        /// <param name="dir"></param>
+        private void Parse(DirectoryInfo dir)
+        {
+            if (!dir.Exists)
+                return;
+
+            foreach (var file in dir.EnumerateFiles("*.classmethodmappings"))
+            {
+                using (var reader = file.OpenText())
+                {
+                    Parse(reader);
+                }
+            }
         }
 
         /// <summary>

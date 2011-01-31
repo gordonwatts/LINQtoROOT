@@ -262,6 +262,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             IValue result = null;
 
             var e0 = Expression.Call(null, typeof(ParseTest).GetMethod("tan"), new Expression[] { Expression.Constant((double)10.3) });
+            ProcessMethodCall(target, e0, out result, gc, context);
             Assert.AreEqual(0, gc.IncludeFiles.Count(), "# include files after none should have been added");
 
             var e1 = Expression.Call(null, typeof(ParseTest).GetMethod("cos"), new Expression[] { Expression.Constant((double)10.3) });
@@ -275,6 +276,25 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             Assert.IsTrue(gc.IncludeFiles.Contains("cmath1"), "cmath1 missing");
             Assert.IsTrue(gc.IncludeFiles.Contains("cmath2"), "cmath1 missing");
             Assert.IsTrue(gc.IncludeFiles.Contains("cmath3"), "cmath1 missing");
+        }
+
+        [TestMethod]
+        public void TestAutoLoad()
+        {
+            var tanmethod = from m in typeof(Math).GetMethods()
+                            where m.Name == "Tan"
+                            where m.ReturnParameter.ParameterType == typeof(double)
+                            select m;
+
+            var e0 = Expression.Call(null, tanmethod.FirstOrDefault(), new Expression[] { Expression.Constant((double)10.3) });
+
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            IValue result = null;
+            var target = new TypeHandlerReplacementCall();
+
+            ProcessMethodCall(target, e0, out result, gc, context);
+
         }
     }
 }
