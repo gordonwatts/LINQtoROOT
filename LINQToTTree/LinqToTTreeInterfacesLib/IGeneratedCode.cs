@@ -29,5 +29,11 @@ namespace LinqToTTreeInterfacesLib
         /// Returns the outter most coding block
         /// </summary>
         IBookingStatementBlock CodeBody { get; }
+
+        /// <summary>
+        /// Adds an include file to be included for this query's C++ file.
+        /// </summary>
+        /// <param name="filename"></param>
+        void AddIncludeFile(string filename);
     }
 }
