@@ -1,0 +1,30 @@
+﻿#
+# Contains default mappings for various .NET method calls to something
+# perhaps more workable in the C++ world.
+#
+
+#
+# Generic functions
+#
+
+include: cmath
+Math Sin(double) => std::sin(double)
+Math Sin(float) => std::sin(float)
+Math Cos(double) => std::cos(double)
+Math Cos(float) => std::cos(float)
+Math Tan(double) => std::tan(double)
+Math Tan(float) => std::tan(float)
+
+Math Asin(double) => std::asin(double)
+Math Asin(float) => std::asin(float)
+Math Acos(double) => std::acos(double)
+Math Acos(float) => std::acos(float)
+Math Atan(double) => std::atan(double)
+Math Atan(float) => std::atan(float)
+Math Atan2(double, double) => std::atan(double, double)
+Math Atan2(float, float) => std::atan(float, float)
+
+Math Abs(float) => std::abs(float)
+Math Abs(double) => std::abs(double)
+Math Abs(int) => std::abs(int)
+
