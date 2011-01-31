@@ -1,6 +1,8 @@
 // <copyright file="TypeHandlerReplacementCallTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.IO;
 using System.Linq.Expressions;
+using System.Text;
 using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -163,6 +165,71 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var gc = new GeneratedCode();
             var context = new CodeContext();
             var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+        }
+
+        public class ParseTest
+        {
+            static public double sin(double x) { return x; }
+            static public double f1(int x, int y) { return x; }
+            static public double f2(double x, double y) { return x; }
+        }
+
+        [TestMethod]
+        public void TestStringParsing()
+        {
+            StringBuilder bld = new StringBuilder();
+            bld.AppendLine("#<classtype Name> func(arg1 FullName type, arg2 FullName type) => c++func(cppargtype, cppargtype)");
+            bld.AppendLine("ParseTest sin(System.Double) => sin(double)");
+            bld.AppendLine("ParseTest f1(System.Int32, System.Int32) => f1(int, int)");
+            bld.AppendLine("ParseTest f2(System.Double,System.Double) => f2(double,double)");
+
+            var target = new TypeHandlerReplacementCall();
+            target.Parse(new StringReader(bld.ToString()));
+
+            var e1 = Expression.Call(null, typeof(ParseTest).GetMethod("sin"), new Expression[] { Expression.Constant((double)10.3) });
+            var e2 = Expression.Call(null, typeof(ParseTest).GetMethod("f1"), new Expression[] { Expression.Constant((int)10), Expression.Constant((int)20) });
+            var e3 = Expression.Call(null, typeof(ParseTest).GetMethod("f2"), new Expression[] { Expression.Constant((double)10.3), Expression.Constant((double)20.3) });
+
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            IValue result = null;
+
+            ProcessMethodCall(target, e1, out result, gc, context);
+            Assert.AreEqual("sin(10.3)", result.RawValue, "sin incorrect");
+
+            ProcessMethodCall(target, e2, out result, gc, context);
+            Assert.AreEqual("f1(10,20)", result.RawValue, "f1 incorrect");
+
+            ProcessMethodCall(target, e3, out result, gc, context);
+            Assert.AreEqual("f2(10.3,20.3)", result.RawValue, "f2 incorrect");
+        }
+
+        [TestMethod]
+        public void TestFunctionMerge()
+        {
+            StringBuilder bld = new StringBuilder();
+            bld.AppendLine("ParseTest sin(System.Double) => freak(double)");
+            var target = new TypeHandlerReplacementCall();
+            target.Parse(new StringReader(bld.ToString()));
+
+            bld = new StringBuilder();
+            bld.AppendLine("ParseTest sin(System.Double) => sin(double)");
+            target.Parse(new StringReader(bld.ToString()));
+
+            var e1 = Expression.Call(null, typeof(ParseTest).GetMethod("sin"), new Expression[] { Expression.Constant((double)10.3) });
+
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            IValue result = null;
+
+            ProcessMethodCall(target, e1, out result, gc, context);
+            Assert.AreEqual("freak(10.3)", result.RawValue, "sin incorrect");
+        }
+
+        [TestMethod]
+        public void TestIncludes()
+        {
+            Assert.Inconclusive("Some mathes should have include files!");
         }
     }
 }

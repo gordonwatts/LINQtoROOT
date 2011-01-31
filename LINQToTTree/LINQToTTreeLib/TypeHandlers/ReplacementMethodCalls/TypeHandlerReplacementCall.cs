@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 
@@ -210,6 +212,119 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         internal static void ClearTypeList()
         {
             gSetTypes.Clear();
+        }
+
+        /// <summary>
+        /// Parse a stream from a file (or whatever) for function definitions and add them. Don't superseed ones that are already there, but
+        /// allow duplicates.
+        /// </summary>
+        /// <param name="stringReader"></param>
+        internal void Parse(TextReader stringReader)
+        {
+            ///
+            /// Get the "good" lines
+            /// 
+
+            var goodLines = from l in ReadLinesAsIterator(stringReader)
+                            let ltrm = l.Trim()
+                            where !ltrm.StartsWith("#") && !string.IsNullOrWhiteSpace(ltrm)
+                            select ltrm;
+
+            ///
+            /// Is the format good enough that we can split things up?
+            /// 
+
+            Regex funcFinder = new Regex("(?<class>[^\\s]+)\\s+(?<netfunc>[^\\s\\(]+)\\s*\\((?<netargs>[^\\)]+)\\)\\s*=>\\s*(?<cppfunc>[^\\s\\(]+)\\s*\\((?<cppargs>[^\\)]+)\\)");
+            foreach (var line in goodLines)
+            {
+                var m = funcFinder.Match(line);
+                if (!m.Success)
+                    throw new InvalidDataException("Unable to interpret line '" + line + "'");
+
+                var netargs = ParseArgumentListTokens(m.Groups["netargs"].Value);
+
+                var cppargs = ParseArgumentListTokens(m.Groups["cppargs"].Value);
+
+                if (cppargs.Length != netargs.Length)
+                {
+                    throw new InvalidDataException("Arguments for cpp and net are not the same in line '" + line + "'");
+                }
+
+                ///
+                /// Finaly, ready to create the mapping!
+                /// 
+
+                var kt = new KnownTypeInfo()
+                {
+                    Name = m.Groups["class"].Value,
+                    Methods = new KnownTypeInfo.MethodInfo[] {new KnownTypeInfo.MethodInfo() {
+                         Name = m.Groups["netfunc"].Value,
+                         CPPName = m.Groups["cppfunc"].Value,
+                         Arguments = (from a in netargs.Zip(cppargs, (n, c) => new KnownTypeInfo.MechodArg() { CPPType = c, Type = n}) select a).ToArray()
+                     }
+                     }
+                };
+
+                Merge(kt);
+            }
+
+        }
+
+        /// <summary>
+        /// Merge a type in with another type we alreayd have.
+        /// </summary>
+        /// <param name="kt"></param>
+        private void Merge(KnownTypeInfo kt)
+        {
+            Init();
+
+            var already = (from k in _knownTypes
+                           where k.Name == kt.Name
+                           select k).FirstOrDefault();
+
+            if (already == null)
+            {
+                _knownTypes.Add(kt);
+            }
+            else
+            {
+                List<KnownTypeInfo.MethodInfo> methods = new List<KnownTypeInfo.MethodInfo>(already.Methods);
+                methods.AddRange(kt.Methods);
+                already.Methods = methods.ToArray();
+            }
+
+        }
+
+        /// <summary>
+        /// Parse the argument string
+        /// </summary>
+        /// <param name="argstring"></param>
+        /// <returns></returns>
+        private static string[] ParseArgumentListTokens(string argstring)
+        {
+            var netargs = (from a in argstring.Split(',')
+                           let arg = a.Trim()
+                           where !string.IsNullOrWhiteSpace(arg)
+                           select arg).ToArray();
+            return netargs;
+        }
+
+        /// <summary>
+        /// Iterator pattern for reading lines from a stream.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        private IEnumerable<string> ReadLinesAsIterator(TextReader reader)
+        {
+            string line = reader.ReadLine();
+            if (line != null)
+            {
+                do
+                {
+                    yield return line;
+                    line = reader.ReadLine();
+                } while (line != null);
+            }
         }
     }
 }
