@@ -110,21 +110,59 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var gc = new GeneratedCode();
             var context = new CodeContext();
             var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
-
-            Assert.AreEqual(typeof(double), result.Type, "the type that came back ins't right");
-            Assert.AreEqual("noArg()", result.RawValue, "raw translation incorrect");
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
         public void TestRigthClassMethodBadArgs()
         {
-            Assert.Inconclusive("Class we know about, method we know about, wrong # of args");
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg");
+
+            var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((int)1) });
+            IValue result = null;
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestRigthClassMethodBadArgsDefined()
+        {
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArg", "noArg", new Tuple<string, string>[] { new Tuple<string, string>("int", "int") });
+
+            var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
+            IValue result = null;
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+        }
+
+        [TestMethod]
+        public void TestCallWithArgs()
+        {
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>("Int32", "int") });
+
+            var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((int)10) });
+            IValue result = null;
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+
+            Assert.AreEqual("oneArg(10)", result.RawValue, "incorrected coded method argument");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
         public void TestSameMethodsDifferentArgTypes()
         {
-            Assert.Inconclusive("different argument types but otherwise identical");
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>("Int32", "int") });
+
+            var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((float)10.5) });
+            IValue result = null;
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
         }
     }
 }

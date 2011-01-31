@@ -30,6 +30,13 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         /// </summary>
         class KnownTypeInfo
         {
+
+            public class MechodArg
+            {
+                public string Type { get; set; }
+                public string CPPType { get; set; }
+            }
+
             public class MethodInfo
             {
                 /// <summary>
@@ -41,7 +48,13 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                 /// The method name in C++
                 /// </summary>
                 public string CPPName { get; set; }
+
+                /// <summary>
+                /// Arguments to the method
+                /// </summary>
+                public MechodArg[] Arguments { get; set; }
             }
+
             /// <summary>
             /// The type name (Type.Name).
             /// </summary>
@@ -125,7 +138,10 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             /// Next, match with the arguments
             /// 
 
-            var matchingMethod = matchingMethodNames;
+            var matchingMethod = from m in matchingMethodNames
+                                 where m.theMethod.Arguments.Length == expr.Arguments.Count
+                                 where m.theMethod.Arguments.Zip(expr.Arguments, (us, them) => new Tuple<KnownTypeInfo.MechodArg, Expression>(us, them)).All(apair => apair.Item1.Type == apair.Item2.Type.Name)
+                                 select m;
 
             ///
             /// Ok, at this point, we should have only one guy. If we have more then just choose the first
@@ -143,6 +159,14 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
             rawValue.Append(method.theMethod.CPPName);
             rawValue.Append("(");
+            bool first = true;
+            foreach (var arg in expr.Arguments)
+            {
+                if (!first)
+                    rawValue.Append(",");
+                first = false;
+                rawValue.Append(ExpressionVisitor.GetExpression(arg, gc, context).RawValue);
+            }
             rawValue.Append(")");
 
             result = new ValSimple(rawValue.ToString(), expr.Type);
@@ -161,13 +185,22 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         static List<KnownTypeInfo> gSetTypes = new List<KnownTypeInfo>();
 
         /// <summary>
-        /// Add a known type to the list.
+        /// Add a known type to the list. Args is (.net type/cpp type)
         /// </summary>
         /// <param name="typeName"></param>
-        public static void AddMethod(string typeName, string methodName, string cppMethodName)
+        public static void AddMethod(string typeName, string methodName, string cppMethodName, Tuple<string, string>[] args = null)
         {
             var kt = new KnownTypeInfo() { Name = typeName };
-            kt.Methods = new KnownTypeInfo.MethodInfo[] { new KnownTypeInfo.MethodInfo() { Name = methodName, CPPName = cppMethodName } };
+            var ourArgs = new KnownTypeInfo.MechodArg[0];
+            if (args != null)
+                ourArgs = (from t in args
+                           select new KnownTypeInfo.MechodArg()
+                           {
+                               Type = t.Item1,
+                               CPPType = t.Item2
+                           }).ToArray();
+
+            kt.Methods = new KnownTypeInfo.MethodInfo[] { new KnownTypeInfo.MethodInfo() { Name = methodName, CPPName = cppMethodName, Arguments = ourArgs } };
             gSetTypes.Add(kt);
         }
 
