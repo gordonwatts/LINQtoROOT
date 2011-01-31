@@ -129,7 +129,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [ExpectedException(typeof(ArgumentException))]
         public void TestRigthClassMethodBadArgsDefined()
         {
-            TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArg", "noArg", new Tuple<string, string>[] { new Tuple<string, string>("int", "int") });
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArg", "noArg", new Tuple<string, string>[] { new Tuple<string, string>(typeof(int).FullName, "int") });
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
             IValue result = null;
@@ -141,7 +141,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [TestMethod]
         public void TestCallWithArgs()
         {
-            TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>("Int32", "int") });
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>(typeof(int).FullName, "int") });
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((int)10) });
             IValue result = null;
@@ -156,9 +156,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [ExpectedException(typeof(ArgumentException))]
         public void TestSameMethodsDifferentArgTypes()
         {
-            TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>("Int32", "int") });
+            TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>(typeof(float).FullName, "float") });
 
-            var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((float)10.5) });
+            var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((int)10) });
             IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();

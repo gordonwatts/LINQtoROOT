@@ -140,7 +140,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
             var matchingMethod = from m in matchingMethodNames
                                  where m.theMethod.Arguments.Length == expr.Arguments.Count
-                                 where m.theMethod.Arguments.Zip(expr.Arguments, (us, them) => new Tuple<KnownTypeInfo.MechodArg, Expression>(us, them)).All(apair => apair.Item1.Type == apair.Item2.Type.Name)
+                                 where m.theMethod.Arguments.Zip(expr.Arguments, (us, them) => new Tuple<KnownTypeInfo.MechodArg, Expression>(us, them)).All(apair => apair.Item1.Type == apair.Item2.Type.FullName)
                                  select m;
 
             ///
