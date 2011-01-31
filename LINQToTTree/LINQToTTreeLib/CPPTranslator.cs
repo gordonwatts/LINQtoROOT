@@ -26,9 +26,9 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("code");
 
             Dictionary<string, object> result = new Dictionary<string, object>();
-            result["ResultVariable"] = TranslateVariable(code.ResultValue);
+            result["ResultVariable"] = TranslateVariable(code.ResultValue, code);
             result["ProcessStatements"] = TranslateStatements(code.CodeBody);
-            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValue);
+            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValue, code);
 
             return result;
         }
@@ -57,11 +57,11 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable)
+        private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable, GeneratedCode gc)
         {
             if (iVariable.Type.IsROOTClass())
             {
-                _includeFiles.Add(iVariable.Type.Name.Substring(1) + ".h");
+                gc.AddIncludeFile(iVariable.Type.Name.Substring(1) + ".h");
             }
 
             return new VarInfo(iVariable);
@@ -91,26 +91,16 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable)
+        private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable, GeneratedCode gc)
         {
             var saver = _saver.Get(iVariable);
 
             foreach (var f in saver.IncludeFiles(iVariable))
             {
-                if (!_includeFiles.Contains(f))
-                    _includeFiles.Add(f);
+                gc.AddIncludeFile(f);
             }
 
             return saver.SaveToFile(iVariable);
         }
-        /// <summary>
-        /// Keep track of all include files we need to pull in. Ugly - because it is global.
-        /// </summary>
-        public IEnumerable<string> IncludeFiles { get { return _includeFiles; } }
-
-        /// <summary>
-        /// Keep track of the include files.
-        /// </summary>
-        private List<string> _includeFiles = new List<string>();
     }
 }

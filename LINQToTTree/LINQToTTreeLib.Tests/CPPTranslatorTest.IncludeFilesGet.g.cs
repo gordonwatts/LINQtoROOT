@@ -8,28 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib
 {
     public partial class CPPTranslatorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(CPPTranslatorTest))]
-public void IncludeFilesGet490()
-{
-    CPPTranslator cPPTranslator;
-    IEnumerable<string> iEnumerable;
-    cPPTranslator = CPPTranslatorFactory.Create();
-    iEnumerable = this.IncludeFilesGet(cPPTranslator);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)cPPTranslator);
-    Assert.IsNotNull(cPPTranslator.IncludeFiles);
-    Assert.IsTrue
-        (object.ReferenceEquals(cPPTranslator.IncludeFiles, (object)iEnumerable));
-}
     }
 }

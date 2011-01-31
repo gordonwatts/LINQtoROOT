@@ -462,7 +462,7 @@ namespace LINQToTTreeLib
             /// Output all the include files, from everywhere we have managed to collect them.
             /// 
 
-            context.Put("IncludeFiles", _cppTranslator.IncludeFiles);
+            context.Put("IncludeFiles", code.IncludeFiles);
 
             ///
             /// Now do it!
