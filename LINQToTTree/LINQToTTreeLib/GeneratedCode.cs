@@ -136,5 +136,28 @@ namespace LINQToTTreeLib
 
             _variablesToTransfer[name] = val;
         }
+
+        /// <summary>
+        /// Keep track of a list of include files that
+        /// we need to pull in at the top of the header file!
+        /// </summary>
+        private HashSet<string> _includeFiles = new HashSet<string>();
+
+        /// <summary>
+        /// Add an include file to the list... if it is already included, it won't be done twice.
+        /// </summary>
+        /// <param name="includeName"></param>
+        public void AddIncludeFile(string includeName)
+        {
+            _includeFiles.Add(includeName);
+        }
+
+        /// <summary>
+        /// Gets the list of include files that should be included at the top of this.
+        /// </summary>
+        public IEnumerable<string> IncludeFiles
+        {
+            get { return _includeFiles; }
+        }
     }
 }
