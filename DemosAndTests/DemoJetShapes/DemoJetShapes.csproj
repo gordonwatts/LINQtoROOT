@@ -57,7 +57,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4040.37330, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4050.31, Culture=neutral, processorArchitecture=x86" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ntupleDataModel.cs" />
@@ -77,8 +77,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)\..\LINQToTTree\LINQToTTreeLib\bin\Debug\InfrastructureSourceFiles" ".\InfrastructureSourceFiles\"
-xcopy "$(SolutionDir)\..\LINQToTTree\LINQToTTreeLib\bin\Debug\Templates" ".\Templates\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y "$(SolutionDir)\..\LINQToTTree\LINQToTTreeLib\bin\Debug\InfrastructureSourceFiles" ".\InfrastructureSourceFiles\"
+xcopy /Y "$(SolutionDir)\..\LINQToTTree\LINQToTTreeLib\bin\Debug\Templates" ".\Templates\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
