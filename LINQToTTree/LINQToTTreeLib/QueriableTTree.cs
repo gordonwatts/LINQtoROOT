@@ -11,14 +11,27 @@ namespace LINQToTTreeLib
     public class QueriableTTree<T> : QueryableBase<T>
     {
         /// <summary>
-        /// ctor called when the user has opened a new TTree or TChain that is local to this machine. We specify the
-        /// input ROOT file and the tree name we need to find in that root file.
+        /// Create a new LINQ Querable object that will go after a TTree. The ntuple type must have been
+        /// generated with the proper meta data so things like the scanner source file can be found!
+        /// Runs on data in a single source file.
         /// </summary>
         public QueriableTTree(FileInfo rootFile, string treeName)
             : base(new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
         {
             DefineExtraOperators();
         }
+
+        /// <summary>
+        /// Create a new LINQ Querable object that will go after a TTree. The ntuple type must have been
+        /// generated with the proper meta data so things like the scanner source file can be found!
+        /// Runs on data in a multiple source files.
+        /// </summary>
+        public QueriableTTree(FileInfo[] rootFiles, string treeName)
+            : base(new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
+        {
+            DefineExtraOperators();
+        }
+
 
         /// <summary>
         /// Called by the LINQ infrastructure. No need to do much of anything here.
