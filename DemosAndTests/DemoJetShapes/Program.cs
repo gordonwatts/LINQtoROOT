@@ -5,7 +5,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using LINQToTTreeLib;
 using ROOTTTreeDataModel;
 
 namespace DemoJetShapes
@@ -26,7 +25,7 @@ namespace DemoJetShapes
             }
 
             //var rf = new Queryablebtag(rootFile);
-            var rf1 = new QueriableTTree<btag>(rootFile, "btag");
+            var rf1 = Queryablebtag.Create(rootFile);
 
             ///
             /// Count the # of events in the file
