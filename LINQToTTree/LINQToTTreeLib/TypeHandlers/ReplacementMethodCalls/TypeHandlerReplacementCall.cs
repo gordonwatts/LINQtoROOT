@@ -192,12 +192,12 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             rawValue.Append(method.theMethod.CPPName);
             rawValue.Append("(");
             bool first = true;
-            foreach (var arg in expr.Arguments)
+            foreach (var arg in expr.Arguments.Zip(method.theMethod.Arguments, (m, a) => Tuple.Create(m, a)))
             {
                 if (!first)
                     rawValue.Append(",");
                 first = false;
-                rawValue.Append(ExpressionVisitor.GetExpression(arg, gc, context).RawValue);
+                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionVisitor.GetExpression(arg.Item1, gc, context).RawValue);
             }
             rawValue.Append(")");
 

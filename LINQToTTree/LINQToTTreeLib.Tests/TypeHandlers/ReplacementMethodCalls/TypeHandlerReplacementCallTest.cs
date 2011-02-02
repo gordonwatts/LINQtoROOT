@@ -152,7 +152,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var context = new CodeContext();
             var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
 
-            Assert.AreEqual("oneArg(10)", result.RawValue, "incorrected coded method argument");
+            Assert.AreEqual("oneArg((int)10)", result.RawValue, "incorrected coded method argument");
         }
 
         [TestMethod]
@@ -198,13 +198,13 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             IValue result = null;
 
             ProcessMethodCall(target, e1, out result, gc, context);
-            Assert.AreEqual("sin(10.3)", result.RawValue, "sin incorrect");
+            Assert.AreEqual("sin((double)10.3)", result.RawValue, "sin incorrect");
 
             ProcessMethodCall(target, e2, out result, gc, context);
-            Assert.AreEqual("f1(10,20)", result.RawValue, "f1 incorrect");
+            Assert.AreEqual("f1((int)10,(int)20)", result.RawValue, "f1 incorrect");
 
             ProcessMethodCall(target, e3, out result, gc, context);
-            Assert.AreEqual("f2(10.3,20.3)", result.RawValue, "f2 incorrect");
+            Assert.AreEqual("f2((double)10.3,(double)20.3)", result.RawValue, "f2 incorrect");
         }
 
         [TestMethod]
@@ -226,7 +226,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             IValue result = null;
 
             ProcessMethodCall(target, e1, out result, gc, context);
-            Assert.AreEqual("freak(10.3)", result.RawValue, "sin incorrect");
+            Assert.AreEqual("freak((double)10.3)", result.RawValue, "sin incorrect");
         }
 
         [TestMethod]
