@@ -411,11 +411,20 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private FileInfo GetInfrastructureFile(string filename)
         {
-            string baseDir = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
-            var f = new FileInfo(baseDir + "\\InfrastructureSourceFiles\\" + filename);
+            var f = new FileInfo(InfrastructureFile(filename));
             if (!f.Exists)
                 throw new FileNotFoundException("Unable to find infrastructure source file '" + f.FullName + "'");
             return f;
+        }
+
+        /// <summary>
+        /// Generate a path for the infrastructure file
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private string InfrastructureFile(string filename)
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\InfrastructureSourceFiles\\" + filename;
         }
 
         /// <summary>
@@ -480,7 +489,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private string TemplateDirectory(string templateName)
         {
-            return Path.GetDirectoryName(Assembly.GetCallingAssembly().Location) + "\\Templates\\" + templateName;
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Templates\\" + templateName;
         }
 
         /// <summary>
