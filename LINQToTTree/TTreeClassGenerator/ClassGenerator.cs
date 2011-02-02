@@ -159,11 +159,19 @@ namespace TTreeClassGenerator
                     /// against the trees!
                     /// 
 
-                    output.WriteLine("  class Queryable{0} : QueriableTTree<{0}>", cls.Name);
+                    output.WriteLine("  /// Helper classes");
+                    output.WriteLine("  static class Queryable{0}", cls.Name);
                     output.WriteLine("  {");
-                    output.WriteLine("    public Queryable{0} (FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
-                    output.WriteLine("              : base (rootFile, treeName)");
-                    output.WriteLine("    {}");
+                    output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
+                    output.WriteLine("    public static QueriableTTree<{0}> Create (FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
+                    output.WriteLine("    {");
+                    output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name);
+                    output.WriteLine("    }");
+                    output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
+                    output.WriteLine("    public static QueriableTTree<{0}> Create (FileInfo[] rootFiles, string treeName = \"{0}\")", cls.Name);
+                    output.WriteLine("    {");
+                    output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name);
+                    output.WriteLine("    }");
                     output.WriteLine("  }");
                 }
 
