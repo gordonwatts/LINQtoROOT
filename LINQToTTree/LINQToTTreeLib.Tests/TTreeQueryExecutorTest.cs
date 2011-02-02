@@ -155,7 +155,7 @@ namespace LINQToTTreeLib
         /// </summary>
         public class ntuple_with_proxy
         {
-            public static string _gProxyFile = @"C:\Users\gwatts\Documents\ATLAS\Code\LINQtoROOT\DemosAndTests\GenerateNtupleXMLSpec\ntuple_btag.h";
+            public static string _gProxyFile;
         }
 
         /// <summary>
