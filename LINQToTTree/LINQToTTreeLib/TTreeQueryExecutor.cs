@@ -320,12 +320,7 @@ namespace LINQToTTreeLib
             /// Finally, run the whole thing
             /// 
 
-            {
-                var f = new ROOTNET.NTFile(_rootFiles[0].FullName, "READ");
-                var t = f.Get(_treeName) as ROOTNET.Interface.NTTree;
-                t.Process(selector);
-            }
-            //var result = tree.Process(selector);
+            tree.Process(selector);
         }
 
         /// <summary>
