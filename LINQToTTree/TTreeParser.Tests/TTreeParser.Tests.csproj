@@ -60,9 +60,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\WrapperPlumbingLibrary.dll</HintPath>
-    </Reference>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4050.31, Culture=neutral, processorArchitecture=x86" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
