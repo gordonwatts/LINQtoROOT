@@ -105,21 +105,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="InfrastructureSourceFiles\FlowOutputObject.cpp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="InfrastructureSourceFiles\FlowOutputObject.h">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\TSelectorTemplate.cxx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="InfrastructureSourceFiles\FlowOutputObject.cpp" />
+    <Content Include="InfrastructureSourceFiles\FlowOutputObject.h" />
+    <Content Include="Templates\TSelectorTemplate.cxx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist $(USERPROFILE)\AppData\Local\LINQToTTree\Config mkdir $(USERPROFILE)\AppData\Local\LINQToTTree\Config
-copy $(ProjectDir)\ConfigData\default.classmethodmappings $(USERPROFILE)\AppData\Local\LINQToTTree\Config\</PostBuildEvent>
+copy $(ProjectDir)\ConfigData\default.classmethodmappings $(USERPROFILE)\AppData\Local\LINQToTTree\Config\
+xcopy /Y "$(SolutionDir)\LINQToTTreeLib\InfrastructureSourceFiles" "$(USERPROFILE)\AppData\Local\LINQToTTree\InfrastructureSourceFiles\"
+xcopy /Y "$(SolutionDir)\LINQToTTreeLib\Templates" "$(USERPROFILE)\AppData\Local\LINQToTTree\Templates\"
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
