@@ -323,6 +323,35 @@ namespace LINQToTTreeLib
             Assert.AreEqual(numberOfIter, result);
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestForZeroInputFiles()
+        {
+            var rootFile = CreateFileOfInt(5);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { }, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+        }
+
         /// <summary>
         /// Given the root file and the root-tuple name, generate a proxy file 
         /// </summary>

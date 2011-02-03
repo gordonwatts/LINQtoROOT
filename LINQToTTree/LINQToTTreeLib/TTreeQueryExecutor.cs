@@ -50,8 +50,8 @@ namespace LINQToTTreeLib
             /// Basic checks
             /// 
 
-            if (rootFiles == null)
-                throw new ArgumentNullException("Must have good root file");
+            if (rootFiles == null || rootFiles.Length == 0)
+                throw new ArgumentException("Must have good root file");
 
             var nullFiles = (from f in rootFiles
                              where f == null
