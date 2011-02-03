@@ -102,7 +102,12 @@ namespace LINQToTTreeLib
 
             if (!_parameterReplacement.ContainsKey(varname))
                 return new ValSimple(varname, type);
-            return _parameterReplacement[varname];
+            var result = _parameterReplacement[varname];
+
+            if (result.Type != type)
+                throw new InvalidOperationException("Can't convert parameter from type '" + result.Type.Name + "' to '" + type.Name + "'.");
+
+            return result;
         }
     }
 }
