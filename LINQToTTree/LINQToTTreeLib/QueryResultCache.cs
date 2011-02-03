@@ -29,13 +29,13 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         /// <param name="varSaver"></param>
         /// <returns></returns>
-        public Tuple<bool, T> Lookup<T>(FileInfo[] sourceRootFiles, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar)
+        public Tuple<bool, T> Lookup<T>(FileInfo[] sourceRootFiles, string treeName, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar)
         {
             ///
             /// Get the ROOT file
             /// 
 
-            FileInfo rootFileInfo = GetROOTCacheFile(sourceRootFiles, queryModel, false);
+            FileInfo rootFileInfo = GetROOTCacheFile(sourceRootFiles, treeName, queryModel, false);
             if (rootFileInfo == null)
                 return new Tuple<bool, T>(false, default(T));
 
@@ -89,10 +89,10 @@ namespace LINQToTTreeLib
         /// <param name="sourceFiles"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        public void CacheItem(FileInfo[] sourceFiles, QueryModel qm, ROOTNET.Interface.NTObject o)
+        public void CacheItem(FileInfo[] sourceFiles, string treename, QueryModel qm, ROOTNET.Interface.NTObject o)
         {
             var osaver = o.Clone();
-            var rootFile = GetROOTCacheFile(sourceFiles, qm, true);
+            var rootFile = GetROOTCacheFile(sourceFiles, treename, qm, true);
             var trf = new ROOTNET.NTFile(rootFile.FullName, "RECREATE");
             osaver.Write();
             trf.Write();
@@ -106,13 +106,13 @@ namespace LINQToTTreeLib
         /// <param name="rootFiles"></param>
         /// <param name="qm"></param>
         /// <param name="createEverything"></param>
-        private FileInfo GetROOTCacheFile(FileInfo[] rootFiles, QueryModel qm, bool createEverything)
+        private FileInfo GetROOTCacheFile(FileInfo[] rootFiles, string treename, QueryModel qm, bool createEverything)
         {
             ///
             /// Get the directory to cache.
             ///
 
-            var dfile = FindCachForFile(rootFiles, createEverything);
+            var dfile = FindCachForFile(rootFiles, treename, createEverything);
             if (dfile == null)
                 return null;
 
@@ -152,7 +152,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="sourceRootFiles"></param>
         /// <returns></returns>
-        private DirectoryInfo FindCachForFile(FileInfo[] sourceRootFiles, bool create = false)
+        private DirectoryInfo FindCachForFile(FileInfo[] sourceRootFiles, string treename, bool create = false)
         {
             ///
             /// Build the hash, which is a bit of a pain in the butt.
@@ -170,7 +170,7 @@ namespace LINQToTTreeLib
             /// And the directory name - we use the first name of the file.
             /// 
 
-            DirectoryInfo df = new DirectoryInfo(CacheDirectory.FullName + "\\" + hash + " - " + sourceRootFiles[0].Name);
+            DirectoryInfo df = new DirectoryInfo(CacheDirectory.FullName + "\\" + hash + " - " + treename + "-" + sourceRootFiles[0].Name);
 
             ///
             /// If the directory does exist, then check the modification date.

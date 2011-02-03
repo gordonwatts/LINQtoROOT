@@ -41,7 +41,7 @@ namespace LINQToTTreeLib
             NTObject o
         )
         {
-            target.CacheItem(new FileInfo[] { _rootFile }, qm, o);
+            target.CacheItem(new FileInfo[] { _rootFile }, "test", qm, o);
             // TODO: add assertions to method QueryResultCacheTest.CacheItem(QueryResultCache, FileInfo, QueryModel, NTObject)
         }
 
@@ -51,11 +51,12 @@ namespace LINQToTTreeLib
         internal Tuple<bool, T> Lookup<T>(
             [PexAssumeUnderTest]QueryResultCache target,
             FileInfo _rootFile,
+            string treeName,
             QueryModel queryModel,
             IVariableSaver varSaver
         )
         {
-            var result = target.Lookup<T>(new FileInfo[] { _rootFile }, queryModel, varSaver, null);
+            var result = target.Lookup<T>(new FileInfo[] { _rootFile }, treeName, queryModel, varSaver, null);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
             // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
@@ -107,7 +108,7 @@ namespace LINQToTTreeLib
             var f = MakeRootFile("TestNoHit");
             var query = MakeQuery(0);
 
-            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, query, new DummySaver()).Item1, "cache should be empty for this guy!");
+            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", query, new DummySaver()).Item1, "cache should be empty for this guy!");
         }
 
         /// <summary>
@@ -179,7 +180,7 @@ namespace LINQToTTreeLib
 
         private void TestHitDriver(int queryIndex)
         {
-            var f = MakeRootFile("TestNoHit");
+            var f = MakeRootFile("TestHitDriver");
             var query = MakeQuery(queryIndex);
 
             /// Cache a result
@@ -187,9 +188,9 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(new FileInfo[] { f }, query, h);
+            q.CacheItem(new FileInfo[] { f }, "test", query, h);
 
-            var r = Lookup<int>(q, f, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
         }
@@ -197,7 +198,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestForFileOutOfDate()
         {
-            var f = MakeRootFile("TestNoHit");
+            var f = MakeRootFile("TestForFileOutOfDate");
             var query = MakeQuery(0);
 
             /// Cache a result
@@ -205,7 +206,7 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(new FileInfo[] { f }, query, h);
+            q.CacheItem(new FileInfo[] { f }, "test", query, h);
 
             /// Modify the file
 
@@ -217,8 +218,27 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", query, new DummySaver());
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
+        }
+
+        [TestMethod]
+        public void TestForTreeNameChanges()
+        {
+            var f = MakeRootFile("TestForTreeNameChanges");
+            var query = MakeQuery(0);
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+            var q = new QueryResultCache();
+            q.CacheItem(new FileInfo[] { f }, "test", query, h);
+
+            /// And make sure the lookup fails now!
+
+            var r = Lookup<int>(q, f, "test1", query, new DummySaver());
+            Assert.IsFalse(r.Item1, "different tree should have made this fail");
         }
 
     }
