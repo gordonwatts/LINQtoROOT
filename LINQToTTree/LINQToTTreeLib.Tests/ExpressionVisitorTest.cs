@@ -232,12 +232,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestParameterSubstitution()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestParameterSubstitutionIncompatibleTypes()
         {
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             cc.Add("p", new ValSimple("count", typeof(int)));
+            var r = ExpressionVisitor.GetExpression(e, gc, cc);
+        }
+
+        [TestMethod]
+        public void TestParameterSubstitutionOk()
+        {
+            var e = Expression.Parameter(typeof(ntup), "p");
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            cc.Add("p", new ValSimple("count", typeof(ntup)));
             var r = ExpressionVisitor.GetExpression(e, gc, cc);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");

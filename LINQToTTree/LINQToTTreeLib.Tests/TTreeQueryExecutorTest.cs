@@ -7,6 +7,7 @@ using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NVelocity.App;
 
 namespace LINQToTTreeLib
 {
@@ -27,6 +28,9 @@ namespace LINQToTTreeLib
             DirectoryInfo projectDir = new DirectoryInfo(Environment.CurrentDirectory + @"\..\..\..\..");
             ntuple_with_proxy._gProxyFile = projectDir.FullName + @"\DemosAndTests\GenerateNtupleXMLSpec\ntuple_btag.h";
             Assert.IsTrue(File.Exists(ntuple_with_proxy._gProxyFile), "Proxy file we are using for testing isn't around!");
+
+            var eng = new VelocityEngine();
+            eng.Init();
         }
 
         [TestCleanup]
@@ -656,6 +660,7 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<ROOTNET.Interface.NTH1F>(query);
             Assert.AreEqual(result.Entries, numberOfIter);
+            Assert.AreEqual("hi", result.Name, "histogram name");
         }
     }
 }

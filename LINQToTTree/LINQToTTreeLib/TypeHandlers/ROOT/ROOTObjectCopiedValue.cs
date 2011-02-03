@@ -15,7 +15,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// </summary>
         /// <param name="varName"></param>
         /// <param name="rootType"></param>
-        public ROOTObjectCopiedValue(string varName, Type rootType, string CPPType)
+        public ROOTObjectCopiedValue(string varName, Type rootType, string CPPType, string name)
         {
             if (string.IsNullOrWhiteSpace(varName))
                 throw new ArgumentException("invalid variable name");
@@ -31,6 +31,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             /// 
 
             Type = rootType;
+            OriginalName = name;
 
             StringBuilder loadString = new StringBuilder();
             loadString.AppendFormat("LoadFromInputList<{0}>(\"{1}\")", CPPType, varName);
@@ -46,5 +47,10 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// The type of this variable
         /// </summary>
         public Type Type { get; private set; }
+
+        /// <summary>
+        /// The name of the original root object - we will reset it to store it correctly.
+        /// </summary>
+        public string OriginalName { get; private set; }
     }
 }

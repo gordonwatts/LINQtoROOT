@@ -18,14 +18,16 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         internal ROOTObjectCopiedValue Constructor(
             string varName,
             Type rootType,
-            string CPPType
+            string CPPType,
+            string origname
         )
         {
             ROOTObjectCopiedValue target
-               = new ROOTObjectCopiedValue(varName, rootType, CPPType);
+               = new ROOTObjectCopiedValue(varName, rootType, CPPType, origname);
 
             Assert.AreEqual(rootType, target.Type, "reported Type incorrect");
             Assert.AreEqual("LoadFromInputList<" + CPPType + ">(\"" + varName + "\")", target.RawValue, "loader string incorrect");
+            Assert.AreEqual(origname, target.OriginalName, "original name");
 
             return target;
         }
@@ -33,7 +35,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         [TestMethod]
         public void TestSimple()
         {
-            Constructor("test", typeof(ROOTNET.NTH1F), "TH1F");
+            Constructor("test", typeof(ROOTNET.NTH1F), "TH1F", "bogus");
         }
     }
 }

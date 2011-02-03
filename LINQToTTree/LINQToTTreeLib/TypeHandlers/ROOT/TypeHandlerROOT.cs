@@ -40,11 +40,11 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             /// The value is a reference that will do the loading.
             /// 
 
-            var rootObject = expr.Value as ROOTNET.Interface.NTObject;
+            var rootObject = expr.Value as ROOTNET.Interface.NTNamed;
             var varNameForTransport = rootObject.GetType().CreateUniqueVariableName();
             var CPPType = rootObject.GetType().AsCPPType();
 
-            var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType);
+            var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType, rootObject.Name);
 
             ///
             /// Next we need to make sure this root object will be queued for sending accross the wire.
