@@ -83,6 +83,7 @@
     <Compile Include="TypeHandlers\TypeHandlerCache.cs" />
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\ObjectHashCalculator.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
     <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
     <Compile Include="Variables\Savers\VariableSaverManager.cs" />

@@ -19,7 +19,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="queryModel"></param>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        Tuple<bool, T> Lookup<T>(FileInfo[] _rootFiles, string treeName, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar);
+        Tuple<bool, T> Lookup<T>(FileInfo[] _rootFiles, string treeName, object[] inputObjects, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar);
 
         /// <summary>
         /// Save an item for later lookup and retreival.
@@ -27,6 +27,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_rootFile"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        void CacheItem(FileInfo[] _rootFiles, string treeName, QueryModel qm, ROOTNET.Interface.NTObject o);
+        void CacheItem(FileInfo[] _rootFiles, string treeName, object[] inputObjects, QueryModel qm, ROOTNET.Interface.NTObject o);
     }
 }

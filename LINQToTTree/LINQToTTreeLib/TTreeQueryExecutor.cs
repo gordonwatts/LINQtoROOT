@@ -183,7 +183,7 @@ namespace LINQToTTreeLib
             /// Next, see if we have a cache for this
             /// 
 
-            var cacheHit = _cache.Lookup<T>(_rootFiles, _treeName, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
+            var cacheHit = _cache.Lookup<T>(_rootFiles, _treeName, null, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
             if (cacheHit.Item1)
                 return cacheHit.Item2;
 
@@ -264,7 +264,7 @@ namespace LINQToTTreeLib
             try
             {
                 var o = file.Get(iVariable.RawValue);
-                _cache.CacheItem(_rootFiles, "test", qm, o);
+                _cache.CacheItem(_rootFiles, "test", null, qm, o);
                 var s = _varSaver.Get(iVariable);
                 return s.LoadResult<T>(iVariable, o);
             }

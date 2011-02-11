@@ -36,12 +36,13 @@ namespace LINQToTTreeLib
         [PexMethod]
         internal void CacheItem(
             [PexAssumeUnderTest]QueryResultCache target,
+            object[] inputObjs,
             FileInfo _rootFile,
             QueryModel qm,
             NTObject o
         )
         {
-            target.CacheItem(new FileInfo[] { _rootFile }, "test", qm, o);
+            target.CacheItem(new FileInfo[] { _rootFile }, "test", inputObjs, qm, o);
             // TODO: add assertions to method QueryResultCacheTest.CacheItem(QueryResultCache, FileInfo, QueryModel, NTObject)
         }
 
@@ -52,11 +53,12 @@ namespace LINQToTTreeLib
             [PexAssumeUnderTest]QueryResultCache target,
             FileInfo _rootFile,
             string treeName,
+            object[] inputObjects,
             QueryModel queryModel,
             IVariableSaver varSaver
         )
         {
-            var result = target.Lookup<T>(new FileInfo[] { _rootFile }, treeName, queryModel, varSaver, null);
+            var result = target.Lookup<T>(new FileInfo[] { _rootFile }, treeName, inputObjects, queryModel, varSaver, null);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
             // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
@@ -108,7 +110,7 @@ namespace LINQToTTreeLib
             var f = MakeRootFile("TestNoHit");
             var query = MakeQuery(0);
 
-            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", query, new DummySaver()).Item1, "cache should be empty for this guy!");
+            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", null, query, new DummySaver()).Item1, "cache should be empty for this guy!");
         }
 
         /// <summary>
@@ -188,9 +190,9 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(new FileInfo[] { f }, "test", query, h);
+            q.CacheItem(new FileInfo[] { f }, "test", null, query, h);
 
-            var r = Lookup<int>(q, f, "test", query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
         }
@@ -206,7 +208,7 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(new FileInfo[] { f }, "test", query, h);
+            q.CacheItem(new FileInfo[] { f }, "test", null, query, h);
 
             /// Modify the file
 
@@ -218,7 +220,7 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test", query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", null, query, new DummySaver());
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
         }
 
@@ -233,13 +235,73 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(new FileInfo[] { f }, "test", query, h);
+            q.CacheItem(new FileInfo[] { f }, "test", null, query, h);
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test1", query, new DummySaver());
+            var r = Lookup<int>(q, f, "test1", null, query, new DummySaver());
             Assert.IsFalse(r.Item1, "different tree should have made this fail");
         }
 
+        [TestMethod]
+        public void TestForSameHistos()
+        {
+            var f = MakeRootFile("TestForTreeNameChanges");
+            var query = MakeQuery(0);
+
+            /// Histogram that is feed as input
+
+            var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInput.SetBinContent(2, 5.0);
+
+            var inputs = new object[] { hInput };
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+
+            var q = new QueryResultCache();
+            q.CacheItem(new FileInfo[] { f }, "test", inputs, query, h);
+
+            /// And make sure the lookup works now!
+
+            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInputLookup.SetBinContent(2, 5.0);
+
+            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
+            Assert.IsTrue(r.Item1, "Cache should have been there");
+
+        }
+
+        [TestMethod]
+        public void TestForDiffHistos()
+        {
+            var f = MakeRootFile("TestForTreeNameChanges");
+            var query = MakeQuery(0);
+
+            /// Histogram that is feed as input
+
+            var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInput.SetBinContent(2, 5.0);
+
+            var inputs = new object[] { hInput };
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+
+            var q = new QueryResultCache();
+            q.CacheItem(new FileInfo[] { f }, "test", inputs, query, h);
+
+            /// And make sure the lookup works now!
+
+            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInputLookup.SetBinContent(2, 5.5);
+
+            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
+            Assert.IsFalse(r.Item1, "Cache should have been there");
+        }
     }
 }

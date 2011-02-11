@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using Remotion.Data.Linq;
 
 namespace LINQToTTreeLib
@@ -29,13 +30,13 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         /// <param name="varSaver"></param>
         /// <returns></returns>
-        public Tuple<bool, T> Lookup<T>(FileInfo[] sourceRootFiles, string treeName, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar)
+        public Tuple<bool, T> Lookup<T>(FileInfo[] sourceRootFiles, string treeName, object[] inputObjects, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar)
         {
             ///
             /// Get the ROOT file
             /// 
 
-            FileInfo rootFileInfo = GetROOTCacheFile(sourceRootFiles, treeName, queryModel, false);
+            FileInfo rootFileInfo = GetROOTCacheFile(sourceRootFiles, treeName, inputObjects, queryModel, false);
             if (rootFileInfo == null)
                 return new Tuple<bool, T>(false, default(T));
 
@@ -89,10 +90,10 @@ namespace LINQToTTreeLib
         /// <param name="sourceFiles"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        public void CacheItem(FileInfo[] sourceFiles, string treename, QueryModel qm, ROOTNET.Interface.NTObject o)
+        public void CacheItem(FileInfo[] sourceFiles, string treename, object[] inputObjects, QueryModel qm, ROOTNET.Interface.NTObject o)
         {
             var osaver = o.Clone();
-            var rootFile = GetROOTCacheFile(sourceFiles, treename, qm, true);
+            var rootFile = GetROOTCacheFile(sourceFiles, treename, inputObjects, qm, true);
             var trf = new ROOTNET.NTFile(rootFile.FullName, "RECREATE");
             osaver.Write();
             trf.Write();
@@ -106,7 +107,7 @@ namespace LINQToTTreeLib
         /// <param name="rootFiles"></param>
         /// <param name="qm"></param>
         /// <param name="createEverything"></param>
-        private FileInfo GetROOTCacheFile(FileInfo[] rootFiles, string treename, QueryModel qm, bool createEverything)
+        private FileInfo GetROOTCacheFile(FileInfo[] rootFiles, string treename, object[] inputObjects, QueryModel qm, bool createEverything)
         {
             ///
             /// Get the directory to cache.
@@ -121,7 +122,7 @@ namespace LINQToTTreeLib
             /// 
 
             var queryHash = qm.ToString().GetHashCode();
-            string queryNameBase = @"\\query " + queryHash.ToString();
+            string queryNameBase = @"\\query " + queryHash.ToString() + "-" + CalcObjectHash(inputObjects).ToString();
             var rootFile = new FileInfo(dfile.FullName + queryNameBase + ".root");
             if (rootFile.Exists)
                 return rootFile;
@@ -143,6 +144,24 @@ namespace LINQToTTreeLib
             }
 
             return rootFile;
+        }
+
+        /// <summary>
+        /// Calculate the hash value for a bunch of objects
+        /// </summary>
+        /// <param name="inputObjects"></param>
+        /// <returns></returns>
+        private int CalcObjectHash(object[] inputObjects)
+        {
+            if (inputObjects == null)
+                return 0;
+
+            ObjectHashCalculator cq = new ObjectHashCalculator();
+            foreach (var o in inputObjects)
+            {
+                cq.AccumutlateHash(o);
+            }
+            return cq.Hash;
         }
 
         /// <summary>
