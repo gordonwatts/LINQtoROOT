@@ -3,7 +3,7 @@
 #
 
 all: netwrapper
-clean: cleanlibraries
+clean: cleanlibraries cleannetwrapper
 
 #
 # Some Defines to make life simpler
@@ -26,6 +26,9 @@ netwrapper: $(SolutionDir)$(WrapperProjectName)\\$(WrapperProjectName).vcxproj
 
 $(SolutionDir)$(WrapperProjectName)\\$(WrapperProjectName).vcxproj: libraries 
 	$(ADDON) $(WrapperProjectName) $(DLLLibraries)
+
+cleannetwrapper:
+	del /Q $(SolutionDir)$(WrapperProjectName)\\
 
 #
 # The root dll's that do the build
