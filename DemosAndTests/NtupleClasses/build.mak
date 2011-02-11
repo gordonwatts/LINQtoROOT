@@ -3,6 +3,7 @@
 #
 
 all: netwrapper
+clean: cleanlibraries
 
 #
 # Some Defines to make life simpler
@@ -36,4 +37,6 @@ MuonInBJet_cpp.dll BTagJet_cpp.dll : MuonInBJet.cpp MuonInBJet.h BTagJet.cpp BTa
 	$(ROOT) compile.C(\"MuonInBJet.cpp\")
 	$(ROOT) compile.C(\"BTagJet.cpp\")
 
-
+cleanlibraries:
+	del /Q MuonInBJet_cpp.dll
+	del /Q BTagJet_cpp.dll
