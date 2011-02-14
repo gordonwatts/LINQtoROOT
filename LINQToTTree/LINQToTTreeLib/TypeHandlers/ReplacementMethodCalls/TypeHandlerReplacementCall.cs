@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -14,6 +15,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
     /// If the user makes an expression call that is very simple - like a static object,
     /// then we can do a pretty simple replacement
     /// </summary>
+    [Export(typeof(ITypeHandler))]
     public class TypeHandlerReplacementCall : ITypeHandler
     {
         /// <summary>
