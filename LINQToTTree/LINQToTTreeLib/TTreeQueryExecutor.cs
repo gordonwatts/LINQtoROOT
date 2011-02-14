@@ -399,7 +399,14 @@ namespace LINQToTTreeLib
             foreach (var fd in _extraComponentFiles)
             {
                 var output = CopyToCommonDirectory(fd);
-                CompileAndLoad(output);
+                try
+                {
+                    CompileAndLoad(output);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
+                }
             }
         }
 
