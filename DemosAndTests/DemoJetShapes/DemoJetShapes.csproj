@@ -77,6 +77,16 @@
       <Name>NTupleWrappers</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\NtupleClasses\BTagJet_cpp.dll">
+      <Link>BTagJet_cpp.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\NtupleClasses\MuonInBJet_cpp.dll">
+      <Link>MuonInBJet_cpp.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

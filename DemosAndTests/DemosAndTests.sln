@@ -9,6 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NTupleWrappers", "NTupleWra
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoJetShapes", "DemoJetShapes\DemoJetShapes.csproj", "{D79BBEDC-59DC-4D76-8154-BA2A51A72278}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B} = {CB6FA748-F8C3-4CAA-9852-C41F6195915B}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GenerateNtupleXMLSpec", "GenerateNtupleXMLSpec\GenerateNtupleXMLSpec.vcxproj", "{CB6FA748-F8C3-4CAA-9852-C41F6195915B}"
 EndProject
