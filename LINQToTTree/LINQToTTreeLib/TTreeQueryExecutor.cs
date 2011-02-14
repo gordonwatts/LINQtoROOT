@@ -221,6 +221,7 @@ namespace LINQToTTreeLib
 
             UnloadAllModules();
             GetQueryDirectory().Delete(true);
+            _queryDirectory = null;
 
             return final;
         }

@@ -67,6 +67,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\NtupleClasses\BTagJet_cpp.lib">
+      <Link>BTagJet_cpp.lib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\NtupleClasses\MuonInBJet_cpp.lib">
+      <Link>MuonInBJet_cpp.lib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="ntuple.ntupom">
       <Generator>cmd.exe</Generator>
     </None>
@@ -82,8 +90,16 @@
       <Link>BTagJet_cpp.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\NtupleClasses\BTagJet_cpp.pdb">
+      <Link>BTagJet_cpp.pdb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\NtupleClasses\MuonInBJet_cpp.dll">
       <Link>MuonInBJet_cpp.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\NtupleClasses\MuonInBJet_cpp.pdb">
+      <Link>MuonInBJet_cpp.pdb</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

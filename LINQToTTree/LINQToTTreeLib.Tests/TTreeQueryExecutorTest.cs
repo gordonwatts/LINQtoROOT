@@ -566,6 +566,42 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestDualQueryOnSameQueriable()
+        {
+            var rootFile = CreateFileOfInt(5);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+
+            ///
+            /// Run the second one now
+            /// 
+
+            var dude1 = q.Where(e => e.run > 10).Count();
+            query = DummyQueryExectuor.LastQueryModel;
+            result = exe.ExecuteScalar<int>(query);
+        }
+
+        [TestMethod]
         public void TestLoadingCommonFiles()
         {
             /// Create a common C++ object that can be loaded and checked for.
