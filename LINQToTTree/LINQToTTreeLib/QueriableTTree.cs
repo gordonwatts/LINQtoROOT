@@ -32,6 +32,35 @@ namespace LINQToTTreeLib
             DefineExtraOperators();
         }
 
+        /// <summary>
+        /// Debugging Aid: Get/Set to force a re-evaluation of an expression, even if it exists in the cache.
+        /// </summary>
+        public bool IgnoreQueryCache
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).IgnoreQueryCache = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).IgnoreQueryCache;
+            }
+        }
+
+        /// <summary>
+        /// Debugging Aid: Get/Set clean up query submission files (C++ files) after a successful run of a query
+        /// </summary>
+        public bool CleanupQuery
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).CleanupQuery = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).CleanupQuery;
+            }
+        }
 
         /// <summary>
         /// Called by the LINQ infrastructure. No need to do much of anything here.

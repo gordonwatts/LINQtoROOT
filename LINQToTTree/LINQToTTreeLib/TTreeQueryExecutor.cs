@@ -46,6 +46,9 @@ namespace LINQToTTreeLib
         /// <param name="treeName"></param>
         public TTreeQueryExecutor(FileInfo[] rootFiles, string treeName, Type baseNtupleObject)
         {
+            CleanupQuery = true;
+            IgnoreQueryCache = false;
+
             ///
             /// Basic checks
             /// 
@@ -184,9 +187,12 @@ namespace LINQToTTreeLib
             /// 
 
             object[] inputs = null;
-            var cacheHit = _cache.Lookup<T>(_rootFiles, _treeName, inputs, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
-            if (cacheHit.Item1)
-                return cacheHit.Item2;
+            if (!IgnoreQueryCache)
+            {
+                var cacheHit = _cache.Lookup<T>(_rootFiles, _treeName, inputs, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
+                if (cacheHit.Item1)
+                    return cacheHit.Item2;
+            }
 
             ///
             /// If we got back from that without an error, it is time to assemble the files and templates
@@ -221,11 +227,24 @@ namespace LINQToTTreeLib
             /// 
 
             UnloadAllModules();
-            GetQueryDirectory().Delete(true);
+            if (CleanupQuery)
+            {
+                GetQueryDirectory().Delete(true);
+            }
             _queryDirectory = null;
 
             return final;
         }
+
+        /// <summary>
+        /// Get/Set query cleanup control. If false, the files won't be deleted.
+        /// </summary>
+        public bool CleanupQuery { get; set; }
+
+        /// <summary>
+        /// Get/Set query cache control. If set true then the query cache will be ignored and all quieries will be re-run.
+        /// </summary>
+        public bool IgnoreQueryCache { get; set; }
 
         /// <summary>
         /// Do the work of translating the code into C++
