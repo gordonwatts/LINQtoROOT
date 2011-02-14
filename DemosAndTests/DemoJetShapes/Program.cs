@@ -34,8 +34,6 @@ namespace DemoJetShapes
             int count = rf1.Count();
             Console.WriteLine("The number of events in the ntuple, counted the hard way is {0}.", count);
 
-            ROOTNET.Interface.NBTagJet b;
-#if false
 
             ///
             /// Next, count the number of jets in the file
@@ -60,7 +58,6 @@ namespace DemoJetShapes
                              where Math.Abs(j.Eta()) < 1.0
                              select j;
             Console.WriteLine("The number of jets with an eta less than 1.0 is {0}", etaCutJets.Count());
-#endif
         }
     }
 }
