@@ -216,6 +216,7 @@
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.cs" />
     <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
     </Compile>

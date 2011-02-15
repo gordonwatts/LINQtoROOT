@@ -50,10 +50,11 @@ namespace DemoJetShapes
             /// 
 
             var ptCutJets = from j in alljets
-                            where j.Pt() > 30.0
+                            where j.Pt() / 1000.0 > 30.0
                             select j;
             Console.WriteLine("The number of jets with a pT greater than 30 GeV is {0}", ptCutJets.Count());
 
+            rf1.CleanupQuery = false;
             var etaCutJets = from j in alljets
                              where Math.Abs(j.Eta()) < 1.0
                              select j;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -59,6 +58,38 @@ namespace LINQToTTreeLib.Statements
             ValLeft = valueLeft;
             ValRight = valueRight;
             Comparison = comp;
+        }
+
+        /// <summary>
+        /// Translate from the operation into the operation
+        /// </summary>
+        private Dictionary<ComparisonOperator, string> ComparisonCodeTranslation = new Dictionary<ComparisonOperator, string>()
+        { 
+            {ComparisonOperator.EqualTo, "=="},
+            {ComparisonOperator.GreaterThan, ">"},
+            {ComparisonOperator.GreaterThanEqual, ">="},
+            {ComparisonOperator.LessThan, "<"},
+            {ComparisonOperator.LessThanEqual, "<="}
+        };
+
+        /// <summary>
+        /// Emit the code for this test statement
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<string> CodeItUp()
+        {
+            ///
+            /// If no statements, then we can optimize away!
+            /// 
+
+            if (Statements.Any())
+            {
+                yield return "if (" + ValLeft.RawValue + " " + ComparisonCodeTranslation[Comparison] + " " + ValRight.RawValue + ")";
+                foreach (var l in base.CodeItUp())
+                {
+                    yield return l;
+                }
+            }
         }
     }
 }
