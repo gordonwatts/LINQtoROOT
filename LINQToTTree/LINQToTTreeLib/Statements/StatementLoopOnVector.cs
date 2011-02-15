@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Statements
 
             if (Statements.Any())
             {
-                yield return "for (" + IteratorName + "=0; " + IteratorName + " < " + VectorToLoopOver.RawValue + ".size(); " + IteratorName + "++)";
+                yield return "for (int " + IteratorName + "=0; " + IteratorName + " < " + VectorToLoopOver.RawValue + "->size(); " + IteratorName + "++)";
                 foreach (var l in base.CodeItUp())
                 {
                     yield return l;

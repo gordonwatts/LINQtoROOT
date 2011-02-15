@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.Statements
             st.Add(new StatementSimpleStatement("dude"));
             var result = st.CodeItUp().ToArray();
             Assert.AreEqual(4, result.Length, "should have empty statements");
-            Assert.AreEqual("for (fork=0; fork < dude.size(); fork++)", result[0], "for statement incorrect");
+            Assert.AreEqual("for (int fork=0; fork < dude->size(); fork++)", result[0], "for statement incorrect");
         }
 
     }
