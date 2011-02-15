@@ -62,7 +62,7 @@ namespace LINQToTTreeLib.Statements
         /// Return this translated to code, inside curly braced. First variable decl and then the statements.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> CodeItUp()
+        public virtual IEnumerable<string> CodeItUp()
         {
             var goodVars = (from v in _variables
                             where v.Declare

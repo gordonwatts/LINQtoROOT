@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -24,6 +22,32 @@ namespace LINQToTTreeLib.Statements
         public StatementFilter(IValue testExpression)
         {
             TestExpression = testExpression;
+        }
+
+        /// <summary>
+        /// Return the code for this if statement.
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<string> CodeItUp()
+        {
+            ///
+            /// If there are no held statements, then we can optimize away the
+            /// if statement!
+            /// 
+
+            if (Statements.Any())
+            {
+
+                ///
+                /// Now, emit the if statement and work from there
+                /// 
+
+                yield return "if (" + TestExpression.RawValue + ")";
+                foreach (var l in base.CodeItUp())
+                {
+                    yield return l;
+                }
+            }
         }
     }
 }
