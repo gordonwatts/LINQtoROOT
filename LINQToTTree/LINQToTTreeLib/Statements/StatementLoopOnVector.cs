@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -12,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementLoopOnVector : StatementInlineBlock
     {
-        public StatementLoopOnVector(LinqToTTreeInterfacesLib.IValue arrayToIterateOver, string iteratorVarName)
+        public StatementLoopOnVector(IValue arrayToIterateOver, string iteratorVarName)
         {
             VectorToLoopOver = arrayToIterateOver;
             IteratorName = iteratorVarName;
@@ -26,5 +24,25 @@ namespace LINQToTTreeLib.Statements
         /// Get the name of the iterator that we are using for looping.
         /// </summary>
         public string IteratorName { get; private set; }
+
+        /// <summary>
+        /// Code up the loop.
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<string> CodeItUp()
+        {
+            ///
+            /// EMpty statement means no need to do the loop
+            /// 
+
+            if (Statements.Any())
+            {
+                yield return "for (" + IteratorName + "=0; " + IteratorName + " < " + VectorToLoopOver.RawValue + ".size(); " + IteratorName + "++)";
+                foreach (var l in base.CodeItUp())
+                {
+                    yield return l;
+                }
+            }
+        }
     }
 }
