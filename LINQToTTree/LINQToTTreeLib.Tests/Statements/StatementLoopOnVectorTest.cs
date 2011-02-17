@@ -38,7 +38,7 @@ namespace LINQToTTreeLib.Statements
         [TestMethod]
         public void TestEmptyStatements()
         {
-            var st = new StatementLoopOnVector(new Variables.ValSimple("dude", typeof(string)), "fork");
+            var st = new StatementLoopOnVector(new Variables.ValSimple("dude", typeof(IEnumerable<string>)), "fork");
             var result = st.CodeItUp().ToArray();
             Assert.AreEqual(0, result.Length, "should have empty statements");
         }
@@ -46,12 +46,33 @@ namespace LINQToTTreeLib.Statements
         [TestMethod]
         public void TestForWithStatements()
         {
-            var st = new StatementLoopOnVector(new Variables.ValSimple("dude", typeof(string)), "fork");
+            var st = new StatementLoopOnVector(new Variables.ValSimple("dude", typeof(IEnumerable<string>)), "fork");
             st.Add(new StatementSimpleStatement("dude"));
             var result = st.CodeItUp().ToArray();
             Assert.AreEqual(4, result.Length, "should have empty statements");
             Assert.AreEqual("for (int fork=0; fork < dude->size(); fork++)", result[0], "for statement incorrect");
         }
 
+        [TestMethod]
+        public void TestVectorReferenceWorks()
+        {
+            /// We assume a pointer-to-the-vector, so, it should come back...
+
+            var st = new StatementLoopOnVector(new Variables.ValSimple("dude", typeof(IEnumerable<int>)), "fork");
+
+            Assert.AreEqual("(dude)[fork]", st.ObjectReference.RawValue, "iterator isn't right");
+            Assert.AreEqual(typeof(int), st.ObjectReference.Type, "type for object reference isn't correct");
+        }
+
+        [TestMethod]
+        public void TestVectorReferenceWorksArrayType()
+        {
+            /// We assume a pointer-to-the-vector, so, it should come back...
+
+            var st = new StatementLoopOnVector(new Variables.ValSimple("dude", typeof(int[])), "fork");
+
+            Assert.AreEqual("(dude)[fork]", st.ObjectReference.RawValue, "iterator isn't right");
+            Assert.AreEqual(typeof(int), st.ObjectReference.Type, "type for object reference isn't correct");
+        }
     }
 }

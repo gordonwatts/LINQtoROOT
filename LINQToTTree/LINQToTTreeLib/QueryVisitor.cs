@@ -102,7 +102,9 @@ namespace LINQToTTreeLib
             /// 
 
             var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext);
-            _codeEnv.Add(new StatementLoopOnVector(arrayToIterateOver, fromClause.ItemName));
+            var loopstatement = new StatementLoopOnVector(arrayToIterateOver, fromClause.ItemName);
+            _codeEnv.Add(loopstatement);
+            _codeContext.Add(fromClause.ItemName, loopstatement.ObjectReference);
         }
 
         /// <summary>
