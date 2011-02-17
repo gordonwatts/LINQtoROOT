@@ -50,6 +50,15 @@ namespace DemoJetShapes
 
             Console.WriteLine("The number of jets in the ntuple is {0}.", alljets.Count());
 
+            var jetsPerEvent = from e in rf1
+                               select e.jets;
+            var firstJetPerEvent = from jts in jetsPerEvent
+                                   from j in jts.Take(1)
+                                   select j;
+            var secondJetPerEvent = from jts in jetsPerEvent
+                                    from j in jts.Skip(1).Take(1)
+                                    select j;
+
             ///
             /// Apply some very simple cuts
             /// 
@@ -72,6 +81,13 @@ namespace DemoJetShapes
             MakeGenericHistos(alljets, "alljets", outputFile);
             MakeGenericHistos(ptCutJets, "ptjets", outputFile);
             MakeGenericHistos(etaCutJets, "etajets", outputFile);
+
+            MakeGenericHistos(firstJetPerEvent, "firstjet", outputFile);
+            MakeGenericHistos(secondJetPerEvent, "secondjet", outputFile);
+
+            var jetCount = jetsPerEvent.AggregateNoReturn(new ROOTNET.NTH1F("njets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill(x.Count()));
+            jetCount.SetDirectory(outputFile);
+
             outputFile.Write();
             outputFile.Close();
 
