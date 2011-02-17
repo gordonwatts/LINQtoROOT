@@ -38,7 +38,7 @@ namespace LINQToTTreeLib
         /// </summary>
         private IBookingStatementBlock CurrentDeclarationScopePointer;
 
-        internal void SetResult(IVariable r)
+        public void SetResult(IVariable r)
         {
             if (r == null)
                 throw new ArgumentNullException("Cannot set the result to be null");

@@ -35,5 +35,11 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="filename"></param>
         void AddIncludeFile(string filename);
+
+        /// <summary>
+        /// Set the result of the current code contex.
+        /// </summary>
+        /// <param name="result"></param>
+        void SetResult(IVariable result);
     }
 }
