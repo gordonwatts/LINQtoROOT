@@ -41,5 +41,10 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="result"></param>
         void SetResult(IVariable result);
+
+        /// <summary>
+        /// Returns the value that is the result of this calculation.
+        /// </summary>
+        IVariable ResultValue { get; }
     }
 }
