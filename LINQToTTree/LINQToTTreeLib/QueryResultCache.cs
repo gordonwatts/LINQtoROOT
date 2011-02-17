@@ -55,6 +55,8 @@ namespace LINQToTTreeLib
                 if (k == null)
                     return new Tuple<bool, T>(false, default(T));
 
+                var cachedObject = k.ReadObj();
+                ROOTNET.NTROOT.gROOT.cd();
                 return new Tuple<bool, T>(true, varSaver.LoadResult<T>(theVar, k.ReadObj()));
             }
             finally

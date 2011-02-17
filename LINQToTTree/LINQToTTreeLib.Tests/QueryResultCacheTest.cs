@@ -103,6 +103,34 @@ namespace LINQToTTreeLib
             }
         }
 
+        /// <summary>
+        /// Histo return
+        /// </summary>
+        class DummyHistoSaver : IVariableSaver
+        {
+            public bool CanHandle(IVariable iVariable)
+            {
+                throw new NotImplementedException();
+            }
+
+            public System.Collections.Generic.IEnumerable<string> SaveToFile(IVariable iVariable)
+            {
+                throw new NotImplementedException();
+            }
+
+            public System.Collections.Generic.IEnumerable<string> IncludeFiles(IVariable iVariable)
+            {
+                throw new NotImplementedException();
+            }
+
+            public T LoadResult<T>(IVariable iVariable, NTObject obj)
+            {
+                var h = obj.Clone();
+                return (T)h;
+            }
+        }
+
+
 
         [TestMethod]
         public void TestNoHit()
@@ -302,6 +330,29 @@ namespace LINQToTTreeLib
 
             var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
             Assert.IsFalse(r.Item1, "Cache should have been there");
+        }
+
+        [TestMethod]
+        public void TestNoStuckInOpenFile()
+        {
+            ///
+            /// When we load up and return a cache, we are storing a histo in the file - make sure it comes back w/out errors.
+            ///
+
+            var f = MakeRootFile("TestHitDriver");
+            var query = MakeQuery(0);
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+            var q = new QueryResultCache();
+            q.CacheItem(new FileInfo[] { f }, "test", null, query, h);
+
+            var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, query, new DummyHistoSaver());
+            Assert.IsTrue(r.Item1, "expected hit");
+            Assert.AreEqual("hi", r.Item2.Name, "inproper histo came back");
+
         }
     }
 }
