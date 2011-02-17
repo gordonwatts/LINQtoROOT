@@ -12,7 +12,8 @@ namespace DemoJetShapes
     class Program
     {
         /// <summary>
-        /// Simple demo to look at jets in a local root-tuple.
+        /// Simple demo to look at jets in a local root-tuple. This demo is based on the feature
+        /// set that can be found in version 0.1. Basic cuts, Count, and histogram making.
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
@@ -26,6 +27,8 @@ namespace DemoJetShapes
             }
 
             var rf1 = Queryablebtag.Create(rootFile);
+            //rf1.IgnoreQueryCache = true;
+            //rf1.CleanupQuery = false;
 
             ///
             /// Count the # of events in the file
@@ -54,7 +57,6 @@ namespace DemoJetShapes
                             select j;
             Console.WriteLine("The number of jets with a pT greater than 30 GeV is {0}", ptCutJets.Count());
 
-            rf1.CleanupQuery = false;
             var etaCutJets = from j in alljets
                              where Math.Abs(j.Eta()) < 1.0
                              select j;
