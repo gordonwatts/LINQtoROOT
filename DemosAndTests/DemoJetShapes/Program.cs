@@ -6,7 +6,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using LINQToTTreeLib;
 using ROOTTTreeDataModel;
+
 namespace DemoJetShapes
 {
     class Program
@@ -61,6 +63,31 @@ namespace DemoJetShapes
                              where Math.Abs(j.Eta()) < 1.0
                              select j;
             Console.WriteLine("The number of jets with an eta less than 1.0 is {0}", etaCutJets.Count());
+
+            ///
+            /// Make some histos of all of these.
+            /// 
+
+            var outputFile = new ROOTNET.NTFile("result.root", "RECREATE");
+            MakeGenericHistos(alljets, "alljets", outputFile);
+            MakeGenericHistos(ptCutJets, "ptjets", outputFile);
+            MakeGenericHistos(etaCutJets, "etajets", outputFile);
+            outputFile.Write();
+            outputFile.Close();
+
+        }
+
+        /// <summary>
+        /// Make pT and Eta histograms
+        /// </summary>
+        /// <param name="alljets"></param>
+        /// <param name="p"></param>
+        private static void MakeGenericHistos(IQueryable<ROOTNET.Interface.NBTagJet> alljets, string namePrefix, ROOTNET.Interface.NTDirectory dir)
+        {
+            var heta = alljets.AggregateNoReturn(new ROOTNET.NTH1F(namePrefix + "_eta", "\\Eta for " + namePrefix, 50, -5.0, 5.0), (h, x) => h.Fill(x.Eta()));
+            heta.SetDirectory(dir);
+            var hpt = alljets.AggregateNoReturn(new ROOTNET.NTH1F(namePrefix + "_pt", "p_{T} for " + namePrefix, 50, 0.0, 150.0), (h, x) => h.Fill(x.Pt() / 1000.0));
+            hpt.SetDirectory(dir);
         }
     }
 }
