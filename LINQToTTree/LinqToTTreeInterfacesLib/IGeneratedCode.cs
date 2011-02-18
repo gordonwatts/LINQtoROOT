@@ -46,5 +46,10 @@ namespace LinqToTTreeInterfacesLib
         /// Returns the value that is the result of this calculation.
         /// </summary>
         IVariable ResultValue { get; }
+
+        /// <summary>
+        /// Get/Set teh current scope...
+        /// </summary>
+        object CurrentScope { get; set; }
     }
 }
