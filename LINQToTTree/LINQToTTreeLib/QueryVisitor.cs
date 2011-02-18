@@ -17,7 +17,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Hold onto the code we are writing.
         /// </summary>
-        private GeneratedCode _codeEnv;
+        private IGeneratedCode _codeEnv;
 
         /// <summary>
         /// Keep track of the code context
@@ -28,13 +28,12 @@ namespace LINQToTTreeLib
         /// Create a new visitor and add our code to the current spot we are in the "code".
         /// </summary>
         /// <param name="code"></param>
-        public QueryVisitor(GeneratedCode code, ICodeContext context = null)
+        public QueryVisitor(IGeneratedCode code, ICodeContext context = null)
         {
             _codeEnv = code;
             _codeContext = context;
             if (_codeContext == null)
                 _codeContext = new CodeContext();
-
         }
 
         /// <summary>
