@@ -59,6 +59,10 @@ namespace DemoJetShapes
                                     from j in jts.Skip(1).Take(1)
                                     select j;
 
+            var firstGoodJetPerEvent = from jts in jetsPerEvent
+                                       from j in jts.Where(j => j.Pt() / 1000.0 > 30.0).Take(1)
+                                       select j;
+
             ///
             /// Apply some very simple cuts
             /// 
@@ -83,6 +87,7 @@ namespace DemoJetShapes
             MakeGenericHistos(etaCutJets, "etajets", outputFile);
 
             MakeGenericHistos(firstJetPerEvent, "firstjet", outputFile);
+            MakeGenericHistos(firstGoodJetPerEvent, "first30GeVjet", outputFile);
             MakeGenericHistos(secondJetPerEvent, "secondjet", outputFile);
 
             var jetCount = jetsPerEvent.AggregateNoReturn(new ROOTNET.NTH1F("njets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill(x.Count()));
