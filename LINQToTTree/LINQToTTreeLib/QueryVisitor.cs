@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
@@ -60,7 +61,7 @@ namespace LINQToTTreeLib
                 throw new InvalidOperationException("LINQToTTree can't translate the operator '" + resultOperator.ToString() + "'");
             }
 
-            var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext);
+            var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
             if (result != null)
             {
                 _codeEnv.SetResult(result);
@@ -97,7 +98,7 @@ namespace LINQToTTreeLib
             }
             else
             {
-                var arrayRef = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext);
+                var arrayRef = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext, MEFContainer);
 
                 var loop = new StatementLoopOnVector(arrayRef, typeof(int).CreateUniqueVariableName());
                 _codeEnv.Add(loop);
@@ -134,7 +135,7 @@ namespace LINQToTTreeLib
             /// generalized when we loop over more than just a "std::vector".
             /// 
 
-            var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext);
+            var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext, MEFContainer);
             var loopstatement = new StatementLoopOnVector(arrayToIterateOver, fromClause.ItemName);
             _codeEnv.Add(loopstatement);
             _codeContext.Add(fromClause.ItemName, loopstatement.ObjectReference);
@@ -148,7 +149,12 @@ namespace LINQToTTreeLib
         /// <param name="index"></param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            _codeEnv.Add(new Statements.StatementFilter(ExpressionVisitor.GetExpression(whereClause.Predicate, _codeEnv, _codeContext)));
+            _codeEnv.Add(new Statements.StatementFilter(ExpressionVisitor.GetExpression(whereClause.Predicate, _codeEnv, _codeContext, MEFContainer)));
         }
+
+        /// <summary>
+        /// Get/Set the container that can be usef for MEF'ing things.
+        /// </summary>
+        public CompositionContainer MEFContainer { get; set; }
     }
 }

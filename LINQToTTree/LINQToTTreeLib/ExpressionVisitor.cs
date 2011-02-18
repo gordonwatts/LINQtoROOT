@@ -190,8 +190,8 @@ namespace LINQToTTreeLib
             /// Run the expression
             /// 
 
-            var RHS = GetExpression(expression.Right, _codeEnv, _codeContext);
-            var LHS = GetExpression(expression.Left, _codeEnv, _codeContext);
+            var RHS = GetExpression(expression.Right, _codeEnv, _codeContext, MEFContainer);
+            var LHS = GetExpression(expression.Left, _codeEnv, _codeContext, MEFContainer);
 
             string sRHS, sLHS;
             if (CastToFinalType)
@@ -220,15 +220,15 @@ namespace LINQToTTreeLib
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-" + GetExpression(expression.Operand, _codeEnv, _codeContext).AsCastString(), expression.Type);
+                    _result = new ValSimple("-" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).AsCastString(), expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!" + GetExpression(expression.Operand, _codeEnv, _codeContext).AsCastString(), expression.Type);
+                    _result = new ValSimple("!" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).AsCastString(), expression.Type);
                     break;
 
                 case ExpressionType.Convert:
-                    _result = new ValSimple(GetExpression(expression.Operand, _codeEnv, _codeContext).CastToType(expression.Type), expression.Type);
+                    _result = new ValSimple(GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
                     break;
 
                 default:
@@ -259,7 +259,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            var baseExpr = GetExpression(expression.Expression, _codeEnv, _codeContext);
+            var baseExpr = GetExpression(expression.Expression, _codeEnv, _codeContext, MEFContainer);
             _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
 
             return expression;
@@ -285,7 +285,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitLambdaExpression(LambdaExpression expression)
         {
-            _result = GetExpression(expression.Body, _codeEnv, _codeContext);
+            _result = GetExpression(expression.Body, _codeEnv, _codeContext, MEFContainer);
 
             return expression;
         }
@@ -319,6 +319,7 @@ namespace LINQToTTreeLib
             b.AddPart(qv);
             qv.SubExpressionParse = true;
             MEFContainer.Compose(b);
+            qv.MEFContainer = MEFContainer;
 
             ///
             /// Run it - since this result is out of this loop, we pop-back-out when done.

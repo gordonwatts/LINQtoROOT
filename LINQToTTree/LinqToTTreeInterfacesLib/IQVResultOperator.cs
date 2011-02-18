@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition.Hosting;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 
@@ -16,6 +17,6 @@ namespace LinqToTTreeInterfacesLib
         /// <returns></returns>
         bool CanHandle(Type resultOperatorType);
 
-        IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext);
+        IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
     }
 }

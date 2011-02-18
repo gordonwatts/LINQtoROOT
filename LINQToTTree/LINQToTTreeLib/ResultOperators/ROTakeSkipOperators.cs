@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
@@ -35,7 +36,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext, CompositionContainer container)
         {
             ///
             /// Quick checks to make sure
@@ -71,11 +72,11 @@ namespace LINQToTTreeLib.ResultOperators
             if (skip != null)
             {
                 comparison = StatementIfOnCount.ComparisonOperator.GreaterThan;
-                comparisonValue = ExpressionVisitor.GetExpression(skip.Count, codeEnv, codeContext);
+                comparisonValue = ExpressionVisitor.GetExpression(skip.Count, codeEnv, codeContext, container);
             }
             else
             {
-                comparisonValue = ExpressionVisitor.GetExpression(take.Count, codeEnv, codeContext);
+                comparisonValue = ExpressionVisitor.GetExpression(take.Count, codeEnv, codeContext, container);
             }
 
             codeEnv.Add(new StatementIfOnCount(counter, comparisonValue, comparison));

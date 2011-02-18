@@ -4,6 +4,7 @@ using LinqToTTreeInterfacesLib;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
+using System.ComponentModel.Composition.Hosting;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -33,7 +34,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
         {
             ///
             /// First, do data normalization

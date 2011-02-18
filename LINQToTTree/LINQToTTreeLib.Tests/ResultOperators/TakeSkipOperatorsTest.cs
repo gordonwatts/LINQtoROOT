@@ -53,7 +53,7 @@ namespace LINQToTTreeLib.ResultOperators
         {
             CodeContext c = new CodeContext();
             IVariable result
-               = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c);
+               = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
 
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will

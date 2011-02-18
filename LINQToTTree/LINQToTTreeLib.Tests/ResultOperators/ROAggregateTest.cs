@@ -57,7 +57,7 @@ namespace LINQToTTreeLib.ResultOperators
         {
             CodeContext c = new CodeContext();
             IVariable result
-               = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, c);
+               = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, c, null);
             return result;
             // TODO: add assertions to method ROAggregateTest.ProcessResultOperator(ROAggregate, ResultOperatorBase, QueryModel, IGeneratedCode)
         }

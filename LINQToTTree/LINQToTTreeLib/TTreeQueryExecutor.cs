@@ -175,6 +175,7 @@ namespace LINQToTTreeLib
             if (_cppTranslator == null)
                 b.AddPart(this);
             _gContainer.Compose(b);
+            qv.MEFContainer = _gContainer;
 
             ///
             /// Parse the query

@@ -6,6 +6,7 @@ using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
+using System.ComponentModel.Composition.Hosting;
 
 namespace LINQToTTreeLib
 {
@@ -33,7 +34,7 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext, CompositionContainer container)
         {
             if (codeEnv == null)
                 throw new ArgumentNullException("CodeEnv must not be null!");
