@@ -54,6 +54,17 @@ namespace LINQToTTreeLib
             AddWithPop(new CodeContext(), "bogus", replacement1, replacement2);
         }
 
+        [TestMethod]
+        public void TestPopOfNothing()
+        {
+            var replacement1 = new Variables.ValSimple("freakout", typeof(int));
+            var cc = new CodeContext();
+            var popper = cc.Add("dude", replacement1);
+            Assert.AreEqual(1, cc.NumberOfParams, "Incorrect # after insertion");
+            popper.Pop();
+            Assert.AreEqual(0, cc.NumberOfParams, "After pop, expected everything to be gone");
+        }
+
         /// <summary>Test stub for .ctor()</summary>
         [PexMethod]
         public CodeContext Constructor()

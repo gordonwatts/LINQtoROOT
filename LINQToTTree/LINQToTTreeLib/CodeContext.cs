@@ -10,7 +10,16 @@ namespace LINQToTTreeLib
     /// </summary>
     public class CodeContext : ICodeContext
     {
+        /// <summary>
+        /// Keep track of all parameters we need to know about.
+        /// </summary>
         Dictionary<string, IValue> _parameterReplacement = new Dictionary<string, IValue>();
+
+        /// <summary>
+        /// Get the # of parameter replacements we know about.
+        /// </summary>
+        public int NumberOfParams { get { return _parameterReplacement.Count; } }
+
         /// <summary>
         /// Add a parameter replacement to the list.
         /// </summary>
@@ -35,7 +44,7 @@ namespace LINQToTTreeLib
             }
             else
             {
-                popper = new CCReplacementNull();
+                popper = new CCReplacementNull(this, varName);
             }
 
             ///
@@ -52,8 +61,18 @@ namespace LINQToTTreeLib
         /// </summary>
         private class CCReplacementNull : IVariableScopeHolder
         {
+            private string _vName;
+            private CodeContext _codeContext;
+
+            public CCReplacementNull(CodeContext codeContext, string varName)
+            {
+                // TODO: Complete member initialization
+                _codeContext = codeContext;
+                _vName = varName;
+            }
             public void Pop()
             {
+                _codeContext.Delete(_vName);
             }
         }
 
@@ -108,6 +127,15 @@ namespace LINQToTTreeLib
                 throw new InvalidOperationException("Can't convert parameter from type '" + result.Type.Name + "' to '" + type.Name + "'.");
 
             return result;
+        }
+
+        /// <summary>
+        /// Delete a variable name if it is in there.
+        /// </summary>
+        /// <param name="_vName"></param>
+        internal void Delete(string _vName)
+        {
+            _parameterReplacement.Remove(_vName);
         }
     }
 }
