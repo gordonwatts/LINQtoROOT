@@ -339,11 +339,25 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSimpleSubQueryWithAddon()
         {
-            Assert.Inconclusive();
-            /// When we do somethign with a subquery result, make sure that we get something back out!!
-            /// Also need to make sure that any created variables are gotten rid of, and if a var is over-written, it isn't
-            /// totally lost when the scope pops back out! :-)
-            /// Write a test for QV to make sure that the MEF stuff gets passed down correctly!
+            var model = GetModel(() => (from q in new QueriableDummy<dummyntup>() select q.vals.Where(v => v > 20).Count()).Count());
+            var expr = model.SelectClause.Selector as SubQueryExpression;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+
+            ///
+            /// Next, go after the code that comes back and make sure the if statement for the > 20 actually makes sense.
+            /// 
+
+            var loop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
+            Assert.AreEqual(1, loop.Statements.Count(), "Expected one sub-statement");
+            Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");
         }
     }
 }
