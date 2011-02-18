@@ -34,6 +34,8 @@ namespace LINQToTTreeLib
             _codeContext = context;
             if (_codeContext == null)
                 _codeContext = new CodeContext();
+
+            SubExpressionParse = false;
         }
 
         /// <summary>
@@ -66,6 +68,16 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Get/Set indicator if we are parsing a sub expression and thus should generate teh loop ourselves
+        /// </summary>
+        public bool SubExpressionParse { get; set; }
+
+        /// <summary>
+        /// Keep track of the main index variable if it should be gotten rid of!
+        /// </summary>
+        private IVariableScopeHolder _mainIndex = null;
+
+        /// <summary>
         /// Run the main from clause in a query. This can be called more than  once - when you have
         /// multiple from queries at the top level.
         /// </summary>
@@ -77,14 +89,36 @@ namespace LINQToTTreeLib
             /// For the main clause we will just define the variable as "this".
             /// 
 
-            var outter = new VarOutterLoopObjectPointer(fromClause.ItemName, fromClause.ItemType);
-            _codeEnv.Add(outter);
+            if (!SubExpressionParse)
+            {
+                var outter = new VarOutterLoopObjectPointer(fromClause.ItemName, fromClause.ItemType);
+                _codeEnv.Add(outter);
+                _codeContext.Add(outter.VariableName, outter);
+            }
+            else
+            {
+                var arrayRef = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext);
+
+                var loop = new StatementLoopOnVector(arrayRef, typeof(int).CreateUniqueVariableName());
+                _codeEnv.Add(loop);
+                _mainIndex = _codeContext.Add(fromClause.ItemName, loop.ObjectReference);
+            }
+        }
+
+        /// <summary>
+        /// Main driver. Parse the query model.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        public override void VisitQueryModel(QueryModel queryModel)
+        {
+            base.VisitQueryModel(queryModel);
 
             ///
-            /// This is a variable replacement we will have to be doing, so register it for later replacement
+            /// If a main index variable was declared that has now lost its usefulness, we should get rid of it.
             /// 
 
-            _codeContext.Add(outter.VariableName, outter);
+            if (_mainIndex != null)
+                _mainIndex.Pop();
         }
 
         /// <summary>

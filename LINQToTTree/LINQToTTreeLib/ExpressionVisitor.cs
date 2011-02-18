@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
@@ -17,13 +18,22 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public static IValue GetExpression(Expression expr, IGeneratedCode ce, ICodeContext cc = null)
+        public static IValue GetExpression(Expression expr, IGeneratedCode ce, ICodeContext cc = null, CompositionContainer container = null)
         {
             if (cc == null)
             {
                 cc = new CodeContext();
             }
             var visitor = new ExpressionVisitor(ce, cc);
+            visitor.MEFContainer = container;
+
+            if (container != null)
+            {
+                CompositionBatch b = new CompositionBatch();
+                b.AddPart(visitor);
+                container.Compose(b);
+            }
+
             visitor.VisitExpression(expr);
             return visitor.Result;
         }
@@ -294,6 +304,46 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// The user is making a sub-query. We will run the query and return it using the usual QueryVisitor dude, but unlike
+        /// normal we have to run the loop ourselves.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+        {
+            if (MEFContainer == null)
+                throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
+
+            QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext);
+            CompositionBatch b = new CompositionBatch();
+            b.AddPart(qv);
+            qv.SubExpressionParse = true;
+            MEFContainer.Compose(b);
+
+            ///
+            /// Run it - since this result is out of this loop, we pop-back-out when done.
+            /// 
+
+            var scope = _codeEnv.CurrentScope;
+            qv.VisitQueryModel(expression.QueryModel);
+            _codeEnv.CurrentScope = scope;
+
+            ///
+            /// The variable that comes back needs to be booked in the local code block.
+            /// 
+
+            _codeEnv.Add(_codeEnv.ResultValue);
+
+            ///
+            /// And we mark the result as our current result.
+            /// 
+
+            _result = _codeEnv.ResultValue;
+
+            return expression;
+        }
+
+        /// <summary>
         /// If there is something in the expression we can't deal with, this method gets called and we can pop-it-out to warn
         /// the user they are trying to do something we can't deal with yet.
         /// </summary>
@@ -319,5 +369,10 @@ namespace LINQToTTreeLib
             var itemAsExpression = unhandledItem as Expression;
             return itemAsExpression != null ? FormattingExpressionTreeVisitor.Format(itemAsExpression) : unhandledItem.ToString();
         }
+
+        /// <summary>
+        /// Get/Set the MEF container used when we create new objects (like a QV).
+        /// </summary>
+        public CompositionContainer MEFContainer { get; set; }
     }
 }

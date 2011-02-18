@@ -8,12 +8,15 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.Expressions;
+using Remotion.Data.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib
 {
@@ -280,6 +283,67 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("((int)p)+((int)2)", result.RawValue, "raw value was not right");
+        }
+
+        public class dummyntup
+        {
+            public int run;
+            public int[] vals;
+        }
+
+        private QueryModel GetModel<T>(Expression<Func<T>> expr)
+        {
+            var parser = new QueryParser();
+            return parser.GetParsedQuery(expr.Body);
+        }
+
+        [TestMethod]
+        public void TestSimpleSubQuery()
+        {
+            var model = GetModel(() => (from q in new QueriableDummy<dummyntup>() select q.vals.Count()).Count());
+            var expr = model.SelectClause.Selector as SubQueryExpression;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+
+            Assert.AreEqual(typeof(int), result.Type, "bad type for return");
+
+            ///
+            /// Make sure that the aint1 has been declared in the body of the code, and that there are some statements.
+            /// The top level statement should be a loop over whatever it is we are looping over!
+            /// 
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "Incorrect looping statement");
+            Assert.IsFalse(gc.CodeBody.Statements.First().CodeItUp().First().Contains("<generated>"), "Contains a funny variable name: " + gc.CodeBody.Statements.First().CodeItUp().First());
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected one declared variable");
+            Assert.AreEqual(result.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "declared variable name incorrect");
+
+            ///
+            /// Next, make sure if we add a statement it goes where we think it should - after teh stuff that has been added,
+            /// not inside it.
+            /// 
+
+            gc.Add(new Statements.StatementSimpleStatement("dude"));
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Scope has not been reset");
+
+            Assert.AreEqual(0, cc.NumberOfParams, "Impromper # of parameter replacements left over");
+        }
+
+        [TestMethod]
+        public void TestSimpleSubQueryWithAddon()
+        {
+            Assert.Inconclusive();
+            /// When we do somethign with a subquery result, make sure that we get something back out!!
+            /// Also need to make sure that any created variables are gotten rid of, and if a var is over-written, it isn't
+            /// totally lost when the scope pops back out! :-)
+            /// Write a test for QV to make sure that the MEF stuff gets passed down correctly!
         }
     }
 }
