@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -16,6 +13,11 @@ namespace LINQToTTreeLib.Tests
         /// Holds the crap for MEF.
         /// </summary>
         private static CompositionContainer _container = null;
+
+        /// <summary>
+        /// Gets teh container use for composition
+        /// </summary>
+        public static CompositionContainer MEFContainer { get { return _container; } }
 
         /// <summary>
         /// Keep track of everyone we are going to compose.
