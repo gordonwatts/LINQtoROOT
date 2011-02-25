@@ -327,19 +327,27 @@ namespace LINQToTTreeLib
 
             var scope = _codeEnv.CurrentScope;
             qv.VisitQueryModel(expression.QueryModel);
-            _codeEnv.CurrentScope = scope;
 
             ///
-            /// The variable that comes back needs to be booked in the local code block.
+            /// Two possible results from the sub-expression query, and how we proceed depends
+            /// on what happened in the sub query
+            /// 
+            /// 1. <returns a value> - an operator like Count() comes back from the sequence.
+            ///    it will get used in some later sequence (like # of jets in each event). So,
+            ///    we need to make sure it is declared and kept before it is used. The # that comes
+            ///    back needs to be used outside the scope we are sitting in - the one that we were at
+            ///    when we started this.
+            /// 2. <return a sequence> - this is weird - there is nothign that comes back - like
+            ///    a Take operator or similar. In that case, we need to stay inside the Take operator -
+            ///    that is, we need to run inside the scope, so we don't pop the scope.
             /// 
 
-            _codeEnv.Add(_codeEnv.ResultValue);
-
-            ///
-            /// And we mark the result as our current result.
-            /// 
-
-            _result = _codeEnv.ResultValue;
+            if (_codeEnv.ResultValue != null)
+            {
+                _codeEnv.CurrentScope = scope;
+                _codeEnv.Add(_codeEnv.ResultValue);
+                _result = _codeEnv.ResultValue;
+            }
 
             return expression;
         }
