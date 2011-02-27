@@ -66,6 +66,25 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSetMainLoopVariable()
+        {
+            var model = GetModel(() => (new QueriableDummy<dummyntup>().Count()));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc);
+            MEFUtilities.Compose(qv);
+            qv.MEFContainer = MEFUtilities.MEFContainer;
+
+            qv.VisitQueryModel(model);
+
+            Assert.IsNotNull(cc.LoopVariable, "Loop variable is null!");
+        }
+
+        [TestMethod]
         public void TestBasicTakeOperator()
         {
             /// The take operator is funny b/c it is a result, but it returns nothing.
