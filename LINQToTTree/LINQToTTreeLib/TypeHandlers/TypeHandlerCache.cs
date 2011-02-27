@@ -65,7 +65,11 @@ namespace LINQToTTreeLib.TypeHandlers
 
             var h = (from t in _handlers
                      where t.CanHandle(type)
-                     select t).First();
+                     select t).FirstOrDefault();
+
+            if (h == null)
+                throw new InvalidOperationException("I don't know how to deal with the type " + type.Name);
+
             return h;
         }
     }
