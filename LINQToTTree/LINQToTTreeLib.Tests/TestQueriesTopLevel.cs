@@ -65,20 +65,6 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        public void TestTakeSkip()
-        {
-            var q = new QueriableDummy<ntup>();
-            var result = from d in q
-                         select d;
-            var c = result.Take(1).Count();
-
-            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
-            var res = DummyQueryExectuor.FinalResult;
-
-            var e = result.Skip(1).Count();
-        }
-
-        [TestMethod]
         public void TestWhere()
         {
             var q = new QueriableDummy<ntup>();
