@@ -139,6 +139,19 @@ namespace LINQToTTreeLib.ResultOperators
             {
                 get { return _index.Type; }
             }
+
+            /// <summary>
+            /// Add the statements that will actually cause the loops. The fantastic thing about this is
+            /// that the loop is already implied - we are already running it. So we need only declare
+            /// the new index variable and we are set.
+            /// </summary>
+            /// <param name="env"></param>
+            /// <param name="context"></param>
+            /// <param name="indexName"></param>
+            public void AddLoop(IGeneratedCode env, ICodeContext context, string indexName)
+            {
+                context.Add(indexName, context.LoopVariable);
+            }
         }
     }
 }

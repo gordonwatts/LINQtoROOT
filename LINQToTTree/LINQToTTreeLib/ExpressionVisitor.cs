@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
@@ -253,14 +254,39 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// We are going to reference a member item - this is a simple "." coding.
+        /// We are going to reference a member item - this is a simple "." coding. If this is a reference
+        /// to some sort of array, then we need to deal with getting back the proper array type.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
             var baseExpr = GetExpression(expression.Expression, _codeEnv, _codeContext, MEFContainer);
-            _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+
+            ///
+            /// Figure out how to represent the variable type. We base this on the type - enumerables, for
+            /// example, know how to loop, other things like "int" just know how to be simpe values. Eventually
+            /// this will likely have to be made "common".
+            /// 
+
+            _result = null;
+            if (expression.Type.IsGenericType)
+            {
+                if (expression.Type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                }
+            }
+
+            ///
+            /// If we can't figure out what the proper special variable type is from above, then we
+            /// need to just fill in the default.
+            /// 
+
+            if (_result == null)
+            {
+                _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+            }
 
             return expression;
         }

@@ -198,6 +198,7 @@ namespace LINQToTTreeLib
         {
 #pragma warning disable 0169
             int run;
+            IEnumerable<int> numbers;
 #pragma warning restore 0169
         }
 
@@ -210,6 +211,18 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("(*d).run", r.RawValue, "incorrect reference");
+        }
+
+        [TestMethod]
+        public void TestMemberEnumerable()
+        {
+            var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");
+            GeneratedCode gc = new GeneratedCode();
+            var r = ExpressionVisitor.GetExpression(e, gc);
+            CheckGeneratedCodeEmpty(gc);
+            Assert.AreEqual(typeof(IEnumerable<int>), r.Type, "incorrect type");
+            Assert.AreEqual("(*d).numbers", r.RawValue, "incorrect reference");
+            Assert.IsInstanceOfType(r, typeof(ISequenceAccessor), "not an array operator");
         }
 
         [TestMethod]

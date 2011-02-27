@@ -138,9 +138,11 @@ namespace LINQToTTreeLib
 
             var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext, MEFContainer);
 
-            var loopstatement = new StatementLoopOnVector(arrayToIterateOver, fromClause.ItemName);
-            _codeEnv.Add(loopstatement);
-            _codeContext.Add(fromClause.ItemName, loopstatement.ObjectReference);
+            var seqAcc = arrayToIterateOver as ISequenceAccessor;
+            if (seqAcc == null)
+                throw new InvalidOperationException("A sequence should have been returned, but it doesn't seem to know how to be iterated over!");
+
+            seqAcc.AddLoop(_codeEnv, _codeContext, fromClause.ItemName);
         }
 
         /// <summary>
