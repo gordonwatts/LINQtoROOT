@@ -53,6 +53,8 @@ namespace LINQToTTreeLib.ResultOperators
         )
         {
             CodeContext c = new CodeContext();
+            c.SetLoopVariable(new VarSimple(typeof(int)));
+
             IVariable result
                = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
 
