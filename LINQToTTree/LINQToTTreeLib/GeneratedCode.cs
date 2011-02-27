@@ -58,7 +58,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Keeps track of the the current scope
         /// </summary>
-        private class CurrentScopeInfo
+        private class CurrentScopeInfo : IScopeInfo
         {
             public IStatementCompound Scope;
             public IBookingStatementBlock BookingScope;
@@ -69,7 +69,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Get/set the current scope pointer.
         /// </summary>
-        public object CurrentScope
+        public IScopeInfo CurrentScope
         {
             get
             {

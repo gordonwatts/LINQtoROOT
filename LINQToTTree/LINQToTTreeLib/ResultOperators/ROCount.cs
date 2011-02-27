@@ -1,14 +1,14 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
-using System.ComponentModel.Composition.Hosting;
 
-namespace LINQToTTreeLib
+namespace LINQToTTreeLib.ResultOperators
 {
     /// <summary>
     /// Implement the result operator that will deal with the Count predicate.

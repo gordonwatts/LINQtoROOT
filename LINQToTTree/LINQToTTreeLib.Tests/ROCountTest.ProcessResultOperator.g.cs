@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses.ResultOperators;
 using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.ResultOperators;
 
 namespace LINQToTTreeLib
 {

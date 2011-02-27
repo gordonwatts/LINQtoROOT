@@ -2,6 +2,14 @@
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
+    /// Object that holds onto the current scope for this generated object.
+    /// </summary>
+    public interface IScopeInfo
+    {
+
+    }
+
+    /// <summary>
     /// Interface for implementing an object that will contain a complete single query
     /// </summary>
     public interface IGeneratedCode
@@ -56,7 +64,7 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Get/Set teh current scope...
         /// </summary>
-        object CurrentScope { get; set; }
+        IScopeInfo CurrentScope { get; set; }
 
         /// <summary>
         /// How far down in the hierarchy of statements are we?

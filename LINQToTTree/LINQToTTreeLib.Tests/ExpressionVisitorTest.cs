@@ -17,6 +17,7 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Parsing.Structure;
+using LINQToTTreeLib.ResultOperators;
 
 namespace LINQToTTreeLib
 {
