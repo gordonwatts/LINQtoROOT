@@ -277,6 +277,10 @@ namespace LINQToTTreeLib
                     _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
                 }
             }
+            else if (expression.Type.IsArray)
+            {
+                _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+            }
 
             ///
             /// If we can't figure out what the proper special variable type is from above, then we

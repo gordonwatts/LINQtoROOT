@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
@@ -99,12 +99,15 @@ namespace LINQToTTreeLib
             }
             else
             {
+                CodeLoopOverExpression(fromClause.FromExpression, fromClause.ItemName);
+#if false
                 var arrayRef = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext, MEFContainer);
 
                 var loop = new StatementLoopOnVector(arrayRef, typeof(int).CreateUniqueVariableName());
                 _codeEnv.Add(loop);
                 _mainIndex = _codeContext.Add(fromClause.ItemName, loop.ObjectReference);
                 _codeContext.SetLoopVariable(new VarDeclared(loop.ObjectReference, fromClause.ItemName));
+#endif
             }
         }
 
@@ -137,13 +140,24 @@ namespace LINQToTTreeLib
             /// generalized when we loop over more than just a "std::vector".
             /// 
 
-            var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext, MEFContainer);
+            CodeLoopOverExpression(fromClause.FromExpression, fromClause.ItemName);
+        }
+
+        /// <summary>
+        /// Given an expression which we can turn into a loop, add the loop to the current
+        /// code block.
+        /// </summary>
+        /// <param name="loopExpr"></param>
+        /// <param name="indexName"></param>
+        private void CodeLoopOverExpression(Expression loopExpr, string indexName)
+        {
+            var arrayToIterateOver = ExpressionVisitor.GetExpression(loopExpr, _codeEnv, _codeContext, MEFContainer);
 
             var seqAcc = arrayToIterateOver as ISequenceAccessor;
             if (seqAcc == null)
                 throw new InvalidOperationException("A sequence should have been returned, but it doesn't seem to know how to be iterated over!");
 
-            var indexv = seqAcc.AddLoop(_codeEnv, _codeContext, fromClause.ItemName);
+            var indexv = seqAcc.AddLoop(_codeEnv, _codeContext, indexName);
             _codeContext.SetLoopVariable(indexv);
         }
 
