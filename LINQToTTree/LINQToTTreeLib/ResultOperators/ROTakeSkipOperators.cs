@@ -81,7 +81,64 @@ namespace LINQToTTreeLib.ResultOperators
 
             codeEnv.Add(new StatementIfOnCount(counter, comparisonValue, comparison));
 
-            return null;
+            ///
+            /// Subsequent guys are going to want to take the result of this operator an iterate over it.
+            /// So we need to return a loopable variable. But this is a funny loopable variable, of course,
+            /// as we are already in the loop. If anyone else wants to add statements, they just add them
+            /// in the normal way. So we create a sepcial loop variable.
+            /// 
+
+            return new TakeSkipLoopVariable(codeContext.LoopVariable);
+        }
+
+        /// <summary>
+        /// An internal loop variable - so we can make sure that we are looping over the proper things
+        /// </summary>
+        class TakeSkipLoopVariable : IVariable, ISequenceAccessor
+        {
+            /// <summary>
+            /// What is the main loop variable (the indexer) that we are holding onto??
+            /// </summary>
+            private IVariable _index;
+
+            /// <summary>
+            /// Setup with the proper index variable so that we can "return" a loop variable later on.
+            /// </summary>
+            /// <param name="iVariable"></param>
+            public TakeSkipLoopVariable(IVariable iVariable)
+            {
+                if (iVariable == null)
+                    throw new ArgumentNullException("Can't create a fake loop/skip variable based on a null looper");
+
+                _index = iVariable;
+            }
+
+            public string VariableName
+            {
+                get { return _index.VariableName; }
+            }
+
+            public IValue InitialValue
+            {
+                get { return _index.InitialValue; }
+                set { _index.InitialValue = value; }
+            }
+
+            public bool Declare
+            {
+                get { return _index.Declare; }
+                set { _index.Declare = value; }
+            }
+
+            public string RawValue
+            {
+                get { return _index.RawValue; }
+            }
+
+            public Type Type
+            {
+                get { return _index.Type; }
+            }
         }
     }
 }

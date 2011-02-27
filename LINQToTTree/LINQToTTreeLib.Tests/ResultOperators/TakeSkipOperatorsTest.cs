@@ -1,6 +1,7 @@
 // <copyright file="TakeSkipOperatorsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
@@ -80,7 +81,22 @@ namespace LINQToTTreeLib.ResultOperators
             }
             Assert.AreEqual(count, s.ValRight.RawValue, "bad count made it through");
 
+            ///
+            /// Finally, we should be getting back a sequence operator of some sort
+            /// 
+
+            Assert.IsNotNull(result, "Expected a non-null result");
+            Assert.IsInstanceOfType(result, typeof(ISequenceAccessor), "It needs to be a sequence accessor of some sort");
+
             return result;
+        }
+
+        [TestMethod]
+        public void TestBasicTakeSkip()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            var skipper = new SkipResultOperator(Expression.Constant(10));
+            ProcessResultOperator(new ROTakeSkipOperators(), skipper, null, gc);
         }
 
         [TestInitialize]

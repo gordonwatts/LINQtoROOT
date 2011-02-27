@@ -59,6 +59,7 @@
     <Compile Include="IGeneratedCode.cs" />
     <Compile Include="IQueryResultCache.cs" />
     <Compile Include="IQVResultOperator.cs" />
+    <Compile Include="ISequenceAccessor.cs" />
     <Compile Include="IStatement.cs" />
     <Compile Include="IStatementCompound.cs" />
     <Compile Include="ITypeHandler.cs" />
