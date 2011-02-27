@@ -29,6 +29,8 @@ namespace LINQToTTreeLib
 
             var eng = new VelocityEngine();
             eng.Init();
+
+            QueryResultCacheTest.SetupCacheDir();
         }
 
         [TestCleanup]

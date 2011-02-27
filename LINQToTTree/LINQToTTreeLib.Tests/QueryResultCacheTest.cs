@@ -19,11 +19,19 @@ namespace LINQToTTreeLib
     [TestClass]
     public partial class QueryResultCacheTest
     {
+        public static void SetupCacheDir()
+        {
+            var cdir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\QueryCacheForTesting");
+            if (cdir.Exists)
+                cdir.Delete(true);
+            QueryResultCache.CacheDirectory = cdir;
+        }
         [TestInitialize]
         public void TestInit()
         {
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
+            QueryResultCacheTest.SetupCacheDir();
         }
 
         [TestCleanup]

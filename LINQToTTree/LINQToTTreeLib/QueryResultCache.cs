@@ -16,9 +16,13 @@ namespace LINQToTTreeLib
     [Export(typeof(IQueryResultCache))]
     class QueryResultCache : IQueryResultCache
     {
+        /// <summary>
+        /// Create the cache manager
+        /// </summary>
         public QueryResultCache()
         {
-            CacheDirectory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\QueryCache");
+            if (!_cache_dir_good)
+                CacheDirectory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\QueryCache");
         }
 
         /// <summary>
@@ -67,12 +71,17 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Location of the cache directory.
         /// </summary>
-        private DirectoryInfo _cache_dir;
+        private static DirectoryInfo _cache_dir;
+
+        /// <summary>
+        /// Has the cache directory been set once, and set well? :-)
+        /// </summary>
+        private static bool _cache_dir_good = false;
 
         /// <summary>
         /// Get/Set the root directory where we will cache our results. Defaults to local app data directory.
         /// </summary>
-        public DirectoryInfo CacheDirectory
+        public static DirectoryInfo CacheDirectory
         {
             get { return _cache_dir; }
             set
@@ -82,6 +91,7 @@ namespace LINQToTTreeLib
                     value.Create();
                 value.Refresh();
                 _cache_dir = value;
+                _cache_dir_good = true;
             }
         }
 
