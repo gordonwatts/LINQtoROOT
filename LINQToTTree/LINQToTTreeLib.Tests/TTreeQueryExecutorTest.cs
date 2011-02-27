@@ -685,7 +685,7 @@ namespace LINQToTTreeLib
             /// 
 
             var q = new QueriableDummy<TestNtupe>();
-            var dude = q.AggregateNoReturn(new ROOTNET.NTH1F("hi", "title", 2, 0.0, 2.0), (h, n) => h.Fill(n.run));
+            var dude = q.ApplyToObject(new ROOTNET.NTH1F("hi", "title", 2, 0.0, 2.0), (h, n) => h.Fill(n.run));
             var query = DummyQueryExectuor.LastQueryModel;
 
             ///

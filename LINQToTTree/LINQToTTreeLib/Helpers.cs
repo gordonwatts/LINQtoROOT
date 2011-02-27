@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
@@ -41,7 +39,7 @@ namespace LINQToTTreeLib
             return source.Aggregate(seed, (s, n) => ApplyReturnFirst(s, n, (s1, n1) => apply(s1, n1)));
         }
 
-        public static TResult AggregateNoReturn<TSource, TResult>(this IQueryable<TSource> source, TResult seed, Expression<Action<TResult, TSource>> apply)
+        public static TResult ApplyToObject<TSource, TResult>(this IQueryable<TSource> source, TResult seed, Expression<Action<TResult, TSource>> apply)
         {
             return source.Aggregate(seed, (s, n) => ApplyReturnFirst(s, n, apply));
         }
