@@ -1,5 +1,3 @@
-// <copyright file="TTreeQueryExecutorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-
 using System;
 using System.IO;
 using System.Linq;

@@ -19,7 +19,6 @@ namespace LINQToTTreeLib
         public QueryResultCache()
         {
             CacheDirectory = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\QueryCache");
-
         }
 
         /// <summary>

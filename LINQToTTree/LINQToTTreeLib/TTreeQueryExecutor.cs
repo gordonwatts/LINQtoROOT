@@ -187,7 +187,7 @@ namespace LINQToTTreeLib
             /// Next, see if we have a cache for this
             /// 
 
-            object[] inputs = null;
+            object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
             if (!IgnoreQueryCache)
             {
                 var cacheHit = _cache.Lookup<T>(_rootFiles, _treeName, inputs, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
