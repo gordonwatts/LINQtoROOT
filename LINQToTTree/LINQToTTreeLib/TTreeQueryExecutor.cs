@@ -424,7 +424,7 @@ namespace LINQToTTreeLib
                 {
                     CompileAndLoad(output);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
                 }
