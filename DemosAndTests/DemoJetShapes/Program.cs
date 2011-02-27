@@ -90,7 +90,10 @@ namespace DemoJetShapes
             MakeGenericHistos(firstGoodJetPerEvent, "first30GeVjet", outputFile);
             MakeGenericHistos(secondJetPerEvent, "secondjet", outputFile);
 
-            var jetCount = jetsPerEvent.AggregateNoReturn(new ROOTNET.NTH1F("njets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill(x.Count()));
+            var jetCountGood = jetsPerEvent.ApplyToObject(new ROOTNET.NTH1F("njets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill((from j in x where (j.Pt() / 1000.0 > 30.0) select j).Count()));
+            jetCountGood.SetDirectory(outputFile);
+
+            var jetCount = jetsPerEvent.ApplyToObject(new ROOTNET.NTH1F("njets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill(x.Count()));
             jetCount.SetDirectory(outputFile);
 
             outputFile.Write();
@@ -105,9 +108,9 @@ namespace DemoJetShapes
         /// <param name="p"></param>
         private static void MakeGenericHistos(IQueryable<ROOTNET.Interface.NBTagJet> alljets, string namePrefix, ROOTNET.Interface.NTDirectory dir)
         {
-            var heta = alljets.AggregateNoReturn(new ROOTNET.NTH1F(namePrefix + "_eta", "\\Eta for " + namePrefix, 50, -5.0, 5.0), (h, x) => h.Fill(x.Eta()));
+            var heta = alljets.ApplyToObject(new ROOTNET.NTH1F(namePrefix + "_eta", "\\Eta for " + namePrefix, 50, -5.0, 5.0), (h, x) => h.Fill(x.Eta()));
             heta.SetDirectory(dir);
-            var hpt = alljets.AggregateNoReturn(new ROOTNET.NTH1F(namePrefix + "_pt", "p_{T} for " + namePrefix, 50, 0.0, 150.0), (h, x) => h.Fill(x.Pt() / 1000.0));
+            var hpt = alljets.ApplyToObject(new ROOTNET.NTH1F(namePrefix + "_pt", "p_{T} for " + namePrefix, 50, 0.0, 150.0), (h, x) => h.Fill(x.Pt() / 1000.0));
             hpt.SetDirectory(dir);
         }
     }
