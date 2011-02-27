@@ -95,6 +95,7 @@ namespace LINQToTTreeLib
                 var outter = new VarOutterLoopObjectPointer(fromClause.ItemName, fromClause.ItemType);
                 _codeEnv.Add(outter);
                 _codeContext.Add(outter.VariableName, outter);
+                _codeContext.SetLoopVariable(outter);
             }
             else
             {
@@ -136,6 +137,7 @@ namespace LINQToTTreeLib
             /// 
 
             var arrayToIterateOver = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext, MEFContainer);
+
             var loopstatement = new StatementLoopOnVector(arrayToIterateOver, fromClause.ItemName);
             _codeEnv.Add(loopstatement);
             _codeContext.Add(fromClause.ItemName, loopstatement.ObjectReference);
