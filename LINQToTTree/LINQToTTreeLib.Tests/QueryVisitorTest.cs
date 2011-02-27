@@ -148,7 +148,7 @@ namespace LINQToTTreeLib
             /// </summary>
             class dummyvar : IVariable, ISequenceAccessor
             {
-                public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName)
+                public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
                 {
                     return new Variables.VarSimple(typeof(int));
                 }

@@ -148,9 +148,9 @@ namespace LINQToTTreeLib.ResultOperators
             /// <param name="env"></param>
             /// <param name="context"></param>
             /// <param name="indexName"></param>
-            public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName)
+            public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
             {
-                context.Add(indexName, context.LoopVariable);
+                popVariableContext(context.Add(indexName, context.LoopVariable));
                 return context.LoopVariable;
             }
         }

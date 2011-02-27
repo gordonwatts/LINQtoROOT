@@ -100,14 +100,6 @@ namespace LINQToTTreeLib
             else
             {
                 CodeLoopOverExpression(fromClause.FromExpression, fromClause.ItemName);
-#if false
-                var arrayRef = ExpressionVisitor.GetExpression(fromClause.FromExpression, _codeEnv, _codeContext, MEFContainer);
-
-                var loop = new StatementLoopOnVector(arrayRef, typeof(int).CreateUniqueVariableName());
-                _codeEnv.Add(loop);
-                _mainIndex = _codeContext.Add(fromClause.ItemName, loop.ObjectReference);
-                _codeContext.SetLoopVariable(new VarDeclared(loop.ObjectReference, fromClause.ItemName));
-#endif
             }
         }
 
@@ -157,7 +149,7 @@ namespace LINQToTTreeLib
             if (seqAcc == null)
                 throw new InvalidOperationException("A sequence should have been returned, but it doesn't seem to know how to be iterated over!");
 
-            var indexv = seqAcc.AddLoop(_codeEnv, _codeContext, indexName);
+            var indexv = seqAcc.AddLoop(_codeEnv, _codeContext, indexName, m => _mainIndex = m);
             _codeContext.SetLoopVariable(indexv);
         }
 
