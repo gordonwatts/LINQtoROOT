@@ -128,7 +128,8 @@ namespace LINQToTTreeLib.Tests
             Assert.IsInstanceOfType(loop.Statements.First(), typeof(StatementLoopOnVector), "Expected 2nd level loop");
 
             var loop2 = loop.Statements.First() as StatementLoopOnVector;
-            Assert.AreEqual("(*((*this).other)[m]).deeper", loop2.VectorToLoopOver.RawValue, "2nd vector loop variable is not correct");
+            Assert.IsTrue(loop2.VectorToLoopOver.RawValue.StartsWith("(*((*this).other)["), "Bad vector loop index: " + loop2.VectorToLoopOver.RawValue);
+            Assert.IsTrue(loop2.VectorToLoopOver.RawValue.EndsWith("]).deeper"), "Bad vector loop index: " + loop2.VectorToLoopOver.RawValue);
 
             ///
             /// And below that should be one statement that does the incrementing
