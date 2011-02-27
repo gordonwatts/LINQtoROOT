@@ -96,16 +96,8 @@
       <Link>BTagJet_cpp.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\NtupleClasses\BTagJet_cpp.pdb">
-      <Link>BTagJet_cpp.pdb</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\NtupleClasses\MuonInBJet_cpp.dll">
       <Link>MuonInBJet_cpp.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\NtupleClasses\MuonInBJet_cpp.pdb">
-      <Link>MuonInBJet_cpp.pdb</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
