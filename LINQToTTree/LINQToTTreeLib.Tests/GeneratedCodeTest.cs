@@ -154,5 +154,22 @@ namespace LINQToTTreeLib
             Assert.IsNotNull(target.VariablesToTransfer.Last());
             Assert.AreEqual(count + 1, target.VariablesToTransfer.Count());
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestAddOneLevelUpTopLevel()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
+        }
+
+        [TestMethod]
+        public void TestAddOneLevelUpSingleLevel()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            gc.Add(new Statements.StatementInlineBlock());
+            gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level decl");
+        }
     }
 }

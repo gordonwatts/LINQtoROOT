@@ -19,6 +19,12 @@ namespace LinqToTTreeInterfacesLib
         void Add(IVariable v);
 
         /// <summary>
+        /// Add in an outter scope. Fails badly if that outter scope doesn't exist yet!
+        /// </summary>
+        /// <param name="v"></param>
+        void AddOneLevelUp(IVariable v);
+
+        /// <summary>
         /// This variable's inital value is "complex" and must be transfered over the wire in some way other than staight into the code
         /// (for example, a ROOT object that needs to be written to a TFile).
         /// </summary>
@@ -51,5 +57,10 @@ namespace LinqToTTreeInterfacesLib
         /// Get/Set teh current scope...
         /// </summary>
         object CurrentScope { get; set; }
+
+        /// <summary>
+        /// How far down in the hierarchy of statements are we?
+        /// </summary>
+        int Depth { get; }
     }
 }

@@ -223,5 +223,46 @@ namespace LINQToTTreeLib
             qv.VisitQueryModel(model);
         }
 
+        [TestMethod]
+        public void TestTakeInSubQueryForStatements()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                from j in q.vals.Take(1)
+                select j).Aggregate(0, (acc, va) => acc + 1));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc);
+            MEFUtilities.Compose(qv);
+            qv.MEFContainer = MEFUtilities.MEFContainer;
+
+            /// Note that the Assert takes place above, in the TakeOperatortestLoopVar test!
+
+            qv.VisitQueryModel(model);
+
+            /// At the top level we assume there will be a loop over the vals.
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "vector loop not right");
+            var outterfloop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
+
+            Assert.AreEqual(2, outterfloop.Statements.Count(), "inner loop statements not set correctly");
+            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementIncrementInteger), "first loop statemen tis funny");
+            Assert.IsInstanceOfType(outterfloop.Statements.Skip(1).First(), typeof(Statements.StatementIfOnCount), "if on count incorrect");
+
+            var incStatement = outterfloop.Statements.First() as Statements.StatementIncrementInteger;
+            var ifcountStatement = outterfloop.Statements.Skip(1).First() as Statements.StatementIfOnCount;
+
+            Assert.AreEqual(1, ifcountStatement.Statements.Count(), "expected the fill statement");
+            Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAssign), "Assign statement not there");
+        }
+
     }
 }

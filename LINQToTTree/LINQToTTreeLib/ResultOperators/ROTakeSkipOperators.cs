@@ -58,13 +58,18 @@ namespace LINQToTTreeLib.ResultOperators
             if (skip != null && skip.Count.Type != typeof(int))
                 throw new ArgumentException("Skip operator count must be an integer!");
 
+            if (codeEnv.Depth <= 1)
+            {
+                throw new InvalidOperationException("Unable to use the Take or Skip operators at the ntuple level - need to use them only on objects inside the ntuple");
+            }
+
             ///
             /// Now, we create a count variable and that is how we will tell if we are still skipping or
             /// taking. It must be declared in the current block, before our current code! :-)
             /// 
 
             var counter = new VarInteger();
-            codeEnv.Add(counter);
+            codeEnv.AddOneLevelUp(counter);
 
             codeEnv.Add(new StatementIncrementInteger(counter));
             var comparison = StatementIfOnCount.ComparisonOperator.LessThanEqual;

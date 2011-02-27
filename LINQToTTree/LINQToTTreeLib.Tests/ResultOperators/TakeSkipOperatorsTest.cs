@@ -52,6 +52,17 @@ namespace LINQToTTreeLib.ResultOperators
             IGeneratedCode codeEnv
         )
         {
+            ///
+            /// We always expect to be inside a loop - and depend on it for doing our declares, so add something...
+            /// 
+
+            if (codeEnv != null)
+                codeEnv.Add(new StatementInlineBlock());
+
+            ///
+            /// Get the env setup and run it
+            /// 
+
             CodeContext c = new CodeContext();
             c.SetLoopVariable(new VarSimple(typeof(int)));
 
@@ -66,11 +77,13 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(1, codeEnv.CodeBody.DeclaredVariables.Count(), "Expected only 1 variable to be declared");
             Assert.IsInstanceOfType(codeEnv.CodeBody.DeclaredVariables.First(), typeof(VarInteger), "Expected it to be a counter");
 
-            Assert.AreEqual(2, codeEnv.CodeBody.Statements.Count(), "Expected an if block and an increment!");
-            Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.First(), typeof(StatementIncrementInteger), "increment statement not found!");
-            Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.Skip(1).First(), typeof(StatementIfOnCount), "if statement not found!");
+            var statements = codeEnv.CodeBody.Statements.First() as StatementInlineBlock;
 
-            var s = codeEnv.CodeBody.Statements.Skip(1).First() as StatementIfOnCount;
+            Assert.AreEqual(2, statements.Statements.Count(), "Expected an if block and an increment!");
+            Assert.IsInstanceOfType(statements.Statements.First(), typeof(StatementIncrementInteger), "increment statement not found!");
+            Assert.IsInstanceOfType(statements.Statements.Skip(1).First(), typeof(StatementIfOnCount), "if statement not found!");
+
+            var s = statements.Statements.Skip(1).First() as StatementIfOnCount;
 
             string count = "";
             if (resultOperator is SkipResultOperator)
@@ -115,8 +128,14 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void TestTakeSkipInLINQ()
         {
+            ///
+            /// The below is invalid because the "Take" is at the top level - we are taking only a certian
+            /// number of events. That is not legal! So we need to throw when that happens!
+            /// 
+
             var q = new QueriableDummy<ntup>();
             var result = from d in q
                          select d;
