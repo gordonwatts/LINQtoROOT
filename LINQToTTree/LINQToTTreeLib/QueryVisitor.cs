@@ -104,6 +104,7 @@ namespace LINQToTTreeLib
                 var loop = new StatementLoopOnVector(arrayRef, typeof(int).CreateUniqueVariableName());
                 _codeEnv.Add(loop);
                 _mainIndex = _codeContext.Add(fromClause.ItemName, loop.ObjectReference);
+                _codeContext.SetLoopVariable(new VarDeclared(loop.ObjectReference, fromClause.ItemName));
             }
         }
 
@@ -142,7 +143,8 @@ namespace LINQToTTreeLib
             if (seqAcc == null)
                 throw new InvalidOperationException("A sequence should have been returned, but it doesn't seem to know how to be iterated over!");
 
-            seqAcc.AddLoop(_codeEnv, _codeContext, fromClause.ItemName);
+            var indexv = seqAcc.AddLoop(_codeEnv, _codeContext, fromClause.ItemName);
+            _codeContext.SetLoopVariable(indexv);
         }
 
         /// <summary>

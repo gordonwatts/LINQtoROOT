@@ -1,7 +1,9 @@
 // <copyright file="QueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
@@ -10,6 +12,7 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Data.Linq;
+using Remotion.Data.Linq.Clauses.ResultOperators;
 using Remotion.Data.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib
@@ -116,6 +119,82 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(takestatement.Statements.First(), typeof(Statements.StatementIncrementInteger), "inc statement not there");
         }
 
+        /// <summary>
+        /// Dummy to test that the loop variable when we get here is actually pointing to the right thing!
+        /// </summary>
+        [Export(typeof(IQVResultOperator))]
+        class TakeOperatorTestLoopVar : IQVResultOperator
+        {
+
+            public bool CanHandle(Type resultOperatorType)
+            {
+                return resultOperatorType == typeof(TakeResultOperator)
+                    || resultOperatorType == typeof(SkipResultOperator);
+            }
+
+            public IVariable ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                ///
+                /// Look at the loop variable. It should be pointing to something that is going to loop
+                /// over all the "vals"
+                /// 
+
+                Assert.AreEqual(typeof(int), _codeContext.LoopVariable.Type, "Loopvariable type");
+                return new dummyvar();
+            }
+
+            /// <summary>
+            /// Dummy return for a variable and sequencer accessor.
+            /// </summary>
+            class dummyvar : IVariable, ISequenceAccessor
+            {
+                public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName)
+                {
+                    return new Variables.VarSimple(typeof(int));
+                }
+
+                public string VariableName
+                {
+                    get { return "anint_1234"; }
+                }
+
+                public IValue InitialValue
+                {
+                    get
+                    {
+                        throw new NotImplementedException();
+                    }
+                    set
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+
+                public bool Declare
+                {
+                    get
+                    {
+                        throw new NotImplementedException();
+                    }
+                    set
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+
+                public string RawValue
+                {
+                    get { return "dude[i]"; }
+                }
+
+                public Type Type
+                {
+                    get { return typeof(int); }
+                }
+            }
+
+        }
+
         [TestMethod]
         public void TestTakeInSubQuery()
         {
@@ -131,7 +210,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
-            MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new TakeOperatorTestLoopVar());
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
@@ -139,9 +218,9 @@ namespace LINQToTTreeLib
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
-            qv.VisitQueryModel(model);
+            /// Note that the Assert takes place above, in the TakeOperatortestLoopVar test!
 
-            Assert.Inconclusive("test not completed yet");
+            qv.VisitQueryModel(model);
         }
 
     }

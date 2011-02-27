@@ -34,11 +34,13 @@ namespace LINQToTTreeLib.Variables
         /// <param name="env"></param>
         /// <param name="context"></param>
         /// <param name="indexName"></param>
-        public void AddLoop(IGeneratedCode env, ICodeContext context, string indexName)
+        public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName)
         {
             var loopstatement = new StatementLoopOnVector(this, indexName);
             env.Add(loopstatement);
             context.Add(indexName, loopstatement.ObjectReference);
+
+            return new VarDeclared(loopstatement.ObjectReference, indexName);
         }
     }
 }

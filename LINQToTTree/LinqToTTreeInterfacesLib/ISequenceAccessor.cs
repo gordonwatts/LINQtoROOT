@@ -16,6 +16,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_codeEnv"></param>
         /// <param name="_codeContext"></param>
         /// <param name="indexName"></param>
-        void AddLoop(IGeneratedCode env, ICodeContext context, string indexName);
+        IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName);
     }
 }
