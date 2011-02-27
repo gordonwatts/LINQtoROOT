@@ -115,5 +115,29 @@ namespace LINQToTTreeLib
         {
             TestRoundTrip(new CodeContext(), "dude", "fork", typeof(int));
         }
+
+        [TestMethod]
+        public void TestLoopVarCTor()
+        {
+            var c = new CodeContext();
+            Assert.IsNull(c.LoopVariable, "ctor isn't null");
+        }
+
+        [TestMethod]
+        public void TestLoopVarSetting()
+        {
+            var c = new CodeContext();
+            var v = new Variables.VarSimple(typeof(int));
+            c.SetLoopVariable(v);
+            Assert.AreEqual(v, c.LoopVariable, "set didn't work");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestLoopVarSetNull()
+        {
+            var c = new CodeContext();
+            c.SetLoopVariable(null);
+        }
     }
 }
