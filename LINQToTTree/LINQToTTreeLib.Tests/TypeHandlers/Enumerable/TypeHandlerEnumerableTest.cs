@@ -99,7 +99,8 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             Assert.IsNotNull(statements, "That was odd");
             Assert.AreEqual(1, statements.DeclaredVariables.Count(), "Expected the variable iterating to be declared!");
 
-            Assert.Inconclusive("Make sure the scope has been popped so we don't put something inside the count!");
+            gc.Add(new Statements.StatementSimpleStatement("dude"));
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "current scope pointer is incorrectly set");
         }
     }
 }

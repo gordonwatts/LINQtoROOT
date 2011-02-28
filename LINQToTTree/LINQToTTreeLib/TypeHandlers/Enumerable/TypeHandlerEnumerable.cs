@@ -80,6 +80,8 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             /// be whatever we have been handed as an argument.
             /// 
 
+            var oldScope = gc.CurrentScope;
+
             var looper = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context, container);
             if (looper == null)
                 throw new InvalidOperationException("Enumerable.Count needs to have a proper array as its argument");
@@ -103,6 +105,7 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             /// 
 
             popMe.Pop();
+            gc.CurrentScope = oldScope;
 
             ///
             /// Just return what we were working on...
