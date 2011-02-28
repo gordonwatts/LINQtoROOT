@@ -53,6 +53,11 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             {
                 return ProcessCountCall(expr, out result, gc, context, container);
             }
+            else if (expr.Method.Name == "Where")
+            {
+                return ProcessWhereCall(expr, out result, gc, context, container);
+
+            }
 
             ///
             /// They want us to do something that we can't deal with.
@@ -60,6 +65,63 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
 
             throw new NotImplementedException("Sorry, method Enumerable." + expr.Method.Name + " is not translated!");
         }
+
+        /// <summary>
+        /// Process the Where method
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        private Expression ProcessWhereCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
+        {
+            if (expr.Arguments.Count != 2)
+                throw new NotImplementedException("Enumerable.Where is only implemented in the 2 argument flavor");
+            if (expr.Arguments[1].Type.GetGenericArguments().Length != 2)
+                throw new NotImplementedException("Enumerable.Where is only implemented in the Func<x, bool> flavor");
+
+            ///
+            /// We need to loop over our first argument
+            /// 
+
+            IScopeInfo oldScope;
+            IVariableScopeHolder popMe;
+            CodeUpLoop(expr.Arguments[0], gc, context, container, out oldScope, out popMe);
+
+            ///
+            /// Next job is to actually code up the if statement.
+            /// 
+
+            gc.Add(new Statements.StatementFilter(ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context, container)));
+
+            ///
+            /// For a result we return a simple non-looping vector style guy.
+            /// 
+
+            result = new ImpliedLoopVariable();
+            return expr;
+        }
+
+        class ImpliedLoopVariable : ISequenceAccessor, IValue
+        {
+            public string RawValue
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public Type Type
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
 
         /// <summary>
         /// Deal with the count method
@@ -80,17 +142,9 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             /// be whatever we have been handed as an argument.
             /// 
 
-            var oldScope = gc.CurrentScope;
-
-            var looper = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context, container);
-            if (looper == null)
-                throw new InvalidOperationException("Enumerable.Count needs to have a proper array as its argument");
-            var loopArray = looper as ISequenceAccessor;
-            if (loopArray == null)
-                throw new InvalidOperationException("Enumerable.Count needs a real array as its argument.");
-
-            IVariableScopeHolder popMe = null;
-            var loopVar = loopArray.AddLoop(gc, context, "innerv", a => popMe = a);
+            IScopeInfo oldScope;
+            IVariableScopeHolder popMe;
+            CodeUpLoop(expr.Arguments[0], gc, context, container, out oldScope, out popMe);
 
             ///
             /// Now that are inside a loop, implement the counting
@@ -112,6 +166,32 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             /// 
 
             return expr;
+        }
+
+        /// <summary>
+        /// Form a loop around the (presumably) enumerable arg.
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <param name="oldScope"></param>
+        /// <param name="popMe"></param>
+        private static void CodeUpLoop(Expression arg, IGeneratedCode gc, ICodeContext context, CompositionContainer container, out IScopeInfo oldScope, out IVariableScopeHolder popMe)
+        {
+            oldScope = gc.CurrentScope;
+
+            var looper = ExpressionVisitor.GetExpression(arg, gc, context, container);
+            if (looper == null)
+                throw new InvalidOperationException("Enumerable.Count needs to have a proper array as its argument");
+            var loopArray = looper as ISequenceAccessor;
+            if (loopArray == null)
+                throw new InvalidOperationException("Enumerable.Count needs a real array as its argument.");
+
+            popMe = null;
+            IVariableScopeHolder newPop = null;
+            var loopVar = loopArray.AddLoop(gc, context, "innerv", a => newPop = a);
+            popMe = newPop;
         }
     }
 }

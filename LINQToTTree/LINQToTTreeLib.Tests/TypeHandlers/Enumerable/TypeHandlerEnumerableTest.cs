@@ -102,5 +102,51 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             gc.Add(new Statements.StatementSimpleStatement("dude"));
             Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "current scope pointer is incorrectly set");
         }
+
+        [TestMethod]
+        public void TestSimpleWhere()
+        {
+            var wgmethod = (from m in typeof(System.Linq.Enumerable).GetMethods()
+                            where m.Name == "Where" && m.GetParameters().Count() == 2
+                            where m.GetParameters()[1].ParameterType.GetGenericArguments().Length == 2
+                            select m).First();
+            var wmethod = wgmethod.MakeGenericMethod(new Type[] { typeof(int) });
+
+            /// The result that we are going to get back
+            IValue result;
+
+            /// Where we expect code to show up
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            int[] myArray = new int[] { 0, 1, 2, 3 };
+
+            Expression<Func<int, bool>> lambda = a => a == 0;
+
+            var call = Expression.Call(wmethod, Expression.Variable(typeof(int[]), "dude"), lambda);
+
+            context.Add("dude", new Variables.ValEnumerableVector("fork", typeof(int[])));
+
+            ProcessMethodCall(new TypeHandlerEnumerable(), call, out result, gc, context);
+
+            /// There should be an outter loop
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "only 1 statement expected");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "bad loop type");
+            var loop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
+            Assert.AreEqual(1, loop.Statements.Count(), "Incorrect # of statements in the loop");
+            Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "no filter statement?");
+            var filter = loop.Statements.First() as Statements.StatementFilter;
+            Assert.AreEqual(0, filter.Statements.Count(), "bad # of filter statements - shouldn't be any under it!");
+
+            /// Check that the scope is correct.
+
+            gc.Add(new Statements.StatementSimpleStatement("dude"));
+            Assert.AreEqual(1, filter.Statements.Count(), "Scope dosen't seem to be pointed to the inner statement here!");
+
+            /// Make sure the type that comes back is an array!
+
+            Assert.IsInstanceOfType(result, typeof(ISequenceAccessor), "return is not a sequence");
+        }
     }
 }
