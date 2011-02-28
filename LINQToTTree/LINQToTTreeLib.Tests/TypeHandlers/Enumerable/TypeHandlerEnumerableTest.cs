@@ -48,7 +48,7 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             ICodeContext context
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context);
+            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context, null);
             return result01;
             // TODO: add assertions to method TypeHandlerEnumerableTest.ProcessMethodCall(TypeHandlerEnumerable, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
         }

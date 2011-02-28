@@ -1,12 +1,11 @@
 // <copyright file="TypeHandlerHelpersTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 
 using System;
-using LINQToTTreeLib.TypeHandlers;
+using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -25,7 +24,7 @@ namespace LINQToTTreeLib.TypeHandlers
             ICodeContext context
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context);
+            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context, null);
             return result01;
             // TODO: add assertions to method TypeHandlerHelpersTest.ProcessMethodCall(TypeHandlerHelpers, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
         }

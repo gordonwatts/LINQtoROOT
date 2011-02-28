@@ -329,7 +329,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
-            var exprOut = TypeHandlers.ProcessMethodCall(expression, out _result, _codeEnv, _codeContext);
+            var exprOut = TypeHandlers.ProcessMethodCall(expression, out _result, _codeEnv, _codeContext, MEFContainer);
             return exprOut;
         }
 

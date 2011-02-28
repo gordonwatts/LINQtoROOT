@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.ResultOperators;
@@ -46,11 +47,11 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
             if (expr.Method.Name == "Count")
             {
-                return ProcessCountCall(expr, out result, gc, context);
+                return ProcessCountCall(expr, out result, gc, context, container);
             }
 
             ///
@@ -68,7 +69,7 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        private Expression ProcessCountCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        private Expression ProcessCountCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
             if (expr.Arguments.Count != 1)
                 throw new NotImplementedException("Enuemrable.Count is only implemented in the 1 argument flavor");
@@ -79,7 +80,7 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             /// be whatever we have been handed as an argument.
             /// 
 
-            var looper = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context);
+            var looper = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context, container);
             if (looper == null)
                 throw new InvalidOperationException("Enumerable.Count needs to have a proper array as its argument");
             var loopArray = looper as ISequenceAccessor;

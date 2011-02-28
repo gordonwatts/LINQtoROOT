@@ -54,7 +54,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             ICodeContext context
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context);
+            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context, null);
             return result01;
             // TODO: add assertions to method TypeHandlerReplacementCallTest.ProcessMethodCall(TypeHandlerReplacementCall, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
         }

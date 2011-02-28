@@ -1,14 +1,14 @@
 // <copyright file="TypeHandlerCacheTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using LINQToTTreeLib.TypeHandlers;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LinqToTTreeInterfacesLib;
-using System.Linq.Expressions;
-using LINQToTTreeLib.Tests;
-using System.ComponentModel.Composition;
-using System.Linq;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -56,7 +56,7 @@ namespace LINQToTTreeLib.TypeHandlers
             }
 
 
-            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
             {
                 result = new Variables.VarInteger();
                 return expr;
@@ -113,7 +113,7 @@ namespace LINQToTTreeLib.TypeHandlers
             ICodeContext cc
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, cc);
+            Expression result01 = target.ProcessMethodCall(expr, out result, gc, cc, null);
             return result01;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessMethodCall(TypeHandlerCache, MethodCallExpression, IValue&, IGeneratedCode)
         }

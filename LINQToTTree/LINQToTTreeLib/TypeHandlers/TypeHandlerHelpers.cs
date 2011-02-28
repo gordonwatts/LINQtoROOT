@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using System.ComponentModel.Composition.Hosting;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -45,7 +46,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
             if (expr == null)
                 throw new ArgumentNullException("expr");

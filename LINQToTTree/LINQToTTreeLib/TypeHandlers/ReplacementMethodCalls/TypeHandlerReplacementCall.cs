@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -150,7 +151,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
             Init();
 
@@ -199,7 +200,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                 if (!first)
                     rawValue.Append(",");
                 first = false;
-                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionVisitor.GetExpression(arg.Item1, gc, context).RawValue);
+                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionVisitor.GetExpression(arg.Item1, gc, context, container).RawValue);
             }
             rawValue.Append(")");
 

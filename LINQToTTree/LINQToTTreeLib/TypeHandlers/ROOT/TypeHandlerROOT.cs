@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -70,9 +71,9 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
-            var objRef = ExpressionVisitor.GetExpression(expr.Object, gc, context);
+            var objRef = ExpressionVisitor.GetExpression(expr.Object, gc, context, container);
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}.{1}(", objRef.AsObjectReference(), expr.Method.Name);
 
@@ -84,7 +85,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                     bld.Append(",");
                 }
                 first = false;
-                bld.Append(ExpressionVisitor.GetExpression(a, gc, context).AsCastString());
+                bld.Append(ExpressionVisitor.GetExpression(a, gc, context, container).AsCastString());
             }
             bld.Append(")");
 

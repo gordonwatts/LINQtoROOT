@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 
 namespace LinqToTTreeInterfacesLib
@@ -39,7 +37,9 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="expr"></param>
         /// <param name="result"></param>
         /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container">If expression or others need to be built, this container will be needed for MEF</param>
         /// <returns></returns>
-        Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context);
+        Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container);
     }
 }
