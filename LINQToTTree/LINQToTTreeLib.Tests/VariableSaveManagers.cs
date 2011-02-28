@@ -1,7 +1,7 @@
-﻿using System;
+﻿
+using System;
 using System.ComponentModel.Composition;
 using LinqToTTreeInterfacesLib;
-
 namespace LINQToTTreeLib.Tests
 {
     /// <summary>

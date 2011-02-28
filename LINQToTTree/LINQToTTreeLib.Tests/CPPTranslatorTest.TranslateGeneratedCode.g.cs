@@ -8,26 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib
 {
     public partial class CPPTranslatorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(CPPTranslatorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TranslateGeneratedCodeThrowsArgumentNullException299()
-{
-    CPPTranslator cPPTranslator;
-    Dictionary<string, object> dictionary;
-    cPPTranslator = CPPTranslatorFactory.Create();
-    dictionary = this.TranslateGeneratedCode(cPPTranslator, (GeneratedCode)null);
-}
     }
 }
