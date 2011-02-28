@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using System.ComponentModel.Composition.Hosting;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -72,10 +72,10 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// 
 
                 var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context);
-                var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context));
+                var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context, container));
                 var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
 
-                var statementBody = ExpressionVisitor.GetExpression(action, gc, context);
+                var statementBody = ExpressionVisitor.GetExpression(action, gc, context, container);
 
                 p2.Pop();
                 p1.Pop();
