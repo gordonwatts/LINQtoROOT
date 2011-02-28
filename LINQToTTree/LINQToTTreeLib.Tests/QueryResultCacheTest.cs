@@ -311,6 +311,37 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestForSameHistosEmpty()
+        {
+            var f = MakeRootFile("TestForTreeNameChanges");
+            var query = MakeQuery(0);
+            var q = new QueryResultCache();
+
+            /// Histogram that is feed as input
+
+            {
+                var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+
+                var inputs = new object[] { hInput };
+
+                /// Cache a result
+
+                var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+                h.SetBinContent(1, 5.0);
+
+                q.CacheItem(new FileInfo[] { f }, "test", inputs, query, h);
+            }
+
+            /// And make sure the lookup works now!
+
+            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+
+            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
+            Assert.IsTrue(r.Item1, "Cache should have been there");
+
+        }
+
+        [TestMethod]
         public void TestForDiffHistos()
         {
             var f = MakeRootFile("TestForTreeNameChanges");
