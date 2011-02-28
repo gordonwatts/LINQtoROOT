@@ -247,7 +247,6 @@
     <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="TypeHandlers\Enumerable\TypeHandlerEnumerableTest.cs" />
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.cs" />
     <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValueTest.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
@@ -302,6 +301,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
