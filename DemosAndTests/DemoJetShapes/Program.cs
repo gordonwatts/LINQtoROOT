@@ -90,10 +90,10 @@ namespace DemoJetShapes
             MakeGenericHistos(firstGoodJetPerEvent, "first30GeVjet", outputFile);
             MakeGenericHistos(secondJetPerEvent, "secondjet", outputFile);
 
-            var jetCountGood = jetsPerEvent.ApplyToObject(new ROOTNET.NTH1F("njets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill((from j in x where (j.Pt() / 1000.0 > 30.0) select j).Count()));
+            var jetCountGood = jetsPerEvent.ApplyToObject(new ROOTNET.NTH1F("nGoodJets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill((from j in x where (j.Pt() / 1000.0 > 30.0) select j).Count()));
             jetCountGood.SetDirectory(outputFile);
 
-            var jetCount = jetsPerEvent.ApplyToObject(new ROOTNET.NTH1F("njets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill(x.Count()));
+            var jetCount = jetsPerEvent.ApplyToObject(new ROOTNET.NTH1F("nJets", "N_{J}", 10, 0.0, 10.0), (h, x) => h.Fill(x.Count()));
             jetCount.SetDirectory(outputFile);
 
             outputFile.Write();
