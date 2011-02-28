@@ -71,7 +71,7 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// before any parameters are replaced!
                 /// 
 
-                var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context);
+                var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context, container);
                 var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context, container));
                 var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
 
