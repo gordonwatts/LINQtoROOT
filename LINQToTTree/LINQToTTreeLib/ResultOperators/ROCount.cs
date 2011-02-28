@@ -53,7 +53,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// </summary>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public static VarInteger ImplementCount(IGeneratedCode codeEnv)
+        public static IVariable ImplementCount(IGeneratedCode codeEnv)
         {
             var intResult = new VarInteger();
 

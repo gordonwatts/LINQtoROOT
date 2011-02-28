@@ -94,7 +94,9 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             /// Now that are inside a loop, implement the counting
             /// 
 
-            result = ROCount.ImplementCount(gc);
+            var r = ROCount.ImplementCount(gc);
+            gc.AddOneLevelUp(r);
+            result = r;
 
             ///
             /// no longer need the looping var!

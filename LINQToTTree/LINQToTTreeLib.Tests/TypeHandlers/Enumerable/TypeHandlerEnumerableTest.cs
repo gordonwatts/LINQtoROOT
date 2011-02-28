@@ -94,6 +94,12 @@ namespace LINQToTTreeLib.TypeHandlers.Enumerable
             Assert.AreEqual(typeof(int), result.Type, "bad type coming back");
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "only 1 statement expected");
             Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "bad loop type");
+
+            var statements = gc.CodeBody;
+            Assert.IsNotNull(statements, "That was odd");
+            Assert.AreEqual(1, statements.DeclaredVariables.Count(), "Expected the variable iterating to be declared!");
+
+            Assert.Inconclusive("Make sure the scope has been popped so we don't put something inside the count!");
         }
     }
 }
