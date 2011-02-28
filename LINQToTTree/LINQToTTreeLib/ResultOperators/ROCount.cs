@@ -43,10 +43,21 @@ namespace LINQToTTreeLib.ResultOperators
             if (c == null)
                 throw new ArgumentNullException("resultOperator can only be a CountResultOperator and must not be null");
 
+            var intResult = ImplementCount(codeEnv);
+
+            return intResult;
+        }
+
+        /// <summary>
+        /// Actually write the code for the count operator.
+        /// </summary>
+        /// <param name="codeEnv"></param>
+        /// <returns></returns>
+        public static VarInteger ImplementCount(IGeneratedCode codeEnv)
+        {
             var intResult = new VarInteger();
 
             codeEnv.Add(new StatementIncrementInteger(intResult));
-
             return intResult;
         }
     }
