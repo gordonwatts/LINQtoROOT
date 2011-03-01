@@ -187,10 +187,14 @@ namespace LINQToTTreeLib
             /// Next, see if we have a cache for this
             /// 
 
-            object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
+            IQueryResultCacheKey key = null;
+            {
+                object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
+                key = _cache.GetKey(_rootFiles, _treeName, inputs, queryModel);
+            }
             if (!IgnoreQueryCache)
             {
-                var cacheHit = _cache.Lookup<T>(_rootFiles, _treeName, inputs, queryModel, _varSaver.Get(result.ResultValue), result.ResultValue);
+                var cacheHit = _cache.Lookup<T>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
                 if (cacheHit.Item1)
                     return cacheHit.Item2;
             }
@@ -221,7 +225,7 @@ namespace LINQToTTreeLib
             /// Last job, extract all the variables! And save in the cache!
             /// 
 
-            var final = ExtractResult<T>(result.ResultValue, queryModel, inputs);
+            var final = ExtractResult<T>(result.ResultValue, key);
 
             ///
             /// Ok, we are all done. Try to unload everything now.
@@ -269,7 +273,7 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IVariable iVariable, QueryModel qm, object[] inputs)
+        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key)
         {
             ///
             /// Open the file, if it isn't there something very serious has gone wrong.
@@ -286,7 +290,7 @@ namespace LINQToTTreeLib
             try
             {
                 var o = file.Get(iVariable.RawValue);
-                _cache.CacheItem(_rootFiles, _treeName, inputs, qm, o);
+                _cache.CacheItem(key, o);
                 var s = _varSaver.Get(iVariable);
                 return s.LoadResult<T>(iVariable, o);
             }

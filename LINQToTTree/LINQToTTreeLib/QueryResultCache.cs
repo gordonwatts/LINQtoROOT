@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,99 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Private cache of the key info for 
+        /// </summary>
+        class KeyInfo : IQueryResultCacheKey
+        {
+            /// <summary>
+            /// Directory where the cache files can be found.
+            /// </summary>
+            public DirectoryInfo CacheDirectory { get; set; }
+
+            public FileInfo RootFile { get; set; }
+
+            public DateTime OldestSourceFileDate { get; set; }
+
+            public string[] DescriptionLines { get; set; }
+
+            public string QueryText { get; set; }
+        }
+
+        /// <summary>
+        /// Return the key object
+        /// </summary>
+        /// <param name="rootfiles"></param>
+        /// <param name="treename"></param>
+        /// <param name="inputObjects"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query)
+        {
+            KeyInfo result = new KeyInfo();
+
+            ///
+            /// Build the hash, which is a bit of a pain in the butt.
+            /// 
+
+            StringBuilder fullSourceName = new StringBuilder();
+            foreach (var f in rootfiles)
+            {
+                fullSourceName.Append(f.FullName);
+            }
+
+            var hash = fullSourceName.ToString().GetHashCode();
+
+            ///
+            /// Save the names of the files for a descriptor we will write out.
+            /// 
+
+            result.DescriptionLines = (from f in rootfiles
+                                       select f.FullName).ToArray();
+
+            ///
+            /// Text for the query
+            /// 
+
+            result.QueryText = query.ToString();
+
+            ///
+            /// And the directory name - we use the first name of the file.
+            /// 
+
+            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + hash + " - " + treename + "-" + Path.GetFileNameWithoutExtension(rootfiles[0].Name));
+
+            ///
+            /// Scan the files that we are input and find the oldest one there
+            /// 
+
+            result.OldestSourceFileDate = GetRecentFileDates(rootfiles).Max();
+
+            ///
+            /// And now the file that the query should be cached in
+            /// 
+
+            var queryHash = query.ToString().GetHashCode();
+            string queryNameBase = @"\\query " + queryHash.ToString() + "-" + CalcObjectHash(inputObjects).ToString();
+            result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + ".root");
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get the most recent modified date
+        /// </summary>
+        /// <param name="rootfiles"></param>
+        /// <returns></returns>
+        private IEnumerable<DateTime> GetRecentFileDates(FileInfo[] rootfiles)
+        {
+            foreach (var f in rootfiles)
+            {
+                f.Refresh();
+                yield return f.LastWriteTime;
+            }
+        }
+
+        /// <summary>
         /// Lookup in our cache. Fail if we can't find things by returning null.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -33,23 +127,44 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         /// <param name="varSaver"></param>
         /// <returns></returns>
-        public Tuple<bool, T> Lookup<T>(FileInfo[] sourceRootFiles, string treeName, object[] inputObjects, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar)
+        public Tuple<bool, T> Lookup<T>(IQueryResultCacheKey akey, IVariableSaver varSaver, IVariable theVar)
         {
+            if (akey == null || (akey as KeyInfo) == null)
+                throw new ArgumentNullException("the key cannot be null");
+            var key = akey as KeyInfo;
+
             ///
-            /// Get the ROOT file
+            /// First, check to make sure none of the source root files have actually be altered since
+            /// the cache line was written (if there is a cache line, indeed!).
             /// 
 
-            FileInfo rootFileInfo = GetROOTCacheFile(sourceRootFiles, treeName, inputObjects, queryModel, false);
-            if (rootFileInfo == null)
+            if (!ROOTFileDatesOK(key))
                 return new Tuple<bool, T>(false, default(T));
 
             ///
-            /// Next, load it up. There should be only one object in there, so it should be easy
+            /// Ok. Next task is to see if the cache file exists right now
             /// 
 
-            var tf = new ROOTNET.NTFile(rootFileInfo.FullName, "READ");
+            key.RootFile.Refresh();
+            if (!key.RootFile.Exists)
+                return new Tuple<bool, T>(false, default(T));
+
+            ///
+            /// At this point we think that the file contains a valid cache line. As long as it isn't
+            /// corrupt! :-)
+            /// 
+
+            var tf = new ROOTNET.NTFile(key.RootFile.FullName, "READ");
             if (!tf.IsOpen())
                 return new Tuple<bool, T>(false, default(T));
+
+            ///
+            /// Find and load the object. Proect against an error in ROOT while this is going on
+            /// causing us to leave something open. Note b/c of the way ROOT works we need to disconnect
+            /// the object from the file. There is a uniform way to do this, but it involves a call-back
+            /// and the ROOT.NET translation wrapper doesn't implement this yet. So we have to use the clone
+            /// technique, after we change our default directory. :(
+            /// 
 
             try
             {
@@ -66,6 +181,36 @@ namespace LINQToTTreeLib
             {
                 tf.Close();
             }
+        }
+
+        /// <summary>
+        /// Check to see if any source root files have had their date updated. If a source file has
+        /// a date more modern than the cache file, then we return false - the cache line is out of date.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private bool ROOTFileDatesOK(KeyInfo key)
+        {
+            var df = GetCacheInfoFileDescriptor(key);
+            if (df.Exists)
+            {
+                if (key.OldestSourceFileDate < df.LastWriteTime)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Returns the file that contains the basic text for the key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private static FileInfo GetCacheInfoFileDescriptor(KeyInfo key)
+        {
+            var df = new FileInfo(key.CacheDirectory.FullName + "\\file.txt");
+            return df;
         }
 
         /// <summary>
@@ -101,60 +246,56 @@ namespace LINQToTTreeLib
         /// <param name="sourceFiles"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        public void CacheItem(FileInfo[] sourceFiles, string treename, object[] inputObjects, QueryModel qm, ROOTNET.Interface.NTObject o)
+        public void CacheItem(IQueryResultCacheKey akey, ROOTNET.Interface.NTObject o)
         {
+            var key = akey as KeyInfo;
+            if (key == null)
+                throw new ArgumentNullException("The key must be valid to cache an item");
+
+            ///
+            /// See if teh directory exists
+            /// 
+
+            ///
+            /// Now, write out the text file that tells everyone what files are here. Do that only
+            /// if the thing isn't there already.
+            /// 
+
+            var df = GetCacheInfoFileDescriptor(key);
+            if (!df.Exists)
+            {
+                if (!df.Directory.Exists)
+                    df.Directory.Create();
+
+                using (var writer = df.CreateText())
+                {
+                    writer.WriteLine("This cache directory is for queries against the file:");
+                    foreach (var f in key.DescriptionLines)
+                    {
+                        writer.WriteLine(f);
+                    }
+                    writer.Close();
+                }
+            }
+
+            ///
+            /// Write out the query
+            /// 
+
+            using (var writer = File.CreateText(Path.ChangeExtension(key.RootFile.FullName, "txt")))
+            {
+                writer.WriteLine(key.QueryText);
+            }
+
+            ///
+            /// Ok, now save it to the root file
+            /// 
+
             var osaver = o.Clone();
-            var rootFile = GetROOTCacheFile(sourceFiles, treename, inputObjects, qm, true);
-            var trf = new ROOTNET.NTFile(rootFile.FullName, "RECREATE");
+            var trf = new ROOTNET.NTFile(key.RootFile.FullName, "RECREATE");
             osaver.Write();
             trf.Write();
             trf.Close();
-        }
-
-        /// <summary>
-        /// Get the root file FileInfo for the item we are going to query. If "create it all" is set, then
-        /// create all the meta-data files and other things along the way.
-        /// </summary>
-        /// <param name="rootFiles"></param>
-        /// <param name="qm"></param>
-        /// <param name="createEverything"></param>
-        private FileInfo GetROOTCacheFile(FileInfo[] rootFiles, string treename, object[] inputObjects, QueryModel qm, bool createEverything)
-        {
-            ///
-            /// Get the directory to cache.
-            ///
-
-            var dfile = FindCachForFile(rootFiles, treename, createEverything);
-            if (dfile == null)
-                return null;
-
-            ///
-            /// And now the file that the query should be cached in
-            /// 
-
-            var queryHash = qm.ToString().GetHashCode();
-            string queryNameBase = @"\\query " + queryHash.ToString() + "-" + CalcObjectHash(inputObjects).ToString();
-            var rootFile = new FileInfo(dfile.FullName + queryNameBase + ".root");
-            if (rootFile.Exists)
-                return rootFile;
-
-            ///
-            /// Ok, the root file doesn't exist. If we are not creating, then we fail. Otherwise
-            /// we create the meta-data file and return.
-            /// 
-
-            if (!createEverything)
-            {
-                return null;
-            }
-
-            using (var writer = new FileInfo(dfile.FullName + queryNameBase + ".txt").CreateText())
-            {
-                writer.WriteLine(qm.ToString());
-                writer.Close();
-            }
-
-            return rootFile;
         }
 
         /// <summary>
@@ -173,77 +314,6 @@ namespace LINQToTTreeLib
                 cq.AccumutlateHash(o);
             }
             return cq.Hash;
-        }
-
-        /// <summary>
-        /// Returns the cache directory for a particular file. Create it if requested. Check the modification
-        /// date - if the file was modified, then we need to kill off everything we already know about the
-        /// file as the file has been altered. :(
-        /// </summary>
-        /// <param name="sourceRootFiles"></param>
-        /// <returns></returns>
-        private DirectoryInfo FindCachForFile(FileInfo[] sourceRootFiles, string treename, bool create = false)
-        {
-            ///
-            /// Build the hash, which is a bit of a pain in the butt.
-            /// 
-
-            StringBuilder fullSourceName = new StringBuilder();
-            foreach (var f in sourceRootFiles)
-            {
-                fullSourceName.Append(f.FullName);
-            }
-
-            var hash = fullSourceName.ToString().GetHashCode();
-
-            ///
-            /// And the directory name - we use the first name of the file.
-            /// 
-
-            DirectoryInfo df = new DirectoryInfo(CacheDirectory.FullName + "\\" + hash + " - " + treename + "-" + sourceRootFiles[0].Name);
-
-            ///
-            /// If the directory does exist, then check the modification date.
-            /// 
-
-            var descriptor = new FileInfo(df.FullName + "\\file.txt");
-            if (df.Exists)
-            {
-                foreach (var f in sourceRootFiles)
-                {
-                    f.Refresh();
-                    if (f.LastWriteTime > descriptor.LastWriteTime)
-                    {
-                        df.Delete(true);
-                        df.Refresh();
-                        break;
-                    }
-                }
-            }
-
-            ///
-            /// Ok, if the directory doesn't exist, then we should do some work on it.
-            /// 
-
-            if (!df.Exists)
-            {
-                if (!create)
-                    return null;
-                df.Create();
-                df.Refresh();
-
-                using (var writer = descriptor.CreateText())
-                {
-                    writer.WriteLine("This cache directory is for queries against the file:");
-                    foreach (var f in sourceRootFiles)
-                    {
-                        writer.WriteLine(f.FullName);
-                    }
-                    writer.Close();
-                }
-            }
-
-            return df;
         }
     }
 }

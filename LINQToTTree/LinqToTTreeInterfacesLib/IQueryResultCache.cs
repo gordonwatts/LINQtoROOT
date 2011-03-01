@@ -5,10 +5,28 @@ using Remotion.Data.Linq;
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
+    /// The key object returned from the caching interface.
+    /// </summary>
+    public interface IQueryResultCacheKey
+    {
+
+    }
+
+    /// <summary>
     /// Caches query results - and allows for later lookup.
     /// </summary>
     public interface IQueryResultCache
     {
+        /// <summary>
+        /// Get the key for the cache entry for the object we are interested in.
+        /// </summary>
+        /// <param name="rootfiles"></param>
+        /// <param name="treename"></param>
+        /// <param name="inputObjects"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query);
+
         /// <summary>
         /// Have we made this query before? Check the file date, the query string. If there is a match,
         /// then extract the value and return it. Returns false for the first arg of the tuple if nothing found,
@@ -19,7 +37,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="queryModel"></param>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        Tuple<bool, T> Lookup<T>(FileInfo[] _rootFiles, string treeName, object[] inputObjects, QueryModel queryModel, IVariableSaver varSaver, IVariable theVar);
+        Tuple<bool, T> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IVariable theVar);
 
         /// <summary>
         /// Save an item for later lookup and retreival.
@@ -27,6 +45,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_rootFile"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        void CacheItem(FileInfo[] _rootFiles, string treeName, object[] inputObjects, QueryModel qm, ROOTNET.Interface.NTObject o);
+        void CacheItem(IQueryResultCacheKey key, ROOTNET.Interface.NTObject o);
     }
 }
