@@ -15,6 +15,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoJetShapes", "DemoJetSha
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GenerateNtupleXMLSpec", "GenerateNtupleXMLSpec\GenerateNtupleXMLSpec.vcxproj", "{CB6FA748-F8C3-4CAA-9852-C41F6195915B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo-01-JetShapes", "Demo-01-JetShapes", "{020D53A3-F7E5-4898-9E88-18B8626C13EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo-02-NtupleArrays", "Demo-02-NtupleArrays", "{41050E98-7DDE-4D2A-B788-7747CC3B0DF7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GenerateArrayNtupleXMLSpec", "GenerateArrayNtupleXMLSpec\GenerateArrayNtupleXMLSpec.vcxproj", "{B11A33A7-7181-4405-87D9-AF76DADD84B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoNtupleArrays", "DemoNtupleArrays\DemoNtupleArrays.csproj", "{0A482544-DA4B-42C6-AF61-B54301A91603}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -65,8 +73,36 @@ Global
 		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|Win32.ActiveCfg = Release|Win32
 		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|Win32.Build.0 = Release|Win32
 		{CB6FA748-F8C3-4CAA-9852-C41F6195915B}.Release|x86.ActiveCfg = Release|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Debug|Win32.Build.0 = Debug|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Debug|x86.ActiveCfg = Debug|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Release|Win32.ActiveCfg = Release|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Release|Win32.Build.0 = Release|Win32
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3}.Release|x86.ActiveCfg = Release|Win32
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Debug|Win32.ActiveCfg = Debug|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Debug|x86.ActiveCfg = Debug|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Debug|x86.Build.0 = Debug|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Release|Mixed Platforms.Build.0 = Release|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Release|Win32.ActiveCfg = Release|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Release|x86.ActiveCfg = Release|x86
+		{0A482544-DA4B-42C6-AF61-B54301A91603}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D6019F8B-BBB1-426A-82D0-DFD6D3C12DE5} = {020D53A3-F7E5-4898-9E88-18B8626C13EC}
+		{D79BBEDC-59DC-4D76-8154-BA2A51A72278} = {020D53A3-F7E5-4898-9E88-18B8626C13EC}
+		{CB6FA748-F8C3-4CAA-9852-C41F6195915B} = {020D53A3-F7E5-4898-9E88-18B8626C13EC}
+		{0842181C-FDE0-4518-93A0-CA5CE647BC3A} = {020D53A3-F7E5-4898-9E88-18B8626C13EC}
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3} = {41050E98-7DDE-4D2A-B788-7747CC3B0DF7}
+		{0A482544-DA4B-42C6-AF61-B54301A91603} = {41050E98-7DDE-4D2A-B788-7747CC3B0DF7}
 	EndGlobalSection
 EndGlobal
