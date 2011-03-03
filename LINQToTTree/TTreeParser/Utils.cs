@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace TTreeParser
 {
@@ -19,7 +18,7 @@ namespace TTreeParser
         /// <param name="rootDir"></param>
         /// <returns></returns>
         public static IEnumerable<T> FindAllOfType<T>(ROOTNET.Interface.NTDirectory rootDir)
-            where T: ROOTNET.Interface.NTObject
+            where T : ROOTNET.Interface.NTObject
         {
             var objectKeys = rootDir.GetListOfKeys();
             string basename = typeof(T).Name.Substring(1);
@@ -60,6 +59,60 @@ namespace TTreeParser
                     done = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// Figure out what a C++ type would look like in C#. Only simple types are done.
+        /// </summary>
+        /// <param name="cppTypeName"></param>
+        /// <returns></returns>
+        public static string SimpleCPPTypeToCSharpType(this string cppTypeName)
+        {
+            string result = cppTypeName;
+
+            switch (cppTypeName)
+            {
+                case "int":
+                    break;
+
+                case "bool":
+                    break;
+
+                case "float":
+                    break;
+
+                case "double":
+                    break;
+
+                case "short":
+                    break;
+
+                case "unsigned int":
+                    result = "uint";
+                    break;
+
+                case "unsigned long":
+                    result = "uint";
+                    break;
+
+                case "unsigned short":
+                    result = "ushort";
+                    break;
+
+                case "long long":
+                    result = "long";
+                    break;
+
+                case "unsigned long long":
+                    result = "ulong";
+                    break;
+
+                default:
+                    result = null;
+                    break;
+            }
+
+            return result;
         }
     }
 }

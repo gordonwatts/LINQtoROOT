@@ -172,10 +172,18 @@ namespace TTreeParser
             if (r is RegularDecl)
             {
                 var typ = (r as RegularDecl).Type;
+                typ = TypeDefTranslator.ResolveTypedef(typ);
                 if (ROOTNET.NTClass.GetClass(typ) != null)
                 {
                     typ = "ROOTNET.Interface.N" + typ;
                 }
+                else
+                {
+                    typ = typ.SimpleCPPTypeToCSharpType();
+                }
+                if (typ == null)
+                    throw new InvalidOperationException("Don't know how to deal with type '" + (r as RegularDecl).Type + "'.");
+
                 return typ;
             }
 

@@ -129,8 +129,15 @@ namespace TTreeParser
                 {
                     foreach (var leaf in branch.GetListOfLeaves().AsEnumerable().Cast<ROOTNET.Interface.NTLeaf>())
                     {
-                        IClassItem toAdd = ExtractSimpleItem(leaf);
-                        container.Add(toAdd);
+                        try
+                        {
+                            IClassItem toAdd = ExtractSimpleItem(leaf);
+                            container.Add(toAdd);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Warning: Unable to transltae ntuple leaf '" + leaf.Name + "': " + e.Message);
+                        }
                     }
                 }
                 else
@@ -326,10 +333,10 @@ namespace TTreeParser
             }
             else
             {
-                toAdd = new ItemSimpleType(ln, className);
+                toAdd = new ItemSimpleType(ln, className.SimpleCPPTypeToCSharpType());
             }
 
-            if (toAdd == null)
+            if (toAdd == null || toAdd.ItemType == null)
             {
                 throw new InvalidOperationException("Unknown type - cant' translate '" + className + "'.");
             }
