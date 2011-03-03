@@ -34,9 +34,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Build.bat">
-      <Filter>BuildFiles</Filter>
-    </None>
     <None Include="build.mak">
       <Filter>BuildFiles</Filter>
     </None>

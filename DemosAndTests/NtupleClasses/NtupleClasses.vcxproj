@@ -20,7 +20,6 @@
     <ClInclude Include="MuonInBJet.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Build.bat" />
     <None Include="build.mak" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
