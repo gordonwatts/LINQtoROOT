@@ -139,7 +139,8 @@ namespace TTreeParser
                         try
                         {
                             IClassItem toAdd = ExtractSimpleItem(leaf);
-                            container.Add(toAdd);
+                            if (toAdd != null)
+                                container.Add(toAdd);
                         }
                         catch (Exception e)
                         {
@@ -325,6 +326,14 @@ namespace TTreeParser
             {
                 return ExtractTemplateItem(leaf, result as TemplateParser.TemplateInfo);
             }
+
+            ///
+            /// Next, check if it is an array. We are currently not translating
+            /// raw C++ arrays.
+            /// 
+
+            if (leaf.Title.Contains("["))
+                return null;
 
             ///
             /// Ok - so it is a single "object" or similar. So we need to look at it and figure

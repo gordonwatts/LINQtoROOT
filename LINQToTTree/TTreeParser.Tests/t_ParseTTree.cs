@@ -218,6 +218,16 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestIgnoreNonVectorArray()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithNonVectorArray();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result[0].Items.Count, "Number of leaves should be just 1");
+        }
+
+        [TestMethod]
         public void TestGenerateSimpleItems()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateSingleItemTree();

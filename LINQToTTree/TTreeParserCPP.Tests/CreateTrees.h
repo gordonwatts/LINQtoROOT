@@ -150,6 +150,22 @@ namespace TTreeParserCPPTests {
 			return gcnew ROOTNET::NTTree(t);
 		}
 
+		/// Create a tree with some number of TLZ's.
+		static ROOTNET::NTTree ^CreateTreeWithNonVectorArray()
+		{
+			int myarr[20];
+			int lenUsed;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrL = t->Branch("lenUsed", &lenUsed);
+			auto brAddr = t->Branch ("myarr", &myarr, "myarr[lenUsed]/I");
+
+			t->ResetBranchAddress(brAddr);
+			t->ResetBranchAddress(brAddrL);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
 		/// Create a tree with an integer array and something "normal"
 		static ROOTNET::NTTree ^CreateTreeWithSimpleSingleVectorAndItem(int entries)
 		{
