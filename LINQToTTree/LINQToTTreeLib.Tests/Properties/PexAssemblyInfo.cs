@@ -50,3 +50,4 @@ using System.Runtime.CompilerServices;
 [assembly: PexSuppressStaticFieldStore("System.ComponentModel.Composition.ContractNameServices", "typeIdentityCache")]
 [assembly: PexSuppressStaticFieldStore("System.Linq.EmptyEnumerable`1", "instance")]
 [assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.MEFUtilities", "_batch")]
+[assembly: PexAssemblyUnderTest("TTreeParser")]

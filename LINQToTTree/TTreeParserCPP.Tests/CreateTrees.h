@@ -11,6 +11,7 @@
 #include <TTree.h>
 #include <TLorentzVector.h>
 #include <TList.h>
+#include <TFile.h>
 
 using std::string;
 using std::ostringstream;
@@ -125,6 +126,26 @@ namespace TTreeParserCPPTests {
 
 			t->Branch ("myvectoroftlz", &bogus);
 			int n = t->GetListOfBranches()->GetEntries();
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with some number of TLZ's.
+		static ROOTNET::NTTree ^CreateTreeWithSimpleSingleVector(int entries)
+		{
+			vector<int> bogus;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddr = t->Branch ("myvectorofint", &bogus);
+
+			for (int i = 0; i < entries; i++) {
+				bogus.clear();
+				for (int j = 0; j < 10; j++) {
+					bogus.push_back(j);
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}

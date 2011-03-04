@@ -38,6 +38,13 @@ namespace TTreeParser
             masterClass.NtupleProxyPath = f.FullName;
 
             ///
+            /// Analyze the TTree arrays.
+            /// 
+
+            var at = new ArrayAnalyzer();
+            //at.AnalyzeTTree(masterClass, tree, 10);
+
+            ///
             /// Return the master class
             /// 
 
