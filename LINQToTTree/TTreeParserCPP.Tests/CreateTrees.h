@@ -150,6 +150,30 @@ namespace TTreeParserCPPTests {
 			return gcnew ROOTNET::NTTree(t);
 		}
 
+		/// Create a tree with an integer array and something "normal"
+		static ROOTNET::NTTree ^CreateTreeWithSimpleSingleVectorAndItem(int entries)
+		{
+			vector<int> bogus;
+			int other;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddr = t->Branch ("myvectorofint", &bogus);
+			auto brAddr1 = t->Branch("other", &other);
+
+			for (int i = 0; i < entries; i++) {
+				bogus.clear();
+				other = i;
+				for (int j = 0; j < 10; j++) {
+					bogus.push_back(j);
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddr);
+			t->ResetBranchAddress(brAddr1);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
 		/// Create a tree with some number of vector's in it.
 		static ROOTNET::NTTree ^CreateVectorTree()
 		{

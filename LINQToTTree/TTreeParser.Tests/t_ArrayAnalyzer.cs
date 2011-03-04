@@ -117,5 +117,19 @@ namespace TTreeParser.Tests
             Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
             Assert.IsTrue(result.All(x => x[0].Item2 == 10), "incorrect individual variable list length list");
         }
+
+        [TestMethod]
+        public void TestArrayAndNormalItem()
+        {
+            var aa = new ArrayAnalyzer();
+            var tree = CreateTrees.CreateTreeWithSimpleSingleVectorAndItem(20);
+
+            ROOTClassShell sh = new ROOTClassShell();
+            sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
+            var result = aa.DetermineAllArrayLengths(sh, tree, 10);
+            Assert.AreEqual(10, result.Length, "# of events");
+            Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
+            Assert.IsTrue(result.All(x => x[0].Item2 == 10), "incorrect individual variable list length list");
+        }
     }
 }
