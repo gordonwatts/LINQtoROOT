@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayGroup.cs" />
     <Compile Include="IClassItem.cs" />
     <Compile Include="ItemROOTClass.cs" />
     <Compile Include="ItemSimpleType.cs" />
