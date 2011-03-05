@@ -247,7 +247,7 @@ namespace TTreeParser
         internal Tuple<string, int>[][] DetermineAllArrayLengths(ROOTClassShell classinfo, ROOTNET.Interface.NTTree tree, long eventsToAnalyze)
         {
             if (tree.Entries == 0)
-                throw new ArgumentException("Tree has no entries and can't be analyzed!");
+                return new Tuple<string, int>[][] { new Tuple<string, int>[0] };
             if (classinfo == null)
                 throw new ArgumentNullException("the class info cannot be null!");
 

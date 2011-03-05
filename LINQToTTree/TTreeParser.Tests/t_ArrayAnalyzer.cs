@@ -75,7 +75,6 @@ namespace TTreeParser.Tests
         ///A test for DetermineAllArrayLengths
         ///</summary>
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestArrayWithNoEntries()
         {
             ArrayAnalyzer target = new ArrayAnalyzer(); // TODO: Initialize to an appropriate value
