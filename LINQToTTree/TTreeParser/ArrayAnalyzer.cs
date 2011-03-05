@@ -275,15 +275,6 @@ namespace TTreeParser
             var eventNtupleData = (from entry in Enumerable.Range(0, (int)entriesToTry)
                                    select ComputeCounters(counterlist, tree, entry)).ToArray();
 
-            foreach (var item in eventNtupleData)
-            {
-                Console.WriteLine("Entry");
-                foreach (var line in item)
-                {
-                    Console.WriteLine("  {0}: {1}", line.Item1, line.Item2);
-                }
-            }
-
             ///
             /// Make sure to clean up
             /// 
