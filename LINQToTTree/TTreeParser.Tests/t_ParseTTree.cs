@@ -340,7 +340,7 @@ namespace LINQToTTreeLib.Tests
         }
 #endif
         [TestMethod]
-        public void TestBasicProxyGeneration()
+        public void TestBasicProxyAndUserInfoGeneration()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
             var p = new ParseTTree();
@@ -351,6 +351,7 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(fhpp.Exists, "check for hpp file existance");
 
             Assert.AreEqual(fhpp.FullName, result[0].NtupleProxyPath, "ntuple proxy path incorrect");
+            Assert.IsTrue(File.Exists(result[0].UserInfoPath), "user info file missing");
         }
 
         [TestMethod]

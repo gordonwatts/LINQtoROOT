@@ -47,5 +47,10 @@ namespace TTreeDataModel
         /// guy represents an actual class.
         /// </summary>
         public string NtupleProxyPath { get; set; }
+
+        /// <summary>
+        /// Get/Set the full path name where the user info xml file can be found.
+        /// </summary>
+        public string UserInfoPath { get; set; }
     }
 }

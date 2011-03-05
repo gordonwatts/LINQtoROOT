@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 using TTreeDataModel;
 
 namespace TTreeParser
@@ -42,13 +43,56 @@ namespace TTreeParser
             /// 
 
             var at = new ArrayAnalyzer();
-            //at.AnalyzeTTree(masterClass, tree, 10);
+            var groupInfo = at.AnalyzeTTree(masterClass, tree, 100);
+
+            ///
+            /// Write out the user info
+            /// 
+
+            masterClass.UserInfoPath = WriteUserInfo(groupInfo, tree.Name).FullName;
 
             ///
             /// Return the master class
             /// 
 
             yield return masterClass;
+        }
+
+        /// <summary>
+        /// Write out the user info file. This file contains things like group names, etc., that the user
+        /// might want to change. Do not destroy the old one. Rather, move it out of the way!
+        /// </summary>
+        /// <param name="groupInfo"></param>
+        /// <returns></returns>
+        private FileInfo WriteUserInfo(ArrayGroup[] groupInfo, string treeName)
+        {
+            ///
+            /// First job is to figure out where we will put the file. If there is one there already, then
+            /// we chose a new filename. :-)
+            /// 
+
+            FileInfo userInfoFile = null;
+            int index = 0;
+            do
+            {
+                userInfoFile = new FileInfo("treeNameConfig-" + index.ToString("###") + ".ntup");
+                index = index + 1;
+            } while (userInfoFile.Exists);
+
+            ///
+            /// Write out the info.
+            /// 
+
+            using (var writer = userInfoFile.CreateText())
+            {
+                XmlSerializer output = new XmlSerializer(typeof(TTreeUserInfo));
+                var userInfo = new TTreeUserInfo() { Groups = groupInfo };
+                output.Serialize(writer, userInfo);
+                writer.Close();
+            }
+
+            return userInfoFile;
+
         }
 
         /// <summary>
