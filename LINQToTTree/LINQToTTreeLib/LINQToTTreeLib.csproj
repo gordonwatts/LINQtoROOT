@@ -56,6 +56,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeAttributes\RenameVariableAttribute.cs" />
+    <Compile Include="CodeAttributes\TranslateToClassAttribute.cs" />
+    <Compile Include="CodeAttributes\TTreeVariableGroupingAttribute.cs" />
     <Compile Include="CodeContext.cs" />
     <Compile Include="CPPTranslator.cs" />
     <Compile Include="ExpressionVisitor.cs" />
@@ -76,10 +79,12 @@
     <Compile Include="Statements\StatementInlineBlock.cs" />
     <Compile Include="Statements\StatementLoopOnVector.cs" />
     <Compile Include="Statements\StatementSimpleStatement.cs" />
+    <Compile Include="TranslatingExpressionVisitor.cs" />
     <Compile Include="TTreeQueryExecutor.cs" />
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCall.cs" />
     <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValue.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHandlerROOT.cs" />
+    <Compile Include="TypeHandlers\TranslationTypes\TypeHandlerTranslationClass.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCache.cs" />
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
     <Compile Include="Utils\FileUtils.cs" />

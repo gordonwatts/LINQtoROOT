@@ -31,7 +31,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedCode codeEnv)
+        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
         {
             /// There is something very broken if this guy is getting called!
             throw new NotImplementedException();

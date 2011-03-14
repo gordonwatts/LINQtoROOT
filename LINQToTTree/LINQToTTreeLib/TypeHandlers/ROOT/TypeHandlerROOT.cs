@@ -35,7 +35,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
         {
             ///
             /// The value is a reference that will do the loading.

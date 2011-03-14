@@ -28,7 +28,9 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="codeEnv"></param>
         /// <returns></returns>
         IValue ProcessConstantReference(ConstantExpression expr,
-            IGeneratedCode codeEnv);
+            IGeneratedCode codeEnv,
+            ICodeContext context,
+            CompositionContainer container);
 
         /// <summary>
         /// Process a method call against this object. The result - which is the resulting expression - is put into

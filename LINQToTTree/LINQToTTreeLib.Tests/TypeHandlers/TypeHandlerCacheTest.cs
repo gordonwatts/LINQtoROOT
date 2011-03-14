@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.TypeHandlers
             IGeneratedCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessConstantReference(TypeHandlerCache, ConstantExpression, IGeneratedCode)
         }
@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.TypeHandlers
                 return true;
             }
 
-            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv)
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
             {
                 return new Variables.ValSimple("dude", expr.Type);
             }

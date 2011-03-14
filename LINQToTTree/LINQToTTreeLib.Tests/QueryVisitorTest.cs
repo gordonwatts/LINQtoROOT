@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
@@ -269,22 +270,23 @@ namespace LINQToTTreeLib
 
         public class subNtupleObjects
         {
-            int var1;
-            double var2;
+            public int var1;
+            public double var2;
         }
 
         public class ntupWithObjects
         {
-            subNtupleObjects[] jets;
+            [TTreeVariableGrouping]
+            public subNtupleObjects[] jets;
         }
 
         [TestMethod]
         public void TestObjectStacked()
         {
             var model = GetModel(() => (
-                from q in new QueriableDummy<dummyntup>()
-                from j in q.vals.Take(1)
-                select j).Aggregate(0, (acc, va) => acc + 1));
+                from q in new QueriableDummy<ntupWithObjects>()
+                from j in q.jets
+                select j.var1).Aggregate(0, (acc, va) => acc + va));
 
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
@@ -301,22 +303,19 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
-            /// At the top level we assume there will be a loop over the vals.
-
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
             Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "vector loop not right");
             var outterfloop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
 
-            Assert.AreEqual(2, outterfloop.Statements.Count(), "inner loop statements not set correctly");
+
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
+
+            Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementIncrementInteger), "first loop statemen tis funny");
-            Assert.IsInstanceOfType(outterfloop.Statements.Skip(1).First(), typeof(Statements.StatementIfOnCount), "if on count incorrect");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "assignment statement missing");
 
-            var incStatement = outterfloop.Statements.First() as Statements.StatementIncrementInteger;
-            var ifcountStatement = outterfloop.Statements.Skip(1).First() as Statements.StatementIfOnCount;
-
-            Assert.AreEqual(1, ifcountStatement.Statements.Count(), "expected the fill statement");
-            Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAssign), "Assign statement not there");
+            var ass = outterfloop.Statements.First() as Statements.StatementAssign;
+            Assert.IsFalse(ass.Expression.RawValue.Contains("jets"), "jets should be missing from the expression - " + ass.Expression.RawValue);
         }
     }
 }

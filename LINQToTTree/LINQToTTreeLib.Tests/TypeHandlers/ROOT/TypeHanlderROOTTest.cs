@@ -2,7 +2,6 @@
 using System;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.TypeHandlers.ROOT;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +32,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             [PexAssumeNotNull] IGeneratedCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
             Assert.IsNotNull(result);
             return result;
         }

@@ -138,7 +138,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedCode codeEnv)
+        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
         {
             throw new NotImplementedException();
         }

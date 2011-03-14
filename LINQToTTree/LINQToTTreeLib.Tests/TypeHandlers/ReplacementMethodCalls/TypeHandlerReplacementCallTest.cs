@@ -39,7 +39,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             IGeneratedCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
             return result;
             // TODO: add assertions to method TypeHandlerReplacementCallTest.ProcessConstantReference(TypeHandlerReplacementCall, ConstantExpression, IGeneratedCode)
         }

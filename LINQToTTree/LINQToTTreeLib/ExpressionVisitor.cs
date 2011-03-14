@@ -35,6 +35,21 @@ namespace LINQToTTreeLib
                 container.Compose(b);
             }
 
+            ///
+            /// First, attempt to translate the expr (if needed)
+            /// 
+
+            string oldExpr = "";
+            while (expr.ToString() != oldExpr)
+            {
+                oldExpr = expr.ToString();
+                expr = TranslatingExpressionVisitor.Translate(expr);
+            }
+
+            ///
+            /// Now, generate the C++ code
+            /// 
+
             visitor.VisitExpression(expr);
             return visitor.Result;
         }
@@ -106,7 +121,7 @@ namespace LINQToTTreeLib
             }
             else
             {
-                _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv);
+                _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv, _codeContext, MEFContainer);
             }
 
             return expression;
@@ -276,9 +291,14 @@ namespace LINQToTTreeLib
                 {
                     _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
                 }
+                else
+                {
+                    throw new NotImplementedException("Can't deal with a generic type for iterator for " + expression.Type.Name + ".");
+                }
             }
             else if (expression.Type.IsArray)
             {
+                //var isA = expression.Type.
                 _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
             }
 

@@ -263,6 +263,7 @@
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="t_TranslatingExpressionVisitor.cs" />
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />

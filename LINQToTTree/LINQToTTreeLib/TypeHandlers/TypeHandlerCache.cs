@@ -25,7 +25,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
         {
             // <pex>
             if (expr == (ConstantExpression)null)
@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.TypeHandlers
             // </pex>
 
             var h = FindHandler(expr.Type);
-            return h.ProcessConstantReference(expr, codeEnv);
+            return h.ProcessConstantReference(expr, codeEnv, context, container);
         }
 
         /// <summary>

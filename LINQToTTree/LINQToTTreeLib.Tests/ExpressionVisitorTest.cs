@@ -5,9 +5,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
@@ -17,7 +20,6 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Parsing.Structure;
-using LINQToTTreeLib.ResultOperators;
 
 namespace LINQToTTreeLib
 {
@@ -297,6 +299,43 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("((int)p)+((int)2)", result.RawValue, "raw value was not right");
+        }
+
+        [TranslateToClass(typeof(transToNtup))]
+        public class toTransNtupe
+        {
+            [RenameVariable("rVal")]
+            public int[] val;
+        }
+
+        public class transToNtup : IExpressionHolder
+        {
+            public transToNtup(Expression holder)
+            {
+                HeldExpression = holder;
+            }
+            public int[] rVal;
+
+            public Expression HeldExpression { get; set; }
+        }
+
+        [TestMethod]
+        public void TestTrivialTranslation()
+        {
+            var model = GetModel(() => (from q in new QueriableDummy<toTransNtupe>() select q.val.Count()));
+            var expr = model.SelectClause.Selector;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
+            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+            Assert.AreEqual(typeof(int), result.Type, "bad type for return");
         }
 
         public class dummyntup
