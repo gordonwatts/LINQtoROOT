@@ -152,5 +152,53 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("same", me.Member.Name, "member access name incorrect");
             Assert.AreEqual(typeof(ResultType1), me.Expression.Type, "variable type not right");
         }
+
+        public class SourceType2Container
+        {
+            [TTreeVariableGrouping]
+            public int val;
+        }
+
+        [TranslateToClass(typeof(ResultType2))]
+        public class SourceType2
+        {
+            [TTreeVariableGrouping]
+            public SourceType2Container[] jets;
+        }
+
+        public class ResultType2
+        {
+            public ResultType2(Expression holder)
+            {
+
+            }
+            public int[] val;
+        }
+
+        [TestMethod]
+        public void TestArrayGroupingChange()
+        {
+            var actual = new SourceType2() { jets = new SourceType2Container[] { new SourceType2Container() { val = 2 } } };
+            var value = Expression.Constant(actual);
+            var exprBase = Expression.MakeMemberAccess(value, typeof(SourceType2).GetMember("jets").First());
+            var exprArr = Expression.MakeBinary(ExpressionType.ArrayIndex, exprBase, Expression.Constant(0));
+            var exprArrValue = Expression.MakeMemberAccess(exprArr, typeof(SourceType2Container).GetMember("val").First());
+
+            var result = TranslatingExpressionVisitor.Translate(exprArrValue);
+
+            /// Make sure we are now doing an array access on the second object....            /// 
+
+            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "type incorrect");
+            var translatedArAccess = result as BinaryExpression;
+            Assert.AreEqual(ExpressionType.ArrayIndex, translatedArAccess.NodeType, "expected array index");
+            var constExpr = translatedArAccess.Right as ConstantExpression;
+            Assert.IsNotNull(constExpr, "const not there for index expression");
+            Assert.AreEqual(0, constExpr.Value, "Index is incorrect");
+
+            var translatedMemberAccess = translatedArAccess.Left as MemberExpression;
+            Assert.IsNotNull(translatedMemberAccess, "the member access isn't right");
+            Assert.AreEqual("val", translatedMemberAccess.Member.Name, "The actual member name didn't get mapped over correctly");
+            Assert.AreEqual(typeof(ResultType2), translatedMemberAccess.Expression.Type, "bad return type - not translated");
+        }
     }
 }

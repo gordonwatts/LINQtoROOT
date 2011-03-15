@@ -36,16 +36,83 @@ namespace LINQToTTreeLib
             /// 
 
             var attr = TypeHasAttribute<TranslateToClassAttribute>(expression.Expression.Type);
-            if (attr == null)
+            if (attr != null)
             {
-                return base.VisitMemberExpression(expression);
+                return RecodeClass(expression, attr);
             }
 
+            ///
+            /// Ok, next see if this is an array recoding
+            /// 
+
+            var attrV = TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member);
+            if (attrV != null)
+            {
+                var recodedExpression = RecodeArrayGrouping(expression);
+                if (recodedExpression != null)
+                    return recodedExpression;
+            }
+
+            return base.VisitMemberExpression(expression);
+
+        }
+
+        /// <summary>
+        /// We have an array grouping. We need to pop-it up one.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="attrV"></param>
+        /// <returns></returns>
+        private Expression RecodeArrayGrouping(MemberExpression expression)
+        {
+            ///
+            /// First do some base checks. Pull appart the array index. If any of that
+            /// doesn't work, then we just return a null.
+            /// 
+
+            var arrayIndexOperation = expression.Expression as BinaryExpression;
+            if (arrayIndexOperation == null)
+                return null;
+            if (arrayIndexOperation.NodeType != ExpressionType.ArrayIndex)
+                return null;
+
+            var memberAccessArray = arrayIndexOperation.Left as MemberExpression;
+            if (memberAccessArray == null)
+                return null;
+
+            var translateAttribute = TypeHasAttribute<TranslateToClassAttribute>(memberAccessArray.Expression.Type);
+            if (translateAttribute == null)
+                return null;
+
+            var targetMemberInfo = translateAttribute.TargetClassType.GetMember(expression.Member.Name).FirstOrDefault();
+            if (targetMemberInfo == null)
+                return null;
+
+            ///
+            /// Ok, at this point we are ready to start rebuilding the array access
+            /// 
+
+            var targetArray = Expression.MakeMemberAccess(TranslateRootObject(memberAccessArray, translateAttribute.TargetClassType), targetMemberInfo);
+            var arrayLookup = Expression.MakeBinary(ExpressionType.ArrayIndex, targetArray, arrayIndexOperation.Right);
+
+            return arrayLookup;
+        }
+
+        private Expression RecodeClass(MemberExpression expression, TranslateToClassAttribute attr)
+        {
             ///
             /// Ok. Now we need to see if this member has a translation request attached to it.
             /// 
 
             Expression result = RecodeWithRename(expression, attr.TargetClassType);
+            if (result != null)
+                return result;
+
+            ///
+            /// See if there is an array grouping that needs to be dealt with?
+            /// 
+
+            result = RecodeWithArray(expression, attr.TargetClassType);
             if (result != null)
                 return result;
 
@@ -60,6 +127,34 @@ namespace LINQToTTreeLib
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Deal with an array index. This is interesting because it might be that
+        /// the array access is on an object that needs to be "collapsed".
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitBinaryExpression(BinaryExpression expression)
+        {
+            return base.VisitBinaryExpression(expression);
+        }
+
+        /// <summary>
+        /// See if this is an array recoding....
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private Expression RecodeWithArray(MemberExpression expression, Type type)
+        {
+            var attr = TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member);
+            if (attr == null)
+                return null;
+
+
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
