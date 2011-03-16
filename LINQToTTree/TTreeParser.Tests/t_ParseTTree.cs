@@ -282,6 +282,17 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestGenerateWithStringVectorTypes()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithStringTypes();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "Empty ntuple should have fired");
+            Assert.AreEqual(0, result[0].Items.Count, "Expected nothing to be pasred");
+        }
+
+        [TestMethod]
         public void GenerateClassesTestVectorVector()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateVectorVectorTree();
