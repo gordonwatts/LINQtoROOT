@@ -160,7 +160,7 @@ namespace TTreeClassGenerator
                     /// 
 
                     output.WriteLine("  /// Helper classes");
-                    output.WriteLine("  static class Queryable{0}", cls.Name);
+                    output.WriteLine("  public static class Queryable{0}", cls.Name);
                     output.WriteLine("  {");
                     output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
                     output.WriteLine("    public static QueriableTTree<{0}> Create (FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
