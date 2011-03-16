@@ -125,7 +125,11 @@ namespace TTreeClassGenerator
                     output.WriteLine("  public class {0}", cls.Name);
                     output.WriteLine("  {");
 
+                    ///
                     /// These fields will never be set or accessed - so we turn off some warnings the compiler will generate.
+                    /// They are dummies so that intellisense works and we can do the translation properly.
+                    /// 
+
                     output.WriteLine("#pragma warning disable 0649");
 
                     foreach (var item in cls.Items)
@@ -135,16 +139,12 @@ namespace TTreeClassGenerator
 
                     output.WriteLine("#pragma warning restore 0649");
 
-                    output.WriteLine("  }"); // End of the class
-
                     ///
                     /// Write out the info class that contains everything needed to process this.
                     /// We could use attribute programing here, but that takes more code at the other
                     /// end, so until there is a real reason, we'll do it this way.
                     /// 
 
-                    output.WriteLine("  public static class {0}_info", cls.Name);
-                    output.WriteLine("  {");
                     output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
                     output.WriteLine("    public static string[] _gObjectFiles= {");
                     foreach (var item in classSpec.ClassImplimintationFiles)
@@ -159,11 +159,19 @@ namespace TTreeClassGenerator
                     /// against the trees!
                     /// 
 
-                    output.WriteLine("  class Queryable{0} : QueriableTTree<{0}>", cls.Name);
+                    output.WriteLine("  /// Helper classes");
+                    output.WriteLine("  static class Queryable{0}", cls.Name);
                     output.WriteLine("  {");
-                    output.WriteLine("    public Queryable{0} (FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
-                    output.WriteLine("              : base (rootFile, treeName)");
-                    output.WriteLine("    {}");
+                    output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
+                    output.WriteLine("    public static QueriableTTree<{0}> Create (FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
+                    output.WriteLine("    {");
+                    output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name);
+                    output.WriteLine("    }");
+                    output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
+                    output.WriteLine("    public static QueriableTTree<{0}> Create (FileInfo[] rootFiles, string treeName = \"{0}\")", cls.Name);
+                    output.WriteLine("    {");
+                    output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name);
+                    output.WriteLine("    }");
                     output.WriteLine("  }");
                 }
 

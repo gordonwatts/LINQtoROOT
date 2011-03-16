@@ -11,13 +11,55 @@ namespace LINQToTTreeLib
     public class QueriableTTree<T> : QueryableBase<T>
     {
         /// <summary>
-        /// ctor called when the user has opened a new TTree or TChain that is local to this machine. We specify the
-        /// input ROOT file and the tree name we need to find in that root file.
+        /// Create a new LINQ Querable object that will go after a TTree. The ntuple type must have been
+        /// generated with the proper meta data so things like the scanner source file can be found!
+        /// Runs on data in a single source file.
         /// </summary>
         public QueriableTTree(FileInfo rootFile, string treeName)
-            : base(new TTreeQueryExecutor(rootFile, treeName, typeof(T)))
+            : base(new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
         {
             DefineExtraOperators();
+        }
+
+        /// <summary>
+        /// Create a new LINQ Querable object that will go after a TTree. The ntuple type must have been
+        /// generated with the proper meta data so things like the scanner source file can be found!
+        /// Runs on data in a multiple source files.
+        /// </summary>
+        public QueriableTTree(FileInfo[] rootFiles, string treeName)
+            : base(new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
+        {
+            DefineExtraOperators();
+        }
+
+        /// <summary>
+        /// Debugging Aid: Get/Set to force a re-evaluation of an expression, even if it exists in the cache.
+        /// </summary>
+        public bool IgnoreQueryCache
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).IgnoreQueryCache = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).IgnoreQueryCache;
+            }
+        }
+
+        /// <summary>
+        /// Debugging Aid: Get/Set clean up query submission files (C++ files) after a successful run of a query
+        /// </summary>
+        public bool CleanupQuery
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).CleanupQuery = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).CleanupQuery;
+            }
         }
 
         /// <summary>

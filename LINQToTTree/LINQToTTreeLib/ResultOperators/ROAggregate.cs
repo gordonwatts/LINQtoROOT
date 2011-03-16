@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
@@ -32,7 +33,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext context)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext context, CompositionContainer container)
         {
             ///
             /// Basic code checks
@@ -69,7 +70,7 @@ namespace LINQToTTreeLib.ResultOperators
             {
                 accumulator = new Variables.VarSimple(a.Seed.Type);
             }
-            accumulator.InitialValue = ExpressionVisitor.GetExpression(a.Seed, _codeEnv);
+            accumulator.InitialValue = ExpressionVisitor.GetExpression(a.Seed, _codeEnv, context, container);
 
             ///
             /// Now, parse the lambda expression, doing a substitution with this guy! Note that the only argument is our
@@ -77,7 +78,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var p1 = context.Add(a.Func.Parameters[0].Name, accumulator);
-            var funcResolved = ExpressionVisitor.GetExpression(a.Func.Body, _codeEnv, context);
+            var funcResolved = ExpressionVisitor.GetExpression(a.Func.Body, _codeEnv, context, container);
             p1.Pop();
 
             _codeEnv.Add(new StatementAssign(accumulator, funcResolved));

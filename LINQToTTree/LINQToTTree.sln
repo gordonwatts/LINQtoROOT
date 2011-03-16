@@ -1,13 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A6EE159-F508-458E-82A5-95A79B6DEBC5}"
-	ProjectSection(SolutionItems) = preProject
-		LINQToTTree.vsmdi = LINQToTTree.vsmdi
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQToTTreeLib", "LINQToTTreeLib\LINQToTTreeLib.csproj", "{A1A955AD-BC56-4413-92BC-581C35A78522}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQToTTreeLib.Tests", "LINQToTTreeLib.Tests\LINQToTTreeLib.Tests.csproj", "{B4D4BD10-53CD-42BE-9174-876F117D245C}"
@@ -31,6 +24,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdGenerateLINQClasses", "CmdGenerateLINQClasses\CmdGenerateLINQClasses.csproj", "{E174BAA6-23F6-4F7C-805F-E6532B59964F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTreeClassGenerator.Tests", "TTreeClassGenerator.Tests\TTreeClassGenerator.Tests.csproj", "{A518EA23-831C-4300-AD1C-4C0F386AF0C8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BuildLibraryDistribution", "BuildLibraryDistribution\BuildLibraryDistribution.vcxproj", "{E259F50A-B306-4FA7-B566-DD27E58B698D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E957E9D-BEE2-48CB-AC19-02F89A896725} = {4E957E9D-BEE2-48CB-AC19-02F89A896725}
+		{E174BAA6-23F6-4F7C-805F-E6532B59964F} = {E174BAA6-23F6-4F7C-805F-E6532B59964F}
+		{A1A955AD-BC56-4413-92BC-581C35A78522} = {A1A955AD-BC56-4413-92BC-581C35A78522}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -120,6 +120,7 @@ Global
 		{3F0367B8-C970-4134-8FC6-944400C00F71}.Release|Win32.ActiveCfg = Release|Any CPU
 		{3F0367B8-C970-4134-8FC6-944400C00F71}.Release|x86.ActiveCfg = Release|Any CPU
 		{967E302F-C718-44B4-A6C5-93B87C786E57}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{967E302F-C718-44B4-A6C5-93B87C786E57}.Debug|Any CPU.Build.0 = Debug|Win32
 		{967E302F-C718-44B4-A6C5-93B87C786E57}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{967E302F-C718-44B4-A6C5-93B87C786E57}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{967E302F-C718-44B4-A6C5-93B87C786E57}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -132,6 +133,7 @@ Global
 		{967E302F-C718-44B4-A6C5-93B87C786E57}.Release|Win32.Build.0 = Release|Win32
 		{967E302F-C718-44B4-A6C5-93B87C786E57}.Release|x86.ActiveCfg = Release|Win32
 		{4E957E9D-BEE2-48CB-AC19-02F89A896725}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{4E957E9D-BEE2-48CB-AC19-02F89A896725}.Debug|Any CPU.Build.0 = Debug|x86
 		{4E957E9D-BEE2-48CB-AC19-02F89A896725}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{4E957E9D-BEE2-48CB-AC19-02F89A896725}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{4E957E9D-BEE2-48CB-AC19-02F89A896725}.Debug|Win32.ActiveCfg = Debug|x86
@@ -156,6 +158,7 @@ Global
 		{02912B73-54E2-4EA5-88F1-863BFFE0B639}.Release|Win32.ActiveCfg = Release|Any CPU
 		{02912B73-54E2-4EA5-88F1-863BFFE0B639}.Release|x86.ActiveCfg = Release|Any CPU
 		{E174BAA6-23F6-4F7C-805F-E6532B59964F}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E174BAA6-23F6-4F7C-805F-E6532B59964F}.Debug|Any CPU.Build.0 = Debug|x86
 		{E174BAA6-23F6-4F7C-805F-E6532B59964F}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{E174BAA6-23F6-4F7C-805F-E6532B59964F}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{E174BAA6-23F6-4F7C-805F-E6532B59964F}.Debug|Win32.ActiveCfg = Debug|x86
@@ -179,6 +182,18 @@ Global
 		{A518EA23-831C-4300-AD1C-4C0F386AF0C8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A518EA23-831C-4300-AD1C-4C0F386AF0C8}.Release|Win32.ActiveCfg = Release|Any CPU
 		{A518EA23-831C-4300-AD1C-4C0F386AF0C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Debug|Win32.Build.0 = Debug|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Debug|x86.ActiveCfg = Debug|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Release|Any CPU.ActiveCfg = Release|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Release|Win32.ActiveCfg = Release|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Release|Win32.Build.0 = Release|Win32
+		{E259F50A-B306-4FA7-B566-DD27E58B698D}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

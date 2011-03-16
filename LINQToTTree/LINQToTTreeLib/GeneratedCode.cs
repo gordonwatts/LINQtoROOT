@@ -15,7 +15,11 @@ namespace LINQToTTreeLib
             CodeBody = new StatementInlineBlock();
             CurrentScopePointer = CodeBody;
             CurrentDeclarationScopePointer = CodeBody;
+            PreviousDeclarationScopePointer = null;
+            Depth = 1;
         }
+
+        public int Depth { get; private set; }
 
         /// <summary>
         /// The final result of this query.
@@ -38,7 +42,12 @@ namespace LINQToTTreeLib
         /// </summary>
         private IBookingStatementBlock CurrentDeclarationScopePointer;
 
-        internal void SetResult(IVariable r)
+        /// <summary>
+        /// One level up from where we are now...
+        /// </summary>
+        private IBookingStatementBlock PreviousDeclarationScopePointer;
+
+        public void SetResult(IVariable r)
         {
             if (r == null)
                 throw new ArgumentNullException("Cannot set the result to be null");
@@ -49,20 +58,22 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Keeps track of the the current scope
         /// </summary>
-        private class CurrentScopeInfo
+        private class CurrentScopeInfo : IScopeInfo
         {
             public IStatementCompound Scope;
             public IBookingStatementBlock BookingScope;
+            public IBookingStatementBlock PreviousBookingScope;
+            public int oldDepth;
         }
 
         /// <summary>
         /// Get/set the current scope pointer.
         /// </summary>
-        public object CurrentScope
+        public IScopeInfo CurrentScope
         {
             get
             {
-                return new CurrentScopeInfo() { Scope = CurrentScopePointer, BookingScope = CurrentDeclarationScopePointer };
+                return new CurrentScopeInfo() { Scope = CurrentScopePointer, BookingScope = CurrentDeclarationScopePointer, PreviousBookingScope = PreviousDeclarationScopePointer, oldDepth = Depth };
             }
             set
             {
@@ -72,6 +83,8 @@ namespace LINQToTTreeLib
 
                 CurrentScopePointer = info.Scope;
                 CurrentDeclarationScopePointer = info.BookingScope;
+                PreviousDeclarationScopePointer = info.PreviousBookingScope;
+                Depth = info.oldDepth;
             }
         }
 
@@ -95,7 +108,11 @@ namespace LINQToTTreeLib
             if (s is IStatementCompound)
                 CurrentScopePointer = s as IStatementCompound;
             if (s is IBookingStatementBlock)
+            {
+                PreviousDeclarationScopePointer = CurrentDeclarationScopePointer;
                 CurrentDeclarationScopePointer = s as IBookingStatementBlock;
+                Depth++;
+            }
         }
 
         /// <summary>
@@ -108,6 +125,21 @@ namespace LINQToTTreeLib
             if (v == null)
                 throw new ArgumentNullException("Cannot add a null variable!");
             CurrentDeclarationScopePointer.Add(v);
+        }
+
+        /// <summary>
+        /// Add a variable one level up from the current scope. Fail if we can't!
+        /// </summary>
+        /// <param name="valSimple"></param>
+        public void AddOneLevelUp(IVariable valSimple)
+        {
+            if (valSimple == null)
+                throw new ArgumentNullException("cannot add null variable!");
+
+            if (PreviousDeclarationScopePointer == null)
+                throw new InvalidOperationException("Can't declare one varaible one level up when one level up doesn't exist!");
+
+            PreviousDeclarationScopePointer.Add(valSimple);
         }
 
         /// <summary>
@@ -127,7 +159,7 @@ namespace LINQToTTreeLib
         /// to the source with what we need in it.
         /// </summary>
         /// <param name="v"></param>
-        public void AddTransfered(string name, object val)
+        public void QueueForTransfer(string name, object val)
         {
             if (val == null)
                 throw new ArgumentNullException("val");
@@ -135,6 +167,29 @@ namespace LINQToTTreeLib
                 throw new ArgumentException("name");
 
             _variablesToTransfer[name] = val;
+        }
+
+        /// <summary>
+        /// Keep track of a list of include files that
+        /// we need to pull in at the top of the header file!
+        /// </summary>
+        private HashSet<string> _includeFiles = new HashSet<string>();
+
+        /// <summary>
+        /// Add an include file to the list... if it is already included, it won't be done twice.
+        /// </summary>
+        /// <param name="includeName"></param>
+        public void AddIncludeFile(string includeName)
+        {
+            _includeFiles.Add(includeName);
+        }
+
+        /// <summary>
+        /// Gets the list of include files that should be included at the top of this.
+        /// </summary>
+        public IEnumerable<string> IncludeFiles
+        {
+            get { return _includeFiles; }
         }
     }
 }

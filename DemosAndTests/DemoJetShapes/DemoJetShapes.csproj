@@ -33,15 +33,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libHistWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libHistWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="libPhysicsWrapper">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libPhysicsWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libRIOWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libRIOWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="LINQToTTreeLib">
-      <HintPath>..\..\LINQToROOT\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
+      <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Remotion.Data.Linq, Version=1.13.41.2, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\..\LINQToTTree\RemotionRelinq_1.13.41.0\net-3.5\bin\debug\Remotion.Data.Linq.dll</HintPath>
@@ -53,7 +63,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=1.0.4017.847, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4058.40323, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -63,6 +73,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\NtupleClasses\BTagJet_cpp.lib">
+      <Link>BTagJet_cpp.lib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\NtupleClasses\MuonInBJet_cpp.lib">
+      <Link>MuonInBJet_cpp.lib</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="ntuple.ntupom">
       <Generator>cmd.exe</Generator>
     </None>
@@ -73,7 +91,21 @@
       <Name>NTupleWrappers</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\NtupleClasses\BTagJet_cpp.dll">
+      <Link>BTagJet_cpp.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\NtupleClasses\MuonInBJet_cpp.dll">
+      <Link>MuonInBJet_cpp.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

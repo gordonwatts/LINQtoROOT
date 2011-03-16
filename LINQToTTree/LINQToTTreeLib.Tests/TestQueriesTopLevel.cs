@@ -23,6 +23,7 @@ namespace LINQToTTreeLib.Tests
         {
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
+            QueryResultCacheTest.SetupCacheDir();
         }
 
         [TestCleanup]
@@ -62,20 +63,6 @@ namespace LINQToTTreeLib.Tests
             var statement = res.CodeBody.Statements.First();
             Assert.IsInstanceOfType(statement, typeof(StatementIncrementInteger), "count should be incrementing an integer!");
             Assert.AreEqual(DummyQueryExectuor.FinalResult.ResultValue, (statement as StatementIncrementInteger).Integer, "The variable should match");
-        }
-
-        [TestMethod]
-        public void TestTakeSkip()
-        {
-            var q = new QueriableDummy<ntup>();
-            var result = from d in q
-                         select d;
-            var c = result.Take(1).Count();
-
-            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
-            var res = DummyQueryExectuor.FinalResult;
-
-            var e = result.Skip(1).Count();
         }
 
         [TestMethod]
@@ -160,7 +147,7 @@ namespace LINQToTTreeLib.Tests
             var q = new QueriableDummy<ntup>();
             var r = from d in q
                     select d;
-            var c = r.AggregateNoReturn(new ROOTNET.NTH1F("dude", "put a fork in it", 10, 0.0, 20.0), (h1, n1) => h1.Fill(n1.run));
+            var c = r.ApplyToObject(new ROOTNET.NTH1F("dude", "put a fork in it", 10, 0.0, 20.0), (h1, n1) => h1.Fill(n1.run));
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
@@ -45,7 +46,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
             if (expr == null)
                 throw new ArgumentNullException("expr");
@@ -70,11 +71,11 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// before any parameters are replaced!
                 /// 
 
-                var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context);
-                var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context));
+                var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context, container);
+                var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context, container));
                 var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
 
-                var statementBody = ExpressionVisitor.GetExpression(action, gc, context);
+                var statementBody = ExpressionVisitor.GetExpression(action, gc, context, container);
 
                 p2.Pop();
                 p1.Pop();

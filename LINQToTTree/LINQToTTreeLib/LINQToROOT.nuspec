@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<package> 
+  <metadata> 
+    <id>LINQToROOT</id> 
+    <version>0.1</version> 
+    <authors>Gordon Watts</authors>
+    <description>Provides a basic LINQ interface to running over a TTree in root. Translates a LINQ query into C++ which is then compiled and run against a TChain list of files.</description>
+    <summary>Enables access to ROOT TTree's via .NET's LINQ</summary>
+    <language>en-US</language>
+    <licenseUrl>http://linqtoroot.codeplex.com/license</licenseUrl>
+    <projectUrl>http://linqtoroot.codeplex.com/</projectUrl>
+    <dependencies>
+      <dependency id="NVelocity" version="1.0.3" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="LINQToTTreeLib.dll" target="lib"/>
+    <file src="LinqToTTreeInterfacesLib.dll" target="lib"/>
+    <file src="Remotion.Data.Linq.dll" target="lib"/>
+  </files>
+</package>

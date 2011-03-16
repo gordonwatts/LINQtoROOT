@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
@@ -35,7 +36,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext, CompositionContainer container)
         {
             ///
             /// Quick checks to make sure
@@ -57,13 +58,18 @@ namespace LINQToTTreeLib.ResultOperators
             if (skip != null && skip.Count.Type != typeof(int))
                 throw new ArgumentException("Skip operator count must be an integer!");
 
+            if (codeEnv.Depth <= 1)
+            {
+                throw new InvalidOperationException("Unable to use the Take or Skip operators at the ntuple level - need to use them only on objects inside the ntuple");
+            }
+
             ///
             /// Now, we create a count variable and that is how we will tell if we are still skipping or
             /// taking. It must be declared in the current block, before our current code! :-)
             /// 
 
             var counter = new VarInteger();
-            codeEnv.Add(counter);
+            codeEnv.AddOneLevelUp(counter);
 
             codeEnv.Add(new StatementIncrementInteger(counter));
             var comparison = StatementIfOnCount.ComparisonOperator.LessThanEqual;
@@ -71,16 +77,87 @@ namespace LINQToTTreeLib.ResultOperators
             if (skip != null)
             {
                 comparison = StatementIfOnCount.ComparisonOperator.GreaterThan;
-                comparisonValue = ExpressionVisitor.GetExpression(skip.Count, codeEnv, codeContext);
+                comparisonValue = ExpressionVisitor.GetExpression(skip.Count, codeEnv, codeContext, container);
             }
             else
             {
-                comparisonValue = ExpressionVisitor.GetExpression(take.Count, codeEnv, codeContext);
+                comparisonValue = ExpressionVisitor.GetExpression(take.Count, codeEnv, codeContext, container);
             }
 
             codeEnv.Add(new StatementIfOnCount(counter, comparisonValue, comparison));
 
-            return null;
+            ///
+            /// Subsequent guys are going to want to take the result of this operator an iterate over it.
+            /// So we need to return a loopable variable. But this is a funny loopable variable, of course,
+            /// as we are already in the loop. If anyone else wants to add statements, they just add them
+            /// in the normal way. So we create a sepcial loop variable.
+            /// 
+
+            return new TakeSkipLoopVariable(codeContext.LoopVariable);
+        }
+
+        /// <summary>
+        /// An internal loop variable - so we can make sure that we are looping over the proper things
+        /// </summary>
+        class TakeSkipLoopVariable : IVariable, ISequenceAccessor
+        {
+            /// <summary>
+            /// What is the main loop variable (the indexer) that we are holding onto??
+            /// </summary>
+            private IVariable _index;
+
+            /// <summary>
+            /// Setup with the proper index variable so that we can "return" a loop variable later on.
+            /// </summary>
+            /// <param name="iVariable"></param>
+            public TakeSkipLoopVariable(IVariable iVariable)
+            {
+                if (iVariable == null)
+                    throw new ArgumentNullException("Can't create a fake loop/skip variable based on a null looper");
+
+                _index = iVariable;
+            }
+
+            public string VariableName
+            {
+                get { return _index.VariableName; }
+            }
+
+            public IValue InitialValue
+            {
+                get { return _index.InitialValue; }
+                set { _index.InitialValue = value; }
+            }
+
+            public bool Declare
+            {
+                get { return _index.Declare; }
+                set { _index.Declare = value; }
+            }
+
+            public string RawValue
+            {
+                get { return _index.RawValue; }
+            }
+
+            public Type Type
+            {
+                get { return _index.Type; }
+            }
+
+            /// <summary>
+            /// Add the statements that will actually cause the loops. The fantastic thing about this is
+            /// that the loop is already implied - we are already running it. So we need only declare
+            /// the new index variable and we are set.
+            /// </summary>
+            /// <param name="env"></param>
+            /// <param name="context"></param>
+            /// <param name="indexName"></param>
+            public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
+            {
+                popVariableContext(context.Add(indexName, context.LoopVariable));
+                return context.LoopVariable;
+            }
         }
     }
 }

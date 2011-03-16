@@ -8,12 +8,16 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.Expressions;
+using Remotion.Data.Linq.Parsing.Structure;
+using LINQToTTreeLib.ResultOperators;
 
 namespace LINQToTTreeLib
 {
@@ -195,6 +199,7 @@ namespace LINQToTTreeLib
         {
 #pragma warning disable 0169
             int run;
+            IEnumerable<int> numbers;
 #pragma warning restore 0169
         }
 
@@ -207,6 +212,18 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("(*d).run", r.RawValue, "incorrect reference");
+        }
+
+        [TestMethod]
+        public void TestMemberEnumerable()
+        {
+            var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");
+            GeneratedCode gc = new GeneratedCode();
+            var r = ExpressionVisitor.GetExpression(e, gc);
+            CheckGeneratedCodeEmpty(gc);
+            Assert.AreEqual(typeof(IEnumerable<int>), r.Type, "incorrect type");
+            Assert.AreEqual("(*d).numbers", r.RawValue, "incorrect reference");
+            Assert.IsInstanceOfType(r, typeof(ISequenceAccessor), "not an array operator");
         }
 
         [TestMethod]
@@ -232,12 +249,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestParameterSubstitution()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestParameterSubstitutionIncompatibleTypes()
         {
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             cc.Add("p", new ValSimple("count", typeof(int)));
+            var r = ExpressionVisitor.GetExpression(e, gc, cc);
+        }
+
+        [TestMethod]
+        public void TestParameterSubstitutionOk()
+        {
+            var e = Expression.Parameter(typeof(ntup), "p");
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            cc.Add("p", new ValSimple("count", typeof(ntup)));
             var r = ExpressionVisitor.GetExpression(e, gc, cc);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");
@@ -269,6 +297,81 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("((int)p)+((int)2)", result.RawValue, "raw value was not right");
+        }
+
+        public class dummyntup
+        {
+            public int run;
+            public int[] vals;
+        }
+
+        private QueryModel GetModel<T>(Expression<Func<T>> expr)
+        {
+            var parser = new QueryParser();
+            return parser.GetParsedQuery(expr.Body);
+        }
+
+        [TestMethod]
+        public void TestSimpleSubQuery()
+        {
+            var model = GetModel(() => (from q in new QueriableDummy<dummyntup>() select q.vals.Count()).Count());
+            var expr = model.SelectClause.Selector as SubQueryExpression;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+
+            Assert.AreEqual(typeof(int), result.Type, "bad type for return");
+
+            ///
+            /// Make sure that the aint1 has been declared in the body of the code, and that there are some statements.
+            /// The top level statement should be a loop over whatever it is we are looping over!
+            /// 
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "Incorrect looping statement");
+            Assert.IsFalse(gc.CodeBody.Statements.First().CodeItUp().First().Contains("<generated>"), "Contains a funny variable name: " + gc.CodeBody.Statements.First().CodeItUp().First());
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected one declared variable");
+            Assert.AreEqual(result.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "declared variable name incorrect");
+
+            ///
+            /// Next, make sure if we add a statement it goes where we think it should - after teh stuff that has been added,
+            /// not inside it.
+            /// 
+
+            gc.Add(new Statements.StatementSimpleStatement("dude"));
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Scope has not been reset");
+
+            Assert.AreEqual(0, cc.NumberOfParams, "Impromper # of parameter replacements left over");
+        }
+
+        [TestMethod]
+        public void TestSimpleSubQueryWithAddon()
+        {
+            var model = GetModel(() => (from q in new QueriableDummy<dummyntup>() select q.vals.Where(v => v > 20).Count()).Count());
+            var expr = model.SelectClause.Selector as SubQueryExpression;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+
+            ///
+            /// Next, go after the code that comes back and make sure the if statement for the > 20 actually makes sense.
+            /// 
+
+            var loop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
+            Assert.AreEqual(1, loop.Statements.Count(), "Expected one sub-statement");
+            Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");
         }
     }
 }

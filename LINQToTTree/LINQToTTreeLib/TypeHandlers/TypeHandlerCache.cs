@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
@@ -42,7 +43,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
             // <pex>
             if (expr == (MethodCallExpression)null)
@@ -50,7 +51,7 @@ namespace LINQToTTreeLib.TypeHandlers
             // </pex>
 
             var h = FindHandler(expr.Method.DeclaringType);
-            return h.ProcessMethodCall(expr, out result, gc, context);
+            return h.ProcessMethodCall(expr, out result, gc, context, container);
         }
 
         /// <summary>
@@ -65,7 +66,11 @@ namespace LINQToTTreeLib.TypeHandlers
 
             var h = (from t in _handlers
                      where t.CanHandle(type)
-                     select t).First();
+                     select t).FirstOrDefault();
+
+            if (h == null)
+                throw new InvalidOperationException("I don't know how to deal with the type " + type.Name);
+
             return h;
         }
     }

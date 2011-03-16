@@ -59,6 +59,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="NVelocity, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\NVelocity.1.0.3\lib\NVelocity.dll</HintPath>
+    </Reference>
     <Reference Include="Remotion.Data.Linq">
       <HintPath>..\RemotionRelinq_1.13.41.0\net-3.5\bin\debug\Remotion.Data.Linq.dll</HintPath>
     </Reference>
@@ -179,6 +182,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QueriableDummy.cs" />
+    <Compile Include="QueryResultCacheTest.cs" />
+    <Compile Include="QueryVisitorTest.cs" />
     <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
     </Compile>
@@ -211,6 +216,8 @@
     <Compile Include="ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.cs" />
     <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
     </Compile>
@@ -225,6 +232,7 @@
     <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementLoopOnVectorTest.cs" />
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
@@ -239,6 +247,7 @@
     <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.cs" />
     <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValueTest.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
@@ -289,6 +298,10 @@
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

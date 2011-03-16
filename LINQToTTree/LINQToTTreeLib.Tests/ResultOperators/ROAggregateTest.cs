@@ -57,7 +57,7 @@ namespace LINQToTTreeLib.ResultOperators
         {
             CodeContext c = new CodeContext();
             IVariable result
-               = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, c);
+               = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, c, null);
             return result;
             // TODO: add assertions to method ROAggregateTest.ProcessResultOperator(ROAggregate, ResultOperatorBase, QueryModel, IGeneratedCode)
         }
@@ -131,7 +131,7 @@ namespace LINQToTTreeLib.ResultOperators
             var q = new QueriableDummy<ntup>();
             var r = from d in q
                     select d;
-            var c = r.AggregateNoReturn(new ROOTNET.NTH1F("dude", "put a fork in it", 10, 0.0, 20.0), (h1, n1) => h1.Fill(n1.run));
+            var c = r.ApplyToObject(new ROOTNET.NTH1F("dude", "put a fork in it", 10, 0.0, 20.0), (h1, n1) => h1.Fill(n1.run));
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;

@@ -42,6 +42,7 @@
       <HintPath>..\RemotionRelinq_1.13.41.0\net-3.5\bin\debug\Remotion.Data.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -56,7 +57,9 @@
     <Compile Include="IBookingStatementBlock.cs" />
     <Compile Include="ICodeContext.cs" />
     <Compile Include="IGeneratedCode.cs" />
+    <Compile Include="IQueryResultCache.cs" />
     <Compile Include="IQVResultOperator.cs" />
+    <Compile Include="ISequenceAccessor.cs" />
     <Compile Include="IStatement.cs" />
     <Compile Include="IStatementCompound.cs" />
     <Compile Include="ITypeHandler.cs" />

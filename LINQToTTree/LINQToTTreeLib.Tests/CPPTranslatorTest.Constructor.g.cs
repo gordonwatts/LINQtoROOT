@@ -8,22 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib
 {
     public partial class CPPTranslatorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(CPPTranslatorTest))]
-public void Constructor545()
-{
-    CPPTranslator cPPTranslator;
-    cPPTranslator = this.Constructor();
-    Assert.IsNotNull((object)cPPTranslator);
-    Assert.IsNotNull(cPPTranslator.IncludeFiles);
-}
     }
 }

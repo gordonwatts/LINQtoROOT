@@ -54,6 +54,17 @@ namespace LINQToTTreeLib
             AddWithPop(new CodeContext(), "bogus", replacement1, replacement2);
         }
 
+        [TestMethod]
+        public void TestPopOfNothing()
+        {
+            var replacement1 = new Variables.ValSimple("freakout", typeof(int));
+            var cc = new CodeContext();
+            var popper = cc.Add("dude", replacement1);
+            Assert.AreEqual(1, cc.NumberOfParams, "Incorrect # after insertion");
+            popper.Pop();
+            Assert.AreEqual(0, cc.NumberOfParams, "After pop, expected everything to be gone");
+        }
+
         /// <summary>Test stub for .ctor()</summary>
         [PexMethod]
         public CodeContext Constructor()
@@ -103,6 +114,30 @@ namespace LINQToTTreeLib
         public void OneRoundTripTest()
         {
             TestRoundTrip(new CodeContext(), "dude", "fork", typeof(int));
+        }
+
+        [TestMethod]
+        public void TestLoopVarCTor()
+        {
+            var c = new CodeContext();
+            Assert.IsNull(c.LoopVariable, "ctor isn't null");
+        }
+
+        [TestMethod]
+        public void TestLoopVarSetting()
+        {
+            var c = new CodeContext();
+            var v = new Variables.VarSimple(typeof(int));
+            c.SetLoopVariable(v);
+            Assert.AreEqual(v, c.LoopVariable, "set didn't work");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestLoopVarSetNull()
+        {
+            var c = new CodeContext();
+            c.SetLoopVariable(null);
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Variables;
@@ -18,13 +19,22 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public static IValue GetExpression(Expression expr, IGeneratedCode ce, ICodeContext cc = null)
+        public static IValue GetExpression(Expression expr, IGeneratedCode ce, ICodeContext cc = null, CompositionContainer container = null)
         {
             if (cc == null)
             {
                 cc = new CodeContext();
             }
             var visitor = new ExpressionVisitor(ce, cc);
+            visitor.MEFContainer = container;
+
+            if (container != null)
+            {
+                CompositionBatch b = new CompositionBatch();
+                b.AddPart(visitor);
+                container.Compose(b);
+            }
+
             visitor.VisitExpression(expr);
             return visitor.Result;
         }
@@ -34,11 +44,13 @@ namespace LINQToTTreeLib
         /// </summary>
         private IValue Result
         {
-            get { return new ValSimple(_expr.ToString(), _exprType); }
+            get { return _result; }
         }
 
-        private StringBuilder _expr = new StringBuilder();
-        private Type _exprType = null;
+        /// <summary>
+        /// This is where the result is put
+        /// </summary>
+        IValue _result = null;
 
         /// <summary>
         /// Sometimes we get sub-query expressions and other things that require us to write more than
@@ -79,26 +91,22 @@ namespace LINQToTTreeLib
                 || expression.Type == typeof(float)
                 || expression.Type == typeof(double))
             {
-                _expr.AppendFormat("{0}", expression.Value);
-                _exprType = expression.Type;
+                _result = new ValSimple(expression.Value.ToString(), expression.Type);
             }
             else if (expression.Type == typeof(bool))
             {
                 if ((bool)expression.Value)
                 {
-                    _expr.Append("true");
+                    _result = new ValSimple("true", typeof(bool));
                 }
                 else
                 {
-                    _expr.Append("false");
+                    _result = new ValSimple("false", typeof(bool));
                 }
-                _exprType = typeof(bool);
             }
             else
             {
-                var v = TypeHandlers.ProcessConstantReference(expression, _codeEnv);
-                _expr.Append(v.RawValue);
-                _exprType = v.Type;
+                _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv);
             }
 
             return expression;
@@ -114,53 +122,54 @@ namespace LINQToTTreeLib
             string op = "";
             bool CastToFinalType = false;
 
+            Type resultType = null;
             switch (expression.NodeType)
             {
                 case ExpressionType.Add:
                     op = "+";
-                    _exprType = expression.Type;
+                    resultType = expression.Type;
                     break;
                 case ExpressionType.AndAlso:
                     CastToFinalType = true;
                     op = "&&";
-                    _exprType = typeof(bool);
+                    resultType = typeof(bool);
                     break;
                 case ExpressionType.Divide:
                     op = "/";
-                    _exprType = expression.Type;
+                    resultType = expression.Type;
                     break;
                 case ExpressionType.Equal:
                     op = "==";
-                    _exprType = typeof(bool);
+                    resultType = typeof(bool);
                     break;
                 case ExpressionType.GreaterThan:
                     op = ">";
-                    _exprType = typeof(bool);
+                    resultType = typeof(bool);
                     break;
                 case ExpressionType.GreaterThanOrEqual:
                     op = ">=";
-                    _exprType = typeof(bool);
+                    resultType = typeof(bool);
                     break;
                 case ExpressionType.LessThan:
                     op = "<";
-                    _exprType = typeof(bool);
+                    resultType = typeof(bool);
                     break;
                 case ExpressionType.LessThanOrEqual:
                     op = "<=";
-                    _exprType = typeof(bool);
+                    resultType = typeof(bool);
                     break;
                 case ExpressionType.Multiply:
                     op = "*";
-                    _exprType = expression.Type;
+                    resultType = expression.Type;
                     break;
                 case ExpressionType.OrElse:
                     CastToFinalType = true;
                     op = "||";
-                    _exprType = typeof(bool);
+                    resultType = typeof(bool);
                     break;
                 case ExpressionType.Subtract:
                     op = "-";
-                    _exprType = expression.Type;
+                    resultType = expression.Type;
                     break;
 
                 case ExpressionType.And:
@@ -182,8 +191,8 @@ namespace LINQToTTreeLib
             /// Run the expression
             /// 
 
-            var RHS = GetExpression(expression.Right, _codeEnv, _codeContext);
-            var LHS = GetExpression(expression.Left, _codeEnv, _codeContext);
+            var RHS = GetExpression(expression.Right, _codeEnv, _codeContext, MEFContainer);
+            var LHS = GetExpression(expression.Left, _codeEnv, _codeContext, MEFContainer);
 
             string sRHS, sLHS;
             if (CastToFinalType)
@@ -197,7 +206,7 @@ namespace LINQToTTreeLib
                 sLHS = LHS.AsCastString();
             }
 
-            _expr.AppendFormat("{0}{1}{2}", sLHS, op, sRHS);
+            _result = new ValSimple(sLHS + op + sRHS, resultType);
 
             return expression;
         }
@@ -212,18 +221,15 @@ namespace LINQToTTreeLib
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _exprType = expression.Type;
-                    _expr.AppendFormat("-{0}", GetExpression(expression.Operand, _codeEnv, _codeContext).AsCastString());
+                    _result = new ValSimple("-" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).AsCastString(), expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _exprType = expression.Type;
-                    _expr.AppendFormat("!{0}", GetExpression(expression.Operand, _codeEnv, _codeContext).AsCastString());
+                    _result = new ValSimple("!" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).AsCastString(), expression.Type);
                     break;
 
                 case ExpressionType.Convert:
-                    _exprType = expression.Type;
-                    _expr.Append(GetExpression(expression.Operand, _codeEnv, _codeContext).CastToType(expression.Type));
+                    _result = new ValSimple(GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
                     break;
 
                 default:
@@ -242,22 +248,49 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            _expr.Append(_codeContext.GetReplacement(expression.ReferencedQuerySource.ItemName, expression.ReferencedQuerySource.ItemType).RawValue);
-            _exprType = expression.ReferencedQuerySource.ItemType;
+            _result = _codeContext.GetReplacement(expression.ReferencedQuerySource.ItemName, expression.ReferencedQuerySource.ItemType);
 
             return expression;
         }
 
         /// <summary>
-        /// We are going to reference a member item - this is a simple "." coding.
+        /// We are going to reference a member item - this is a simple "." coding. If this is a reference
+        /// to some sort of array, then we need to deal with getting back the proper array type.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            var baseExpr = GetExpression(expression.Expression, _codeEnv, _codeContext);
-            _exprType = expression.Type;
-            _expr.AppendFormat("{0}.{1}", baseExpr.AsObjectReference(), expression.Member.Name);
+            var baseExpr = GetExpression(expression.Expression, _codeEnv, _codeContext, MEFContainer);
+
+            ///
+            /// Figure out how to represent the variable type. We base this on the type - enumerables, for
+            /// example, know how to loop, other things like "int" just know how to be simpe values. Eventually
+            /// this will likely have to be made "common".
+            /// 
+
+            _result = null;
+            if (expression.Type.IsGenericType)
+            {
+                if (expression.Type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                }
+            }
+            else if (expression.Type.IsArray)
+            {
+                _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+            }
+
+            ///
+            /// If we can't figure out what the proper special variable type is from above, then we
+            /// need to just fill in the default.
+            /// 
+
+            if (_result == null)
+            {
+                _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+            }
 
             return expression;
         }
@@ -269,9 +302,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitParameterExpression(ParameterExpression expression)
         {
-            _exprType = expression.Type;
-
-            _expr.AppendFormat("{0}", _codeContext.GetReplacement(expression.Name, expression.Type).RawValue);
+            _result = _codeContext.GetReplacement(expression.Name, expression.Type);
 
             return expression;
         }
@@ -284,8 +315,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitLambdaExpression(LambdaExpression expression)
         {
-            _expr.Append(GetExpression(expression.Body, _codeEnv, _codeContext).RawValue);
-            _exprType = expression.Body.Type;
+            _result = GetExpression(expression.Body, _codeEnv, _codeContext, MEFContainer);
 
             return expression;
         }
@@ -299,11 +329,57 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
-            IValue result;
-            var exprOut = TypeHandlers.ProcessMethodCall(expression, out result, _codeEnv, _codeContext);
-            _expr.Append(result.RawValue);
-            _exprType = result.Type;
+            var exprOut = TypeHandlers.ProcessMethodCall(expression, out _result, _codeEnv, _codeContext, MEFContainer);
             return exprOut;
+        }
+
+        /// <summary>
+        /// The user is making a sub-query. We will run the query and return it using the usual QueryVisitor dude, but unlike
+        /// normal we have to run the loop ourselves.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+        {
+            if (MEFContainer == null)
+                throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
+
+            QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext);
+            CompositionBatch b = new CompositionBatch();
+            b.AddPart(qv);
+            qv.SubExpressionParse = true;
+            MEFContainer.Compose(b);
+            qv.MEFContainer = MEFContainer;
+
+            ///
+            /// Run it - since this result is out of this loop, we pop-back-out when done.
+            /// 
+
+            var scope = _codeEnv.CurrentScope;
+            qv.VisitQueryModel(expression.QueryModel);
+
+            ///
+            /// Two possible results from the sub-expression query, and how we proceed depends
+            /// on what happened in the sub query
+            /// 
+            /// 1. <returns a value> - an operator like Count() comes back from the sequence.
+            ///    it will get used in some later sequence (like # of jets in each event). So,
+            ///    we need to make sure it is declared and kept before it is used. The # that comes
+            ///    back needs to be used outside the scope we are sitting in - the one that we were at
+            ///    when we started this.
+            /// 2. <return a sequence> - this is weird - what we return is an array operator, but the key
+            ///    thing is that we don't want to pop off the current pointer where we are going to insert
+            ///    the next sequence.
+            /// 
+
+            if ((_codeEnv.ResultValue as ISequenceAccessor) == null)
+            {
+                _codeEnv.CurrentScope = scope;
+                _codeEnv.Add(_codeEnv.ResultValue);
+            }
+            _result = _codeEnv.ResultValue;
+
+            return expression;
         }
 
         /// <summary>
@@ -332,5 +408,10 @@ namespace LINQToTTreeLib
             var itemAsExpression = unhandledItem as Expression;
             return itemAsExpression != null ? FormattingExpressionTreeVisitor.Format(itemAsExpression) : unhandledItem.ToString();
         }
+
+        /// <summary>
+        /// Get/Set the MEF container used when we create new objects (like a QV).
+        /// </summary>
+        public CompositionContainer MEFContainer { get; set; }
     }
 }

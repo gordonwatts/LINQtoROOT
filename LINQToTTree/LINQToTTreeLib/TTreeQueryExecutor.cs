@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using NVelocity;
@@ -19,9 +20,9 @@ namespace LINQToTTreeLib
     public class TTreeQueryExecutor : IQueryExecutor
     {
         /// <summary>
-        /// The root file that this exector operates on
+        /// The root files that this exector operates on
         /// </summary>
-        private FileInfo _rootFile;
+        private FileInfo[] _rootFiles;
 
         /// <summary>
         /// The tree name that in the root file that this guy operates on.
@@ -41,18 +42,42 @@ namespace LINQToTTreeLib
         /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
-        /// <param name="rootFile"></param>
+        /// <param name="rootFiles"></param>
         /// <param name="treeName"></param>
-        public TTreeQueryExecutor(FileInfo rootFile, string treeName, Type baseNtupleObject)
+        public TTreeQueryExecutor(FileInfo[] rootFiles, string treeName, Type baseNtupleObject)
         {
+            CleanupQuery = true;
+            IgnoreQueryCache = false;
+
             ///
             /// Basic checks
             /// 
 
-            if (rootFile == null)
-                throw new ArgumentNullException("Must have good root file");
-            if (!rootFile.Exists)
-                throw new ArgumentException("File '" + rootFile.FullName + "' not found");
+            if (rootFiles == null || rootFiles.Length == 0)
+                throw new ArgumentException("Must have good root file");
+
+            var nullFiles = (from f in rootFiles
+                             where f == null
+                             select f).ToArray();
+            if (nullFiles.Length > 0)
+            {
+                throw new ArgumentNullException("Null FileInfo passed to LINKToTTree");
+            }
+
+            var badFiles = (from f in rootFiles
+                            where !f.Exists
+                            select f).ToArray();
+            if (badFiles.Length > 0)
+            {
+                StringBuilder bld = new StringBuilder();
+                bld.Append("The following file(s) do not exist and so can't be processed: ");
+                foreach (var f in badFiles)
+                {
+                    bld.AppendFormat("{0} ", f.FullName);
+                }
+                throw new FileNotFoundException(bld.ToString());
+
+            }
             if (treeName == null)
                 throw new ArgumentNullException("The tree must have a valid name");
             if (string.IsNullOrWhiteSpace(treeName))
@@ -102,7 +127,7 @@ namespace LINQToTTreeLib
             /// Save the values
             /// 
 
-            _rootFile = rootFile;
+            _rootFiles = rootFiles;
             _treeName = treeName;
         }
 
@@ -119,6 +144,8 @@ namespace LINQToTTreeLib
         {
             throw new NotImplementedException();
         }
+
+        private IQueryResultCache _cache = new QueryResultCache();
 
         /// <summary>
         /// Execute a scalar result. These are things that end in "count" or "aggregate", etc.
@@ -148,12 +175,29 @@ namespace LINQToTTreeLib
             if (_cppTranslator == null)
                 b.AddPart(this);
             _gContainer.Compose(b);
+            qv.MEFContainer = _gContainer;
 
             ///
             /// Parse the query
             /// 
 
             qv.VisitQueryModel(queryModel);
+
+            ///
+            /// Next, see if we have a cache for this
+            /// 
+
+            IQueryResultCacheKey key = null;
+            {
+                object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
+                key = _cache.GetKey(_rootFiles, _treeName, inputs, queryModel);
+            }
+            if (!IgnoreQueryCache)
+            {
+                var cacheHit = _cache.Lookup<T>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
+                if (cacheHit.Item1)
+                    return cacheHit.Item2;
+            }
 
             ///
             /// If we got back from that without an error, it is time to assemble the files and templates
@@ -178,20 +222,34 @@ namespace LINQToTTreeLib
             RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), result.VariablesToTransfer);
 
             ///
-            /// Last job, extract all the variables!
+            /// Last job, extract all the variables! And save in the cache!
             /// 
 
-            var final = ExtractResult<T>(result.ResultValue);
+            var final = ExtractResult<T>(result.ResultValue, key);
 
             ///
             /// Ok, we are all done. Try to unload everything now.
             /// 
 
             UnloadAllModules();
-            GetQueryDirectory().Delete(true);
+            if (CleanupQuery)
+            {
+                GetQueryDirectory().Delete(true);
+            }
+            _queryDirectory = null;
 
             return final;
         }
+
+        /// <summary>
+        /// Get/Set query cleanup control. If false, the files won't be deleted.
+        /// </summary>
+        public bool CleanupQuery { get; set; }
+
+        /// <summary>
+        /// Get/Set query cache control. If set true then the query cache will be ignored and all quieries will be re-run.
+        /// </summary>
+        public bool IgnoreQueryCache { get; set; }
 
         /// <summary>
         /// Do the work of translating the code into C++
@@ -215,7 +273,7 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IVariable iVariable)
+        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key)
         {
             ///
             /// Open the file, if it isn't there something very serious has gone wrong.
@@ -232,6 +290,7 @@ namespace LINQToTTreeLib
             try
             {
                 var o = file.Get(iVariable.RawValue);
+                _cache.CacheItem(key, o);
                 var s = _varSaver.Get(iVariable);
                 return s.LoadResult<T>(iVariable, o);
             }
@@ -239,7 +298,6 @@ namespace LINQToTTreeLib
             {
                 file.Close();
             }
-
         }
 
         /// <summary>
@@ -259,15 +317,14 @@ namespace LINQToTTreeLib
             var selector = cls.New() as ROOTNET.Interface.NTSelector;
 
             ///
-            /// Fetch out the tree now
+            /// Create the chain and load file files into it.
             /// 
 
-            var rf = new ROOTNET.NTFile(_rootFile.FullName, "READ");
-            if (!rf.IsOpen())
-                throw new InvalidOperationException("Unable to open file '" + _rootFile.FullName + "' with root's TFiel!");
-            var tree = rf.Get(_treeName) as ROOTNET.Interface.NTTree;
-            if (tree == null)
-                throw new InvalidOperationException("Unable to find tree '" + _treeName + "' in file '" + _rootFile.FullName + "'.");
+            var tree = new ROOTNET.NTChain(_treeName);
+            foreach (var f in _rootFiles)
+            {
+                tree.Add(f.FullName);
+            }
 
             ///
             /// If there are any objects we need to send to the selector, then send them on now
@@ -288,7 +345,7 @@ namespace LINQToTTreeLib
             /// Finally, run the whole thing
             /// 
 
-            var result = tree.Process(selector);
+            tree.Process(selector);
         }
 
         /// <summary>
@@ -367,7 +424,14 @@ namespace LINQToTTreeLib
             foreach (var fd in _extraComponentFiles)
             {
                 var output = CopyToCommonDirectory(fd);
-                CompileAndLoad(output);
+                try
+                {
+                    CompileAndLoad(output);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
+                }
             }
         }
 
@@ -379,11 +443,20 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private FileInfo GetInfrastructureFile(string filename)
         {
-            string baseDir = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
-            var f = new FileInfo(baseDir + "\\InfrastructureSourceFiles\\" + filename);
+            var f = new FileInfo(InfrastructureFile(filename));
             if (!f.Exists)
                 throw new FileNotFoundException("Unable to find infrastructure source file '" + f.FullName + "'");
             return f;
+        }
+
+        /// <summary>
+        /// Generate a path for the infrastructure file
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private string InfrastructureFile(string filename)
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\InfrastructureSourceFiles\\" + filename;
         }
 
         /// <summary>
@@ -425,7 +498,7 @@ namespace LINQToTTreeLib
             /// Output all the include files, from everywhere we have managed to collect them.
             /// 
 
-            context.Put("IncludeFiles", _cppTranslator.IncludeFiles);
+            context.Put("IncludeFiles", code.IncludeFiles);
 
             ///
             /// Now do it!
@@ -448,7 +521,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private string TemplateDirectory(string templateName)
         {
-            return Path.GetDirectoryName(Assembly.GetCallingAssembly().Location) + "\\Templates\\" + templateName;
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Templates\\" + templateName;
         }
 
         /// <summary>
@@ -493,6 +566,7 @@ namespace LINQToTTreeLib
 
             var includeFiles = FindIncludeFiles(sourceFile);
             var goodIncludeFiles = from f in includeFiles
+                                   where !Path.IsPathRooted(f)
                                    let full = new FileInfo(sourceFile.DirectoryName + "\\" + f)
                                    where full.Exists
                                    select full;

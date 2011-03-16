@@ -314,6 +314,12 @@ namespace LINQToTTreeLib.Tests
                 writer.Close();
             }
 
+            /// Make sure that ROOT has been correctly initalized!
+
+            ROOTNET.NTApplication.CreateApplication();
+
+            /// Now run the compile
+
             var compile = ROOTNET.NTSystem.gSystem.CompileMacro("TestProxyBuild.C");
             Assert.AreEqual(1, compile, "compile error for built macro - make sure that cl is a good command by starting devenv with vs command line!!");
         }

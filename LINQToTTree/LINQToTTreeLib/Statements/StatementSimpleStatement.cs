@@ -17,6 +17,10 @@ namespace LINQToTTreeLib.Statements
         }
         public string Line { get; private set; }
 
+        /// <summary>
+        /// Return the simple statement, along with a semi-colon!
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
             yield return Line + ";";

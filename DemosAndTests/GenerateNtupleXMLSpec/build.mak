@@ -5,6 +5,8 @@
 # into it!!
 #
 
+clean: cleanall
+
 DemoJetShapesDir = ..\DemoJetShapes
 SolutionDir = ..
 ConverterImage = ..\..\LINQToTTree\CmdTFileParser\bin\Debug\CmdTFileParser.exe
@@ -24,3 +26,10 @@ $(DemoJetShapesDir)\ntuple.ntupom : $(SolutionDir)\output.root $(ConverterImage)
 
 $(ClassCSFile) : $(DemoJetShapesDir)\ntuple.ntupom $(ClassConverterImage)
 	$(ClassConverterImage) $(DemoJetShapesDir)\ntuple.ntupom $(ClassCSFile)
+
+#
+# Clean up the above files to force a restart
+#
+cleanall:
+	del /Q $(DemoJetShapesDir)\ntuple.ntupom
+	del /Q $(ClassCSFile)

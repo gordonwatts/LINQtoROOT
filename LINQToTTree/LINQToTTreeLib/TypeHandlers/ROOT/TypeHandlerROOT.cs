@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -40,17 +41,21 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             /// The value is a reference that will do the loading.
             /// 
 
-            var rootObject = expr.Value as ROOTNET.Interface.NTObject;
+            var rootObject = expr.Value as ROOTNET.Interface.NTNamed;
             var varNameForTransport = rootObject.GetType().CreateUniqueVariableName();
             var CPPType = rootObject.GetType().AsCPPType();
 
-            var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType);
+            var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType, rootObject.Name);
+
+            ///
+            /// Calculate the hash for this object, which will be required to figure out if we've used this already
+            /// 
 
             ///
             /// Next we need to make sure this root object will be queued for sending accross the wire.
             /// 
 
-            codeEnv.AddTransfered(varNameForTransport, rootObject);
+            codeEnv.QueueForTransfer(varNameForTransport, rootObject);
 
             ///
             /// Done. Return the guy for later use.
@@ -66,9 +71,9 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context)
+        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
-            var objRef = ExpressionVisitor.GetExpression(expr.Object, gc, context);
+            var objRef = ExpressionVisitor.GetExpression(expr.Object, gc, context, container);
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}.{1}(", objRef.AsObjectReference(), expr.Method.Name);
 
@@ -80,7 +85,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                     bld.Append(",");
                 }
                 first = false;
-                bld.Append(ExpressionVisitor.GetExpression(a, gc, context).AsCastString());
+                bld.Append(ExpressionVisitor.GetExpression(a, gc, context, container).AsCastString());
             }
             bld.Append(")");
 

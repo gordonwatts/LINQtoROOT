@@ -11,6 +11,7 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses.ResultOperators;
+using LINQToTTreeLib.ResultOperators;
 
 namespace LINQToTTreeLib
 {
@@ -30,7 +31,7 @@ namespace LINQToTTreeLib
         )
         {
             CodeContext c = new CodeContext();
-            IVariable result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c);
+            IVariable result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
             Assert.AreEqual(1, codeEnv.CodeBody.Statements.Count(), "Expected an added statement!");
             Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.First(), typeof(StatementIncrementInteger), "Statement to inc the integer must have been done!");
             Assert.IsInstanceOfType(result, typeof(VarInteger), "Expected to be calculating an integer");

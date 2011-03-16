@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
@@ -41,9 +39,32 @@ namespace LINQToTTreeLib
             return source.Aggregate(seed, (s, n) => ApplyReturnFirst(s, n, (s1, n1) => apply(s1, n1)));
         }
 
-        public static TResult AggregateNoReturn<TSource, TResult>(this IQueryable<TSource> source, TResult seed, Expression<Action<TResult, TSource>> apply)
+        /// <summary>
+        /// given an object, apply each iteration to that object using a func, and return the object when done. Can
+        /// be used much like Aggregate (o.Fill(arg)).
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="seed"></param>
+        /// <param name="apply"></param>
+        /// <returns></returns>
+        public static TResult ApplyToObject<TSource, TResult>(this IQueryable<TSource> source, TResult seed, Expression<Action<TResult, TSource>> apply)
         {
+            var applyMethod = typeof(Helpers).GetMethod("ApplyReturnFirst").MakeGenericMethod(typeof(TResult), typeof(TSource));
+
+            var sParameter = Expression.Parameter(typeof(TResult), "s");
+            var nParameter = Expression.Parameter(typeof(TSource), "n");
+
+            var func = Expression.Lambda<Func<TResult, TSource, TResult>>(
+                Expression.Call(applyMethod, sParameter, nParameter, apply),
+                sParameter,
+                nParameter);
+
+            return source.Aggregate(seed, func);
+#if false
             return source.Aggregate(seed, (s, n) => ApplyReturnFirst(s, n, apply));
+#endif
         }
     }
 }

@@ -10,7 +10,16 @@ namespace LINQToTTreeLib
     /// </summary>
     public class CodeContext : ICodeContext
     {
+        /// <summary>
+        /// Keep track of all parameters we need to know about.
+        /// </summary>
         Dictionary<string, IValue> _parameterReplacement = new Dictionary<string, IValue>();
+
+        /// <summary>
+        /// Get the # of parameter replacements we know about.
+        /// </summary>
+        public int NumberOfParams { get { return _parameterReplacement.Count; } }
+
         /// <summary>
         /// Add a parameter replacement to the list.
         /// </summary>
@@ -35,7 +44,7 @@ namespace LINQToTTreeLib
             }
             else
             {
-                popper = new CCReplacementNull();
+                popper = new CCReplacementNull(this, varName);
             }
 
             ///
@@ -52,8 +61,18 @@ namespace LINQToTTreeLib
         /// </summary>
         private class CCReplacementNull : IVariableScopeHolder
         {
+            private string _vName;
+            private CodeContext _codeContext;
+
+            public CCReplacementNull(CodeContext codeContext, string varName)
+            {
+                // TODO: Complete member initialization
+                _codeContext = codeContext;
+                _vName = varName;
+            }
             public void Pop()
             {
+                _codeContext.Delete(_vName);
             }
         }
 
@@ -102,7 +121,38 @@ namespace LINQToTTreeLib
 
             if (!_parameterReplacement.ContainsKey(varname))
                 return new ValSimple(varname, type);
-            return _parameterReplacement[varname];
+            var result = _parameterReplacement[varname];
+
+            if (result.Type != type)
+                throw new InvalidOperationException("Can't convert parameter from type '" + result.Type.Name + "' to '" + type.Name + "'.");
+
+            return result;
+        }
+
+        /// <summary>
+        /// Delete a variable name if it is in there.
+        /// </summary>
+        /// <param name="_vName"></param>
+        internal void Delete(string _vName)
+        {
+            _parameterReplacement.Remove(_vName);
+        }
+
+        /// <summary>
+        /// Get the current loop variable. Is null only at the very start!
+        /// </summary>
+        public IVariable LoopVariable { get; private set; }
+
+        /// <summary>
+        /// Set the loop variable to a new value
+        /// </summary>
+        /// <param name="v"></param>
+        public void SetLoopVariable(IVariable v)
+        {
+            if (v == null)
+                throw new ArgumentNullException("can not set a null loop variable");
+
+            LoopVariable = v;
         }
     }
 }

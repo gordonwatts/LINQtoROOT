@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.TypeHandlers.ROOT;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -64,9 +65,18 @@ namespace LINQToTTreeLib.Variables.Savers
             if (obj == null)
                 throw new ArgumentNullException("Obj cannot be null");
 
-            ROOTNET.NTDirectory.gDirectory.List.Remove(obj);
+            var named = obj as ROOTNET.Interface.NTNamed;
+            if (named == null)
+                throw new ArgumentException("Object isn't named");
 
-            return (T)obj;
+            var rootObjInfo = iVariable.InitialValue as ROOTObjectCopiedValue;
+            if (rootObjInfo == null)
+                throw new InvalidOperationException("iVariable must be a ROOTObjectCopiedValue!");
+
+            var result = named.Clone() as ROOTNET.Interface.NTNamed;
+            result.Name = rootObjInfo.OriginalName;
+
+            return (T)result;
         }
     }
 }

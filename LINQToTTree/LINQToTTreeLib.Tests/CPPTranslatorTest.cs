@@ -43,16 +43,6 @@ namespace LINQToTTreeLib
             // TODO: add assertions to method CPPTranslatorTest.Constructor()
         }
 
-        /// <summary>Test stub for get_IncludeFiles()</summary>
-        [PexMethod]
-        public IEnumerable<string> IncludeFilesGet([PexAssumeUnderTest]CPPTranslator target)
-        {
-            MEFUtilities.Compose(target);
-            IEnumerable<string> result = target.IncludeFiles;
-            Assert.IsNotNull(result);
-            return result;
-        }
-
         /// <summary>Test stub for TranslateGeneratedCode(GeneratedCode)</summary>
         [PexMethod]
         [PexUseType(typeof(StatementInlineBlock))]
@@ -126,7 +116,7 @@ namespace LINQToTTreeLib
 
             var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
             Assert.AreEqual("TH1F*", rv.VariableType, "type is not right");
-            var inFiles = target.IncludeFiles.ToArray();
+            var inFiles = code.IncludeFiles.ToArray();
             foreach (var item in inFiles)
             {
                 Console.WriteLine("include file '{0}'", item);

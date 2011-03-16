@@ -63,6 +63,7 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueriableTTree.cs" />
+    <Compile Include="QueryResultCache.cs" />
     <Compile Include="QueryVisitor.cs" />
     <Compile Include="ResultOperators\ROAggregate.cs" />
     <Compile Include="ResultOperators\ROCount.cs" />
@@ -76,15 +77,19 @@
     <Compile Include="Statements\StatementLoopOnVector.cs" />
     <Compile Include="Statements\StatementSimpleStatement.cs" />
     <Compile Include="TTreeQueryExecutor.cs" />
+    <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCall.cs" />
     <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValue.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHandlerROOT.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCache.cs" />
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\ObjectHashCalculator.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
     <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
     <Compile Include="Variables\Savers\VariableSaverManager.cs" />
     <Compile Include="Variables\Savers\SaveVarObject.cs" />
+    <Compile Include="Variables\ValEnumerableVector.cs" />
+    <Compile Include="Variables\VarDeclared.cs" />
     <Compile Include="Variables\VarObject.cs" />
     <Compile Include="Variables\VarOutterLoopObjectPointer.cs" />
     <Compile Include="Variables\VarSimple.cs" />
@@ -99,20 +104,28 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="InfrastructureSourceFiles\FlowOutputObject.cpp">
+    <None Include="ConfigData\default.classmethodmappings" />
+    <None Include="LINQToROOT.nuspec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="InfrastructureSourceFiles\FlowOutputObject.h">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\TSelectorTemplate.cxx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="InfrastructureSourceFiles\FlowOutputObject.cpp" />
+    <Content Include="InfrastructureSourceFiles\FlowOutputObject.h" />
+    <Content Include="Templates\TSelectorTemplate.cxx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist $(USERPROFILE)\AppData\Local\LINQToTTree\Config mkdir $(USERPROFILE)\AppData\Local\LINQToTTree\Config
+copy $(ProjectDir)\ConfigData\default.classmethodmappings $(USERPROFILE)\AppData\Local\LINQToTTree\Config\
+xcopy /Y "$(SolutionDir)\LINQToTTreeLib\InfrastructureSourceFiles" "$(USERPROFILE)\AppData\Local\LINQToTTree\InfrastructureSourceFiles\"
+xcopy /Y "$(SolutionDir)\LINQToTTreeLib\Templates" "$(USERPROFILE)\AppData\Local\LINQToTTree\Templates\"
+$(SolutionDir)\nuget pack LINQToROOT.nuspec</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

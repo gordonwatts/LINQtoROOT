@@ -32,5 +32,17 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="type"></param>
         /// <returns></returns>
         IValue GetReplacement(string varname, Type type);
+
+        /// <summary>
+        /// Get the current index loop variable.
+        /// </summary>
+        IVariable LoopVariable { get; }
+
+        /// <summary>
+        /// Set the current loop variable to be something new
+        /// </summary>
+        /// <param name="v"></param>
+        void SetLoopVariable(IVariable v);
+
     }
 }
