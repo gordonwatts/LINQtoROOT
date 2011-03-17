@@ -289,13 +289,109 @@ namespace LINQToTTreeLib.Tests
                 finalExpectedValue = fullExpression.Body;
             }
 
-            Assert.AreEqual(finalExpectedValue.ToString(), result.ToString(), "expression not correct");
+            Assert.IsTrue(result.ToString().Contains(".specialIndex[0]]"), "missign the special index reference");
+            Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
+        }
+
+        public class SourceType4Container1
+        {
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType4), "muons")]
+            public SourceType4Container3 specialIndex1;
+        }
+
+        public class SourceType4Container2
+        {
+            [TTreeVariableGrouping]
+            public int val;
+        }
+
+        public class SourceType4Container3
+        {
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType4), "tracks")]
+            public SourceType4Container2 specialIndex2;
+        }
+
+        [TranslateToClass(typeof(ResultType4))]
+        public class SourceType4
+        {
+            [TTreeVariableGrouping]
+            public SourceType4Container1[] jets;
+
+            [TTreeVariableGrouping]
+            public SourceType4Container3[] muons;
+
+            [TTreeVariableGrouping]
+            public SourceType4Container2[] tracks;
+        }
+
+        public class ResultType4
+        {
+            public ResultType4(Expression holder)
+            {
+            }
+            public int[] val;
+            public int[] specialIndex1;
+            public int[] specialIndex2;
         }
 
         [TestMethod]
         public void TestDoubleArrayIndirectIndex()
         {
-            Assert.Inconclusive();
+            ///
+            /// BUild up an expression to do the functional query we are interested in seeing go
+            /// 
+
+            SourceType4 actual = null;
+            {
+                actual = new SourceType4()
+                {
+                    tracks = new SourceType4Container2[] { new SourceType4Container2() { val = 1 }, new SourceType4Container2() { val = 3 } }
+                };
+                actual.muons = new SourceType4Container3[] {
+                    new SourceType4Container3() { specialIndex2 = actual.tracks[0]},
+                    new SourceType4Container3() { specialIndex2 = actual.tracks[1]}
+                };
+                actual.jets = new SourceType4Container1[]
+                {
+                    new SourceType4Container1() { specialIndex1 = actual.muons[0]},
+                    new SourceType4Container1() { specialIndex1 = actual.muons[1]}
+                };
+            }
+
+            ///
+            /// Now, code up an expression that looks like the following:
+            ///   actual.jets[0].specialIndex.val
+
+            var origValueAsConst = Expression.Constant(actual);
+            Expression originalExpression = null;
+            {
+                Expression<Func<int>> a = () => actual.jets[0].specialIndex1.specialIndex2.val;
+                originalExpression = a.Body as MemberExpression;
+            }
+
+            ///
+            /// Do the translation
+            /// 
+
+            var result = TranslatingExpressionVisitor.Translate(originalExpression);
+
+            ///
+            /// Ok, now that translation is done, we expect to see
+            /// result.val[result.specialIndex[0]]. To do the compare, lets create a destiantion expression
+            /// 
+
+            Expression finalExpectedValue = null;
+            {
+                var expected = new ResultType3(null) { specialIndex = new int[] { 0, 1 }, val = new int[] { 1, 3 } };
+                Expression<Func<int>> fullExpression = () => expected.val[expected.specialIndex[0]];
+                finalExpectedValue = fullExpression.Body;
+            }
+
+            Assert.IsTrue(result.ToString().Contains(".specialIndex1[0]]]"), "missign the special index 1 reference");
+            Assert.IsTrue(result.ToString().Contains(".specialIndex2[value"), "missign the special index 2 reference");
+            Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
         }
 
         [TestMethod]
