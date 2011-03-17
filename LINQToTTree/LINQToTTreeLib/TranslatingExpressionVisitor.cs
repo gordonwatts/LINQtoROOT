@@ -48,13 +48,141 @@ namespace LINQToTTreeLib
             var attrV = TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member);
             if (attrV != null)
             {
+                ///
+                /// Regular array recoding - so this is at the top level and is the most
+                /// common kind
+                /// 
+
                 var recodedExpression = RecodeArrayGrouping(expression);
                 if (recodedExpression != null)
                     return recodedExpression;
+
+                ///
+                /// The only other possibility is if this is in another object that
+                /// we can decode as an array reference. In short - this guy is a 
+                /// pointer from another guy to this guy.
+                /// 
+
+                var recoded = RecodeArrayPointer(expression);
+                if (recoded != null)
+                    return recoded;
+
+                ///
+                /// If this has an recode attribute, but we can't do it. Fail!
+                /// 
+
+                throw new NotImplementedException("Member '" + expression.Member.Name + "' is marked for array recoding, but we can't figure out what to do.");
             }
+
+            ///
+            /// Hopefully the default behavior is the right thing to do here!
+            /// 
 
             return base.VisitMemberExpression(expression);
 
+        }
+
+        /// <summary>
+        /// See if this is of the form something.index.value - where index we can track back to a pointer to an actualy item.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private Expression RecodeArrayPointer(MemberExpression expression)
+        {
+            var targetMemberName = expression.Member.Name;
+            var sourceExpression = expression.Expression;
+
+            ///
+            /// Make sure that Name is a member
+            /// 
+
+            var extendedType = sourceExpression.Type;
+            var targetMember = extendedType.GetMember(targetMemberName).First();
+            if (targetMember == null)
+                return null;
+
+            ///
+            /// Next job is to figure out where this index guy is pointing to. In order to
+            /// do that look for the other link object. Do the check and make sure the types
+            /// are correct so we are "ready" to go.
+            /// 
+
+            var indexMemberExpression = sourceExpression as MemberExpression;
+            if (indexMemberExpression == null)
+                throw new NotImplementedException("Index isn't a member access in '" + sourceExpression.ToString() + "'.");
+            var indexMember = indexMemberExpression.Member;
+            var attrIndexReferences = TypeHasAttribute<IndexToOtherObjectArrayAttribute>(indexMember);
+            if (attrIndexReferences == null)
+                throw new NotImplementedException("Index variable '" + indexMember.Name + "' was not marked with the IndexToOtherObjectArray attribute");
+
+            var indexTargetMember = attrIndexReferences.BaseType.GetMember(attrIndexReferences.ArrayName).FirstOrDefault();
+            if (indexTargetMember == null)
+                throw new NotImplementedException("Could nto find member '" + attrIndexReferences.ArrayName + "' in type " + attrIndexReferences.BaseType.Name);
+
+            ///
+            /// Get the source of the expression. It has to be somewhere up our line, so we will dig deep to find it.
+            /// 
+
+            var rootObject = FindObjectOfType(sourceExpression, attrIndexReferences.BaseType);
+
+            ///
+            /// Next, the source expression should be an index, so make sure it translates to
+            /// an integer...
+            /// 
+
+            var sourceIndex = Translate(sourceExpression);
+            if (sourceIndex == null)
+                throw new NotImplementedException("Failed to translate expression '" + sourceExpression.ToString() + "' of '" + expression.ToString() + "'");
+            if (sourceIndex.Type != typeof(int))
+                throw new NotImplementedException("Array index expression is not an integer (it is a '" + sourceIndex.Type.Name + "') - failed with '" + expression.ToString() + "'");
+
+            ///
+            /// Now, build an array index expression!
+            /// 
+
+            var accessTargetMemberExpression = Expression.MakeMemberAccess(rootObject, indexTargetMember);
+            var targetIndexedAccessExpression = Expression.MakeBinary(ExpressionType.ArrayIndex, accessTargetMemberExpression, sourceIndex);
+            var targetValueIndexedAccessExpression = Expression.MakeMemberAccess(targetIndexedAccessExpression, targetMember);
+
+            ///
+            /// Ok! Got it! Now, we need to translate this one and we are off to the races! :-)
+            /// 
+
+            return Translate(targetValueIndexedAccessExpression);
+        }
+
+        /// <summary>
+        /// Recursively go down and find the expression this is of this type...
+        /// </summary>
+        /// <param name="sourceExpression"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private Expression FindObjectOfType(Expression sourceExpression, Type type)
+        {
+            ///
+            /// Is it easy??
+            /// 
+
+            if (sourceExpression.Type == type)
+                return sourceExpression;
+
+            ///
+            /// ok, check for each type that we know how to unravel...
+            /// 
+
+            if (sourceExpression.NodeType == ExpressionType.MemberAccess)
+            {
+                var memberAccess = sourceExpression as MemberExpression;
+                return FindObjectOfType(memberAccess.Expression, type);
+            }
+
+            if (sourceExpression.NodeType == ExpressionType.ArrayIndex)
+            {
+                var arrayAccess = sourceExpression as BinaryExpression;
+                return FindObjectOfType(arrayAccess.Left, type);
+            }
+
+            throw new NotImplementedException("Don't know how to get back into '" + sourceExpression.NodeType.ToString() + "'");
         }
 
         /// <summary>

@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeAttributes\IndexToOtherObjectArrayAttribute.cs" />
     <Compile Include="CodeAttributes\RenameVariableAttribute.cs" />
     <Compile Include="CodeAttributes\TranslateToClassAttribute.cs" />
     <Compile Include="CodeAttributes\TTreeVariableGroupingAttribute.cs" />

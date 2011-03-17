@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using LINQToTTreeLib.CodeAttributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -178,6 +179,12 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void TestArrayGroupingChange()
         {
+            ///
+            /// First, build up an object
+            /// we can build expresisons against
+            /// 
+
+
             var actual = new SourceType2() { jets = new SourceType2Container[] { new SourceType2Container() { val = 2 } } };
             var value = Expression.Constant(actual);
             var exprBase = Expression.MakeMemberAccess(value, typeof(SourceType2).GetMember("jets").First());
@@ -199,6 +206,102 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNotNull(translatedMemberAccess, "the member access isn't right");
             Assert.AreEqual("val", translatedMemberAccess.Member.Name, "The actual member name didn't get mapped over correctly");
             Assert.AreEqual(typeof(ResultType2), translatedMemberAccess.Expression.Type, "bad return type - not translated");
+        }
+
+        public class SourceType3Container1
+        {
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
+            public SourceType3Container2 specialIndex;
+        }
+
+        public class SourceType3Container2
+        {
+            [TTreeVariableGrouping]
+            public int val;
+        }
+
+        [TranslateToClass(typeof(ResultType3))]
+        public class SourceType3
+        {
+            [TTreeVariableGrouping]
+            public SourceType3Container1[] jets;
+
+            [TTreeVariableGrouping]
+            public SourceType3Container2[] muons;
+        }
+
+        public class ResultType3
+        {
+            public ResultType3(Expression holder)
+            {
+            }
+            public int[] val;
+            public int[] specialIndex;
+        }
+
+        [TestMethod]
+        public void TestArrayIndex()
+        {
+            ///
+            /// BUild up an expression to do the functional query we are interested in seeing go
+            /// 
+
+            SourceType3 actual = null;
+            {
+                actual = new SourceType3()
+                {
+                    muons = new SourceType3Container2[] { new SourceType3Container2() { val = 1 }, new SourceType3Container2() { val = 3 } }
+                };
+                actual.jets = new SourceType3Container1[]
+                {
+                    new SourceType3Container1() { specialIndex = actual.muons[0]},
+                    new SourceType3Container1() { specialIndex = actual.muons[1]}
+                };
+            }
+
+            ///
+            /// Now, code up an expression that looks like the following:
+            ///   actual.jets[0].specialIndex.val
+
+            var origValueAsConst = Expression.Constant(actual);
+            Expression originalExpression = null;
+            {
+                Expression<Func<int>> a = () => actual.jets[0].specialIndex.val;
+                originalExpression = a.Body as MemberExpression;
+            }
+
+            ///
+            /// Do the translation
+            /// 
+
+            var result = TranslatingExpressionVisitor.Translate(originalExpression);
+
+            ///
+            /// Ok, now that translation is done, we expect to see
+            /// result.val[result.specialIndex[0]]. To do the compare, lets create a destiantion expression
+            /// 
+
+            Expression finalExpectedValue = null;
+            {
+                var expected = new ResultType3(null) { specialIndex = new int[] { 0, 1 }, val = new int[] { 1, 3 } };
+                Expression<Func<int>> fullExpression = () => expected.val[expected.specialIndex[0]];
+                finalExpectedValue = fullExpression.Body;
+            }
+
+            Assert.AreEqual(finalExpectedValue.ToString(), result.ToString(), "expression not correct");
+        }
+
+        [TestMethod]
+        public void TestDoubleArrayIndirectIndex()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void TestArrayIndirectRename()
+        {
+            Assert.Inconclusive("Cehckt to see if we can rename on the fly an array reference");
         }
     }
 }
