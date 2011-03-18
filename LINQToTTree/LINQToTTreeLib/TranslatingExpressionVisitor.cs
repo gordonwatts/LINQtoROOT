@@ -212,7 +212,7 @@ namespace LINQToTTreeLib
             if (translateAttribute == null)
                 return null;
 
-            var targetMemberInfo = translateAttribute.TargetClassType.GetMember(expression.Member.Name).FirstOrDefault();
+            var targetMemberInfo = ResolveMemberName(translateAttribute.TargetClassType, expression.Member);
             if (targetMemberInfo == null)
                 return null;
 
@@ -224,6 +224,26 @@ namespace LINQToTTreeLib
             var arrayLookup = Expression.MakeBinary(ExpressionType.ArrayIndex, targetArray, arrayIndexOperation.Right);
 
             return arrayLookup;
+        }
+
+        /// <summary>
+        /// Converts a MemeberInfo into a name for lookup. Take into account
+        /// any codeing attributes that might "change" the name.
+        /// </summary>
+        /// <param name="memberInfo">The info of the member we want to find on the other type</param>
+        /// <param name="fromType">The type where we want to do the lookup</param>
+        /// <returns></returns>
+        private MemberInfo ResolveMemberName(Type fromType, MemberInfo memberInfo)
+        {
+            string targetMemberName = memberInfo.Name;
+
+            var attr = TypeHasAttribute<RenameVariableAttribute>(memberInfo);
+            if (attr != null)
+            {
+                targetMemberName = attr.RenameTo;
+            }
+
+            return fromType.GetMember(targetMemberName).FirstOrDefault();
         }
 
         private Expression RecodeClass(MemberExpression expression, TranslateToClassAttribute attr)
@@ -293,22 +313,9 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private Expression RecodeWithRename(MemberExpression expression, Type type)
         {
-            ///
-            /// See if the rename is there
-            /// 
-
-            var attr = TypeHasAttribute<RenameVariableAttribute>(expression.Member);
-            if (attr == null)
-                return null;
-
-            ///
-            /// Now we need to construct the new expression with the rename.
-            /// 
-
-            var targetMember = type.GetMember(attr.RenameTo).FirstOrDefault();
+            var targetMember = ResolveMemberName(type, expression.Member);
             if (targetMember == null)
-                throw new InvalidOperationException("Type '" + type.Name + "' doesn't have a member to rename to called '" + attr.RenameTo + "'");
-
+                throw new InvalidOperationException("Need to rename member '" + expression.Member.Name + "' on type '" + expression.Type.Name + "' but can't find it on type '" + type.Name + "'.");
             return Expression.MakeMemberAccess(TranslateRootObject(expression.Expression, type), targetMember);
         }
 

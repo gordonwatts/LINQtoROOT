@@ -394,10 +394,91 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
         }
 
+        public class SourceType5Container1
+        {
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType5), "muons")]
+            [RenameVariable("specialIndex")]
+            public SourceType5Container2 theMuon;
+        }
+
+        public class SourceType5Container2
+        {
+            [TTreeVariableGrouping]
+            public int val;
+        }
+
+        [TranslateToClass(typeof(ResultType5))]
+        public class SourceType5
+        {
+            [TTreeVariableGrouping]
+            public SourceType5Container1[] jets;
+
+            [TTreeVariableGrouping]
+            public SourceType5Container2[] muons;
+        }
+
+        public class ResultType5
+        {
+            public ResultType5(Expression holder)
+            {
+            }
+            public int[] val;
+            public int[] specialIndex;
+        }
+
         [TestMethod]
         public void TestArrayIndirectRename()
         {
-            Assert.Inconclusive("Cehckt to see if we can rename on the fly an array reference");
+            ///
+            /// BUild up an expression to do the functional query we are interested in seeing go, and make
+            /// sure the indirect index rename actually gets done correctly.
+            /// 
+
+            SourceType5 actual = null;
+            {
+                actual = new SourceType5()
+                {
+                    muons = new SourceType5Container2[] { new SourceType5Container2() { val = 1 }, new SourceType5Container2() { val = 3 } }
+                };
+                actual.jets = new SourceType5Container1[]
+                {
+                    new SourceType5Container1() { theMuon = actual.muons[0]},
+                    new SourceType5Container1() { theMuon = actual.muons[1]}
+                };
+            }
+
+            ///
+            /// Now, code up an expression that looks like the following:
+            ///   actual.jets[0].specialIndex.val
+
+            var origValueAsConst = Expression.Constant(actual);
+            Expression originalExpression = null;
+            {
+                Expression<Func<int>> a = () => actual.jets[0].theMuon.val;
+                originalExpression = a.Body as MemberExpression;
+            }
+
+            ///
+            /// Do the translation
+            /// 
+
+            var result = TranslatingExpressionVisitor.Translate(originalExpression);
+
+            ///
+            /// Ok, now that translation is done, we expect to see
+            /// result.val[result.specialIndex[0]]. To do the compare, lets create a destiantion expression
+            /// 
+
+            Expression finalExpectedValue = null;
+            {
+                var expected = new ResultType3(null) { specialIndex = new int[] { 0, 1 }, val = new int[] { 1, 3 } };
+                Expression<Func<int>> fullExpression = () => expected.val[expected.specialIndex[0]];
+                finalExpectedValue = fullExpression.Body;
+            }
+
+            Assert.IsTrue(result.ToString().Contains(".specialIndex[0]]"), "missign the special index reference");
+            Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
         }
     }
 }
