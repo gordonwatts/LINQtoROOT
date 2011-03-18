@@ -158,6 +158,12 @@ namespace LINQToTTreeLib
                     op = "<=";
                     resultType = typeof(bool);
                     break;
+
+                case ExpressionType.NotEqual:
+                    op = "!=";
+                    resultType = typeof(bool);
+                    break;
+
                 case ExpressionType.Multiply:
                     op = "*";
                     resultType = expression.Type;
