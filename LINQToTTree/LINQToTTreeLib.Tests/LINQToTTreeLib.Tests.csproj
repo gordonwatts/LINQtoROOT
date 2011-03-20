@@ -129,7 +129,7 @@
     <None Include="CPPTranslatorTest.TranslateGeneratedCode.g.cs">
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
     </None>
-    <None Include="DummyQueryExectuor.cs" />
+    <Compile Include="DummyQueryExectuor.cs" />
     <None Include="ExpressionVisitorMethodCallTests.cs" />
     <None Include="ExpressionVisitorTest.cs" />
     <None Include="ExpressionVisitorTest.GetExpression.g.cs">
@@ -178,12 +178,12 @@
     <None Include="GeneratedCodeTest.TestChangeScope.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </None>
-    <None Include="MEFUtilities.cs" />
+    <Compile Include="MEFUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <None Include="QueriableDummy.cs" />
     <None Include="QueryResultCacheTest.cs" />
-    <None Include="QueryVisitorTest.cs" />
+    <Compile Include="QueryVisitorTest.cs" />
     <None Include="QVResultOperatorsTest.Constructor.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
     </None>
@@ -208,7 +208,7 @@
     <None Include="ResultOperators\TakeSkipOperatorsTest.ProcessResultOperator.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </None>
-    <None Include="ResultOperators\TestCount.cs" />
+    <Compile Include="ResultOperators\TestCount.cs" />
     <None Include="ROCountTest.CanHandle.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </None>
@@ -294,7 +294,7 @@
     <None Include="Variables\VarUtilsTest.CastToType.g.cs">
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
     </None>
-    <None Include="Variables\VarUtilsTest.cs" />
+    <Compile Include="Variables\VarUtilsTest.cs" />
     <None Include="Variables\VarUtilsTest.IsPointerType.g.cs">
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
     </None>

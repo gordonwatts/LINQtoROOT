@@ -56,10 +56,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CodeAttributes\IndexToOtherObjectArrayAttribute.cs" />
-    <None Include="CodeAttributes\RenameVariableAttribute.cs" />
-    <None Include="CodeAttributes\TranslateToClassAttribute.cs" />
-    <None Include="CodeAttributes\TTreeVariableGroupingAttribute.cs" />
+    <Compile Include="CodeAttributes\IndexToOtherObjectArrayAttribute.cs" />
+    <Compile Include="CodeAttributes\RenameVariableAttribute.cs" />
+    <Compile Include="CodeAttributes\TranslateToClassAttribute.cs" />
+    <Compile Include="CodeAttributes\TTreeVariableGroupingAttribute.cs" />
     <None Include="CodeContext.cs" />
     <None Include="CPPTranslator.cs" />
     <None Include="ExpressionVisitor.cs" />
@@ -68,9 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="QueriableTTree.cs" />
     <None Include="QueryResultCache.cs" />
-    <None Include="QueryVisitor.cs" />
+    <Compile Include="QueryVisitor.cs" />
     <None Include="ResultOperators\ROAggregate.cs" />
-    <None Include="ResultOperators\ROCount.cs" />
+    <Compile Include="ResultOperators\ROCount.cs" />
     <None Include="ResultOperators\ROFirstLast.cs" />
     <None Include="ResultOperators\ROTakeSkipOperators.cs" />
     <None Include="Statements\StatementAssign.cs" />
@@ -99,9 +99,9 @@
     <None Include="Variables\VarObject.cs" />
     <None Include="Variables\VarOutterLoopObjectPointer.cs" />
     <None Include="Variables\VarSimple.cs" />
-    <None Include="Variables\VarUtils.cs" />
+    <Compile Include="Variables\VarUtils.cs" />
     <None Include="Variables\ValSimple.cs" />
-    <None Include="Variables\VarInteger.cs" />
+    <Compile Include="Variables\VarInteger.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinqToTTreeInterfacesLib\LinqToTTreeInterfacesLib.csproj">
