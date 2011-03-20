@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using LinqToTTreeInterfacesLib;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -11,51 +10,44 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementLoopOnVector : StatementInlineBlock
     {
-        public StatementLoopOnVector(IValue arrayToIterateOver, string iteratorVarName)
+        public StatementLoopOnVector(Expression arrayToIterateOver, string iteratorVarName)
         {
-            VectorToLoopOver = arrayToIterateOver;
-            IteratorName = iteratorVarName;
-
             ///
-            /// Extract the type of object we are iterating over
+            /// Simple checks to make sure that we actually have enumerable
+            /// object to run over here
             /// 
 
-            Type argToLoopOver = null;
-            var enumType = arrayToIterateOver.Type;
-            if (enumType.IsGenericType && enumType.Name.StartsWith("IEnumerable`"))
-            {
-                argToLoopOver = enumType.GetGenericArguments()[0];
-            }
+            if (!arrayToIterateOver.Type.IsArray)
+                throw new NotImplementedException("Can't iterate over object of type '" + arrayToIterateOver.Type.Name + "' because it isn't listed as an array (" + arrayToIterateOver.ToString() + ").");
 
-            if (enumType.IsArray)
-            {
-                argToLoopOver = enumType.GetElementType();
-            }
+            ///
+            /// Save for later
+            /// 
 
-            if (argToLoopOver == null)
-            {
-                throw new ArgumentException("Argument to createa loop is not IEnumerable.");
-            }
+            VectorToLoopOver = arrayToIterateOver;
+            IteratorVariable = Expression.Variable(typeof(int), iteratorVarName);
 
-            /// Assume that this is a pointer to a vector at top level - no need to go down at all.
+            ///
+            /// Now just create the expression to access this guy.
+            /// 
 
-            ObjectReference = new Variables.ValSimple("(" + arrayToIterateOver.RawValue + ")[" + IteratorName + "]", argToLoopOver);
+            ObjectReference = Expression.MakeBinary(ExpressionType.ArrayIndex, VectorToLoopOver, IteratorVariable);
         }
 
         /// <summary>
         /// Get the name of the variable that we are going to be looping over.
         /// </summary>
-        public IValue VectorToLoopOver { get; private set; }
+        public Expression VectorToLoopOver { get; private set; }
 
         /// <summary>
         /// Get the name of the iterator that we are using for looping.
         /// </summary>
-        public string IteratorName { get; private set; }
+        public ParameterExpression IteratorVariable { get; private set; }
 
         /// <summary>
         /// Get the value that points to the actual object that can reference the array
         /// </summary>
-        public IValue ObjectReference { get; private set; }
+        public Expression ObjectReference { get; private set; }
 
         /// <summary>
         /// Code up the loop.
@@ -63,18 +55,21 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override IEnumerable<string> CodeItUp()
         {
+            throw new NotImplementedException();
+#if false
             ///
             /// EMpty statement means no need to do the loop
             /// 
 
             if (Statements.Any())
             {
-                yield return "for (int " + IteratorName + "=0; " + IteratorName + " < " + VectorToLoopOver.RawValue + "->size(); " + IteratorName + "++)";
+                yield return "for (int " + IteratorVariable + "=0; " + IteratorVariable + " < " + VectorToLoopOver.RawValue + "->size(); " + IteratorVariable + "++)";
                 foreach (var l in base.CodeItUp())
                 {
                     yield return l;
                 }
             }
+#endif
         }
     }
 }

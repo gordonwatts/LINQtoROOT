@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -23,7 +24,7 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="varName"></param>
         /// <param name="replacementName"></param>
-        IVariableScopeHolder Add(string varName, IValue replacementName);
+        IVariableScopeHolder Add(string varName, Expression replacementName);
 
         /// <summary>
         /// Lookup a replacement
@@ -31,7 +32,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="varname"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        IValue GetReplacement(string varname, Type type);
+        Expression GetReplacement(string varname, Type type);
 
         /// <summary>
         /// Get the current index loop variable.

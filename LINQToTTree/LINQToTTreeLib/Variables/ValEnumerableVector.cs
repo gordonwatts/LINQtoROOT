@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 
@@ -11,22 +12,28 @@ namespace LINQToTTreeLib.Variables
     /// </summary>
     class ValEnumerableVector : IValue, ISequenceAccessor
     {
-        public ValEnumerableVector(string rawVal, Type t)
+        public ValEnumerableVector(Expression vector)
         {
-            // TODO: Complete member initialization
-            RawValue = rawVal;
-            Type = t;
+            RawVectorValue = vector;
         }
+
+        private Expression RawVectorValue { get; set; }
 
         /// <summary>
         /// Get the raw value
         /// </summary>
-        public string RawValue { get; private set; }
+        public string RawValue
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         /// <summary>
         /// Get the type of this item
         /// </summary>
-        public Type Type { get; private set; }
+        public Type Type { get { return RawVectorValue.Type; } }
 
         /// <summary>
         /// We want to generate some loop statements.
@@ -36,11 +43,11 @@ namespace LINQToTTreeLib.Variables
         /// <param name="indexName"></param>
         public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
         {
-            var loopstatement = new StatementLoopOnVector(this, typeof(int).CreateUniqueVariableName());
+            var loopstatement = new StatementLoopOnVector(RawVectorValue, typeof(int).CreateUniqueVariableName());
             env.Add(loopstatement);
             popVariableContext(context.Add(indexName, loopstatement.ObjectReference));
 
-            return new VarDeclared(loopstatement.ObjectReference, indexName);
+            return new VarDeclared(indexName);
         }
     }
 }

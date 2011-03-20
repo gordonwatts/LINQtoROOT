@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib
 {
@@ -13,7 +13,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Keep track of all parameters we need to know about.
         /// </summary>
-        Dictionary<string, IValue> _parameterReplacement = new Dictionary<string, IValue>();
+        Dictionary<string, Expression> _parameterReplacement = new Dictionary<string, Expression>();
 
         /// <summary>
         /// Get the # of parameter replacements we know about.
@@ -25,7 +25,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="varName"></param>
         /// <param name="replacementName"></param>
-        public IVariableScopeHolder Add(string varName, IValue replacementName)
+        public IVariableScopeHolder Add(string varName, Expression replacementName)
         {
             if (varName == null || replacementName == null)
                 throw new ArgumentNullException("Can't setup an Add that is null!");
@@ -83,9 +83,9 @@ namespace LINQToTTreeLib
         {
             private CodeContext _context;
             private string _varName;
-            private IValue _oldVal;
+            private Expression _oldVal;
 
-            public CCReplacement(CodeContext codeContext, string varName, IValue iValue)
+            public CCReplacement(CodeContext codeContext, string varName, Expression iValue)
             {
                 _context = codeContext;
                 _varName = varName;
@@ -108,7 +108,7 @@ namespace LINQToTTreeLib
         /// <param name="varname"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public IValue GetReplacement(string varname, Type type)
+        public Expression GetReplacement(string varname, Type type)
         {
             if (varname == null)
                 throw new ArgumentNullException("Can't lookup a null var name!");
@@ -120,7 +120,7 @@ namespace LINQToTTreeLib
                 throw new ArgumentException("Variables must be non-zero length!");
 
             if (!_parameterReplacement.ContainsKey(varname))
-                return new ValSimple(varname, type);
+                return Expression.Variable(type, varname);
             var result = _parameterReplacement[varname];
 
             if (result.Type != type)
