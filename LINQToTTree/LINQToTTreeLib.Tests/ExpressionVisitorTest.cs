@@ -228,6 +228,45 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(r, typeof(ISequenceAccessor), "not an array operator");
         }
 
+        class TMSource1SubObject
+        {
+            [TTreeVariableGrouping]
+            public int val1;
+        }
+
+        [TranslateToClass(typeof(TMResult1))]
+        class TMSource1
+        {
+            public TMSource1SubObject[] jets;
+        }
+
+        class TMResult1
+        {
+            public TMResult1(Expression keeper)
+            { }
+            public int[] val1;
+        }
+
+        [TestMethod]
+        public void TestLoopOverWorksButNotAccessForGroupObjectRef()
+        {
+            /// When doing translation we can end up with something pretty funny here - a
+            /// loop over an array that doesn't really exist... so we have to mak eusre we can
+            /// deal with that.
+            var e = Expression.Field(Expression.Variable(typeof(TMSource1), "d"), "jets");
+
+            GeneratedCode gc = new GeneratedCode();
+            var r = ExpressionVisitor.GetExpression(e, gc);
+            CheckGeneratedCodeEmpty(gc);
+            Assert.AreEqual(typeof(TMSource1SubObject[]), r.Type, "incorrect type");
+            Assert.IsInstanceOfType(r, typeof(ISequenceAccessor), "not an array operator");
+
+            Assert.Inconclusive("Further checks need to be coded");
+            /// We need to understand how to propagate this all the way through a coding reference
+            /// before this is going to work correctly! Especially with index and other things like that!
+            /// Make sure tha the loop statement makes sesne, and that the raw value turns out right.
+        }
+
         [TestMethod]
         public void TestParameterSimple()
         {
