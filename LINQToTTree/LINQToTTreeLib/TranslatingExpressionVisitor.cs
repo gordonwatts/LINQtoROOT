@@ -220,7 +220,7 @@ namespace LINQToTTreeLib
             /// Ok, at this point we are ready to start rebuilding the array access
             /// 
 
-            var targetArray = Expression.MakeMemberAccess(TranslateRootObject(memberAccessArray, translateAttribute.TargetClassType), targetMemberInfo);
+            var targetArray = Expression.MakeMemberAccess(TranslateRootObject(memberAccessArray.Expression, translateAttribute.TargetClassType), targetMemberInfo);
             var arrayLookup = Expression.MakeBinary(ExpressionType.ArrayIndex, targetArray, arrayIndexOperation.Right);
 
             return arrayLookup;
