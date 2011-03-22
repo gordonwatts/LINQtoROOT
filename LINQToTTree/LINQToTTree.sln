@@ -32,9 +32,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BuildLibraryDistribution", 
 		{A1A955AD-BC56-4413-92BC-581C35A78522} = {A1A955AD-BC56-4413-92BC-581C35A78522}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2EB381E3-ABE4-4408-88D9-4FC45E636A73}"
+	ProjectSection(SolutionItems) = preProject
+		Code Coverage.testsettings = Code Coverage.testsettings
+		LINQToTTree1.vsmdi = LINQToTTree1.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = LINQToTTree.vsmdi
+		CategoryFile = LINQToTTree1.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
