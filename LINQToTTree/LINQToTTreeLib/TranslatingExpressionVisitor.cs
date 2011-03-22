@@ -289,6 +289,99 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Parse any unary expressions we are supposed to be dealing with
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitUnaryExpression(UnaryExpression expression)
+        {
+            switch (expression.NodeType)
+            {
+                case ExpressionType.ArrayLength:
+                    return VisitArrayIndex(expression);
+                default:
+                    return base.VisitUnaryExpression(expression);
+            }
+        }
+
+        /// <summary>
+        /// Array index can be a little rough b/c it can be traning to make a translation. This is actually quite tricking
+        /// - especially in teh case of an array grouping - we have to go find a variable we can use as a proxy to get a size
+        /// operator on! :-)
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private Expression VisitArrayIndex(UnaryExpression expression)
+        {
+            ///
+            /// The key to this is what the operand is. If it isn't a member
+            /// expression (like a functino call, etc.) then forget it.
+            /// 
+
+            var rootExpression = expression.Operand;
+            if (rootExpression is MemberExpression)
+            {
+                ///
+                /// Is this something like a grouping variable. For index redirection - well that would be odd if we ever
+                /// ended up here as an index operation is just a single pointer right now!
+                /// 
+
+                var memberExpr = rootExpression as MemberExpression;
+                if (TypeHasAttribute<TTreeVariableGroupingAttribute>(memberExpr.Member) != null)
+                {
+                    ///
+                    /// Ok. This a little complex - it is an array of some sort - a group of some sort, or something "deep". The problem is that
+                    /// we don't parse or translate arrays - we parse references to arrays (with an index on them). So, what we do here is build up
+                    /// an access to one of these guys and then run it, and then pull appart the answer. Evil. I know. :-)
+                    /// 
+
+                    var nonArrayMember = FindNonArrayMember(memberExpr.Type.GetElementType());
+                    var arrayLookup = Expression.ArrayIndex(memberExpr, Expression.Variable(typeof(int), "d"));
+                    var leafLookup = Expression.MakeMemberAccess(arrayLookup, nonArrayMember);
+
+                    var translated = Translate(leafLookup);
+                    if (translated.NodeType != ExpressionType.ArrayIndex)
+                        throw new InvalidOperationException("Tried to translate '" + leafLookup.ToString() + "' into an array index, but it didn't come back an array index - it came back '" + translated.ToString() + "'");
+
+                    var lastItemIndex = translated as BinaryExpression;
+                    return Expression.ArrayLength(lastItemIndex.Left);
+                }
+
+                ///
+                /// Is this a simple straight-up class mapping?
+                /// 
+
+                var attr = TypeHasAttribute<TranslateToClassAttribute>(memberExpr.Expression.Type);
+                if (attr != null)
+                {
+                    var result = RecodeClass(memberExpr, attr);
+                    return Expression.ArrayLength(result);
+                }
+            }
+
+            ///
+            /// If we are here, we don't know how to translate. So just pop-it-up
+            /// 
+
+            return expression;
+        }
+
+        /// <summary>
+        /// Givne the current type see if we can find some variable that isn't an array...
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private MemberInfo FindNonArrayMember(Type type)
+        {
+            var firstNonArray = from member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public)
+                                let field = member as FieldInfo
+                                where field != null
+                                where !field.FieldType.IsArray
+                                select field;
+            return firstNonArray.First();
+        }
+
+        /// <summary>
         /// See if this is an array recoding....
         /// </summary>
         /// <param name="expression"></param>
