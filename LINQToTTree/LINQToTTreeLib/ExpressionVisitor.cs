@@ -247,11 +247,25 @@ namespace LINQToTTreeLib
                     _result = new ValSimple(GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
                     break;
 
+                case ExpressionType.ArrayLength:
+                    VisitArrayLength(expression);
+                    break;
+
                 default:
                     return base.VisitUnaryExpression(expression);
             }
 
             return expression;
+        }
+
+        /// <summary>
+        /// The expression is trying to figure out how long this array is.
+        /// </summary>
+        /// <param name="expression"></param>
+        private void VisitArrayLength(UnaryExpression expression)
+        {
+            var arrayBase = GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer);
+            _result = new ValSimple(arrayBase.AsObjectReference() + ".size()", expression.Type);
         }
 
         /// <summary>

@@ -451,5 +451,83 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, loop.Statements.Count(), "Expected one sub-statement");
             Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");
         }
+
+        [TestMethod]
+        public void TestSimpleArrayLength()
+        {
+            Expression<Func<int[], int>> arrayLenLambda = arr => arr.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            Assert.AreEqual("(*arr).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda)
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
+            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var result = ExpressionVisitor.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            Assert.IsNotNull(result, "result");
+            Assert.AreEqual(typeof(int), result.Type, "result type");
+            return result;
+        }
+
+        class ResultType0
+        {
+            public int[] val1;
+        }
+
+        [TestMethod]
+        public void TestClassArraySize()
+        {
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        [TranslateToClass(typeof(ResultType1))]
+        class SourceType1
+        {
+            [TTreeVariableGrouping]
+            public SourceType1SubType[] jets;
+        }
+
+        class SourceType1SubType
+        {
+            [TTreeVariableGrouping]
+            public int val1;
+        }
+
+        class ResultType1 : IExpressionHolder
+        {
+            public ResultType1(Expression holder)
+            { HeldExpression = holder; }
+
+            public int[] val1;
+
+            public Expression HeldExpression
+            {
+                get;
+                private set;
+            }
+        }
+
+        [TestMethod]
+        public void TestRenamedArrayLength()
+        {
+            /// There are extensive translation tests in the TranslationExpressionVisitor test - so we just need to
+            /// make sure at least one case goes all the way through. Since it uses that code, all the cases covered
+            /// in the TranslationExpressionVisitor object should take care of the rest. Fingers crossed! :-)
+
+            Expression<Func<SourceType1, int>> arrayLenLambda = arr => arr.jets.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
     }
 }
