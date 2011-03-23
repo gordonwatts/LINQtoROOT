@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Parsing;
 
 namespace LINQToTTreeLib.Expressions
@@ -43,6 +44,19 @@ namespace LINQToTTreeLib.Expressions
             if (replaceit == null)
                 return base.VisitParameterExpression(paramExpr);
 
+            return replaceit;
+        }
+
+        /// <summary>
+        /// See if we can find the main sub query parameter for lookup here.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
+        {
+            var replaceit = _context.GetReplacement(expression.ReferencedQuerySource.ItemName);
+            if (replaceit == null)
+                return expression;
             return replaceit;
         }
     }
