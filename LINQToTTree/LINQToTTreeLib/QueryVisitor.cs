@@ -143,6 +143,17 @@ namespace LINQToTTreeLib
         /// <param name="indexName"></param>
         private void CodeLoopOverExpression(Expression loopExpr, string indexName)
         {
+            var arrayRef = Expressions.ArrayExpressionParser.ParseArrayExpression(loopExpr);
+            var indexVar = arrayRef.AddLoop(_codeEnv, _codeContext);
+
+            ///
+            /// Next, make sure the index variable can be used for later references!
+            /// 
+
+            //_mainIndex =            _codeContext.Add(indexName, indexVar);
+            // _codeContext.SetLoopVariable(indexVar) or indexName!?!?
+
+#if false
             var arrayToIterateOver = ExpressionVisitor.GetExpression(loopExpr, _codeEnv, _codeContext, MEFContainer);
 
             var seqAcc = arrayToIterateOver as ISequenceAccessor;
@@ -151,6 +162,7 @@ namespace LINQToTTreeLib
 
             var indexv = seqAcc.AddLoop(_codeEnv, _codeContext, indexName, m => _mainIndex = m);
             _codeContext.SetLoopVariable(indexv);
+#endif
         }
 
         /// <summary>
