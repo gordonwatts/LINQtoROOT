@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
@@ -36,7 +37,13 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// First, attempt to translate the expr (if needed)
+            /// First, see if there are any parameter replacements that can be done out-of-band
+            /// 
+
+            expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
+
+            ///
+            /// Next, attempt to translate the expr (if needed)
             /// 
 
             string oldExpr = "";

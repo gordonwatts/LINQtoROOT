@@ -529,5 +529,28 @@ namespace LINQToTTreeLib
             var result = RunArrayLengthOnExpression(arrayLenLambda);
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
         }
+
+        [TestMethod]
+        public void TestParameterReplacement()
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
+            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var expr = Expression.Variable(typeof(int), "d");
+
+            cc.Add("d", Expression.Constant(20));
+
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+
+            Assert.IsNotNull(result, "result");
+            Assert.AreEqual(typeof(int), result.Type, "result type");
+            Assert.AreEqual("20", result.RawValue, "raw value");
+        }
     }
 }
