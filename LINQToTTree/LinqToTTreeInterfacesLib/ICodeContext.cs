@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -26,12 +27,29 @@ namespace LinqToTTreeInterfacesLib
         IVariableScopeHolder Add(string varName, IValue replacementName);
 
         /// <summary>
+        /// Add a vairable mapping to an expression. Used for dealing with parameters and the like.
+        /// Use the return object to pop it off the stack when you are done.
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <param name="indexExpression"></param>
+        /// <returns></returns>
+        IVariableScopeHolder Add(string indexName, Expression indexExpression);
+
+        /// <summary>
         /// Lookup a replacement
         /// </summary>
         /// <param name="varname"></param>
         /// <param name="type"></param>
         /// <returns></returns>
         IValue GetReplacement(string varname, Type type);
+
+        /// <summary>
+        /// Returns the expression that has been stored under this name.
+        /// Returns null if the translation does not exist.
+        /// </summary>
+        /// <param name="varname"></param>
+        /// <returns></returns>
+        Expression GetReplacement(string varname);
 
         /// <summary>
         /// Get the current index loop variable.
@@ -43,6 +61,7 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="v"></param>
         void SetLoopVariable(IVariable v);
+
 
     }
 }

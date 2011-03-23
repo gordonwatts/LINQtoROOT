@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 
@@ -101,6 +102,30 @@ namespace LINQToTTreeLib
             }
         }
 
+        /// <summary>
+        /// Keep track of a context
+        /// </summary>
+        private class CCReplacementExpression : IVariableScopeHolder
+        {
+            private CodeContext _context;
+            private string _varName;
+            private Expression _oldVal;
+
+            public CCReplacementExpression(CodeContext codeContext, string varName, Expression iValue)
+            {
+                _context = codeContext;
+                _varName = varName;
+                _oldVal = iValue;
+            }
+
+            /// <summary>
+            /// Go back to what we had!
+            /// </summary>
+            public void Pop()
+            {
+                _context.Add(_varName, _oldVal);
+            }
+        }
 
         /// <summary>
         /// Get a replacement substitution - given the name and expected type.
@@ -132,10 +157,11 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Delete a variable name if it is in there.
         /// </summary>
-        /// <param name="_vName"></param>
-        internal void Delete(string _vName)
+        /// <param name="vName"></param>
+        internal void Delete(string vName)
         {
-            _parameterReplacement.Remove(_vName);
+            _parameterReplacement.Remove(vName);
+            _expressionReplacement.Remove(vName);
         }
 
         /// <summary>
@@ -153,6 +179,51 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("can not set a null loop variable");
 
             LoopVariable = v;
+        }
+
+        private Dictionary<string, Expression> _expressionReplacement = new Dictionary<string, Expression>();
+
+        /// <summary>
+        /// Add a new expression to our holding library for later replacement.
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <param name="indexExpression"></param>
+        /// <returns></returns>
+        public IVariableScopeHolder Add(string indexName, Expression indexExpression)
+        {
+            ///
+            /// Somethign to get us back to this state
+            /// 
+
+            IVariableScopeHolder popper = null;
+            if (_expressionReplacement.ContainsKey(indexName))
+            {
+                popper = new CCReplacementExpression(this, indexName, _expressionReplacement[indexName]);
+            }
+            else
+            {
+                popper = new CCReplacementNull(this, indexName);
+            }
+
+            ///
+            /// And save the expression for future lookup
+            /// 
+
+            _expressionReplacement[indexName] = indexExpression;
+
+            return popper;
+        }
+
+        /// <summary>
+        /// Return a replacement item. If it doesn't exist, return null.
+        /// </summary>
+        /// <param name="varname"></param>
+        /// <returns></returns>
+        public System.Linq.Expressions.Expression GetReplacement(string varname)
+        {
+            if (!_expressionReplacement.ContainsKey(varname))
+                return null;
+            return _expressionReplacement[varname];
         }
     }
 }

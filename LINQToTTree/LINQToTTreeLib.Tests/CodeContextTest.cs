@@ -1,5 +1,6 @@
 // <copyright file="CodeContextTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -138,6 +139,32 @@ namespace LINQToTTreeLib
         {
             var c = new CodeContext();
             c.SetLoopVariable(null);
+        }
+
+        [TestMethod]
+        public void TestSetExpressionAndPop()
+        {
+            var c = new CodeContext();
+            Assert.IsNull(c.GetReplacement("d"), "initally get");
+            var myvar = Expression.Variable(typeof(int), "fork");
+            var p = c.Add("d", myvar);
+            Assert.AreEqual(myvar, c.GetReplacement("d"), "callback after store");
+            p.Pop();
+            Assert.IsNull(c.GetReplacement("d"), "Final get");
+        }
+
+        [TestMethod]
+        public void TestExpressionHiding()
+        {
+            var c = new CodeContext();
+            var myvar1 = Expression.Variable(typeof(int), "d");
+            var myvar2 = Expression.Variable(typeof(float), "dude");
+
+            c.Add("p", myvar1);
+            var p = c.Add("p", myvar2);
+            Assert.AreEqual(myvar2, c.GetReplacement("p"), "replacement check");
+            p.Pop();
+            Assert.AreEqual(myvar1, c.GetReplacement("p"), "poped state");
         }
     }
 }
