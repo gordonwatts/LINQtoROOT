@@ -9,6 +9,7 @@ using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Data.Linq.Parsing;
+using System.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -173,6 +174,12 @@ namespace LINQToTTreeLib
                     op = "<=";
                     resultType = typeof(bool);
                     break;
+
+                case ExpressionType.NotEqual:
+                    op = "!=";
+                    resultType = typeof(bool);
+                    break;
+
                 case ExpressionType.Multiply:
                     op = "*";
                     resultType = expression.Type;
@@ -336,6 +343,48 @@ namespace LINQToTTreeLib
         protected override Expression VisitLambdaExpression(LambdaExpression expression)
         {
             _result = GetExpression(expression.Body, _codeEnv, _codeContext, MEFContainer);
+
+            return expression;
+        }
+
+        /// <summary>
+        /// We are doing an inline call to a lambda expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitInvocationExpression(InvocationExpression expression)
+        {
+            ///
+            /// Declare all the parameters for lookup.
+            /// 
+
+            if (!(expression.Expression is LambdaExpression))
+                throw new NotImplementedException("Do not know how to invoke a non-lambda call like '" + expression.ToString() + "'");
+            var lambda = expression.Expression as LambdaExpression;
+
+            var paramArgs = lambda.Parameters.Zip(expression.Arguments, (p, a) => Tuple.Create(p, a));
+            var paramDefineToPopers = from pair in paramArgs
+                                      select _codeContext.Add(pair.Item1.Name, GetExpression(pair.Item2, _codeEnv, _codeContext, MEFContainer));
+            var allParamDefineToPopers = paramDefineToPopers.ToArray();
+
+            ///
+            /// Do the work!
+            /// 
+
+            _result = GetExpression(lambda, _codeEnv, _codeContext, MEFContainer);
+
+            ///
+            /// Now, pop everything off!
+            /// 
+
+            foreach (var param in allParamDefineToPopers)
+            {
+                param.Pop();
+            }
+
+            ///
+            /// Done!
+            /// 
 
             return expression;
         }

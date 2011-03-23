@@ -173,6 +173,12 @@ namespace TTreeParser
             {
                 var typ = (r as RegularDecl).Type;
                 typ = TypeDefTranslator.ResolveTypedef(typ);
+
+                if (typ == "string")
+                {
+                    throw new NotImplementedException("Unable to translate the C++ type of string");
+                }
+
                 if (ROOTNET.NTClass.GetClass(typ) != null)
                 {
                     typ = "ROOTNET.Interface.N" + typ;

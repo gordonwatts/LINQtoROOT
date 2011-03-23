@@ -218,6 +218,81 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestGenerateSimpleItems()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateSingleItemTree();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
+
+            string[] possibleTypes = new string[] {
+                "int",
+                "uint",
+                "short",
+                "ushort",
+                "long",
+                "ulong",
+                "bool"
+            };
+
+            Assert.IsTrue(result[0].Items.All(i => possibleTypes.Contains(i.ItemType)), "Some responses not correct!");
+            Assert.AreEqual(possibleTypes.Length, result[0].Items.Select(i => i.ItemType).Distinct().Count(), "Incorrect number of branches found!");
+
+            CheckSerialization(result, "GenerateClassesTestVectorIntAndDoubleAndShort");
+        }
+
+        [TestMethod]
+        public void TestGenerateTemplateTypedef()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateVectorTreeWithTypedef();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
+
+            string[] possibleTypes = new string[] {
+                "int[]"
+            };
+
+            Assert.IsTrue(result[0].Items.All(i => possibleTypes.Contains(i.ItemType)), "Some responses not correct!");
+            Assert.AreEqual(possibleTypes.Length, result[0].Items.Select(i => i.ItemType).Distinct().Count(), "Incorrect number of branches found!");
+
+            CheckSerialization(result, "GenerateClassesTestVectorIntAndDoubleAndShort");
+        }
+
+        [TestMethod]
+        public void TestGenerateWithOddVectorTypes()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithOddTypes();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
+
+            string[] possibleTypes = new string[] {
+                "uint[]",
+                "int[]"
+            };
+
+            Assert.IsTrue(result[0].Items.All(i => possibleTypes.Contains(i.ItemType)), "Some responses not correct!");
+            Assert.AreEqual(possibleTypes.Length, result[0].Items.Select(i => i.ItemType).Distinct().Count(), "Incorrect number of branches found!");
+
+            CheckSerialization(result, "GenerateClassesTestVectorIntAndDoubleAndShort");
+        }
+
+        [TestMethod]
+        public void TestGenerateWithStringVectorTypes()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithStringTypes();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "Empty ntuple should have fired");
+            Assert.AreEqual(0, result[0].Items.Count, "Expected nothing to be pasred");
+        }
+
+        [TestMethod]
         public void TestIgnoreNonVectorArray()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithNonVectorArray();

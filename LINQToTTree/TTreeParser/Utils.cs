@@ -72,6 +72,10 @@ namespace TTreeParser
 
             switch (cppTypeName)
             {
+                case "char":
+                    result = "sbyte";
+                    break;
+
                 case "int":
                     break;
 
@@ -101,6 +105,13 @@ namespace TTreeParser
 
                 case "long long":
                     result = "long";
+                    break;
+
+                    /// I always have trouble with this - but this is the case... at least on
+                    /// this platform - a long in C++ is a 32 bit integer. int is also a 32 bit
+                    /// integer...
+                case "long":
+                    result = "int";
                     break;
 
                 case "unsigned long long":

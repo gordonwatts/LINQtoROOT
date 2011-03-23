@@ -289,6 +289,68 @@ namespace TTreeParserCPPTests {
 		}
 
 		/// Create a tree with some number of vector's in it.
+		static ROOTNET::NTTree ^CreateVectorTreeWithTypedef()
+		{
+			vector<Int32> ivector;
+
+			TTree *t = new TTree("dude", "left field");
+
+			t->Branch("i", &ivector);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with some number of vector's in it.
+		static ROOTNET::NTTree ^CreateSingleItemTree()
+		{
+			int intVar;
+			unsigned int uintVar;
+			short shortVar;
+			unsigned short ushortVar;
+			Long64_t longVar;
+			ULong64_t ulongVar;
+			bool bVar;
+
+			TTree *t = new TTree("dude", "left field");
+
+			t->Branch("intvar", &intVar);
+			t->Branch("shortvar", &shortVar);
+			t->Branch("longvar", &longVar);
+
+			t->Branch("uintvar", &uintVar);
+			t->Branch("ushortvar", &ushortVar);
+			t->Branch("ulongvar", &ulongVar);
+
+			t->Branch("bvar", &bVar);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with things like unsigned int, unsigned short, etc.
+		static ROOTNET::NTTree ^CreateWithOddTypes()
+		{
+			vector<unsigned int> uintVector;
+			vector<Int_t> templateVector;
+
+			TTree *t = new TTree("dude", "left field");
+			t->Branch("uint_vector", &uintVector);
+			t->Branch("i32_vector", &templateVector);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with things like unsigned int, unsigned short, etc.
+		static ROOTNET::NTTree ^CreateWithStringTypes()
+		{
+			vector<string> strVector;
+
+			TTree *t = new TTree("dude", "left field");
+			t->Branch("str_vector", &strVector);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with some number of vector's in it.
 		static ROOTNET::NTTree ^CreateVectorVectorTree()
 		{
 			vector<vector<double> > dvector;
