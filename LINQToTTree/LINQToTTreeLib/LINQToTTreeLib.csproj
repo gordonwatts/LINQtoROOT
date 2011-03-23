@@ -62,6 +62,8 @@
     <Compile Include="CodeAttributes\TTreeVariableGroupingAttribute.cs" />
     <Compile Include="CodeContext.cs" />
     <Compile Include="CPPTranslator.cs" />
+    <Compile Include="Expressions\ArrayExpressionParser.cs" />
+    <Compile Include="Expressions\ArrayInfoVector.cs" />
     <Compile Include="ExpressionVisitor.cs" />
     <Compile Include="GeneratedCode.cs" />
     <Compile Include="Helpers.cs" />
