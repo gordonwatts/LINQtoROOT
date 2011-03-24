@@ -251,7 +251,7 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
-            DumpStatements(gc.CodeBody);
+            gc.DumpCodeToConsole();
 
             /// At the top level we assume there will be a loop over the vals.
 
@@ -287,7 +287,7 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
-            DumpStatements(gc.CodeBody);
+            gc.DumpCodeToConsole();
 
             /// At the top level we assume there will be a loop over the vals.
 
@@ -300,19 +300,6 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
             var ass = outterfloop.Statements.First() as Statements.StatementAssign;
             Assert.IsFalse(ass.Expression.RawValue.Contains("(int)j"), "Expression seems to reference the linq variable name j: '" + ass.Expression.RawValue + "'");
-        }
-
-        /// <summary>
-        /// Dumps the statements out to the std out for debugging tests.
-        /// </summary>
-        /// <param name="iBookingStatementBlock"></param>
-        private void DumpStatements(IBookingStatementBlock iBookingStatementBlock)
-        {
-            Console.WriteLine("Code that came back:");
-            foreach (var l in iBookingStatementBlock.CodeItUp())
-            {
-                Console.WriteLine(l);
-            }
         }
 
         [TestMethod]
