@@ -237,6 +237,7 @@
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
+    <Compile Include="TestUtils.cs" />
     <Compile Include="TTreeQueryExecutorTest.Constructor.g.cs">
       <DependentUpon>TTreeQueryExecutorTest.cs</DependentUpon>
     </Compile>
