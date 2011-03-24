@@ -150,7 +150,7 @@ namespace LINQToTTreeLib
             /// Next, make sure the index variable can be used for later references!
             /// 
 
-            //_mainIndex =            _codeContext.Add(indexName, indexVar);
+            _mainIndex = _codeContext.Add(indexName, indexVar);
             // _codeContext.SetLoopVariable(indexVar) or indexName!?!?
 
 #if false

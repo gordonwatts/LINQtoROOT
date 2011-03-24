@@ -263,6 +263,44 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
         }
 
+        [TestMethod]
+        public void TestSubQueryForStatementsWithPlaneAdd()
+        {
+            /// Make sure a sub query works correctly...
+
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                from j in q.vals
+                select j).Aggregate(0, (acc, va) => acc + va));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc);
+            MEFUtilities.Compose(qv);
+            qv.MEFContainer = MEFUtilities.MEFContainer;
+
+            qv.VisitQueryModel(model);
+
+            DumpStatements(gc.CodeBody);
+
+            /// At the top level we assume there will be a loop over the vals.
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not compound");
+            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+
+            Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
+            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
+            var ass = outterfloop.Statements.First() as Statements.StatementAssign;
+            Assert.IsFalse(ass.Expression.RawValue.Contains("(int)j"), "Expression seems to reference the linq variable name j: '" + ass.Expression.RawValue + "'");
+        }
+
         /// <summary>
         /// Dumps the statements out to the std out for debugging tests.
         /// </summary>
@@ -334,7 +372,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestObjectStacked()
+        public void TestTranslatedNestedLoop()
         {
             Assert.Inconclusive("Needs updating");
             var model = GetModel(() => (
