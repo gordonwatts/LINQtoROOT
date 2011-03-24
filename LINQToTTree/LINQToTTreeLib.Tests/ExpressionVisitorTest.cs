@@ -447,7 +447,8 @@ namespace LINQToTTreeLib
             /// Next, go after the code that comes back and make sure the if statement for the > 20 actually makes sense.
             /// 
 
-            var loop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
+            var loop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(loop, "Loop statement not found");
             Assert.AreEqual(1, loop.Statements.Count(), "Expected one sub-statement");
             Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");
         }
