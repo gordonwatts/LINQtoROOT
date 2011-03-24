@@ -552,5 +552,32 @@ namespace LINQToTTreeLib
             Assert.AreEqual(typeof(int), result.Type, "result type");
             Assert.AreEqual("20", result.RawValue, "raw value");
         }
+
+        [TestMethod]
+        public void TestSimpleArrayAccess()
+        {
+            var myvar = Expression.Variable(typeof(int[]), "d");
+            var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
+
+            var result = RunArrayLengthOnExpression(myaccess);
+            Assert.AreEqual("((Int32[])(*d))[((int)1)]", result.RawValue, "C++ incorrectly translated");
+        }
+
+        class ObjectArrayTest
+        {
+            public int[] arr;
+        }
+
+        [TestMethod]
+        public void TestObjectArrayAccess()
+        {
+            var arr = Expression.Variable(typeof(ObjectArrayTest), "obj");
+            var arrMember = Expression.MakeMemberAccess(arr, typeof(ObjectArrayTest).GetMember("arr").First());
+            var arrayIndex = Expression.ArrayIndex(arrMember, Expression.Constant(1));
+
+            var result = RunArrayLengthOnExpression(arrayIndex);
+
+            Assert.AreEqual("((Int32[])(*(*obj).arr))[((int)1)]", result.RawValue, "array text");
+        }
     }
 }

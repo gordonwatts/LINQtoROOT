@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
+using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
@@ -143,6 +144,7 @@ namespace LINQToTTreeLib
         {
             string op = "";
             bool CastToFinalType = false;
+            string format = "{0}{1}{2}";
 
             Type resultType = null;
             switch (expression.NodeType)
@@ -194,6 +196,13 @@ namespace LINQToTTreeLib
                     resultType = expression.Type;
                     break;
 
+
+                case ExpressionType.ArrayIndex:
+                    resultType = expression.Type;
+                    op = "[]";
+                    format = "{0}[{2}]";
+                    break;
+
                 case ExpressionType.And:
                     break;
                 case ExpressionType.Modulo:
@@ -228,7 +237,9 @@ namespace LINQToTTreeLib
                 sLHS = LHS.AsCastString();
             }
 
-            _result = new ValSimple(sLHS + op + sRHS, resultType);
+            StringBuilder bld = new StringBuilder();
+            bld.AppendFormat(format, sLHS, op, sRHS);
+            _result = new ValSimple(bld.ToString(), resultType);
 
             return expression;
         }
