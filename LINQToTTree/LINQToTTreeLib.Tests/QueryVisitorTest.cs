@@ -303,12 +303,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestLoopReferenceWorks()
-        {
-            Assert.Inconclusive("Need to make sure the loop reference is properly working when a sub query happens with the new looping code!");
-        }
-
-        [TestMethod]
         public void TestTakeInSubQueryForStatements()
         {
             var model = GetModel(() => (
@@ -317,7 +311,6 @@ namespace LINQToTTreeLib
                 select j).Aggregate(0, (acc, va) => acc + 1));
 
             MEFUtilities.AddPart(new QVResultOperators());
-            MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
