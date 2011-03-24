@@ -3,6 +3,7 @@ using System;
 using System.Linq.Expressions;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -232,13 +233,13 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestTakeInSubQueryForStatements()
+        public void TestSubQueryForStatements()
         {
-            Assert.Inconclusive();
-#if false
+            /// Make sure a sub query works correctly...
+
             var model = GetModel(() => (
                 from q in new QueriableDummy<dummyntup>()
-                from j in q.vals.Take(1)
+                from j in q.vals
                 select j).Aggregate(0, (acc, va) => acc + 1));
 
             MEFUtilities.AddPart(new QVResultOperators());
@@ -252,7 +253,76 @@ namespace LINQToTTreeLib
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
-            /// Note that the Assert takes place above, in the TakeOperatortestLoopVar test!
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            /// At the top level we assume there will be a loop over the vals.
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not compound");
+            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+
+            Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
+            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
+        }
+
+        [TestMethod]
+        public void TestSubQueryForStatementsWithPlaneAdd()
+        {
+            /// Make sure a sub query works correctly...
+
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                from j in q.vals
+                select j).Aggregate(0, (acc, va) => acc + va));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc);
+            MEFUtilities.Compose(qv);
+            qv.MEFContainer = MEFUtilities.MEFContainer;
+
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            /// At the top level we assume there will be a loop over the vals.
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not compound");
+            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+
+            Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
+            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
+            var ass = outterfloop.Statements.First() as Statements.StatementAssign;
+            Assert.IsFalse(ass.Expression.RawValue.Contains("(int)j"), "Expression seems to reference the linq variable name j: '" + ass.Expression.RawValue + "'");
+        }
+
+        [TestMethod]
+        public void TestTakeInSubQueryForStatements()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                from j in q.vals.Take(1)
+                select j).Aggregate(0, (acc, va) => acc + 1));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc);
+            MEFUtilities.Compose(qv);
+            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             qv.VisitQueryModel(model);
 
@@ -277,18 +347,31 @@ namespace LINQToTTreeLib
 
         public class subNtupleObjects
         {
+            [TTreeVariableGrouping]
             public int var1;
             public double var2;
         }
 
+        [TranslateToClass(typeof(ntupWithObjectsDest))]
         public class ntupWithObjects
         {
             [TTreeVariableGrouping]
             public subNtupleObjects[] jets;
         }
 
+        public class ntupWithObjectsDest : IExpressionHolder
+        {
+            public ntupWithObjectsDest(Expression expr)
+            {
+                HeldExpression = expr;
+            }
+            public int[] var1;
+
+            public Expression HeldExpression { get; private set; }
+        }
+
         [TestMethod]
-        public void TestObjectStacked()
+        public void TestTranslatedNestedLoop()
         {
             Assert.Inconclusive();
 #if false
@@ -301,7 +384,10 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
-            MEFUtilities.AddPart(new TypeHandlerCache());
+            var myth = new TypeHandlerCache();
+            MEFUtilities.AddPart(myth);
+            ExpressionVisitor.TypeHandlers = myth;
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             var qv = new QueryVisitor(gc, cc);
@@ -312,12 +398,12 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
-            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "vector loop not right");
-            var outterfloop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not right");
+            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
 
 
-            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");

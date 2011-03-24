@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
+using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
@@ -36,7 +38,13 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// First, attempt to translate the expr (if needed)
+            /// First, see if there are any parameter replacements that can be done out-of-band
+            /// 
+
+            expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
+
+            ///
+            /// Next, attempt to translate the expr (if needed)
             /// 
 
             string oldExpr = "";
@@ -136,6 +144,7 @@ namespace LINQToTTreeLib
         {
             string op = "";
             bool CastToFinalType = false;
+            string format = "{0}{1}{2}";
 
             Type resultType = null;
             switch (expression.NodeType)
@@ -187,6 +196,13 @@ namespace LINQToTTreeLib
                     resultType = expression.Type;
                     break;
 
+
+                case ExpressionType.ArrayIndex:
+                    resultType = expression.Type;
+                    op = "[]";
+                    format = "{0}[{2}]";
+                    break;
+
                 case ExpressionType.And:
                     break;
                 case ExpressionType.Modulo:
@@ -221,7 +237,9 @@ namespace LINQToTTreeLib
                 sLHS = LHS.AsCastString();
             }
 
-            _result = new ValSimple(sLHS + op + sRHS, resultType);
+            StringBuilder bld = new StringBuilder();
+            bld.AppendFormat(format, sLHS, op, sRHS);
+            _result = new ValSimple(bld.ToString(), resultType);
 
             return expression;
         }
@@ -247,11 +265,25 @@ namespace LINQToTTreeLib
                     _result = new ValSimple(GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
                     break;
 
+                case ExpressionType.ArrayLength:
+                    VisitArrayLength(expression);
+                    break;
+
                 default:
                     return base.VisitUnaryExpression(expression);
             }
 
             return expression;
+        }
+
+        /// <summary>
+        /// The expression is trying to figure out how long this array is.
+        /// </summary>
+        /// <param name="expression"></param>
+        private void VisitArrayLength(UnaryExpression expression)
+        {
+            var arrayBase = GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer);
+            _result = new ValSimple(arrayBase.AsObjectReference() + ".size()", expression.Type);
         }
 
         /// <summary>

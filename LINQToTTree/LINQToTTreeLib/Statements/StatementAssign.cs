@@ -36,5 +36,10 @@ namespace LINQToTTreeLib.Statements
             if (result != setTo)
                 yield return result + "=" + setTo + ";";
         }
+
+        public override string ToString()
+        {
+            return ResultVariable.RawValue + "=" + Expression.RawValue;
+        }
     }
 }

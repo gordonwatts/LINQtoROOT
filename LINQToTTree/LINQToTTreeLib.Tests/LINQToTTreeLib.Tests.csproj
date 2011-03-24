@@ -130,7 +130,7 @@
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
     </None>
     <Compile Include="DummyQueryExectuor.cs" />
-    <None Include="ExpressionVisitorMethodCallTests.cs" />
+    <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
     <None Include="ExpressionVisitorTest.cs" />
     <None Include="ExpressionVisitorTest.GetExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
@@ -236,7 +236,8 @@
     <None Include="Statements\StatementSimpleStatementTest.cs" />
     <None Include="TestQueriesGreaterLevels.cs" />
     <None Include="TestQueriesTopLevel.cs" />
-    <None Include="TTreeQueryExecutorTest.Constructor.g.cs">
+    <Compile Include="TestUtils.cs" />
+    <Compile Include="TTreeQueryExecutorTest.Constructor.g.cs">
       <DependentUpon>TTreeQueryExecutorTest.cs</DependentUpon>
     </None>
     <None Include="TTreeQueryExecutorTest.cs" />
@@ -263,11 +264,16 @@
     <None Include="TypeHandlers\TypeHandlerCacheTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </None>
-    <None Include="t_TranslatingExpressionVisitor.cs" />
-    <None Include="t_TypeDefTranslator.cs" />
+    <Compile Include="Expressions\t_ArrayExpressionParser.cs" />
+    <Compile Include="Expressions\t_ArrayInfoVector.cs" />
     <None Include="VariableSaveManagers.cs" />
     <None Include="Variables\Savers\SaveVarObjectTest.cs" />
     <None Include="Variables\ValSimpleTest.Constructor.g.cs">
+    <Compile Include="t_TranslatingExpressionVisitor.cs" />
+    <Compile Include="t_TypeDefTranslator.cs" />
+    <Compile Include="VariableSaveManagers.cs" />
+    <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
+    <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
     </None>
     <None Include="Variables\ValSimpleTest.Constructor2.g.cs">

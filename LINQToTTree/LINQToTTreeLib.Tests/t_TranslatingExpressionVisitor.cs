@@ -96,6 +96,25 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(typeof(NoTranslateClass), me.Expression.Type, "variable type not right");
         }
 
+        class NoTranslateArrayClass
+        {
+            public int[] val;
+        }
+
+        [TestMethod]
+        public void TestNoTranslateArrayIndex()
+        {
+            Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val.Length;
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var ue = result as UnaryExpression;
+            Assert.IsNotNull(ue, "not unaryexpression");
+            var me = ue.Operand as MemberExpression;
+            Assert.IsNotNull(me, "unary operand type");
+            Assert.AreEqual(typeof(NoTranslateArrayClass), me.Expression.Type, "type of member we are applying val to");
+            Assert.AreEqual("val", me.Member.Name, "member access bad");
+        }
+
         [TranslateToClass(typeof(ResultType1))]
         public class SourceType1
         {
@@ -138,6 +157,52 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(typeof(ResultType1), me.Expression.Type, "variable type not right");
         }
 
+        [TranslateToClass(typeof(ResultType6))]
+        public class SourceType6
+        {
+            [RenameVariable("Val")]
+            public int[] val;
+            public int[] same;
+        }
+
+        public class ResultType6
+        {
+            public ResultType6(Expression holder)
+            {
+
+            }
+            public int[] Val;
+            public int[] same;
+        }
+
+        [TestMethod]
+        public void TestArrayRenameLength()
+        {
+            Expression<Func<SourceType6, int>> lambdaExpr = arr => arr.val.Length;
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var ue = result as UnaryExpression;
+            Assert.IsNotNull(ue, "not unaryexpression");
+            var me = ue.Operand as MemberExpression;
+            Assert.IsNotNull(me, "unary operand type");
+            Assert.AreEqual(typeof(ResultType6), me.Expression.Type, "type of member we are applying val to");
+            Assert.AreEqual("Val", me.Member.Name, "member access bad");
+        }
+
+        [TestMethod]
+        public void TestArrayLengthNoRename()
+        {
+            Expression<Func<SourceType6, int>> lambdaExpr = arr => arr.same.Length;
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var ue = result as UnaryExpression;
+            Assert.IsNotNull(ue, "not unaryexpression");
+            var me = ue.Operand as MemberExpression;
+            Assert.IsNotNull(me, "unary operand type");
+            Assert.AreEqual(typeof(ResultType6), me.Expression.Type, "type of member we are applying val to");
+            Assert.AreEqual("same", me.Member.Name, "member access bad");
+        }
+
         [TestMethod]
         public void TestTranslateClassButNotMember()
         {
@@ -174,6 +239,20 @@ namespace LINQToTTreeLib.Tests
 
             }
             public int[] val;
+        }
+
+        [TestMethod]
+        public void TestArrayLengthGroupingChange()
+        {
+            Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets.Length;
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var ue = result as UnaryExpression;
+            Assert.IsNotNull(ue, "not unaryexpression");
+            var me = ue.Operand as MemberExpression;
+            Assert.IsNotNull(me, "unary operand type");
+            Assert.AreEqual(typeof(ResultType2), me.Expression.Type, "type of member we are applying val to");
+            Assert.AreEqual("val", me.Member.Name, "member access bad");
         }
 
         [TestMethod]

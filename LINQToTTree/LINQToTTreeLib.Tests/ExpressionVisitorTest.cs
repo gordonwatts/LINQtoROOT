@@ -228,45 +228,6 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(r, typeof(ISequenceAccessor), "not an array operator");
         }
 
-        class TMSource1SubObject
-        {
-            [TTreeVariableGrouping]
-            public int val1;
-        }
-
-        [TranslateToClass(typeof(TMResult1))]
-        class TMSource1
-        {
-            public TMSource1SubObject[] jets;
-        }
-
-        class TMResult1
-        {
-            public TMResult1(Expression keeper)
-            { }
-            public int[] val1;
-        }
-
-        [TestMethod]
-        public void TestLoopOverWorksButNotAccessForGroupObjectRef()
-        {
-            /// When doing translation we can end up with something pretty funny here - a
-            /// loop over an array that doesn't really exist... so we have to mak eusre we can
-            /// deal with that.
-            var e = Expression.Field(Expression.Variable(typeof(TMSource1), "d"), "jets");
-
-            GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(e, gc);
-            CheckGeneratedCodeEmpty(gc);
-            Assert.AreEqual(typeof(TMSource1SubObject[]), r.Type, "incorrect type");
-            Assert.IsInstanceOfType(r, typeof(ISequenceAccessor), "not an array operator");
-
-            Assert.Inconclusive("Further checks need to be coded");
-            /// We need to understand how to propagate this all the way through a coding reference
-            /// before this is going to work correctly! Especially with index and other things like that!
-            /// Make sure tha the loop statement makes sesne, and that the raw value turns out right.
-        }
-
         [TestMethod]
         public void TestParameterSimple()
         {
@@ -403,6 +364,7 @@ namespace LINQToTTreeLib
             MEFUtilities.Compose(new QueryVisitor(gc, cc));
 
             var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+            gc.DumpCodeToConsole();
 
             Assert.AreEqual(typeof(int), result.Type, "bad type for return");
 
@@ -411,11 +373,10 @@ namespace LINQToTTreeLib
             /// The top level statement should be a loop over whatever it is we are looping over!
             /// 
 
-            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementLoopOnVector), "Incorrect looping statement");
-            Assert.IsFalse(gc.CodeBody.Statements.First().CodeItUp().First().Contains("<generated>"), "Contains a funny variable name: " + gc.CodeBody.Statements.First().CodeItUp().First());
-            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected one declared variable");
-            Assert.AreEqual(result.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "declared variable name incorrect");
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "Incorrect looping statement");
+            Assert.IsFalse(gc.CodeBody.Statements.Skip(1).First().CodeItUp().First().Contains("<generated>"), "Contains a funny variable name: " + gc.CodeBody.Statements.Skip(1).First().CodeItUp().First());
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count(), "Expected one declared variable");
 
             ///
             /// Next, make sure if we add a statement it goes where we think it should - after teh stuff that has been added,
@@ -423,7 +384,7 @@ namespace LINQToTTreeLib
             /// 
 
             gc.Add(new Statements.StatementSimpleStatement("dude"));
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Scope has not been reset");
+            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "Scope has not been reset");
 
             Assert.AreEqual(0, cc.NumberOfParams, "Impromper # of parameter replacements left over");
         }
@@ -447,9 +408,138 @@ namespace LINQToTTreeLib
             /// Next, go after the code that comes back and make sure the if statement for the > 20 actually makes sense.
             /// 
 
-            var loop = gc.CodeBody.Statements.First() as Statements.StatementLoopOnVector;
+            var loop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(loop, "Loop statement not found");
             Assert.AreEqual(1, loop.Statements.Count(), "Expected one sub-statement");
             Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");
+        }
+
+        [TestMethod]
+        public void TestSimpleArrayLength()
+        {
+            Expression<Func<int[], int>> arrayLenLambda = arr => arr.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            Assert.AreEqual("(*arr).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda)
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
+            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var result = ExpressionVisitor.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            Assert.IsNotNull(result, "result");
+            Assert.AreEqual(typeof(int), result.Type, "result type");
+            return result;
+        }
+
+        class ResultType0
+        {
+            public int[] val1;
+        }
+
+        [TestMethod]
+        public void TestClassArraySize()
+        {
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        [TranslateToClass(typeof(ResultType1))]
+        class SourceType1
+        {
+            [TTreeVariableGrouping]
+            public SourceType1SubType[] jets;
+        }
+
+        class SourceType1SubType
+        {
+            [TTreeVariableGrouping]
+            public int val1;
+        }
+
+        class ResultType1 : IExpressionHolder
+        {
+            public ResultType1(Expression holder)
+            { HeldExpression = holder; }
+
+            public int[] val1;
+
+            public Expression HeldExpression
+            {
+                get;
+                private set;
+            }
+        }
+
+        [TestMethod]
+        public void TestRenamedArrayLength()
+        {
+            /// There are extensive translation tests in the TranslationExpressionVisitor test - so we just need to
+            /// make sure at least one case goes all the way through. Since it uses that code, all the cases covered
+            /// in the TranslationExpressionVisitor object should take care of the rest. Fingers crossed! :-)
+
+            Expression<Func<SourceType1, int>> arrayLenLambda = arr => arr.jets.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        [TestMethod]
+        public void TestParameterReplacement()
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
+            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            var expr = Expression.Variable(typeof(int), "d");
+
+            cc.Add("d", Expression.Constant(20));
+
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+
+            Assert.IsNotNull(result, "result");
+            Assert.AreEqual(typeof(int), result.Type, "result type");
+            Assert.AreEqual("20", result.RawValue, "raw value");
+        }
+
+        [TestMethod]
+        public void TestSimpleArrayAccess()
+        {
+            var myvar = Expression.Variable(typeof(int[]), "d");
+            var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
+
+            var result = RunArrayLengthOnExpression(myaccess);
+            Assert.AreEqual("((Int32[])(*d))[((int)1)]", result.RawValue, "C++ incorrectly translated");
+        }
+
+        class ObjectArrayTest
+        {
+            public int[] arr;
+        }
+
+        [TestMethod]
+        public void TestObjectArrayAccess()
+        {
+            var arr = Expression.Variable(typeof(ObjectArrayTest), "obj");
+            var arrMember = Expression.MakeMemberAccess(arr, typeof(ObjectArrayTest).GetMember("arr").First());
+            var arrayIndex = Expression.ArrayIndex(arrMember, Expression.Constant(1));
+
+            var result = RunArrayLengthOnExpression(arrayIndex);
+
+            Assert.AreEqual("((Int32[])(*(*obj).arr))[((int)1)]", result.RawValue, "array text");
         }
     }
 }

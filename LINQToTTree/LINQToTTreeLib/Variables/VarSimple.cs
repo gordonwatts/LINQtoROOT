@@ -25,17 +25,9 @@ namespace LINQToTTreeLib.Variables
 
         public IValue InitialValue { get; set; }
 
-
-        public bool Declare
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        /// <summary>
+        /// Get/Set if this variable needs to be declared.
+        /// </summary>
+        public bool Declare { get; set; }
     }
 }
