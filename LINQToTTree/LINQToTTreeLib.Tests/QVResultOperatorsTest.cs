@@ -37,8 +37,8 @@ namespace LINQToTTreeLib.Utils
             // TODO: add assertions to method QVResultOperatorsTest.Constructor()
         }
 
-        [Export(typeof(IQVResultOperator))]
-        class DummyRO : IQVResultOperator
+        [Export(typeof(IQVScalarResultOperator))]
+        class DummyRO : IQVScalarResultOperator
         {
             public bool CanHandle(Type resultOperatorType)
             {
@@ -57,7 +57,7 @@ namespace LINQToTTreeLib.Utils
         {
             var t = GenerateAType(tindex);
             var target = new QVResultOperators();
-            var r = target.FindROProcessor(t);
+            var r = target.FindScalarROProcessor(t);
             Assert.IsNull(r);
         }
 
@@ -84,7 +84,7 @@ namespace LINQToTTreeLib.Utils
             var target = new QVResultOperators();
             MEFUtilities.Compose(target);
 
-            var result = target.FindROProcessor(t);
+            var result = target.FindScalarROProcessor(t);
 
             if (t == typeof(DummyRO))
             {
@@ -104,8 +104,8 @@ namespace LINQToTTreeLib.Utils
             var target = new QVResultOperators();
             MEFUtilities.Compose(target);
 
-            var result1 = target.FindROProcessor(t);
-            var result2 = target.FindROProcessor(t);
+            var result1 = target.FindScalarROProcessor(t);
+            var result2 = target.FindScalarROProcessor(t);
 
             Assert.AreEqual(result1, result2, "Expected the same result when called with the same inputs!");
         }

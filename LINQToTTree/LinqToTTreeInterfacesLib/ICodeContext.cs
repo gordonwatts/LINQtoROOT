@@ -54,13 +54,13 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Get the current index loop variable.
         /// </summary>
-        IVariable LoopVariable { get; }
+        Expression LoopVariable { get; }
 
         /// <summary>
         /// Set the current loop variable to be something new
         /// </summary>
         /// <param name="v"></param>
-        void SetLoopVariable(IVariable v);
+        void SetLoopVariable(Expression v);
 
 
     }

@@ -4,7 +4,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 
@@ -12,6 +11,13 @@ namespace LINQToTTreeLib
 {
     /// <summary>
     /// Visitor patter class to move through the expression we've been handed.
+    /// 
+    /// This QV deals with things that are going to be scalar results and also collection
+    /// results. Logically, it would be nice to have a QV that deals with scalar results and
+    /// one that deals with collections. However, if you think about what a query looks like
+    /// (and the fact it can contain Where clauses, etc.) the logic for the two cases become
+    /// very intertwined. If you split things up, then it is likely to lead to a set of
+    /// very inter-connected objects. Sub-queries suck in this respect!
     /// </summary>
     public class QueryVisitor : QueryModelVisitorBase
     {
@@ -55,17 +61,29 @@ namespace LINQToTTreeLib
         /// <param name="index"></param>
         public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
         {
-            var processor = _operators.FindROProcessor(resultOperator.GetType());
-            if (processor == null)
+            var processor = _operators.FindScalarROProcessor(resultOperator.GetType());
+            if (processor != null)
             {
-                throw new InvalidOperationException("LINQToTTree can't translate the operator '" + resultOperator.ToString() + "'");
+                var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
+                if (result != null)
+                {
+                    _codeEnv.SetResult(result);
+                }
+                return;
             }
 
-            var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
-            if (result != null)
+            var collectionProcessor = _operators.FindCollectionROProcessor(resultOperator.GetType());
+            if (collectionProcessor != null)
             {
-                _codeEnv.SetResult(result);
+                processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
+                return;
             }
+
+            ///
+            /// Uh oh - no idea how to do this!
+            /// 
+
+            throw new InvalidOperationException("LINQToTTree can't translate the operator '" + resultOperator.ToString() + "'");
         }
 
         /// <summary>
@@ -77,6 +95,36 @@ namespace LINQToTTreeLib
         /// Keep track of the main index variable if it should be gotten rid of!
         /// </summary>
         private IVariableScopeHolder _mainIndex = null;
+
+        /// <summary>
+        /// Helper class for dealing with an outter array - which means we do no actual looping! :-)
+        /// </summary>
+        class OutterLoopArrayInfo : IArrayInfo
+        {
+            private Type thisType;
+
+            /// <summary>
+            /// Create an outter loop array reference - with the given type.
+            /// </summary>
+            /// <param name="type"></param>
+            public OutterLoopArrayInfo(Type type)
+            {
+                thisType = type;
+            }
+
+            /// <summary>
+            /// We add no statements to the loop as we are the outter variable - and
+            /// since we are in the middle of a TSelector, we reference "this" - ourselves!
+            /// </summary>
+            /// <param name="env"></param>
+            /// <param name="context"></param>
+            /// <returns></returns>
+            public Expression AddLoop(IGeneratedCode env, ICodeContext context)
+            {
+                return Expression.Variable(thisType, "this");
+            }
+        }
+
 
         /// <summary>
         /// Run the main from clause in a query. This can be called more than  once - when you have
@@ -92,10 +140,7 @@ namespace LINQToTTreeLib
 
             if (!SubExpressionParse)
             {
-                var outter = new VarOutterLoopObjectPointer(fromClause.ItemName, fromClause.ItemType);
-                _codeEnv.Add(outter);
-                _codeContext.Add(outter.VariableName, outter);
-                _codeContext.SetLoopVariable(outter);
+                CodeLoopOverArrayInfo(fromClause.ItemName, new OutterLoopArrayInfo(fromClause.ItemType));
             }
             else
             {
@@ -144,6 +189,16 @@ namespace LINQToTTreeLib
         private void CodeLoopOverExpression(Expression loopExpr, string indexName)
         {
             var arrayRef = Expressions.ArrayExpressionParser.ParseArrayExpression(loopExpr);
+            CodeLoopOverArrayInfo(indexName, arrayRef);
+        }
+
+        /// <summary>
+        /// Given array info, code a loop over it.
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <param name="arrayRef"></param>
+        private void CodeLoopOverArrayInfo(string indexName, IArrayInfo arrayRef)
+        {
             var indexVar = arrayRef.AddLoop(_codeEnv, _codeContext);
 
             ///
@@ -151,18 +206,7 @@ namespace LINQToTTreeLib
             /// 
 
             _mainIndex = _codeContext.Add(indexName, indexVar);
-            // _codeContext.SetLoopVariable(indexVar) or indexName!?!?
-
-#if false
-            var arrayToIterateOver = ExpressionVisitor.GetExpression(loopExpr, _codeEnv, _codeContext, MEFContainer);
-
-            var seqAcc = arrayToIterateOver as ISequenceAccessor;
-            if (seqAcc == null)
-                throw new InvalidOperationException("A sequence should have been returned, but it doesn't seem to know how to be iterated over!");
-
-            var indexv = seqAcc.AddLoop(_codeEnv, _codeContext, indexName, m => _mainIndex = m);
-            _codeContext.SetLoopVariable(indexv);
-#endif
+            _codeContext.SetLoopVariable(indexVar);
         }
 
         /// <summary>

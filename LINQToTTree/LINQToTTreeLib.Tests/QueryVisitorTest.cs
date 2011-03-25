@@ -127,8 +127,8 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Dummy to test that the loop variable when we get here is actually pointing to the right thing!
         /// </summary>
-        [Export(typeof(IQVResultOperator))]
-        class TakeOperatorTestLoopVar : IQVResultOperator
+        [Export(typeof(IQVScalarResultOperator))]
+        class TakeOperatorTestLoopVar : IQVScalarResultOperator
         {
 
             public bool CanHandle(Type resultOperatorType)

@@ -64,10 +64,9 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             CodeContext c = new CodeContext();
-            c.SetLoopVariable(new VarSimple(typeof(int)));
+            c.SetLoopVariable(Expression.Variable(typeof(int), "d"));
 
-            IVariable result
-               = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
+            target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
 
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will
@@ -97,13 +96,15 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(count, s.ValRight.RawValue, "bad count made it through");
 
             ///
-            /// Finally, we should be getting back a sequence operator of some sort
+            /// Finally, the current loop variable should be identical, and there should be no result set.
             /// 
 
-            Assert.IsNotNull(result, "Expected a non-null result");
-            Assert.IsInstanceOfType(result, typeof(ISequenceAccessor), "It needs to be a sequence accessor of some sort");
+            Assert.IsNull(codeEnv.ResultValue, "result value");
+            Assert.IsInstanceOfType(c.LoopVariable, typeof(ParameterExpression), "loop variable type");
+            var lv = c.LoopVariable as ParameterExpression;
+            Assert.AreEqual("d", lv.Name, "loop variable name");
 
-            return result;
+            return null;
         }
 
         [TestMethod]

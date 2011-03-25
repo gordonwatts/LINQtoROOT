@@ -13,8 +13,8 @@ namespace LINQToTTreeLib.ResultOperators
     /// <summary>
     /// Implement the result operator that will deal with the Count predicate.
     /// </summary>
-    [Export(typeof(IQVResultOperator))]
-    class ROCount : IQVResultOperator
+    [Export(typeof(IQVScalarResultOperator))]
+    class ROCount : IQVScalarResultOperator
     {
         /// <summary>
         /// Get the proper value here.

@@ -13,8 +13,8 @@ namespace LINQToTTreeLib.ResultOperators
     /// <summary>
     /// The aggragate operator - implement everything!
     /// </summary>
-    [Export(typeof(IQVResultOperator))]
-    public class ROAggregate : IQVResultOperator
+    [Export(typeof(IQVScalarResultOperator))]
+    public class ROAggregate : IQVScalarResultOperator
     {
         /// <summary>
         /// We deal only with the aggregate operator here.

@@ -11,8 +11,8 @@ namespace LINQToTTreeLib.ResultOperators
     /// <summary>
     /// The user wants either the first or the last item in this list. Also, if we have to have a value, then throw if we don't!
     /// </summary>
-    [Export(typeof(IQVResultOperator))]
-    public class ROFirstLast : IQVResultOperator
+    [Export(typeof(IQVScalarResultOperator))]
+    public class ROFirstLast : IQVScalarResultOperator
     {
         /// <summary>
         /// We support the first/last guys...

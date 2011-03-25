@@ -167,13 +167,13 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Get the current loop variable. Is null only at the very start!
         /// </summary>
-        public IVariable LoopVariable { get; private set; }
+        public Expression LoopVariable { get; private set; }
 
         /// <summary>
         /// Set the loop variable to a new value
         /// </summary>
         /// <param name="v"></param>
-        public void SetLoopVariable(IVariable v)
+        public void SetLoopVariable(Expression v)
         {
             if (v == null)
                 throw new ArgumentNullException("can not set a null loop variable");

@@ -13,8 +13,8 @@ namespace LINQToTTreeLib.ResultOperators
     /// <summary>
     /// Deal with the take and the skip operators in an expression
     /// </summary>
-    [Export(typeof(IQVResultOperator))]
-    class ROTakeSkipOperators : IQVResultOperator
+    [Export(typeof(IQVCollectionResultOperator))]
+    class ROTakeSkipOperators : IQVCollectionResultOperator
     {
         /// <summary>
         /// We can handle either the take or the skipping of items! :-)
@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext, CompositionContainer container)
+        public void ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext, CompositionContainer container)
         {
             ///
             /// Quick checks to make sure
@@ -87,77 +87,10 @@ namespace LINQToTTreeLib.ResultOperators
             codeEnv.Add(new StatementIfOnCount(counter, comparisonValue, comparison));
 
             ///
-            /// Subsequent guys are going to want to take the result of this operator an iterate over it.
-            /// So we need to return a loopable variable. But this is a funny loopable variable, of course,
-            /// as we are already in the loop. If anyone else wants to add statements, they just add them
-            /// in the normal way. So we create a sepcial loop variable.
+            /// We are particlarly fortunate here. We don't have to update the Loop variable - whatever it is is
+            /// still the right one! Normally we'd have to futz with the LoopVariable in code context because we
+            /// were iterating over something new. :-) Easy peasy.
             /// 
-
-            return new TakeSkipLoopVariable(codeContext.LoopVariable);
-        }
-
-        /// <summary>
-        /// An internal loop variable - so we can make sure that we are looping over the proper things
-        /// </summary>
-        class TakeSkipLoopVariable : IVariable, ISequenceAccessor
-        {
-            /// <summary>
-            /// What is the main loop variable (the indexer) that we are holding onto??
-            /// </summary>
-            private IVariable _index;
-
-            /// <summary>
-            /// Setup with the proper index variable so that we can "return" a loop variable later on.
-            /// </summary>
-            /// <param name="iVariable"></param>
-            public TakeSkipLoopVariable(IVariable iVariable)
-            {
-                if (iVariable == null)
-                    throw new ArgumentNullException("Can't create a fake loop/skip variable based on a null looper");
-
-                _index = iVariable;
-            }
-
-            public string VariableName
-            {
-                get { return _index.VariableName; }
-            }
-
-            public IValue InitialValue
-            {
-                get { return _index.InitialValue; }
-                set { _index.InitialValue = value; }
-            }
-
-            public bool Declare
-            {
-                get { return _index.Declare; }
-                set { _index.Declare = value; }
-            }
-
-            public string RawValue
-            {
-                get { return _index.RawValue; }
-            }
-
-            public Type Type
-            {
-                get { return _index.Type; }
-            }
-
-            /// <summary>
-            /// Add the statements that will actually cause the loops. The fantastic thing about this is
-            /// that the loop is already implied - we are already running it. So we need only declare
-            /// the new index variable and we are set.
-            /// </summary>
-            /// <param name="env"></param>
-            /// <param name="context"></param>
-            /// <param name="indexName"></param>
-            public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
-            {
-                popVariableContext(context.Add(indexName, context.LoopVariable));
-                return context.LoopVariable;
-            }
         }
     }
 }

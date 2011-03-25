@@ -8,7 +8,7 @@ namespace LinqToTTreeInterfacesLib
     /// <summary>
     /// This gets called when a result operator is run.
     /// </summary>
-    public interface IQVResultOperator
+    public interface IQVScalarResultOperator
     {
         /// <summary>
         /// Return true if this plug-in can handle this particlar result operator type.

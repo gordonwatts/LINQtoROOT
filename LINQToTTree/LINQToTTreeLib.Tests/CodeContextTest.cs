@@ -128,7 +128,7 @@ namespace LINQToTTreeLib
         public void TestLoopVarSetting()
         {
             var c = new CodeContext();
-            var v = new Variables.VarSimple(typeof(int));
+            var v = Expression.Variable(typeof(int), "d");
             c.SetLoopVariable(v);
             Assert.AreEqual(v, c.LoopVariable, "set didn't work");
         }
