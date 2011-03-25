@@ -4,8 +4,8 @@ using System.Linq.Expressions;
 using LINQToTTreeLib.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Data.Linq;
-using Remotion.Data.Linq.Parsing.Structure;
 using Remotion.Data.Linq.Clauses.Expressions;
+using Remotion.Data.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -44,8 +44,6 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void TestSubQueryExpression()
         {
-            //var model = GetModel(() => (from q in new QueriableDummy<dummyntup>() from j in q.vals.Take(1) select j).Aggregate(0, (acc, va) => acc + 1));
-
             var q = new dummyntup();
             q.vals = new int[] { 1, 2, 3, 4, 5 };
             var model = GetModel(() => (from j in q.vals select j).Take(1));
