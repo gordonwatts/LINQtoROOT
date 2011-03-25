@@ -189,7 +189,8 @@ namespace LINQToTTreeLib
         /// <param name="indexName"></param>
         private void CodeLoopOverExpression(Expression loopExpr, string indexName)
         {
-            Expressions.ArrayExpressionParser.ParseArrayExpression(indexName, loopExpr, _codeEnv, _codeContext, MEFContainer);
+            Expressions.ArrayExpressionParser.ParseArrayExpression(loopExpr, _codeEnv, _codeContext, MEFContainer);
+            _mainIndex = _codeContext.Add(indexName, _codeContext.LoopVariable);
         }
 
         /// <summary>
