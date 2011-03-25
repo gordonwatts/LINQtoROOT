@@ -109,6 +109,18 @@ namespace LINQToTTreeLib.QueryVisitors
         /// <param name="queryModel"></param>
         public override void VisitQueryModel(QueryModel queryModel)
         {
+            ///
+            /// We can only do scalars.
+            /// 
+
+            var resultType = queryModel.GetResultType();
+            if (resultType.GetInterface("IEnumerable") != null)
+                throw new ArgumentException("Scalar query visitor can't return an sequence or array for the query '" + queryModel.ToString() + "'");
+
+            ///
+            /// Do the visit
+            /// 
+
             base.VisitQueryModel(queryModel);
 
             ///

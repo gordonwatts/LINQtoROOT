@@ -51,6 +51,27 @@ namespace LINQToTTreeLib.QueryVisitors
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestArrayParseFails()
+        {
+            /// The scalar query guy doesn't work on arrays!
+
+            var model = GetModel(() => from q in new QueriableDummy<dummyntup>() from j in q.vals select j);
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new ScalarQueryVisitor(gc, cc);
+            MEFUtilities.Compose(qv);
+            qv.MEFContainer = MEFUtilities.MEFContainer;
+
+            qv.VisitQueryModel(model);
+        }
+
+        [TestMethod]
         public void TestMEFQueryPassAlong()
         {
             var model = GetModel(() => (
