@@ -218,16 +218,6 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        public void TestIgnoreNonVectorArray()
-        {
-            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithNonVectorArray();
-            var p = new ParseTTree();
-            var result = p.GenerateClasses(t).ToArray();
-
-            Assert.AreEqual(1, result[0].Items.Count, "Number of leaves should be just 1");
-        }
-
-        [TestMethod]
         public void TestGenerateSimpleItems()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateSingleItemTree();
@@ -289,6 +279,27 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(possibleTypes.Length, result[0].Items.Select(i => i.ItemType).Distinct().Count(), "Incorrect number of branches found!");
 
             CheckSerialization(result, "GenerateClassesTestVectorIntAndDoubleAndShort");
+        }
+
+        [TestMethod]
+        public void TestGenerateWithStringVectorTypes()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithStringTypes();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "Empty ntuple should have fired");
+            Assert.AreEqual(0, result[0].Items.Count, "Expected nothing to be pasred");
+        }
+
+        [TestMethod]
+        public void TestIgnoreNonVectorArray()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithNonVectorArray();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result[0].Items.Count, "Number of leaves should be just 1");
         }
 
         [TestMethod]

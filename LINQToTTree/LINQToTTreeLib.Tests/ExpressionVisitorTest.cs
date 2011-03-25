@@ -541,5 +541,49 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual("((Int32[])(*(*obj).arr))[((int)1)]", result.RawValue, "array text");
         }
+
+        [TestMethod]
+        public void TestLambdaCallFunction()
+        {
+            /// Test a call that looks like v => v+1.
+            
+            Expression<Func<int, int>> incr = v => v +1;
+            var invoke = Expression.Invoke(incr, Expression.Variable(typeof(int), "d"));
+
+            var result = CallBasicGetExpression(invoke);
+
+            Assert.AreEqual(typeof(int), result.Type, "type");
+            Assert.AreEqual("((int)d)+((int)1)", result.RawValue, "raw value");
+        }
+
+        [TestMethod]
+        public void TestNestedLambaCallFunction()
+        {
+            Expression<Func<int, int>> incr = v => v + 1;
+            var invoke = Expression.Invoke(incr, Expression.Variable(typeof(int), "d"));
+
+            var invoke2 = Expression.Invoke(incr, invoke);
+
+            var result = CallBasicGetExpression(invoke2);
+
+            Assert.AreEqual(typeof(int), result.Type, "type");
+            Assert.AreEqual("((int)((int)d)+((int)1))+((int)1)", result.RawValue, "raw value");
+        }
+
+        /// <summary>
+        /// Does some simple work to get an expression
+        /// </summary>
+        /// <param name="invoke"></param>
+        private static IValue CallBasicGetExpression(InvocationExpression invoke)
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+
+            return ExpressionVisitor.GetExpression(invoke, gc, cc, MEFUtilities.MEFContainer);
+        }
     }
 }

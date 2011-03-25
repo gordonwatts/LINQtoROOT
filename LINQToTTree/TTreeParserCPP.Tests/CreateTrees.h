@@ -288,6 +288,17 @@ namespace TTreeParserCPPTests {
 			return gcnew ROOTNET::NTTree(t);
 		}
 
+		/// Create a tree with things like unsigned int, unsigned short, etc.
+		static ROOTNET::NTTree ^CreateWithStringTypes()
+		{
+			vector<string> strVector;
+
+			TTree *t = new TTree("dude", "left field");
+			t->Branch("str_vector", &strVector);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
 		/// Create a tree with some number of vector's in it.
 		static ROOTNET::NTTree ^CreateVectorVectorTree()
 		{
