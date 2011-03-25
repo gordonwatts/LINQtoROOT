@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,13 +16,13 @@ namespace LINQToTTreeLib.Tests
         public class subclass
         {
             public int val;
-            public IEnumerable<subsubclass> deeper;
+            public subsubclass[] deeper;
         }
 
         public class ntup
         {
             public int run;
-            public IEnumerable<subclass> other;
+            public subclass[] other;
         }
 
         [TestInitialize]
