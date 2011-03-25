@@ -56,6 +56,14 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Reset the result to be null
+        /// </summary>
+        public void ResetResult()
+        {
+            ResultValue = null;
+        }
+
+        /// <summary>
         /// Keeps track of the the current scope
         /// </summary>
         private class CurrentScopeInfo : IScopeInfo

@@ -419,17 +419,17 @@ namespace LINQToTTreeLib
             ///    we need to make sure it is declared and kept before it is used. The # that comes
             ///    back needs to be used outside the scope we are sitting in - the one that we were at
             ///    when we started this.
-            /// 2. <return a sequence> - this is weird - what we return is an array operator, but the key
-            ///    thing is that we don't want to pop off the current pointer where we are going to insert
-            ///    the next sequence.
+            /// 2. <return a sequence> - this is weird - What we are actually doing here is putting the
+            ///    sequence into code. So the loop variable has been updated with the new sequence iterator
+            ///    value. But there isn't really a result! So the result will be null...
             /// 
 
-            if ((_codeEnv.ResultValue as ISequenceAccessor) == null)
+            if (_codeEnv.ResultValue != null)
             {
                 _codeEnv.CurrentScope = scope;
                 _codeEnv.Add(_codeEnv.ResultValue);
+                _result = _codeEnv.ResultValue;
             }
-            _result = _codeEnv.ResultValue;
 
             return expression;
         }

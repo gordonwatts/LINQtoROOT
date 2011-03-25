@@ -57,6 +57,11 @@ namespace LinqToTTreeInterfacesLib
         void SetResult(IVariable result);
 
         /// <summary>
+        /// Set no-result (i.e. set it to null).
+        /// </summary>
+        void ResetResult();
+
+        /// <summary>
         /// Returns the value that is the result of this calculation.
         /// </summary>
         IVariable ResultValue { get; }
