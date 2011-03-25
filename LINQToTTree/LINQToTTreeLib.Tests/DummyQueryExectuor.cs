@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
@@ -52,7 +53,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
             }
 
-            var qv = new QueryVisitor(Result);
+            var qv = new ScalarQueryVisitor(Result);
             MEFUtilities.Compose(qv);
 
             qv.VisitQueryModel(queryModel);

@@ -11,6 +11,7 @@ using LinqToTTreeInterfacesLib;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Data.Linq;
+using LINQToTTreeLib.QueryVisitors;
 
 namespace LINQToTTreeLib
 {
@@ -168,7 +169,7 @@ namespace LINQToTTreeLib
             /// 
 
             var result = new GeneratedCode();
-            var qv = new QueryVisitor(result);
+            var qv = new ScalarQueryVisitor(result);
 
             CompositionBatch b = new CompositionBatch();
             b.AddPart(qv);

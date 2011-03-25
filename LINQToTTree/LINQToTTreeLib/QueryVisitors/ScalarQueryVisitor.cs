@@ -8,12 +8,12 @@ using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 
-namespace LINQToTTreeLib
+namespace LINQToTTreeLib.QueryVisitors
 {
     /// <summary>
     /// Visitor patter class to move through the expression we've been handed.
     /// </summary>
-    public class QueryVisitor : QueryModelVisitorBase
+    public class ScalarQueryVisitor : QueryModelVisitorBase
     {
         /// <summary>
         /// Hold onto the code we are writing.
@@ -29,7 +29,7 @@ namespace LINQToTTreeLib
         /// Create a new visitor and add our code to the current spot we are in the "code".
         /// </summary>
         /// <param name="code"></param>
-        public QueryVisitor(IGeneratedCode code, ICodeContext context = null)
+        public ScalarQueryVisitor(IGeneratedCode code, ICodeContext context = null)
         {
             _codeEnv = code;
             _codeContext = context;

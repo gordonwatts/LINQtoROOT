@@ -20,6 +20,7 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Parsing.Structure;
+using LINQToTTreeLib.QueryVisitors;
 
 namespace LINQToTTreeLib
 {
@@ -332,7 +333,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new ScalarQueryVisitor(gc, cc));
 
             var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             Assert.AreEqual(typeof(int), result.Type, "bad type for return");
@@ -361,7 +362,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new ScalarQueryVisitor(gc, cc));
 
             var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             gc.DumpCodeToConsole();
@@ -400,7 +401,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new ScalarQueryVisitor(gc, cc));
 
             var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
 
@@ -431,7 +432,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new ScalarQueryVisitor(gc, cc));
 
             var result = ExpressionVisitor.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
 
@@ -502,7 +503,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new ScalarQueryVisitor(gc, cc));
 
             var expr = Expression.Variable(typeof(int), "d");
 

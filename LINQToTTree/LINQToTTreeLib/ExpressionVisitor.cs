@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
@@ -396,7 +397,7 @@ namespace LINQToTTreeLib
             if (MEFContainer == null)
                 throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
 
-            QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext);
+            ScalarQueryVisitor qv = new ScalarQueryVisitor(_codeEnv, _codeContext);
             CompositionBatch b = new CompositionBatch();
             b.AddPart(qv);
             qv.SubExpressionParse = true;

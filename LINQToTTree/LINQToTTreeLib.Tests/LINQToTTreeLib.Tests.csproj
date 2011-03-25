@@ -184,7 +184,7 @@
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QueriableDummy.cs" />
     <Compile Include="QueryResultCacheTest.cs" />
-    <Compile Include="QueryVisitorTest.cs" />
+    <Compile Include="QueryVisitors\ScalarQueryVisitorTest.cs" />
     <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
     </Compile>

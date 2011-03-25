@@ -17,14 +17,14 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses.ResultOperators;
 using Remotion.Data.Linq.Parsing.Structure;
 
-namespace LINQToTTreeLib
+namespace LINQToTTreeLib.QueryVisitors
 {
     /// <summary>This class contains parameterized unit tests for QueryVisitor</summary>
-    [PexClass(typeof(QueryVisitor))]
+    [PexClass(typeof(ScalarQueryVisitor))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
-    public partial class QueryVisitorTest
+    public partial class ScalarQueryVisitorTest
     {
         [TestInitialize]
         public void Setup()
@@ -63,7 +63,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new ScalarQueryVisitor(gc, cc);
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
@@ -80,7 +80,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new ScalarQueryVisitor(gc, cc);
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
@@ -219,7 +219,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new ScalarQueryVisitor(gc, cc);
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
@@ -245,7 +245,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new ScalarQueryVisitor(gc, cc);
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
@@ -281,7 +281,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new ScalarQueryVisitor(gc, cc);
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
@@ -316,7 +316,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new ScalarQueryVisitor(gc, cc);
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
@@ -383,7 +383,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new ScalarQueryVisitor(gc, cc);
             MEFUtilities.Compose(qv);
             qv.MEFContainer = MEFUtilities.MEFContainer;
 
