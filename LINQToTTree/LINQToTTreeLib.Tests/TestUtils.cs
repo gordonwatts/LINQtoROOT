@@ -17,7 +17,11 @@ namespace LINQToTTreeLib.Tests
             Console.WriteLine("Code:");
             foreach (var var in code.CodeBody.DeclaredVariables)
             {
-                Console.WriteLine(var.Type.Name + " " + var.VariableName + " = " + var.InitialValue.RawValue + ";");
+                string initalValue = "default()";
+                if (var.InitialValue != null && var.InitialValue.RawValue != null)
+                    initalValue = var.InitialValue.RawValue;
+
+                Console.WriteLine(var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
             }
             foreach (var l in code.CodeBody.CodeItUp())
             {

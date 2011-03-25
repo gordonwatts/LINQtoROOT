@@ -49,13 +49,6 @@ namespace LINQToTTreeLib.Tests
             var res = DummyQueryExectuor.FinalResult;
 
             ///
-            /// We should be booking "d" as a variable that hangs out for a while
-            /// 
-
-            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "expected one variable declared");
-            Assert.AreEqual("this", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
-
-            ///
             /// Now, take a lok at the statements and make sure that we see them all correctly.
             ///
 
@@ -78,8 +71,6 @@ namespace LINQToTTreeLib.Tests
             var res = DummyQueryExectuor.FinalResult;
 
             res.DumpCodeToConsole();
-
-            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "Expect a single declared variable");
 
             ///
             /// We expect a single top level statement
@@ -109,8 +100,6 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
-
-            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "Expect a single declared variable");
 
             ///
             /// We expect a single top level statement

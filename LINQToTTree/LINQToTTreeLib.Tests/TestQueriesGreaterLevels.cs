@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -61,18 +62,17 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "expected one variable declared");
-            Assert.AreEqual("this", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
 
             ///
             /// Now, take a lok at the statements and make sure that we see them all correctly. This first guy should be the
             /// loop statement over the d.other guys.
             ///
 
-            Assert.AreEqual(1, res.CodeBody.Statements.Count(), "Expected a single statement");
-            Assert.IsInstanceOfType(res.CodeBody.Statements.First(), typeof(StatementLoopOnVector), "loop missing!");
+            Assert.AreEqual(2, res.CodeBody.Statements.Count(), "Expected a single statement");
+            Assert.IsInstanceOfType(res.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "loop missing!");
 
-            var loop = res.CodeBody.Statements.First() as StatementLoopOnVector;
-            Assert.AreEqual("(*this).other", loop.VectorToLoopOver.RawValue, "vector that will be looped over is not specified correctly");
+            var loop = res.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            var firstLine = loop.CodeItUp().First();
 
             ///
             /// And below that should be one statement that does the incrementing
@@ -107,29 +107,25 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "expected one variable declared");
-            Assert.AreEqual("this", res.CodeBody.DeclaredVariables.First().RawValue, "expected it to maintain the name!");
 
             ///
             /// Now, take a lok at the statements and make sure that we see them all correctly. This first guy should be the
             /// loop statement over the d.other guys.
             ///
 
-            Assert.AreEqual(1, res.CodeBody.Statements.Count(), "Expected a single statement");
-            Assert.IsInstanceOfType(res.CodeBody.Statements.First(), typeof(StatementLoopOnVector), "loop missing!");
+            Assert.AreEqual(2, res.CodeBody.Statements.Count(), "Expected a single statement");
+            Assert.IsInstanceOfType(res.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "loop missing!");
 
-            var loop = res.CodeBody.Statements.First() as StatementLoopOnVector;
-            Assert.AreEqual("(*this).other", loop.VectorToLoopOver.RawValue, "vector that will be looped over is not specified correctly");
+            var loop = res.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
 
             ///
             /// Second level down...
             /// 
 
-            Assert.AreEqual(1, loop.Statements.Count(), "expected second level down one loop statement");
-            Assert.IsInstanceOfType(loop.Statements.First(), typeof(StatementLoopOnVector), "Expected 2nd level loop");
+            Assert.AreEqual(2, loop.Statements.Count(), "expected second level down one loop statement");
+            Assert.IsInstanceOfType(loop.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "Expected 2nd level loop");
 
-            var loop2 = loop.Statements.First() as StatementLoopOnVector;
-            Assert.IsTrue(loop2.VectorToLoopOver.RawValue.StartsWith("(*((*this).other)["), "Bad vector loop index: " + loop2.VectorToLoopOver.RawValue);
-            Assert.IsTrue(loop2.VectorToLoopOver.RawValue.EndsWith("]).deeper"), "Bad vector loop index: " + loop2.VectorToLoopOver.RawValue);
+            var loop2 = loop.Statements.Skip(1).First() as IBookingStatementBlock;
 
             ///
             /// And below that should be one statement that does the incrementing
