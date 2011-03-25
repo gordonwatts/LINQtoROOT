@@ -38,7 +38,9 @@ namespace LINQToTTreeLib.Expressions
                 /// The sub-query expression will just run. We need to parse the result and see what happens. We reutnr
                 /// null in the end because it is the "context" that is getting setup.
 
-                ExpressionVisitor.GetExpression(expr, gc, cc, container);
+                var val = ExpressionVisitor.GetExpression(expr, gc, cc, container);
+                if (val != null)
+                    throw new ArgumentException("What looked like an array (type '" + expr.Type.Name + "') seems to have returned a value: '" + val.RawValue + "'");
                 return null;
             }
 
