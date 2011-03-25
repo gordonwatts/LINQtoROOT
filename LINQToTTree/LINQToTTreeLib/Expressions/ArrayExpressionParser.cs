@@ -1,11 +1,14 @@
 ﻿using System;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using Remotion.Data.Linq.Clauses.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
     /// <summary>
-    /// Parse an array expression
+    /// Parse an array expression. Think of this as an extension of ExpressionVisitor, but meant
+    /// for a specific purpose (i.e. we have pulled it out to keep the code in one place).
     /// </summary>
     internal class ArrayExpressionParser
     {
@@ -15,12 +18,33 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public static IArrayInfo ParseArrayExpression(Expression expr)
+        public static IArrayInfo ParseArrayExpression(Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
         {
-            if (!IsArrayType(expr))
-                throw new ArgumentException("Type '" + expr.Type.Name + "' is not an array we know how to deal with");
+            ///
+            /// Is it a simple array?
+            /// 
 
-            return new ArrayInfoVector(expr);
+            if (IsArrayType(expr))
+                return new ArrayInfoVector(expr);
+
+            ///
+            /// Is it a sub-query expression?
+            /// 
+
+            if (expr is SubQueryExpression)
+            {
+                /// The sub-query expression will just run. We need to parse the result and see what happens. We reutnr
+                /// null in the end because it is the "context" that is getting setup.
+
+                ExpressionVisitor.GetExpression(expr, gc, cc, container);
+                return null;
+            }
+
+            ///
+            /// We have no idea how to deal with this!
+            /// 
+
+            throw new ArgumentException("Type '" + expr.Type.Name + "' ('" + expr.ToString() + "') is not an array we know how to deal with");
         }
 
         /// <summary>

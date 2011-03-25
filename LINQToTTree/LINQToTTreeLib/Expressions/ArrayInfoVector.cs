@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -35,14 +36,14 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="indexName"></param>
         /// <param name="popVariableContext"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression AddLoop(IGeneratedCode env, ICodeContext context)
+        public System.Linq.Expressions.Expression AddLoop(IGeneratedCode env, ICodeContext context, CompositionContainer container)
         {
             ///
             /// First, we will need to know the length of this array
             /// 
 
             var lenExpression = Expression.ArrayLength(_arrayExpression);
-            var lenTranslation = ExpressionVisitor.GetExpression(lenExpression, env, context);
+            var lenTranslation = ExpressionVisitor.GetExpression(lenExpression, env, context, container);
 
             ///
             /// Next, generate the expression that forms the basis of the index lookup. We don't

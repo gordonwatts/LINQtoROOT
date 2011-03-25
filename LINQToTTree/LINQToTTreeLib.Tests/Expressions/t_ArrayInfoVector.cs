@@ -1,6 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.ComponentModel.Composition;
+using System.Linq;
 using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -15,6 +20,46 @@ namespace LINQToTTreeLib.Tests
     public class TestArrayInfoVector
     {
 
+
+        [TestInitialize]
+        public void Setup()
+        {
+            MEFUtilities.MyClassInit();
+            MEFUtilities.AddPart(new QVResultOperators());
+            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
+            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new DealWithInt32());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc);
+            MEFUtilities.Compose(qv);
+        }
+
+        [Export(typeof(ITypeHandler))]
+        class DealWithInt32 : ITypeHandler
+        {
+            public bool CanHandle(System.Type t)
+            {
+                return t == typeof(System.Int32[]);
+            }
+
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                return new Variables.ValSimple("35", typeof(int[]));
+            }
+
+            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            MEFUtilities.MyClassDone();
+        }
 
         private TestContext testContextInstance;
 
@@ -74,7 +119,7 @@ namespace LINQToTTreeLib.Tests
             CodeContext cc = new CodeContext();
             GeneratedCode gc = new GeneratedCode();
 
-            var indexVar = vec.AddLoop(gc, cc);
+            var indexVar = vec.AddLoop(gc, cc, MEFUtilities.MEFContainer);
 
             ///
             /// Add a dumb statement to force the rendering of the loop (empty loops don't render)

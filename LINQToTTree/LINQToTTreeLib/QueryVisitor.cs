@@ -75,7 +75,8 @@ namespace LINQToTTreeLib
             var collectionProcessor = _operators.FindCollectionROProcessor(resultOperator.GetType());
             if (collectionProcessor != null)
             {
-                processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
+                collectionProcessor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
+                _codeEnv.ResetResult();
                 return;
             }
 
@@ -119,7 +120,7 @@ namespace LINQToTTreeLib
             /// <param name="env"></param>
             /// <param name="context"></param>
             /// <returns></returns>
-            public Expression AddLoop(IGeneratedCode env, ICodeContext context)
+            public Expression AddLoop(IGeneratedCode env, ICodeContext context, CompositionContainer container)
             {
                 return Expression.Variable(thisType, "this");
             }
@@ -188,7 +189,7 @@ namespace LINQToTTreeLib
         /// <param name="indexName"></param>
         private void CodeLoopOverExpression(Expression loopExpr, string indexName)
         {
-            var arrayRef = Expressions.ArrayExpressionParser.ParseArrayExpression(loopExpr);
+            var arrayRef = Expressions.ArrayExpressionParser.ParseArrayExpression(loopExpr, _codeEnv, _codeContext, MEFContainer);
             CodeLoopOverArrayInfo(indexName, arrayRef);
         }
 
@@ -199,7 +200,7 @@ namespace LINQToTTreeLib
         /// <param name="arrayRef"></param>
         private void CodeLoopOverArrayInfo(string indexName, IArrayInfo arrayRef)
         {
-            var indexVar = arrayRef.AddLoop(_codeEnv, _codeContext);
+            var indexVar = arrayRef.AddLoop(_codeEnv, _codeContext, MEFContainer);
 
             ///
             /// Next, make sure the index variable can be used for later references!
