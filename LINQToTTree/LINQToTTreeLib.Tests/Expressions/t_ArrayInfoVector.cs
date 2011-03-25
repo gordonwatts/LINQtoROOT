@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
@@ -28,7 +29,7 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.AddPart(new QVResultOperators());
             ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
             MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
-            MEFUtilities.AddPart(new DealWithInt32());
+            MEFUtilities.AddPart(new DealWithMyTypes());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             var qv = new QueryVisitor(gc, cc);
@@ -36,16 +37,17 @@ namespace LINQToTTreeLib.Tests
         }
 
         [Export(typeof(ITypeHandler))]
-        class DealWithInt32 : ITypeHandler
+        class DealWithMyTypes : ITypeHandler
         {
             public bool CanHandle(System.Type t)
             {
-                return t == typeof(System.Int32[]);
+                return t == typeof(System.Int32[])
+                    || t == typeof(ResultType1);
             }
 
             public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
-                return new Variables.ValSimple("35", typeof(int[]));
+                return new Variables.ValSimple("35", expr.Type);
             }
 
             public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
@@ -53,7 +55,6 @@ namespace LINQToTTreeLib.Tests
                 throw new NotImplementedException();
             }
         }
-
 
         [TestCleanup]
         public void Cleanup()
@@ -151,14 +152,66 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(statements[3].StartsWith("  for (int "), "statement 3 - for (): '" + statements[3] + "'");
             Assert.AreEqual("  {", statements[4], "for loop brace opening");
             Assert.AreEqual("    d = d;", statements[5], "the actual statement");
+        }
 
-            Assert.Inconclusive("Need to code up checks to make sure the 'loop' variable is set correctly so other expressions depending on the loop can access this guy.");
+        [TranslateToClass(typeof(ResultType1))]
+        class SourceType1
+        {
+            [TTreeVariableGrouping]
+            public SourceType1SubType[] jets;
+        }
+
+        class SourceType1SubType
+        {
+            [TTreeVariableGrouping]
+            public int val1;
+        }
+
+        class ResultType1 : IExpressionHolder
+        {
+            public ResultType1(Expression holder)
+            { HeldExpression = holder; }
+
+            public int[] val1;
+
+            public Expression HeldExpression
+            {
+                get;
+                private set;
+            }
         }
 
         [TestMethod]
         public void TestTranslatedArray()
         {
-            Assert.Inconclusive("not written yet");
+            var baseVar = Expression.Variable(typeof(SourceType1), "d");
+            var jetRef = Expression.MakeMemberAccess(baseVar, typeof(SourceType1).GetMember("jets").First());
+
+            ArrayInfoVector vec = new ArrayInfoVector(jetRef);
+
+            CodeContext cc = new CodeContext();
+            GeneratedCode gc = new GeneratedCode();
+
+            var indexVar = vec.AddLoop(gc, cc, MEFUtilities.MEFContainer);
+
+            ///
+            /// Make sure the indexvar is working correctly
+            /// 
+
+            Assert.IsInstanceOfType(indexVar, typeof(BinaryExpression), "inproper expression variable type");
+            Assert.AreEqual(typeof(SourceType1SubType), indexVar.Type, "index var type");
+            var be = indexVar as BinaryExpression;
+            Assert.AreEqual(ExpressionType.ArrayIndex, be.NodeType, "not array index");
+            Assert.AreEqual(typeof(int), be.Right.Type, "Indexer of array type");
+            Assert.IsInstanceOfType(be.Left, typeof(MemberExpression), "now the same paraemter, I think!");
+            Assert.AreEqual(jetRef, be.Left, "array isn't right");
+
+            ///
+            /// Now, make sure we got as far as a proper size variable
+            /// 
+
+            var statements = gc.CodeBody.CodeItUp().ToArray();
+            Assert.IsTrue(statements[2].Contains(".val1).size()"), "size statement incorrect: '" + statements[2] + "'");
         }
     }
 }
