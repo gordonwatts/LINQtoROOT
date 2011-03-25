@@ -77,6 +77,8 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
 
+            res.DumpCodeToConsole();
+
             Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count(), "Expect a single declared variable");
 
             ///

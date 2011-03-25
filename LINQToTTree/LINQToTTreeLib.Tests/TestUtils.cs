@@ -15,6 +15,10 @@ namespace LINQToTTreeLib.Tests
         public static void DumpCodeToConsole(this IGeneratedCode code)
         {
             Console.WriteLine("Code:");
+            foreach (var var in code.CodeBody.DeclaredVariables)
+            {
+                Console.WriteLine(var.Type.Name + " " + var.VariableName + " = " + var.InitialValue.RawValue + ";");
+            }
             foreach (var l in code.CodeBody.CodeItUp())
             {
                 Console.WriteLine("  " + l);
