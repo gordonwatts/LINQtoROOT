@@ -2,6 +2,8 @@
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
 
 namespace LINQToTTreeLib.Expressions
@@ -18,7 +20,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public static IArrayInfo ParseArrayExpression(Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
+        private static IArrayInfo GetIArrayInfo(Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
             /// Is it a simple array?
@@ -45,6 +47,41 @@ namespace LINQToTTreeLib.Expressions
             /// 
 
             throw new ArgumentException("Type '" + expr.Type.Name + "' ('" + expr.ToString() + "') is not an array we know how to deal with");
+        }
+
+        /// <summary>
+        /// Given an array expression, turn it into a loop. 
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        public static void ParseArrayExpression(Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
+        {
+            ParseArrayExpression(null, expr, gc, cc, container);
+        }
+
+        /// <summary>
+        /// Parse an array expression, and turn it into a loop. Use indexName as the loop variable. Bomb if we can't do it. If you hand in null we will make up our own.
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        public static void ParseArrayExpression(string indexName, Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
+        {
+            var result = GetIArrayInfo(expr, gc, cc, container);
+            if (result == null && !string.IsNullOrEmpty(indexName))
+                throw new ArgumentException("When parsing array expression it's iterator was preset, however caller asked us to reset it");
+
+            if (result == null)
+                return;
+
+            if (indexName == null)
+                indexName = typeof(int).CreateUniqueVariableName();
+            result.CodeLoopOverArrayInfo(indexName, gc, cc, container);
         }
 
         /// <summary>

@@ -91,6 +91,7 @@
     <Compile Include="TypeHandlers\TranslationTypes\TypeHandlerTranslationClass.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCache.cs" />
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
+    <Compile Include="Utils\ExpressionUtilities.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\ObjectHashCalculator.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />

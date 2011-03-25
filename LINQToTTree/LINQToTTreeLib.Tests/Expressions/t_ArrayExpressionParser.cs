@@ -76,6 +76,7 @@ namespace LINQToTTreeLib.Tests
             var gc = new GeneratedCode();
             var cc = new CodeContext();
             ArrayExpressionParser.ParseArrayExpression(Expression.Variable(typeof(int[]), "d"), gc, cc, MEFUtilities.MEFContainer);
+            Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }
 
         private QueryModel GetModel<T>(Expression<Func<T>> expr)
@@ -101,8 +102,7 @@ namespace LINQToTTreeLib.Tests
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
 
-            var result = ArrayExpressionParser.ParseArrayExpression(sq, gc, cc, MEFUtilities.MEFContainer);
-            Assert.IsNull(result, "result of parse array");
+            ArrayExpressionParser.ParseArrayExpression(sq, gc, cc, MEFUtilities.MEFContainer);
 
             Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }

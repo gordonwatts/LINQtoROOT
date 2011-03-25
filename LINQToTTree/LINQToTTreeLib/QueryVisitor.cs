@@ -141,7 +141,7 @@ namespace LINQToTTreeLib
 
             if (!SubExpressionParse)
             {
-                CodeLoopOverArrayInfo(fromClause.ItemName, new OutterLoopArrayInfo(fromClause.ItemType));
+                _mainIndex = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause.ItemName, _codeEnv, _codeContext, MEFContainer);
             }
             else
             {
@@ -189,25 +189,7 @@ namespace LINQToTTreeLib
         /// <param name="indexName"></param>
         private void CodeLoopOverExpression(Expression loopExpr, string indexName)
         {
-            var arrayRef = Expressions.ArrayExpressionParser.ParseArrayExpression(loopExpr, _codeEnv, _codeContext, MEFContainer);
-            CodeLoopOverArrayInfo(indexName, arrayRef);
-        }
-
-        /// <summary>
-        /// Given array info, code a loop over it.
-        /// </summary>
-        /// <param name="indexName"></param>
-        /// <param name="arrayRef"></param>
-        private void CodeLoopOverArrayInfo(string indexName, IArrayInfo arrayRef)
-        {
-            var indexVar = arrayRef.AddLoop(_codeEnv, _codeContext, MEFContainer);
-
-            ///
-            /// Next, make sure the index variable can be used for later references!
-            /// 
-
-            _mainIndex = _codeContext.Add(indexName, indexVar);
-            _codeContext.SetLoopVariable(indexVar);
+            Expressions.ArrayExpressionParser.ParseArrayExpression(indexName, loopExpr, _codeEnv, _codeContext, MEFContainer);
         }
 
         /// <summary>
