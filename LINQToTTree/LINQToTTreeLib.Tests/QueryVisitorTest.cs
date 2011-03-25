@@ -127,8 +127,8 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Dummy to test that the loop variable when we get here is actually pointing to the right thing!
         /// </summary>
-        [Export(typeof(IQVScalarResultOperator))]
-        class TakeOperatorTestLoopVar : IQVScalarResultOperator
+        [Export(typeof(IQVCollectionResultOperator))]
+        class TakeOperatorTestLoopVar : IQVCollectionResultOperator
         {
 
             public bool CanHandle(Type resultOperatorType)
@@ -137,7 +137,7 @@ namespace LINQToTTreeLib
                     || resultOperatorType == typeof(SkipResultOperator);
             }
 
-            public IVariable ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            public void ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 ///
                 /// Look at the loop variable. It should be pointing to something that is going to loop
@@ -145,7 +145,6 @@ namespace LINQToTTreeLib
                 /// 
 
                 Assert.AreEqual(typeof(int), _codeContext.LoopVariable.Type, "Loopvariable type");
-                return new dummyvar();
             }
 
             /// <summary>
