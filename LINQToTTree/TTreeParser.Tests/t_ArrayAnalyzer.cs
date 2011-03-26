@@ -183,7 +183,7 @@ namespace TTreeParser.Tests
             Assert.AreEqual(1, result.Length, "# of groups");
             Assert.AreEqual("ungrouped", result[0].Name, "ungrouped name");
             Assert.AreEqual(1, result[0].Variables.Length, "var count");
-            Assert.AreEqual("var1", result[0].Variables[0], "var name");
+            Assert.AreEqual("var1", result[0].Variables[0].Name, "var name");
         }
 
         [TestMethod]
@@ -202,8 +202,8 @@ namespace TTreeParser.Tests
             var result = aa.DetermineGroups(data);
             Assert.AreEqual(1, result.Length, "# of groups");
             Assert.AreEqual(2, result[0].Variables.Length, "# of vars in group");
-            Assert.IsTrue((result[0].Variables[0] == "var1" && result[0].Variables[1] == "var2")
-        || (result[0].Variables[0] == "var2" && result[0].Variables[1] == "var1"), "varable names");
+            Assert.IsTrue((result[0].Variables[0].Name == "var1" && result[0].Variables[1].Name == "var2")
+        || (result[0].Variables[0].Name == "var2" && result[0].Variables[1].Name == "var1"), "varable names");
         }
 
         [TestMethod]
@@ -277,8 +277,8 @@ namespace TTreeParser.Tests
             Assert.AreEqual(2, result[0].Variables.Length, "# of variables in group 1");
             Assert.AreEqual(2, result[1].Variables.Length, "# of variables in group 2");
             var ungroup = (from g in result where g.Name == "ungrouped" select g).First();
-            if (ungroup.Variables[0] == "var3")
-                Assert.AreEqual("var4", ungroup.Variables[1]);
+            if (ungroup.Variables[0].Name == "var3")
+                Assert.AreEqual("var4", ungroup.Variables[1].Name);
             else
                 Assert.AreEqual("var3", ungroup.Variables[1]);
         }
