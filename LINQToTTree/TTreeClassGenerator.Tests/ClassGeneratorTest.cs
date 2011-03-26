@@ -224,6 +224,102 @@ namespace TTreeClassGenerator
         }
 
         [TestMethod]
+        public void TestNoGroups()
+        {
+            /// Create simple user info - but don't do anything with it!
+            ItemSimpleType simple = new ItemSimpleType("var1", "int");
+            FileInfo proxyFile = new FileInfo("TestNoGroupsProxy.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "ungrouped", Variables = new VariableInfo[] { new VariableInfo() { Name = "var1", RenameTo = "var1" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestNoGroups.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleRename", userinfo } });
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsFalse(FindInFile(outputFile, "RenameVariable"), "We saw a rename!");
+            Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
+        }
+
+        [TestMethod]
+        public void TestSimpleRename()
+        {
+            /// Create simple user info - but don't do anything with it!
+            ItemSimpleType simple = new ItemSimpleType("var1", "int");
+            FileInfo proxyFile = new FileInfo("TestSimpleRename.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "ungrouped", Variables = new VariableInfo[] { new VariableInfo() { Name = "myvar", RenameTo = "var1" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestSimpleRename.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleRename", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsTrue(FindInFile(outputFile, "RenameVariable(\"var1\")"), "Rename missing!");
+            Assert.IsTrue(FindInFile(outputFile, "int myvar"), "myvar missing");
+            Assert.IsTrue(FindInFile(outputFile, "int var1"), "val1 missing");
+            Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
+        }
+
+        [TestMethod]
+        public void TestSimpleGroupAndRename()
+        {
+            /// Create simple user info - but don't do anything with it!
+            ItemSimpleType simple = new ItemSimpleType("var1", "int");
+            FileInfo proxyFile = new FileInfo("TestSimpleGroupAndRename.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", Variables = new VariableInfo[] { new VariableInfo() { Name = "myvar", RenameTo = "var1" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestSimpleGroupAndRename.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleGroupAndRename", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsTrue(FindInFile(outputFile, "RenameVariable(\"var1\")"), "Rename missing!");
+            Assert.IsTrue(FindInFile(outputFile, "TTreeVariableGrouping"), "Missing TTreeVariableGrouping");
+            Assert.IsTrue(FindInFile(outputFile, "jets"), "missing a reference to jets");
+            Assert.IsTrue(FindInFile(outputFile, "int myvar"), "myvar missing");
+            Assert.IsTrue(FindInFile(outputFile, "int var1"), "val1 missing");
+            Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
+        }
+
+        private void DumpOutputFile(FileInfo outputFile)
+        {
+            foreach (var l in LinesInFile(outputFile))
+            {
+                Console.WriteLine(l);
+            }
+        }
+
+        [TestMethod]
         public void TestOutputTestFiles()
         {
             GenerateClassFromClasses(new ClassGenerator(),

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -49,7 +50,7 @@ namespace TTreeClassGenerator
         /// <param name="classSpec"></param>
         /// <param name="outputCSFile"></param>
         /// <param name="namespaceName"></param>
-        public void GenerateClasss(NtupleTreeInfo classSpec, FileInfo outputCSFile, string namespaceName)
+        public void GenerateClasss(NtupleTreeInfo classSpec, FileInfo outputCSFile, string namespaceName, IDictionary<string, TTreeUserInfo> userInfo = null)
         {
             ///
             /// Parameter checks
@@ -122,7 +123,27 @@ namespace TTreeClassGenerator
 
                 foreach (var cls in classSpec.Classes)
                 {
-                    output.WriteLine("  public class {0}", cls.Name);
+                    ///
+                    /// First, if there is a translated object model, write it out.
+                    /// 
+
+                    var rawClassName = cls.Name;
+                    if (userInfo != null)
+                    {
+                        if (userInfo.ContainsKey(cls.Name))
+                        {
+                            if (RequiresTranslation(userInfo[cls.Name]))
+                            {
+                                rawClassName = rawClassName + "TranslatedTo";
+                                var varTypes = FindVariableTypes(cls.Items);
+                                WriteTranslatedObjectStructure(output, userInfo[cls.Name], cls.Name, rawClassName, varTypes);
+                                output.WriteLine();
+                                output.WriteLine();
+                            }
+                        }
+                    }
+
+                    output.WriteLine("  public class {0}", rawClassName);
                     output.WriteLine("  {");
 
                     ///
@@ -183,6 +204,126 @@ namespace TTreeClassGenerator
 
                 output.Close();
             }
+        }
+
+        /// <summary>
+        /// Find a mapping from varname -> type
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        private IDictionary<string, string> FindVariableTypes(List<IClassItem> list)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            foreach (var v in list)
+            {
+                result[v.Name] = v.ItemType;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// We have to write out the translated class. Sigh!! :-)
+        /// </summary>
+        /// <param name="tTreeUserInfo"></param>
+        /// <param name="p"></param>
+        /// <param name="rawClassName"></param>
+        private void WriteTranslatedObjectStructure(TextWriter output, TTreeUserInfo tTreeUserInfo, string className, string translateToName, IDictionary<string, string> varTypes)
+        {
+            ///
+            /// Main class header
+            /// 
+
+            output.WriteLine("  [TranslateToClass(typeof({0}))]", translateToName);
+            output.WriteLine("  public class {0}", className);
+            output.WriteLine("  {");
+
+            ///
+            /// First, do the ungrouped variables
+            /// 
+
+            var ungrouped = (from g in tTreeUserInfo.Groups
+                             where g.Name == "ungrouped"
+                             select g).FirstOrDefault();
+            if (ungrouped != null)
+            {
+                foreach (var v in ungrouped.Variables)
+                {
+                    WriteVariableRenameDefinition(output, v, varTypes);
+                }
+            }
+
+
+            ///
+            /// Now do the groups
+            /// 
+
+            foreach (var grp in tTreeUserInfo.Groups.Where(g => g.Name != "ungrouped"))
+            {
+                output.WriteLine("    [TTreeVariableGrouping]");
+                output.WriteLine("    public {0}{1}[] {1};", className, grp.Name);
+            }
+
+            ///
+            /// And the object is finished.
+            /// 
+
+            output.WriteLine("  }");
+            output.WriteLine();
+            output.WriteLine();
+
+            ///
+            /// Now do all the group classes
+            /// 
+
+            foreach (var grp in tTreeUserInfo.Groups.Where(g => g.Name != "ungrouped"))
+            {
+                output.WriteLine("  public class {0}{1}", className, grp.Name);
+                output.WriteLine("  {");
+
+                foreach (var v in grp.Variables)
+                {
+                    output.WriteLine("    [TTreeVariableGrouping]");
+                    WriteVariableRenameDefinition(output, v, varTypes);
+                }
+
+                output.WriteLine("  }");
+                output.WriteLine();
+                output.WriteLine();
+            }
+        }
+
+        /// <summary>
+        /// Write out a variable definition
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="v"></param>
+        private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes)
+        {
+            output.WriteLine("#pragma warning disable 0649");
+            var cppVarName = v.Name;
+            if (v.Name != v.RenameTo)
+            {
+                cppVarName = v.RenameTo;
+                output.WriteLine("    [RenameVariable(\"{0}\")]", v.RenameTo);
+            }
+            output.WriteLine("    public {0} {1};", varTypes[cppVarName], v.Name);
+            output.WriteLine("#pragma warning restore 0649");
+        }
+
+        /// <summary>
+        /// See if any translation is required.
+        /// </summary>
+        /// <param name="tTreeUserInfo"></param>
+        /// <returns></returns>
+        private bool RequiresTranslation(TTreeUserInfo tTreeUserInfo)
+        {
+            if (tTreeUserInfo.Groups.Length > 1)
+                return true;
+            if (tTreeUserInfo.Groups[0].Name != "ungrouped")
+                return true;
+
+            var anyRenames = tTreeUserInfo.Groups[0].Variables.Where(g => g.RenameTo != g.Name).Any();
+            return anyRenames;
         }
 
         /// <summary>
