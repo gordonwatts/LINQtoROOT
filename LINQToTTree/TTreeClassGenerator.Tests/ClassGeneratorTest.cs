@@ -311,6 +311,59 @@ namespace TTreeClassGenerator
             Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
         }
 
+        [TestMethod]
+        public void TestSimpleIndexing()
+        {
+            /// Create simple user info - but don't do anything with it!
+            ItemSimpleType simpleIndex = new ItemSimpleType("index", "int");
+            ItemSimpleType simpleVal = new ItemSimpleType("var1", "float");
+            FileInfo proxyFile = new FileInfo("TestSimpleIndexing.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleIndexing") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simpleIndex);
+            mainClass.Add(simpleVal);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo()
+            {
+                Groups = new ArrayGroup[] {
+                    new ArrayGroup()
+                    {
+                        Name = "jets", Variables = new VariableInfo[]
+                        {
+                            new VariableInfo() { Name = "index", RenameTo = "index", IndexToGroup="muons" }
+                        }
+                    },
+                    new ArrayGroup()
+                    {
+                        Name = "muons", Variables = new VariableInfo[]
+                        {
+                            new VariableInfo() { Name = "var1", RenameTo = "var1"}
+                        }
+                    }
+                }
+            };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestSimpleIndexing.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleIndexing", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsTrue(FindInFile(outputFile, "TTreeVariableGrouping"), "Missing TTreeVariableGrouping");
+            Assert.IsTrue(FindInFile(outputFile, "jets"), "missing a reference to jets");
+            Assert.IsTrue(FindInFile(outputFile, "muons"), "missing a reference to jets");
+            Assert.IsTrue(FindInFile(outputFile, "IndexToOtherObjectArray(typeof("), "Missing IndexToOtherObject");
+            Assert.IsTrue(FindInFile(outputFile, "\"muons\")"), "Missing muons reference");
+            Assert.IsTrue(FindInFile(outputFile, "float var1"), "var1 missing");
+            Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
+        }
+
         private void DumpOutputFile(FileInfo outputFile)
         {
             foreach (var l in LinesInFile(outputFile))

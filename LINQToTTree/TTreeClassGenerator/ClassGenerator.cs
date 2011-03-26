@@ -248,7 +248,7 @@ namespace TTreeClassGenerator
             {
                 foreach (var v in ungrouped.Variables)
                 {
-                    WriteVariableRenameDefinition(output, v, varTypes);
+                    WriteVariableRenameDefinition(output, v, varTypes, className);
                 }
             }
 
@@ -283,7 +283,7 @@ namespace TTreeClassGenerator
                 foreach (var v in grp.Variables)
                 {
                     output.WriteLine("    [TTreeVariableGrouping]");
-                    WriteVariableRenameDefinition(output, v, varTypes);
+                    WriteVariableRenameDefinition(output, v, varTypes, className);
                 }
 
                 output.WriteLine("  }");
@@ -297,14 +297,18 @@ namespace TTreeClassGenerator
         /// </summary>
         /// <param name="output"></param>
         /// <param name="v"></param>
-        private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes)
+        private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes, string baseTypeName)
         {
             output.WriteLine("#pragma warning disable 0649");
             var cppVarName = v.Name;
-            if (v.Name != v.RenameTo)
+            if (v.Name != v.RenameTo && string.IsNullOrEmpty(v.IndexToGroup))
             {
                 cppVarName = v.RenameTo;
                 output.WriteLine("    [RenameVariable(\"{0}\")]", v.RenameTo);
+            }
+            if (!string.IsNullOrEmpty(v.IndexToGroup))
+            {
+                output.WriteLine("    [IndexToOtherObjectArray(typeof({0}), \"{1}\")]", baseTypeName, v.IndexToGroup);
             }
             output.WriteLine("    public {0} {1};", varTypes[cppVarName], v.Name);
             output.WriteLine("#pragma warning restore 0649");

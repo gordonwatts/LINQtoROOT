@@ -12,5 +12,8 @@ namespace TTreeDataModel
 
         [XmlAttribute]
         public string RenameTo;
+
+        [XmlAttribute]
+        public string IndexToGroup;
     }
 }
