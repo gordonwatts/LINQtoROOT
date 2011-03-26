@@ -6,7 +6,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// Any expression involving this class should be translated into another type
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    sealed class TranslateToClassAttribute : Attribute
+    public sealed class TranslateToClassAttribute : Attribute
     {
         // This is a positional argument
         public TranslateToClassAttribute(Type targetType)

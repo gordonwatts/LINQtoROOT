@@ -63,7 +63,7 @@ namespace TTreeClassGenerator
             /// Now do the actual work!
             /// 
 
-            GenerateClasss(classSpec, outputCSFile, namespaceName);
+            GenerateClasss(classSpec, outputCSFile, namespaceName, userInfoMap);
         }
 
         /// <summary>
@@ -135,6 +135,7 @@ namespace TTreeClassGenerator
 
                 output.WriteLine("using System.IO;");
                 output.WriteLine("using LINQToTTreeLib;");
+                output.WriteLine("using LINQToTTreeLib.CodeAttributes;");
 
                 output.WriteLine();
                 output.WriteLine("namespace {0} {{", namespaceName);

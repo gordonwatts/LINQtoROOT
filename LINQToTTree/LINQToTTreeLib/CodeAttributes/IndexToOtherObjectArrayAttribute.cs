@@ -6,7 +6,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// Used when an object (which is an index refernece) points to another collection.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class IndexToOtherObjectArrayAttribute : Attribute
+    public sealed class IndexToOtherObjectArrayAttribute : Attribute
     {
         public IndexToOtherObjectArrayAttribute(Type baseType, string arrayName)
         {

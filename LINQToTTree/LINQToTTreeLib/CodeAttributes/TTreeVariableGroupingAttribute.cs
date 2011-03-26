@@ -7,7 +7,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// refered to in this object are actually arrays, and this object is grouped around them.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class TTreeVariableGroupingAttribute : Attribute
+    public sealed class TTreeVariableGroupingAttribute : Attribute
     {
         // This is a positional argument
         public TTreeVariableGroupingAttribute()
