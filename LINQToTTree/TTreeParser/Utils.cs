@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TTreeDataModel;
 
 namespace TTreeParser
 {
@@ -107,9 +108,9 @@ namespace TTreeParser
                     result = "long";
                     break;
 
-                    /// I always have trouble with this - but this is the case... at least on
-                    /// this platform - a long in C++ is a 32 bit integer. int is also a 32 bit
-                    /// integer...
+                /// I always have trouble with this - but this is the case... at least on
+                /// this platform - a long in C++ is a 32 bit integer. int is also a 32 bit
+                /// integer...
                 case "long":
                     result = "int";
                     break;
@@ -124,6 +125,22 @@ namespace TTreeParser
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Given a set of variable names, turn them into a list of Variable info
+        /// </summary>
+        /// <param name="varNames"></param>
+        /// <returns></returns>
+        public static IEnumerable<VariableInfo> ToVariableInfo(this IEnumerable<string> varNames)
+        {
+            var vars = from v in varNames
+                       select new VariableInfo()
+                       {
+                           Name = v,
+                           RenameTo = v
+                       };
+            return vars;
         }
     }
 }

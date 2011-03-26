@@ -14,6 +14,6 @@ namespace TTreeDataModel
         /// <summary>
         /// The list of variable names that this group contains.
         /// </summary>
-        public string[] Variables { get; set; }
+        public VariableInfo[] Variables { get; set; }
     }
 }

@@ -202,7 +202,7 @@ namespace TTreeParser
 
             List<ArrayGroup> aGroups = new List<ArrayGroup>();
             if (ungrouped.Length > 0 || alwaysZero.Length > 0)
-                aGroups.Add(new ArrayGroup() { Name = "ungrouped", Variables = ungrouped.Concat(alwaysZero).ToArray() });
+                aGroups.Add(new ArrayGroup() { Name = "ungrouped", Variables = ungrouped.Concat(alwaysZero).ToVariableInfo().ToArray() });
 
             ///
             /// Now make any group that is larger than 1 into a real group
@@ -215,7 +215,7 @@ namespace TTreeParser
             int index = 1;
             foreach (var g in goodGroups)
             {
-                aGroups.Add(new ArrayGroup() { Name = "group" + index.ToString(), Variables = g });
+                aGroups.Add(new ArrayGroup() { Name = "group" + index.ToString(), Variables = g.ToVariableInfo().ToArray() });
                 index = index + 1;
             }
 
