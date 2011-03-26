@@ -274,7 +274,7 @@ namespace TTreeClassGenerator
 
             /// Look through this to see if we can make sure there are no renames!
             Assert.IsTrue(FindInFile(outputFile, "RenameVariable(\"var1\")"), "Rename missing!");
-            Assert.IsTrue(FindInFile(outputFile, "int myvar"), "myvar missing");
+            Assert.IsTrue(FindInFile(outputFile, "int[] myvar"), "myvar missing");
             Assert.IsTrue(FindInFile(outputFile, "int[] var1"), "val1 missing");
             Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
         }
@@ -307,7 +307,7 @@ namespace TTreeClassGenerator
             Assert.IsTrue(FindInFile(outputFile, "TTreeVariableGrouping"), "Missing TTreeVariableGrouping");
             Assert.IsTrue(FindInFile(outputFile, "jets"), "missing a reference to jets");
             Assert.IsTrue(FindInFile(outputFile, "int myvar"), "myvar missing");
-            Assert.IsTrue(FindInFile(outputFile, "int var1"), "val1 missing");
+            Assert.IsTrue(FindInFile(outputFile, "int[] var1"), "val1 missing");
             Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
         }
 
