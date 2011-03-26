@@ -34,8 +34,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="libCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libHistWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libHistWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libRIOWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libRIOWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqToTTreeInterfacesLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LinqToTTreeInterfacesLib.dll</HintPath>
+    </Reference>
     <Reference Include="LINQToTTreeLib">
       <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Data.Linq">
+      <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\Remotion.Data.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,11 +59,18 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4058.40323, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ntupleDataModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ntupleinfo.ntupom" />
+    <None Include="vtupleConfig-000.ntup" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

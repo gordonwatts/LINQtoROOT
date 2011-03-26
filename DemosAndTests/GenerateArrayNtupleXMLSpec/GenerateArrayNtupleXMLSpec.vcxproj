@@ -37,15 +37,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>nmake all</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>nmake all SolutionDir=$(SolutionDir)</NMakeBuildCommandLine>
     <NMakeOutput>GenerateArrayNtupleXMLSpec.exe</NMakeOutput>
-    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>nmake clean SolutionDir=$(SolutionDir)</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>make all</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>nmake all SolutionDir=$(SolutionDir)</NMakeBuildCommandLine>
     <NMakeOutput>GenerateArrayNtupleXMLSpec.exe</NMakeOutput>
-    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>nmake clean SolutionDir=$(SolutionDir)</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
