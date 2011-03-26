@@ -1,4 +1,5 @@
 ﻿
+using System.Xml.Serialization;
 namespace TTreeDataModel
 {
     public class ItemSimpleType : IClassItem
@@ -19,7 +20,11 @@ namespace TTreeDataModel
         /// <summary>
         /// Return the type of this guy
         /// </summary>
+        [XmlAttribute]
         public override string ItemType { get; set; }
+
+
+        [XmlAttribute]
         public override string Name { get; set; }
     }
 }

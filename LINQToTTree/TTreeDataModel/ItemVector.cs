@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Xml.Serialization;
 
 namespace TTreeDataModel
 {
@@ -29,7 +26,10 @@ namespace TTreeDataModel
         {
         }
 
+        [XmlAttribute]
         public override string ItemType { get; set; }
+
+        [XmlAttribute]
         public override string Name { get; set; }
     }
 }

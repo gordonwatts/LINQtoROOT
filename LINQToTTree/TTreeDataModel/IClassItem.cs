@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace TTreeDataModel
 {
@@ -14,11 +10,13 @@ namespace TTreeDataModel
         /// <summary>
         /// Get the item type (in the .NET world).
         /// </summary>
-        abstract public string ItemType { get; set;}
+        [XmlAttribute]
+        abstract public string ItemType { get; set; }
 
         /// <summary>
         /// Get/Set the name of the member!
         /// </summary>
+        [XmlAttribute]
         abstract public string Name { get; set; }
     }
 }
