@@ -227,7 +227,7 @@ namespace TTreeClassGenerator
         public void TestNoGroups()
         {
             /// Create simple user info - but don't do anything with it!
-            ItemSimpleType simple = new ItemSimpleType("var1", "int");
+            ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
             FileInfo proxyFile = new FileInfo("TestNoGroupsProxy.cpp");
             using (var writer = proxyFile.CreateText())
             {
@@ -253,7 +253,7 @@ namespace TTreeClassGenerator
         public void TestSimpleRename()
         {
             /// Create simple user info - but don't do anything with it!
-            ItemSimpleType simple = new ItemSimpleType("var1", "int");
+            ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
             FileInfo proxyFile = new FileInfo("TestSimpleRename.cpp");
             using (var writer = proxyFile.CreateText())
             {
@@ -275,7 +275,7 @@ namespace TTreeClassGenerator
             /// Look through this to see if we can make sure there are no renames!
             Assert.IsTrue(FindInFile(outputFile, "RenameVariable(\"var1\")"), "Rename missing!");
             Assert.IsTrue(FindInFile(outputFile, "int myvar"), "myvar missing");
-            Assert.IsTrue(FindInFile(outputFile, "int var1"), "val1 missing");
+            Assert.IsTrue(FindInFile(outputFile, "int[] var1"), "val1 missing");
             Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
         }
 
@@ -283,7 +283,7 @@ namespace TTreeClassGenerator
         public void TestSimpleGroupAndRename()
         {
             /// Create simple user info - but don't do anything with it!
-            ItemSimpleType simple = new ItemSimpleType("var1", "int");
+            ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
             FileInfo proxyFile = new FileInfo("TestSimpleGroupAndRename.cpp");
             using (var writer = proxyFile.CreateText())
             {
@@ -315,8 +315,8 @@ namespace TTreeClassGenerator
         public void TestSimpleIndexing()
         {
             /// Create simple user info - but don't do anything with it!
-            ItemSimpleType simpleIndex = new ItemSimpleType("index", "int");
-            ItemSimpleType simpleVal = new ItemSimpleType("var1", "float");
+            ItemSimpleType simpleIndex = new ItemSimpleType("index", "int[]");
+            ItemSimpleType simpleVal = new ItemSimpleType("var1", "float[]");
             FileInfo proxyFile = new FileInfo("TestSimpleIndexing.cpp");
             using (var writer = proxyFile.CreateText())
             {

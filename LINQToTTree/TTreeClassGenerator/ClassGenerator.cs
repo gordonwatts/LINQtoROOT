@@ -281,7 +281,7 @@ namespace TTreeClassGenerator
             {
                 foreach (var v in ungrouped.Variables)
                 {
-                    WriteVariableRenameDefinition(output, v, varTypes, className);
+                    WriteVariableRenameDefinition(output, v, varTypes, className, false);
                 }
             }
 
@@ -317,7 +317,7 @@ namespace TTreeClassGenerator
                 foreach (var v in grp.Variables)
                 {
                     output.WriteLine("    [TTreeVariableGrouping]");
-                    WriteVariableRenameDefinition(output, v, varTypes, className);
+                    WriteVariableRenameDefinition(output, v, varTypes, className, true);
                 }
 
                 output.WriteLine("  }");
@@ -331,7 +331,7 @@ namespace TTreeClassGenerator
         /// </summary>
         /// <param name="output"></param>
         /// <param name="v"></param>
-        private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes, string baseTypeName)
+        private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes, string baseTypeName, bool removeOneArrayDecl)
         {
             output.WriteLine("#pragma warning disable 0649");
             var cppVarName = v.Name;
@@ -344,7 +344,16 @@ namespace TTreeClassGenerator
             {
                 output.WriteLine("    [IndexToOtherObjectArray(typeof({0}), \"{1}\")]", baseTypeName, v.IndexToGroup);
             }
-            output.WriteLine("    public {0} {1};", varTypes[cppVarName], v.Name);
+
+            var typeName = varTypes[cppVarName];
+            if (removeOneArrayDecl)
+            {
+                if (!typeName.EndsWith("[]"))
+                    throw new ArgumentException("Attempting to remove an array indirection from type '" + typeName + "' and can't find a [] at the end!");
+                typeName = typeName.Substring(0, typeName.Length - 2);
+            }
+
+            output.WriteLine("    public {0} {1};", typeName, v.Name);
             output.WriteLine("#pragma warning restore 0649");
         }
 
