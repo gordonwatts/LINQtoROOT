@@ -135,7 +135,9 @@ namespace TTreeClassGenerator
 
                 output.WriteLine("using System.IO;");
                 output.WriteLine("using LINQToTTreeLib;");
+                output.WriteLine("using LinqToTTreeInterfacesLib;");
                 output.WriteLine("using LINQToTTreeLib.CodeAttributes;");
+                output.WriteLine("using System.Linq.Expressions;");
 
                 output.WriteLine();
                 output.WriteLine("namespace {0} {{", namespaceName);
@@ -185,8 +187,11 @@ namespace TTreeClassGenerator
                         }
                     }
 
-                    output.WriteLine("  public class {0}", rawClassName);
+                    output.WriteLine("  public class {0} : IExpressionHolder", rawClassName);
                     output.WriteLine("  {");
+                    output.WriteLine("    public Expression HeldExpression {get; private set;}");
+                    output.WriteLine("    public {0} (Expression expr) {{ HeldExpression = expr; }}", rawClassName);
+                    output.WriteLine();
 
                     ///
                     /// These fields will never be set or accessed - so we turn off some warnings the compiler will generate.
