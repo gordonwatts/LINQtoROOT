@@ -38,6 +38,28 @@ namespace TTreeClassGenerator
             var classSpec = LoadFromXMLFile(inputXMLFile);
 
             ///
+            /// Next, see if we can find the user specification file
+            /// 
+
+            Dictionary<string, TTreeUserInfo> userInfoMap = new Dictionary<string, TTreeUserInfo>();
+            foreach (var c in classSpec.Classes)
+            {
+                var xmlUserFileName = c.UserInfoPath;
+                if (!string.IsNullOrEmpty(xmlUserFileName))
+                {
+                    var xmlFile = new FileInfo(xmlUserFileName);
+                    if (!xmlFile.Exists)
+                    {
+                        xmlFile = new FileInfo(inputXMLFile.DirectoryName + "\\" + xmlUserFileName);
+                        if (!xmlFile.Exists)
+                            throw new ArgumentException("Unable to find user selection file '" + xmlUserFileName + " - " + xmlFile.FullName);
+                    }
+
+                    userInfoMap[c.Name] = LoadUserInfoFromXMLFile(xmlFile);
+                }
+            }
+
+            ///
             /// Now do the actual work!
             /// 
 
@@ -355,6 +377,22 @@ namespace TTreeClassGenerator
             using (var reader = inputXMLFile.OpenText())
             {
                 var result = x.Deserialize(reader) as NtupleTreeInfo;
+                reader.Close();
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Load in a user info file
+        /// </summary>
+        /// <param name="inputFile"></param>
+        /// <returns></returns>
+        private TTreeUserInfo LoadUserInfoFromXMLFile(FileInfo inputFile)
+        {
+            XmlSerializer x = new XmlSerializer(typeof(TTreeUserInfo));
+            using (var reader = inputFile.OpenText())
+            {
+                var result = x.Deserialize(reader) as TTreeUserInfo;
                 reader.Close();
                 return result;
             }
