@@ -147,6 +147,25 @@ namespace TTreeClassGenerator
                 foreach (var cls in classSpec.Classes)
                 {
                     ///
+                    /// Write out the info class that contains everything needed to process this.
+                    /// We could use attribute programing here, but that takes more code at the other
+                    /// end, so until there is a real reason, we'll do it this way.
+                    /// 
+                    /// This is a kludge until we do more work to fix things with attributes, etc.
+                    /// 
+
+                    Action writeOutExtra = () =>
+                    {
+                        output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
+                        output.WriteLine("    public static string[] _gObjectFiles= {");
+                        foreach (var item in classSpec.ClassImplimintationFiles)
+                        {
+                            output.WriteLine("      @\"" + item + "\",");
+                        }
+                        output.WriteLine("    };");
+                    };
+
+                    ///
                     /// First, if there is a translated object model, write it out.
                     /// 
 
@@ -159,7 +178,7 @@ namespace TTreeClassGenerator
                             {
                                 rawClassName = rawClassName + "TranslatedTo";
                                 var varTypes = FindVariableTypes(cls.Items);
-                                WriteTranslatedObjectStructure(output, userInfo[cls.Name], cls.Name, rawClassName, varTypes);
+                                WriteTranslatedObjectStructure(output, userInfo[cls.Name], cls.Name, rawClassName, varTypes, writeOutExtra);
                                 output.WriteLine();
                                 output.WriteLine();
                             }
@@ -183,20 +202,11 @@ namespace TTreeClassGenerator
 
                     output.WriteLine("#pragma warning restore 0649");
 
-                    ///
-                    /// Write out the info class that contains everything needed to process this.
-                    /// We could use attribute programing here, but that takes more code at the other
-                    /// end, so until there is a real reason, we'll do it this way.
-                    /// 
+                    writeOutExtra();
 
-                    output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
-                    output.WriteLine("    public static string[] _gObjectFiles= {");
-                    foreach (var item in classSpec.ClassImplimintationFiles)
-                    {
-                        output.WriteLine("      @\"" + item + "\",");
-                    }
-                    output.WriteLine("    };");
                     output.WriteLine("  }"); // End of the class
+                    output.WriteLine();
+                    output.WriteLine();
 
                     ///
                     /// Next, write out the queriable classes so we can actually do the queires
@@ -207,12 +217,12 @@ namespace TTreeClassGenerator
                     output.WriteLine("  public static class Queryable{0}", cls.Name);
                     output.WriteLine("  {");
                     output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
-                    output.WriteLine("    public static QueriableTTree<{0}> Create (FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
+                    output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
                     output.WriteLine("    {");
                     output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name);
                     output.WriteLine("    }");
                     output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
-                    output.WriteLine("    public static QueriableTTree<{0}> Create (FileInfo[] rootFiles, string treeName = \"{0}\")", cls.Name);
+                    output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo[] rootFiles, string treeName = \"{0}\")", cls.Name);
                     output.WriteLine("    {");
                     output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name);
                     output.WriteLine("    }");
@@ -250,7 +260,7 @@ namespace TTreeClassGenerator
         /// <param name="tTreeUserInfo"></param>
         /// <param name="p"></param>
         /// <param name="rawClassName"></param>
-        private void WriteTranslatedObjectStructure(TextWriter output, TTreeUserInfo tTreeUserInfo, string className, string translateToName, IDictionary<string, string> varTypes)
+        private void WriteTranslatedObjectStructure(TextWriter output, TTreeUserInfo tTreeUserInfo, string className, string translateToName, IDictionary<string, string> varTypes, Action kludgeWriter)
         {
             ///
             /// Main class header
@@ -290,6 +300,7 @@ namespace TTreeClassGenerator
             /// And the object is finished.
             /// 
 
+            kludgeWriter();
             output.WriteLine("  }");
             output.WriteLine();
             output.WriteLine();
