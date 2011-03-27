@@ -45,6 +45,13 @@ namespace LINQToTTreeLib.Variables
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestCPPArrayType()
+        {
+            AsCPPType(typeof(float[]));
+        }
+
+        [TestMethod]
         public void TestCPPTypeROOT()
         {
             Assert.AreEqual("TString*", AsCPPType(typeof(ROOTNET.NTString)), "root tstring incorrect");
@@ -58,6 +65,12 @@ namespace LINQToTTreeLib.Variables
             string result = VarUtils.AsCastString(val);
             Assert.IsTrue(result.Contains("(("), "Result doesn't seem to contains the cast operator!");
             return result;
+        }
+
+        [TestMethod]
+        public void TestCastToStringArray()
+        {
+            Assert.AreEqual("(*d)", new ValSimple("d", typeof(int[])).AsCastString(), "array reference");
         }
 
         /// <summary>Test stub for CastToType(IValue, Type)</summary>

@@ -522,7 +522,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess);
-            Assert.AreEqual("((Int32[])(*d))[((int)1)]", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*d)[((int)1)]", result.RawValue, "C++ incorrectly translated");
         }
 
         class ObjectArrayTest
@@ -539,15 +539,15 @@ namespace LINQToTTreeLib
 
             var result = RunArrayLengthOnExpression(arrayIndex);
 
-            Assert.AreEqual("((Int32[])(*(*obj).arr))[((int)1)]", result.RawValue, "array text");
+            Assert.AreEqual("(*(*obj).arr)[((int)1)]", result.RawValue, "array text");
         }
 
         [TestMethod]
         public void TestLambdaCallFunction()
         {
             /// Test a call that looks like v => v+1.
-            
-            Expression<Func<int, int>> incr = v => v +1;
+
+            Expression<Func<int, int>> incr = v => v + 1;
             var invoke = Expression.Invoke(incr, Expression.Variable(typeof(int), "d"));
 
             var result = CallBasicGetExpression(invoke);

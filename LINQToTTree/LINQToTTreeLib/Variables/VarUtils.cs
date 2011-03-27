@@ -11,9 +11,16 @@ namespace LINQToTTreeLib.Variables
             if (val == null)
                 throw new ArgumentNullException("Value can't be null");
 
-            StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("(({0}){1})", val.Type.AsCPPType(), val.AsObjectReference());
-            return bld.ToString();
+            if (!val.Type.IsArray)
+            {
+                StringBuilder bld = new StringBuilder();
+                bld.AppendFormat("(({0}){1})", val.Type.AsCPPType(), val.AsObjectReference());
+                return bld.ToString();
+            }
+            else
+            {
+                return val.AsObjectReference();
+            }
         }
 
         /// <summary>
@@ -64,6 +71,8 @@ namespace LINQToTTreeLib.Variables
         {
             if (t == null)
                 throw new ArgumentNullException("Type must not be null");
+            if (t.IsArray)
+                throw new ArgumentException("Type '" + t.Name + "' is an array - clean conversion to C++ is not possible!");
 
             if (t == typeof(int))
             {
