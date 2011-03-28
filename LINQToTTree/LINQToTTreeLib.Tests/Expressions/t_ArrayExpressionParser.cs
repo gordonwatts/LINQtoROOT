@@ -25,8 +25,7 @@ namespace LINQToTTreeLib.Tests
         {
             MEFUtilities.MyClassInit();
             MEFUtilities.AddPart(new QVResultOperators());
-            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
-            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new DealWithInt32());
             MEFUtilities.AddPart(new LINQToTTreeLib.ResultOperators.ROTakeSkipOperators());
             GeneratedCode gc = new GeneratedCode();

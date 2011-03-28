@@ -48,11 +48,10 @@ namespace LINQToTTreeLib.Tests
 
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
-                ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
-                MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+                MEFUtilities.AddPart(new TypeHandlerCache());
             }
 
-            var qv = new QueryVisitor(Result, null, null);
+            var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
             qv.VisitQueryModel(queryModel);

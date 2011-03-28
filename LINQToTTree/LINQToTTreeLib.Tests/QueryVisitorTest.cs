@@ -367,7 +367,6 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROTakeSkipOperators());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
-            ExpressionVisitor.TypeHandlers = myth;
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();

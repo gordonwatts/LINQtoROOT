@@ -17,8 +17,7 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.MyClassInit();
             MEFUtilities.AddPart(new TypeHandlerROOT());
             MEFUtilities.AddPart(new TypeHandlerHelpers());
-            ExpressionVisitor.TypeHandlers = new TypeHandlers.TypeHandlerCache();
-            MEFUtilities.Compose(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.Compose(new TypeHandlers.TypeHandlerCache());
         }
 
         [TestCleanup]
@@ -44,7 +43,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionVisitor.GetExpression(mc, gc, null, null);
+            var result = ExpressionVisitor.GetExpression(mc, gc, null, MEFUtilities.MEFContainer);
 
             ///
             /// And check the results!

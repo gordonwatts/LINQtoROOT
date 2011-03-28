@@ -45,7 +45,7 @@ namespace LINQToTTreeLib
         [PexMethod]
         internal IValue GetExpression([PexAssumeNotNull]Expression expr, IGeneratedCode ce)
         {
-            IValue result = ExpressionVisitor.GetExpression(expr, ce, null, null);
+            IValue result = ExpressionVisitor.GetExpression(expr, ce, null, MEFUtilities.MEFContainer);
             return result;
         }
 
@@ -83,7 +83,6 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerROOT());
             var t = new TypeHandlerCache();
             MEFUtilities.Compose(t);
-            ExpressionVisitor.TypeHandlers = t;
 
             foreach (var expr in ConstantExpressionTestCases)
             {
@@ -326,8 +325,7 @@ namespace LINQToTTreeLib
 
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
-            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
-            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
@@ -425,8 +423,7 @@ namespace LINQToTTreeLib
         {
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
-            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
-            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
@@ -496,8 +493,7 @@ namespace LINQToTTreeLib
         {
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
-            ExpressionVisitor.TypeHandlers = new TypeHandlerCache();
-            MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
+            MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();

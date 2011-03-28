@@ -101,7 +101,7 @@ namespace LINQToTTreeLib
         /// List of the type handlers that we can use to process things.
         /// </summary>
         [Import]
-        static public TypeHandlerCache TypeHandlers { get; set; }
+        private TypeHandlerCache TypeHandlers { get; set; }
 
         /// <summary>
         /// Deal with a constant expression. Exactly how this is dealt with depends on the value. We process

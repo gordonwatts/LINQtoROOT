@@ -666,9 +666,8 @@ namespace LINQToTTreeLib
             AggregateCatalog aggCat = new AggregateCatalog();
             aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
             _gContainer = new CompositionContainer(aggCat);
-            ExpressionVisitor.TypeHandlers = new TypeHandlers.TypeHandlerCache();
             CompositionBatch b = new CompositionBatch();
-            b.AddPart(ExpressionVisitor.TypeHandlers);
+            b.AddPart(new TypeHandlers.TypeHandlerCache());
             _gContainer.Compose(b);
 
             ///
