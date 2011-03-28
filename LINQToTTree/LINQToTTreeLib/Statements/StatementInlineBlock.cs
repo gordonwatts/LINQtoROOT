@@ -80,7 +80,7 @@ namespace LINQToTTreeLib.Statements
                         varDecl = varDecl + "=" + v.InitialValue.RawValue;
                     }
                     varDecl += ";";
-                    yield return varDecl;
+                    yield return "  " + varDecl;
                 }
 
                 var sublines = from s in _statements
