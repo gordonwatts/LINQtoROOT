@@ -79,7 +79,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, res.CodeBody.Statements.Count(), "only single statement expected");
             var ifStatement = res.CodeBody.Statements.First() as StatementFilter;
             Assert.IsNotNull(ifStatement, "if statement isn't an if statement!");
-            Assert.AreEqual("((int)(*this).run)>((int)10)", ifStatement.TestExpression.RawValue, "incorrect if statement");
+            Assert.AreEqual("(*this).run>10", ifStatement.TestExpression.RawValue, "incorrect if statement");
 
             ///
             /// Finally, the count statement should be down here!
@@ -107,7 +107,7 @@ namespace LINQToTTreeLib.Tests
 
             var ifStatement = res.CodeBody.Statements.First() as StatementFilter;
             Assert.IsNotNull(ifStatement, "if statement isn't an if statement!");
-            Assert.AreEqual("((bool)((int)(*this).run)>((int)10))&&((bool)((int)(*this).run)<((int)100))", ifStatement.TestExpression.RawValue, "incorrect if statement");
+            Assert.AreEqual("(*this).run>10&&(*this).run<100", ifStatement.TestExpression.RawValue, "incorrect if statement");
         }
 
         [TestMethod]
@@ -128,7 +128,7 @@ namespace LINQToTTreeLib.Tests
 
             var assignment = res.CodeBody.Statements.First() as StatementAssign;
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("((int){0})+((int)1)", assignment.ResultVariable.RawValue, "bad assignment!");
+            bld.AppendFormat("{0}+1", assignment.ResultVariable.RawValue, "bad assignment!");
             Assert.AreEqual(bld.ToString(), assignment.Expression.RawValue, "expression is incorrect");
         }
 

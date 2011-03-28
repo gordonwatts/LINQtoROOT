@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Linq.Expressions;
+using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.TypeHandlers.ROOT;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq.Expressions;
-using System.Linq;
-using LINQToTTreeLib.TypeHandlers.ROOT;
-using LINQToTTreeLib.TypeHandlers;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -40,7 +38,7 @@ namespace LINQToTTreeLib.Tests
             var cls = clsGeneric.MakeGenericMethod(new Type[] { typeof(ROOTNET.NTH1F), typeof(double) });
             Expression<Action<ROOTNET.NTH1F, double>> applyIt = (h, item) => h.Fill(item);
             MethodCallExpression mc = Expression.Call(cls, Expression.Parameter(typeof(ROOTNET.NTH1F), "myhist"), Expression.Constant(10.2), applyIt);
-            
+
             ///
             /// Now do the actual call
             /// 
@@ -58,7 +56,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expected a statement body to do the filling!");
             Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementSimpleStatement), "incorrect statement saved");
             var statement = gc.CodeBody.Statements.First() as Statements.StatementSimpleStatement;
-            Assert.AreEqual("(*myhist).Fill(((double)10.2))", statement.Line, "incorrect fill statement");
+            Assert.AreEqual("(*myhist).Fill(10.2)", statement.Line, "incorrect fill statement");
         }
     }
 }

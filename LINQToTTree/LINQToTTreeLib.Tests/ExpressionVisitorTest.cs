@@ -103,17 +103,17 @@ namespace LINQToTTreeLib
 
         List<BinaryExpressionTestCase> BinaryTestCases = new List<BinaryExpressionTestCase>()
         {
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Equal, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="((int)10)==((int)10)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.GreaterThan, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="((int)10)>((int)10)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.GreaterThanOrEqual, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="((int)10)>=((int)10)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.LessThan, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="((int)10)<((int)10)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.LessThanOrEqual, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="((int)10)<=((int)10)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.OrElse, LHS=Expression.Constant(false), RHS=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="((bool)false)||((bool)true)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.AndAlso, LHS=Expression.Constant(false), RHS=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="((bool)false)&&((bool)true)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Add, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="((int)10)+((int)20)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Subtract, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="((int)10)-((int)20)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Multiply, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="((int)10)*((int)20)"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="((int)10)/((int)20)"}
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Equal, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10==10"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.GreaterThan, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10>10"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.GreaterThanOrEqual, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10>=10"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.LessThan, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10<10"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.LessThanOrEqual, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10<=10"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.OrElse, LHS=Expression.Constant(false), RHS=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="false||true"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.AndAlso, LHS=Expression.Constant(false), RHS=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="false&&true"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Add, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10+20"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Subtract, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10-20"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Multiply, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10*20"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10/20"}
         };
 
         public void TestBinaryExpressionCase(BinaryExpressionTestCase c)
@@ -146,9 +146,9 @@ namespace LINQToTTreeLib
 
         List<UnaryTestCase> UnaryTests = new List<UnaryTestCase>()
         {
-            new UnaryTestCase() { UnaryType= ExpressionType.Negate, UnaryTarget=Expression.Constant(10), ExpectedType=typeof(int), ExpectedValue = "-((int)10)"},
-            new UnaryTestCase() { UnaryType= ExpressionType.Not, UnaryTarget=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="!((bool)true)"},
-            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Constant(10), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="((double)((int)10))"}
+            new UnaryTestCase() { UnaryType= ExpressionType.Negate, UnaryTarget=Expression.Constant(10), ExpectedType=typeof(int), ExpectedValue = "-10"},
+            new UnaryTestCase() { UnaryType= ExpressionType.Not, UnaryTarget=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="!true"},
+            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Constant(10), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="((double)10)"}
         };
 
         public void TestUnaryTestCase(UnaryTestCase u)
@@ -285,7 +285,7 @@ namespace LINQToTTreeLib
             var result = ExpressionVisitor.GetExpression(laFunc, gc);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
-            Assert.AreEqual("((int)1)+((int)2)", result.RawValue, "raw value was not right");
+            Assert.AreEqual("1+2", result.RawValue, "raw value was not right");
         }
 
         [TestMethod]
@@ -298,7 +298,7 @@ namespace LINQToTTreeLib
             var result = ExpressionVisitor.GetExpression(laFunc, gc);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
-            Assert.AreEqual("((int)p)+((int)2)", result.RawValue, "raw value was not right");
+            Assert.AreEqual("p+2", result.RawValue, "raw value was not right");
         }
 
         [TranslateToClass(typeof(transToNtup))]
@@ -522,7 +522,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess);
-            Assert.AreEqual("(*d)[((int)1)]", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*d)[1]", result.RawValue, "C++ incorrectly translated");
         }
 
         class ObjectArrayTest
@@ -539,7 +539,7 @@ namespace LINQToTTreeLib
 
             var result = RunArrayLengthOnExpression(arrayIndex);
 
-            Assert.AreEqual("(*(*obj).arr)[((int)1)]", result.RawValue, "array text");
+            Assert.AreEqual("(*(*obj).arr)[1]", result.RawValue, "array text");
         }
 
         [TestMethod]
@@ -553,7 +553,7 @@ namespace LINQToTTreeLib
             var result = CallBasicGetExpression(invoke);
 
             Assert.AreEqual(typeof(int), result.Type, "type");
-            Assert.AreEqual("((int)d)+((int)1)", result.RawValue, "raw value");
+            Assert.AreEqual("d+1", result.RawValue, "raw value");
         }
 
         [TestMethod]
@@ -567,7 +567,7 @@ namespace LINQToTTreeLib
             var result = CallBasicGetExpression(invoke2);
 
             Assert.AreEqual(typeof(int), result.Type, "type");
-            Assert.AreEqual("((int)((int)d)+((int)1))+((int)1)", result.RawValue, "raw value");
+            Assert.AreEqual("d+1+1", result.RawValue, "raw value");
         }
 
         /// <summary>

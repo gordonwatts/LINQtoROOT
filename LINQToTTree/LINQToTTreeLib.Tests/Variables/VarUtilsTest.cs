@@ -60,17 +60,23 @@ namespace LINQToTTreeLib.Variables
 
         /// <summary>Test stub for AsCastString(IValue)</summary>
         [PexMethod]
-        public string AsCastString(IValue val)
+        public string AsCastString(IValue val, Type desType)
         {
-            string result = VarUtils.AsCastString(val);
+            string result = VarUtils.CastToType(val, desType);
             Assert.IsTrue(result.Contains("(("), "Result doesn't seem to contains the cast operator!");
             return result;
         }
 
         [TestMethod]
+        public void TestActualConversion()
+        {
+            Assert.AreEqual("((int)10)", new ValSimple("10", typeof(double)).CastToType(typeof(int)), "switch to int");
+        }
+
+        [TestMethod]
         public void TestCastToStringArray()
         {
-            Assert.AreEqual("(*d)", new ValSimple("d", typeof(int[])).AsCastString(), "array reference");
+            Assert.AreEqual("(*d)", new ValSimple("d", typeof(int[])).CastToType(typeof(int[])), "array reference");
         }
 
         /// <summary>Test stub for CastToType(IValue, Type)</summary>

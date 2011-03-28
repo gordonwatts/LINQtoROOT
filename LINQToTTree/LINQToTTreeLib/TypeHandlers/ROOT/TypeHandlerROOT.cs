@@ -85,7 +85,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                     bld.Append(",");
                 }
                 first = false;
-                bld.Append(ExpressionVisitor.GetExpression(a, gc, context, container).AsCastString());
+                bld.Append(ExpressionVisitor.GetExpression(a, gc, context, container).CastToType(a.Type));
             }
             bld.Append(")");
 

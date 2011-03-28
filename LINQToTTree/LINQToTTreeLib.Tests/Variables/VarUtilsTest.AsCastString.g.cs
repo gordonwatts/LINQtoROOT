@@ -17,13 +17,5 @@ namespace LINQToTTreeLib.Variables
 {
     public partial class VarUtilsTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(VarUtilsTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void AsCastStringThrowsArgumentNullException82()
-        {
-            string s;
-            s = this.AsCastString((IValue)null);
-        }
     }
 }

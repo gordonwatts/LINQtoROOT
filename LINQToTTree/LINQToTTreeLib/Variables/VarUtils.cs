@@ -6,7 +6,8 @@ namespace LINQToTTreeLib.Variables
 {
     public static class VarUtils
     {
-        public static string AsCastString(this IValue val)
+#if false
+        public static string CastToType(this IValue val)
         {
             if (val == null)
                 throw new ArgumentNullException("Value can't be null");
@@ -22,6 +23,7 @@ namespace LINQToTTreeLib.Variables
                 return val.AsObjectReference();
             }
         }
+#endif
 
         /// <summary>
         /// Make sure it is a solid reference, not a -> and ignore type issues. :-)
@@ -53,12 +55,26 @@ namespace LINQToTTreeLib.Variables
             if (sourceValue == null || destType == null)
                 throw new ArgumentNullException("Cannot pass ource or dest type/vars as null");
 
-            if (destType == sourceValue.Type)
+            var objRefForm = sourceValue.AsObjectReference();
+
+            ///
+            /// If the type is already there or if the type is an array, then we will do no conversion.
+            /// Already there: not needed
+            /// Array: vector or regular C style array - we don't know this deep in the code, so
+            ///        conversion would probably make a mess of things!
+            ///
+
+            if (destType == sourceValue.Type || destType.IsArray)
             {
-                return sourceValue.AsCastString();
+                return objRefForm;
             }
+
+            ///
+            /// Type conversion required!
+            /// 
+
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("(({0}){1})", destType.AsCPPType(), sourceValue.AsCastString());
+            bld.AppendFormat("(({0}){1})", destType.AsCPPType(), objRefForm);
             return bld.ToString();
         }
 

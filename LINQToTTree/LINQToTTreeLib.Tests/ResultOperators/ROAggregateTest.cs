@@ -99,7 +99,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             var ass = gc.CodeBody.Statements.First() as Statements.StatementAssign;
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("((int){0})+((int)1)", ass.ResultVariable.RawValue);
+            bld.AppendFormat("{0}+1", ass.ResultVariable.RawValue);
             Assert.AreEqual(bld.ToString(), ass.Expression.RawValue, "the raw value of hte expression is not right");
         }
 

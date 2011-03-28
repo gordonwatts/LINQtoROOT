@@ -17,45 +17,5 @@ namespace LINQToTTreeLib.Variables
 {
     public partial class VarUtilsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
-public void CastToType505()
-{
-    string s;
-    s = this.CastToType(0, 0);
-    Assert.AreEqual<string>("((int)10)", s);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
-public void CastToType459()
-{
-    string s;
-    s = this.CastToType(0, 1);
-    Assert.AreEqual<string>("((double)((int)10))", s);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
-public void CastToType48()
-{
-    string s;
-    s = this.CastToType(1, 0);
-    Assert.AreEqual<string>("((int)((double)10.0))", s);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
-public void CastToType184()
-{
-    string s;
-    s = this.CastToType(2, 0);
-    Assert.AreEqual<string>("", s);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
-public void CastToType906()
-{
-    string s;
-    s = this.CastToType(0, 2);
-    Assert.AreEqual<string>("", s);
-}
     }
 }

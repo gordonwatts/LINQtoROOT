@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -11,7 +12,6 @@ using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Data.Linq.Parsing;
-using System.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -240,8 +240,8 @@ namespace LINQToTTreeLib
             }
             else
             {
-                sRHS = RHS.AsCastString();
-                sLHS = LHS.AsCastString();
+                sRHS = RHS.CastToType(expression.Right.Type);
+                sLHS = LHS.CastToType(expression.Left.Type);
             }
 
             StringBuilder bld = new StringBuilder();
@@ -261,11 +261,11 @@ namespace LINQToTTreeLib
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).AsCastString(), expression.Type);
+                    _result = new ValSimple("-" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).AsCastString(), expression.Type);
+                    _result = new ValSimple("!" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
                     break;
 
                 case ExpressionType.Convert:
