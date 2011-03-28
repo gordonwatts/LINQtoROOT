@@ -339,11 +339,11 @@ namespace TTreeClassGenerator
         private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes, string baseTypeName, bool removeOneArrayDecl)
         {
             output.WriteLine("#pragma warning disable 0649");
-            var cppVarName = v.Name;
-            if (v.Name != v.RenameTo && string.IsNullOrEmpty(v.IndexToGroup))
+            var cppVarName = v.NETName;
+            if (v.NETName != v.TTreeName && string.IsNullOrEmpty(v.IndexToGroup))
             {
-                cppVarName = v.RenameTo;
-                output.WriteLine("    [RenameVariable(\"{0}\")]", v.RenameTo);
+                cppVarName = v.TTreeName;
+                output.WriteLine("    [RenameVariable(\"{0}\")]", v.TTreeName);
             }
             if (!string.IsNullOrEmpty(v.IndexToGroup))
             {
@@ -358,7 +358,7 @@ namespace TTreeClassGenerator
                 typeName = typeName.Substring(0, typeName.Length - 2);
             }
 
-            output.WriteLine("    public {0} {1};", typeName, v.Name);
+            output.WriteLine("    public {0} {1};", typeName, v.NETName);
             output.WriteLine("#pragma warning restore 0649");
         }
 
@@ -374,7 +374,7 @@ namespace TTreeClassGenerator
             if (tTreeUserInfo.Groups[0].Name != "ungrouped")
                 return true;
 
-            var anyRenames = tTreeUserInfo.Groups[0].Variables.Where(g => g.RenameTo != g.Name).Any();
+            var anyRenames = tTreeUserInfo.Groups[0].Variables.Where(g => g.TTreeName != g.NETName).Any();
             return anyRenames;
         }
 

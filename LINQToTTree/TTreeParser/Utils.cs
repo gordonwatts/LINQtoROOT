@@ -137,8 +137,8 @@ namespace TTreeParser
             var vars = from v in varNames
                        select new VariableInfo()
                        {
-                           Name = v,
-                           RenameTo = v
+                           NETName = v,
+                           TTreeName = v
                        };
             return vars;
         }

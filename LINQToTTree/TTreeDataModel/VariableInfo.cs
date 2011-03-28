@@ -8,10 +8,10 @@ namespace TTreeDataModel
     public class VariableInfo
     {
         [XmlAttribute]
-        public string Name;
+        public string NETName;
 
         [XmlAttribute]
-        public string RenameTo;
+        public string TTreeName;
 
         [XmlAttribute]
         public string IndexToGroup;

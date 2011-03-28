@@ -238,7 +238,7 @@ namespace TTreeClassGenerator
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
-            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "ungrouped", Variables = new VariableInfo[] { new VariableInfo() { Name = "var1", RenameTo = "var1" } } } } };
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "ungrouped", Variables = new VariableInfo[] { new VariableInfo() { NETName = "var1", TTreeName = "var1" } } } } };
 
             var cg = new ClassGenerator();
             var outputFile = new FileInfo("TestNoGroups.cs");
@@ -264,7 +264,7 @@ namespace TTreeClassGenerator
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
-            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "ungrouped", Variables = new VariableInfo[] { new VariableInfo() { Name = "myvar", RenameTo = "var1" } } } } };
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "ungrouped", Variables = new VariableInfo[] { new VariableInfo() { NETName = "myvar", TTreeName = "var1" } } } } };
 
             var cg = new ClassGenerator();
             var outputFile = new FileInfo("TestSimpleRename.cs");
@@ -294,7 +294,7 @@ namespace TTreeClassGenerator
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
-            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", Variables = new VariableInfo[] { new VariableInfo() { Name = "myvar", RenameTo = "var1" } } } } };
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", Variables = new VariableInfo[] { new VariableInfo() { NETName = "myvar", TTreeName = "var1" } } } } };
 
             var cg = new ClassGenerator();
             var outputFile = new FileInfo("TestSimpleGroupAndRename.cs");
@@ -335,14 +335,14 @@ namespace TTreeClassGenerator
                     {
                         Name = "jets", Variables = new VariableInfo[]
                         {
-                            new VariableInfo() { Name = "index", RenameTo = "index", IndexToGroup="muons" }
+                            new VariableInfo() { NETName = "index", TTreeName = "index", IndexToGroup="muons" }
                         }
                     },
                     new ArrayGroup()
                     {
                         Name = "muons", Variables = new VariableInfo[]
                         {
-                            new VariableInfo() { Name = "var1", RenameTo = "var1"}
+                            new VariableInfo() { NETName = "var1", TTreeName = "var1"}
                         }
                     }
                 }
