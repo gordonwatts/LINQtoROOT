@@ -64,7 +64,7 @@ namespace LINQToTTreeLib.Variables
             ///        conversion would probably make a mess of things!
             ///
 
-            if (destType == sourceValue.Type || destType.IsArray)
+            if (!RequiresConversion(destType, sourceValue.Type) || destType.IsArray)
             {
                 return objRefForm;
             }
@@ -76,6 +76,30 @@ namespace LINQToTTreeLib.Variables
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("(({0}){1})", destType.AsCPPType(), objRefForm);
             return bld.ToString();
+        }
+
+        /// <summary>
+        /// Determine if a conversion is required.
+        /// </summary>
+        /// <param name="destType"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static bool RequiresConversion(Type destType, Type sourceType)
+        {
+            if (destType == sourceType)
+                return false;
+
+            /// If the dest is double and the source if float, or int or something like that, ignore it
+
+            if (destType == typeof(double))
+            {
+                if (sourceType == typeof(float) || sourceType == typeof(int))
+                    return false;
+            }
+
+            /// Oh well. convert!
+
+            return true;
         }
 
         /// <summary>

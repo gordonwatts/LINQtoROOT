@@ -74,6 +74,15 @@ namespace LINQToTTreeLib.Variables
         }
 
         [TestMethod]
+        public void TestFloatToDoubleConversion()
+        {
+            /// Compilers can do float -> double automatically, but they might complain going the other way - lets keep things
+            /// as clean as possible.
+            Assert.AreEqual("10.2", new ValSimple("10.2", typeof(float)).CastToType(typeof(double)), "switch to double");
+            Assert.AreEqual("((float)10.2)", new ValSimple("10.2", typeof(double)).CastToType(typeof(float)), "switch to float");
+        }
+
+        [TestMethod]
         public void TestCastToStringArray()
         {
             Assert.AreEqual("(*d)", new ValSimple("d", typeof(int[])).CastToType(typeof(int[])), "array reference");
