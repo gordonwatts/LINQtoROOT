@@ -87,7 +87,7 @@ namespace LINQToTTreeLib
 
             foreach (var expr in ConstantExpressionTestCases)
             {
-                Variables.VarUtils._variableNameCounter = 0;
+                Utils.TypeUtils._variableNameCounter = 0;
                 TestConstantExpression(expr);
             }
         }

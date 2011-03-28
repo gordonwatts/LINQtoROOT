@@ -1,5 +1,6 @@
 ﻿using System;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Variables
 {

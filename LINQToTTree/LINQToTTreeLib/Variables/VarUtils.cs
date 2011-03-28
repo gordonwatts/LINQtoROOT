@@ -165,18 +165,6 @@ namespace LINQToTTreeLib.Variables
             return t.IsClass;
         }
 
-        public static int _variableNameCounter = 0;
-        public static string CreateUniqueVariableName(this Type sourceType)
-        {
-            return sourceType.Name.CreateUniqueVariableName();
-        }
-
-        public static string CreateUniqueVariableName(this string varbasename)
-        {
-            _variableNameCounter += 1;
-            return varbasename + "_" + _variableNameCounter.ToString();
-        }
-
         /// <summary>
         /// Figure out if this is a root class or not!
         /// </summary>

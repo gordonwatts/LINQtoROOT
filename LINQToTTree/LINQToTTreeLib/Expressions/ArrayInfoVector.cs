@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Expressions

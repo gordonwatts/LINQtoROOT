@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -19,7 +20,7 @@ namespace LINQToTTreeLib.Variables
 
         public VarInteger()
         {
-            VariableName = VarUtils.CreateUniqueVariableName("anint");
+            VariableName = TypeUtils.CreateUniqueVariableName("anint");
             InitialValue = new IntVal() { RawValue = "0" };
             Declare = true;
             RawValue = VariableName;

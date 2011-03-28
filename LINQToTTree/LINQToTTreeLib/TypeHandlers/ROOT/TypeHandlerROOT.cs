@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
