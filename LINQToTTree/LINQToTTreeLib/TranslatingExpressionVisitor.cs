@@ -290,7 +290,7 @@ namespace LINQToTTreeLib
             switch (expression.NodeType)
             {
                 case ExpressionType.ArrayLength:
-                    return VisitArrayIndex(expression);
+                    return VisitArrayLength(expression);
                 default:
                     return base.VisitUnaryExpression(expression);
             }
@@ -303,7 +303,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        private Expression VisitArrayIndex(UnaryExpression expression)
+        private Expression VisitArrayLength(UnaryExpression expression)
         {
             ///
             /// The key to this is what the operand is. If it isn't a member
