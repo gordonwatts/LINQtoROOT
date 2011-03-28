@@ -52,7 +52,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(ExpressionVisitor.TypeHandlers);
             }
 
-            var qv = new QueryVisitor(Result);
+            var qv = new QueryVisitor(Result, null, null);
             MEFUtilities.Compose(qv);
 
             qv.VisitQueryModel(queryModel);

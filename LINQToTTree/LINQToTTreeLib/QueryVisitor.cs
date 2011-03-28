@@ -35,10 +35,11 @@ namespace LINQToTTreeLib
         /// Create a new visitor and add our code to the current spot we are in the "code".
         /// </summary>
         /// <param name="code"></param>
-        public QueryVisitor(IGeneratedCode code, ICodeContext context = null)
+        public QueryVisitor(IGeneratedCode code, ICodeContext context, CompositionContainer container)
         {
             _codeEnv = code;
             _codeContext = context;
+            MEFContainer = container;
             if (_codeContext == null)
                 _codeContext = new CodeContext();
 
@@ -207,6 +208,6 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Get/Set the container that can be usef for MEF'ing things.
         /// </summary>
-        public CompositionContainer MEFContainer { get; set; }
+        public CompositionContainer MEFContainer { get; private set; }
     }
 }

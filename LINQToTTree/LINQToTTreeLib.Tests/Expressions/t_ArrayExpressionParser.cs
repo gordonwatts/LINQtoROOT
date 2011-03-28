@@ -31,7 +31,7 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.AddPart(new LINQToTTreeLib.ResultOperators.ROTakeSkipOperators());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
         }
 

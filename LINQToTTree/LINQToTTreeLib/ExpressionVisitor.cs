@@ -22,7 +22,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public static IValue GetExpression(Expression expr, IGeneratedCode ce, ICodeContext cc = null, CompositionContainer container = null)
+        public static IValue GetExpression(Expression expr, IGeneratedCode ce, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
             {
@@ -444,12 +444,11 @@ namespace LINQToTTreeLib
             if (MEFContainer == null)
                 throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
 
-            QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext);
+            QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext, MEFContainer);
             CompositionBatch b = new CompositionBatch();
             b.AddPart(qv);
             qv.SubExpressionParse = true;
             MEFContainer.Compose(b);
-            qv.MEFContainer = MEFContainer;
 
             ///
             /// Run it - since this result is out of this loop, we pop-back-out when done.

@@ -44,7 +44,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionVisitor.GetExpression(mc, gc);
+            var result = ExpressionVisitor.GetExpression(mc, gc, null, null);
 
             ///
             /// And check the results!

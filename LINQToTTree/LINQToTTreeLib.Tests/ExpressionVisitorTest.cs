@@ -45,7 +45,7 @@ namespace LINQToTTreeLib
         [PexMethod]
         internal IValue GetExpression([PexAssumeNotNull]Expression expr, IGeneratedCode ce)
         {
-            IValue result = ExpressionVisitor.GetExpression(expr, ce);
+            IValue result = ExpressionVisitor.GetExpression(expr, ce, null, null);
             return result;
         }
 
@@ -120,7 +120,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.MakeBinary(c.BinaryType, c.LHS, c.RHS);
             GeneratedCode g = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(e, g);
+            var r = ExpressionVisitor.GetExpression(e, g, null, null);
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(c.ExpectedType, r.Type, "Expected type is incorrect");
             Assert.AreEqual(c.ExpectedValue, r.RawValue, "value is incorrect");
@@ -155,7 +155,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.MakeUnary(u.UnaryType, u.UnaryTarget, u.ConvertType);
             GeneratedCode g = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(e, g);
+            var r = ExpressionVisitor.GetExpression(e, g, null, null);
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(u.ExpectedType, r.Type, "type not correct");
             Assert.AreEqual(u.ExpectedValue, r.RawValue, "resulting value not correct");
@@ -181,7 +181,7 @@ namespace LINQToTTreeLib
         {
             QuerySourceReferenceExpression q = new QuerySourceReferenceExpression(new DummyQueryReference() { ItemName = "evt", ItemType = typeof(int) });
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(q, gc);
+            var r = ExpressionVisitor.GetExpression(q, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("evt", r.RawValue, "expansion incorrect");
@@ -210,7 +210,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "run");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(e, gc);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("(*d).run", r.RawValue, "incorrect reference");
@@ -221,7 +221,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(e, gc);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(IEnumerable<int>), r.Type, "incorrect type");
             Assert.AreEqual("(*d).numbers", r.RawValue, "incorrect reference");
@@ -232,7 +232,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Parameter(typeof(int), "p");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(e, gc);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "type is not correct");
             Assert.AreEqual("p", r.RawValue, "raw value is not right");
@@ -243,7 +243,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionVisitor.GetExpression(e, gc);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");
             Assert.AreEqual("p", r.RawValue, "raw value is not right");
@@ -257,7 +257,7 @@ namespace LINQToTTreeLib
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             cc.Add("p", new ValSimple("count", typeof(int)));
-            var r = ExpressionVisitor.GetExpression(e, gc, cc);
+            var r = ExpressionVisitor.GetExpression(e, gc, cc, null);
         }
 
         [TestMethod]
@@ -267,7 +267,7 @@ namespace LINQToTTreeLib
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             cc.Add("p", new ValSimple("count", typeof(ntup)));
-            var r = ExpressionVisitor.GetExpression(e, gc, cc);
+            var r = ExpressionVisitor.GetExpression(e, gc, cc, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");
             Assert.AreEqual("count", r.RawValue, "raw value is not right");
@@ -281,7 +281,7 @@ namespace LINQToTTreeLib
                 Expression.Constant(2)));
 
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionVisitor.GetExpression(laFunc, gc);
+            var result = ExpressionVisitor.GetExpression(laFunc, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("1+2", result.RawValue, "raw value was not right");
@@ -294,7 +294,7 @@ namespace LINQToTTreeLib
                 Expression.Parameter(typeof(int), "p"),
                 Expression.Constant(2)));
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionVisitor.GetExpression(laFunc, gc);
+            var result = ExpressionVisitor.GetExpression(laFunc, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("p+2", result.RawValue, "raw value was not right");
@@ -331,7 +331,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             Assert.AreEqual(typeof(int), result.Type, "bad type for return");
@@ -360,7 +360,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             gc.DumpCodeToConsole();
@@ -399,7 +399,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
 
@@ -430,7 +430,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             var result = ExpressionVisitor.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
 
@@ -501,7 +501,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             var expr = Expression.Variable(typeof(int), "d");
 
@@ -580,7 +580,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            MEFUtilities.Compose(new QueryVisitor(gc, cc));
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             return ExpressionVisitor.GetExpression(invoke, gc, cc, MEFUtilities.MEFContainer);
         }

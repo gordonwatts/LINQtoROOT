@@ -168,14 +168,15 @@ namespace LINQToTTreeLib
             /// 
 
             var result = new GeneratedCode();
-            var qv = new QueryVisitor(result);
 
             CompositionBatch b = new CompositionBatch();
+            var qv = new QueryVisitor(result, null, _gContainer);
             b.AddPart(qv);
+
             if (_cppTranslator == null)
                 b.AddPart(this);
+
             _gContainer.Compose(b);
-            qv.MEFContainer = _gContainer;
 
             ///
             /// Parse the query

@@ -63,9 +63,8 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             qv.VisitQueryModel(model);
         }
@@ -80,9 +79,8 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             qv.VisitQueryModel(model);
 
@@ -213,9 +211,8 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             /// Note that the Assert takes place above, in the TakeOperatortestLoopVar test!
 
@@ -239,9 +236,8 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             qv.VisitQueryModel(model);
 
@@ -275,9 +271,8 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             qv.VisitQueryModel(model);
 
@@ -310,9 +305,8 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             qv.VisitQueryModel(model);
 
@@ -377,9 +371,8 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
 
             /// Note that the Assert takes place above, in the TakeOperatortestLoopVar test!
 
