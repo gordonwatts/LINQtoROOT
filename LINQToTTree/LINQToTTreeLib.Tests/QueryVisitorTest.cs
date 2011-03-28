@@ -150,13 +150,8 @@ namespace LINQToTTreeLib
             /// <summary>
             /// Dummy return for a variable and sequencer accessor.
             /// </summary>
-            class dummyvar : IVariable, ISequenceAccessor
+            class dummyvar : IVariable
             {
-                public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
-                {
-                    return new Variables.VarSimple(typeof(int));
-                }
-
                 public string VariableName
                 {
                     get { return "anint_1234"; }

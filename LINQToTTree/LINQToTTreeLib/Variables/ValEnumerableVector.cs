@@ -1,6 +1,5 @@
 ﻿using System;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Statements;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -9,7 +8,7 @@ namespace LINQToTTreeLib.Variables
     /// that we have (i.e. we can use things like v.size() to get the size of the thing we are iterating
     /// over).
     /// </summary>
-    class ValEnumerableVector : IValue, ISequenceAccessor
+    class ValEnumerableVector : IValue
     {
         public ValEnumerableVector(string rawVal, Type t)
         {
@@ -27,20 +26,5 @@ namespace LINQToTTreeLib.Variables
         /// Get the type of this item
         /// </summary>
         public Type Type { get; private set; }
-
-        /// <summary>
-        /// We want to generate some loop statements.
-        /// </summary>
-        /// <param name="env"></param>
-        /// <param name="context"></param>
-        /// <param name="indexName"></param>
-        public IVariable AddLoop(IGeneratedCode env, ICodeContext context, string indexName, Action<IVariableScopeHolder> popVariableContext)
-        {
-            var loopstatement = new StatementLoopOnVector(this, typeof(int).CreateUniqueVariableName());
-            env.Add(loopstatement);
-            popVariableContext(context.Add(indexName, loopstatement.ObjectReference));
-
-            return new VarDeclared(loopstatement.ObjectReference, indexName);
-        }
     }
 }

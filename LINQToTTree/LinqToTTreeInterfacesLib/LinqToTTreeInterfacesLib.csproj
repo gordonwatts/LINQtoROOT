@@ -62,7 +62,6 @@
     <Compile Include="IQueryResultCache.cs" />
     <Compile Include="IQVCollectionResultOperator.cs" />
     <Compile Include="IQVScalarResultOperator.cs" />
-    <Compile Include="ISequenceAccessor.cs" />
     <Compile Include="IStatement.cs" />
     <Compile Include="IStatementCompound.cs" />
     <Compile Include="ITypeHandler.cs" />

@@ -337,7 +337,6 @@ namespace LINQToTTreeLib
             }
             else if (expression.Type.IsArray)
             {
-                //var isA = expression.Type.
                 _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
             }
 

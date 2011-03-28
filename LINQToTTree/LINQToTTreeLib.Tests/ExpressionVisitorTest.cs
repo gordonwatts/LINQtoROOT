@@ -225,7 +225,6 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(IEnumerable<int>), r.Type, "incorrect type");
             Assert.AreEqual("(*d).numbers", r.RawValue, "incorrect reference");
-            Assert.IsInstanceOfType(r, typeof(ISequenceAccessor), "not an array operator");
         }
 
         [TestMethod]
