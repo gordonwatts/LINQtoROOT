@@ -328,7 +328,7 @@ namespace LINQToTTreeLib
             {
                 if (expression.Type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
-                    _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                    _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
                 }
                 else
                 {
@@ -337,7 +337,7 @@ namespace LINQToTTreeLib
             }
             else if (expression.Type.IsArray)
             {
-                _result = new ValEnumerableVector(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
             }
 
             ///
