@@ -257,14 +257,6 @@ namespace LINQToTTreeLib
                 return result;
 
             ///
-            /// See if there is an array grouping that needs to be dealt with?
-            /// 
-
-            result = RecodeWithArray(expression, attr.TargetClassType);
-            if (result != null)
-                return result;
-
-            ///
             /// Ok, it doesn't. So what we need to look for, then, is the same member in the final class.
             /// 
 
@@ -379,23 +371,6 @@ namespace LINQToTTreeLib
                                 where !field.FieldType.IsArray
                                 select field;
             return firstNonArray.First();
-        }
-
-        /// <summary>
-        /// See if this is an array recoding....
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private Expression RecodeWithArray(MemberExpression expression, Type type)
-        {
-            var attr = TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member);
-            if (attr == null)
-                return null;
-
-
-
-            throw new NotImplementedException();
         }
 
         /// <summary>
