@@ -233,7 +233,6 @@
     <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Statements\StatementLoopOnVectorTest.cs" />
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
