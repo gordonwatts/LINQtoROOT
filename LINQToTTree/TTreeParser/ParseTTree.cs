@@ -391,7 +391,7 @@ namespace TTreeParser
             var ln = NormalizeLeafName(leaf.Name);
 
             IClassItem toAdd = null;
-            if (IsROOTClass(className))
+            if (IsROOTClass(className) && className != "string")
             {
                 toAdd = new ItemROOTClass(ln, className);
             }
