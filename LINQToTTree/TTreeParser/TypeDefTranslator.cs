@@ -33,7 +33,10 @@ namespace TTreeParser
 
             foreach (var typeDef in ROOTNET.NTROOT.gROOT.GetListOfTypes().AsEnumerable().Cast<ROOTNET.Interface.NTDataType>())
             {
-                _translationTable[typeDef.Name] = typeDef.FullTypeName;
+                if (typeDef.Name != typeDef.FullTypeName)
+                {
+                    _translationTable[typeDef.Name] = typeDef.FullTypeName;
+                }
                 if (typeDef.Name == "Option_t")
                     _translationTable[typeDef.Name] = "const char";
             }

@@ -76,7 +76,7 @@ namespace LINQToTTreeLib.Tests
         public void ResolveTypedefTest()
         {
             Assert.AreEqual("int", TypeDefTranslator.ResolveTypedef("int"), "No change expected");
-            Assert.AreEqual("int", TypeDefTranslator.ResolveTypedef("Int_t"), "Should have found it");
+            Assert.AreEqual("unsigned int", TypeDefTranslator.ResolveTypedef("size_t"), "Should have found it");
         }
     }
 }
