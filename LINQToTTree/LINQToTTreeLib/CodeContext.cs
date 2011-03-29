@@ -191,25 +191,58 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public IVariableScopeHolder Add(string indexName, Expression indexExpression)
         {
+            if (indexExpression == null)
+                throw new ArgumentException("expr can't be null");
+
+            return AddInternal(indexName, indexExpression);
+        }
+
+
+        /// <summary>
+        /// Remove the definition of a internal variable, and return a popper to allow us
+        /// to restore the magic! :-)
+        /// </summary>
+        /// <param name="varName"></param>
+        /// <returns></returns>
+        public IVariableScopeHolder Remove(string varName)
+        {
+            return AddInternal(varName, null);
+        }
+
+        /// <summary>
+        /// Replace the the variable name with the requested expression.
+        /// </summary>
+        /// <param name="varName"></param>
+        /// <param name="replacementExpr"></param>
+        /// <returns></returns>
+        public IVariableScopeHolder AddInternal(string varName, Expression replacementExpr)
+        {
             ///
             /// Somethign to get us back to this state
             /// 
 
             IVariableScopeHolder popper = null;
-            if (_expressionReplacement.ContainsKey(indexName))
+            if (_expressionReplacement.ContainsKey(varName))
             {
-                popper = new CCReplacementExpression(this, indexName, _expressionReplacement[indexName]);
+                popper = new CCReplacementExpression(this, varName, _expressionReplacement[varName]);
             }
             else
             {
-                popper = new CCReplacementNull(this, indexName);
+                popper = new CCReplacementNull(this, varName);
             }
 
             ///
             /// And save the expression for future lookup
             /// 
 
-            _expressionReplacement[indexName] = indexExpression;
+            if (replacementExpr != null)
+            {
+                _expressionReplacement[varName] = replacementExpr;
+            }
+            else
+            {
+                _expressionReplacement.Remove(varName);
+            }
 
             return popper;
         }
@@ -225,5 +258,6 @@ namespace LINQToTTreeLib
                 return null;
             return _expressionReplacement[varname];
         }
+
     }
 }

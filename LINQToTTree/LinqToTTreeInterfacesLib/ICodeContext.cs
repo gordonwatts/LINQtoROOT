@@ -52,6 +52,14 @@ namespace LinqToTTreeInterfacesLib
         Expression GetReplacement(string varname);
 
         /// <summary>
+        /// Remove an expression from the repository - allows restoration via the
+        /// scope holder
+        /// </summary>
+        /// <param name="indexName"></param>
+        /// <returns></returns>
+        IVariableScopeHolder Remove(string indexName);
+
+        /// <summary>
         /// Get the current index loop variable.
         /// </summary>
         Expression LoopVariable { get; }

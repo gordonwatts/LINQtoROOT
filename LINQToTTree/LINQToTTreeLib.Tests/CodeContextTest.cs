@@ -166,5 +166,34 @@ namespace LINQToTTreeLib
             p.Pop();
             Assert.AreEqual(myvar1, c.GetReplacement("p"), "poped state");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestAddNullExpression()
+        {
+            var c = new CodeContext();
+            c.Add("dude", (Expression)null);
+        }
+
+        [TestMethod]
+        public void TestRemoveAndPopRemove()
+        {
+            var c = new CodeContext();
+            var myvar = Expression.Variable(typeof(int), "d");
+            c.Add("dude", myvar);
+
+            var popper = c.Remove("dude");
+            Assert.IsNull(c.GetReplacement("dude"), "incorrect dummy name");
+            popper.Pop();
+            Assert.AreEqual("d", (c.GetReplacement("dude") as ParameterExpression).Name, "incorrect dummy name");
+        }
+
+        [TestMethod]
+        public void TestRemoveOfNothing()
+        {
+            var c = new CodeContext();
+            var popper = c.Remove("dude");
+            popper.Pop();
+        }
     }
 }
