@@ -280,7 +280,7 @@ namespace LINQToTTreeLib
             /// Open the file, if it isn't there something very serious has gone wrong.
             /// 
 
-            var file = ROOTNET.NTFile.Open("plots.root");
+            var file = ROOTNET.NTFile.Open("queryplots.root");
             if (!file.IsOpen())
                 throw new FileNotFoundException("Unable to find the output file from the ROOT run!");
 

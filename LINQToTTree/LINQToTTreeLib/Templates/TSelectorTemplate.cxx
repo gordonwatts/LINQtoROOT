@@ -48,7 +48,7 @@ public:
 	/// Called with all plots at hand
 	void Terminate()
 	{
-		string outputRootFilename ("plots.root");
+		string outputRootFilename ("queryplots.root");
 		TFile *output = new TFile(outputRootFilename.c_str(), "RECREATE");
 
 		TIter next (GetOutputList());
