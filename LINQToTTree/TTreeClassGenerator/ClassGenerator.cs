@@ -291,10 +291,12 @@ namespace TTreeClassGenerator
                              select g).FirstOrDefault();
             if (ungrouped != null)
             {
+                output.WriteLine("#pragma warning disable 0649");
                 foreach (var v in ungrouped.Variables)
                 {
                     WriteVariableRenameDefinition(output, v, varTypes, className, false);
                 }
+                output.WriteLine("#pragma warning restore 0649");
             }
 
 
@@ -326,11 +328,13 @@ namespace TTreeClassGenerator
                 output.WriteLine("  public class {0}{1}", className, grp.Name);
                 output.WriteLine("  {");
 
+                output.WriteLine("#pragma warning disable 0649");
                 foreach (var v in grp.Variables)
                 {
                     output.WriteLine("    [TTreeVariableGrouping]");
                     WriteVariableRenameDefinition(output, v, varTypes, className, true);
                 }
+                output.WriteLine("#pragma warning restore 0649");
 
                 output.WriteLine("  }");
                 output.WriteLine();
@@ -345,7 +349,6 @@ namespace TTreeClassGenerator
         /// <param name="v"></param>
         private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes, string baseTypeName, bool removeOneArrayDecl)
         {
-            output.WriteLine("#pragma warning disable 0649");
             var cppVarName = v.NETName;
             if (v.NETName != v.TTreeName && string.IsNullOrEmpty(v.IndexToGroup))
             {
@@ -366,7 +369,6 @@ namespace TTreeClassGenerator
             }
 
             output.WriteLine("    public {0} {1};", typeName, v.NETName);
-            output.WriteLine("#pragma warning restore 0649");
         }
 
         /// <summary>
