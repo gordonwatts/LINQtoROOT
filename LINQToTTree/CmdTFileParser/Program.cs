@@ -24,7 +24,7 @@ namespace CmdTFileParser
             List<FileInfo> rootFiles = new List<FileInfo>();
             List<FileInfo> libraries = new List<FileInfo>();
             string specialFile = "";
-            FileInfo outputFile = new FileInfo("ntupleinfo.ntupom");
+            FileInfo outputFile = null;
             DirectoryInfo outputDir = new DirectoryInfo(".");
             bool doExistanceCheck = true;
 
@@ -83,6 +83,9 @@ namespace CmdTFileParser
                 Console.WriteLine("no input root files to scan!");
                 return;
             }
+
+            if (outputFile == null)
+                outputFile = new FileInfo(Path.ChangeExtension(rootFiles[0].FullName, "ntupom"));
 
             ///
             /// Next, load up all the libraries
