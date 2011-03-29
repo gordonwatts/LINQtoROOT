@@ -69,8 +69,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ntupleinfo.ntupom" />
-    <None Include="vtupleConfig-000.ntup" />
+    <None Include="CollectionTreeConfig-000.ntup" />
+    <None Include="hvsample.ntupom" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -21,10 +21,10 @@ ConverterImage = $(SolutionDir)\..\LINQToTTree\CmdTFileParser\bin\Debug\CmdTFile
 all: $(ClassCSFile)
 
 #$(DemoJetShapesDir)\ntuple.ntupom : $(SolutionDir)\btag-slim.root $(ConverterImage) $(NtupleDLLs) $(ConverterImage)
-#    $(ConverterImage) $(NtupleDLLs) $(SolutionDir)\btag-slim.root -o $(DemoJetShapesDir)\ntuple.ntupom
+#    $(ConverterImage) $(NtupleDLLs) $(SolutionDir)\btag-slim.root -o $(DemoJetShapesDir)\ntupleinfo.ntupom
 
-$(ClassCSFile) : $(DemoJetShapesDir)\ntupleinfo.ntupom $(DemoJetShapesDir)\vtupleConfig-000.ntup $(ClassConverterImage) 
-    $(ClassConverterImage) $(DemoJetShapesDir)\ntupleinfo.ntupom $(ClassCSFile)
+$(ClassCSFile) : $(DemoJetShapesDir)\hvsample.ntupom $(DemoJetShapesDir)\CollectionTreeConfig-000.ntup $(ClassConverterImage) 
+    $(ClassConverterImage) $(DemoJetShapesDir)\hvsample.ntupom $(ClassCSFile)
 
 #
 # Clean up the above files to force a restart
