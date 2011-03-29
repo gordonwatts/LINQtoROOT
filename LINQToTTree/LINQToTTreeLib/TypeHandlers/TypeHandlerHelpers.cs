@@ -68,14 +68,15 @@ namespace LINQToTTreeLib.TypeHandlers
 
                 ///
                 /// Next, do the lambda expression. Order of p1 and p2 is b/c we should make sure that it happens
-                /// before any parameters are replaced!
+                /// before any parameters are replaced! Note we parse the body of the lambda here! Parameters are defined and should
+                /// correctly deal with any substitution in process.
                 /// 
 
                 var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context, container);
                 var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context, container));
                 var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
 
-                var statementBody = ExpressionVisitor.GetExpression(action, gc, context, container);
+                var statementBody = ExpressionVisitor.GetExpression(action.Body, gc, context, container);
 
                 p2.Pop();
                 p1.Pop();
@@ -101,7 +102,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        private Expression RaiseLambda(Expression expression)
+        private LambdaExpression RaiseLambda(Expression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");

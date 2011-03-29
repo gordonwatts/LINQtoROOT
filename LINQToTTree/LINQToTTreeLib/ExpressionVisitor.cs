@@ -399,10 +399,11 @@ namespace LINQToTTreeLib
             var allParamDefineToPopers = paramDefineToPopers.ToArray();
 
             ///
-            /// Do the work!
+            /// Do the work. We parse the body of the lambda expression. The references to the parameters should be automatically
+            /// dealt with.
             /// 
 
-            _result = GetExpression(lambda, _codeEnv, _codeContext, MEFContainer);
+            _result = GetExpression(lambda.Body, _codeEnv, _codeContext, MEFContainer);
 
             ///
             /// Now, pop everything off!
