@@ -148,90 +148,97 @@ namespace TTreeClassGenerator
 
                 foreach (var cls in classSpec.Classes)
                 {
-                    ///
-                    /// Write out the info class that contains everything needed to process this.
-                    /// We could use attribute programing here, but that takes more code at the other
-                    /// end, so until there is a real reason, we'll do it this way.
-                    /// 
-                    /// This is a kludge until we do more work to fix things with attributes, etc.
-                    /// 
-
-                    Action writeOutExtra = () =>
+                    try
                     {
-                        output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
-                        output.WriteLine("    public static string[] _gObjectFiles= {");
-                        foreach (var item in classSpec.ClassImplimintationFiles)
-                        {
-                            output.WriteLine("      @\"" + item + "\",");
-                        }
-                        output.WriteLine("    };");
-                    };
+                        ///
+                        /// Write out the info class that contains everything needed to process this.
+                        /// We could use attribute programing here, but that takes more code at the other
+                        /// end, so until there is a real reason, we'll do it this way.
+                        /// 
+                        /// This is a kludge until we do more work to fix things with attributes, etc.
+                        /// 
 
-                    ///
-                    /// First, if there is a translated object model, write it out.
-                    /// 
-
-                    var rawClassName = cls.Name;
-                    if (userInfo != null)
-                    {
-                        if (userInfo.ContainsKey(cls.Name))
+                        Action writeOutExtra = () =>
                         {
-                            if (RequiresTranslation(userInfo[cls.Name]))
+                            output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
+                            output.WriteLine("    public static string[] _gObjectFiles= {");
+                            foreach (var item in classSpec.ClassImplimintationFiles)
                             {
-                                rawClassName = rawClassName + "TranslatedTo";
-                                var varTypes = FindVariableTypes(cls.Items);
-                                WriteTranslatedObjectStructure(output, userInfo[cls.Name], cls.Name, rawClassName, varTypes, writeOutExtra);
-                                output.WriteLine();
-                                output.WriteLine();
+                                output.WriteLine("      @\"" + item + "\",");
+                            }
+                            output.WriteLine("    };");
+                        };
+
+                        ///
+                        /// First, if there is a translated object model, write it out.
+                        /// 
+
+                        var rawClassName = cls.Name;
+                        if (userInfo != null)
+                        {
+                            if (userInfo.ContainsKey(cls.Name))
+                            {
+                                if (RequiresTranslation(userInfo[cls.Name]))
+                                {
+                                    rawClassName = rawClassName + "TranslatedTo";
+                                    var varTypes = FindVariableTypes(cls.Items);
+                                    WriteTranslatedObjectStructure(output, userInfo[cls.Name], cls.Name, rawClassName, varTypes, writeOutExtra);
+                                    output.WriteLine();
+                                    output.WriteLine();
+                                }
                             }
                         }
+
+                        output.WriteLine("  public class {0} : IExpressionHolder", rawClassName);
+                        output.WriteLine("  {");
+                        output.WriteLine("    public Expression HeldExpression {get; private set;}");
+                        output.WriteLine("    public {0} (Expression expr) {{ HeldExpression = expr; }}", rawClassName);
+                        output.WriteLine();
+
+                        ///
+                        /// These fields will never be set or accessed - so we turn off some warnings the compiler will generate.
+                        /// They are dummies so that intellisense works and we can do the translation properly.
+                        /// 
+
+                        output.WriteLine("#pragma warning disable 0649");
+
+                        foreach (var item in cls.Items)
+                        {
+                            WriteItem(item, output);
+                        }
+
+                        output.WriteLine("#pragma warning restore 0649");
+
+                        writeOutExtra();
+
+                        output.WriteLine("  }"); // End of the class
+                        output.WriteLine();
+                        output.WriteLine();
+
+                        ///
+                        /// Next, write out the queriable classes so we can actually do the queires
+                        /// against the trees!
+                        /// 
+
+                        output.WriteLine("  /// Helper classes");
+                        output.WriteLine("  public static class Queryable{0}", cls.Name);
+                        output.WriteLine("  {");
+                        output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
+                        output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
+                        output.WriteLine("    {");
+                        output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name);
+                        output.WriteLine("    }");
+                        output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
+                        output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo[] rootFiles, string treeName = \"{0}\")", cls.Name);
+                        output.WriteLine("    {");
+                        output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name);
+                        output.WriteLine("    }");
+                        output.WriteLine("  }");
                     }
-
-                    output.WriteLine("  public class {0} : IExpressionHolder", rawClassName);
-                    output.WriteLine("  {");
-                    output.WriteLine("    public Expression HeldExpression {get; private set;}");
-                    output.WriteLine("    public {0} (Expression expr) {{ HeldExpression = expr; }}", rawClassName);
-                    output.WriteLine();
-
-                    ///
-                    /// These fields will never be set or accessed - so we turn off some warnings the compiler will generate.
-                    /// They are dummies so that intellisense works and we can do the translation properly.
-                    /// 
-
-                    output.WriteLine("#pragma warning disable 0649");
-
-                    foreach (var item in cls.Items)
+                    catch (Exception e)
                     {
-                        WriteItem(item, output);
+                        throw new Exception("Error while processing class '" + cls.Name + "'", e);
                     }
-
-                    output.WriteLine("#pragma warning restore 0649");
-
-                    writeOutExtra();
-
-                    output.WriteLine("  }"); // End of the class
-                    output.WriteLine();
-                    output.WriteLine();
-
-                    ///
-                    /// Next, write out the queriable classes so we can actually do the queires
-                    /// against the trees!
-                    /// 
-
-                    output.WriteLine("  /// Helper classes");
-                    output.WriteLine("  public static class Queryable{0}", cls.Name);
-                    output.WriteLine("  {");
-                    output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
-                    output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo rootFile, string treeName = \"{0}\")", cls.Name);
-                    output.WriteLine("    {");
-                    output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name);
-                    output.WriteLine("    }");
-                    output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
-                    output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo[] rootFiles, string treeName = \"{0}\")", cls.Name);
-                    output.WriteLine("    {");
-                    output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name);
-                    output.WriteLine("    }");
-                    output.WriteLine("  }");
                 }
 
                 ///
@@ -369,6 +376,9 @@ namespace TTreeClassGenerator
         /// <returns></returns>
         private bool RequiresTranslation(TTreeUserInfo tTreeUserInfo)
         {
+            if (tTreeUserInfo.Groups.Length == 0)
+                return false;
+
             if (tTreeUserInfo.Groups.Length > 1)
                 return true;
             if (tTreeUserInfo.Groups[0].Name != "ungrouped")
