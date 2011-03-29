@@ -38,23 +38,24 @@ namespace TTreeClassGenerator
             var classSpec = LoadFromXMLFile(inputXMLFile);
 
             ///
-            /// Next, see if we can find the user specification file
+            /// Next, see if we can find the user specification file. We get a search path and use that to find this file.
             /// 
 
             Dictionary<string, TTreeUserInfo> userInfoMap = new Dictionary<string, TTreeUserInfo>();
             foreach (var c in classSpec.Classes)
             {
-                var xmlUserFileName = c.UserInfoPath;
-                if (!string.IsNullOrEmpty(xmlUserFileName))
+                var xmlFile = FindFileInDefaultPaths(c.UserInfoPath, inputXMLFile);
+                if (xmlFile == null)
                 {
-                    var xmlFile = new FileInfo(xmlUserFileName);
-                    if (!xmlFile.Exists)
-                    {
-                        xmlFile = new FileInfo(inputXMLFile.DirectoryName + "\\" + xmlUserFileName);
-                        if (!xmlFile.Exists)
-                            throw new ArgumentException("Unable to find user selection file '" + xmlUserFileName + " - " + xmlFile.FullName);
-                    }
-
+                    Console.WriteLine("WARNING: No grouping file specified or found for the ntuple '" + c.Name + "' (the xxxConfig.ntup file).");
+                }
+                else if (!xmlFile.Exists)
+                {
+                    throw new FileNotFoundException("ERROR: Unable to find ntuple grouping file '" + c.UserInfoPath + "' in any of the standard places (working dir, the full path, near the executable)");
+                }
+                else
+                {
+                    Console.WriteLine("INFO: Loading gropuing file '" + xmlFile.FullName + "' for class '" + c.Name + "'.");
                     userInfoMap[c.Name] = LoadUserInfoFromXMLFile(xmlFile);
                 }
             }
@@ -64,6 +65,47 @@ namespace TTreeClassGenerator
             /// 
 
             GenerateClasss(classSpec, outputCSFile, namespaceName, userInfoMap);
+        }
+
+        /// <summary>
+        /// Search for a file with fpath.Name in:
+        /// 1) The current directory
+        /// 2) The fully specified path
+        /// 3) The location of the executable
+        /// 
+        /// If we get a null, return a null - if we can't find the file, return a FileInfo of the full filePath
+        /// with .Exists == false.
+        /// </summary>
+        /// <param name="filePath">String of where we think the file might be</param>
+        /// <returns></returns>
+        private FileInfo FindFileInDefaultPaths(string filePath, params FileInfo[] otherFiles)
+        {
+            if (string.IsNullOrWhiteSpace(filePath) == null)
+                return null;
+
+            string name = Path.GetFileName(filePath);
+
+            /// Local directory??
+            var result = new FileInfo(name);
+            if (result.Exists)
+                return result;
+
+            /// Near any of the other files?
+            foreach (var of in otherFiles)
+            {
+                result = new FileInfo(of.DirectoryName + "\\" + name);
+                if (result.Exists)
+                    return result;
+            }
+
+            /// Full path??
+            result = new FileInfo(filePath);
+            if (result.Exists)
+                return result;
+
+            /// Wow. Give up!
+
+            return result;
         }
 
         /// <summary>
