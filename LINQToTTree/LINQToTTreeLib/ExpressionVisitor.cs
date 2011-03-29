@@ -64,6 +64,17 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Local version of get expression that passes on all of our information. This is basically
+        /// a syntatic shortcut.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        private IValue GetExpression(Expression expr)
+        {
+            return GetExpression(expr, _codeEnv, _codeContext, MEFContainer);
+        }
+
+        /// <summary>
         /// Hold onto the result that we will eventually pass back
         /// </summary>
         private IValue Result
@@ -229,8 +240,8 @@ namespace LINQToTTreeLib
             /// Run the expression
             /// 
 
-            var RHS = GetExpression(expression.Right, _codeEnv, _codeContext, MEFContainer);
-            var LHS = GetExpression(expression.Left, _codeEnv, _codeContext, MEFContainer);
+            var RHS = GetExpression(expression.Right);
+            var LHS = GetExpression(expression.Left);
 
             string sRHS, sLHS;
             if (CastToFinalType)
@@ -261,15 +272,15 @@ namespace LINQToTTreeLib
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
+                    _result = new ValSimple("-" + GetExpression(expression.Operand).CastToType(expression.Type), expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!" + GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
+                    _result = new ValSimple("!" + GetExpression(expression.Operand).CastToType(expression.Type), expression.Type);
                     break;
 
                 case ExpressionType.Convert:
-                    _result = new ValSimple(GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer).CastToType(expression.Type), expression.Type);
+                    _result = new ValSimple(GetExpression(expression.Operand).CastToType(expression.Type), expression.Type);
                     break;
 
                 case ExpressionType.ArrayLength:
@@ -289,7 +300,7 @@ namespace LINQToTTreeLib
         /// <param name="expression"></param>
         private void VisitArrayLength(UnaryExpression expression)
         {
-            var arrayBase = GetExpression(expression.Operand, _codeEnv, _codeContext, MEFContainer);
+            var arrayBase = GetExpression(expression.Operand);
             _result = new ValSimple(arrayBase.AsObjectReference() + ".size()", expression.Type);
         }
 
@@ -315,7 +326,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            var baseExpr = GetExpression(expression.Expression, _codeEnv, _codeContext, MEFContainer);
+            var baseExpr = GetExpression(expression.Expression);
 
             ///
             /// Figure out how to represent the variable type. We base this on the type - enumerables, for
@@ -373,7 +384,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitLambdaExpression(LambdaExpression expression)
         {
-            _result = GetExpression(expression.Body, _codeEnv, _codeContext, MEFContainer);
+            _result = GetExpression(expression.Body);
 
             return expression;
         }
@@ -395,7 +406,7 @@ namespace LINQToTTreeLib
 
             var paramArgs = lambda.Parameters.Zip(expression.Arguments, (p, a) => Tuple.Create(p, a));
             var paramDefineToPopers = from pair in paramArgs
-                                      select _codeContext.Add(pair.Item1.Name, GetExpression(pair.Item2, _codeEnv, _codeContext, MEFContainer));
+                                      select _codeContext.Add(pair.Item1.Name, GetExpression(pair.Item2));
             var allParamDefineToPopers = paramDefineToPopers.ToArray();
 
             ///
@@ -403,7 +414,7 @@ namespace LINQToTTreeLib
             /// dealt with.
             /// 
 
-            _result = GetExpression(lambda.Body, _codeEnv, _codeContext, MEFContainer);
+            _result = GetExpression(lambda.Body);
 
             ///
             /// Now, pop everything off!
