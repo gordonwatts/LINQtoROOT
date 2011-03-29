@@ -270,13 +270,32 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Deal with an array index. This is interesting because it might be that
-        /// the array access is on an object that needs to be "collapsed".
+        /// Deal with an array index. Now, normally, we never come through here to do a translation - because we
+        /// need an leaf to really correctly do the translation. So what we do here is we stop the translation process
+        /// if we are not on a leaf.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
+            if (expression.NodeType != ExpressionType.ArrayIndex)
+            {
+                return base.VisitBinaryExpression(expression);
+            }
+
+            ///
+            /// No need to translate further if this isn't a final leaf bit... if it is not a final leaf, then
+            /// we shoudl short-circut the translation.
+            /// 
+
+            var memberAccess = expression.Left as MemberExpression;
+            if (memberAccess != null)
+            {
+                var attr = TypeHasAttribute<TTreeVariableGroupingAttribute>(memberAccess.Member);
+                if (attr != null)
+                    return expression;
+            }
+
             return base.VisitBinaryExpression(expression);
         }
 

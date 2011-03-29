@@ -256,6 +256,16 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestArrayGroupingNoTranslation()
+        {
+            Expression<Func<SourceType2, SourceType2Container>> lambdaExpr = arr => arr.jets[12];
+            var notReadyYet = lambdaExpr.Body;
+
+            var result = TranslatingExpressionVisitor.Translate(notReadyYet);
+            Assert.AreEqual(notReadyYet.ToString(), result.ToString(), "translation shouldn't have happened");
+        }
+
+        [TestMethod]
         public void TestArrayGroupingChange()
         {
             ///
