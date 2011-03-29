@@ -1,11 +1,10 @@
-﻿using TTreeParser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TTreeParser;
 
 namespace LINQToTTreeLib.Tests
 {
-    
-    
+
+
     /// <summary>
     ///This is a test class for TypeDefTranslatorTest and is intended
     ///to contain all TypeDefTranslatorTest Unit Tests
@@ -16,6 +15,12 @@ namespace LINQToTTreeLib.Tests
 
 
         private TestContext testContextInstance;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            var a = ROOTNET.NTROOT.gROOT.GetApplication();
+        }
 
         /// <summary>
         ///Gets or sets the test context which provides
