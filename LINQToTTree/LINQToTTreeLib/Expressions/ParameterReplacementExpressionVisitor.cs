@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Parsing;
@@ -58,6 +59,30 @@ namespace LINQToTTreeLib.Expressions
             if (replaceit == null)
                 return expression;
             return replaceit;
+        }
+
+        /// <summary>
+        /// We have to protect the lambda expression's parameters from accidental translation.
+        /// 
+        /// If a parameter is called "t" to a lambda function, and the parameter is defined above us in some other
+        /// context, then we need to make sure that we hide it here so as we translate the expression we don't
+        /// accidentally translate the rest of the stuff!
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitLambdaExpression(LambdaExpression expression)
+        {
+            var popers = (from a in expression.Parameters
+                          select _context.Remove(a.Name)).ToArray();
+
+            var result = base.VisitLambdaExpression(expression);
+
+            foreach (var p in popers)
+            {
+                p.Pop();
+            }
+
+            return result;
         }
     }
 }

@@ -107,5 +107,35 @@ namespace LINQToTTreeLib.Expressions
             Assert.AreEqual(typeof(int), asp.Type, "bad type coming back");
             Assert.AreEqual("f", asp.Name, "variable name");
         }
+
+        class testLambdaSimple
+        {
+            public float pt;
+        }
+
+        [TestMethod]
+        public void TestLambda()
+        {
+            Expression<Func<testLambdaSimple, float>> lambdaExpr = t => t.pt / ((float)100.0);
+
+            CodeContext cc = new CodeContext();
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc);
+
+            Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
+        }
+
+        [TestMethod]
+        public void TestLambdaWithPredefinedName()
+        {
+            /// This is basically a scope test! :-)
+            Expression<Func<testLambdaSimple, float>> lambdaExpr = t => t.pt / ((float)100.0);
+
+            CodeContext cc = new CodeContext();
+            cc.Add("t", Expression.Variable(typeof(testLambdaSimple), "fook"));
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc);
+
+            Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
+            Assert.AreEqual("fook", (cc.GetReplacement("t") as ParameterExpression).Name, "code context was altered");
+        }
     }
 }
