@@ -32,6 +32,13 @@ namespace LINQToTTreeLib
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
             ///
+            /// If this is an array, short-circut the translation here
+            /// 
+
+            if (expression.Type.IsArray)
+                return expression;
+
+            ///
             /// See if the source has a "translated-to" class on it?
             /// 
 
@@ -48,6 +55,14 @@ namespace LINQToTTreeLib
             var attrV = TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member);
             if (attrV != null)
             {
+                ///
+                /// Sometimes we are deep in the middle of a lambda translation, or similar. In that case,
+                /// we may not be able to walk all the way back. There is a pattern we can detect, however.
+                /// 
+
+                if (expression.Expression is ParameterExpression)
+                    return expression;
+
                 ///
                 /// Regular array recoding - so this is at the top level and is the most
                 /// common kind
@@ -109,7 +124,8 @@ namespace LINQToTTreeLib
 
             var indexMemberExpression = sourceExpression as MemberExpression;
             if (indexMemberExpression == null)
-                throw new NotImplementedException("Index isn't a member access in '" + sourceExpression.ToString() + "'.");
+                return null;
+
             var indexMember = indexMemberExpression.Member;
             var attrIndexReferences = TypeHasAttribute<IndexToOtherObjectArrayAttribute>(indexMember);
             if (attrIndexReferences == null)
@@ -267,36 +283,6 @@ namespace LINQToTTreeLib
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Deal with an array index. Now, normally, we never come through here to do a translation - because we
-        /// need an leaf to really correctly do the translation. So what we do here is we stop the translation process
-        /// if we are not on a leaf.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitBinaryExpression(BinaryExpression expression)
-        {
-            if (expression.NodeType != ExpressionType.ArrayIndex)
-            {
-                return base.VisitBinaryExpression(expression);
-            }
-
-            ///
-            /// No need to translate further if this isn't a final leaf bit... if it is not a final leaf, then
-            /// we shoudl short-circut the translation.
-            /// 
-
-            var memberAccess = expression.Left as MemberExpression;
-            if (memberAccess != null)
-            {
-                var attr = TypeHasAttribute<TTreeVariableGroupingAttribute>(memberAccess.Member);
-                if (attr != null)
-                    return expression;
-            }
-
-            return base.VisitBinaryExpression(expression);
         }
 
         /// <summary>
