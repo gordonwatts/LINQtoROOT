@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TTreeParser;
 
 namespace LINQToTTreeLib.Tests
@@ -77,6 +78,23 @@ namespace LINQToTTreeLib.Tests
         {
             Assert.AreEqual("int", TypeDefTranslator.ResolveTypedef("int"), "No change expected");
             Assert.AreEqual("unsigned int", TypeDefTranslator.ResolveTypedef("size_t"), "Should have found it");
+        }
+
+        [TestMethod]
+        public void DefineNewTypedef()
+        {
+            Assert.AreEqual("fork", TypeDefTranslator.ResolveTypedef("fork"), "the fork typdef should not have been defined");
+
+            var output = new FileInfo("DefineNewTypedef.C");
+            using (var writer = output.CreateText())
+            {
+                writer.WriteLine("typedef int fork;");
+                writer.WriteLine();
+                writer.Close();
+            }
+            int result = ROOTNET.NTSystem.gSystem.CompileMacro("DefineNewTypedef.C");
+
+            Assert.AreEqual("int", TypeDefTranslator.ResolveTypedef("fork"), "the fork typdef should now be defined");
         }
     }
 }

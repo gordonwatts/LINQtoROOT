@@ -18,20 +18,40 @@ namespace TTreeParser
             return type;
         }
 
+        /// <summary>
+        /// Keep track of all the translations
+        /// </summary>
         private static Dictionary<string, string> _translationTable = null;
+
+        /// <summary>
+        /// Keep track of the number of typedef's we've seen.
+        /// </summary>
+        private static int _numgerOfTypedefs = -1;
 
         /// <summary>
         /// Load up everything from root
         /// </summary>
         private static void Init()
         {
-            if (_translationTable != null)
-            {
-                return;
-            }
-            _translationTable = new Dictionary<string, string>();
+            ///
+            /// Check if we've run or the # of items we've found has changed.
+            /// 
 
-            foreach (var typeDef in ROOTNET.NTROOT.gROOT.GetListOfTypes().AsEnumerable().Cast<ROOTNET.Interface.NTDataType>())
+            var typedefList = ROOTNET.NTROOT.gROOT.ListOfTypes;
+            if (_numgerOfTypedefs == typedefList.Entries)
+                return;
+            _numgerOfTypedefs = typedefList.Entries;
+
+            ///
+            /// Ok - get the typedef list cache up and running
+            /// 
+
+            if (_translationTable == null)
+            {
+                _translationTable = new Dictionary<string, string>();
+            }
+
+            foreach (var typeDef in typedefList.Cast<ROOTNET.Interface.NTDataType>())
             {
                 if (typeDef.Name != typeDef.FullTypeName)
                 {
