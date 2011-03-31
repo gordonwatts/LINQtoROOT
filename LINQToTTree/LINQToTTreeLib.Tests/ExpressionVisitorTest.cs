@@ -415,11 +415,11 @@ namespace LINQToTTreeLib
         public void TestSimpleArrayLength()
         {
             Expression<Func<int[], int>> arrayLenLambda = arr => arr.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("(*arr).size()", result.RawValue, "actual translation incorrect");
         }
 
-        private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda)
+        private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)
         {
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
@@ -432,7 +432,7 @@ namespace LINQToTTreeLib
             var result = ExpressionVisitor.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
 
             Assert.IsNotNull(result, "result");
-            Assert.AreEqual(typeof(int), result.Type, "result type");
+            Assert.AreEqual(expectedType, result.Type, "result type");
             return result;
         }
 
@@ -445,7 +445,7 @@ namespace LINQToTTreeLib
         public void TestClassArraySize()
         {
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
         }
 
@@ -484,7 +484,7 @@ namespace LINQToTTreeLib
             /// in the TranslationExpressionVisitor object should take care of the rest. Fingers crossed! :-)
 
             Expression<Func<SourceType1, int>> arrayLenLambda = arr => arr.jets.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda);
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
         }
 
@@ -516,8 +516,18 @@ namespace LINQToTTreeLib
             var myvar = Expression.Variable(typeof(int[]), "d");
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
-            var result = RunArrayLengthOnExpression(myaccess);
+            var result = RunArrayLengthOnExpression(myaccess, typeof(int));
             Assert.AreEqual("(*d)[1]", result.RawValue, "C++ incorrectly translated");
+        }
+
+        [TestMethod]
+        public void TestComplexObjectArrayAccess()
+        {
+            var myarray = Expression.Variable(typeof(ROOTNET.NTH1F[]), "harr");
+            var myaccess = Expression.ArrayIndex(myarray, Expression.Constant(1));
+
+            var result = RunArrayLengthOnExpression(myaccess, typeof(ROOTNET.NTH1F));
+            Assert.AreEqual("(*harr)[1]", result.RawValue, "C++ th1f not translated correctly");
         }
 
         class ObjectArrayTest
@@ -532,7 +542,7 @@ namespace LINQToTTreeLib
             var arrMember = Expression.MakeMemberAccess(arr, typeof(ObjectArrayTest).GetMember("arr").First());
             var arrayIndex = Expression.ArrayIndex(arrMember, Expression.Constant(1));
 
-            var result = RunArrayLengthOnExpression(arrayIndex);
+            var result = RunArrayLengthOnExpression(arrayIndex, typeof(int));
 
             Assert.AreEqual("(*(*obj).arr)[1]", result.RawValue, "array text");
         }
