@@ -137,5 +137,19 @@ namespace LINQToTTreeLib.Expressions
             Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
             Assert.AreEqual("fook", (cc.GetReplacement("t") as ParameterExpression).Name, "code context was altered");
         }
+
+        [TestMethod]
+        public void TestLambdaWithPredefinedNameAsParam()
+        {
+            /// This is basically a scope test! :-)
+            Expression<Func<testLambdaSimple, float>> lambdaExpr = t => t.pt / ((float)100.0);
+
+            CodeContext cc = new CodeContext();
+            cc.Add("t", new Variables.ValSimple("fook", typeof(testLambdaSimple)));
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc);
+
+            Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
+            Assert.AreEqual("fook", cc.GetReplacement("t", typeof(testLambdaSimple)).RawValue, "code context was altered");
+        }
     }
 }

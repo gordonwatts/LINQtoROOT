@@ -73,7 +73,7 @@ namespace LINQToTTreeLib
             }
             public void Pop()
             {
-                _codeContext.Delete(_vName);
+                _codeContext.DeleteValue(_vName);
             }
         }
 
@@ -123,7 +123,10 @@ namespace LINQToTTreeLib
             /// </summary>
             public void Pop()
             {
-                _context.Add(_varName, _oldVal);
+                if (_oldVal != null)
+                    _context.Add(_varName, _oldVal);
+                else
+                    _context.DeleteExpression(_varName);
             }
         }
 
@@ -160,8 +163,18 @@ namespace LINQToTTreeLib
         /// <param name="vName"></param>
         internal void Delete(string vName)
         {
-            _parameterReplacement.Remove(vName);
+            DeleteExpression(vName);
+            DeleteValue(vName);
+        }
+
+        internal void DeleteExpression(string vName)
+        {
             _expressionReplacement.Remove(vName);
+        }
+
+        internal void DeleteValue(string vName)
+        {
+            _parameterReplacement.Remove(vName);
         }
 
         /// <summary>
@@ -228,7 +241,7 @@ namespace LINQToTTreeLib
             }
             else
             {
-                popper = new CCReplacementNull(this, varName);
+                popper = new CCReplacementExpression(this, varName, null);
             }
 
             ///
@@ -258,6 +271,5 @@ namespace LINQToTTreeLib
                 return null;
             return _expressionReplacement[varname];
         }
-
     }
 }

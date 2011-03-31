@@ -195,5 +195,31 @@ namespace LINQToTTreeLib
             var popper = c.Remove("dude");
             popper.Pop();
         }
+
+        [TestMethod]
+        public void TestPopAcrossDomainsExpression()
+        {
+            var c = new CodeContext();
+            var myvar = new Variables.ValSimple("hi", typeof(int));
+            c.Add("dude", myvar);
+            var popper = c.Add("dude", Expression.Variable(typeof(int), "dude"));
+
+            Assert.AreEqual("hi", c.GetReplacement("dude", typeof(int)).RawValue, "dude not there");
+            popper.Pop();
+            Assert.AreEqual("hi", c.GetReplacement("dude", typeof(int)).RawValue, "dude not there");
+        }
+
+        [TestMethod]
+        public void TestPopAcrossDomainsValue()
+        {
+            var c = new CodeContext();
+            var myvar = new Variables.ValSimple("hi", typeof(int));
+            c.Add("dude", Expression.Variable(typeof(int), "dude"));
+            var popper = c.Add("dude", myvar);
+
+            Assert.IsNotNull(c.GetReplacement("dude"), "dude not there");
+            popper.Pop();
+            Assert.IsNotNull(c.GetReplacement("dude"), "dude not there");
+        }
     }
 }
