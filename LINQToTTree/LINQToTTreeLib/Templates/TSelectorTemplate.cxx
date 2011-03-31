@@ -16,6 +16,13 @@
 
 using std::string;
 
+#ifdef __MAKECINT__
+#foreach($l in $CINTLines)
+$l
+#end
+#endif
+
+
 class query : public $baseClassName
 {
 public:

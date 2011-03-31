@@ -169,6 +169,7 @@ namespace LINQToTTreeLib
         {
             public static string _gProxyFile = "";
             public static string[] _gObjectFiles = { };
+            public static string[] _gCINTLines = { };
 
             internal static void Reset()
             {

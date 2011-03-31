@@ -40,6 +40,11 @@ namespace LINQToTTreeLib
         private FileInfo[] _extraComponentFiles;
 
         /// <summary>
+        /// CINT commands we want to make sure are in our headers
+        /// </summary>
+        private string[] _cintLines;
+
+        /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
         /// <param name="rootFiles"></param>
@@ -94,6 +99,8 @@ namespace LINQToTTreeLib
                 throw new ArgumentException("_gProxyFile - object is not a member of " + baseNtupleObject.ToString());
             if (baseNtupleObject.GetField("_gObjectFiles") == null)
                 throw new ArgumentException("_gObjectFiles - object is not a member of " + baseNtupleObject.ToString());
+            if (baseNtupleObject.GetField("_gCINTLines") == null)
+                throw new ArgumentException("_gCINTLines - object is not a member of " + baseNtupleObject.ToString());
 
             var proxyFileName = baseNtupleObject.GetField("_gProxyFile").GetValue(null) as string;
             if (string.IsNullOrWhiteSpace(proxyFileName))
@@ -123,12 +130,19 @@ namespace LINQToTTreeLib
             if (bad.Length != 0)
                 throw new ArgumentException("Extra component files were missing: " + bad + "");
 
+            var cintLines = baseNtupleObject.GetField("_gCINTLines").GetValue(null) as string[];
+            if (cintLines == null)
+            {
+                cintLines = new string[0];
+            }
+
             ///
             /// Save the values
             /// 
 
             _rootFiles = rootFiles;
             _treeName = treeName;
+            _cintLines = cintLines;
         }
 
         /// <summary>
@@ -484,6 +498,7 @@ namespace LINQToTTreeLib
             var context = new VelocityContext();
             context.Put("baseClassInclude", proxyFileName);
             context.Put("baseClassName", proxyObjectName);
+            context.Put("CINTLines", _cintLines);
 
             ///
             /// Now translate all the code we are looking at

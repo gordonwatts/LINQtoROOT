@@ -203,12 +203,24 @@ namespace TTreeClassGenerator
                         Action writeOutExtra = () =>
                         {
                             output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
+
                             output.WriteLine("    public static string[] _gObjectFiles= {");
                             foreach (var item in classSpec.ClassImplimintationFiles)
                             {
                                 output.WriteLine("      @\"" + item + "\",");
                             }
                             output.WriteLine("    };");
+
+                            output.WriteLine("    public static string[] _gCINTLines= {");
+                            if (cls.CINTExtraInfo != null)
+                            {
+                                foreach (var item in cls.CINTExtraInfo)
+                                {
+                                    output.WriteLine("      @\"" + item + "\",");
+                                }
+                            }
+                            output.WriteLine("    };");
+
                         };
 
                         ///

@@ -52,5 +52,10 @@ namespace TTreeDataModel
         /// Get/Set the full path name where the user info xml file can be found.
         /// </summary>
         public string UserInfoPath { get; set; }
+
+        /// <summary>
+        /// lines that we should feed to the CINT interpreter when we are doing our generation.
+        /// </summary>
+        public string[] CINTExtraInfo { get; set; }
     }
 }
