@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TTreeDataModel;
 
@@ -141,6 +142,74 @@ namespace TTreeParser
                            TTreeName = v
                        };
             return vars;
+        }
+
+        /// <summary>
+        /// Parses a file in INI format.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string[]> ParseINIFormat(this TextReader input)
+        {
+            var result = new Dictionary<string, List<string>>();
+
+            string line;
+            string sectionName = null;
+            do
+            {
+                line = input.ReadLine();
+                if (line != null)
+                {
+                    if (line.StartsWith("[") && line.EndsWith("]"))
+                    {
+                        sectionName = line.Substring(1, line.Length - 2);
+                        if (!result.ContainsKey(sectionName))
+                            result[sectionName] = new List<string>();
+                    }
+                    else
+                    {
+                        if (sectionName != null)
+                        {
+                            result[sectionName].Add(line);
+                        }
+                    }
+                }
+            } while (line != null);
+
+            var arrayified = from p in result
+                             select new
+                             {
+                                 Key = p.Key,
+                                 Val = p.Value.ToArray()
+                             };
+            var resultArray = new Dictionary<string, string[]>();
+            foreach (var p in arrayified)
+            {
+                resultArray[p.Key] = p.Val;
+            }
+
+            return resultArray;
+        }
+
+        /// <summary>
+        /// Parse a file as an ini file.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="okIfMissing"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string[]> ParseAsINIFile(this FileInfo input, bool okIfMissing = true)
+        {
+            if (!input.Exists)
+            {
+                if (okIfMissing)
+                    return new Dictionary<string, string[]>();
+                throw new FileNotFoundException("Unable to locate file", input.FullName);
+            }
+
+            using (var reader = input.OpenText())
+            {
+                return reader.ParseINIFormat();
+            }
         }
     }
 }

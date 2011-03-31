@@ -1,14 +1,12 @@
-﻿using TTreeParser;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using ROOTNET.Interface;
-using System.Collections.Generic;
+﻿using System;
+using System.IO;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TTreeParser.Tests
 {
-    
-    
+
+
     /// <summary>
     ///This is a test class for UtilsTest and is intended
     ///to contain all UtilsTest Unit Tests
@@ -173,6 +171,38 @@ namespace TTreeParser.Tests
         {
             DoEnumerableTest(10, new ROOTNET.NTList());
             DoEnumerableTest(0, new ROOTNET.NTList());
+        }
+
+        [TestMethod]
+        public void TestIniFile()
+        {
+            var ms = new MemoryStream();
+            var writer = new StreamWriter(ms);
+            writer.WriteLine("[Section1]");
+            writer.WriteLine("Line 1");
+            writer.WriteLine("");
+            writer.WriteLine("[Section2]");
+            writer.WriteLine("hi");
+            writer.Flush();
+
+            ms.Position = 0;
+            var reader = new StreamReader(ms);
+            ms.Position = 0;
+
+            var results = reader.ParseINIFormat();
+
+            Assert.IsNotNull(results, "results");
+            Assert.AreEqual(2, results.Keys.Count, "# of sections");
+            Assert.IsTrue(results.ContainsKey("Section1"), "section 1 key missing");
+            Assert.IsTrue(results.ContainsKey("Section2"), "section 2 key missing");
+
+            Assert.AreEqual(2, results["Section1"].Length, "# of lines in section 1");
+            Assert.AreEqual("Line 1", results["Section1"][0], "#1 line of section 1");
+            Assert.AreEqual("", results["Section1"][1], "#2 line of section 1");
+
+            Assert.AreEqual(1, results["Section2"].Length, "# of lines in section 2");
+            Assert.AreEqual("hi", results["Section2"][0], "#1 line of section 2");
+
         }
     }
 }

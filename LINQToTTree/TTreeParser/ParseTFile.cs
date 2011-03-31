@@ -65,7 +65,21 @@ namespace TTreeParser
                 throw new ArgumentException("Failed to open file in ROOT");
             }
 
-            return ParseTDirectory(f);
+            ///
+            /// See if we can find a file with further stuff we should be adding
+            /// 
+
+            var fFurtherInfo = new FileInfo(Path.ChangeExtension(inputFile.FullName, ".root-extra-info"));
+            Dictionary<string, string[]> extraInfo = fFurtherInfo.ParseAsINIFile(true);
+
+            foreach (var cls in ParseTDirectory(f))
+            {
+                if (extraInfo.ContainsKey("CINT"))
+                {
+                    cls.CINTExtraInfo = extraInfo["CINT"];
+                }
+                yield return cls;
+            }
         }
     }
 }
