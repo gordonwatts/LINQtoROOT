@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TTreeParser;
 
 namespace LINQToTTreeLib.Tests
@@ -85,14 +84,9 @@ namespace LINQToTTreeLib.Tests
         {
             Assert.AreEqual("fork", TypeDefTranslator.ResolveTypedef("fork"), "the fork typdef should not have been defined");
 
-            var output = new FileInfo("DefineNewTypedef.C");
-            using (var writer = output.CreateText())
-            {
-                writer.WriteLine("typedef int fork;");
-                writer.WriteLine();
-                writer.Close();
-            }
-            int result = ROOTNET.NTSystem.gSystem.CompileMacro("DefineNewTypedef.C");
+            ROOTNET.NTROOT.gROOT.ProcessLine("typedef int fork;");
+            /// Force a re-load - normally someone else behind our backs does this - like after a copmile or similar.
+            ROOTNET.NTROOT.gROOT.GetListOfTypes(true);
 
             Assert.AreEqual("int", TypeDefTranslator.ResolveTypedef("fork"), "the fork typdef should now be defined");
         }
