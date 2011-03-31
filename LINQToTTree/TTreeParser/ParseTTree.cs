@@ -26,7 +26,7 @@ namespace TTreeParser
 
             var masterClass = new ROOTClassShell(tree.Name);
 
-            foreach (var c in ExtractClassesFromBranchList(masterClass, tree.GetListOfBranches().AsEnumerable().Cast<ROOTNET.Interface.NTBranch>()))
+            foreach (var c in ExtractClassesFromBranchList(masterClass, tree.GetListOfBranches().Cast<ROOTNET.Interface.NTBranch>()))
             {
                 yield return c;
             }
@@ -178,7 +178,7 @@ namespace TTreeParser
 
                 if (branch.ListOfBranches.Entries == 0)
                 {
-                    foreach (var leaf in branch.GetListOfLeaves().AsEnumerable().Cast<ROOTNET.Interface.NTLeaf>())
+                    foreach (var leaf in branch.GetListOfLeaves().Cast<ROOTNET.Interface.NTLeaf>())
                     {
                         try
                         {

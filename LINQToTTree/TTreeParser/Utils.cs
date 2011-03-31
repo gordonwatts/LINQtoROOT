@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TTreeDataModel;
@@ -25,40 +24,12 @@ namespace TTreeParser
             var objectKeys = rootDir.GetListOfKeys();
             string basename = typeof(T).Name.Substring(1);
 
-            foreach (var item in objectKeys.AsEnumerable().Cast<ROOTNET.Interface.NTKey>())
+            foreach (var item in objectKeys.Cast<ROOTNET.Interface.NTKey>())
             {
                 var c = ROOTNET.NTClass.GetClass(item.GetClassName());
                 if (c.InheritsFrom(basename))
                 {
                     yield return (T)item.ReadObj();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Turn the list into something we can enumerate over!
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public static IEnumerable<ROOTNET.Interface.NTObject> AsEnumerable(this ROOTNET.Interface.NTCollection list)
-        {
-            if (list == null)
-            {
-                throw new ArgumentNullException("list");
-            }
-
-            var iter = new ROOTNET.NTIter(list);
-            bool done = false;
-            while (!done)
-            {
-                var result = iter.Next() as ROOTNET.Interface.NTObject;
-                if (result != null)
-                {
-                    yield return result;
-                }
-                else
-                {
-                    done = true;
                 }
             }
         }
