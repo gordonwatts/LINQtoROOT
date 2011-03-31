@@ -11,6 +11,7 @@ DemoJetShapesDir = $(SolutionDir)\DemoNtupleArrays
 ClassConverterImage = $(SolutionDir)\..\LINQToTTree\CmdGenerateLINQClasses\bin\Debug\CmdGenerateLINQClasses.exe
 
 ClassCSFile = $(DemoJetShapesDir)\ntupleDataModel.cs
+ClassCSFile1 = $(DemoJetShapesDir)\vtupleDataModel.cs
 
 ConverterImage = $(SolutionDir)\..\LINQToTTree\CmdTFileParser\bin\Debug\CmdTFileParser.exe
 
@@ -18,13 +19,16 @@ ConverterImage = $(SolutionDir)\..\LINQToTTree\CmdTFileParser\bin\Debug\CmdTFile
 # Rules
 #
 
-all: $(ClassCSFile)
+all: $(ClassCSFile) $(ClassCSFile1)
 
 #$(DemoJetShapesDir)\ntuple.ntupom : $(SolutionDir)\btag-slim.root $(ConverterImage) $(NtupleDLLs) $(ConverterImage)
 #    $(ConverterImage) $(NtupleDLLs) $(SolutionDir)\btag-slim.root -o $(DemoJetShapesDir)\ntupleinfo.ntupom
 
 $(ClassCSFile) : $(DemoJetShapesDir)\hvsample.ntupom $(DemoJetShapesDir)\CollectionTreeConfig-000.ntup $(ClassConverterImage) 
     $(ClassConverterImage) $(DemoJetShapesDir)\hvsample.ntupom $(ClassCSFile)
+
+$(ClassCSFile1) : $(DemoJetShapesDir)\btag-slim.ntupom $(DemoJetShapesDir)\vtupleConfig-000.ntup $(ClassConverterImage) 
+    $(ClassConverterImage) $(DemoJetShapesDir)\btag-slim.ntupom $(ClassCSFile1)
 
 #
 # Clean up the above files to force a restart

@@ -22,6 +22,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GenerateArrayNtupleXMLSpec", "GenerateArrayNtupleXMLSpec\GenerateArrayNtupleXMLSpec.vcxproj", "{B11A33A7-7181-4405-87D9-AF76DADD84B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoNtupleArrays", "DemoNtupleArrays\DemoNtupleArrays.csproj", "{0A482544-DA4B-42C6-AF61-B54301A91603}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B11A33A7-7181-4405-87D9-AF76DADD84B3} = {B11A33A7-7181-4405-87D9-AF76DADD84B3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

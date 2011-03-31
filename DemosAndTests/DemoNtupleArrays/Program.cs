@@ -55,6 +55,18 @@ namespace DemoNtupleArrays
                                 select t;
             PlotTracks(output, centralTracks, "central", "Central");
 
+            ///
+            /// Next, do a few btagging ntuple things
+            /// 
+
+            var fbtag = new FileInfo(@"..\..\..\btag-slim.root");
+            var btagEvents = ROOTTTreeDataModel.Queryablevtuple.Create(fbtag);
+
+            var btagTracks = from e in btagEvents
+                             from t in e.tracks
+                             select t.pt / 1000.0;
+            output.Add(btagTracks.Plot("btag_alltracks_pt", "All tracks for btagging p_{T}", 100, 0.0, 100.0));
+
             output.Write();
             output.Clone();
 
