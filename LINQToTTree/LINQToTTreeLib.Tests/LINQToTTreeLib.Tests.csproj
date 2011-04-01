@@ -106,203 +106,201 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CodeContextTest.Add.g.cs">
+    <Compile Include="CodeContextTest.Add.g.cs">
       <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </None>
-    <None Include="CodeContextTest.Constructor.g.cs">
+    </Compile>
+    <Compile Include="CodeContextTest.Constructor.g.cs">
       <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </None>
-    <None Include="CodeContextTest.cs" />
-    <None Include="CodeContextTest.GetReplacement.g.cs">
+    </Compile>
+    <Compile Include="CodeContextTest.cs" />
+    <Compile Include="CodeContextTest.GetReplacement.g.cs">
       <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </None>
-    <None Include="CodeContextTest.TestRoundTrip.g.cs">
+    </Compile>
+    <Compile Include="CodeContextTest.TestRoundTrip.g.cs">
       <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </None>
-    <None Include="CPPTranslatorTest.Constructor.g.cs">
+    </Compile>
+    <Compile Include="CPPTranslatorTest.Constructor.g.cs">
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
-    </None>
-    <None Include="CPPTranslatorTest.cs" />
-    <None Include="CPPTranslatorTest.IncludeFilesGet.g.cs">
+    </Compile>
+    <Compile Include="CPPTranslatorTest.cs" />
+    <Compile Include="CPPTranslatorTest.IncludeFilesGet.g.cs">
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
-    </None>
-    <None Include="CPPTranslatorTest.TranslateGeneratedCode.g.cs">
+    </Compile>
+    <Compile Include="CPPTranslatorTest.TranslateGeneratedCode.g.cs">
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
-    </None>
+    </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
-    <None Include="ExpressionVisitorTest.cs" />
-    <None Include="ExpressionVisitorTest.GetExpression.g.cs">
+    <Compile Include="ExpressionVisitorMethodCallTests.cs" />
+    <Compile Include="ExpressionVisitorTest.cs" />
+    <Compile Include="ExpressionVisitorTest.GetExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
-    </None>
-    <None Include="ExpressionVisitorTest.TestConstantExpression.g.cs">
+    </Compile>
+    <Compile Include="ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
-    </None>
-    <None Include="Factories\ConstantExpressionFactory.cs" />
-    <None Include="Factories\CPPTranslatorFactory.cs" />
-    <None Include="Factories\GeneratedCodeFactory.cs" />
-    <None Include="Factories\MethodCallExpressionFactory.cs" />
-    <None Include="Factories\SkipResultOperatorFactory.cs" />
-    <None Include="Factories\StatementIncrementIntegerFactory.cs" />
-    <None Include="Factories\StatementInlineBlockFactory.cs" />
-    <None Include="Factories\TakeResultOperatorFactory.cs" />
-    <None Include="FileUtilsTest.cs" />
-    <None Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
+    </Compile>
+    <Compile Include="Factories\ConstantExpressionFactory.cs" />
+    <Compile Include="Factories\CPPTranslatorFactory.cs" />
+    <Compile Include="Factories\GeneratedCodeFactory.cs" />
+    <Compile Include="Factories\MethodCallExpressionFactory.cs" />
+    <Compile Include="Factories\SkipResultOperatorFactory.cs" />
+    <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
+    <Compile Include="Factories\StatementInlineBlockFactory.cs" />
+    <Compile Include="Factories\TakeResultOperatorFactory.cs" />
+    <Compile Include="FileUtilsTest.cs" />
+    <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
-    </None>
-    <None Include="FileUtilsTest.MakeSureFileNotUpdated.g.cs">
+    </Compile>
+    <Compile Include="FileUtilsTest.MakeSureFileNotUpdated.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
-    </None>
-    <None Include="FileUtilsTest.WriteTextIfNotDuplicate.g.cs">
+    </Compile>
+    <Compile Include="FileUtilsTest.WriteTextIfNotDuplicate.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
-    </None>
-    <None Include="GeneratedCodeTest.Add.g.cs">
+    </Compile>
+    <Compile Include="GeneratedCodeTest.Add.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </None>
-    <None Include="GeneratedCodeTest.AddCompound.g.cs">
+    </Compile>
+    <Compile Include="GeneratedCodeTest.AddCompound.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </None>
-    <None Include="GeneratedCodeTest.AddCompoundStatementTest.g.cs">
+    </Compile>
+    <Compile Include="GeneratedCodeTest.AddCompoundStatementTest.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </None>
-    <None Include="GeneratedCodeTest.Constructor.g.cs">
+    </Compile>
+    <Compile Include="GeneratedCodeTest.Constructor.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </None>
-    <None Include="GeneratedCodeTest.cs" />
-    <None Include="GeneratedCodeTest.SetResult.g.cs">
+    </Compile>
+    <Compile Include="GeneratedCodeTest.cs" />
+    <Compile Include="GeneratedCodeTest.SetResult.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </None>
-    <None Include="GeneratedCodeTest.TestAddTransfer.g.cs">
+    </Compile>
+    <Compile Include="GeneratedCodeTest.TestAddTransfer.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </None>
-    <None Include="GeneratedCodeTest.TestChangeScope.g.cs">
+    </Compile>
+    <Compile Include="GeneratedCodeTest.TestChangeScope.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </None>
+    </Compile>
     <Compile Include="MEFUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
-    <None Include="QueriableDummy.cs" />
-    <None Include="QueryResultCacheTest.cs" />
+    <Compile Include="QueriableDummy.cs" />
+    <Compile Include="QueryResultCacheTest.cs" />
     <Compile Include="QueryVisitorTest.cs" />
-    <None Include="QVResultOperatorsTest.Constructor.g.cs">
+    <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </None>
-    <None Include="QVResultOperatorsTest.cs" />
-    <None Include="QVResultOperatorsTest.TestForGoodReturn.g.cs">
+    </Compile>
+    <Compile Include="QVResultOperatorsTest.cs" />
+    <Compile Include="QVResultOperatorsTest.TestForGoodReturn.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </None>
-    <None Include="QVResultOperatorsTest.TestLookupNothing.g.cs">
+    </Compile>
+    <Compile Include="QVResultOperatorsTest.TestLookupNothing.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </None>
-    <None Include="QVResultOperatorsTest.TestLookupTwice.g.cs">
+    </Compile>
+    <Compile Include="QVResultOperatorsTest.TestLookupTwice.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </None>
-    <None Include="ResultOperators\ROAggregateTest.CanHandle.g.cs">
+    </Compile>
+    <Compile Include="ResultOperators\ROAggregateTest.CanHandle.g.cs">
       <DependentUpon>ROAggregateTest.cs</DependentUpon>
-    </None>
-    <None Include="ResultOperators\ROAggregateTest.cs" />
-    <None Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
+    </Compile>
+    <Compile Include="ResultOperators\ROAggregateTest.cs" />
+    <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
-    </None>
-    <None Include="ResultOperators\TakeSkipOperatorsTest.cs" />
-    <None Include="ResultOperators\TakeSkipOperatorsTest.ProcessResultOperator.g.cs">
+    </Compile>
+    <Compile Include="ResultOperators\TakeSkipOperatorsTest.cs" />
+    <Compile Include="ResultOperators\TakeSkipOperatorsTest.ProcessResultOperator.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
-    </None>
+    </Compile>
     <Compile Include="ResultOperators\TestCount.cs" />
-    <None Include="ROCountTest.CanHandle.g.cs">
+    <Compile Include="ROCountTest.CanHandle.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
-    </None>
-    <None Include="ROCountTest.cs" />
-    <None Include="ROCountTest.ProcessResultOperator.g.cs">
+    </Compile>
+    <Compile Include="ROCountTest.cs" />
+    <Compile Include="ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
-    </None>
-    <None Include="Statements\StatementFilterTest.cs" />
-    <None Include="Statements\StatementIfOnCountTest.cs" />
-    <None Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
+    </Compile>
+    <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.cs" />
+    <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
-    </None>
-    <None Include="Statements\StatementIncrementIntegerTest.cs" />
-    <None Include="Statements\StatementInlineBlockTest.Add.g.cs">
+    </Compile>
+    <Compile Include="Statements\StatementIncrementIntegerTest.cs" />
+    <Compile Include="Statements\StatementInlineBlockTest.Add.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </None>
-    <None Include="Statements\StatementInlineBlockTest.Constructor.g.cs">
+    </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.Constructor.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </None>
-    <None Include="Statements\StatementInlineBlockTest.cs" />
-    <None Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
+    </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.cs" />
+    <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </None>
-    <None Include="Statements\StatementSimpleStatementTest.cs" />
-    <None Include="TestQueriesGreaterLevels.cs" />
-    <None Include="TestQueriesTopLevel.cs" />
+    </Compile>
+    <Compile Include="Statements\StatementSimpleStatementTest.cs" />
+    <Compile Include="TestQueriesGreaterLevels.cs" />
+    <Compile Include="TestQueriesTopLevel.cs" />
     <Compile Include="TestUtils.cs" />
     <Compile Include="TTreeQueryExecutorTest.Constructor.g.cs">
       <DependentUpon>TTreeQueryExecutorTest.cs</DependentUpon>
-    </None>
-    <None Include="TTreeQueryExecutorTest.cs" />
-    <None Include="TypeHandlerHelpersTest.cs" />
-    <None Include="TypeHandlerHelpersTest.ProcessConstantReference.g.cs">
+    </Compile>
+    <Compile Include="TTreeQueryExecutorTest.cs" />
+    <Compile Include="TypeHandlerHelpersTest.cs" />
+    <Compile Include="TypeHandlerHelpersTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
-    </None>
-    <None Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
+    </Compile>
+    <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
-    </None>
-    <None Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.cs" />
-    <None Include="TypeHandlers\ROOT\ROOTObjectCopiedValueTest.cs" />
-    <None Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
+    </Compile>
+    <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.cs" />
+    <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValueTest.cs" />
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
-    </None>
-    <None Include="TypeHandlers\ROOT\TypeHanlderROOTTest.cs" />
-    <None Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessConstantReference.g.cs">
+    </Compile>
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.cs" />
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
-    </None>
-    <None Include="TypeHandlers\TypeHandlerCacheTest.cs" />
-    <None Include="TypeHandlers\TypeHandlerCacheTest.ProcessConstantReference.g.cs">
+    </Compile>
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.cs" />
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
-    </None>
-    <None Include="TypeHandlers\TypeHandlerCacheTest.ProcessMethodCall.g.cs">
+    </Compile>
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
-    </None>
+    </Compile>
     <Compile Include="Expressions\t_ArrayExpressionParser.cs" />
     <Compile Include="Expressions\t_ArrayInfoVector.cs" />
-    <None Include="VariableSaveManagers.cs" />
-    <None Include="Variables\Savers\SaveVarObjectTest.cs" />
-    <None Include="Variables\ValSimpleTest.Constructor.g.cs">
     <Compile Include="t_TranslatingExpressionVisitor.cs" />
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
     <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
-    </None>
-    <None Include="Variables\ValSimpleTest.Constructor2.g.cs">
+    </Compile>
+    <Compile Include="Variables\ValSimpleTest.Constructor2.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
-    </None>
-    <None Include="Variables\ValSimpleTest.cs" />
-    <None Include="Variables\ValSimpleTest.TestCTorWithType.g.cs">
+    </Compile>
+    <Compile Include="Variables\ValSimpleTest.cs" />
+    <Compile Include="Variables\ValSimpleTest.TestCTorWithType.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
-    </None>
-    <None Include="Variables\VarObjectTest.Constructor.g.cs">
+    </Compile>
+    <Compile Include="Variables\VarObjectTest.Constructor.g.cs">
       <DependentUpon>VarObjectTest.cs</DependentUpon>
-    </None>
-    <None Include="Variables\VarObjectTest.cs" />
-    <None Include="Variables\VarSimpleTest.Constructor.g.cs">
+    </Compile>
+    <Compile Include="Variables\VarObjectTest.cs" />
+    <Compile Include="Variables\VarSimpleTest.Constructor.g.cs">
       <DependentUpon>VarSimpleTest.cs</DependentUpon>
-    </None>
-    <None Include="Variables\VarSimpleTest.cs" />
-    <None Include="Variables\VarUtilsTest.AsCastString.g.cs">
+    </Compile>
+    <Compile Include="Variables\VarSimpleTest.cs" />
+    <Compile Include="Variables\VarUtilsTest.AsCastString.g.cs">
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </None>
-    <None Include="Variables\VarUtilsTest.AsCPPType.g.cs">
+    </Compile>
+    <Compile Include="Variables\VarUtilsTest.AsCPPType.g.cs">
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </None>
-    <None Include="Variables\VarUtilsTest.CastToType.g.cs">
+    </Compile>
+    <Compile Include="Variables\VarUtilsTest.CastToType.g.cs">
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </None>
+    </Compile>
     <Compile Include="Variables\VarUtilsTest.cs" />
-    <None Include="Variables\VarUtilsTest.IsPointerType.g.cs">
+    <Compile Include="Variables\VarUtilsTest.IsPointerType.g.cs">
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </None>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,4 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Tests.ResultOperators
 {
@@ -21,8 +26,6 @@ namespace LINQToTTreeLib.Tests.ResultOperators
         [TestMethod]
         public void TestBasicCount()
         {
-            Assert.Inconclusive();
-#if false
             var q = new QueriableDummy<ntup>();
             var result = from d in q
                          select d;
@@ -34,7 +37,6 @@ namespace LINQToTTreeLib.Tests.ResultOperators
             /// Return type is correct
             Assert.IsNotNull(res.ResultValue, "Expected a result from the count!");
             Assert.IsInstanceOfType(res.ResultValue, typeof(VarInteger), "integer return type expected");
-#endif
         }
     }
 }

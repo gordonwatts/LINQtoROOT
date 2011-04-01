@@ -2,10 +2,11 @@
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -55,12 +56,9 @@ namespace LINQToTTreeLib.ResultOperators
         public static IVariable ImplementCount(IGeneratedCode codeEnv)
         {
             var intResult = new VarInteger();
-            throw new NotImplementedException();
 
-#if false
             codeEnv.Add(new StatementIncrementInteger(intResult));
             return intResult;
-#endif
         }
     }
 }

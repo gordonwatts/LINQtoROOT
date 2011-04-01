@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using LINQToTTreeLib.ResultOperators;
+using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.Utils;
 using Remotion.Data.Linq;
 
 namespace LINQToTTreeLib.Tests
@@ -10,7 +14,7 @@ namespace LINQToTTreeLib.Tests
         {
             throw new NotImplementedException();
         }
-#if false
+
         /// <summary>
         /// The result of the query
         /// </summary>
@@ -18,10 +22,9 @@ namespace LINQToTTreeLib.Tests
 
         public static GeneratedCode FinalResult { get; private set; }
 
+        public static bool GlobalInitalized = false;
 
         public static QueryModel LastQueryModel { get; private set; }
-#endif
-        public static bool GlobalInitalized = false;
 
         /// <summary>
         /// The only thing that we are going to *even* allow!
@@ -31,7 +34,6 @@ namespace LINQToTTreeLib.Tests
         /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-#if false
             LastQueryModel = queryModel;
 
             Result = new GeneratedCode();
@@ -55,7 +57,6 @@ namespace LINQToTTreeLib.Tests
             qv.VisitQueryModel(queryModel);
 
             FinalResult = Result;
-#endif
             return default(T);
         }
 

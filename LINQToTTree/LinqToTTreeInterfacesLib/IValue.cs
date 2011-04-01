@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -9,12 +8,12 @@ namespace LinqToTTreeInterfacesLib
     public interface IValue
     {
         /// <summary>
-        /// The expression we represent.
+        /// Returns, as a string, the value of this guy. Could be "10", or "j", depending.
         /// </summary>
-        Expression RawValue { get; }
+        string RawValue { get; }
 
         /// <summary>
-        /// The type of this guy - typeof(int), etc. Usually it will just be RawValue.Type.
+        /// The type of this guy - typeof(int), etc.
         /// </summary>
         Type Type { get; }
     }

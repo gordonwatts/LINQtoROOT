@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
@@ -36,7 +37,6 @@ namespace LINQToTTreeLib
         /// <param name="code"></param>
         public QueryVisitor(IGeneratedCode code, ICodeContext context, CompositionContainer container)
         {
-#if false
             _codeEnv = code;
             _codeContext = context;
             MEFContainer = container;
@@ -44,7 +44,6 @@ namespace LINQToTTreeLib
                 _codeContext = new CodeContext();
 
             SubExpressionParse = false;
-#endif
         }
 
         /// <summary>
@@ -137,8 +136,6 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
         {
-            base.VisitMainFromClause(fromClause, queryModel);
-#if false
             ///
             /// For the main clause we will just define the variable as "this".
             /// 
@@ -151,7 +148,6 @@ namespace LINQToTTreeLib
             {
                 CodeLoopOverExpression(fromClause.FromExpression, fromClause.ItemName);
             }
-#endif
         }
 
         /// <summary>
@@ -161,8 +157,6 @@ namespace LINQToTTreeLib
         public override void VisitQueryModel(QueryModel queryModel)
         {
             base.VisitQueryModel(queryModel);
-#if false
-            base.VisitQueryModel(queryModel);
 
             ///
             /// If a main index variable was declared that has now lost its usefulness, we should get rid of it.
@@ -170,7 +164,6 @@ namespace LINQToTTreeLib
 
             if (_mainIndex != null)
                 _mainIndex.Pop();
-#endif
         }
 
         /// <summary>
@@ -181,15 +174,12 @@ namespace LINQToTTreeLib
         /// <param name="index"></param>
         public override void VisitAdditionalFromClause(AdditionalFromClause fromClause, QueryModel queryModel, int index)
         {
-            base.VisitAdditionalFromClause(fromClause, queryModel, index);
-#if false
             ///
             /// With the expression to loop over, just iterate! :-) Some of this probably will need to be
             /// generalized when we loop over more than just a "std::vector".
             /// 
 
             CodeLoopOverExpression(fromClause.FromExpression, fromClause.ItemName);
-#endif
         }
 
         /// <summary>
@@ -212,10 +202,7 @@ namespace LINQToTTreeLib
         /// <param name="index"></param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            base.VisitWhereClause(whereClause, queryModel, index);
-#if false
             _codeEnv.Add(new Statements.StatementFilter(ExpressionVisitor.GetExpression(whereClause.Predicate, _codeEnv, _codeContext, MEFContainer)));
-#endif
         }
 
         /// <summary>

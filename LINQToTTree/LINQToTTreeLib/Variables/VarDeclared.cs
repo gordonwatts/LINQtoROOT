@@ -12,10 +12,10 @@ namespace LINQToTTreeLib.Variables
         private IValue _value;
         private string _name;
 
-        public VarDeclared(string indexName)
+        public VarDeclared(IValue iValue, string indexName)
         {
             // TODO: Complete member initialization
-            //_value = iValue;
+            _value = iValue;
             _name = indexName;
         }
         public string VariableName

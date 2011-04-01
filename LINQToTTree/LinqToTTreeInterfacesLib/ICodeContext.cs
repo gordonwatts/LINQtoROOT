@@ -24,7 +24,7 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="varName"></param>
         /// <param name="replacementName"></param>
-        IVariableScopeHolder Add(string varName, Expression replacementName);
+        IVariableScopeHolder Add(string varName, IValue replacementName);
 
         /// <summary>
         /// Add a vairable mapping to an expression. Used for dealing with parameters and the like.
@@ -41,7 +41,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="varname"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        Expression GetReplacement(string varname, Type type);
+        IValue GetReplacement(string varname, Type type);
 
         /// <summary>
         /// Returns the expression that has been stored under this name.

@@ -32,8 +32,6 @@ namespace LINQToTTreeLib.Variables
         /// <returns></returns>
         public static string AsObjectReference(this IValue val)
         {
-            throw new NotImplementedException();
-#if false
             StringBuilder bld = new StringBuilder();
             if (val.Type.IsPointerType())
             {
@@ -44,7 +42,6 @@ namespace LINQToTTreeLib.Variables
             {
                 return val.RawValue;
             }
-#endif
         }
 
         /// <summary>
@@ -55,7 +52,6 @@ namespace LINQToTTreeLib.Variables
         /// <returns></returns>
         public static string CastToType(this IValue sourceValue, Type destType)
         {
-            throw new NotImplementedException();
             if (sourceValue == null || destType == null)
                 throw new ArgumentNullException("Cannot pass ource or dest type/vars as null");
 
