@@ -78,8 +78,43 @@ namespace TTreeParser
                 {
                     cls.CINTExtraInfo = extraInfo["CINT"];
                 }
+                if (extraInfo.ContainsKey("CreateDictionary"))
+                {
+                    ///
+                    /// Do some basic syntax checking
+                    /// 
+
+                    var allDictTypes = from l in extraInfo["CreateDictionary"]
+                                       let spec = GetDictSpec(l)
+                                       where spec != null
+                                       select spec;
+                    cls.ClassesToGenerate = allDictTypes.ToArray();
+                }
                 yield return cls;
             }
+        }
+
+        /// <summary>
+        /// Convert a string into class / includes.
+        /// </summary>
+        /// <param name="l"></param>
+        /// <returns></returns>
+        private ClassForDictionary GetDictSpec(string l)
+        {
+            if (string.IsNullOrWhiteSpace(l))
+                return null;
+            if (l.StartsWith("#") || l.StartsWith("//"))
+                return null;
+
+            var bySemi = l.Split(';');
+            if (bySemi.Length > 2)
+                throw new ArgumentException("Line in the root-extra-info file '" + l + "' has more than one semicolon in it - please see the docs on how to format this file.");
+
+            var result = new ClassForDictionary() { classSpec = bySemi[0].Trim(), includeFiles = "" };
+            if (bySemi.Length == 2)
+                result.includeFiles = bySemi[1].Trim();
+
+            return result;
         }
     }
 }

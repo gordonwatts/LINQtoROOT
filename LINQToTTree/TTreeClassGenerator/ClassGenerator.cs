@@ -221,6 +221,25 @@ namespace TTreeClassGenerator
                             }
                             output.WriteLine("    };");
 
+                            output.WriteLine("    public static string[] _gClassesToDeclare= {");
+                            if (cls.ClassesToGenerate != null)
+                            {
+                                foreach (var item in cls.ClassesToGenerate)
+                                {
+                                    output.WriteLine("      @\"" + item.classSpec + "\",");
+                                }
+                            }
+                            output.WriteLine("    };");
+
+                            output.WriteLine("    public static string[] _gClassesToDeclareIncludes = {");
+                            if (cls.ClassesToGenerate != null)
+                            {
+                                foreach (var item in cls.ClassesToGenerate)
+                                {
+                                    output.WriteLine("      @\"" + item.includeFiles + "\",");
+                                }
+                            }
+                            output.WriteLine("    };");
                         };
 
                         ///

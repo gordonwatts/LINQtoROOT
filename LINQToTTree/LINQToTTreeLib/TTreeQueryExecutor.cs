@@ -45,6 +45,11 @@ namespace LINQToTTreeLib
         private string[] _cintLines;
 
         /// <summary>
+        /// Classes and includes to be passed to GenerateDictionary.
+        /// </summary>
+        private string[][] _classToDictify;
+
+        /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
         /// <param name="rootFiles"></param>
@@ -137,6 +142,25 @@ namespace LINQToTTreeLib
             }
 
             ///
+            /// For the includes it is ok if the files aren't good enough yet
+            /// 
+
+            if (baseNtupleObject.GetField("_gClassesToDeclare") == null)
+            {
+                _classToDictify = new string[0][];
+            }
+            else
+            {
+                var rawClasses = baseNtupleObject.GetField("_gClassesToDeclare").GetValue(null) as string[];
+                var rawIncludes = baseNtupleObject.GetField("_gClassesToDeclareIncludes").GetValue(null) as string[];
+                if (rawClasses.Length != rawIncludes.Length)
+                    throw new InvalidOperationException("The classes and includes are of different length");
+
+                var asPairs = rawClasses.Zip(rawIncludes, (sCls, sInc) => new string[] { sCls, sInc });
+                _classToDictify = asPairs.ToArray();
+            }
+
+            ///
             /// Save the values
             /// 
 
@@ -174,6 +198,22 @@ namespace LINQToTTreeLib
             /// 
 
             Init();
+
+            ///
+            /// Generate any dictionaries that are requested.
+            /// 
+
+            foreach (var clsPair in _classToDictify)
+            {
+                if (string.IsNullOrWhiteSpace(clsPair[1]))
+                {
+                    ROOTNET.NTInterpreter.Instance().GenerateDictionary(clsPair[0]);
+                }
+                else
+                {
+                    ROOTNET.NTInterpreter.Instance().GenerateDictionary(clsPair[0], clsPair[1]);
+                }
+            }
 
             ///
             /// The query visitor is what we will use to scan the actual guys.

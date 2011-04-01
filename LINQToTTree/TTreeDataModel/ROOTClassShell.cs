@@ -57,5 +57,10 @@ namespace TTreeDataModel
         /// lines that we should feed to the CINT interpreter when we are doing our generation.
         /// </summary>
         public string[] CINTExtraInfo { get; set; }
+
+        /// <summary>
+        /// List of classes for whome we need to generate a dictionary.
+        /// </summary>
+        public ClassForDictionary[] ClassesToGenerate { get; set; }
     }
 }
