@@ -55,8 +55,10 @@ namespace DemoNtupleArrays
                                 select t;
             PlotTracks(output, centralTracks, "central", "Central");
 
-            ///
-            /// Next, do a few btagging ntuple things
+            ///////////////////////////////////////////////////////////
+            /// 
+            /// Next, do a few btagging ntuple things. This
+            /// ntuple is more complex so we can show of more features.
             /// 
 
             var fbtag = new FileInfo(@"..\..\..\btag-slim.root");
@@ -66,6 +68,29 @@ namespace DemoNtupleArrays
                              from t in e.tracks
                              select t.pt / 1000.0;
             output.Add(btagTracks.Plot("btag_alltracks_pt", "All tracks for btagging p_{T}", 100, 0.0, 100.0));
+
+            ///
+            /// Muons are crazy because they are referenced by other jets. This is the one line way of saving
+            /// a plot to a file.
+            /// 
+
+            (from e in btagEvents select e.muons.Count()).Plot("btag_allmuon_count", "Number of muons in each btag event", 20, 0.0, 20.0).SaveToROOTDirectory(output);
+
+            ///
+            /// Look at jets (note the pT is renamed here)
+            /// 
+
+            var btagJets = from e in btagEvents
+                           from j in e.jets06
+                           select j;
+
+            (from j in btagJets select j.pt / 1000.0).Plot("btag_all_jet_pt", "all 0.6 jets, p_{T}", 100, 0.0, 100.0).SaveToROOTDirectory(output);
+
+            ///
+            /// Muons are associated with jets - so lets look at this. First, this 
+            /// 
+
+            (from j in btagJets from m in j.muon_ptrel select m / 1000.0).Plot("btag_allmuon_nearjet_ptrel", "Number of muons associated with every jets", 20, 0.0, 20.0).SaveToROOTDirectory(output);
 
             output.Write();
             output.Clone();
