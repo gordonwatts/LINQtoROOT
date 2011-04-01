@@ -119,9 +119,18 @@ namespace LINQToTTreeLib
         {
             return source.Plot(plotID, plotTitle, nbins, lowBin, highBin, v => v);
         }
-        public static ROOTNET.Interface.NTH1F Plot<T>
+        public static ROOTNET.Interface.NTH1F Plot
             (
             this IQueryable<float> source,
+            string plotID, string plotTitle,
+            int nbins, double lowBin, double highBin)
+        {
+            return source.Plot(plotID, plotTitle, nbins, lowBin, highBin, v => v);
+        }
+
+        public static ROOTNET.Interface.NTH1F Plot
+            (
+            this IQueryable<int> source,
             string plotID, string plotTitle,
             int nbins, double lowBin, double highBin)
         {
@@ -136,6 +145,19 @@ namespace LINQToTTreeLib
         public static void Add(this ROOTNET.Interface.NTDirectory dir, ROOTNET.Interface.NTH1 h)
         {
             h.SetDirectory(dir);
+        }
+
+        /// <summary>
+        /// Save a plot to a TDirectory. Return the plot so it can also be used in other
+        /// places.
+        /// </summary>
+        /// <param name="hist"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        public static ROOTNET.Interface.NTH1 SaveToROOTDirectory(this ROOTNET.Interface.NTH1 hist, ROOTNET.Interface.NTDirectory dir)
+        {
+            hist.SetDirectory(dir);
+            return hist;
         }
     }
 }
