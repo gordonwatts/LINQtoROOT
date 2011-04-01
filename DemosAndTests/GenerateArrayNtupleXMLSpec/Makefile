@@ -21,9 +21,6 @@ ConverterImage = $(SolutionDir)\..\LINQToTTree\CmdTFileParser\bin\Debug\CmdTFile
 
 all: $(ClassCSFile) $(ClassCSFile1)
 
-#$(DemoJetShapesDir)\ntuple.ntupom : $(SolutionDir)\btag-slim.root $(ConverterImage) $(NtupleDLLs) $(ConverterImage)
-#    $(ConverterImage) $(NtupleDLLs) $(SolutionDir)\btag-slim.root -o $(DemoJetShapesDir)\ntupleinfo.ntupom
-
 $(ClassCSFile) : $(DemoJetShapesDir)\hvsample.ntupom $(DemoJetShapesDir)\CollectionTreeConfig-000.ntup $(ClassConverterImage) 
     $(ClassConverterImage) $(DemoJetShapesDir)\hvsample.ntupom $(ClassCSFile)
 
