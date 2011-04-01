@@ -1,4 +1,5 @@
-﻿using LinqToTTreeInterfacesLib;
+﻿using System;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Variables
@@ -16,14 +17,21 @@ namespace LINQToTTreeLib.Variables
             {
                 get { return typeof(int); }
             }
+
+            System.Linq.Expressions.Expression IValue.RawValue
+            {
+                get { throw new NotImplementedException(); }
+            }
         }
 
         public VarInteger()
         {
             VariableName = TypeUtils.CreateUniqueVariableName("anint");
+#if fales
             InitialValue = new IntVal() { RawValue = "0" };
             Declare = true;
             RawValue = VariableName;
+#endif
         }
         public string RawValue { get; private set; }
 
@@ -38,5 +46,10 @@ namespace LINQToTTreeLib.Variables
 
 
         public bool Declare { get; set; }
+
+        System.Linq.Expressions.Expression IValue.RawValue
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

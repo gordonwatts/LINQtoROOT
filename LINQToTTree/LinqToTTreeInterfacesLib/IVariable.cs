@@ -18,7 +18,8 @@ namespace LinqToTTreeInterfacesLib
         IValue InitialValue { get; set; }
 
         /// <summary>
-        /// Should this variable be declared in a statement block, or is it implicit in some way?
+        /// If true then this variable needs a declaration in a statement block. Otherwise it is
+        /// declared in something like a for loop - so nothing explicit is required.
         /// </summary>
         bool Declare { get; set; }
     }

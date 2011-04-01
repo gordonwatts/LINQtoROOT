@@ -92,6 +92,8 @@ namespace LINQToTTreeLib.Variables
         [PexMethod]
         public string CastToType(int sourceTypeSpec, int destTypeSpec)
         {
+            throw new NotImplementedException();
+#if false
             IValue sourceType = null;
             switch (sourceTypeSpec)
             {
@@ -132,6 +134,7 @@ namespace LINQToTTreeLib.Variables
                 Assert.IsTrue(result.Contains(")("), "Incorrect number of  '((' in the list of items ('" + result + "') - expecting a cast!");
             }
             return result;
+#endif
         }
 #if false
         /// Pex exploration problems.
