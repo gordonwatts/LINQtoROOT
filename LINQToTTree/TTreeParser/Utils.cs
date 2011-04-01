@@ -182,5 +182,16 @@ namespace TTreeParser
                 return reader.ParseINIFormat();
             }
         }
+
+        /// <summary>
+        /// Makes sure a created formula is "good".
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static bool IsGoodFormula(this ROOTNET.Interface.NTTreeFormula f)
+        {
+            f.QuickLoad = true;
+            return f.Ndim != 0;
+        }
     }
 }
