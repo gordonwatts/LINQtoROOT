@@ -123,9 +123,6 @@
     <Content Include="InfrastructureSourceFiles\FlowOutputObject.h" />
     <Content Include="Templates\TSelectorTemplate.cxx" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if not exist $(USERPROFILE)\AppData\Local\LINQToTTree\Config mkdir $(USERPROFILE)\AppData\Local\LINQToTTree\Config
