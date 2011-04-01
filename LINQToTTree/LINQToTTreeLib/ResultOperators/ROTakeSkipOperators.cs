@@ -7,6 +7,7 @@ using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -77,11 +78,11 @@ namespace LINQToTTreeLib.ResultOperators
             if (skip != null)
             {
                 comparison = StatementIfOnCount.ComparisonOperator.GreaterThan;
-                comparisonValue = ExpressionVisitor.GetExpression(skip.Count, codeEnv, codeContext, container);
+                comparisonValue = ExpressionToCPP.GetExpression(skip.Count, codeEnv, codeContext, container);
             }
             else
             {
-                comparisonValue = ExpressionVisitor.GetExpression(take.Count, codeEnv, codeContext, container);
+                comparisonValue = ExpressionToCPP.GetExpression(take.Count, codeEnv, codeContext, container);
             }
 
             codeEnv.Add(new StatementIfOnCount(counter, comparisonValue, comparison));
