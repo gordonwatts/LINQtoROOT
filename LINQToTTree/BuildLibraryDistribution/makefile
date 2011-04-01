@@ -27,8 +27,8 @@ clean:
 #
 
 $(SolutionDir)\$(ResultName)-$(BuildConfig).zip : $(ResultDirectoryName)\date.txt
-	cd $(ResultDirectoryName)
-	$(zip7App) a $(SolutionDir)\$(ResultName)-$(BuildConfig).zip "."
+	cd $(ResultDirectoryName)\..
+	$(zip7App) a $(SolutionDir)\$(ResultName)-$(BuildConfig).zip ".\$(ResultName)"
 
 #
 # Create the directory that we will be zipping
