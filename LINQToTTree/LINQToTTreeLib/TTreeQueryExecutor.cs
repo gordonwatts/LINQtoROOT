@@ -475,6 +475,11 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Keep track of the queires we've done so we can track where they go.
+        /// </summary>
+        private static int _gQueryCounter = 0;
+
+        /// <summary>
         /// Write out the TSelector file derived from the already existing query. This now includes all the code we need
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
@@ -501,6 +506,16 @@ namespace LINQToTTreeLib
             context.Put("CINTLines", _cintLines);
 
             ///
+            /// In order to avoid conflicts having to do with root map files pointing to DLL's and some other weird bookeeping things
+            /// that root does, we will name the query to be something different each time. This isn't a problem unless something goes
+            /// wrong, but it can make whatever went wrong pretty confusing!
+            /// 
+
+            context.Put("QueryIndex", _gQueryCounter);
+            string queryFileName = "query" + _gQueryCounter.ToString();
+            _gQueryCounter++;
+
+            ///
             /// Now translate all the code we are looking at
             /// 
 
@@ -520,7 +535,7 @@ namespace LINQToTTreeLib
             /// Now do it!
             /// 
 
-            var ourSelector = new FileInfo(GetQueryDirectory() + "\\query.cxx");
+            var ourSelector = new FileInfo(GetQueryDirectory() + "\\" + queryFileName + ".cxx");
             using (var writer = ourSelector.CreateText())
             {
                 eng.Evaluate(context, writer, null, template);

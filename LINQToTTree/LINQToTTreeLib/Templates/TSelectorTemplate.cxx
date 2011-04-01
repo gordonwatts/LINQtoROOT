@@ -23,12 +23,12 @@ $l
 #endif
 
 
-class query : public $baseClassName
+class query$QueryIndex : public $baseClassName
 {
 public:
 	/// So there is some init that CINT will know about
 	/// (I don't know why this is required, but it is).
-	query()
+	query$QueryIndex()
 	{
 	}
 
