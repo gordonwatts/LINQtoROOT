@@ -26,6 +26,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoNtupleArrays", "DemoNtu
 		{B11A33A7-7181-4405-87D9-AF76DADD84B3} = {B11A33A7-7181-4405-87D9-AF76DADD84B3}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4D0230E3-A090-41FF-9B2A-D978881848EB}"
+	ProjectSection(SolutionItems) = preProject
+		CopySingleTree.C = CopySingleTree.C
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
