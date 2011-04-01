@@ -80,7 +80,7 @@ namespace TTreeClassGenerator
         /// <returns></returns>
         private FileInfo FindFileInDefaultPaths(string filePath, params FileInfo[] otherFiles)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(filePath) == null)
                 return null;
 
             string name = Path.GetFileName(filePath);

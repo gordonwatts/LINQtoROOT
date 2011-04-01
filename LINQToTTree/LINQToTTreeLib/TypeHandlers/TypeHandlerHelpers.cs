@@ -5,7 +5,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -73,11 +72,11 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// correctly deal with any substitution in process.
                 /// 
 
-                var returnedValue = ExpressionToCPP.GetExpression(expr.Arguments[0], gc, context, container);
-                var p2 = context.Add(lambdaParameters[1].Name, ExpressionToCPP.GetExpression(expr.Arguments[1], gc, context, container));
+                var returnedValue = ExpressionVisitor.GetExpression(expr.Arguments[0], gc, context, container);
+                var p2 = context.Add(lambdaParameters[1].Name, ExpressionVisitor.GetExpression(expr.Arguments[1], gc, context, container));
                 var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
 
-                var statementBody = ExpressionToCPP.GetExpression(action.Body, gc, context, container);
+                var statementBody = ExpressionVisitor.GetExpression(action.Body, gc, context, container);
 
                 p2.Pop();
                 p1.Pop();

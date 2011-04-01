@@ -5,7 +5,6 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -44,7 +43,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionToCPP.GetExpression(mc, gc, null, MEFUtilities.MEFContainer);
+            var result = ExpressionVisitor.GetExpression(mc, gc, null, MEFUtilities.MEFContainer);
 
             ///
             /// And check the results!

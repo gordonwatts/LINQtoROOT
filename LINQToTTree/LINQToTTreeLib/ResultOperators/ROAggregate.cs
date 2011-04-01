@@ -7,7 +7,6 @@ using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -71,7 +70,7 @@ namespace LINQToTTreeLib.ResultOperators
             {
                 accumulator = new Variables.VarSimple(a.Seed.Type);
             }
-            accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
+            accumulator.InitialValue = ExpressionVisitor.GetExpression(a.Seed, _codeEnv, context, container);
 
             ///
             /// Now, parse the lambda expression, doing a substitution with this guy! Note that the only argument is our
@@ -79,7 +78,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var p1 = context.Add(a.Func.Parameters[0].Name, accumulator);
-            var funcResolved = ExpressionToCPP.GetExpression(a.Func.Body, _codeEnv, context, container);
+            var funcResolved = ExpressionVisitor.GetExpression(a.Func.Body, _codeEnv, context, container);
             p1.Pop();
 
             _codeEnv.Add(new StatementAssign(accumulator, funcResolved));

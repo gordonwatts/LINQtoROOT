@@ -3,7 +3,6 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
 {
@@ -37,7 +36,7 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
 
             var held = holder.HeldExpression;
 
-            return ExpressionToCPP.GetExpression(held, codeEnv, context, container);
+            return ExpressionVisitor.GetExpression(held, codeEnv, context, container);
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace LINQToTTreeLib.Expressions
             /// 
 
             var lenExpression = Expression.ArrayLength(_arrayExpression);
-            var lenTranslation = ExpressionToCPP.GetExpression(lenExpression, env, context, container);
+            var lenTranslation = ExpressionVisitor.GetExpression(lenExpression, env, context, container);
 
             ///
             /// Next, generate the expression that forms the basis of the index lookup. We don't

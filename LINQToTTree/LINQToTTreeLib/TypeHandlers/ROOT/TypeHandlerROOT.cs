@@ -6,7 +6,6 @@ using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -75,7 +74,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <returns></returns>
         public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
         {
-            var objRef = ExpressionToCPP.GetExpression(expr.Object, gc, context, container);
+            var objRef = ExpressionVisitor.GetExpression(expr.Object, gc, context, container);
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}.{1}(", objRef.AsObjectReference(), expr.Method.Name);
 
@@ -87,7 +86,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                     bld.Append(",");
                 }
                 first = false;
-                bld.Append(ExpressionToCPP.GetExpression(a, gc, context, container).CastToType(a.Type));
+                bld.Append(ExpressionVisitor.GetExpression(a, gc, context, container).CastToType(a.Type));
             }
             bld.Append(")");
 

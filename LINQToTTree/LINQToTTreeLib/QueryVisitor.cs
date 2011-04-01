@@ -5,7 +5,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -213,8 +212,9 @@ namespace LINQToTTreeLib
         /// <param name="index"></param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            _codeEnv.Add(new Statements.StatementFilter(ExpressionToCPP.GetExpression(whereClause.Predicate, _codeEnv, _codeContext, MEFContainer)));
+            base.VisitWhereClause(whereClause, queryModel, index);
 #if false
+            _codeEnv.Add(new Statements.StatementFilter(ExpressionVisitor.GetExpression(whereClause.Predicate, _codeEnv, _codeContext, MEFContainer)));
 #endif
         }
 

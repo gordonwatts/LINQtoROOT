@@ -20,12 +20,11 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Parsing.Structure;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for ExpressionVisitor</summary>
-    [PexClass(typeof(ExpressionToCPP))]
+    [PexClass(typeof(ExpressionVisitor))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ExpressionVisitorTest
@@ -46,7 +45,7 @@ namespace LINQToTTreeLib
         [PexMethod]
         internal IValue GetExpression([PexAssumeNotNull]Expression expr, IGeneratedCode ce)
         {
-            IValue result = ExpressionToCPP.GetExpression(expr, ce, null, MEFUtilities.MEFContainer);
+            IValue result = ExpressionVisitor.GetExpression(expr, ce, null, MEFUtilities.MEFContainer);
             return result;
         }
 
@@ -120,7 +119,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.MakeBinary(c.BinaryType, c.LHS, c.RHS);
             GeneratedCode g = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, g, null, null);
+            var r = ExpressionVisitor.GetExpression(e, g, null, null);
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(c.ExpectedType, r.Type, "Expected type is incorrect");
             Assert.AreEqual(c.ExpectedValue, r.RawValue, "value is incorrect");
@@ -155,7 +154,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.MakeUnary(u.UnaryType, u.UnaryTarget, u.ConvertType);
             GeneratedCode g = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, g, null, null);
+            var r = ExpressionVisitor.GetExpression(e, g, null, null);
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(u.ExpectedType, r.Type, "type not correct");
             Assert.AreEqual(u.ExpectedValue, r.RawValue, "resulting value not correct");
@@ -181,7 +180,7 @@ namespace LINQToTTreeLib
         {
             QuerySourceReferenceExpression q = new QuerySourceReferenceExpression(new DummyQueryReference() { ItemName = "evt", ItemType = typeof(int) });
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(q, gc, null, null);
+            var r = ExpressionVisitor.GetExpression(q, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("evt", r.RawValue, "expansion incorrect");
@@ -210,7 +209,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "run");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("(*d).run", r.RawValue, "incorrect reference");
@@ -221,7 +220,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(IEnumerable<int>), r.Type, "incorrect type");
             Assert.AreEqual("(*d).numbers", r.RawValue, "incorrect reference");
@@ -232,7 +231,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Parameter(typeof(int), "p");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "type is not correct");
             Assert.AreEqual("p", r.RawValue, "raw value is not right");
@@ -243,7 +242,7 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            var r = ExpressionVisitor.GetExpression(e, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");
             Assert.AreEqual("p", r.RawValue, "raw value is not right");
@@ -257,7 +256,7 @@ namespace LINQToTTreeLib
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             cc.Add("p", new ValSimple("count", typeof(int)));
-            var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
+            var r = ExpressionVisitor.GetExpression(e, gc, cc, null);
         }
 
         [TestMethod]
@@ -267,7 +266,7 @@ namespace LINQToTTreeLib
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             cc.Add("p", new ValSimple("count", typeof(ntup)));
-            var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
+            var r = ExpressionVisitor.GetExpression(e, gc, cc, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");
             Assert.AreEqual("count", r.RawValue, "raw value is not right");
@@ -281,7 +280,7 @@ namespace LINQToTTreeLib
                 Expression.Constant(2)));
 
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionToCPP.GetExpression(laFunc, gc, null, null);
+            var result = ExpressionVisitor.GetExpression(laFunc, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("1+2", result.RawValue, "raw value was not right");
@@ -294,7 +293,7 @@ namespace LINQToTTreeLib
                 Expression.Parameter(typeof(int), "p"),
                 Expression.Constant(2)));
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionToCPP.GetExpression(laFunc, gc, null, null);
+            var result = ExpressionVisitor.GetExpression(laFunc, gc, null, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("p+2", result.RawValue, "raw value was not right");
@@ -332,7 +331,7 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
-            var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             Assert.AreEqual(typeof(int), result.Type, "bad type for return");
         }
 
@@ -361,7 +360,7 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
-            var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             gc.DumpCodeToConsole();
 
             Assert.AreEqual(typeof(int), result.Type, "bad type for return");
@@ -400,7 +399,7 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
-            var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
 
             ///
             /// Next, go after the code that comes back and make sure the if statement for the > 20 actually makes sense.
@@ -416,11 +415,11 @@ namespace LINQToTTreeLib
         public void TestSimpleArrayLength()
         {
             Expression<Func<int[], int>> arrayLenLambda = arr => arr.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
             Assert.AreEqual("(*arr).size()", result.RawValue, "actual translation incorrect");
         }
 
-        private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)
+        private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda)
         {
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
@@ -430,10 +429,10 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
-            var result = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+            var result = ExpressionVisitor.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
 
             Assert.IsNotNull(result, "result");
-            Assert.AreEqual(expectedType, result.Type, "result type");
+            Assert.AreEqual(typeof(int), result.Type, "result type");
             return result;
         }
 
@@ -446,7 +445,7 @@ namespace LINQToTTreeLib
         public void TestClassArraySize()
         {
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
         }
 
@@ -485,7 +484,7 @@ namespace LINQToTTreeLib
             /// in the TranslationExpressionVisitor object should take care of the rest. Fingers crossed! :-)
 
             Expression<Func<SourceType1, int>> arrayLenLambda = arr => arr.jets.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            var result = RunArrayLengthOnExpression(arrayLenLambda);
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
         }
 
@@ -504,7 +503,7 @@ namespace LINQToTTreeLib
 
             cc.Add("d", Expression.Constant(20));
 
-            var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+            var result = ExpressionVisitor.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
 
             Assert.IsNotNull(result, "result");
             Assert.AreEqual(typeof(int), result.Type, "result type");
@@ -517,18 +516,8 @@ namespace LINQToTTreeLib
             var myvar = Expression.Variable(typeof(int[]), "d");
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
-            var result = RunArrayLengthOnExpression(myaccess, typeof(int));
+            var result = RunArrayLengthOnExpression(myaccess);
             Assert.AreEqual("(*d)[1]", result.RawValue, "C++ incorrectly translated");
-        }
-
-        [TestMethod]
-        public void TestComplexObjectArrayAccess()
-        {
-            var myarray = Expression.Variable(typeof(ROOTNET.NTH1F[]), "harr");
-            var myaccess = Expression.ArrayIndex(myarray, Expression.Constant(1));
-
-            var result = RunArrayLengthOnExpression(myaccess, typeof(ROOTNET.NTH1F));
-            Assert.AreEqual("(*harr)[1]", result.RawValue, "C++ th1f not translated correctly");
         }
 
         class ObjectArrayTest
@@ -543,7 +532,7 @@ namespace LINQToTTreeLib
             var arrMember = Expression.MakeMemberAccess(arr, typeof(ObjectArrayTest).GetMember("arr").First());
             var arrayIndex = Expression.ArrayIndex(arrMember, Expression.Constant(1));
 
-            var result = RunArrayLengthOnExpression(arrayIndex, typeof(int));
+            var result = RunArrayLengthOnExpression(arrayIndex);
 
             Assert.AreEqual("(*(*obj).arr)[1]", result.RawValue, "array text");
         }
@@ -589,7 +578,7 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
-            return ExpressionToCPP.GetExpression(invoke, gc, cc, MEFUtilities.MEFContainer);
+            return ExpressionVisitor.GetExpression(invoke, gc, cc, MEFUtilities.MEFContainer);
         }
     }
 }

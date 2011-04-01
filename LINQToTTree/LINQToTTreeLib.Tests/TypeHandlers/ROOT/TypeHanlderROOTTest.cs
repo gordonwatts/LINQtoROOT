@@ -2,8 +2,6 @@
 using System;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,20 +15,6 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
     [TestClass]
     public partial class TypeHanlderROOTTest
     {
-        [TestInitialize]
-        public void Setup()
-        {
-            MEFUtilities.MyClassInit();
-            MEFUtilities.AddPart(new QVResultOperators());
-            MEFUtilities.Compose(new TypeHandlerCache());
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            MEFUtilities.MyClassDone();
-        }
-
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         public bool CanHandle([PexAssumeUnderTest]TypeHandlerROOT target, Type t)
@@ -51,25 +35,6 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
             Assert.IsNotNull(result);
             return result;
-        }
-
-        [TestMethod]
-        public void TestROOTMethodReference()
-        {
-            var expr = Expression.Variable(typeof(ROOTNET.NTH1F), "myvar");
-            var getEntriesMethod = typeof(ROOTNET.NTH1F).GetMethod("GetEntries", new Type[0]);
-            var theCall = Expression.Call(expr, getEntriesMethod);
-
-            var target = new TypeHandlerROOT();
-
-
-
-            IValue resultOfCall;
-            var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var returned = target.ProcessMethodCall(theCall, out resultOfCall, gc, cc, MEFUtilities.MEFContainer);
-
-            Assert.AreEqual("(*myvar).GetEntries()", resultOfCall.RawValue, "call is incorrect");
         }
     }
 }

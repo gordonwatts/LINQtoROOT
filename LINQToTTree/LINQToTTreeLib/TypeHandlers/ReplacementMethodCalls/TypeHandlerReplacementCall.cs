@@ -9,7 +9,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 {
@@ -201,7 +200,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                 if (!first)
                     rawValue.Append(",");
                 first = false;
-                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionToCPP.GetExpression(arg.Item1, gc, context, container).RawValue);
+                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionVisitor.GetExpression(arg.Item1, gc, context, container).RawValue);
             }
             rawValue.Append(")");
 
