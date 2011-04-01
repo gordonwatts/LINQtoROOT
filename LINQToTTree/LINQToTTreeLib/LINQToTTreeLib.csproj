@@ -65,6 +65,7 @@
     <Compile Include="Expressions\ArrayExpressionParser.cs" />
     <Compile Include="Expressions\ArrayInfoVector.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitor.cs" />
+    <Compile Include="Expressions\ExpressionToCPP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="QueriableTTree.cs" />
     <None Include="QueryResultCache.cs" />

@@ -6,16 +6,15 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Variables;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Data.Linq.Parsing;
 
-namespace LINQToTTreeLib
+namespace LINQToTTreeLib.Expressions
 {
-    class ExpressionVisitor : ThrowingExpressionTreeVisitor
+    class ExpressionToCPP : ThrowingExpressionTreeVisitor
     {
         /// <summary>
         /// Helper routine to return the expression as a string.
@@ -28,7 +27,7 @@ namespace LINQToTTreeLib
             {
                 cc = new CodeContext();
             }
-            var visitor = new ExpressionVisitor(ce, cc);
+            var visitor = new ExpressionToCPP(ce, cc);
             visitor.MEFContainer = container;
 
             if (container != null)
@@ -102,7 +101,7 @@ namespace LINQToTTreeLib
         /// ctor - only called by our helper routine above.
         /// </summary>
         /// <param name="ce"></param>
-        private ExpressionVisitor(IGeneratedCode ce, ICodeContext cc)
+        private ExpressionToCPP(IGeneratedCode ce, ICodeContext cc)
         {
             _codeEnv = ce;
             _codeContext = cc;
