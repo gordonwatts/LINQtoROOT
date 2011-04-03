@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -144,6 +145,20 @@ namespace LINQToTTreeLib
                 return null;
 
             ///
+            /// Now, it is possible that this special index is actually a 2D index. In short, if this is muons, there
+            /// could be multiple muons associated with this jet. In that case, there will be an array index sitting
+            /// right here which we need to strip off. NOTE - we can't deal with a 3D parameterization here!
+            ///
+
+            List<Expression> arrayLooksups = new List<Expression>();
+            while (sourceExpression.NodeType == ExpressionType.ArrayIndex)
+            {
+                var aind = sourceExpression as BinaryExpression;
+                arrayLooksups.Add(aind.Right);
+                sourceExpression = aind.Left;
+            }
+
+            ///
             /// Next job is to figure out where this index guy is pointing to. In order to
             /// do that look for the other link object. Do the check and make sure the types
             /// are correct so we are "ready" to go.
@@ -170,12 +185,18 @@ namespace LINQToTTreeLib
 
             ///
             /// Next, the source expression should be an index, so make sure it translates to
-            /// an integer...
+            /// an integer... And if there were multiple array references then we need to unwind them here.
             /// 
 
             var sourceIndex = Translate(sourceExpression);
             if (sourceIndex == null)
                 throw new NotImplementedException("Failed to translate expression '" + sourceExpression.ToString() + "' of '" + expression.ToString() + "'");
+
+            foreach (var arrayExpression in arrayLooksups)
+            {
+                sourceIndex = Expression.ArrayIndex(sourceIndex, arrayExpression);
+            }
+
             if (sourceIndex.Type != typeof(int))
                 throw new NotImplementedException("Array index expression is not an integer (it is a '" + sourceIndex.Type.Name + "') - failed with '" + expression.ToString() + "'");
 
@@ -184,7 +205,12 @@ namespace LINQToTTreeLib
             /// 
 
             var accessTargetMemberExpression = Expression.MakeMemberAccess(rootObject, indexTargetMember);
-            var targetIndexedAccessExpression = Expression.MakeBinary(ExpressionType.ArrayIndex, accessTargetMemberExpression, sourceIndex);
+            var targetIndexedAccessExpression = Expression.ArrayIndex(accessTargetMemberExpression, sourceIndex);
+
+            ///
+            /// And finally the resulting member access
+            /// 
+
             var targetValueIndexedAccessExpression = Expression.MakeMemberAccess(targetIndexedAccessExpression, targetMember);
 
             ///
@@ -345,13 +371,29 @@ namespace LINQToTTreeLib
             var rootExpression = expression.Operand;
             if (rootExpression is MemberExpression)
             {
+                var memberExpr = rootExpression as MemberExpression;
+                var attrClassTranslate = TypeHasAttribute<TranslateToClassAttribute>(memberExpr.Expression.Type);
+                var attrMemberTypeGrouping = TypeHasAttribute<TTreeVariableGroupingAttribute>(memberExpr.Member);
+                var attrMemberIsIndex = TypeHasAttribute<IndexToOtherObjectArrayAttribute>(memberExpr.Member);
+
+                ///
+                /// If this is a deep level index re-direct, and we are here, that means we have a 2D index that we are trying
+                /// to take the length of (obj.jets[0].muonredirect.Length, where muondirectect is an array of indicies. We need
+                /// to get this into "arr.muonredirect[0].Length". Note this is very different from doing the indirect lookup
+                /// we usually do with an index! SO some special code is required.
+                /// 
+
+                if (attrClassTranslate == null && attrMemberIsIndex != null)
+                {
+                    return IndexedArrayLengthLookup(memberExpr, attrMemberIsIndex);
+                }
+
                 ///
                 /// Is this something like a grouping variable. For index redirection - well that would be odd if we ever
                 /// ended up here as an index operation is just a single pointer right now!
                 /// 
 
-                var memberExpr = rootExpression as MemberExpression;
-                if (TypeHasAttribute<TTreeVariableGroupingAttribute>(memberExpr.Member) != null)
+                if (attrMemberTypeGrouping != null)
                 {
                     ///
                     /// Ok. This a little complex - it is an array of some sort - a group of some sort, or something "deep". The problem is that
@@ -387,10 +429,9 @@ namespace LINQToTTreeLib
                 /// Is this a simple straight-up class mapping?
                 /// 
 
-                var attr = TypeHasAttribute<TranslateToClassAttribute>(memberExpr.Expression.Type);
-                if (attr != null)
+                if (attrClassTranslate != null)
                 {
-                    var result = RecodeClass(memberExpr, attr);
+                    var result = RecodeClass(memberExpr, attrClassTranslate);
                     return Expression.ArrayLength(result);
                 }
             }
@@ -400,6 +441,56 @@ namespace LINQToTTreeLib
             /// 
 
             return expression;
+        }
+
+        /// <summary>
+        /// We have a member index like arr.jet[0].muonidnex.Length that has been called. We are called with just the muonidnex. We need to
+        /// do the translation now.
+        /// 
+        ///   arr.jet[0].muonindex => obj.muonindex[0].Length
+        ///   arr.jet.muonindex => obj.muonindex.Length
+        /// 
+        /// </summary>
+        /// <param name="memberExpr"></param>
+        /// <param name="attr"></param>
+        /// <returns></returns>
+        private Expression IndexedArrayLengthLookup(MemberExpression memberExpr, IndexToOtherObjectArrayAttribute attr)
+        {
+            ///
+            /// First, we need to find the base class that does the translation for us.
+            /// 
+
+            var classToTranslateTo = TypeHasAttribute<TranslateToClassAttribute>(attr.BaseType);
+            if (classToTranslateTo == null)
+                throw new NotImplementedException("Unable to translate '" + memberExpr + "' for an array length because the translation base type '" + attr.BaseType.Name + "' doesn't have a translate class attribute");
+
+            ///
+            /// Now, find, with renames, what the "muonindex" points to, and build acces to it from
+            /// a translated root.
+            /// 
+
+            var targetMember = ResolveMemberName(classToTranslateTo.TargetClassType, memberExpr.Member);
+
+            var root = FindObjectOfType(memberExpr, attr.BaseType);
+            var transRoot = TranslateRootObject(root, classToTranslateTo.TargetClassType);
+            var memberAccess = Expression.MakeMemberAccess(transRoot, targetMember);
+
+            ///
+            /// See if the "jet" guy has an index on it.
+            /// 
+
+            Expression arrayLength = memberAccess;
+
+            if (memberExpr.Expression.NodeType == ExpressionType.ArrayIndex)
+            {
+                var oldArrayIndex = memberExpr.Expression as BinaryExpression;
+                arrayLength = Expression.ArrayIndex(arrayLength, oldArrayIndex.Right);
+                if (!arrayLength.Type.IsArray)
+                    throw new NotImplementedException("Unable to translate array length for '" + memberExpr + "' because we saw an index and adding it gave us '" + arrayLength + "' which isn't an array!");
+            }
+
+            arrayLength = Expression.ArrayLength(arrayLength);
+            return arrayLength;
         }
 
         /// <summary>

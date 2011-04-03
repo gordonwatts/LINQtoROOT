@@ -376,6 +376,10 @@ namespace LINQToTTreeLib.Tests
             [TTreeVariableGrouping]
             [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
             public SourceType3Container2 specialIndex;
+
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
+            public SourceType3Container2[] specialIndicies;
         }
 
         public class SourceType3Container2
@@ -401,6 +405,7 @@ namespace LINQToTTreeLib.Tests
             }
             public int[] val;
             public int[] specialIndex;
+            public int[][] specialIndicies;
         }
 
         [TestMethod]
@@ -454,6 +459,51 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsTrue(result.ToString().Contains(".specialIndex[0]]"), "missign the special index reference");
             Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
+        }
+
+        [TestMethod]
+        public void TestArray2DIndexLength()
+        {
+            Expression<Func<SourceType3, int>> lambdaExpr = arr => arr.jets[0].specialIndicies.Length;
+            /// => arr.specialIndicies[0].Length
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var ue = result as UnaryExpression;
+            Assert.AreEqual(ExpressionType.ArrayIndex, ue.Operand.NodeType, "expression array index for the insize missing");
+            var be = ue.Operand as BinaryExpression;
+            Assert.AreEqual(ExpressionType.MemberAccess, be.Left.NodeType, "member access incorrect");
+            var me = be.Left as MemberExpression;
+            Assert.AreEqual("specialIndicies", me.Member.Name, "va2D member isn't being referenced!");
+            Console.WriteLine(result.ToString());
+        }
+
+        [TestMethod]
+        public void TestArray2DIndexLookup()
+        {
+            Expression<Func<SourceType3, int>> lambdaExpr = arr => arr.jets[0].specialIndicies[1].val;
+            /// => arr.muons[obj.specialIndicies[0][1]].val => obj.val[obj.specialIndicies[0][1]]
+            /// 
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+
+            Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
+            var topLevelBe = result as BinaryExpression;
+
+            Assert.AreEqual(ExpressionType.MemberAccess, topLevelBe.Left.NodeType, "obj.val lookup");
+            var topLevelMe = topLevelBe.Left as MemberExpression;
+            Assert.AreEqual("val", topLevelMe.Member.Name, "top level member access");
+
+            Assert.AreEqual(ExpressionType.ArrayIndex, topLevelBe.Right.NodeType, "master index lookup");
+            var topArrayIndex = topLevelBe.Right as BinaryExpression;
+            Assert.AreEqual(ExpressionType.Constant, topArrayIndex.Right.NodeType, "constant 1 not right");
+            Assert.AreEqual(ExpressionType.ArrayIndex, topArrayIndex.Left.NodeType, "second level array lookup");
+            var secondArrayIndex = topArrayIndex.Left as BinaryExpression;
+            Assert.AreEqual(ExpressionType.Constant, secondArrayIndex.Right.NodeType, "2nd array constant lookup");
+            Assert.AreEqual(ExpressionType.MemberAccess, secondArrayIndex.Left.NodeType, "2nd array member acess");
+            var secondMemberAccess = secondArrayIndex.Left as MemberExpression;
+            Assert.AreEqual("specialIndicies", secondMemberAccess.Member.Name, "member access for index");
+
+            Console.WriteLine(result);
         }
 
         public class SourceType4Container1
