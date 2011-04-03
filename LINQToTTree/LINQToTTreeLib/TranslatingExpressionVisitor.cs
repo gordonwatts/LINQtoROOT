@@ -38,6 +38,17 @@ namespace LINQToTTreeLib
             if (expression.Type.IsArray)
                 return expression;
 
+            return InternalVisitMemberExpression(expression);
+
+        }
+
+        /// <summary>
+        /// Try to translate a member expression
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private Expression InternalVisitMemberExpression(MemberExpression expression)
+        {
             ///
             /// See if the source has a "translated-to" class on it?
             /// 
@@ -94,7 +105,6 @@ namespace LINQToTTreeLib
             /// 
 
             return base.VisitMemberExpression(expression);
-
         }
 
         /// <summary>
@@ -333,15 +343,27 @@ namespace LINQToTTreeLib
                     /// 
 
                     var nonArrayMember = FindNonArrayMember(memberExpr.Type.GetElementType());
-                    var arrayLookup = Expression.ArrayIndex(memberExpr, Expression.Variable(typeof(int), "d"));
-                    var leafLookup = Expression.MakeMemberAccess(arrayLookup, nonArrayMember);
+                    if (nonArrayMember != null)
+                    {
+                        var arrayLookup = Expression.ArrayIndex(memberExpr, Expression.Variable(typeof(int), "d"));
+                        var leafLookup = Expression.MakeMemberAccess(arrayLookup, nonArrayMember);
 
-                    var translated = Translate(leafLookup);
-                    if (translated.NodeType != ExpressionType.ArrayIndex)
-                        throw new InvalidOperationException("Tried to translate '" + leafLookup.ToString() + "' into an array index, but it didn't come back an array index - it came back '" + translated.ToString() + "'");
+                        var translated = Translate(leafLookup);
+                        if (translated.NodeType != ExpressionType.ArrayIndex)
+                            throw new InvalidOperationException("Tried to translate '" + leafLookup.ToString() + "' into an array index, but it didn't come back an array index - it came back '" + translated.ToString() + "'");
 
-                    var lastItemIndex = translated as BinaryExpression;
-                    return Expression.ArrayLength(lastItemIndex.Left);
+                        var lastItemIndex = translated as BinaryExpression;
+                        return Expression.ArrayLength(lastItemIndex.Left);
+                    }
+
+                    ///
+                    /// The next option is that this is an array that is sitting in an object that points back. So to deal with this we will
+                    /// need to translate the root of this guy.
+                    /// 
+
+                    var translatedInterior = InternalVisitMemberExpression(memberExpr);
+                    var length = Expression.ArrayLength(translatedInterior);
+                    return length;
                 }
 
                 ///
@@ -375,7 +397,7 @@ namespace LINQToTTreeLib
                                 where field != null
                                 where !field.FieldType.IsArray
                                 select field;
-            return firstNonArray.First();
+            return firstNonArray.FirstOrDefault();
         }
 
         /// <summary>

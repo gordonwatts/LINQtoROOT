@@ -99,10 +99,11 @@ namespace LINQToTTreeLib.Tests
         class NoTranslateArrayClass
         {
             public int[] val;
+            public int[][] val2D;
         }
 
         [TestMethod]
-        public void TestNoTranslateArrayIndex()
+        public void TestNoTranslateArrayLength()
         {
             Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val.Length;
             var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
@@ -113,6 +114,25 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNotNull(me, "unary operand type");
             Assert.AreEqual(typeof(NoTranslateArrayClass), me.Expression.Type, "type of member we are applying val to");
             Assert.AreEqual("val", me.Member.Name, "member access bad");
+        }
+
+        [TestMethod]
+        public void TestNoTranslate1DArrayIndex()
+        {
+            Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val[1];
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
+            Assert.AreEqual(lambdaExpr.Body.ToString(), result.ToString(), "expression doesn't match");
+        }
+
+        [TestMethod]
+        public void TestNoTranslate2DArrayIndex()
+        {
+            Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val2D[1][1];
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
+            Assert.AreEqual(lambdaExpr.Body.ToString(), result.ToString(), "expression doesn't match");
+            Console.WriteLine(lambdaExpr.Body.ToString());
         }
 
         [TranslateToClass(typeof(ResultType1))]
@@ -223,6 +243,9 @@ namespace LINQToTTreeLib.Tests
         {
             [TTreeVariableGrouping]
             public int val;
+
+            [TTreeVariableGrouping]
+            public int[] val2D;
         }
 
         [TranslateToClass(typeof(ResultType2))]
@@ -236,9 +259,10 @@ namespace LINQToTTreeLib.Tests
         {
             public ResultType2(Expression holder)
             {
-
             }
+
             public int[] val;
+            public int[][] val2D;
         }
 
         [TestMethod]
@@ -253,6 +277,21 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNotNull(me, "unary operand type");
             Assert.AreEqual(typeof(ResultType2), me.Expression.Type, "type of member we are applying val to");
             Assert.AreEqual("val", me.Member.Name, "member access bad");
+        }
+
+        [TestMethod]
+        public void TestArrayLengthFor2D()
+        {
+            Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets[0].val2D.Length;
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var ue = result as UnaryExpression;
+            Assert.AreEqual(ExpressionType.ArrayIndex, ue.Operand.NodeType, "expression array index for the insize missing");
+            var be = ue.Operand as BinaryExpression;
+            Assert.AreEqual(ExpressionType.MemberAccess, be.Left.NodeType, "member access incorrect");
+            var me = be.Left as MemberExpression;
+            Assert.AreEqual("val2D", me.Member.Name, "va2D member isn't being referenced!");
+            Console.WriteLine(result.ToString());
         }
 
         [TestMethod]
