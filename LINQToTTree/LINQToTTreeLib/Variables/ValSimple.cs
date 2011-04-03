@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables
@@ -33,5 +30,14 @@ namespace LINQToTTreeLib.Variables
 
 
         public Type Type { get; private set; }
+
+        /// <summary>
+        /// Print out basic info - helpful for debugging.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return "(" + Type.Name + ") " + RawValue;
+        }
     }
 }

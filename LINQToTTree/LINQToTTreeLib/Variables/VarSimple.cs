@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Variables
         /// <returns></returns>
         public override string ToString()
         {
-            return "(" + Type.Name + ") " + RawValue;
+            return VariableName + " = (" + Type.Name + ") " + RawValue;
         }
     }
 }
