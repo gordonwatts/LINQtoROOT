@@ -131,12 +131,12 @@
     </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
-    <Compile Include="ExpressionVisitorMethodCallTests.cs" />
-    <Compile Include="ExpressionVisitorTest.cs" />
-    <Compile Include="ExpressionVisitorTest.GetExpression.g.cs">
+    <Compile Include="Expressions\ExpressionVisitorMethodCallTests.cs" />
+    <Compile Include="Expressions\ExpressionVisitorTest.cs" />
+    <Compile Include="Expressions\ExpressionVisitorTest.GetExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExpressionVisitorTest.TestConstantExpression.g.cs">
+    <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Factories\ConstantExpressionFactory.cs" />
