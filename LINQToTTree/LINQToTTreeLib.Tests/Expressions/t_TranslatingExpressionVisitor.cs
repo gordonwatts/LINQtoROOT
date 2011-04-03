@@ -295,6 +295,21 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestArrayIndex2D()
+        {
+            Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets[0].val2D[1];
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body);
+            Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
+            var firstbe = result as BinaryExpression;
+            Assert.AreEqual(ExpressionType.ArrayIndex, firstbe.Left.NodeType, "expression array index for the insize missing");
+            var be = firstbe.Left as BinaryExpression;
+            Assert.AreEqual(ExpressionType.MemberAccess, be.Left.NodeType, "member access incorrect");
+            var me = be.Left as MemberExpression;
+            Assert.AreEqual("val2D", me.Member.Name, "va2D member isn't being referenced!");
+            Console.WriteLine(result.ToString());
+        }
+
+        [TestMethod]
         public void TestArrayGroupingNoTranslation()
         {
             Expression<Func<SourceType2, SourceType2Container>> lambdaExpr = arr => arr.jets[12];

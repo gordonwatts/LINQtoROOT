@@ -25,30 +25,26 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Accessing a member of a class. See if 
+        /// Accessing a member of a class. The translation is a little tricky. For example:
+        ///   arr.jets - don't translate that!
+        ///   arr.jets[0].member - do translate that
+        ///   [Where jets is a grouped variable]
+        ///   
+        ///   arr.jets[0].muonindex.pt - translate that to the muon array
+        ///   arr.jets[0].muonsindex[0].pt - translate to the first index of the muon array.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
             ///
-            /// If this is an array, short-circut the translation here
+            /// If this is a bar array that is connected to the main object, then we want
+            /// to not translate this. It will be delt with further above us.
             /// 
 
-            if (expression.Type.IsArray)
+            if (IsRootObjectArrayReference(expression))
                 return expression;
 
-            return InternalVisitMemberExpression(expression);
-
-        }
-
-        /// <summary>
-        /// Try to translate a member expression
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        private Expression InternalVisitMemberExpression(MemberExpression expression)
-        {
             ///
             /// See if the source has a "translated-to" class on it?
             /// 
@@ -105,6 +101,27 @@ namespace LINQToTTreeLib
             /// 
 
             return base.VisitMemberExpression(expression);
+        }
+
+        /// <summary>
+        /// Is this something like:
+        ///   obj.jets where jets is an array that points off to a "regrouped" variable? If so, then we
+        ///   don't want to do the translation here.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private bool IsRootObjectArrayReference(MemberExpression expression)
+        {
+            if (!expression.Type.IsArray)
+                return false;
+
+            if (TypeHasAttribute<TranslateToClassAttribute>(expression.Expression.Type) == null)
+                return false;
+
+            if (TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member) == null)
+                return false;
+
+            return true;
         }
 
         /// <summary>
@@ -361,7 +378,7 @@ namespace LINQToTTreeLib
                     /// need to translate the root of this guy.
                     /// 
 
-                    var translatedInterior = InternalVisitMemberExpression(memberExpr);
+                    var translatedInterior = Translate(memberExpr);
                     var length = Expression.ArrayLength(translatedInterior);
                     return length;
                 }
