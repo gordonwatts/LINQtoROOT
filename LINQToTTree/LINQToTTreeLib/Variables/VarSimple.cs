@@ -30,5 +30,14 @@ namespace LINQToTTreeLib.Variables
         /// Get/Set if this variable needs to be declared.
         /// </summary>
         public bool Declare { get; set; }
+
+        /// <summary>
+        /// TO help with debugging...
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return "(" + Type.Name + ") " + RawValue;
+        }
     }
 }
