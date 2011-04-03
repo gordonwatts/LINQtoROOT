@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
@@ -20,7 +21,6 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
 using Remotion.Data.Linq.Clauses.Expressions;
 using Remotion.Data.Linq.Parsing.Structure;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -519,6 +519,17 @@ namespace LINQToTTreeLib
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
             Assert.AreEqual("(*d)[1]", result.RawValue, "C++ incorrectly translated");
+        }
+
+        [TestMethod]
+        public void Test2DArrayAccess()
+        {
+            var myvar = Expression.Variable(typeof(int[][]), "d");
+            var myaccess1 = Expression.ArrayIndex(myvar, Expression.Constant(1));
+            var myaccess = Expression.ArrayIndex(myaccess1, Expression.Constant(2));
+
+            var result = RunArrayLengthOnExpression(myaccess, typeof(int));
+            Assert.AreEqual("(*d)[1][2]", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]

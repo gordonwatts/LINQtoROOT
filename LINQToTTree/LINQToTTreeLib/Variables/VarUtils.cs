@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 
@@ -6,34 +7,69 @@ namespace LINQToTTreeLib.Variables
 {
     public static class VarUtils
     {
-#if false
-        public static string CastToType(this IValue val)
-        {
-            if (val == null)
-                throw new ArgumentNullException("Value can't be null");
-
-            if (!val.Type.IsArray)
-            {
-                StringBuilder bld = new StringBuilder();
-                bld.AppendFormat("(({0}){1})", val.Type.AsCPPType(), val.AsObjectReference());
-                return bld.ToString();
-            }
-            else
-            {
-                return val.AsObjectReference();
-            }
-        }
-#endif
-
         /// <summary>
         /// Make sure it is a solid reference, not a -> and ignore type issues. :-)
+        /// 
+        /// 1) If the object is an array (like int[]) then:
+        ///    If the array is a member access from some obj, then we assume we need a pointer
+        ///    If the array is off another array, then we assume we don't need a pointer.
+        /// 
+        /// 2) If it is a class, we assume it needs to be dereferenced.
+        /// 
+        /// 3) We assume no deref is required.
+        /// 
+        /// A few consequences of this logic:
+        ///   1) Any non .NET class doesn't get dereferenced. We are probably pretty safe here
+        ///   2) Any array doesn't get dereferenced unless it is coming from a root object. So if you call a function that returns a pointer
+        ///      to an array then you'll get the wrong thing.
+        ///   3) Any object that is part of a class will get dereferenced, even if it doesn't need it. This can cause problems
+        ///      when there is a sub-object that is completely contained.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static string AsObjectReference(this IValue val)
+        public static string AsObjectReference(this IValue val, Expression destExpression = null)
         {
             StringBuilder bld = new StringBuilder();
-            if (val.Type.IsPointerType())
+
+            ///
+            /// If it isn't a pointer type (that is, a class) then
+            /// this is easy
+            /// 
+
+            if (!val.Type.IsPointerType())
+                return val.RawValue;
+
+            ///
+            /// Ok, now, we now this is a class. Now, if we know nothing about the expression
+            /// then we have to bail
+            /// 
+
+            bool isObject = true;
+            if (destExpression != null)
+            {
+                ///
+                /// If this is an array, then we need to look a little deeper.
+                ///
+
+                if (val.Type.IsArray)
+                {
+                    ///
+                    /// Now, look to see if this is member expression. If not, then it is an
+                    /// array.
+                    /// 
+
+                    if (destExpression.NodeType == ExpressionType.ArrayIndex)
+                    {
+                        isObject = false;
+                    }
+                }
+            }
+
+            ///
+            /// Now, return our result!
+            /// 
+
+            if (isObject)
             {
                 bld.AppendFormat("(*{0})", val.RawValue);
                 return bld.ToString();
@@ -45,17 +81,35 @@ namespace LINQToTTreeLib.Variables
         }
 
         /// <summary>
-        /// Takes the value, out puts it, and casts it to the type destType
+        /// Takes the value, out puts it, and casts it to the type destType. We use heuristics at the moment to figure out what
+        /// the reference is. We are forced to do this at the moment because in C++ there are points and also references to objects,
+        /// a distinction not made in .NET...
+        /// 
+        /// 1) If the object is an array (like int[]) then:
+        ///    If the array is a member access from some obj, then we assume we need a pointer
+        ///    If the array is off another array, then we assume we don't need a pointer.
+        /// 
+        /// 2) If it is a class, we assume it needs to be dereferenced.
+        /// 
+        /// 3) We assume no deref is required.
+        /// 
+        /// A few consequences of this logic:
+        ///   1) Any non .NET class doesn't get dereferenced. We are probably pretty safe here
+        ///   2) Any array doesn't get dereferenced unless it is coming from a root object. So if you call a function that returns a pointer
+        ///      to an array then you'll get the wrong thing.
+        ///   3) Any object that is part of a class will get dereferenced, even if it doesn't need it. This can cause problems
+        ///      when there is a sub-object that is completely contained.
+        /// 
         /// </summary>
         /// <param name="sourceValue"></param>
-        /// <param name="destType"></param>
+        /// <param name="expressionDestType"></param>
         /// <returns></returns>
-        public static string CastToType(this IValue sourceValue, Type destType)
+        public static string CastToType(this IValue sourceValue, Expression expressionDestType)
         {
-            if (sourceValue == null || destType == null)
+            if (sourceValue == null || expressionDestType == null)
                 throw new ArgumentNullException("Cannot pass ource or dest type/vars as null");
 
-            var objRefForm = sourceValue.AsObjectReference();
+            var objRefForm = sourceValue.AsObjectReference(expressionDestType);
 
             ///
             /// If the type is already there or if the type is an array, then we will do no conversion.
@@ -64,7 +118,7 @@ namespace LINQToTTreeLib.Variables
             ///        conversion would probably make a mess of things!
             ///
 
-            if (!RequiresConversion(destType, sourceValue.Type) || destType.IsArray)
+            if (!RequiresConversion(expressionDestType.Type, sourceValue.Type) || expressionDestType.Type.IsArray)
             {
                 return objRefForm;
             }
@@ -74,7 +128,7 @@ namespace LINQToTTreeLib.Variables
             /// 
 
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("(({0}){1})", destType.AsCPPType(), objRefForm);
+            bld.AppendFormat("(({0}){1})", expressionDestType.Type.AsCPPType(), objRefForm);
             return bld.ToString();
         }
 

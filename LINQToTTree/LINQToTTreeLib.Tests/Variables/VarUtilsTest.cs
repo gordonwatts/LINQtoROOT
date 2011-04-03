@@ -1,5 +1,7 @@
 // <copyright file="VarUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -62,7 +64,7 @@ namespace LINQToTTreeLib.Variables
         [PexMethod]
         public string AsCastString(IValue val, Type desType)
         {
-            string result = VarUtils.CastToType(val, desType);
+            string result = VarUtils.CastToType(val, Expression.Variable(desType, "d"));
             Assert.IsTrue(result.Contains("(("), "Result doesn't seem to contains the cast operator!");
             return result;
         }
@@ -70,7 +72,7 @@ namespace LINQToTTreeLib.Variables
         [TestMethod]
         public void TestActualConversion()
         {
-            Assert.AreEqual("((int)10)", new ValSimple("10", typeof(double)).CastToType(typeof(int)), "switch to int");
+            Assert.AreEqual("((int)10)", new ValSimple("10", typeof(double)).CastToType(Expression.Constant((int)1)), "switch to int");
         }
 
         [TestMethod]
@@ -78,14 +80,32 @@ namespace LINQToTTreeLib.Variables
         {
             /// Compilers can do float -> double automatically, but they might complain going the other way - lets keep things
             /// as clean as possible.
-            Assert.AreEqual("10.2", new ValSimple("10.2", typeof(float)).CastToType(typeof(double)), "switch to double");
-            Assert.AreEqual("((float)10.2)", new ValSimple("10.2", typeof(double)).CastToType(typeof(float)), "switch to float");
+            Assert.AreEqual("10.2", new ValSimple("10.2", typeof(float)).CastToType(Expression.Constant((double)1.0)), "switch to double");
+            Assert.AreEqual("((float)10.2)", new ValSimple("10.2", typeof(double)).CastToType(Expression.Constant((float)1.0)), "switch to float");
         }
 
         [TestMethod]
-        public void TestCastToStringArray()
+        public void TestCastTo1DArray()
         {
-            Assert.AreEqual("(*d)", new ValSimple("d", typeof(int[])).CastToType(typeof(int[])), "array reference");
+            Assert.AreEqual("(*d)", new ValSimple("d", typeof(int[])).CastToType(Expression.Variable(typeof(int[]), "d")), "array reference");
+        }
+
+        class mainObject
+        {
+            public int[][] j;
+        }
+
+        [TestMethod]
+        public void TestCastToMainObjectWithDimentions()
+        {
+            Expression mainObj = Expression.Variable(typeof(mainObject), "obj");
+            var directJ = Expression.MakeMemberAccess(mainObj, typeof(mainObject).GetMember("j").First());
+            var j1DAccess = Expression.ArrayIndex(directJ, Expression.Constant(1));
+            var j2DAccess = Expression.ArrayIndex(j1DAccess, Expression.Constant(2));
+
+            Assert.AreEqual("(*obj).j[1][2]", new ValSimple("(*obj).j[1][2]", typeof(int)).CastToType(j2DAccess), "2D access failed");
+            Assert.AreEqual("(*obj).j[1]", new ValSimple("(*obj).j[1]", typeof(int[])).CastToType(j1DAccess), "1D access failed");
+            Assert.AreEqual("(*obj)", new ValSimple("obj", typeof(int[][])).CastToType(directJ), "0D access failed");
         }
 
         /// <summary>Test stub for CastToType(IValue, Type)</summary>
@@ -122,7 +142,7 @@ namespace LINQToTTreeLib.Variables
                     return "";
             }
 
-            string result = VarUtils.CastToType(sourceType, destType);
+            string result = VarUtils.CastToType(sourceType, Expression.Variable(destType, "d"));
             if (destType == sourceType.Type)
             {
                 Assert.IsFalse(result.Contains(")("), "More that '((' in the list of items ('" + result + "')");

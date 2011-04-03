@@ -245,13 +245,13 @@ namespace LINQToTTreeLib.Expressions
             string sRHS, sLHS;
             if (CastToFinalType)
             {
-                sRHS = RHS.CastToType(expression.Type);
-                sLHS = LHS.CastToType(expression.Type);
+                sRHS = RHS.CastToType(expression);
+                sLHS = LHS.CastToType(expression);
             }
             else
             {
-                sRHS = RHS.CastToType(expression.Right.Type);
-                sLHS = LHS.CastToType(expression.Left.Type);
+                sRHS = RHS.CastToType(expression.Right);
+                sLHS = LHS.CastToType(expression.Left);
             }
 
             StringBuilder bld = new StringBuilder();
@@ -271,15 +271,15 @@ namespace LINQToTTreeLib.Expressions
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-" + GetExpression(expression.Operand).CastToType(expression.Type), expression.Type);
+                    _result = new ValSimple("-" + GetExpression(expression.Operand).CastToType(expression), expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!" + GetExpression(expression.Operand).CastToType(expression.Type), expression.Type);
+                    _result = new ValSimple("!" + GetExpression(expression.Operand).CastToType(expression), expression.Type);
                     break;
 
                 case ExpressionType.Convert:
-                    _result = new ValSimple(GetExpression(expression.Operand).CastToType(expression.Type), expression.Type);
+                    _result = new ValSimple(GetExpression(expression.Operand).CastToType(expression), expression.Type);
                     break;
 
                 case ExpressionType.ArrayLength:
