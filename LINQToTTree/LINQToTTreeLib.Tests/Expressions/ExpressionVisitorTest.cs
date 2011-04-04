@@ -533,6 +533,17 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void Test2DArrayLength()
+        {
+            var myvar = Expression.Variable(typeof(int[][]), "d");
+            var myaccess1 = Expression.ArrayIndex(myvar, Expression.Constant(1));
+            var myArrayLength = Expression.ArrayLength(myaccess1);
+
+            var result = RunArrayLengthOnExpression(myArrayLength, typeof(int));
+            Assert.AreEqual("(*d)[1].size()", result.RawValue, "C++ incorrectly translated");
+        }
+
+        [TestMethod]
         public void TestComplexObjectArrayAccess()
         {
             var myarray = Expression.Variable(typeof(ROOTNET.NTH1F[]), "harr");

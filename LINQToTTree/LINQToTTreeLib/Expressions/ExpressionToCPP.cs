@@ -300,7 +300,7 @@ namespace LINQToTTreeLib.Expressions
         private void VisitArrayLength(UnaryExpression expression)
         {
             var arrayBase = GetExpression(expression.Operand);
-            _result = new ValSimple(arrayBase.AsObjectReference() + ".size()", expression.Type);
+            _result = new ValSimple(arrayBase.AsObjectReference(expression.Operand) + ".size()", expression.Type);
         }
 
         /// <summary>
