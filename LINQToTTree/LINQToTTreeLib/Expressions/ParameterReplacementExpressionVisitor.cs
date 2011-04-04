@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitParameterExpression(ParameterExpression paramExpr)
         {
-            var replaceit = _context.GetReplacement(paramExpr.Name);
+            var replaceit = ResolveExpressionReplacement(paramExpr.Name);
             if (replaceit == null)
                 return base.VisitParameterExpression(paramExpr);
 
@@ -55,10 +55,22 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            var replaceit = _context.GetReplacement(expression.ReferencedQuerySource.ItemName);
+            var replaceit = ResolveExpressionReplacement(expression.ReferencedQuerySource.ItemName);
             if (replaceit == null)
                 return expression;
             return replaceit;
+        }
+
+        /// <summary>
+        /// Do the lookup for the expression, and recursivly resolve it, incease there are further
+        /// parameters in it.
+        /// </summary>
+        /// <param name="exprName"></param>
+        /// <returns></returns>
+        private Expression ResolveExpressionReplacement(string exprName)
+        {
+            var replaceit = _context.GetReplacement(exprName);
+            return VisitExpression(replaceit);
         }
 
         /// <summary>

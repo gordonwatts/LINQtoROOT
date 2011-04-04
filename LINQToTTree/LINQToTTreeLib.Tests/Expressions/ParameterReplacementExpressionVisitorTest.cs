@@ -43,6 +43,20 @@ namespace LINQToTTreeLib.Expressions
         }
 
         [TestMethod]
+        public void TestSimpleNestedReplacement()
+        {
+            var cc = new CodeContext();
+            cc.Add("d", Expression.Variable(typeof(int), "f"));
+            cc.Add("f", Expression.Constant(20));
+
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc);
+
+            var asconst = expr as ConstantExpression;
+            Assert.IsNotNull(asconst, "constant replacement");
+            Assert.AreEqual(20, asconst.Value, "value of translation");
+        }
+
+        [TestMethod]
         public void TestArrayReplacement()
         {
             var myvar = Expression.Variable(typeof(int[]), "d");
@@ -106,6 +120,23 @@ namespace LINQToTTreeLib.Expressions
             Assert.IsNotNull(asp, "expected the returned expression to be of type ParameterExpression");
             Assert.AreEqual(typeof(int), asp.Type, "bad type coming back");
             Assert.AreEqual("f", asp.Name, "variable name");
+        }
+
+        [TestMethod]
+        public void TestSubqueryNestedPatternReplacement()
+        {
+            var qexpr = new QuerySourceReferenceExpression(new dummyQuerySource());
+
+            CodeContext cc = new CodeContext();
+            cc.Add("d", Expression.Variable(typeof(int), "f"));
+            cc.Add("f", Expression.Variable(typeof(int), "fork"));
+
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(qexpr, cc);
+
+            var asp = expr as ParameterExpression;
+            Assert.IsNotNull(asp, "expected the returned expression to be of type ParameterExpression");
+            Assert.AreEqual(typeof(int), asp.Type, "bad type coming back");
+            Assert.AreEqual("fork", asp.Name, "variable name");
         }
 
         class testLambdaSimple
