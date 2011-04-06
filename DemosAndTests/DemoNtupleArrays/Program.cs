@@ -90,7 +90,17 @@ namespace DemoNtupleArrays
             /// Muons are associated with jets - so lets look at this. First, this 
             /// 
 
-            (from j in btagJets from m in j.muon_ptrel select m / 1000.0).Plot("btag_allmuon_nearjet_ptrel", "Number of muons associated with every jets", 20, 0.0, 20.0).SaveToROOTDirectory(output);
+            (from j in btagJets from m in j.muon_ptrel select m / 1000.0).Plot("btag_allmuon_nearjet_ptrel", "Number of muons associated with every jets", 100, -10.0, 20.0).SaveToROOTDirectory(output);
+
+            ///
+            /// All muon ptrel
+            /// 
+
+            var btagMuons = from e in btagEvents
+                            from m in e.muons
+                            select m;
+
+            (from m in btagMuons select m.mupt / 1000.0).Plot("btag_allmuon_pt", "p_{T} of any muon in the event", 100, -10.0, 100.0).SaveToROOTDirectory(output);
 
             output.Write();
             output.Clone();
