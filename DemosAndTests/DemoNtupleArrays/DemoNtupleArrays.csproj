@@ -73,7 +73,9 @@
     <None Include="btag-slim.ntupom" />
     <None Include="CollectionTreeConfig-000.ntup" />
     <None Include="hvsample.ntupom" />
-    <None Include="vtupleConfig-000.ntup" />
+    <None Include="vtupleConfig-000.ntup">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,3 +8,5 @@ See web docs for how to format this file!
 
 [CreateDictionary]
 vector<Long64_t> ; vector
+vector<vector<float> > ; vector
+vector<vector<int> > ; vector
