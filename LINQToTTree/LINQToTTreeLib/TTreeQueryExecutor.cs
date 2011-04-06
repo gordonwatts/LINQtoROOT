@@ -447,6 +447,14 @@ namespace LINQToTTreeLib
                                  select l;
 
             ///
+            /// Before unloading we need to make sure that we aren't
+            /// holding onto any pointers back to these guys!
+            /// 
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            
+            ///
             /// Now that we have them, unload them. Since repeated unloading
             /// cases erorr messages to the concole, clear the list so we don't
             /// make a mistake later.
