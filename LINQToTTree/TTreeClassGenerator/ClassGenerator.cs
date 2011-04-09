@@ -433,6 +433,11 @@ namespace TTreeClassGenerator
                 output.WriteLine("    [IndexToOtherObjectArray(typeof({0}), \"{1}\")]", baseTypeName, v.IndexToGroup);
             }
 
+            if (!varTypes.ContainsKey(cppVarName))
+            {
+                throw new ArgumentException("The variable '" + cppVarName + "' is not known!");
+            }
+
             var typeName = varTypes[cppVarName];
             if (removeOneArrayDecl)
             {
