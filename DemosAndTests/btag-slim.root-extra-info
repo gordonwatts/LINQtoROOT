@@ -3,10 +3,5 @@ Anything before the first [] is a comment.
 After that, make sure that the formatting is right!
 See web docs for how to format this file!
 
-[CINT]
-#pragma create TClass vector<Long64_t>;
-
 [CreateDictionary]
 vector<Long64_t> ; vector
-vector<vector<float> > ; vector
-vector<vector<int> > ; vector
