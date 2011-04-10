@@ -74,13 +74,13 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// 
 
                 var returnedValue = ExpressionToCPP.GetExpression(expr.Arguments[0], gc, context, container);
-                var p2 = context.Add(lambdaParameters[1].Name, ExpressionToCPP.GetExpression(expr.Arguments[1], gc, context, container));
+                var p2 = context.Add(lambdaParameters[1].Name, expr.Arguments[1]);
                 var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
 
                 var statementBody = ExpressionToCPP.GetExpression(action.Body, gc, context, container);
 
-                p2.Pop();
                 p1.Pop();
+                p2.Pop();
 
                 gc.Add(new Statements.StatementSimpleStatement(statementBody.RawValue));
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Remotion.Data.Linq;
 
@@ -49,6 +50,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
                 MEFUtilities.AddPart(new TypeHandlerCache());
+                MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             }
 
             var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);

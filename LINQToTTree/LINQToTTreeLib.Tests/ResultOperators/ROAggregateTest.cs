@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -143,6 +144,81 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.IsInstanceOfType(varToTrans[0], typeof(KeyValuePair<string, object>), "bad object type to transfer");
             var ro = (KeyValuePair<string, object>)varToTrans[0];
             Assert.IsTrue(res.ResultValue.InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + res.ResultValue.InitialValue.RawValue + ")");
+        }
+
+        [TranslateToClass(typeof(targetTransNtup))]
+        class transNtup
+        {
+            [TTreeVariableGrouping]
+            public transNtupSubType[] stuff;
+        }
+
+        class transNtupSubType
+        {
+            [TTreeVariableGrouping]
+            public int values;
+        }
+
+        class targetTransNtup : IExpressionHolder
+        {
+            public targetTransNtup(Expression h)
+            {
+                HeldExpression = h;
+            }
+            public int[] values;
+
+            public Expression HeldExpression { get; private set; }
+        }
+
+        /// <summary>
+        /// We hvae a data-model that requires translation, but translation, of course,
+        /// only occurs when the full expression is present. So make sure a split expression
+        /// is properly put together and translated.
+        /// </summary>
+        [TestMethod]
+        public void TestWithSplitExpressionForTranslation()
+        {
+            ///
+            /// Create an agregate result operator from scratch ere...
+            /// 
+
+#if false
+            Expression<Func<int, transNtupSubType, int>> adder = (acc, stuff) => acc + stuff.values;
+            var lambda = adder as LambdaExpression;
+
+            var agg = new AggregateFromSeedResultOperator(
+                Expression.Constant(1),
+                lambda,
+                null);
+            var target = new ROAggregate();
+
+            var result = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, constext, MEFUtilities.MEFContainer);
+
+#endif
+            var q = new QueriableDummy<transNtup>();
+            var vals = from evt in q
+                       from v in evt.stuff
+                       select v;
+
+            var c = vals.ApplyToObject(
+                new ROOTNET.NTH1F("dude", "put a fork in it", 10, 0.0, 20.0),
+                (h1, n1) => h1.Fill(n1.values));
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            Assert.AreEqual(res.ResultValue.Type, typeof(ROOTNET.NTH1F), "incorrect result type came back!");
+
+            ///
+            /// Get the "Fill" line out
+            /// 
+
+            var filline = (from l in res.CodeBody.CodeItUp()
+                           where l.Contains("Fill")
+                           select l).FirstOrDefault();
+
+            Console.WriteLine("Found line '{0}'", filline);
+            Assert.IsFalse(filline.Contains("stuff"), "The stuff should have been translated away '" + filline + "'");
         }
     }
 }
