@@ -325,7 +325,16 @@ namespace TTreeClassGenerator
         }
 
         /// <summary>
-        /// Find a mapping from varname -> type
+        /// Keep track of a class item that is for a group (helper item).
+        /// </summary>
+        private class GroupItem : IClassItem
+        {
+            public override string ItemType { get; set; }
+            public override string Name { get; set; }
+        }
+
+        /// <summary>
+        /// Find a mapping from varname -> type. Fix up to deal with the groups.
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
@@ -367,7 +376,7 @@ namespace TTreeClassGenerator
                 output.WriteLine("#pragma warning disable 0649");
                 foreach (var v in ungrouped.Variables)
                 {
-                    WriteVariableRenameDefinition(output, v, varTypes, className, false);
+                    WriteVariableRenameDefinition(output, v, varTypes, className, false, tTreeUserInfo);
                 }
                 output.WriteLine("#pragma warning restore 0649");
             }
@@ -405,7 +414,7 @@ namespace TTreeClassGenerator
                 foreach (var v in grp.Variables)
                 {
                     output.WriteLine("    [TTreeVariableGrouping]");
-                    WriteVariableRenameDefinition(output, v, varTypes, className, true);
+                    WriteVariableRenameDefinition(output, v, varTypes, className, true, tTreeUserInfo);
                 }
                 output.WriteLine("#pragma warning restore 0649");
 
@@ -420,18 +429,23 @@ namespace TTreeClassGenerator
         /// </summary>
         /// <param name="output"></param>
         /// <param name="v"></param>
-        private void WriteVariableRenameDefinition(TextWriter output, VariableInfo v, IDictionary<string, string> varTypes, string baseTypeName, bool removeOneArrayDecl)
+        private void WriteVariableRenameDefinition(TextWriter output,
+            VariableInfo v,
+            IDictionary<string, string> varTypes,
+            string baseTypeName,
+            bool removeOneArrayDecl,
+            TTreeUserInfo groupInfo)
         {
             var cppVarName = v.NETName;
-            if (v.NETName != v.TTreeName && string.IsNullOrEmpty(v.IndexToGroup))
+            if (v.NETName != v.TTreeName)
             {
                 cppVarName = v.TTreeName;
                 output.WriteLine("    [RenameVariable(\"{0}\")]", v.TTreeName);
             }
-            if (!string.IsNullOrEmpty(v.IndexToGroup))
-            {
-                output.WriteLine("    [IndexToOtherObjectArray(typeof({0}), \"{1}\")]", baseTypeName, v.IndexToGroup);
-            }
+
+            ///
+            /// Figure out what type the variable is
+            /// 
 
             if (!varTypes.ContainsKey(cppVarName))
             {
@@ -439,6 +453,26 @@ namespace TTreeClassGenerator
             }
 
             var typeName = varTypes[cppVarName];
+
+            ///
+            /// If this is an index, then reset the type and also write
+            /// out the index spec. We do, also, have to copy over all the array references
+            /// that are found on this guy.
+            /// 
+
+            if (!string.IsNullOrEmpty(v.IndexToGroup))
+            {
+                var grpReference = (from g in groupInfo.Groups
+                                    where g.Name == v.IndexToGroup
+                                    select g).FirstOrDefault();
+                if (grpReference == null)
+                    throw new ArgumentException("Group '" + v.IndexToGroup + "' is not a defined group!");
+
+                typeName = baseTypeName + v.IndexToGroup + ArrayReferences(typeName);
+
+                output.WriteLine("    [IndexToOtherObjectArray(typeof({0}), \"{1}\")]", baseTypeName, v.IndexToGroup);
+            }
+
             if (removeOneArrayDecl)
             {
                 if (!typeName.EndsWith("[]"))
@@ -447,6 +481,20 @@ namespace TTreeClassGenerator
             }
 
             output.WriteLine("    public {0} {1};", typeName, v.NETName);
+        }
+
+        /// <summary>
+        /// Return the array references on the type that is passed to us.
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <returns></returns>
+        private string ArrayReferences(string typeName)
+        {
+            var i = typeName.IndexOf("[");
+            if (i < 0)
+                return "";
+
+            return typeName.Substring(i);
         }
 
         /// <summary>
