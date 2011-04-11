@@ -368,13 +368,97 @@ namespace TTreeClassGenerator
         [TestMethod]
         public void TestRenameIndexArray()
         {
-            Assert.Inconclusive("not written");
+            /// Create simple user info - but don't do anything with it!
+            ItemSimpleType simpleIndex = new ItemSimpleType("index", "int[][]");
+            ItemSimpleType simpleVal = new ItemSimpleType("var1", "float[]");
+            FileInfo proxyFile = new FileInfo("TestRenameIndexArray.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestRenameIndexArray") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simpleIndex);
+            mainClass.Add(simpleVal);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo()
+            {
+                Groups = new ArrayGroup[] {
+                    new ArrayGroup()
+                    {
+                        Name = "jets", Variables = new VariableInfo[]
+                        {
+                            new VariableInfo() { NETName = "muons", TTreeName = "index", IndexToGroup="muons" }
+                        }
+                    },
+                    new ArrayGroup()
+                    {
+                        Name = "muons", Variables = new VariableInfo[]
+                        {
+                            new VariableInfo() { NETName = "var1", TTreeName = "var1"}
+                        }
+                    }
+                }
+            };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestRenameIndexArray.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestRenameIndexArray", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsTrue(FindInFile(outputFile, "TTreeVariableGrouping"), "Missing TTreeVariableGrouping");
+            Assert.IsTrue(FindInFile(outputFile, "jets"), "missing a reference to jets");
+            Assert.IsTrue(FindInFile(outputFile, "muons"), "missing a reference to jets");
+            Assert.IsTrue(FindInFile(outputFile, "IndexToOtherObjectArray(typeof("), "Missing IndexToOtherObject");
+            Assert.IsTrue(FindInFile(outputFile, "float var1"), "var1 missing");
+            Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
+            Assert.IsTrue(FindInFile(outputFile, "TestRenameIndexArraymuons[] muons"), "Muon reference is imporper");
         }
 
         [TestMethod]
+        [ExpectedException(typeof(Exception))]
         public void TestNonIntIndex()
         {
-            Assert.Inconclusive("not written yet");
+            /// Create simple user info - but don't do anything with it!
+            ItemSimpleType simpleIndex = new ItemSimpleType("index", "float[]");
+            ItemSimpleType simpleVal = new ItemSimpleType("var1", "float[]");
+            FileInfo proxyFile = new FileInfo("TestNonIntIndex.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestNonIntIndex") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simpleIndex);
+            mainClass.Add(simpleVal);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo()
+            {
+                Groups = new ArrayGroup[] {
+                    new ArrayGroup()
+                    {
+                        Name = "jets", Variables = new VariableInfo[]
+                        {
+                            new VariableInfo() { NETName = "index", TTreeName = "index", IndexToGroup="muons" }
+                        }
+                    },
+                    new ArrayGroup()
+                    {
+                        Name = "muons", Variables = new VariableInfo[]
+                        {
+                            new VariableInfo() { NETName = "var1", TTreeName = "var1"}
+                        }
+                    }
+                }
+            };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestNonIntIndex.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestNonIntIndex", userinfo } });
         }
 
         [TestMethod]
@@ -425,7 +509,7 @@ namespace TTreeClassGenerator
             Assert.IsTrue(FindInFile(outputFile, "jets"), "missing a reference to jets");
             Assert.IsTrue(FindInFile(outputFile, "muons"), "missing a reference to jets");
             Assert.IsTrue(FindInFile(outputFile, "IndexToOtherObjectArray(typeof("), "Missing IndexToOtherObject");
-            Assert.IsTrue(FindInFile(outputFile, "\"muons\")"), "Missing muons reference");
+            Assert.IsTrue(FindInFile(outputFile, "TestRenamedIndexmuons muons"), "Muon reference is imporper");
             Assert.IsTrue(FindInFile(outputFile, "float var1"), "var1 missing");
             Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
         }

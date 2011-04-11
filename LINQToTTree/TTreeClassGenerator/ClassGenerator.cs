@@ -467,6 +467,8 @@ namespace TTreeClassGenerator
                                     select g).FirstOrDefault();
                 if (grpReference == null)
                     throw new ArgumentException("Group '" + v.IndexToGroup + "' is not a defined group!");
+                if (!typeName.StartsWith("int"))
+                    throw new ArgumentException("Variable of type '" + typeName + "' marked as index - only integers and integer arrays can index into other objects");
 
                 typeName = baseTypeName + v.IndexToGroup + ArrayReferences(typeName);
 
