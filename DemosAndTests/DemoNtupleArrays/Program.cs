@@ -93,7 +93,18 @@ namespace DemoNtupleArrays
             (from j in btagJets from m in j.muon_ptrel select m / 1000.0).Plot("btag_allmuon_nearjet_ptrel", "Number of muons associated with every jets", 100, -10.0, 20.0).SaveToROOTDirectory(output);
 
             ///
-            /// All muon ptrel
+            /// And tracks. This is a index linkage - so we can see the track object from the muons.
+            /// 
+
+            (from j in btagJets select j).Plot("btag_alljet_ntracks", "# of tracks near jet", 20, 0.0, 20.0, v => v.ntracks).SaveToROOTDirectory(output);
+
+            var tracksNearJets = from j in btagJets
+                                 from t in j.associatedTracks
+                                 select t;
+            tracksNearJets.Plot("btag_alljet_neartrack_pt", "p_{T} of tracks near jets", 100, 0.0, 100.0, v => v.pt / 1000.0).SaveToROOTDirectory(output);
+
+            ///
+            /// All muon pt's
             /// 
 
             var btagMuons = from e in btagEvents
@@ -101,6 +112,8 @@ namespace DemoNtupleArrays
                             select m;
 
             (from m in btagMuons select m.mupt / 1000.0).Plot("btag_allmuon_pt", "p_{T} of any muon in the event", 100, -10.0, 100.0).SaveToROOTDirectory(output);
+
+
 
             output.Write();
             output.Clone();
