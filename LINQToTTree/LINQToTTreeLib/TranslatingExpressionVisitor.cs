@@ -15,7 +15,8 @@ namespace LINQToTTreeLib
     public class TranslatingExpressionVisitor : ExpressionTreeVisitor
     {
         /// <summary>
-        /// Translate an 
+        /// Translate a fully formed expression. Partial expressions
+        /// are not trnaslated, however!
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
@@ -23,6 +24,36 @@ namespace LINQToTTreeLib
         {
             var trans = new TranslatingExpressionVisitor();
             return trans.VisitExpression(expr);
+        }
+
+        /// <summary>
+        /// Top level parser for an expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitExpression(Expression expression)
+        {
+            ///
+            /// Make sure this member reference is for a "leaf". For exmaple, if we have the valid expression
+            /// for translation obj.jets[0].muons[1].pt and we are looking at obj.jets[0].muons - then we don't
+            /// want to try to translate this! We check for this by looking for any translation instruction
+            /// attributes assocated with the final type!
+            /// 
+
+            if (expression != null && expression.Type.IsClass)
+                return expression;
+
+            return VisitExpressionImplemented(expression);
+        }
+
+        /// <summary>
+        /// See if we can't parse this expression, but do this w/out protection.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private Expression VisitExpressionImplemented(Expression expression)
+        {
+            return base.VisitExpression(expression);
         }
 
         /// <summary>
@@ -188,7 +219,7 @@ namespace LINQToTTreeLib
             /// an integer... And if there were multiple array references then we need to unwind them here.
             /// 
 
-            var sourceIndex = Translate(sourceExpression);
+            var sourceIndex = VisitExpressionImplemented(sourceExpression);
             if (sourceIndex == null)
                 throw new NotImplementedException("Failed to translate expression '" + sourceExpression.ToString() + "' of '" + expression.ToString() + "'");
 
@@ -217,7 +248,7 @@ namespace LINQToTTreeLib
             /// Ok! Got it! Now, we need to translate this one and we are off to the races! :-)
             /// 
 
-            return Translate(targetValueIndexedAccessExpression);
+            return VisitExpressionImplemented(targetValueIndexedAccessExpression);
         }
 
         /// <summary>
@@ -355,6 +386,26 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Deal with a special case for an index redirection where we are looking for
+        /// an integer or some simply type. There is only one very special case where this
+        /// shows up. Unlikely to be used by physics, actually. :-)
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitBinaryExpression(BinaryExpression expression)
+        {
+            if (expression.NodeType == ExpressionType.ArrayIndex && !expression.Type.IsClass)
+            {
+                var rootExpr = expression.Left as MemberExpression;
+                if (rootExpr != null)
+                {
+                    return Expression.ArrayIndex(VisitExpressionImplemented(rootExpr), expression.Right);
+                }
+            }
+            return base.VisitBinaryExpression(expression);
+        }
+
+        /// <summary>
         /// Array index can be a little rough b/c it can be traning to make a translation. This is actually quite tricking
         /// - especially in teh case of an array grouping - we have to go find a variable we can use as a proxy to get a size
         /// operator on! :-)
@@ -407,7 +458,7 @@ namespace LINQToTTreeLib
                         var arrayLookup = Expression.ArrayIndex(memberExpr, Expression.Variable(typeof(int), "d"));
                         var leafLookup = Expression.MakeMemberAccess(arrayLookup, nonArrayMember);
 
-                        var translated = Translate(leafLookup);
+                        var translated = VisitExpressionImplemented(leafLookup);
                         if (translated.NodeType != ExpressionType.ArrayIndex)
                             throw new InvalidOperationException("Tried to translate '" + leafLookup.ToString() + "' into an array index, but it didn't come back an array index - it came back '" + translated.ToString() + "'");
 
@@ -420,7 +471,7 @@ namespace LINQToTTreeLib
                     /// need to translate the root of this guy.
                     /// 
 
-                    var translatedInterior = Translate(memberExpr);
+                    var translatedInterior = VisitExpressionImplemented(memberExpr);
                     var length = Expression.ArrayLength(translatedInterior);
                     return length;
                 }

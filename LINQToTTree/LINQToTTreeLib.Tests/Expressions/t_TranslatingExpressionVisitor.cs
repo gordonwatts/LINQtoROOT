@@ -511,6 +511,9 @@ namespace LINQToTTreeLib.Tests
             [TTreeVariableGrouping]
             [IndexToOtherObjectArray(typeof(SourceType4), "muons")]
             public SourceType4Container3 specialIndex1;
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType4), "muons")]
+            public SourceType4Container2[] specialIndex3;
         }
 
         public class SourceType4Container2
@@ -524,6 +527,9 @@ namespace LINQToTTreeLib.Tests
             [TTreeVariableGrouping]
             [IndexToOtherObjectArray(typeof(SourceType4), "tracks")]
             public SourceType4Container2 specialIndex2;
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType4), "tracks")]
+            public SourceType4Container2[] specialIndex3;
         }
 
         [TranslateToClass(typeof(ResultType4))]
@@ -547,6 +553,7 @@ namespace LINQToTTreeLib.Tests
             public int[] val;
             public int[] specialIndex1;
             public int[] specialIndex2;
+            public int[][] specialIndex3;
         }
 
         [TestMethod]
@@ -605,6 +612,46 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(result.ToString().Contains(".specialIndex1[0]]]"), "missign the special index 1 reference");
             Assert.IsTrue(result.ToString().Contains(".specialIndex2[value"), "missign the special index 2 reference");
             Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
+        }
+
+        /// <summary>
+        /// When a complex object is referenced, but the final bit is missing, make sure
+        /// that no translation occurs!
+        /// </summary>
+        [TestMethod]
+        public void TestPartialSingleArrayReference()
+        {
+            ///
+            /// BUild up an expression to do the functional query we are interested in seeing go
+            /// 
+
+            Expression<Func<SourceType4, SourceType4Container3>> loader = s => s.jets[0].specialIndex1;
+
+            ///
+            /// Do the translation
+            /// 
+
+            var result = TranslatingExpressionVisitor.Translate(loader.Body);
+
+            Assert.AreEqual(loader.Body.ToString(), result.ToString(), "expression should have been untouched!");
+        }
+
+        [TestMethod]
+        public void TestPartialDoubleArrayReference()
+        {
+            ///
+            /// BUild up an expression to do the functional query we are interested in seeing go
+            /// 
+
+            Expression<Func<SourceType4, SourceType4Container2>> loader = s => s.jets[0].specialIndex3[0];
+
+            ///
+            /// Do the translation
+            /// 
+
+            var result = TranslatingExpressionVisitor.Translate(loader.Body);
+
+            Assert.AreEqual(loader.Body.ToString(), result.ToString(), "expression should have been untouched!");
         }
 
         public class SourceType5Container1
