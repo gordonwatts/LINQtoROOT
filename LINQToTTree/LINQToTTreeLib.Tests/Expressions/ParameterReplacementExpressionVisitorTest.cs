@@ -141,7 +141,9 @@ namespace LINQToTTreeLib.Expressions
 
         class testLambdaSimple
         {
+#pragma warning disable 0649
             public float pt;
+#pragma warning restore 0649
         }
 
         [TestMethod]

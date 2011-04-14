@@ -86,8 +86,10 @@ namespace LINQToTTreeLib.Tests
 
         class dummyntup
         {
+#pragma warning disable 0649
             public int run;
             public int[] vals;
+#pragma warning restore 0649
         }
 
         [TestMethod]

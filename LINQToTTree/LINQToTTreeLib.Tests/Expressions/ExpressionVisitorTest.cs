@@ -439,7 +439,9 @@ namespace LINQToTTreeLib
 
         class ResultType0
         {
+#pragma warning disable 0649
             public int[] val1;
+#pragma warning restore 0649
         }
 
         [TestMethod]
@@ -453,14 +455,18 @@ namespace LINQToTTreeLib
         [TranslateToClass(typeof(ResultType1))]
         class SourceType1
         {
+#pragma warning disable 0649
             [TTreeVariableGrouping]
             public SourceType1SubType[] jets;
+#pragma warning restore 0649
         }
 
         class SourceType1SubType
         {
+#pragma warning disable 0649
             [TTreeVariableGrouping]
             public int val1;
+#pragma warning restore 0649
         }
 
         class ResultType1 : IExpressionHolder
@@ -468,7 +474,9 @@ namespace LINQToTTreeLib
             public ResultType1(Expression holder)
             { HeldExpression = holder; }
 
+#pragma warning disable 0649
             public int[] val1;
+#pragma warning restore 0649
 
             public Expression HeldExpression
             {
@@ -555,7 +563,9 @@ namespace LINQToTTreeLib
 
         class ObjectArrayTest
         {
+#pragma warning disable 0649
             public int[] arr;
+#pragma warning restore 0649
         }
 
         [TestMethod]

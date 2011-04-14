@@ -92,7 +92,9 @@ namespace LINQToTTreeLib.Variables
 
         class mainObject
         {
+#pragma warning disable 0649
             public int[][] j;
+#pragma warning restore 0649
         }
 
         [TestMethod]

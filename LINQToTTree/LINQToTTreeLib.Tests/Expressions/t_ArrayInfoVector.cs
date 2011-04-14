@@ -156,14 +156,18 @@ namespace LINQToTTreeLib.Tests
         [TranslateToClass(typeof(ResultType1))]
         class SourceType1
         {
+#pragma warning disable 0649
             [TTreeVariableGrouping]
             public SourceType1SubType[] jets;
+#pragma warning restore 0649
         }
 
         class SourceType1SubType
         {
+#pragma warning disable 0649
             [TTreeVariableGrouping]
             public int val1;
+#pragma warning restore 0649
         }
 
         class ResultType1 : IExpressionHolder
@@ -171,7 +175,9 @@ namespace LINQToTTreeLib.Tests
             public ResultType1(Expression holder)
             { HeldExpression = holder; }
 
+#pragma warning disable 0649
             public int[] val1;
+#pragma warning restore 0649
 
             public Expression HeldExpression
             {

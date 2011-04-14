@@ -145,14 +145,18 @@ namespace LINQToTTreeLib.ResultOperators
         [TranslateToClass(typeof(targetTransNtup))]
         class transNtup
         {
+#pragma warning disable 0649
             [TTreeVariableGrouping]
             public transNtupSubType[] stuff;
+#pragma warning restore 0649
         }
 
         class transNtupSubType
         {
+#pragma warning disable 0649
             [TTreeVariableGrouping]
             public int values;
+#pragma warning restore 0649
         }
 
         class targetTransNtup : IExpressionHolder
@@ -161,7 +165,9 @@ namespace LINQToTTreeLib.ResultOperators
             {
                 HeldExpression = h;
             }
+#pragma warning disable 0649
             public int[] values;
+#pragma warning restore 0649
 
             public Expression HeldExpression { get; private set; }
         }

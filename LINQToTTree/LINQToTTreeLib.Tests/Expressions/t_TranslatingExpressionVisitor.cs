@@ -98,8 +98,10 @@ namespace LINQToTTreeLib.Tests
 
         class NoTranslateArrayClass
         {
+#pragma warning disable 0649
             public int[] val;
             public int[][] val2D;
+#pragma warning restore 0649
         }
 
         [TestMethod]
