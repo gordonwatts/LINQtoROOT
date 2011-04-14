@@ -24,8 +24,8 @@ namespace LINQToTTreeLib.ResultOperators
     {
 [TestMethod]
 [PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-[PexRaisedException(typeof(ArgumentException))]
-public void ProcessResultOperatorThrowsArgumentException705()
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessResultOperatorThrowsArgumentException614()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;

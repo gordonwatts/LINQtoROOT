@@ -173,6 +173,7 @@
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
+    <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">

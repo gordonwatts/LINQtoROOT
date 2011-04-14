@@ -53,3 +53,4 @@ using ROOTNET;
 [assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.MEFUtilities", "_batch")]
 [assembly: PexAssemblyUnderTest("TTreeParser")]
 [assembly: PexUseType(typeof(NTObject))]
+[assembly: PexSuppressUninstrumentedMethodFromType(typeof(Buffer))]

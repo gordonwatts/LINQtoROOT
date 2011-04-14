@@ -27,14 +27,6 @@ public void CastToType29()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(VarUtilsTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void CastToTypeThrowsAssertFailedException468()
-{
-    string s;
-    s = this.CastToType(1, 0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(VarUtilsTest))]
 public void CastToType480()
 {
     string s;
@@ -56,6 +48,14 @@ public void CastToType302()
     string s;
     s = this.CastToType(0, 1);
     Assert.AreEqual<string>("10", s);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(VarUtilsTest))]
+public void CastToType202()
+{
+    string s;
+    s = this.CastToType(1, 0);
+    Assert.AreEqual<string>("((int)10.0)", s);
 }
     }
 }

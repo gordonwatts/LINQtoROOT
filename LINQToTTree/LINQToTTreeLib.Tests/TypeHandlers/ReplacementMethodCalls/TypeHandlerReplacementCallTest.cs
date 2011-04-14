@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.ClearTypeList();
         }
         /// <summary>Test stub for CanHandle(Type)</summary>
-        [PexMethod]
+        //[PexMethod]
         public bool CanHandle([PexAssumeUnderTest]TypeHandlerReplacementCall target, Type t)
         {
             bool result = target.CanHandle(t);

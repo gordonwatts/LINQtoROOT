@@ -59,14 +59,6 @@ public void ConstructorThrowsAssertFailedException419()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 [PexRaisedException(typeof(AssertFailedException))]
-public void ConstructorThrowsAssertFailedException141()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor("\ufeff\ufeff\0;;");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[PexRaisedException(typeof(AssertFailedException))]
 public void ConstructorThrowsAssertFailedException513()
 {
     StatementSimpleStatement statementSimpleStatement;
@@ -112,6 +104,15 @@ public void ConstructorThrowsAssertFailedException25()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor("\0;\u0085");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+public void Constructor279()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor("\ufeff\ufeff\0;;");
+    Assert.IsNotNull((object)statementSimpleStatement);
+    Assert.AreEqual<string>("\ufeff\ufeff\0", statementSimpleStatement.Line);
 }
     }
 }

@@ -34,5 +34,11 @@ namespace LINQToTTreeLib.Utils
         {
             this.MakeSureFileNotUpdated((string)null, "\0");
         }
+[TestMethod]
+[PexGeneratedBy(typeof(FileUtilsTest))]
+public void MakeSureFileNotUpdated580()
+{
+    this.MakeSureFileNotUpdated((string)null, "\0\0");
+}
     }
 }
