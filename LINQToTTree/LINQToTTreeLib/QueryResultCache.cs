@@ -63,7 +63,7 @@ namespace LINQToTTreeLib
                 throw new ArgumentException("one of the root files is null");
             if (string.IsNullOrWhiteSpace(treename))
                 throw new ArgumentException("treename must be valid");
-            if (inputObjects.Any(o => o == null))
+            if (inputObjects != null && inputObjects.Any(o => o == null))
                 throw new ArgumentException("one of the input objects is null - not allowed");
 
             ///

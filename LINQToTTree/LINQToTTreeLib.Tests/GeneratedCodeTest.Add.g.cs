@@ -33,8 +33,7 @@ public void AddThrowsArgumentNullException128()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-[PexRaisedException(typeof(TermDestructionException))]
-public void AddThrowsTermDestructionException120()
+public void Add170()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;

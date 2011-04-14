@@ -34,14 +34,14 @@ namespace LINQToTTreeLib.Variables.Savers
         [TestMethod]
         public void TestForROOTTObject()
         {
-            var v = new VarObject(typeof(ROOTNET.NTObject));
+            var v = new VarObject(typeof(ROOTNET.Interface.NTObject));
             Assert.IsFalse(CanHandle(new SaveVarObject(), v), "TObject array should be false");
         }
 
         [TestMethod]
         public void TestForROOTTH1F()
         {
-            var v = new VarObject(typeof(ROOTNET.NTH1F));
+            var v = new VarObject(typeof(ROOTNET.Interface.NTH1F));
             Assert.IsTrue(CanHandle(new SaveVarObject(), v), "TH1F");
         }
 

@@ -62,6 +62,7 @@ namespace LINQToTTreeLib.Variables
 
         /// <summary>Test stub for AsCastString(IValue)</summary>
         [PexMethod]
+        [PexAllowedException(typeof(ArgumentException))]
         public string AsCastString(IValue val, [PexAssumeNotNull]Type desType)
         {
             if (desType == null)
