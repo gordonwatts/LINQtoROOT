@@ -5,7 +5,6 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ROOTNET.Interface;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -17,7 +16,7 @@ namespace LINQToTTreeLib.Variables.Savers
     public partial class SaveVarObjectTest
     {
         /// <summary>Test stub for CanHandle(IVariable)</summary>
-        [PexMethod]
+        ///[PexMethod]
         internal bool CanHandle([PexAssumeUnderTest]SaveVarObject target, IVariable iVariable)
         {
             bool result = target.CanHandle(iVariable);
@@ -35,14 +34,14 @@ namespace LINQToTTreeLib.Variables.Savers
         [TestMethod]
         public void TestForROOTTObject()
         {
-            var v = new VarObject(typeof(ROOTNET.NTObject));
+            var v = new VarObject(typeof(ROOTNET.Interface.NTObject));
             Assert.IsFalse(CanHandle(new SaveVarObject(), v), "TObject array should be false");
         }
 
         [TestMethod]
         public void TestForROOTTH1F()
         {
-            var v = new VarObject(typeof(ROOTNET.NTH1F));
+            var v = new VarObject(typeof(ROOTNET.Interface.NTH1F));
             Assert.IsTrue(CanHandle(new SaveVarObject(), v), "TH1F");
         }
 
@@ -61,7 +60,7 @@ namespace LINQToTTreeLib.Variables.Savers
         internal T LoadResult<T>(
             [PexAssumeUnderTest]SaveVarObject target,
             IVariable iVariable,
-            NTObject obj
+            ROOTNET.Interface.NTObject obj
         )
         {
             T result = target.LoadResult<T>(iVariable, obj);

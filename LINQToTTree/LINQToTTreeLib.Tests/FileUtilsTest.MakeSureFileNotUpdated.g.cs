@@ -24,12 +24,6 @@ namespace LINQToTTreeLib.Utils
         }
         [TestMethod]
         [PexGeneratedBy(typeof(FileUtilsTest))]
-        public void MakeSureFileNotUpdated684()
-        {
-            this.MakeSureFileNotUpdated((string)null, "");
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(FileUtilsTest))]
         public void MakeSureFileNotUpdated163()
         {
             this.MakeSureFileNotUpdated("", (string)null);
@@ -40,19 +34,19 @@ namespace LINQToTTreeLib.Utils
         {
             this.MakeSureFileNotUpdated((string)null, "\0");
         }
-        [TestMethod]
-        [PexGeneratedBy(typeof(FileUtilsTest))]
-        public void MakeSureFileNotUpdated588()
-        {
-            this.MakeSureFileNotUpdated((string)null, "\0\0");
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(FileUtilsTest))]
-        [Ignore]
-        [PexDescription("the test state was: path bounds exceeded")]
-        public void MakeSureFileNotUpdated797()
-        {
-            this.MakeSureFileNotUpdated((string)null, new string('\0', 1024));
-        }
+[TestMethod]
+[PexGeneratedBy(typeof(FileUtilsTest))]
+public void MakeSureFileNotUpdated580()
+{
+    this.MakeSureFileNotUpdated((string)null, "\0\0");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(FileUtilsTest))]
+[Ignore]
+[PexDescription("the test state was: path bounds exceeded")]
+public void MakeSureFileNotUpdated584()
+{
+    this.MakeSureFileNotUpdated((string)null, new string('\0', 1024));
+}
     }
 }

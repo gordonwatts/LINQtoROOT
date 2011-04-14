@@ -17,25 +17,5 @@ namespace LINQToTTreeLib
 {
     public partial class CodeContextTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(CodeContextTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GetReplacementThrowsArgumentNullException69()
-{
-    CodeContext codeContext;
-    IValue iValue;
-    codeContext = new CodeContext();
-    iValue = this.GetReplacement(codeContext, (string)null, (Type)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CodeContextTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void GetReplacementThrowsArgumentNullException854()
-{
-    CodeContext codeContext;
-    IValue iValue;
-    codeContext = new CodeContext();
-    iValue = this.GetReplacement(codeContext, "", (Type)null);
-}
     }
 }

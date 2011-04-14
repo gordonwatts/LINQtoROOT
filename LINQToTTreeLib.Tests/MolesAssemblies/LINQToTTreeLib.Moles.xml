@@ -1,0 +1,1458 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LINQToTTreeLib.Moles</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Moles.Framework.LINQToTTreeLibDelegates">
+            <summary>Contains custom delegates used for the stubs and moles of LINQToTTreeLib</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.MCodeContext">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.CodeContext"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MCodeContext.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MCodeContext.#ctor(LINQToTTreeLib.CodeContext)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MCodeContext.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MCodeContext.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MCodeContext.Bind(LinqToTTreeInterfacesLib.ICodeContext)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MCodeContext.AddStringIValue">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.CodeContext.Add(System.String,LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MCodeContext.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MCodeContext.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.CodeContext.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MCodeContext.GetReplacementStringType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.CodeContext.GetReplacement(System.String,System.Type)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.MCodeContext.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MCodeContext.AllInstances.AddStringIValue">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.CodeContext.Add(System.String,LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MCodeContext.AllInstances.GetReplacementStringType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.CodeContext.GetReplacement(System.String,System.Type)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Utils.Moles.MFileUtils">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Utils.FileUtils"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Utils.Moles.MFileUtils.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Utils.Moles.MFileUtils.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Utils.Moles.MFileUtils.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Utils.Moles.MFileUtils.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Utils.Moles.MFileUtils.WriteTextIfNotDuplicateFileInfo">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Utils.FileUtils.WriteTextIfNotDuplicate(System.IO.FileInfo)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.MGeneratedCode">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.GeneratedCode"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MGeneratedCode.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MGeneratedCode.#ctor(LINQToTTreeLib.GeneratedCode)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MGeneratedCode.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MGeneratedCode.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MGeneratedCode.Bind(LinqToTTreeInterfacesLib.IGeneratedCode)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AddIStatement">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AddIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AddTransferedIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.AddTransfered(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.CodeBodyGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CodeBody"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.CodeBodySetIBookingStatementBlock">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CodeBody"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.CurrentScopeGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CurrentScope"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.CurrentScopeSetObject">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CurrentScope"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.ResultValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.ResultValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.ResultValueSetIVariable">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.ResultValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.SetResultIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.SetResult(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.VariablesToTransferGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.VariablesToTransfer"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.AddIStatement">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.AddIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.AddTransferedIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.AddTransfered(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.CodeBodyGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CodeBody"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.CodeBodySetIBookingStatementBlock">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CodeBody"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.CurrentScopeGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CurrentScope"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.CurrentScopeSetObject">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.CurrentScope"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.ResultValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.ResultValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.ResultValueSetIVariable">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.ResultValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.SetResultIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.GeneratedCode.SetResult(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MGeneratedCode.AllInstances.VariablesToTransferGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.GeneratedCode.VariablesToTransfer"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.MHelpers">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Helpers"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MHelpers.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MHelpers.AggregateIQueryableOfTSourceExpressionOfFuncOfTResultActionOfTResultTSource``2(Microsoft.Moles.Framework.MolesDelegates.Func{System.Linq.IQueryable{``0},System.Linq.Expressions.Expression{System.Func{``1}},System.Action{``1,``0},``1})">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Helpers.Aggregate``2(System.Linq.IQueryable`1{``0},System.Linq.Expressions.Expression`1{System.Func`1{``1}},System.Action`2{``1,``0})"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MHelpers.AggregateNoReturnIQueryableOfTSourceTResultExpressionOfActionOfTResultTSource``2(Microsoft.Moles.Framework.MolesDelegates.Func{System.Linq.IQueryable{``0},``1,System.Linq.Expressions.Expression{System.Action{``1,``0}},``1})">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Helpers.AggregateNoReturn``2(System.Linq.IQueryable`1{``0},``1,System.Linq.Expressions.Expression`1{System.Action`2{``1,``0}})"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MHelpers.ApplyReturnFirstT1T2ExpressionOfActionOfT1T2``2(Microsoft.Moles.Framework.MolesDelegates.Func{``0,``1,System.Linq.Expressions.Expression{System.Action{``0,``1}},``0})">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Helpers.ApplyReturnFirst``2(``0,``1,System.Linq.Expressions.Expression`1{System.Action`2{``0,``1}})"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MHelpers.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MHelpers.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MHelpers.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.MQueryVisitor">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.QueryVisitor"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MQueryVisitor.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MQueryVisitor.#ctor(LINQToTTreeLib.QueryVisitor)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MQueryVisitor.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MQueryVisitor.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.MQueryVisitor.Bind(Remotion.Data.Linq.IQueryModelVisitor)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.ConstructorGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.#ctor(LINQToTTreeLib.GeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.VisitAdditionalFromClauseAdditionalFromClauseQueryModelInt32">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitAdditionalFromClause(Remotion.Data.Linq.Clauses.AdditionalFromClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.VisitMainFromClauseMainFromClauseQueryModel">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitMainFromClause(Remotion.Data.Linq.Clauses.MainFromClause,Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.VisitResultOperatorResultOperatorBaseQueryModelInt32">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.VisitWhereClauseWhereClauseQueryModelInt32">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitWhereClause(Remotion.Data.Linq.Clauses.WhereClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.MQueryVisitor.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.AllInstances.VisitAdditionalFromClauseAdditionalFromClauseQueryModelInt32">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitAdditionalFromClause(Remotion.Data.Linq.Clauses.AdditionalFromClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.AllInstances.VisitMainFromClauseMainFromClauseQueryModel">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitMainFromClause(Remotion.Data.Linq.Clauses.MainFromClause,Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.AllInstances.VisitResultOperatorResultOperatorBaseQueryModelInt32">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.MQueryVisitor.AllInstances.VisitWhereClauseWhereClauseQueryModelInt32">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitWhereClause(Remotion.Data.Linq.Clauses.WhereClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.ResultOperators.Moles.MROAggregate">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.ResultOperators.ROAggregate"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.#ctor(LINQToTTreeLib.ResultOperators.ROAggregate)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.Bind(LinqToTTreeInterfacesLib.IQVResultOperator)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.CanHandleType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROAggregate.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROAggregate.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.ProcessResultOperatorResultOperatorBaseQueryModelIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROAggregate.ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.AllInstances.CanHandleType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROAggregate.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROAggregate.AllInstances.ProcessResultOperatorResultOperatorBaseQueryModelIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROAggregate.ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.ResultOperators.ROFirstLast"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.#ctor(LINQToTTreeLib.ResultOperators.ROFirstLast)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.Bind(LinqToTTreeInterfacesLib.IQVResultOperator)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.CanHandleType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROFirstLast.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROFirstLast.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.ProcessResultOperatorResultOperatorBaseQueryModelIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROFirstLast.ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.AllInstances.CanHandleType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROFirstLast.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.MROFirstLast.AllInstances.ProcessResultOperatorResultOperatorBaseQueryModelIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.ResultOperators.ROFirstLast.ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementAssign">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Statements.StatementAssign"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementAssign.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementAssign.#ctor(LINQToTTreeLib.Statements.StatementAssign)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementAssign.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementAssign.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementAssign.Bind(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.ConstructorIVariableIValue">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementAssign.#ctor(LinqToTTreeInterfacesLib.IVariable,LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.ExpressionGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.Expression"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.ExpressionSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.Expression"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.ResultVariableGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.ResultVariable"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.ResultVariableSetIVariable">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.ResultVariable"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementAssign.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.AllInstances.ExpressionGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.Expression"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.AllInstances.ExpressionSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.Expression"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.AllInstances.ResultVariableGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.ResultVariable"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementAssign.AllInstances.ResultVariableSetIVariable">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementAssign.ResultVariable"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementFilter">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Statements.StatementFilter"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementFilter.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementFilter.#ctor(LINQToTTreeLib.Statements.StatementFilter)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementFilter.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementFilter.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementFilter.Bind(LinqToTTreeInterfacesLib.IBookingStatementBlock)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementFilter.Bind(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementFilter.Bind(LinqToTTreeInterfacesLib.IStatementCompound)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementFilter.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementFilter.ConstructorIValue">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementFilter.#ctor(LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementFilter.TestExpressionGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementFilter.TestExpression"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementFilter.TestExpressionSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementFilter.TestExpression"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementFilter.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementFilter.AllInstances.TestExpressionGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementFilter.TestExpression"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementFilter.AllInstances.TestExpressionSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementFilter.TestExpression"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Statements.StatementIfOnCount"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.#ctor(LINQToTTreeLib.Statements.StatementIfOnCount)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.Bind(LinqToTTreeInterfacesLib.IBookingStatementBlock)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.Bind(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.Bind(LinqToTTreeInterfacesLib.IStatementCompound)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.ComparisonGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.Comparison"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.ComparisonSetStatementIfOnCountComparisonOperator">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.Comparison"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.ConstructorIValueIValueStatementIfOnCountComparisonOperator">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementIfOnCount.#ctor(LinqToTTreeInterfacesLib.IValue,LinqToTTreeInterfacesLib.IValue,LINQToTTreeLib.Statements.StatementIfOnCount.ComparisonOperator)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.ValLeftGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValLeft"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.ValLeftSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValLeft"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.ValRightGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValRight"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.ValRightSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValRight"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.AllInstances.ComparisonGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.Comparison"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.AllInstances.ComparisonSetStatementIfOnCountComparisonOperator">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.Comparison"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.AllInstances.ValLeftGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValLeft"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.AllInstances.ValLeftSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValLeft"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.AllInstances.ValRightGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValRight"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIfOnCount.AllInstances.ValRightSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIfOnCount.ValRight"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Statements.StatementIncrementInteger"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.#ctor(LINQToTTreeLib.Statements.StatementIncrementInteger)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.Bind(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.ConstructorVarInteger">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementIncrementInteger.#ctor(LINQToTTreeLib.Variables.VarInteger)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.IntegerGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIncrementInteger.Integer"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.IntegerSetVarInteger">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIncrementInteger.Integer"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.AllInstances.IntegerGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIncrementInteger.Integer"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementIncrementInteger.AllInstances.IntegerSetVarInteger">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementIncrementInteger.Integer"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Statements.StatementInlineBlock"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.#ctor(LINQToTTreeLib.Statements.StatementInlineBlock)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.Bind(LinqToTTreeInterfacesLib.IBookingStatementBlock)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.Bind(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.Bind(LinqToTTreeInterfacesLib.IStatementCompound)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.AddIStatement">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementInlineBlock.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.AddIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementInlineBlock.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementInlineBlock.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.DeclaredVariablesGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementInlineBlock.DeclaredVariables"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.StatementsGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementInlineBlock.Statements"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.AllInstances.AddIStatement">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementInlineBlock.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.AllInstances.AddIVariable">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementInlineBlock.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.AllInstances.DeclaredVariablesGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementInlineBlock.DeclaredVariables"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementInlineBlock.AllInstances.StatementsGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementInlineBlock.Statements"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Statements.StatementLoopOnVector"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.#ctor(LINQToTTreeLib.Statements.StatementLoopOnVector)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.Bind(LinqToTTreeInterfacesLib.IBookingStatementBlock)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.Bind(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.Bind(LinqToTTreeInterfacesLib.IStatementCompound)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.ConstructorIValueString">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementLoopOnVector.#ctor(LinqToTTreeInterfacesLib.IValue,System.String)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.IteratorNameGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.IteratorName"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.IteratorNameSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.IteratorName"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.VectorToLoopOverGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.VectorToLoopOver"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.VectorToLoopOverSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.VectorToLoopOver"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.AllInstances.IteratorNameGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.IteratorName"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.AllInstances.IteratorNameSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.IteratorName"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.AllInstances.VectorToLoopOverGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.VectorToLoopOver"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementLoopOnVector.AllInstances.VectorToLoopOverSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementLoopOnVector.VectorToLoopOver"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Statements.StatementSimpleStatement"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.#ctor(LINQToTTreeLib.Statements.StatementSimpleStatement)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.Bind(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.ConstructorString">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Statements.StatementSimpleStatement.#ctor(System.String)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.LineGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementSimpleStatement.Line"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.LineSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementSimpleStatement.Line"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.AllInstances.LineGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementSimpleStatement.Line"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.MStatementSimpleStatement.AllInstances.LineSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Statements.StatementSimpleStatement.Line"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.TypeHandlers.TypeHandlerCache"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.#ctor(LINQToTTreeLib.TypeHandlers.TypeHandlerCache)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.TypeHandlerCache.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.FindHandlerType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.TypeHandlerCache.FindHandler(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.ProcessConstantReferenceConstantExpressionIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.TypeHandlerCache.ProcessConstantReference(System.Linq.Expressions.ConstantExpression,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.AllInstances.FindHandlerType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.TypeHandlerCache.FindHandler(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.MTypeHandlerCache.AllInstances.ProcessConstantReferenceConstantExpressionIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.TypeHandlerCache.ProcessConstantReference(System.Linq.Expressions.ConstantExpression,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.#ctor(LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.Bind(LinqToTTreeInterfacesLib.ITypeHandler)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.CanHandleType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.ProcessConstantReferenceConstantExpressionIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT.ProcessConstantReference(System.Linq.Expressions.ConstantExpression,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.AllInstances.CanHandleType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.MTypeHandlerROOT.AllInstances.ProcessConstantReferenceConstantExpressionIGeneratedCode">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT.ProcessConstantReference(System.Linq.Expressions.ConstantExpression,LinqToTTreeInterfacesLib.IGeneratedCode)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Variables.Moles.MVarInteger">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Variables.VarInteger"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarInteger.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarInteger.#ctor(LINQToTTreeLib.Variables.VarInteger)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarInteger.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarInteger.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarInteger.Bind(LinqToTTreeInterfacesLib.IValue)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarInteger.Bind(LinqToTTreeInterfacesLib.IVariable)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.Constructor">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarInteger.#ctor"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.InitialValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.InitialValueSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.RawValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.TypeGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.Type"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.VariableNameGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.VariableName"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Variables.Moles.MVarInteger.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.AllInstances.InitialValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.AllInstances.InitialValueSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.AllInstances.RawValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.AllInstances.TypeGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.Type"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarInteger.AllInstances.VariableNameGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarInteger.VariableName"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Variables.Moles.MVarSimple">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Variables.VarSimple"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarSimple.#ctor">
+            <summary>Initializes a new mole</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarSimple.#ctor(LINQToTTreeLib.Variables.VarSimple)">
+            <summary>Initializes a new mole for the given instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarSimple.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarSimple.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarSimple.Bind(LinqToTTreeInterfacesLib.IValue)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarSimple.Bind(LinqToTTreeInterfacesLib.IVariable)">
+            <summary>Binds the members of the interface to the mole.</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.ConstructorType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarSimple.#ctor(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.InitialValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.InitialValueSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.RawValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.RawValueSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.TypeGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.Type"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.TypeSetType">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.Type"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.VariableNameGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.VariableName"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.VariableNameSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.VariableName"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances">
+            <summary>Define moles for all instances members</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.InitialValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.InitialValueSetIValue">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.RawValueGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.RawValueSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.TypeGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.Type"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.TypeSetType">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.Type"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.VariableNameGet">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.VariableName"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarSimple.AllInstances.VariableNameSetString">
+            <summary>Sets the mole of <see cref="P:LINQToTTreeLib.Variables.VarSimple.VariableName"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Variables.Moles.MVarUtils">
+            <summary>Mole type of <see cref="T:LINQToTTreeLib.Variables.VarUtils"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarUtils.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarUtils.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.MVarUtils.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.AsCPPTypeType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarUtils.AsCPPType(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.AsCastStringIValue">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarUtils.AsCastString(LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.AsObjectReferenceIValue">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarUtils.AsObjectReference(LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.Behavior">
+            <summary>Assigns the behavior for all methods of the moled type</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.CastToTypeIValueType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarUtils.CastToType(LinqToTTreeInterfacesLib.IValue,System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.CreateUniqueVariableNameString">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarUtils.CreateUniqueVariableName(System.String)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.CreateUniqueVariableNameType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarUtils.CreateUniqueVariableName(System.Type)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.MVarUtils.IsPointerTypeType">
+            <summary>Sets the mole of <see cref="M:LINQToTTreeLib.Variables.VarUtils.IsPointerType(System.Type)"/>
+            </summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.SCodeContext">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.CodeContext"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SCodeContext.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SCodeContext.InitializeStub">
+            <summary>Initializes a new instance of type SCodeContext</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.SCodeContext.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.SCodeContext.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.SGeneratedCode">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.GeneratedCode"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SGeneratedCode.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SGeneratedCode.InitializeStub">
+            <summary>Initializes a new instance of type SGeneratedCode</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.SGeneratedCode.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.SGeneratedCode.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Moles.SQueryVisitor">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.QueryVisitor"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.#ctor(LINQToTTreeLib.GeneratedCode)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.InitializeStub">
+            <summary>Initializes a new instance of type SQueryVisitor</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitAdditionalFromClause(Remotion.Data.Linq.Clauses.AdditionalFromClause,Remotion.Data.Linq.QueryModel,System.Int32)">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitAdditionalFromClause(Remotion.Data.Linq.Clauses.AdditionalFromClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitAdditionalFromClauseAdditionalFromClauseQueryModelInt32">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitAdditionalFromClause(Remotion.Data.Linq.Clauses.AdditionalFromClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitBodyClauses(Remotion.Data.Linq.Collections.ObservableCollection{Remotion.Data.Linq.Clauses.IBodyClause},Remotion.Data.Linq.QueryModel)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitBodyClauses(Remotion.Data.Linq.Collections.ObservableCollection`1{Remotion.Data.Linq.Clauses.IBodyClause},Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitBodyClausesObservableCollectionOfIBodyClauseQueryModel">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitBodyClauses(Remotion.Data.Linq.Collections.ObservableCollection`1{Remotion.Data.Linq.Clauses.IBodyClause},Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitGroupJoinClause(Remotion.Data.Linq.Clauses.GroupJoinClause,Remotion.Data.Linq.QueryModel,System.Int32)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitGroupJoinClause(Remotion.Data.Linq.Clauses.GroupJoinClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitGroupJoinClauseGroupJoinClauseQueryModelInt32">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitGroupJoinClause(Remotion.Data.Linq.Clauses.GroupJoinClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitJoinClause(Remotion.Data.Linq.Clauses.JoinClause,Remotion.Data.Linq.QueryModel,System.Int32)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitJoinClause(Remotion.Data.Linq.Clauses.JoinClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitJoinClause(Remotion.Data.Linq.Clauses.JoinClause,Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.GroupJoinClause)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitJoinClause(Remotion.Data.Linq.Clauses.JoinClause,Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.GroupJoinClause)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitJoinClauseJoinClauseQueryModelGroupJoinClause">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitJoinClause(Remotion.Data.Linq.Clauses.JoinClause,Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.GroupJoinClause)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitJoinClauseJoinClauseQueryModelInt32">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitJoinClause(Remotion.Data.Linq.Clauses.JoinClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitMainFromClause(Remotion.Data.Linq.Clauses.MainFromClause,Remotion.Data.Linq.QueryModel)">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitMainFromClause(Remotion.Data.Linq.Clauses.MainFromClause,Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitMainFromClauseMainFromClauseQueryModel">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitMainFromClause(Remotion.Data.Linq.Clauses.MainFromClause,Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitOrderByClause(Remotion.Data.Linq.Clauses.OrderByClause,Remotion.Data.Linq.QueryModel,System.Int32)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitOrderByClause(Remotion.Data.Linq.Clauses.OrderByClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitOrderByClauseOrderByClauseQueryModelInt32">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitOrderByClause(Remotion.Data.Linq.Clauses.OrderByClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitOrdering(Remotion.Data.Linq.Clauses.Ordering,Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.OrderByClause,System.Int32)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitOrdering(Remotion.Data.Linq.Clauses.Ordering,Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.OrderByClause,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitOrderingOrderingQueryModelOrderByClauseInt32">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitOrdering(Remotion.Data.Linq.Clauses.Ordering,Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.OrderByClause,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitOrderings(Remotion.Data.Linq.Collections.ObservableCollection{Remotion.Data.Linq.Clauses.Ordering},Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.OrderByClause)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitOrderings(Remotion.Data.Linq.Collections.ObservableCollection`1{Remotion.Data.Linq.Clauses.Ordering},Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.OrderByClause)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitOrderingsObservableCollectionOfOrderingQueryModelOrderByClause">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitOrderings(Remotion.Data.Linq.Collections.ObservableCollection`1{Remotion.Data.Linq.Clauses.Ordering},Remotion.Data.Linq.QueryModel,Remotion.Data.Linq.Clauses.OrderByClause)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitQueryModel(Remotion.Data.Linq.QueryModel)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitQueryModel(Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitQueryModelQueryModel">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitQueryModel(Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,System.Int32)">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitResultOperatorResultOperatorBaseQueryModelInt32">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitResultOperators(Remotion.Data.Linq.Collections.ObservableCollection{Remotion.Data.Linq.Clauses.ResultOperatorBase},Remotion.Data.Linq.QueryModel)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitResultOperators(Remotion.Data.Linq.Collections.ObservableCollection`1{Remotion.Data.Linq.Clauses.ResultOperatorBase},Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitResultOperatorsObservableCollectionOfResultOperatorBaseQueryModel">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitResultOperators(Remotion.Data.Linq.Collections.ObservableCollection`1{Remotion.Data.Linq.Clauses.ResultOperatorBase},Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitSelectClause(Remotion.Data.Linq.Clauses.SelectClause,Remotion.Data.Linq.QueryModel)">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitSelectClause(Remotion.Data.Linq.Clauses.SelectClause,Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitSelectClauseSelectClauseQueryModel">
+            <summary>Sets the stub of <see cref="M:Remotion.Data.Linq.QueryModelVisitorBase.VisitSelectClause(Remotion.Data.Linq.Clauses.SelectClause,Remotion.Data.Linq.QueryModel)"/>
+            </summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Moles.SQueryVisitor.VisitWhereClause(Remotion.Data.Linq.Clauses.WhereClause,Remotion.Data.Linq.QueryModel,System.Int32)">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitWhereClause(Remotion.Data.Linq.Clauses.WhereClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="F:LINQToTTreeLib.Moles.SQueryVisitor.VisitWhereClauseWhereClauseQueryModelInt32">
+            <summary>Sets the stub of <see cref="M:LINQToTTreeLib.QueryVisitor.VisitWhereClause(Remotion.Data.Linq.Clauses.WhereClause,Remotion.Data.Linq.QueryModel,System.Int32)"/>
+            </summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.SQueryVisitor.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Moles.SQueryVisitor.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.ResultOperators.Moles.SROAggregate">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.ResultOperators.ROAggregate"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.SROAggregate.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.SROAggregate.InitializeStub">
+            <summary>Initializes a new instance of type SROAggregate</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.SROAggregate.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.SROAggregate.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.ResultOperators.Moles.SROFirstLast">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.ResultOperators.ROFirstLast"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.SROFirstLast.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.ResultOperators.Moles.SROFirstLast.InitializeStub">
+            <summary>Initializes a new instance of type SROFirstLast</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.SROFirstLast.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.ResultOperators.Moles.SROFirstLast.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.SStatementAssign">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Statements.StatementAssign"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementAssign.#ctor(LinqToTTreeInterfacesLib.IVariable,LinqToTTreeInterfacesLib.IValue)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementAssign.InitializeStub">
+            <summary>Initializes a new instance of type SStatementAssign</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementAssign.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementAssign.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.SStatementFilter">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Statements.StatementFilter"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementFilter.#ctor(LinqToTTreeInterfacesLib.IValue)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementFilter.InitializeStub">
+            <summary>Initializes a new instance of type SStatementFilter</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementFilter.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementFilter.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.SStatementIfOnCount">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Statements.StatementIfOnCount"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementIfOnCount.#ctor(LinqToTTreeInterfacesLib.IValue,LinqToTTreeInterfacesLib.IValue,LINQToTTreeLib.Statements.StatementIfOnCount.ComparisonOperator)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementIfOnCount.InitializeStub">
+            <summary>Initializes a new instance of type SStatementIfOnCount</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementIfOnCount.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementIfOnCount.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.SStatementIncrementInteger">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Statements.StatementIncrementInteger"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementIncrementInteger.#ctor(LINQToTTreeLib.Variables.VarInteger)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementIncrementInteger.InitializeStub">
+            <summary>Initializes a new instance of type SStatementIncrementInteger</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementIncrementInteger.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementIncrementInteger.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.SStatementInlineBlock">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Statements.StatementInlineBlock"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementInlineBlock.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementInlineBlock.InitializeStub">
+            <summary>Initializes a new instance of type SStatementInlineBlock</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementInlineBlock.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementInlineBlock.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.SStatementLoopOnVector">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Statements.StatementLoopOnVector"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementLoopOnVector.#ctor(LinqToTTreeInterfacesLib.IValue,System.String)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementLoopOnVector.InitializeStub">
+            <summary>Initializes a new instance of type SStatementLoopOnVector</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementLoopOnVector.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementLoopOnVector.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Statements.Moles.SStatementSimpleStatement">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Statements.StatementSimpleStatement"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementSimpleStatement.#ctor(System.String)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Statements.Moles.SStatementSimpleStatement.InitializeStub">
+            <summary>Initializes a new instance of type SStatementSimpleStatement</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementSimpleStatement.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Statements.Moles.SStatementSimpleStatement.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.TypeHandlers.Moles.STypeHandlerCache">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.TypeHandlers.TypeHandlerCache"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.Moles.STypeHandlerCache.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.Moles.STypeHandlerCache.InitializeStub">
+            <summary>Initializes a new instance of type STypeHandlerCache</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.STypeHandlerCache.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.Moles.STypeHandlerCache.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.TypeHandlers.ROOT.Moles.STypeHandlerROOT">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.ROOT.Moles.STypeHandlerROOT.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.TypeHandlers.ROOT.Moles.STypeHandlerROOT.InitializeStub">
+            <summary>Initializes a new instance of type STypeHandlerROOT</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.STypeHandlerROOT.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.TypeHandlers.ROOT.Moles.STypeHandlerROOT.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Variables.Moles.SVarInteger">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Variables.VarInteger"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.SVarInteger.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.SVarInteger.InitializeStub">
+            <summary>Initializes a new instance of type SVarInteger</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.SVarInteger.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.SVarInteger.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="T:LINQToTTreeLib.Variables.Moles.SVarSimple">
+            <summary>Stub type of <see cref="T:LINQToTTreeLib.Variables.VarSimple"/>
+            .</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.SVarSimple.#ctor(System.Type)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:LINQToTTreeLib.Variables.Moles.SVarSimple.InitializeStub">
+            <summary>Initializes a new instance of type SVarSimple</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.SVarSimple.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:LINQToTTreeLib.Variables.Moles.SVarSimple.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+    </members>
+</doc>

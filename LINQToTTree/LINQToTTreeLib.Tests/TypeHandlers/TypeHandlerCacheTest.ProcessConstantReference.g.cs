@@ -30,5 +30,31 @@ public void ProcessConstantReferenceThrowsArgumentNullException351()
     iValue = this.ProcessConstantReference
                  (typeHandlerCache, (ConstantExpression)null, (IGeneratedCode)null);
 }
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
+[ExpectedException(typeof(InvalidOperationException))]
+public void ProcessConstantReferenceThrowsInvalidOperationException881()
+{
+    TypeHandlerCache typeHandlerCache;
+    ConstantExpression constantExpression;
+    IValue iValue;
+    typeHandlerCache = new TypeHandlerCache();
+    constantExpression = ConstantExpressionFactory.Create(0);
+    iValue = this.ProcessConstantReference
+                 (typeHandlerCache, constantExpression, (IGeneratedCode)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
+[ExpectedException(typeof(InvalidOperationException))]
+public void ProcessConstantReferenceThrowsInvalidOperationException341()
+{
+    TypeHandlerCache typeHandlerCache;
+    ConstantExpression constantExpression;
+    IValue iValue;
+    typeHandlerCache = new TypeHandlerCache();
+    constantExpression = ConstantExpressionFactory.Create(1);
+    iValue = this.ProcessConstantReference
+                 (typeHandlerCache, constantExpression, (IGeneratedCode)null);
+}
     }
 }

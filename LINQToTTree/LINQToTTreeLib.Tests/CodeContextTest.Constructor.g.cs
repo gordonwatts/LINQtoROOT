@@ -17,11 +17,12 @@ namespace LINQToTTreeLib
     {
 [TestMethod]
 [PexGeneratedBy(typeof(CodeContextTest))]
-public void Constructor541()
+public void Constructor671()
 {
     CodeContext codeContext;
     codeContext = this.Constructor();
     Assert.IsNotNull((object)codeContext);
+    Assert.IsNull(codeContext.LoopVariable);
 }
     }
 }

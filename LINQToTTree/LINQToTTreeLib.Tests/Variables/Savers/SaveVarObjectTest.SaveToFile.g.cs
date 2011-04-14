@@ -9,22 +9,24 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Pex.Framework.Generated;
 
-namespace LINQToTTreeLib.Variables
+namespace LINQToTTreeLib.Variables.Savers
 {
-    public partial class VarUtilsTest
+    public partial class SaveVarObjectTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(VarUtilsTest))]
-        [PexRaisedException(typeof(ArgumentException))]
-        [ExpectedException(typeof(ArgumentException))]
-        public void AsCastStringThrowsArgumentNullException980()
-        {
-            string s;
-            s = this.AsCastString((IValue)null, (Type)null);
-        }
+[TestMethod]
+[PexGeneratedBy(typeof(SaveVarObjectTest))]
+public void SaveToFile391()
+{
+    IEnumerable<string> iEnumerable;
+    SaveVarObject s0 = new SaveVarObject();
+    iEnumerable = this.SaveToFile(s0, (IVariable)null);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)s0);
+}
     }
 }

@@ -13,10 +13,45 @@ using LinqToTTreeInterfacesLib;
 using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.Variables;
+using LINQToTTreeLib;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
     public partial class TypeHanlderROOTTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+public void ProcessConstantReference980()
+{
+    ConstantExpression constantExpression;
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IValue iValue;
+    constantExpression = ConstantExpressionFactory.Create(1);
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    iValue = this.ProcessConstantReference
+                 (s0, constantExpression, (IGeneratedCode)generatedCode);
+    Assert.IsNotNull((object)iValue);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessConstantReferenceThrowsArgumentException123()
+{
+    ConstantExpression constantExpression;
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IValue iValue;
+    constantExpression = ConstantExpressionFactory.Create(0);
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    iValue = this.ProcessConstantReference
+                 (s0, constantExpression, (IGeneratedCode)generatedCode);
+}
     }
 }

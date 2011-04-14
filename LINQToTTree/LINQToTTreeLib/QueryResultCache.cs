@@ -55,7 +55,16 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query)
         {
-            KeyInfo result = new KeyInfo();
+            ///
+            /// Quick check to make sure everything is good
+            /// 
+
+            if (rootfiles.Any(f => f == null))
+                throw new ArgumentException("one of the root files is null");
+            if (string.IsNullOrWhiteSpace(treename))
+                throw new ArgumentException("treename must be valid");
+            if (inputObjects != null && inputObjects.Any(o => o == null))
+                throw new ArgumentException("one of the input objects is null - not allowed");
 
             ///
             /// Build the hash, which is a bit of a pain in the butt.
@@ -72,6 +81,8 @@ namespace LINQToTTreeLib
             ///
             /// Save the names of the files for a descriptor we will write out.
             /// 
+
+            KeyInfo result = new KeyInfo();
 
             result.DescriptionLines = (from f in rootfiles
                                        select f.FullName).ToArray();

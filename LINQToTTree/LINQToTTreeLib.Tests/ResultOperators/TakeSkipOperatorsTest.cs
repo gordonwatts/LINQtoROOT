@@ -44,14 +44,17 @@ namespace LINQToTTreeLib.ResultOperators
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode)</summary>
         [PexMethod]
         [PexUseType(typeof(TakeResultOperator))]
-        [PexUseType(typeof(SkipResultOperator))]
+        [PexUseType(typeof(SkipResultOperator)), PexAllowedException(typeof(ArgumentException))]
         internal IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROTakeSkipOperators target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
-            IGeneratedCode codeEnv
+            [PexAssumeNotNull]IGeneratedCode codeEnv
         )
         {
+            if (codeEnv.ResultValue != null)
+                throw new ArgumentException("this should not b enull for this test");
+
             ///
             /// We always expect to be inside a loop - and depend on it for doing our declares, so add something...
             /// 

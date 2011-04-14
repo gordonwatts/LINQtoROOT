@@ -35,9 +35,10 @@ namespace LINQToTTreeLib
         /// <param name="varName"></param>
         /// <param name="replacement1"></param>
         /// <param name="replacement2"></param>
-        [PexMethod]
         public void AddWithPop([PexAssumeUnderTest]CodeContext target,
-           [PexAssumeNotNull] string varName, [PexAssumeNotNull]IValue replacement1, [PexAssumeNotNull]IValue replacement2)
+           [PexAssumeNotNull] string varName,
+            [PexAssumeNotNull]IValue replacement1,
+            [PexAssumeNotNull]IValue replacement2)
         {
             target.Add(varName, replacement1);
             Assert.AreEqual(replacement1, target.GetReplacement(varName, replacement1.Type), "value didn't come out correctly");
