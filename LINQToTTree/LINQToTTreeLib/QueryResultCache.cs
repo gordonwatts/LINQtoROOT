@@ -7,7 +7,6 @@ using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using Remotion.Data.Linq;
-using System.Diagnostics;
 
 namespace LINQToTTreeLib
 {
@@ -56,9 +55,16 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query)
         {
-            // <pex>
-            Debug.Assert(rootfiles[0] != (object)null, "rootfiles[0]");
-            // </pex>
+            ///
+            /// Quick check to make sure everything is good
+            /// 
+
+            if (rootfiles.Any(f => f == null))
+                throw new ArgumentException("one of the root files is null");
+            if (string.IsNullOrWhiteSpace(treename))
+                throw new ArgumentException("treename must be valid");
+            if (inputObjects.Any(o => o == null))
+                throw new ArgumentException("one of the input objects is null - not allowed");
 
             ///
             /// Build the hash, which is a bit of a pain in the butt.

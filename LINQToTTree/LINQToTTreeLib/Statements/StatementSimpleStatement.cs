@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -11,6 +12,9 @@ namespace LINQToTTreeLib.Statements
     {
         public StatementSimpleStatement(string line)
         {
+            if (string.IsNullOrWhiteSpace(line))
+                throw new ArgumentException("line can't be empty");
+
             Line = line.Trim();
             if (Line.EndsWith(";"))
                 Line = Line.Substring(0, Line.Length - 1);

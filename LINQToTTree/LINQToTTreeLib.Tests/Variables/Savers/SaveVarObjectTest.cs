@@ -5,7 +5,6 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ROOTNET.Interface;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -61,7 +60,7 @@ namespace LINQToTTreeLib.Variables.Savers
         internal T LoadResult<T>(
             [PexAssumeUnderTest]SaveVarObject target,
             IVariable iVariable,
-            NTObject obj
+            ROOTNET.Interface.NTObject obj
         )
         {
             T result = target.LoadResult<T>(iVariable, obj);

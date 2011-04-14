@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         }
 
         /// <summary>Test stub for ProcessConstantReference(ConstantExpression, IGeneratedCode)</summary>
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(NullReferenceException))]
         public IValue ProcessConstantReference(
             [PexAssumeUnderTest]TypeHandlerROOT target,
             [PexAssumeNotNull] ConstantExpression expr,

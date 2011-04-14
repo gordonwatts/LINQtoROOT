@@ -31,19 +31,6 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             // TODO: add assertions to method TypeHandlerReplacementCallTest.CanHandle(TypeHandlerReplacementCall, Type)
         }
 
-        /// <summary>Test stub for ProcessConstantReference(ConstantExpression, IGeneratedCode)</summary>
-        [PexMethod]
-        public IValue ProcessConstantReference(
-            [PexAssumeUnderTest]TypeHandlerReplacementCall target,
-            ConstantExpression expr,
-            IGeneratedCode codeEnv
-        )
-        {
-            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
-            return result;
-            // TODO: add assertions to method TypeHandlerReplacementCallTest.ProcessConstantReference(TypeHandlerReplacementCall, ConstantExpression, IGeneratedCode)
-        }
-
         /// <summary>Test stub for ProcessMethodCall(MethodCallExpression, IValue&amp;, IGeneratedCode, ICodeContext)</summary>
         ///[PexMethod]
         public Expression ProcessMethodCall(
@@ -63,7 +50,8 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [ExpectedException(typeof(NotImplementedException))]
         public void TestProcessConstantReference()
         {
-            ProcessConstantReference(new TypeHandlerReplacementCall(), null, null);
+            var p = new TypeHandlerReplacementCall();
+            p.ProcessConstantReference(null, null, null, null);
         }
 
         class SimpleTest

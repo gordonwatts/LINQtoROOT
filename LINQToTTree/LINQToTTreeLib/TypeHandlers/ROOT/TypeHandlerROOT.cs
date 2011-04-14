@@ -4,9 +4,9 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -44,6 +44,9 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             /// 
 
             var rootObject = expr.Value as ROOTNET.Interface.NTNamed;
+            if (rootObject == null)
+                throw new ArgumentException("the object to be stored must derive from NTNamed! Instead it is of type '" + expr.Value.GetType().Name + "'");
+
             var varNameForTransport = rootObject.GetType().CreateUniqueVariableName();
             var CPPType = rootObject.GetType().AsCPPType();
 
