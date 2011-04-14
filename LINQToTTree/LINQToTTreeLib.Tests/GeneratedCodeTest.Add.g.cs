@@ -49,24 +49,5 @@ public void Add170()
     Assert.IsNotNull(generatedCode.VariablesToTransfer);
     Assert.IsNotNull(generatedCode.IncludeFiles);
 }
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[PexRaisedException(typeof(TermDestructionException))]
-public void AddThrowsTermDestructionException98()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    this.Add(generatedCode, (IStatement)statementIncrementInteger);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.AreEqual<int>(1, generatedCode.Depth);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-    Assert.IsNotNull(generatedCode.IncludeFiles);
-}
     }
 }

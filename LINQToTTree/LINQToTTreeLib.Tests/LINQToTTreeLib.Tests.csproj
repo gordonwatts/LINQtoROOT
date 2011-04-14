@@ -80,6 +80,7 @@
     <Reference Include="Microsoft.Pex.Linq, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualC" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NVelocity, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\NVelocity.1.0.3\lib\NVelocity.dll</HintPath>
@@ -169,6 +170,7 @@
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
+    <Compile Include="Factories\UnaryExpressionFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
@@ -322,6 +324,15 @@
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
+    <Compile Include="Variables\Savers\SaveVarObjectTest.IncludeFiles.g.cs">
+      <DependentUpon>SaveVarObjectTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\Savers\SaveVarObjectTest.LoadResult.g.cs">
+      <DependentUpon>SaveVarObjectTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\Savers\SaveVarObjectTest.SaveToFile.g.cs">
+      <DependentUpon>SaveVarObjectTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
     </Compile>

@@ -46,13 +46,5 @@ namespace LINQToTTreeLib.Utils
         {
             this.MakeSureFileNotUpdated((string)null, "\0\0");
         }
-        [TestMethod]
-        [PexGeneratedBy(typeof(FileUtilsTest))]
-        [Ignore]
-        [PexDescription("the test state was: path bounds exceeded")]
-        public void MakeSureFileNotUpdated797()
-        {
-            this.MakeSureFileNotUpdated((string)null, new string('\0', 1024));
-        }
     }
 }
