@@ -116,14 +116,33 @@ public void CanHandle27405()
 [PexGeneratedBy(typeof(TypeHandlerReplacementCallTest))]
 [Ignore]
 [PexDescription("the test state was: path bounds exceeded")]
-public void CanHandle27410()
+public void CanHandle27408()
 {
     using (PexDisposableContext disposables = PexDisposableContext.Create())
     {
       StringReader stringReader;
       TypeHandlerReplacementCall typeHandlerReplacementCall;
       bool b;
-      stringReader = new StringReader("#\0\0\0\0");
+      stringReader = new StringReader("#\0\0\0\0\0");
+      disposables.Add((IDisposable)stringReader);
+      typeHandlerReplacementCall = new TypeHandlerReplacementCall();
+      typeHandlerReplacementCall.Parse((TextReader)stringReader);
+      b = this.CanHandle(typeHandlerReplacementCall, (Type)null);
+      disposables.Dispose();
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerReplacementCallTest))]
+[Ignore]
+[PexDescription("the test state was: path bounds exceeded")]
+public void CanHandle27412()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      StringReader stringReader;
+      TypeHandlerReplacementCall typeHandlerReplacementCall;
+      bool b;
+      stringReader = new StringReader("include: \0\0\0");
       disposables.Add((IDisposable)stringReader);
       typeHandlerReplacementCall = new TypeHandlerReplacementCall();
       typeHandlerReplacementCall.Parse((TextReader)stringReader);

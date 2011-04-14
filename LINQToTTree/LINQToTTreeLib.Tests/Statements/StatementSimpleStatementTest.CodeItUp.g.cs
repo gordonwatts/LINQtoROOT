@@ -19,18 +19,6 @@ namespace LINQToTTreeLib.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-public void CodeItUp195()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    IEnumerable<string> iEnumerable;
-    statementSimpleStatement = new StatementSimpleStatement("");
-    iEnumerable = this.CodeItUp(statementSimpleStatement);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)statementSimpleStatement);
-    Assert.AreEqual<string>("", statementSimpleStatement.Line);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 public void CodeItUp960()
 {
     StatementSimpleStatement statementSimpleStatement;

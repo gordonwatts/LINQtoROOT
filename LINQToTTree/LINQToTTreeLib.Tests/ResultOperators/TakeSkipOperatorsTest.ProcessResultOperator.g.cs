@@ -24,16 +24,6 @@ namespace LINQToTTreeLib.ResultOperators
     {
 [TestMethod]
 [PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void ProcessResultOperatorThrowsNullReferenceException658()
-{
-    IVariable iVariable;
-    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
-    iVariable = this.ProcessResultOperator
-                    (s0, (ResultOperatorBase)null, (QueryModel)null, (IGeneratedCode)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
 [PexRaisedException(typeof(ArgumentException))]
 public void ProcessResultOperatorThrowsArgumentException705()
 {

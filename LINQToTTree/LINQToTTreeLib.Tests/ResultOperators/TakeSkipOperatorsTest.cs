@@ -44,7 +44,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode)</summary>
         [PexMethod]
         [PexUseType(typeof(TakeResultOperator))]
-        [PexUseType(typeof(SkipResultOperator))]
+        [PexUseType(typeof(SkipResultOperator)), PexAllowedException(typeof(ArgumentException))]
         internal IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROTakeSkipOperators target,
             ResultOperatorBase resultOperator,

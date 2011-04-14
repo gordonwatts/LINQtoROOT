@@ -64,6 +64,8 @@ namespace LINQToTTreeLib.Variables
         [PexMethod]
         public string AsCastString(IValue val, [PexAssumeNotNull]Type desType)
         {
+            if (desType == null)
+                throw new ArgumentException("destype must not be null");
             string result = VarUtils.CastToType(val, Expression.Variable(desType, "d"));
             Assert.IsTrue(result.Contains("(("), "Result doesn't seem to contains the cast operator!");
             return result;
@@ -146,11 +148,11 @@ namespace LINQToTTreeLib.Variables
             if (destType == sourceType.Type
                 || sourceType.Type == typeof(int) && (destType == typeof(double) || destType == typeof(float)))
             {
-                Assert.IsFalse(result.Contains(")("), "More that '((' in the list of items ('" + result + "')");
+                Assert.IsFalse(result.Contains("(("), "More that '((' in the list of items ('" + result + "')");
             }
             else
             {
-                Assert.IsTrue(result.Contains(")("), "Incorrect number of  '((' in the list of items ('" + result + "') - expecting a cast from '" + sourceType.Type.Name + " to " + destType.Name + "'!");
+                Assert.IsTrue(result.Contains("(("), "Incorrect number of  '((' in the list of items ('" + result + "') - expecting a cast from '" + sourceType.Type.Name + " to " + destType.Name + "'!");
             }
             return result;
         }

@@ -16,7 +16,7 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentException("line can't be empty");
 
             Line = line.Trim();
-            if (Line.EndsWith(";"))
+            while (Line.EndsWith(";"))
                 Line = Line.Substring(0, Line.Length - 1);
         }
         public string Line { get; private set; }

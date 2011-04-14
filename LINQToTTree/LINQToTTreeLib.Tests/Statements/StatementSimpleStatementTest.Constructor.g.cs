@@ -26,27 +26,11 @@ public void ConstructorThrowsAssertFailedException216()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void ConstructorThrowsNullReferenceException775()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor((string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 [PexRaisedException(typeof(AssertFailedException))]
 public void ConstructorThrowsAssertFailedException878()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor("\0\u3000");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void ConstructorThrowsAssertFailedException852()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor("\u3000");
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
@@ -90,11 +74,44 @@ public void ConstructorThrowsAssertFailedException513()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void ConstructorThrowsAssertFailedException22()
+public void Constructor308()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor("\u3000\0");
+    Assert.IsNotNull((object)statementSimpleStatement);
+    Assert.AreEqual<string>("\0", statementSimpleStatement.Line);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException836()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor("\u3000");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException571()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor((string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[PexRaisedException(typeof(AssertFailedException))]
+public void ConstructorThrowsAssertFailedException570()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor(";\u2000");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[PexRaisedException(typeof(AssertFailedException))]
+public void ConstructorThrowsAssertFailedException25()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor("\0;\u0085");
 }
     }
 }

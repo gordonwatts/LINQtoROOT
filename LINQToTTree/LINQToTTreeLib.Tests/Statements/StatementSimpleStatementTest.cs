@@ -34,8 +34,8 @@ namespace LINQToTTreeLib.Statements
         public StatementSimpleStatement Constructor(string line)
         {
             StatementSimpleStatement target = new StatementSimpleStatement(line);
-            Assert.IsFalse(target.Line.EndsWith(";"), "semicolon should have been stripped off");
-            if (line.EndsWith(";"))
+            Assert.IsFalse(target.Line.EndsWith(";"), "semicolon should have been stripped off ('" + target.Line + "')");
+            while (line.EndsWith(";"))
                 line = line.Substring(0, line.Length - 1);
             Assert.AreEqual(line.Trim(), target.Line, "bad line set");
             return target;
