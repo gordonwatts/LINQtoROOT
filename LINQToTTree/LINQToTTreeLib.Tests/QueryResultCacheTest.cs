@@ -41,7 +41,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>Test stub for CacheItem(FileInfo, QueryModel, NTObject)</summary>
-        [PexMethod]
+        ///[PexMethod]
         internal void CacheItem(
             [PexAssumeUnderTest]QueryResultCache target,
             object[] inputObjs,

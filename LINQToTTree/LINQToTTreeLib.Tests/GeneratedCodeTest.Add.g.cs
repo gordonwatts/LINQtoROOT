@@ -14,10 +14,59 @@ using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.ExtendedReflection.DataAccess;
 
 namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException128()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    this.Add(generatedCode, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void Add170()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.Add(generatedCode, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[PexRaisedException(typeof(TermDestructionException))]
+public void AddThrowsTermDestructionException98()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.Add(generatedCode, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
     }
 }

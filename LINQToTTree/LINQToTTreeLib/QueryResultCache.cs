@@ -7,6 +7,7 @@ using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using Remotion.Data.Linq;
+using System.Diagnostics;
 
 namespace LINQToTTreeLib
 {
@@ -55,7 +56,9 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query)
         {
-            KeyInfo result = new KeyInfo();
+            // <pex>
+            Debug.Assert(rootfiles[0] != (object)null, "rootfiles[0]");
+            // </pex>
 
             ///
             /// Build the hash, which is a bit of a pain in the butt.
@@ -72,6 +75,8 @@ namespace LINQToTTreeLib
             ///
             /// Save the names of the files for a descriptor we will write out.
             /// 
+
+            KeyInfo result = new KeyInfo();
 
             result.DescriptionLines = (from f in rootfiles
                                        select f.FullName).ToArray();

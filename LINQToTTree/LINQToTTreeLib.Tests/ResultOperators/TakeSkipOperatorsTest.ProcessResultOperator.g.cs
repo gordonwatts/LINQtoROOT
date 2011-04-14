@@ -46,5 +46,90 @@ public void ProcessResultOperatorThrowsArgumentNullException782()
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (IGeneratedCode)generatedCode);
 }
+[TestMethod]
+[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+[PexRaisedException(typeof(AssertFailedException))]
+public void ProcessResultOperatorThrowsAssertFailedException859()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    TakeResultOperator takeResultOperator;
+    IVariable iVariable;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    takeResultOperator = TakeResultOperatorFactory.Create(0);
+    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)takeResultOperator, 
+                                 (QueryModel)null, (IGeneratedCode)generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+[PexRaisedException(typeof(AssertFailedException))]
+public void ProcessResultOperatorThrowsAssertFailedException412()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    TakeResultOperator takeResultOperator;
+    IVariable iVariable;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    takeResultOperator = TakeResultOperatorFactory.Create(int.MaxValue);
+    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)takeResultOperator, 
+                                 (QueryModel)null, (IGeneratedCode)generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+[PexRaisedException(typeof(AssertFailedException))]
+public void ProcessResultOperatorThrowsAssertFailedException973()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    TakeResultOperator takeResultOperator;
+    IVariable iVariable;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    takeResultOperator = TakeResultOperatorFactory.Create(1);
+    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)takeResultOperator, 
+                                 (QueryModel)null, (IGeneratedCode)generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+[PexRaisedException(typeof(AssertFailedException))]
+public void ProcessResultOperatorThrowsAssertFailedException467()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    TakeResultOperator takeResultOperator;
+    IVariable iVariable;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    takeResultOperator = TakeResultOperatorFactory.Create(int.MinValue);
+    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)takeResultOperator, 
+                                 (QueryModel)null, (IGeneratedCode)generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+[PexRaisedException(typeof(AssertFailedException))]
+public void ProcessResultOperatorThrowsAssertFailedException561()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    SkipResultOperator skipResultOperator;
+    IVariable iVariable;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    skipResultOperator = SkipResultOperatorFactory.Create(0);
+    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)skipResultOperator, 
+                                 (QueryModel)null, (IGeneratedCode)generatedCode);
+}
     }
 }

@@ -19,5 +19,51 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestChangeScopeThrowsArgumentNullException468()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    this.TestChangeScope(generatedCode, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope774()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
+    this.TestChangeScope(generatedCode, (IStatement)statementInlineBlock);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(2, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope170()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestChangeScope(generatedCode, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
     }
 }

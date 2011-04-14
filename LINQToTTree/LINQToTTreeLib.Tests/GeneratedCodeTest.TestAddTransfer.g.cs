@@ -18,5 +18,69 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException10()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestAddTransferThrowsArgumentException277()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    object s0 = new object();
+    this.TestAddTransfer(generatedCode, (string)null, s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestAddTransferThrowsArgumentException615()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    object s0 = new object();
+    this.TestAddTransfer(generatedCode, "", s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestAddTransfer439()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    object s0 = new object();
+    this.TestAddTransfer(generatedCode, "\0", s0);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestAddTransferThrowsArgumentException843()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    object s0 = new object();
+    this.TestAddTransfer(generatedCode, "\t\t", s0);
+}
     }
 }

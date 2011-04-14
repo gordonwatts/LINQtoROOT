@@ -46,5 +46,21 @@ public void ProcessResultOperatorThrowsArgumentNullException972()
     iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null, 
                                            (QueryModel)null, (IGeneratedCode)generatedCode);
 }
+[TestMethod]
+[PexGeneratedBy(typeof(ROCountTest))]
+public void ProcessResultOperator44()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = new VarInteger();
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    ROCount s0 = new ROCount();
+    CountResultOperator s1 = new CountResultOperator();
+    iVariable = this.ProcessResultOperator
+                    (s0, s1, (QueryModel)null, (IGeneratedCode)generatedCode);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
     }
 }

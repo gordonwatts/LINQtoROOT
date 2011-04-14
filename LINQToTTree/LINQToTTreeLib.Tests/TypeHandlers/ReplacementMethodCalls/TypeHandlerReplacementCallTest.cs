@@ -45,7 +45,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         }
 
         /// <summary>Test stub for ProcessMethodCall(MethodCallExpression, IValue&amp;, IGeneratedCode, ICodeContext)</summary>
-        [PexMethod]
+        ///[PexMethod]
         public Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerReplacementCall target,
             MethodCallExpression expr,

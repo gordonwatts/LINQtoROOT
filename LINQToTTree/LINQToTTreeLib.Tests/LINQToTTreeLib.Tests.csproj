@@ -205,7 +205,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QueriableDummy.cs" />
+    <Compile Include="QueryResultCacheTest.CacheItem.g.cs">
+      <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="QueryResultCacheTest.cs" />
+    <Compile Include="QueryResultCacheTest.Lookup.g.cs">
+      <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="QueryVisitorTest.cs" />
     <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
@@ -239,7 +245,19 @@
     <Compile Include="ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementFilterTest.Constructor.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.CodeItUp.g.cs">
+      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementIfOnCountTest.Constructor.g.cs">
+      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.cs" />
     <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
@@ -254,6 +272,12 @@
     <Compile Include="Statements\StatementInlineBlockTest.cs" />
     <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
+      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementSimpleStatementTest.Constructor.g.cs">
+      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
@@ -270,7 +294,13 @@
     <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.CanHandle.g.cs">
+      <DependentUpon>TypeHandlerReplacementCallTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.cs" />
+    <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.ProcessConstantReference.g.cs">
+      <DependentUpon>TypeHandlerReplacementCallTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValueTest.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>

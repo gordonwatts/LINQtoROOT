@@ -14,7 +14,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
     public partial class ROOTObjectCopiedVariableTest
     {
         /// <summary>Test stub for .ctor(String, Type, String)</summary>
-        [PexMethod]
+        ///[PexMethod]
         internal ROOTObjectCopiedValue Constructor(
             string varName,
             Type rootType,
