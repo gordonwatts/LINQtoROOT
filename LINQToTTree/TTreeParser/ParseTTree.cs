@@ -278,50 +278,6 @@ namespace TTreeParser
             /// 
 
             return Enumerable.Empty<ROOTClassShell>();
-
-#if false
-            /// Code below was are (busted) attempt at using the TBranch/TLeaf structure to parse out a class
-            ///
-            /// Now that we have parsed out the name of the template class and the sub-class we are going to be calling this
-            /// mess, we can go after the actual guys. This object could be sub-classed. However, we can't really tell b/c it
-            /// may well be that it hasn't been correctly built - it could have been only built using some class that ROOT
-            /// doesn't fully know about. So, we look at all the members, and find all the class names. And grab the last one.
-            /// This probably will fail due to multiple-inherritance, but we'll give it a try.
-            /// 
-
-            var result = new ROOTClassShell(templateArgClass);
-            var subbranches = branch.GetListOfBranches().AsEnumerable().Cast<ROOTNET.Interface.NTBranch>();
-
-            result.SubClassName = (from s in subbranches
-                                   where s.GetClassName() != templateArgClass
-                                   select s.GetClassName()).LastOrDefault();
-
-            var newClassBranches = from s in subbranches
-                                   where s.GetClassName() == templateArgClass
-                                   select s;
-
-            foreach (var c in ExtractClassesFromBranchList(result, newClassBranches))
-            {
-                yield return c;
-            }
-
-            yield return result;
-#endif
-
-#if false
-            ///
-            /// Look at the class layout... This is totally useless! :-)
-            /// 
-
-            var tc = ROOTNET.NTClass.GetClass(templateArgClass);
-            var members = tc.PRListOfAllPublicDataMembers;
-            var memberNames = (from mem in members.AsEnumerable().Cast<ROOTNET.Interface.NTDataMember>()
-                               select new Tuple<string, string>(mem.PRName, mem.PRFullTypeName)).ToArray();
-            foreach (var item in memberNames)
-            {
-                var dude = item;
-            }
-#endif
         }
 
         /// <summary>

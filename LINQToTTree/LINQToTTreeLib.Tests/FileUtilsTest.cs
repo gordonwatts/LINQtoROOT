@@ -1,12 +1,11 @@
 // <copyright file="FileUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 
 using System;
-using LINQToTTreeLib.Utils;
+using System.IO;
 using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Generated;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -117,12 +116,7 @@ namespace LINQToTTreeLib.Utils
             }
 
         }
-#if false
-        [PexMethod]
-        public void MakeSureFileIsUpdated(string text1, string text2)
-        {
-        }
-#endif
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void WriteTextIfNotDuplicateThrowsArgumentNullException466()

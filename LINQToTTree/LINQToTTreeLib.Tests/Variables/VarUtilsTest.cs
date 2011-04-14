@@ -24,10 +24,7 @@ namespace LINQToTTreeLib.Variables
         };
 
         /// <summary>Test stub for AsCPPType(Type)</summary>
-#if false
-        /// Pex exploration problems.
-        [PexMethod]
-#endif
+        ///[PexMethod]
         public string AsCPPType(Type t)
         {
             string result = VarUtils.AsCPPType(t);
@@ -157,10 +154,8 @@ namespace LINQToTTreeLib.Variables
             }
             return result;
         }
-#if false
-        /// Pex exploration problems.
-        [PexMethod]
-#endif
+
+        ///[PexMethod]
         public bool IsPointerType(Type t)
         {
             bool result = VarUtils.IsPointerType(t);

@@ -44,11 +44,7 @@ namespace LINQToTTreeLib.ResultOperators
             // TODO: add assertions to method ROAggregateTest.CanHandle(ROAggregate, Type)
         }
 
-        /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode)</summary>
-#if false
-        /// TODO: Get working around pex!
-        [PexMethod]
-#endif
+        ///[PexMethod]
         public IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROAggregate target,
             AggregateFromSeedResultOperator resultOperator,
@@ -182,19 +178,6 @@ namespace LINQToTTreeLib.ResultOperators
             /// Create an agregate result operator from scratch ere...
             /// 
 
-#if false
-            Expression<Func<int, transNtupSubType, int>> adder = (acc, stuff) => acc + stuff.values;
-            var lambda = adder as LambdaExpression;
-
-            var agg = new AggregateFromSeedResultOperator(
-                Expression.Constant(1),
-                lambda,
-                null);
-            var target = new ROAggregate();
-
-            var result = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, constext, MEFUtilities.MEFContainer);
-
-#endif
             var q = new QueriableDummy<transNtup>();
             var vals = from evt in q
                        from v in evt.stuff

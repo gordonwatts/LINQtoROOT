@@ -87,41 +87,6 @@ namespace LINQToTTreeLib
             Assert.IsNotNull(cc.LoopVariable, "Loop variable is null!");
         }
 
-#if false
-        /// This test doesn't work b/c the Take is at teh top level.
-        [TestMethod]
-        public void TestBasicTakeOperator()
-        {
-            /// The take operator is funny b/c it is a result, but it returns nothing.
-            /// So, for all operators like that the QV has to deal with this correctly.
-
-            var model = GetModel(() => (new QueriableDummy<dummyntup>().Take(10).Count()));
-
-            MEFUtilities.AddPart(new QVResultOperators());
-            MEFUtilities.AddPart(new ROCount());
-            MEFUtilities.AddPart(new ROTakeSkipOperators());
-            MEFUtilities.AddPart(new TypeHandlerCache());
-            GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
-            var qv = new QueryVisitor(gc, cc);
-            MEFUtilities.Compose(qv);
-            qv.MEFContainer = MEFUtilities.MEFContainer;
-
-            qv.VisitQueryModel(model);
-
-            /// Look for the if statement that is the test for the take.
-
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Incorrect # of statementes");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementIfOnCount), "take not implemented correctly");
-            var takestatement = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementIfOnCount;
-
-            /// Make sure the count is inside the loop
-
-            Assert.AreEqual(1, takestatement.Statements.Count(), "Expected the inc statement");
-            Assert.IsInstanceOfType(takestatement.Statements.First(), typeof(Statements.StatementIncrementInteger), "inc statement not there");
-        }
-#endif
-
         /// <summary>
         /// Dummy to test that the loop variable when we get here is actually pointing to the right thing!
         /// </summary>

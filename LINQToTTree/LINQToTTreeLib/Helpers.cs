@@ -62,9 +62,6 @@ namespace LINQToTTreeLib
                 nParameter);
 
             return source.Aggregate(seed, func);
-#if false
-            return source.Aggregate(seed, (s, n) => ApplyReturnFirst(s, n, apply));
-#endif
         }
 
         /// <summary>
