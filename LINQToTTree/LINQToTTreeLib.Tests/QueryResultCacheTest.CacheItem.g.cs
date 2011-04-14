@@ -8,26 +8,7 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using System.IO;
-using Remotion.Data.Linq;
-using ROOTNET.Interface;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib
 {
-    public partial class QueryResultCacheTest
-    {
-[TestMethod]
-[PexGeneratedBy(typeof(QueryResultCacheTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void CacheItemThrowsNullReferenceException14()
-{
-    QueryResultCache queryResultCache;
-    queryResultCache = new QueryResultCache();
-    this.CacheItem(queryResultCache, (object[])null, 
-                   (FileInfo)null, (QueryModel)null, (NTObject)null);
-}
-    }
 }

@@ -17,7 +17,7 @@ namespace LINQToTTreeLib.Variables.Savers
     public partial class SaveVarObjectTest
     {
         /// <summary>Test stub for CanHandle(IVariable)</summary>
-        [PexMethod]
+        ///[PexMethod]
         internal bool CanHandle([PexAssumeUnderTest]SaveVarObject target, IVariable iVariable)
         {
             bool result = target.CanHandle(iVariable);

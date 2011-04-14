@@ -63,6 +63,8 @@
     <Reference Include="libHistWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libHistWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libMathCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="libNetWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libRIOWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libRIOWrapper.dll</HintPath>
     </Reference>
@@ -166,6 +168,7 @@
     <Compile Include="Factories\CPPTranslatorFactory.cs" />
     <Compile Include="Factories\GeneratedCodeFactory.cs" />
     <Compile Include="Factories\MethodCallExpressionFactory.cs" />
+    <Compile Include="Factories\NTObjectFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />

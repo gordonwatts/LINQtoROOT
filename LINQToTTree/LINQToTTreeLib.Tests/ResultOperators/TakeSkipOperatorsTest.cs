@@ -52,6 +52,9 @@ namespace LINQToTTreeLib.ResultOperators
             IGeneratedCode codeEnv
         )
         {
+            if (codeEnv.ResultValue != null)
+                throw new ArgumentException("this should not b enull for this test");
+
             ///
             /// We always expect to be inside a loop - and depend on it for doing our declares, so add something...
             /// 

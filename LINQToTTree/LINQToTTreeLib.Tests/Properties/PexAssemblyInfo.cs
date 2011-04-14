@@ -14,6 +14,7 @@ using LINQToTTreeLib.Statements;
 using LINQToTTreeLib;
 using Microsoft.Pex.Framework.Suppression;
 using System.Runtime.CompilerServices;
+using ROOTNET;
 
 // Microsoft.Pex.Framework.Settings
 [assembly: PexAssemblySettings(TestFramework = "VisualStudioUnitTest")]
@@ -51,3 +52,4 @@ using System.Runtime.CompilerServices;
 [assembly: PexSuppressStaticFieldStore("System.Linq.EmptyEnumerable`1", "instance")]
 [assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.MEFUtilities", "_batch")]
 [assembly: PexAssemblyUnderTest("TTreeParser")]
+[assembly: PexUseType(typeof(NTObject))]
