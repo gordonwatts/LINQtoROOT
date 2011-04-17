@@ -13,6 +13,7 @@ ResultDirectoryName=$(BuildConfig)\$(ResultName)
 LINQToTTreeLibDir=$(SolutionDir)\LINQToTTreeLib\bin\$(BuildConfig)
 CmdGenerateLINQClassesDir=$(SolutionDir)\CmdGenerateLINQClasses\bin\$(BuildConfig)
 CmdTFileParser=$(SolutionDir)\CmdTFileParser\bin\$(BuildConfig)
+MSBuildTask=$(SolutionDir)\MSBuildTasks\bin\$(BuildConfig)
 
 # Rules
 
@@ -38,9 +39,11 @@ $(ResultDirectoryName)\date.txt : $(LINQToTTreeLibDir)\LINQToTTreeLib.dll $(CmdG
 	if NOT EXIST $(ResultDirectoryName) mkdir $(ResultDirectoryName)
 	if NOT EXIST $(ResultDirectoryName)\bin mkdir $(ResultDirectoryName)\bin
 	if NOT EXIST $(ResultDirectoryName)\lib mkdir $(ResultDirectoryName)\lib
+	if NOT EXIST $(ResultDirectoryName)\build mkdir $(ResultDirectoryName)\build
 	copy $(LINQToTTreeLibDir) $(ResultDirectoryName)\lib
 	copy $(CmdGenerateLINQClassesDir) $(ResultDirectoryName)\bin
 	copy $(CmdTFileParser) $(ResultDirectoryName)\bin
+	copy $(MSBuildTask) $(ResultDirectoryName)\build
 	if not exist $(ResultDirectoryName)\AppData\Local\LINQToTTree\Config mkdir $(ResultDirectoryName)\AppData\Local\LINQToTTree\Config
 	copy $(SolutionDir)\LINQToTTreeLib\ConfigData\default.classmethodmappings $(ResultDirectoryName)\AppData\Local\LINQToTTree\Config
 	xcopy /Y "$(SolutionDir)\LINQToTTreeLib\InfrastructureSourceFiles" "$(ResultDirectoryName)\AppData\Local\LINQToTTree\InfrastructureSourceFiles\"
