@@ -39,7 +39,8 @@ $(ResultDirectoryName)\date.txt : $(LINQToTTreeLibDir)\LINQToTTreeLib.dll \
 		$(CmdGenerateLINQClassesDir)\CmdGenerateLINQClasses.exe \
 		$(CmdTFileParser)\CmdTFileParser.exe \
 		$(MSBuildTask)\MSBuildTasks.dll \
-		$(SolutionDir)\LINQToTTreeLib\Templates\TSelectorTemplate.cxx
+		$(SolutionDir)\LINQToTTreeLib\Templates\TSelectorTemplate.cxx \
+		$(SolutionDir)\LINQToTTreeLib\ConfigData\default.classmethodmappings
 	if NOT EXIST $(ResultDirectoryName) mkdir $(ResultDirectoryName)
 	if NOT EXIST $(ResultDirectoryName)\bin mkdir $(ResultDirectoryName)\bin
 	if NOT EXIST $(ResultDirectoryName)\lib mkdir $(ResultDirectoryName)\lib
