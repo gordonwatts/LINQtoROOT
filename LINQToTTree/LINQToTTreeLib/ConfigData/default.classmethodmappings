@@ -22,7 +22,7 @@ Math Atan(System.Double) => std::atan(double)
 Math Atan2(System.Double, double) => std::atan(double, double)
 
 Math Abs(System.Double) => std::abs(double)
-Math Abs(System.float) => std::abs(float)
+Math Abs(System.Single) => std::abs(float)
 Math Abs(System.Int32) => std::abs(int)
 
 Math Exp(System.Double) => std::exp(double)
@@ -38,9 +38,9 @@ Math Pow(System.Double, System.Double) => std::pow(double,double)
 
 include: algorithm
 Math Max(System.Double, System.Double) => std::max(double, double)
-Math Max(System.Float, System.Float) => std::max(float, float)
+Math Max(System.Single, System.Single) => std::max(float, float)
 Math Max(System.Int32, System.Int32) => std::max(int, int)
 
 Math Min(System.Double, System.Double) => std::min(double, double)
-Math Min(System.Float, System.Float) => std::min(float, float)
+Math Min(System.Single, System.Single) => std::min(float, float)
 Math Min(System.Int32, System.Int32) => std::min(int, int)
