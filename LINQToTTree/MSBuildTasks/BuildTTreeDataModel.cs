@@ -69,7 +69,7 @@ namespace MSBuildTasks
             }
             catch (Exception e)
             {
-                Log.LogError("ParseError", "ParseError", "ParseError", inputDM.ItemSpec, 0, 0, 0, 0, "Failed to parse");
+                Log.LogError("ParseError", "ParseError", "ParseError", inputDM.ItemSpec, 0, 0, 0, 0, "Failed to parse: " + e.Message);
             }
         }
     }
