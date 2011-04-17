@@ -35,7 +35,11 @@ $(SolutionDir)\$(ResultName)-$(BuildConfig).zip : $(ResultDirectoryName)\date.tx
 # Create the directory that we will be zipping
 #
 
-$(ResultDirectoryName)\date.txt : $(LINQToTTreeLibDir)\LINQToTTreeLib.dll $(CmdGenerateLINQClassesDir)\CmdGenerateLINQClasses.exe $(CmdTFileParser)\CmdTFileParser.exe
+$(ResultDirectoryName)\date.txt : $(LINQToTTreeLibDir)\LINQToTTreeLib.dll \
+		$(CmdGenerateLINQClassesDir)\CmdGenerateLINQClasses.exe \
+		$(CmdTFileParser)\CmdTFileParser.exe \
+		$(MSBuildTask)\MSBuildTasks.dll \
+		$(SolutionDir)\LINQToTTreeLib\Templates\TSelectorTemplate.cxx
 	if NOT EXIST $(ResultDirectoryName) mkdir $(ResultDirectoryName)
 	if NOT EXIST $(ResultDirectoryName)\bin mkdir $(ResultDirectoryName)\bin
 	if NOT EXIST $(ResultDirectoryName)\lib mkdir $(ResultDirectoryName)\lib
