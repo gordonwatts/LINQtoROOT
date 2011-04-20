@@ -147,6 +147,10 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Save a plot to a TDirectory. Return the plot so it can also be used in other
         /// places.
+        /// 
+        /// Temp Fix: We need to set the object owner so that this object won't be cleaned up during
+        /// GC, however, ROOT.NET doesn't support it yet. So instead we will just set it to null and
+        /// return null for now. To be fixed when we update ROOT.NET.
         /// </summary>
         /// <param name="hist"></param>
         /// <param name="dir"></param>
@@ -154,7 +158,8 @@ namespace LINQToTTreeLib
         public static ROOTNET.Interface.NTH1 SaveToROOTDirectory(this ROOTNET.Interface.NTH1 hist, ROOTNET.Interface.NTDirectory dir)
         {
             hist.SetDirectory(dir);
-            return hist;
+            hist.SetNull();
+            return null;
         }
     }
 }
