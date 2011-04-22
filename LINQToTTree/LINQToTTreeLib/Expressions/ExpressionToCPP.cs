@@ -405,7 +405,7 @@ namespace LINQToTTreeLib.Expressions
 
             var paramArgs = lambda.Parameters.Zip(expression.Arguments, (p, a) => Tuple.Create(p, a));
             var paramDefineToPopers = from pair in paramArgs
-                                      select _codeContext.Add(pair.Item1.Name, GetExpression(pair.Item2));
+                                      select _codeContext.Add(pair.Item1.Name, pair.Item2);
             var allParamDefineToPopers = paramDefineToPopers.ToArray();
 
             ///

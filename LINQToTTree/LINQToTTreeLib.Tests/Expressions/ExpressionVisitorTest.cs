@@ -617,6 +617,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
@@ -624,9 +625,15 @@ namespace LINQToTTreeLib
             return ExpressionToCPP.GetExpression(invoke, gc, cc, MEFUtilities.MEFContainer);
         }
 
-        class ResultIAT
+        class ResultIAT : IExpressionHolder
         {
+            public ResultIAT(Expression holder)
+            {
+                HeldExpression = holder;
+            }
             public float[] values;
+
+            public Expression HeldExpression { get; private set; }
         }
 
         class SourceMuonsIAT
