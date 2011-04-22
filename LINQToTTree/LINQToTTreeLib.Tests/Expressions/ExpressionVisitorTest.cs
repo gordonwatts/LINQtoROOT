@@ -623,5 +623,45 @@ namespace LINQToTTreeLib
 
             return ExpressionToCPP.GetExpression(invoke, gc, cc, MEFUtilities.MEFContainer);
         }
+
+        class ResultIAT
+        {
+            public float[] values;
+        }
+
+        class SourceMuonsIAT
+        {
+            [TTreeVariableGrouping()]
+            public float values;
+        }
+
+        [TranslateToClass(typeof(ResultIAT))]
+        class SourceIAT
+        {
+            [TTreeVariableGrouping()]
+            public SourceMuonsIAT[] muons;
+        }
+
+        [TestMethod]
+        public void TestInvokeAccrossTranslation()
+        {
+            ///
+            /// Make sure invoke works when the arguments and the resolved item ahve to be put together
+            /// in order to get the full story.
+            /// 
+
+            Expression<Func<SourceMuonsIAT, float>> accessor = m => m.values;
+
+            var sourceVar = Expression.Variable(typeof(SourceIAT), "main");
+            var allmuons = Expression.MakeMemberAccess(sourceVar, typeof(SourceIAT).GetMember("muons").First());
+            var oneMuon = Expression.ArrayIndex(allmuons, Expression.Constant(1));
+
+            var invoke = Expression.Invoke(accessor, oneMuon);
+
+            var result = CallBasicGetExpression(invoke);
+            Console.WriteLine("result: " + result.RawValue);
+
+            Assert.IsFalse(result.RawValue.Contains("muons"), "Result should not reference muons: " + result.RawValue);
+        }
     }
 }
