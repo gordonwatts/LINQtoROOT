@@ -27,15 +27,6 @@ namespace LINQToTTreeLib.Expressions
             {
                 cc = new CodeContext();
             }
-            var visitor = new ExpressionToCPP(ce, cc);
-            visitor.MEFContainer = container;
-
-            if (container != null)
-            {
-                CompositionBatch b = new CompositionBatch();
-                b.AddPart(visitor);
-                container.Compose(b);
-            }
 
             ///
             /// First, see if there are any parameter replacements that can be done out-of-band
@@ -55,8 +46,18 @@ namespace LINQToTTreeLib.Expressions
             }
 
             ///
-            /// Now, generate the C++ code
+            /// Finally, translate the expression directly into full blown C++ code.
             /// 
+
+            var visitor = new ExpressionToCPP(ce, cc);
+            visitor.MEFContainer = container;
+
+            if (container != null)
+            {
+                CompositionBatch b = new CompositionBatch();
+                b.AddPart(visitor);
+                container.Compose(b);
+            }
 
             visitor.VisitExpression(expr);
             return visitor.Result;
