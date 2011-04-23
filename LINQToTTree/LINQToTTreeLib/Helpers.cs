@@ -1,11 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib
 {
     public static class Helpers
     {
+        /// <summary>
+        /// Returns all files below the base directory whose name (including extension) match the regex pattern.
+        /// </summary>
+        /// <param name="baseDir"></param>
+        /// <param name="fileExtension"></param>
+        /// <returns></returns>
+        public static IEnumerable<FileInfo> FindAllFiles(this DirectoryInfo baseDir, string pattern)
+        {
+            var subfiles = from subdir in baseDir.EnumerateDirectories()
+                           from f in subdir.FindAllFiles(pattern)
+                           select f;
+
+            Regex matcher = new Regex(pattern);
+            var goodFiles = from f in baseDir.EnumerateFiles()
+                            where matcher.Match(f.Name).Success
+                            select f;
+
+            var allfiles = subfiles.Concat(goodFiles);
+
+            return allfiles;
+        }
+
         /// <summary>
         /// A helper function that allows one to pop this into our LINQ translation. This way h.Fill() can be done
         /// s.t. it returns h (and use the Aggregate function). This is translated magically by our translator!! and
