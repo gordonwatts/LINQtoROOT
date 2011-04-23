@@ -113,7 +113,11 @@ namespace DemoNtupleArrays
 
             (from m in btagMuons select m.mupt / 1000.0).Plot("btag_allmuon_pt", "p_{T} of any muon in the event", 100, -10.0, 100.0).SaveToROOTDirectory(output);
 
+            ///
+            /// And a 2D plot
+            /// 
 
+            btagMuons.Plot("btag_allmuon_pteta", "p_{T} vs \\eta for all muons in event", 100, 0.0, 100.0, 20, -4.0, 4.0, v => v.mupt / 1000.0, v => v.mueta).SaveToROOTDirectory(output);
 
             output.Write();
             output.Clone();
