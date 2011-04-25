@@ -39,6 +39,7 @@ $(ResultDirectoryName)\date.txt : $(LINQToTTreeLibDir)\LINQToTTreeLib.dll \
 		$(CmdGenerateLINQClassesDir)\CmdGenerateLINQClasses.exe \
 		$(CmdTFileParser)\CmdTFileParser.exe \
 		$(MSBuildTask)\MSBuildTasks.dll \
+		$(MSBuildTask)\..\..\LINQTargets.targets \
 		$(SolutionDir)\LINQToTTreeLib\Templates\TSelectorTemplate.cxx \
 		$(SolutionDir)\LINQToTTreeLib\ConfigData\default.classmethodmappings
 	if NOT EXIST $(ResultDirectoryName) mkdir $(ResultDirectoryName)
@@ -49,6 +50,7 @@ $(ResultDirectoryName)\date.txt : $(LINQToTTreeLibDir)\LINQToTTreeLib.dll \
 	copy $(CmdGenerateLINQClassesDir) $(ResultDirectoryName)\bin
 	copy $(CmdTFileParser) $(ResultDirectoryName)\bin
 	copy $(MSBuildTask) $(ResultDirectoryName)\build
+	copy $(MSBuildTask)\..\..\LINQTargets.targets $(ResultDirectoryName)\build
 	if not exist $(ResultDirectoryName)\AppData\Local\LINQToTTree\Config mkdir $(ResultDirectoryName)\AppData\Local\LINQToTTree\Config
 	copy $(SolutionDir)\LINQToTTreeLib\ConfigData\default.classmethodmappings $(ResultDirectoryName)\AppData\Local\LINQToTTree\Config
 	xcopy /Y "$(SolutionDir)\LINQToTTreeLib\InfrastructureSourceFiles" "$(ResultDirectoryName)\AppData\Local\LINQToTTree\InfrastructureSourceFiles\"
