@@ -44,7 +44,8 @@ namespace MSBuildTasks
 
             foreach (var p in pairedFiles)
             {
-                RenderDataModel(p.Item1, p.Item2);
+                if (!RenderDataModel(p.Item1, p.Item2))
+                    return false;
             }
 
             return true;
@@ -55,7 +56,7 @@ namespace MSBuildTasks
         /// </summary>
         /// <param name="iTaskItem"></param>
         /// <param name="iTaskItem_2"></param>
-        private void RenderDataModel(ITaskItem inputDM, ITaskItem outputFile)
+        private bool RenderDataModel(ITaskItem inputDM, ITaskItem outputFile)
         {
             try
             {
@@ -70,7 +71,10 @@ namespace MSBuildTasks
             catch (Exception e)
             {
                 Log.LogError("ParseError", "ParseError", "ParseError", inputDM.ItemSpec, 0, 0, 0, 0, "Failed to parse: " + e.Message);
+                return false;
             }
+
+            return true;
         }
     }
 }
