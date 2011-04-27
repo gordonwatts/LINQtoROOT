@@ -61,6 +61,15 @@ namespace TTreeClassGenerator
             }
 
             ///
+            /// See if we can track down all the class files...
+            /// 
+
+            foreach (var c in classSpec.Classes)
+            {
+                c.NtupleProxyPath = FindFileInDefaultPaths(c.NtupleProxyPath, inputXMLFile).FullName;
+            }
+
+            ///
             /// Now do the actual work!
             /// 
 
