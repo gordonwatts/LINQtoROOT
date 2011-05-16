@@ -19,7 +19,8 @@ namespace TTreeParser
         public DirectoryInfo ProxyGenerationLocation { get; set; }
 
         /// <summary>
-        /// Return all trees that are in a given directory
+        /// Return all trees that are in a given directory. Make sure that if we have multiple
+        /// cycles in the directory we only process the first one we encounter.
         /// </summary>
         /// <param name="dir"></param>
         /// <returns></returns>
@@ -28,6 +29,8 @@ namespace TTreeParser
             var converter = new ParseTTree();
             converter.ProxyGenerationLocation = ProxyGenerationLocation;
 
+            HashSet<string> seenTreeNames = new HashSet<string>();
+
             foreach (var key in dir.ListOfKeys.Cast<ROOTNET.Interface.NTKey>())
             {
                 var c = ROOTNET.NTClass.GetClass(key.GetClassName());
@@ -35,12 +38,16 @@ namespace TTreeParser
                 {
                     if (c.InheritsFrom("TTree"))
                     {
-                        var t = key.ReadObj() as ROOTNET.Interface.NTTree;
-                        if (t != null)
+                        if (!seenTreeNames.Contains(key.Name))
                         {
-                            foreach (var cshell in converter.GenerateClasses(t))
+                            seenTreeNames.Add(key.Name);
+                            var t = key.ReadObj() as ROOTNET.Interface.NTTree;
+                            if (t != null)
                             {
-                                yield return cshell;
+                                foreach (var cshell in converter.GenerateClasses(t))
+                                {
+                                    yield return cshell;
+                                }
                             }
                         }
                     }
