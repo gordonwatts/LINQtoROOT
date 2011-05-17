@@ -46,6 +46,13 @@ namespace TTreeParser
             var groupInfo = at.AnalyzeTTree(masterClass, tree, 100);
 
             ///
+            /// Any item that isn't an array should be added to the list and
+            /// put in the "ungrouped" array.
+            /// 
+
+            AddNonArrays(masterClass, groupInfo, "ungrouped");
+
+            ///
             /// Write out the user info
             /// 
 
@@ -59,12 +66,56 @@ namespace TTreeParser
         }
 
         /// <summary>
+        /// Find all non-arrays and add them to our ungrouped group. Since this
+        /// grouping is what drives the class generation, this is very much something
+        /// we have to do! :-)
+        /// </summary>
+        /// <param name="masterClass"></param>
+        /// <param name="groupToAddTo">What is the name of the group we should add them to?</param>
+        private void AddNonArrays(ROOTClassShell masterClass, List<ArrayGroup> groups, string groupToAddTo)
+        {
+            ///
+            /// First, get all non-arrays. Arrays are all declared with [] right now,
+            /// so we need only look for that.
+            /// 
+
+            var nonarrays = (from item in masterClass.Items
+                             where !item.ItemType.Contains("[]")
+                             select item.Name).ToArray();
+            if (nonarrays.Length == 0)
+                return;
+
+            ///
+            /// Turn the names into variables
+            /// 
+
+            var varInfo = nonarrays.ToVariableInfo();
+
+            ///
+            /// See if the group we should add them to exists.
+            ///
+
+            var grp = (from g in groups
+                       where g.Name == groupToAddTo
+                       select g).FirstOrDefault();
+            if (grp == null)
+            {
+                grp = new ArrayGroup() { Name = groupToAddTo, Variables = varInfo.ToArray() };
+                groups.Add(grp);
+            }
+            else
+            {
+                grp.Variables = (grp.Variables.Concat(varInfo)).ToArray();
+            }
+        }
+
+        /// <summary>
         /// Write out the user info file. This file contains things like group names, etc., that the user
         /// might want to change. Do not destroy the old one. Rather, move it out of the way!
         /// </summary>
         /// <param name="groupInfo"></param>
         /// <returns></returns>
-        private FileInfo WriteUserInfo(ArrayGroup[] groupInfo, string treeName)
+        private FileInfo WriteUserInfo(List<ArrayGroup> groupInfo, string treeName)
         {
             ///
             /// First job is to figure out where we will put the file. If there is one there already, then
@@ -86,7 +137,7 @@ namespace TTreeParser
             using (var writer = userInfoFile.CreateText())
             {
                 XmlSerializer output = new XmlSerializer(typeof(TTreeUserInfo));
-                var userInfo = new TTreeUserInfo() { Groups = groupInfo };
+                var userInfo = new TTreeUserInfo() { Groups = groupInfo.ToArray() };
                 output.Serialize(writer, userInfo);
                 writer.Close();
             }

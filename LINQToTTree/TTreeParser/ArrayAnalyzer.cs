@@ -16,7 +16,7 @@ namespace TTreeParser
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="eventsToAnalyze"># of events to analyze. Zero means the whole tree</param>
-        public ArrayGroup[] AnalyzeTTree(ROOTClassShell classinfo, ROOTNET.Interface.NTTree tree, int eventsToAnalyze)
+        public List<ArrayGroup> AnalyzeTTree(ROOTClassShell classinfo, ROOTNET.Interface.NTTree tree, int eventsToAnalyze)
         {
             if (tree == null)
                 throw new ArgumentNullException("tree must not be null");
@@ -72,7 +72,7 @@ namespace TTreeParser
         /// </summary>
         /// <param name="rawnumbers"></param>
         /// <returns></returns>
-        internal ArrayGroup[] DetermineGroups(Tuple<string, int>[][] rawnumbers)
+        internal List<ArrayGroup> DetermineGroups(Tuple<string, int>[][] rawnumbers)
         {
             ///
             /// Get grouping for a single event
@@ -219,7 +219,7 @@ namespace TTreeParser
                 index = index + 1;
             }
 
-            return aGroups.ToArray();
+            return aGroups;
         }
 
         /// <summary>

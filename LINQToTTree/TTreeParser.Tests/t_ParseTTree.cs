@@ -91,6 +91,30 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestSingleBasicTypeIsUngrouped()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            ///
+            /// See if the ntuple output file that groups things exists
+            /// 
+
+            using (var reader = File.OpenText(result[0].UserInfoPath))
+            {
+                var parser = new XmlSerializer(typeof(TTreeUserInfo));
+                var classInfo = parser.Deserialize(reader) as TTreeUserInfo;
+                Assert.IsNotNull(classInfo, "Unable to read back the user info");
+                Assert.AreEqual(1, classInfo.Groups.Length, "# of groups");
+                var grp = classInfo.Groups[0];
+                Assert.AreEqual("ungrouped", grp.Name, "group name");
+                Assert.AreEqual(5, grp.Variables.Length, "# of group variables");
+                Assert.AreEqual("item_", grp.Variables[0].NETName, "first variable name incorrect");
+            }
+        }
+
+        [TestMethod]
         public void GenerateClassesTestBadNameEvent()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateWithIntName("event");
