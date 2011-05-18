@@ -104,7 +104,7 @@
     <Compile Include="Statements\StatementIncrementInteger.cs" />
     <Compile Include="Statements\StatementInlineBlock.cs" />
     <Compile Include="Statements\StatementSimpleStatement.cs" />
-    <Compile Include="TranslatingExpressionVisitor.cs" />
+    <Compile Include="Expressions\TranslatingExpressionVisitor.cs" />
     <Compile Include="TTreeQueryExecutor.cs" />
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCall.cs" />
     <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValue.cs" />

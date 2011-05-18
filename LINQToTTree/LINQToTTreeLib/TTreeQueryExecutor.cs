@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -64,7 +65,7 @@ namespace LINQToTTreeLib
             /// 
 
             if (rootFiles == null || rootFiles.Length == 0)
-                throw new ArgumentException("Must have good root file");
+                throw new ArgumentException("The TTree Query Exector was given an empty array of root files - a valid root files is required to work!");
 
             var nullFiles = (from f in rootFiles
                              where f == null
@@ -268,15 +269,16 @@ namespace LINQToTTreeLib
             var final = ExtractResult<T>(result.ResultValue, key);
 
             ///
-            /// Ok, we are all done. Try to unload everything now.
+            /// Ok, we are all done. We leave the query directory floating around
+            /// until the next time we run, but reset it to null so we make the
+            /// "state" transition.
             /// 
 
-            UnloadAllModules();
-            if (CleanupQuery)
-            {
-                GetQueryDirectory().Delete(true);
-            }
             _queryDirectory = null;
+
+            ///
+            /// Return the result
+            /// 
 
             return final;
         }
@@ -446,49 +448,6 @@ namespace LINQToTTreeLib
                 throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - make sure command 'cl' is defined!!!");
 
             _loadedModuleNames.Add(templateRunner.Name.Replace(".", "_"));
-        }
-
-        /// <summary>
-        /// Unload all modules that we've loaded. This should have root release the lock on everything.
-        /// </summary>
-        private void UnloadAllModules()
-        {
-            ///
-            /// The library names are a simple "_" replacement. However, the full path must be given to the
-            /// unload function. To avoid any issues we just scan the library list that ROOT has right now, find the
-            /// ones we care about, and unload them. In general this is not a good idea, so when there are random
-            /// crashes this might be a good place to come first! :-)
-            /// 
-
-            var gSystem = ROOTNET.NTSystem.gSystem;
-            var libraries = gSystem.Libraries.Split(' ');
-            _loadedModuleNames.Reverse();
-
-            var full_lib_names = from m in _loadedModuleNames
-                                 from l in libraries
-                                 where l.Contains(m)
-                                 select l;
-
-            ///
-            /// Before unloading we need to make sure that we aren't
-            /// holding onto any pointers back to these guys!
-            /// 
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            ///
-            /// Now that we have them, unload them. Since repeated unloading
-            /// cases erorr messages to the concole, clear the list so we don't
-            /// make a mistake later.
-            /// 
-
-            foreach (var m in full_lib_names)
-            {
-                gSystem.Unload(m);
-            }
-
-            _loadedModuleNames.Clear();
         }
 
         /// <summary>
@@ -728,14 +687,31 @@ namespace LINQToTTreeLib
         private DirectoryInfo _queryDirectory;
 
         /// <summary>
-        /// Get the directory for the current query in progress.
+        /// When true, we will first attempt to delete all files in our main query directory
+        /// scratch space before creating and running everything.
+        /// </summary>
+        static bool gFirstQuerySetup = true;
+
+        /// <summary>
+        /// Get the directory for the current query in progress. If this is the first time
+        /// we attempt to first clean up from the last program run.
         /// </summary>
         /// <returns></returns>
         private DirectoryInfo GetQueryDirectory()
         {
             if (_queryDirectory == null)
             {
-                _queryDirectory = new DirectoryInfo(QueryCreationDirectory.FullName + "\\" + Path.GetRandomFileName());
+                var baseQueryDirectory = new DirectoryInfo(QueryCreationDirectory.FullName + "\\" + Process.GetCurrentProcess().ProcessName);
+                if (gFirstQuerySetup)
+                {
+                    gFirstQuerySetup = false;
+                    try
+                    {
+                        baseQueryDirectory.Delete(true);
+                    }
+                    catch { }
+                }
+                _queryDirectory = new DirectoryInfo(baseQueryDirectory.FullName + "\\" + Path.GetRandomFileName());
                 _queryDirectory.Create();
             }
             return _queryDirectory;

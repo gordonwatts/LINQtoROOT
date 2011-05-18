@@ -513,58 +513,11 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestQueryCleanup()
-        {
-            int numberOfIter = 10;
-
-            var rootFile = CreateFileOfInt(numberOfIter);
-
-            ///
-            /// Generate a proxy .h file that we can use
-            /// 
-
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
-
-            ///
-            /// Get a simple query we can "play" with
-            /// 
-
-            var q = new QueriableDummy<TestNtupe>();
-            var dude = q.Count();
-            var query = DummyQueryExectuor.LastQueryModel;
-
-            ///
-            /// Get the info out of the query executor
-            /// 
-
-            var d = TTreeQueryExecutor.QueryCreationDirectory;
-            int currentDirs = d.EnumerateDirectories().Count();
-            int currentFiles = d.EnumerateFiles().Count();
-
-            ///
-            /// Ok, now we can actually see if we can make it "go".
-            /// 
-
-            ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
-            int result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(numberOfIter, result);
-
-            ///
-            /// Ok - all went well. Now lets check again
-            /// 
-
-            d.Refresh();
-            Assert.AreEqual(currentDirs, d.EnumerateDirectories().Count(), "directories aren't stable");
-            Assert.AreEqual(currentFiles, d.EnumerateFiles().Count(), "files aren't stable");
-        }
-
-        [TestMethod]
         public void TestDualQueries()
         {
             RunSimpleCountResult(10);
             RunSimpleCountResult(20);
-        }
+       } 
 
         [TestMethod]
         public void TestDualQueryOnSameQueriable()
