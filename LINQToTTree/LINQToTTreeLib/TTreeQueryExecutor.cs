@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using NVelocity;
 using NVelocity.App;
-using Remotion.Data.Linq;
+using Remotion.Linq;
 
 namespace LINQToTTreeLib
 {

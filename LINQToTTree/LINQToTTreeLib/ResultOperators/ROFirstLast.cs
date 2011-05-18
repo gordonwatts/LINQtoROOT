@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using LinqToTTreeInterfacesLib;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq.Clauses.ResultOperators;
 using System.ComponentModel.Composition.Hosting;
+using LinqToTTreeInterfacesLib;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
 {

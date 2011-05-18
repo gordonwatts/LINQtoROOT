@@ -13,9 +13,10 @@ using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using Remotion.Data.Linq.Parsing.Structure;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
+using Remotion.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib
 {
@@ -40,7 +41,7 @@ namespace LINQToTTreeLib
 
         private QueryModel GetModel<T>(Expression<Func<T>> expr)
         {
-            var parser = new QueryParser();
+            var parser = QueryParser.CreateDefault();
             return parser.GetParsedQuery(expr.Body);
         }
 
@@ -48,6 +49,7 @@ namespace LINQToTTreeLib
         {
             public int run;
             public int[] vals;
+            public int[][] val2D;
         }
 
         [TestMethod]
@@ -100,7 +102,7 @@ namespace LINQToTTreeLib
                     || resultOperatorType == typeof(SkipResultOperator);
             }
 
-            public void ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            public void ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 ///
                 /// Look at the loop variable. It should be pointing to something that is going to loop
@@ -180,6 +182,34 @@ namespace LINQToTTreeLib
             MEFUtilities.Compose(qv);
 
             /// Note that the Assert takes place above, in the TakeOperatortestLoopVar test!
+
+            qv.VisitQueryModel(model);
+        }
+
+        [TestMethod]
+        public void TestSelectMany()
+        {
+            ///
+            /// Make sure we can also use SelectMany directly, rather than always having to do the
+            /// for loop.
+            /// 
+
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                select q.val2D.SelectMany(vs => vs).Count()
+                ).Aggregate(0, (acc, va) => acc + 1));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+
+            /// SelectMany is something that is auto-parsed by re-linq if we are using a recent
+            /// enough query.
 
             qv.VisitQueryModel(model);
         }

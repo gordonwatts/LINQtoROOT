@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using Remotion.Data.Linq.Clauses.Expressions;
-using Remotion.Data.Linq.Parsing;
+using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib.Expressions
 {

@@ -11,7 +11,7 @@
 using System;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq.Clauses.ResultOperators;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
 {

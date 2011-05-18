@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
-using Remotion.Data.Linq;
+using Remotion.Linq;
 
 namespace LINQToTTreeLib
 {

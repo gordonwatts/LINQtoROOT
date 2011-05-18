@@ -10,31 +10,29 @@
 // </auto-generated>
 using System;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 
 namespace LINQToTTreeLib.ResultOperators
 {
     public partial class TakeSkipOperatorsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ProcessResultOperatorThrowsArgumentException614()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    IVariable iVariable;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
-    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
-                                           (QueryModel)null, (IGeneratedCode)generatedCode);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ProcessResultOperatorThrowsArgumentException614()
+        {
+            VarInteger varInteger;
+            GeneratedCode generatedCode;
+            IVariable iVariable;
+            varInteger = new VarInteger();
+            generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+            ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+            iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null,
+                                                   (QueryModel)null, (IGeneratedCode)generatedCode);
+        }
     }
 }

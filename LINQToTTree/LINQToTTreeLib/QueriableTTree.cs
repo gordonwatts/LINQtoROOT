@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using Remotion.Data.Linq;
+using Remotion.Linq;
+using Remotion.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib
 {
@@ -16,7 +17,7 @@ namespace LINQToTTreeLib
         /// Runs on data in a single source file.
         /// </summary>
         public QueriableTTree(FileInfo rootFile, string treeName)
-            : base(new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
+            : base(QueryParser.CreateDefault(), new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
         {
             DefineExtraOperators();
         }
@@ -27,7 +28,7 @@ namespace LINQToTTreeLib
         /// Runs on data in a multiple source files.
         /// </summary>
         public QueriableTTree(FileInfo[] rootFiles, string treeName)
-            : base(new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
+            : base(QueryParser.CreateDefault(), new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
         {
             DefineExtraOperators();
         }

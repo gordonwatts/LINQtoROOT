@@ -1,8 +1,8 @@
 ﻿
 using System;
 using System.ComponentModel.Composition.Hosting;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 namespace LinqToTTreeInterfacesLib
 {
     public interface IQVCollectionResultOperator

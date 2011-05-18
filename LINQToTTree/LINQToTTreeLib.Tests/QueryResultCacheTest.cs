@@ -7,7 +7,7 @@ using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq;
+using Remotion.Linq;
 using ROOTNET.Interface;
 
 namespace LINQToTTreeLib

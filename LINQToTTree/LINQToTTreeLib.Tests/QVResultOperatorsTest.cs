@@ -2,12 +2,12 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel.Composition.Hosting;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -46,7 +46,7 @@ namespace LINQToTTreeLib.Utils
             }
 
 
-            public IVariable ProcessResultOperator(Remotion.Data.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Data.Linq.QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
+            public IVariable ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

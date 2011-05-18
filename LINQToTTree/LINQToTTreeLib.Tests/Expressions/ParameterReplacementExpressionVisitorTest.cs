@@ -4,8 +4,8 @@ using System.Linq.Expressions;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq.Clauses;
-using Remotion.Data.Linq.Clauses.Expressions;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {

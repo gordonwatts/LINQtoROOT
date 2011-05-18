@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using LINQToTTreeLib.CodeAttributes;
-using Remotion.Data.Linq.Parsing;
+using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib
 {
@@ -31,7 +31,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitExpression(Expression expression)
+        public override Expression VisitExpression(Expression expression)
         {
             ///
             /// Make sure this member reference is for a "leaf". For exmaple, if we have the valid expression

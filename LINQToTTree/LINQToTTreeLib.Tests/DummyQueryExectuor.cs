@@ -5,7 +5,7 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
-using Remotion.Data.Linq;
+using Remotion.Linq;
 
 namespace LINQToTTreeLib.Tests
 {

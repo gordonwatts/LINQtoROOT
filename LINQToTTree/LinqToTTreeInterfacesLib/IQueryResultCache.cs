@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Remotion.Data.Linq;
+using Remotion.Linq;
 
 namespace LinqToTTreeInterfacesLib
 {

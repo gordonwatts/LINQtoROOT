@@ -16,6 +16,6 @@
   <files>
     <file src="LINQToTTreeLib.dll" target="lib"/>
     <file src="LinqToTTreeInterfacesLib.dll" target="lib"/>
-    <file src="Remotion.Data.Linq.dll" target="lib"/>
+    <file src="Remotion.Linq.dll" target="lib"/>
   </files>
 </package>

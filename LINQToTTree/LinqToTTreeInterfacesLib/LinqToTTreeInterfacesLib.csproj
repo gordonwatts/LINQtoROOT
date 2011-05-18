@@ -59,9 +59,8 @@
     <Reference Include="libRIOWrapper">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libRIOWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Data.Linq, Version=1.13.41.2, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\RemotionRelinq_1.13.41.0\net-3.5\bin\debug\Remotion.Data.Linq.dll</HintPath>
+    <Reference Include="Remotion.Linq">
+      <HintPath>..\Relinq_1.13.102\net-3.5\bin\debug\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

@@ -10,10 +10,10 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using LINQToTTreeLib.ResultOperators;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.ResultOperators;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib
 {

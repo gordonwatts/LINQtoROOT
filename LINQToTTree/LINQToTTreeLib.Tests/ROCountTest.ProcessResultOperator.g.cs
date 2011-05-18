@@ -11,56 +11,56 @@
 // </auto-generated>
 using System;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.ResultOperators;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.ResultOperators;
+using Remotion.Linq;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib
 {
     public partial class ROCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException729()
-{
-    IVariable iVariable;
-    ROCount s0 = new ROCount();
-    iVariable = this.ProcessResultOperator
-                    (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedCode)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException972()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    IVariable iVariable;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    ROCount s0 = new ROCount();
-    iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null, 
-                                           (QueryModel)null, (IGeneratedCode)generatedCode);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROCountTest))]
-public void ProcessResultOperator44()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    IVariable iVariable;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    ROCount s0 = new ROCount();
-    CountResultOperator s1 = new CountResultOperator();
-    iVariable = this.ProcessResultOperator
-                    (s0, s1, (QueryModel)null, (IGeneratedCode)generatedCode);
-    Assert.IsNotNull((object)iVariable);
-    Assert.IsNotNull((object)s0);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ProcessResultOperatorThrowsArgumentNullException729()
+        {
+            IVariable iVariable;
+            ROCount s0 = new ROCount();
+            iVariable = this.ProcessResultOperator
+                            (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedCode)null);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ProcessResultOperatorThrowsArgumentNullException972()
+        {
+            VarInteger varInteger;
+            GeneratedCode generatedCode;
+            IVariable iVariable;
+            varInteger = new VarInteger();
+            generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+            ROCount s0 = new ROCount();
+            iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
+                                                   (QueryModel)null, (IGeneratedCode)generatedCode);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROCountTest))]
+        public void ProcessResultOperator44()
+        {
+            VarInteger varInteger;
+            GeneratedCode generatedCode;
+            IVariable iVariable;
+            varInteger = new VarInteger();
+            generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+            ROCount s0 = new ROCount();
+            CountResultOperator s1 = new CountResultOperator();
+            iVariable = this.ProcessResultOperator
+                            (s0, s1, (QueryModel)null, (IGeneratedCode)generatedCode);
+            Assert.IsNotNull((object)iVariable);
+            Assert.IsNotNull((object)s0);
+        }
     }
 }

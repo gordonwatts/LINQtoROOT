@@ -3,10 +3,10 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Utils;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 
 namespace LINQToTTreeLib
 {

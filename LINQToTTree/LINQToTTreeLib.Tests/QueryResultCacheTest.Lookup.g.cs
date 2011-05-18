@@ -10,25 +10,25 @@
 // </auto-generated>
 using System;
 using System.IO;
-using Remotion.Data.Linq;
 using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Linq;
 
 namespace LINQToTTreeLib
 {
     public partial class QueryResultCacheTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(QueryResultCacheTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void LookupThrowsArgumentException724()
-{
-    QueryResultCache queryResultCache;
-    Tuple<bool, int> tuple;
-    queryResultCache = new QueryResultCache();
-    tuple = this.Lookup<int>(queryResultCache, (FileInfo)null, (string)null, 
-                             (object[])null, (QueryModel)null, (IVariableSaver)null);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(QueryResultCacheTest))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void LookupThrowsArgumentException724()
+        {
+            QueryResultCache queryResultCache;
+            Tuple<bool, int> tuple;
+            queryResultCache = new QueryResultCache();
+            tuple = this.Lookup<int>(queryResultCache, (FileInfo)null, (string)null,
+                                     (object[])null, (QueryModel)null, (IVariableSaver)null);
+        }
     }
 }

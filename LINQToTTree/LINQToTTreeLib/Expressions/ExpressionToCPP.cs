@@ -8,9 +8,9 @@ using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Variables;
-using Remotion.Data.Linq.Clauses.Expressions;
-using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
-using Remotion.Data.Linq.Parsing;
+using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Clauses.ExpressionTreeVisitors;
+using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib.Expressions
 {

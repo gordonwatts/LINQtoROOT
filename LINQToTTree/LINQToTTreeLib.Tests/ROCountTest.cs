@@ -3,15 +3,15 @@
 using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.ResultOperators;
+using Remotion.Linq;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib
 {

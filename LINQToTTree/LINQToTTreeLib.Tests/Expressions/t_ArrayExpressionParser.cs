@@ -7,9 +7,9 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Data.Linq;
-using Remotion.Data.Linq.Clauses.Expressions;
-using Remotion.Data.Linq.Parsing.Structure;
+using Remotion.Linq;
+using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -80,7 +80,7 @@ namespace LINQToTTreeLib.Tests
 
         private QueryModel GetModel<T>(Expression<Func<T>> expr)
         {
-            var parser = new QueryParser();
+            var parser = QueryParser.CreateDefault();
             return parser.GetParsedQuery(expr.Body);
         }
 

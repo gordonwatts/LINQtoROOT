@@ -1,7 +1,6 @@
-using System;
-using Microsoft.Pex.Framework;
-using Remotion.Data.Linq.Clauses.ResultOperators;
 using System.Linq.Expressions;
+using Microsoft.Pex.Framework;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace Remotion.Data.Linq.Clauses.ResultOperators
 {

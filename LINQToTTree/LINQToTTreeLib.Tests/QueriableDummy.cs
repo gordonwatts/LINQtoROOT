@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Remotion.Data.Linq;
+﻿using System.Linq;
 using System.Linq.Expressions;
+using Remotion.Linq;
+using Remotion.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -17,7 +15,7 @@ namespace LINQToTTreeLib.Tests
         /// Get ourselves setup!
         /// </summary>
         public QueriableDummy()
-            : base(new DummyQueryExectuor())
+            : base(QueryParser.CreateDefault(), new DummyQueryExectuor())
         {
         }
 

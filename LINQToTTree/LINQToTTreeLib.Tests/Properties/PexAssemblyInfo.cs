@@ -1,19 +1,19 @@
+using System;
+using System.Runtime.CompilerServices;
+using LINQToTTreeLib;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
 // <copyright file="PexAssemblyInfo.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using Microsoft.Pex.Framework.Coverage;
 using Microsoft.Pex.Framework.Creatable;
 using Microsoft.Pex.Framework.Instrumentation;
 using Microsoft.Pex.Framework.Moles;
 using Microsoft.Pex.Framework.Settings;
+using Microsoft.Pex.Framework.Suppression;
+using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.Pex.Linq;
-using Microsoft.Pex.Framework.Using;
-using System;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using LINQToTTreeLib;
-using Microsoft.Pex.Framework.Suppression;
-using System.Runtime.CompilerServices;
+using Remotion.Linq.Clauses.ResultOperators;
 using ROOTNET;
 
 // Microsoft.Pex.Framework.Settings
