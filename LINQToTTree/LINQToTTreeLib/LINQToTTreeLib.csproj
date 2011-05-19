@@ -94,7 +94,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueriableTTree.cs" />
     <Compile Include="QueryResultCache.cs" />
-    <Compile Include="QueryVisitor.cs" />
+    <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
     <Compile Include="ResultOperators\ROAggregate.cs" />
     <Compile Include="ResultOperators\ROCount.cs" />
