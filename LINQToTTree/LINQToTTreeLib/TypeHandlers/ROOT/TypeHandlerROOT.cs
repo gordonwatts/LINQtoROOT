@@ -53,10 +53,6 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType, rootObject.Name);
 
             ///
-            /// Calculate the hash for this object, which will be required to figure out if we've used this already
-            /// 
-
-            ///
             /// Next we need to make sure this root object will be queued for sending accross the wire.
             /// 
 
