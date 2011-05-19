@@ -155,6 +155,7 @@
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
     </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
+    <Compile Include="Expressions\ExpressionStringConverterTest.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
     <Compile Include="Expressions\ExpressionVisitorMethodCallTests.cs" />
     <Compile Include="Expressions\ExpressionVisitorTest.cs" />
@@ -217,6 +218,13 @@
     <Compile Include="QueryResultCacheTest.cs" />
     <Compile Include="QueryResultCacheTest.Lookup.g.cs">
       <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryVisitors\FormattingQueryVisitorTest.cs" />
+    <Compile Include="QueryVisitors\FormattingQueryVisitorTest.Format.g.cs">
+      <DependentUpon>FormattingQueryVisitorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="QueryVisitors\FormattingQueryVisitorTest.TestQueryDoesntCrash.g.cs">
+      <DependentUpon>FormattingQueryVisitorTest.cs</DependentUpon>
     </Compile>
     <Compile Include="QueryVisitorTest.cs" />
     <Compile Include="QVResultOperatorsTest.Constructor.g.cs">

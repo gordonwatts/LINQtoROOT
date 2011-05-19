@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 
@@ -91,7 +92,7 @@ namespace LINQToTTreeLib
             /// Text for the query
             /// 
 
-            result.QueryText = query.ToString();
+            result.QueryText = FormattingQueryVisitor.Format(query);
 
             ///
             /// And the directory name - we use the first name of the file.
@@ -109,7 +110,7 @@ namespace LINQToTTreeLib
             /// And now the file that the query should be cached in
             /// 
 
-            var queryHash = query.ToString().GetHashCode();
+            var queryHash = result.QueryText.GetHashCode();
             string queryNameBase = @"\\query " + queryHash.ToString() + "-" + CalcObjectHash(inputObjects).ToString();
             result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + ".root");
 

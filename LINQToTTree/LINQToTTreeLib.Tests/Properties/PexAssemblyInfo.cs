@@ -15,6 +15,7 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.Pex.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
 using ROOTNET;
+using LINQToTTreeLib.Utils;
 
 // Microsoft.Pex.Framework.Settings
 [assembly: PexAssemblySettings(TestFramework = "VisualStudioUnitTest")]
@@ -54,3 +55,6 @@ using ROOTNET;
 [assembly: PexAssemblyUnderTest("TTreeParser")]
 [assembly: PexUseType(typeof(NTObject))]
 [assembly: PexSuppressUninstrumentedMethodFromType(typeof(Buffer))]
+[assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.DummyQueryExectuor", "GlobalInitalized")]
+[assembly: PexSuppressStaticFieldStore(typeof(TypeUtils), "_variableNameCounter")]
+[assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.DummyQueryExectuor", "<FinalResult>k__BackingField")]

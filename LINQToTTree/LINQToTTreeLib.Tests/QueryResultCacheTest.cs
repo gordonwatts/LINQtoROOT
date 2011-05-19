@@ -30,6 +30,7 @@ namespace LINQToTTreeLib
         public void TestInit()
         {
             MEFUtilities.MyClassInit();
+            MEFUtilities.AddPart(new TypeHandlers.TypeHandlerConvert());
             DummyQueryExectuor.GlobalInitalized = false;
             QueryResultCacheTest.SetupCacheDir();
         }
@@ -174,6 +175,31 @@ namespace LINQToTTreeLib
                              select d;
                 var c = result.Count();
 
+                return DummyQueryExectuor.LastQueryModel;
+            }
+
+            if (queryIndex == 2)
+            {
+                var q = new QueriableDummy<ntup>();
+                var result = from d in q
+                             select d.run;
+                var r = result.Plot("hi", "there", 20, 0.0, 10.0);
+                return DummyQueryExectuor.LastQueryModel;
+            }
+            if (queryIndex == 3)
+            {
+                var q = new QueriableDummy<ntup>();
+                var result = from d in q
+                             select d.run;
+                var r = result.Plot("hi", "there", 40, 0.0, 10.0);
+                return DummyQueryExectuor.LastQueryModel;
+            }
+            if (queryIndex == 4)
+            {
+                var q = new QueriableDummy<ntup>();
+                var result = from d in q
+                             select d.run;
+                var r = result.Plot("hi1", "there is no sppon", 20, 0.0, 10.0);
                 return DummyQueryExectuor.LastQueryModel;
             }
 
@@ -369,6 +395,54 @@ namespace LINQToTTreeLib
 
             var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
             Assert.IsFalse(r.Item1, "Cache should have been there");
+        }
+
+        [TestMethod]
+        public void TestForDiffResultHistos()
+        {
+            var f = MakeRootFile("TestForDiifResultHistos");
+            var query = MakeQuery(2);
+
+            var inputs = new object[0];
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+
+            var q = new QueryResultCache();
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, query), h);
+
+            /// And make sure the lookup works now - make a different query, which is the same
+            /// but with a slightly different query guy.
+
+            var query1 = MakeQuery(3);
+            var r = Lookup<int>(q, f, "test", new object[0], query1, new DummySaver());
+            Assert.IsFalse(r.Item1, "Unexpected cache hit");
+        }
+
+        [TestMethod]
+        public void TestForSameResultHistosDiffNameTitle()
+        {
+            var f = MakeRootFile("TestForDiifResultHistos");
+            var query = MakeQuery(2);
+
+            var inputs = new object[0];
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+
+            var q = new QueryResultCache();
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, query), h);
+
+            /// And make sure the lookup works now - make a different query, which is the same
+            /// but with a slightly different query guy.
+
+            var query1 = MakeQuery(4);
+            var r = Lookup<int>(q, f, "test", new object[0], query1, new DummySaver());
+            Assert.IsTrue(r.Item1, "Expected a cache hit");
         }
 
         [TestMethod]
