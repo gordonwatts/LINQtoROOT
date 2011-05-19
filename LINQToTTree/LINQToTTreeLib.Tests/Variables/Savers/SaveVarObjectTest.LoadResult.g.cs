@@ -13,6 +13,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ROOTNET.Interface;
+using ROOTNET;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -25,23 +26,23 @@ namespace LINQToTTreeLib.Variables.Savers
         {
             int i;
             SaveVarObject s0 = new SaveVarObject();
-            i = this.LoadResult<int>(s0, (IVariable)null, (NTObject)null);
+            i = this.LoadResult<int>(s0, (IVariable)null, (ROOTNET.Interface.NTObject)null);
         }
-        [TestMethod]
-        [PexGeneratedBy(typeof(SaveVarObjectTest))]
-        [ExpectedException(typeof(ArgumentException))]
-        public void LoadResultThrowsArgumentException828()
-        {
-            using (PexDisposableContext disposables = PexDisposableContext.Create())
-            {
-                NTObject nTObject;
-                int i;
-                nTObject = ROOTNET.NTObjectFactory.Create();
-                disposables.Add((IDisposable)nTObject);
-                SaveVarObject s0 = new SaveVarObject();
-                i = this.LoadResult<int>(s0, (IVariable)null, (NTObject)nTObject);
-                disposables.Dispose();
-            }
-        }
+[TestMethod]
+[PexGeneratedBy(typeof(SaveVarObjectTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void LoadResultThrowsArgumentException640()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+        ROOTNET.Interface.NTObject nTObject;
+      int i;
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      SaveVarObject s0 = new SaveVarObject();
+      i = this.LoadResult<int>(s0, (IVariable)null, (ROOTNET.Interface.NTObject)nTObject);
+      disposables.Dispose();
+    }
+}
     }
 }
