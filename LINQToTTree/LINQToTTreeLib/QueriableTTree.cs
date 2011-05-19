@@ -17,9 +17,8 @@ namespace LINQToTTreeLib
         /// Runs on data in a single source file.
         /// </summary>
         public QueriableTTree(FileInfo rootFile, string treeName)
-            : base(QueryParser.CreateDefault(), new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
+            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
         {
-            DefineExtraOperators();
         }
 
         /// <summary>
@@ -28,9 +27,8 @@ namespace LINQToTTreeLib
         /// Runs on data in a multiple source files.
         /// </summary>
         public QueriableTTree(FileInfo[] rootFiles, string treeName)
-            : base(QueryParser.CreateDefault(), new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
+            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
         {
-            DefineExtraOperators();
         }
 
         /// <summary>
@@ -71,14 +69,20 @@ namespace LINQToTTreeLib
         public QueriableTTree(IQueryProvider provider, Expression expression)
             : base(provider, expression)
         {
-            DefineExtraOperators();
         }
 
         /// <summary>
-        /// Define new operators that we want this version of re-linq to look for and correctly deal with.
+        /// Create the parser we want to use to parse the LINQ query. If we need to add
+        /// some operators or other custom things into the parser, this is where it is done.
+        /// See https://www.re-motion.org/jira/browse/RM-3724 for sample code.
         /// </summary>
-        private void DefineExtraOperators()
+        private static IQueryParser CreateLINQToTTreeParser()
         {
+            ///
+            /// Right now we are not doing anything special, so just do the default!
+            /// 
+
+            return QueryParser.CreateDefault();
             ///(this.Provider as DefaultQueryProvider).ExpressionTreeParser.NodeTypeRegistry.Register(xxx.SupportedMethods, typeof(xxx));
         }
     }
