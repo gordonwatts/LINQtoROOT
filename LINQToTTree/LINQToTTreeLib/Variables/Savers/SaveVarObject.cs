@@ -74,7 +74,14 @@ namespace LINQToTTreeLib.Variables.Savers
                 throw new InvalidOperationException("iVariable must be a ROOTObjectCopiedValue!");
 
             var result = named.Clone() as ROOTNET.Interface.NTNamed;
+
+            ///
+            /// Restore name and title - which might be different since our cache is blind
+            /// to those things.
+            /// 
+
             result.Name = rootObjInfo.OriginalName;
+            result.Title = rootObjInfo.OriginalTitle;
 
             return (T)result;
         }

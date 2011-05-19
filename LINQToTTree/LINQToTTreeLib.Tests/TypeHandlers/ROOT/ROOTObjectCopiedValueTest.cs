@@ -23,11 +23,12 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         )
         {
             ROOTObjectCopiedValue target
-               = new ROOTObjectCopiedValue(varName, rootType, CPPType, origname);
+               = new ROOTObjectCopiedValue(varName, rootType, CPPType, origname, "dummy title");
 
             Assert.AreEqual(rootType, target.Type, "reported Type incorrect");
             Assert.AreEqual("LoadFromInputList<" + CPPType + ">(\"" + varName + "\")", target.RawValue, "loader string incorrect");
             Assert.AreEqual(origname, target.OriginalName, "original name");
+            Assert.AreEqual("dummy title", target.OriginalTitle, "title bad");
 
             return target;
         }
