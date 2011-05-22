@@ -12,6 +12,7 @@ namespace LINQToTTreeLib.Tests
     {
         public int run;
     }
+
     /// <summary>
     /// Test top level queires of various sorts!
     /// </summary>
