@@ -1,10 +1,7 @@
 // <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -30,6 +27,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             MEFUtilities.AddPart(new TypeHandlers.TypeHandlerConvert());
             MEFUtilities.AddPart(new ROFirstLast());
+            MEFUtilities.AddPart(new ROAggregate());
         }
 
         [TestCleanup]
@@ -62,51 +60,6 @@ namespace LINQToTTreeLib.ResultOperators
                                    (resultOperator, queryModel, _codeEnv, _codeContext, container);
             return result;
             // TODO: add assertions to method ROFirstLastTest.ProcessResultOperator(ROFirstLast, ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)
-        }
-
-        [TranslateToClass(typeof(targetntupBase))]
-        public class ntupBase
-        {
-            [TTreeVariableGrouping]
-            public PV[] PVs;
-        }
-
-        public class PV
-        {
-            [TTreeVariableGrouping]
-            public int nTracks;
-        }
-
-        public class targetntupBase : IExpressionHolder
-        {
-            public targetntupBase(Expression h)
-            {
-
-            }
-            public int[] nTracks;
-
-            public System.Linq.Expressions.Expression HeldExpression
-            {
-                get { throw new NotImplementedException(); }
-            }
-        }
-
-        [TestMethod]
-        public void TestFirstSecondVarReplacement()
-        {
-            /// A bug encountered outside - we are (were, I hope!) doing something incorrect with
-            /// our variable replacement. This re-creates the bug.
-
-            var q = new QueriableDummy<ntupBase>();
-            var result = from d in q
-                         select d.PVs.First();
-
-            var h = result.Select(pv => pv.nTracks).Plot("hi", "there", 10, 0.0, 10.0);
-
-            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
-            var res = DummyQueryExectuor.FinalResult;
-
-            Assert.Inconclusive("not done yet");
         }
     }
 }

@@ -209,5 +209,53 @@ namespace LINQToTTreeLib.ResultOperators
             Console.WriteLine("Found line '{0}'", filline);
             Assert.IsFalse(filline.Contains("stuff"), "The stuff should have been translated away '" + filline + "'");
         }
+
+        /// <summary>
+        /// Objects to test for query with some complex arguments in the aggregate.
+        /// </summary>
+        [TranslateToClass(typeof(targetntupBase))]
+        public class ntupBase
+        {
+            [TTreeVariableGrouping]
+            public PV[] PVs;
+        }
+
+        public class PV
+        {
+            [TTreeVariableGrouping]
+            public int nTracks;
+        }
+
+        public class targetntupBase : IExpressionHolder
+        {
+            public targetntupBase(Expression h)
+            {
+
+            }
+            public int[] nTracks;
+
+            public System.Linq.Expressions.Expression HeldExpression
+            {
+                get { throw new NotImplementedException(); }
+            }
+        }
+
+        [TestMethod]
+        public void TestComplexArgumentsToAggregetViaSelect()
+        {
+            /// A bug encountered outside - we are (were, I hope!) doing something incorrect with
+            /// our variable replacement. This re-creates the bug.
+
+            var q = new QueriableDummy<ntupBase>();
+            var result = from d in q
+                         select d.PVs.First();
+
+            var h = result.Select(pv => pv.nTracks).Plot("hi", "there", 10, 0.0, 10.0);
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            Assert.Inconclusive("not done yet");
+        }
     }
 }
