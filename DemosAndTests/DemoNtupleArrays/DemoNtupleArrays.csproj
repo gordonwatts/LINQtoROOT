@@ -49,8 +49,8 @@
     <Reference Include="LINQToTTreeLib">
       <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Data.Linq">
-      <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\Remotion.Data.Linq.dll</HintPath>
+    <Reference Include="Remotion.Linq">
+      <HintPath>..\..\LINQToTTree\Libraries\Remotion\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
