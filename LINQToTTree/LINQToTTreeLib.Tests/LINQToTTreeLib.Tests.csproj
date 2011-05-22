@@ -244,7 +244,13 @@
       <DependentUpon>ROAggregateTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\ROAggregateTest.cs" />
+    <Compile Include="ResultOperators\ROFirstLastTest.CanHandle.g.cs">
+      <DependentUpon>ROFirstLastTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\ROFirstLastTest.cs" />
+    <Compile Include="ResultOperators\ROFirstLastTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROFirstLastTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>
