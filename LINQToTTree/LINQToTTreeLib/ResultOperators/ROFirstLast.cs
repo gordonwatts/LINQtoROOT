@@ -64,7 +64,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// valid.
             /// 
 
-            return null;
+            throw new NotImplementedException();
         }
     }
 }
