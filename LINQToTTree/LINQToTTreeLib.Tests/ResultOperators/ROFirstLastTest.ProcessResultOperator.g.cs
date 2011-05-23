@@ -9,56 +9,27 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
-using LinqToTTreeInterfacesLib;
-using Remotion.Linq.Clauses;
-using Remotion.Linq;
 using System.ComponentModel.Composition.Hosting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework.Generated;
-using Remotion.Linq.Clauses.ResultOperators;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 
 namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROFirstLastTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException135()
-{
-    IVariable iVariable;
-    ROFirstLast s0 = new ROFirstLast();
-    iVariable =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
-                                 (IGeneratedCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-public void ProcessResultOperator635()
-{
-    LastResultOperator lastResultOperator;
-    IVariable iVariable;
-    lastResultOperator = new LastResultOperator(false);
-    ROFirstLast s0 = new ROFirstLast();
-    iVariable = this.ProcessResultOperator
-                    (s0, (ResultOperatorBase)lastResultOperator, (QueryModel)null, 
-                     (IGeneratedCode)null, (ICodeContext)null, (CompositionContainer)null);
-    Assert.IsNull((object)iVariable);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-public void ProcessResultOperator80()
-{
-    FirstResultOperator firstResultOperator;
-    IVariable iVariable;
-    firstResultOperator = new FirstResultOperator(false);
-    ROFirstLast s0 = new ROFirstLast();
-    iVariable = this.ProcessResultOperator
-                    (s0, (ResultOperatorBase)firstResultOperator, (QueryModel)null, 
-                     (IGeneratedCode)null, (ICodeContext)null, (CompositionContainer)null);
-    Assert.IsNull((object)iVariable);
-    Assert.IsNotNull((object)s0);
-}
+        [TestMethod]
+        [PexGeneratedBy(typeof(ROFirstLastTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ProcessResultOperatorThrowsArgumentNullException135()
+        {
+            IVariable iVariable;
+            ROFirstLast s0 = new ROFirstLast();
+            iVariable =
+              this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null,
+                                         (IGeneratedCode)null, (ICodeContext)null, (CompositionContainer)null);
+        }
     }
 }

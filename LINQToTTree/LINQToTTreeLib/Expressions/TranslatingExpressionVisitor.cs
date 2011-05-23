@@ -78,6 +78,15 @@ namespace LINQToTTreeLib
                 return expression;
 
             ///
+            /// If this is an object member on a sub-query expression, then it is too early for
+            /// us to look at it. It will come back through here when it gets translated by
+            /// lower level loop unroller code.
+            /// 
+
+            if (expression.Expression is Remotion.Linq.Clauses.Expressions.SubQueryExpression)
+                return expression;
+
+            ///
             /// See if the source has a "translated-to" class on it?
             /// 
 

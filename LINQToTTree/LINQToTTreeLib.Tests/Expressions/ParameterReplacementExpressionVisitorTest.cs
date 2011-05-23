@@ -1,6 +1,7 @@
 // <copyright file="ParameterReplacementExpressionVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Linq.Expressions;
+using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,6 +17,19 @@ namespace LINQToTTreeLib.Expressions
     [TestClass]
     public partial class ParameterReplacementExpressionVisitorTest
     {
+        [TestInitialize]
+        public void TestInit()
+        {
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         [TestMethod]
         public void TestNoReplacement()
         {
@@ -138,6 +152,49 @@ namespace LINQToTTreeLib.Expressions
             Assert.AreEqual(typeof(int), asp.Type, "bad type coming back");
             Assert.AreEqual("fork", asp.Name, "variable name");
         }
+
+        /// <summary>
+        /// Helper classes for the next test.
+        /// </summary>
+        public class TestSubExpressionBuriedArgumentClass
+        {
+            public TestSubExpressionBuriedArgumentPVClass[] PVs;
+        }
+
+        public class TestSubExpressionBuriedArgumentPVClass
+        {
+            public int nTracks;
+        }
+
+#if false
+        [TestMethod]
+        public void TestSubExpressionBuriedArgument()
+        {
+            ////
+            /// This is a regression we found in code. Bummer. There seems to be a problem with
+            /// doing parameter replacement that is a subquery expression.
+            /// 
+
+            var cc = new CodeContext();
+
+            ///
+            /// Create the sub query expression that is
+            /// d.PVs => First() - so take the first of an array.
+            /// To create the sub query expression we need a query expression!
+            /// We then thake .nTracks, and that becomes the argubment "v".
+            /// 
+
+            var q = new QueriableDummy<TestSubExpressionBuriedArgumentClass>();
+            var result = (from d in q
+                          select d.PVs.First()).Count();
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var squery = qm.SelectClause.Selector as SubQueryExpression;
+            var ntracks = Expression.MakeMemberAccess(squery, typeof(TestSubExpressionBuriedArgumentPVClass).GetMember("nTracks").First());
+            Console.WriteLine("The internal subquery ntrack expression: {0}", ntracks.ToString());
+            Console.WriteLine("And the query model for the squery expression above is {0}.", squery.QueryModel.ToString());
+            Assert.Inconclusive();
+        }
+#endif
 
         class testLambdaSimple
         {

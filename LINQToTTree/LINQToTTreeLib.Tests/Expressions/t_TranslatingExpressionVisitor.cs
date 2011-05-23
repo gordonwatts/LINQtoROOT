@@ -16,6 +16,18 @@ namespace LINQToTTreeLib.Tests
     public class TestTranslatingExpressionVisitor
     {
 
+        [TestInitialize]
+        public void TestInit()
+        {
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
 
         private TestContext testContextInstance;
 
@@ -741,6 +753,61 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsTrue(result.ToString().Contains(".specialIndex[0]]"), "missign the special index reference");
             Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
+        }
+
+        /// <summary>
+        /// Helper classes for the next test.
+        /// </summary>
+        [TranslateToClass(typeof(TestSubExpressionBuriedArgumentClassDest))]
+        public class TestSubExpressionBuriedArgumentClass
+        {
+            [TTreeVariableGrouping]
+            public TestSubExpressionBuriedArgumentPVClass[] PVs;
+        }
+
+        public class TestSubExpressionBuriedArgumentPVClass
+        {
+            [TTreeVariableGrouping]
+            public int nTracks;
+        }
+
+        public class TestSubExpressionBuriedArgumentClassDest
+        {
+            public TestSubExpressionBuriedArgumentClassDest(Expression h)
+            { }
+            public int[] nTracks;
+        }
+
+        [TestMethod]
+        public void TestNoTranslateSubQueryExpression()
+        {
+            ////
+            /// This is a regression we found in code. Bummer. There seems to be a problem with
+            /// doing parameter replacement that is a subquery expression.
+            /// 
+
+            var cc = new CodeContext();
+
+            ///
+            /// Create the sub query expression that is
+            /// d.PVs => First() - so take the first of an array.
+            /// To create the sub query expression we need a query expression!
+            /// We then thake .nTracks, and that becomes the argubment "v".
+            /// 
+
+            var q = new QueriableDummy<TestSubExpressionBuriedArgumentClass>();
+            var result = (from d in q
+                          select d.PVs.First()).Count();
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var squery = qm.SelectClause.Selector as Remotion.Linq.Clauses.Expressions.SubQueryExpression;
+            var ntracks = Expression.MakeMemberAccess(squery, typeof(TestSubExpressionBuriedArgumentPVClass).GetMember("nTracks").First());
+            Console.WriteLine("The internal subquery ntrack expression: {0}", ntracks.ToString());
+            Console.WriteLine("And the query model for the squery expression above is {0}.", squery.QueryModel.ToString());
+
+            string initialDesc = ntracks.ToString();
+
+            var exprTans = TranslatingExpressionVisitor.Translate(ntracks);
+            Assert.AreEqual(initialDesc, exprTans.ToString(), "shouldn't have touched it");
         }
     }
 }

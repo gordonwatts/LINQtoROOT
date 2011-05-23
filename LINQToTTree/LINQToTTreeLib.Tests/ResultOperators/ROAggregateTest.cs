@@ -26,6 +26,7 @@ namespace LINQToTTreeLib.ResultOperators
         public void TestInit()
         {
             MEFUtilities.MyClassInit();
+            MEFUtilities.AddPart(new TypeHandlers.TypeHandlerConvert());
             DummyQueryExectuor.GlobalInitalized = false;
         }
 
@@ -240,6 +241,7 @@ namespace LINQToTTreeLib.ResultOperators
             }
         }
 
+#if false
         [TestMethod]
         public void TestComplexArgumentsToAggregetViaSelect()
         {
@@ -257,5 +259,6 @@ namespace LINQToTTreeLib.ResultOperators
 
             Assert.Inconclusive("not done yet");
         }
+#endif
     }
 }
