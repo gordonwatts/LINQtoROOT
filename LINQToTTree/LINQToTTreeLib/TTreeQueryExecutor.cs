@@ -392,7 +392,7 @@ namespace LINQToTTreeLib
 
             var cls = ROOTNET.NTClass.GetClass(tSelectorClassName);
             if (cls == null)
-                throw new InvalidOperationException("Unable to load class '" + tSelectorClassName + "' - can't run ntuple query");
+                throw new InvalidOperationException("Unable find class '" + tSelectorClassName + "' in the ROOT TClass registry that was just successfully compiled - can't run ntuple query - major inconsistency");
 
             var selector = cls.New() as ROOTNET.Interface.NTSelector;
 
