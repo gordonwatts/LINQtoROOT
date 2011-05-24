@@ -397,6 +397,12 @@ namespace TTreeClassGenerator
 
             foreach (var grp in tTreeUserInfo.Groups.Where(g => g.Name != "ungrouped"))
             {
+                if (!string.IsNullOrWhiteSpace(grp.Comment))
+                {
+                    output.WriteLine("    /// <summary>");
+                    output.WriteLine("    /// {0}", grp.Comment);
+                    output.WriteLine("    /// </summary>");
+                }
                 output.WriteLine("    [TTreeVariableGrouping]");
                 output.WriteLine("    public {0}{1}[] {1};", className, grp.Name);
             }
@@ -445,6 +451,30 @@ namespace TTreeClassGenerator
             bool removeOneArrayDecl,
             TTreeUserInfo groupInfo)
         {
+            ///
+            /// Figure out the comment that we put at the top
+            /// 
+
+            string comment = v.Comment;
+            if (string.IsNullOrWhiteSpace(comment))
+                comment = "";
+
+            if (v.NETName != v.TTreeName)
+            {
+                comment += string.Format("(TTree Leaf name: {0})", v.TTreeName);
+            }
+
+            if (!string.IsNullOrWhiteSpace(comment))
+            {
+                output.WriteLine("    /// <summary>");
+                output.WriteLine("    /// {0}", comment);
+                output.WriteLine("    /// </summary>");
+            }
+
+            ///
+            /// If this is a rename, then do teh rename
+            /// 
+
             var cppVarName = v.NETName;
             if (v.NETName != v.TTreeName)
             {

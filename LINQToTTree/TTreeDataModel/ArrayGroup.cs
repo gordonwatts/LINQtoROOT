@@ -1,4 +1,5 @@
 ﻿
+using System.Xml.Serialization;
 namespace TTreeDataModel
 {
     /// <summary>
@@ -15,5 +16,11 @@ namespace TTreeDataModel
         /// The list of variable names that this group contains.
         /// </summary>
         public VariableInfo[] Variables { get; set; }
+
+        /// <summary>
+        /// Any comments the user wants to show up in the intellisense
+        /// </summary>
+        [XmlAttribute]
+        public string Comment { get; set; }
     }
 }

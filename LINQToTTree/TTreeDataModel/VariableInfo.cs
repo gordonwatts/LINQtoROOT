@@ -15,5 +15,11 @@ namespace TTreeDataModel
 
         [XmlAttribute]
         public string IndexToGroup;
+
+        /// <summary>
+        /// A comment the user wants to show up in the intellisense
+        /// </summary>
+        [XmlAttribute]
+        public string Comment;
     }
 }
