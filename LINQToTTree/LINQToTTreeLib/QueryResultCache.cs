@@ -90,10 +90,12 @@ namespace LINQToTTreeLib
                                        select f.FullName).ToArray();
 
             ///
-            /// Text for the query
+            /// Text for the query. There are strings like "generated_x" where x is a number. These get incremented each time they are used,
+            /// so to protect the caching we need to swap those out with a dummy.
             /// 
 
             result.QueryText = FormattingQueryVisitor.Format(query);
+            result.QueryText = result.QueryText.SwapOutWithUninqueString("\\<generated\\>_[0-9]+");
 
             ///
             /// And the directory name - we use the first name of the file.

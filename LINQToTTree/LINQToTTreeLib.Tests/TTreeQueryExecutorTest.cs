@@ -329,6 +329,105 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestCachingOfSimpleHisto()
+        {
+            /// Do two identical queries. Make sure only one causes an actual run!
+
+            var rootFile = CreateFileOfInt(5);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+
+            Assert.AreEqual(0, exe.CountExecutionRuns, "exe runs initialization");
+            Assert.AreEqual(0, exe.CountCacheHits, "cache hits initialization");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Plot("hi", "there", 10, 0.0, 20.0, d => d.run);
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var result = exe.ExecuteScalar<ROOTNET.Interface.NTH1>(query);
+
+            Assert.AreEqual(1, exe.CountExecutionRuns, "exe after exe run");
+            Assert.AreEqual(0, exe.CountCacheHits, "cache after exe run");
+
+            ///
+            /// Re-run the idential query. We have to remake the query b/c the histogram
+            /// stored internally will have now counts in it!! Ops!! :-)
+            /// 
+
+            var dude2 = q.Plot("hi", "there", 10, 0.0, 20.0, d => d.run);
+            var query2 = DummyQueryExectuor.LastQueryModel;
+
+            var result2 = exe.ExecuteScalar<ROOTNET.Interface.NTH1>(query2);
+
+            Assert.AreEqual(1, exe.CountExecutionRuns, "exe after exe and cache run");
+            Assert.AreEqual(1, exe.CountCacheHits, "cache after exe and cache run");
+        }
+
+        [TestMethod]
+        public void TestCachingOfSimpleHistoWithNameTitleChange()
+        {
+            /// Do two identical queries. Make sure only one causes an actual run!
+
+            var rootFile = CreateFileOfInt(5);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+
+            Assert.AreEqual(0, exe.CountExecutionRuns, "exe runs initialization");
+            Assert.AreEqual(0, exe.CountCacheHits, "cache hits initialization");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Plot("hi", "there", 10, 0.0, 20.0, d => d.run);
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var result = exe.ExecuteScalar<ROOTNET.Interface.NTH1>(query);
+
+            Assert.AreEqual(1, exe.CountExecutionRuns, "after exe run");
+            Assert.AreEqual(0, exe.CountCacheHits, "after exe run");
+
+            ///
+            /// Re-run a slightly different query. Should still be cached.
+            /// 
+
+            var dude2 = q.Plot("there", "high", 10, 0.0, 20.0, d => d.run);
+            var query2 = DummyQueryExectuor.LastQueryModel;
+
+            var result2 = exe.ExecuteScalar<ROOTNET.Interface.NTH1>(query2);
+
+            Assert.AreEqual(1, exe.CountExecutionRuns, "after exe and cache run");
+            Assert.AreEqual(1, exe.CountCacheHits, "after exe and cache run");
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestForZeroInputFiles()
         {
@@ -517,7 +616,7 @@ namespace LINQToTTreeLib
         {
             RunSimpleCountResult(10);
             RunSimpleCountResult(20);
-       } 
+        }
 
         [TestMethod]
         public void TestDualQueryOnSameQueriable()

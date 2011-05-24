@@ -51,6 +51,16 @@ namespace LINQToTTreeLib
         private string[][] _classToDictify;
 
         /// <summary>
+        /// How many times the query cache has been hit
+        /// </summary>
+        public int CountCacheHits { get; set; }
+
+        /// <summary>
+        /// How many times we've actually run root to get a result.
+        /// </summary>
+        public int CountExecutionRuns { get; set; }
+
+        /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
         /// <param name="rootFiles"></param>
@@ -59,6 +69,9 @@ namespace LINQToTTreeLib
         {
             CleanupQuery = true;
             IgnoreQueryCache = false;
+
+            CountCacheHits = 0;
+            CountExecutionRuns = 0;
 
             ///
             /// Basic checks
@@ -237,8 +250,13 @@ namespace LINQToTTreeLib
             {
                 var cacheHit = _cache.Lookup<T>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
                 if (cacheHit.Item1)
+                {
+                    CountCacheHits++;
                     return cacheHit.Item2;
+                }
             }
+
+            CountExecutionRuns++;
 
             ///
             /// If we got back from that without an error, it is time to assemble the files and templates
