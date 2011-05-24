@@ -29,7 +29,11 @@ namespace LINQToTTreeLib.Utils
             /// eventually this will be MEF, but right now we only have simple guys.
             /// 
 
-            if (o is ROOTNET.Interface.NTObject)
+            if (o is ROOTNET.Interface.NTNamed)
+            {
+                InternalAccumulateNamedHash(o as ROOTNET.Interface.NTNamed);
+            }
+            else if (o is ROOTNET.Interface.NTObject)
             {
                 InternalAccumulateHash(o as ROOTNET.Interface.NTObject);
             }
@@ -37,6 +41,29 @@ namespace LINQToTTreeLib.Utils
             {
                 throw new NotImplementedException("Unable to calculate the hassh for objects of type '" + o.GetType().Name + "'.");
             }
+        }
+
+        /// <summary>
+        /// Keep track of # of unique names!
+        /// </summary>
+        private int _namedObjectCount = 0;
+
+        /// <summary>
+        /// Normalize the naming of an object. We don't really care about the names for a hash... so...
+        /// </summary>
+        /// <param name="namedObj"></param>
+        private void InternalAccumulateNamedHash(ROOTNET.Interface.NTNamed namedObj)
+        {
+            string oName = namedObj.Name;
+            string oTitle = namedObj.Title;
+
+            namedObj.Name = "name_" + _namedObjectCount.ToString();
+            namedObj.Title = "title_" + _namedObjectCount.ToString();
+
+            InternalAccumulateHash(namedObj);
+
+            namedObj.Name = oName;
+            namedObj.Title = oTitle;
         }
 
         /// <summary>
