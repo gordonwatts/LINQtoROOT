@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Utils
         /// <returns></returns>
         public static string CreateUniqueVariableName(this Type sourceType)
         {
-            return sourceType.Name.CreateUniqueVariableName();
+            return ("a" + sourceType.Name).CreateUniqueVariableName();
         }
 
         /// <summary>
