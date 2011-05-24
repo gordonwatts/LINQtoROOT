@@ -260,27 +260,78 @@ namespace LINQToTTreeLib
             /// Fantastic! Now we need to run the object!
             /// 
 
-            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), result.VariablesToTransfer);
+            //RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), result.VariablesToTransfer);
 
             ///
             /// Last job, extract all the variables! And save in the cache!
             /// 
 
-            var final = ExtractResult<T>(result.ResultValue, key);
+            //var final = ExtractResult<T>(result.ResultValue, key);
 
             ///
             /// Ok, we are all done. We leave the query directory floating around
             /// until the next time we run, but reset it to null so we make the
-            /// "state" transition.
+            /// "state" transition. The reason this is left around is due to a root bug.
+            /// If we unload the libraries then 
             /// 
 
+            UnloadAllModules();
             _queryDirectory = null;
 
             ///
             /// Return the result
             /// 
 
-            return final;
+            return default(T);
+        }
+
+        /// <summary>
+        /// Unload all our loaded modules. We do this because otherwise root keeps trying to link them with the next
+        /// thing. If we have too many runs in a go, then the command line becomes *very* long.
+        /// </summary>
+        private void UnloadAllModules()
+        {
+            ///
+            /// The library names are a simple "_" replacement. However, the full path must be given to the
+            /// unload function. To avoid any issues we just scan the library list that ROOT has right now, find the
+            /// ones we care about, and unload them. In general this is not a good idea, so when there are random
+            /// crashes this might be a good place to come first! :-)
+            /// 
+
+            var gSystem = ROOTNET.NTSystem.gSystem;
+            var libraries = gSystem.Libraries.Split(' ');
+            Console.WriteLine("Libraries:");
+            foreach (var L in libraries)
+            {
+                Console.WriteLine("  - {0}", L);
+            }
+            _loadedModuleNames.Reverse();
+
+            var full_lib_names = from m in _loadedModuleNames
+                                 from l in libraries
+                                 where l.Contains(m)
+                                 select l;
+
+            ///
+            /// Before unloading we need to make sure that we aren't
+            /// holding onto any pointers back to these guys!
+            /// 
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            ///
+            /// Now that we have them, unload them. Since repeated unloading
+            /// cases erorr messages to the concole, clear the list so we don't
+            /// make a mistake later.
+            /// 
+
+            foreach (var m in full_lib_names)
+            {
+                gSystem.Unload(m);
+            }
+
+            _loadedModuleNames.Clear();
         }
 
         /// <summary>
