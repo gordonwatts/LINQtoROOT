@@ -13,6 +13,7 @@
 \#include <TFile.h>
 
 \#include <string>
+\#include <stdexcept>
 
 using std::string;
 
@@ -131,13 +132,13 @@ private:
 	{
 		if (fInput == 0) {
 			std::cout << "Unable to load (object '" << name << "') from the input list - the list is null!" << std::endl;
-			throw std::exception(("Unable to load from input list the object called '" + name + "'.").c_str());
+			throw std::runtime_error(("Unable to load from input list the object called '" + name + "'.").c_str());
 		}
 
 		T result = static_cast<T>(fInput->FindObject(name.c_str()));
 		if (result == 0) {
 			std::cout << "Unable to find object '" << name << "' in the input list!" << std::endl;
-			throw std::exception(("Unable to load object '" + name + "' from the input list - not found!").c_str());
+			throw std::runtime_error(("Unable to load object '" + name + "' from the input list - not found!").c_str());
 		}
 
 		return result;
