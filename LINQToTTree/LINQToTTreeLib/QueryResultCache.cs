@@ -71,7 +71,8 @@ namespace LINQToTTreeLib
             /// Build the hash, which is a bit of a pain in the butt.
             /// 
 
-            StringBuilder fullSourceName = new StringBuilder();
+            int fnameLength = rootfiles.Select(f => f.FullName).Sum(w => w.Length) + 100;
+            StringBuilder fullSourceName = new StringBuilder(fnameLength);
             foreach (var f in rootfiles)
             {
                 fullSourceName.Append(f.FullName);
