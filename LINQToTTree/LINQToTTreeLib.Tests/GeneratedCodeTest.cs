@@ -53,6 +53,12 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+
+            public bool TryCombineStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock

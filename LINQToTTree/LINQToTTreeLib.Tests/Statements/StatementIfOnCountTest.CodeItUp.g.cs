@@ -19,28 +19,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void CodeItUp280()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    IEnumerable<string> iEnumerable;
-    varInteger = new VarInteger();
-    statementIfOnCount = new StatementIfOnCount((IValue)varInteger, 
-                                                (IValue)varInteger, StatementIfOnCount.ComparisonOperator.GreaterThan);
-    iEnumerable = this.CodeItUp(statementIfOnCount);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)statementIfOnCount);
-    Assert.IsNotNull(statementIfOnCount.ValLeft);
-    Assert.IsNotNull(statementIfOnCount.ValRight);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementIfOnCount.ValRight, statementIfOnCount.ValLeft));
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
-         statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
-}
     }
 }

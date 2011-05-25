@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -21,5 +18,13 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="statement"></param>
         void Add(IStatement statement);
+
+        /// <summary>
+        /// Try to combine the statement with this one. If possible, it should
+        /// be appended, or combined with statements that are already in here.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        bool TryCombineStatement(IStatement statement);
     }
 }

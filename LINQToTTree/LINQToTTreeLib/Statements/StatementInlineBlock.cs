@@ -99,5 +99,36 @@ namespace LINQToTTreeLib.Statements
                 yield return "}";
             }
         }
+
+        /// <summary>
+        /// Try to combine this statement with another statement. We do simple append unless it is
+        /// another inline block. In that case we make sure to lift things out.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool TryCombineStatement(IStatement statement)
+        {
+            if (statement == (IStatement)null)
+                throw new ArgumentNullException("statement should not be null");
+
+            if (statement.GetType() == typeof(StatementInlineBlock))
+            {
+                var block = statement as StatementInlineBlock;
+                foreach (var s in block.Statements)
+                {
+                    Add(s);
+                }
+
+                foreach (var v in block.DeclaredVariables)
+                {
+                    Add(v);
+                }
+            }
+            else
+            {
+                Add(statement);
+            }
+            return true;
+        }
     }
 }

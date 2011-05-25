@@ -171,11 +171,13 @@
     <Compile Include="Factories\MethodCallExpressionFactory.cs" />
     <Compile Include="Factories\NTObjectFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
+    <Compile Include="Factories\StatementIfOnCountFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
     <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
+    <Compile Include="Factories\VarIntegerFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
@@ -292,6 +294,9 @@
     </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.cs" />
     <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
+      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.TestAddSingleStatement.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">

@@ -17,16 +17,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void Constructor682()
-{
-    StatementFilter statementFilter;
-    statementFilter = this.Constructor((IValue)null);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
-}
     }
 }

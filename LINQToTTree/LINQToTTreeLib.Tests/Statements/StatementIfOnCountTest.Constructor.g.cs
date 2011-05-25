@@ -18,45 +18,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException634()
-{
-    StatementIfOnCount statementIfOnCount;
-    statementIfOnCount = this.Constructor((IValue)null, 
-                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException987()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    varInteger = new VarInteger();
-    statementIfOnCount = this.Constructor((IValue)varInteger, 
-                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void Constructor925()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    varInteger = new VarInteger();
-    statementIfOnCount = this.Constructor((IValue)varInteger, 
-                                          (IValue)varInteger, StatementIfOnCount.ComparisonOperator.GreaterThan);
-    Assert.IsNotNull((object)statementIfOnCount);
-    Assert.IsNotNull(statementIfOnCount.ValLeft);
-    Assert.IsNotNull(statementIfOnCount.ValRight);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementIfOnCount.ValRight, statementIfOnCount.ValLeft));
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
-         statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
-}
     }
 }

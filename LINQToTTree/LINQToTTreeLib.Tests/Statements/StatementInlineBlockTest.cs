@@ -59,87 +59,6 @@ namespace LINQToTTreeLib.Statements
             IEnumerable<IStatement> result = target.Statements;
             return result;
         }
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void AddThrowsArgumentNullException586()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = new StatementInlineBlock();
-            this.Add(statementInlineBlock, (IStatement)null);
-        }
-        [TestMethod]
-        public void Add472()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = new StatementInlineBlock();
-            this.Add(statementInlineBlock, (IStatement)statementInlineBlock);
-            Assert.IsNotNull((object)statementInlineBlock);
-            Assert.IsNotNull(statementInlineBlock.Statements);
-        }
-        [TestMethod]
-        public void Constructor545()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = this.Constructor();
-            Assert.IsNotNull((object)statementInlineBlock);
-            Assert.IsNotNull(statementInlineBlock.Statements);
-        }
-        [TestMethod]
-        public void Add47201()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create();
-            this.Add(statementInlineBlock, (IStatement)statementInlineBlock);
-            Assert.IsNotNull((object)statementInlineBlock);
-            Assert.IsNotNull(statementInlineBlock.Statements);
-            Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
-        }
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void AddThrowsArgumentNullException469()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create();
-            this.Add(statementInlineBlock, (IStatement)null);
-        }
-        [TestMethod]
-        public void Add803()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create();
-            VarInteger s0 = new VarInteger();
-            this.Add(statementInlineBlock, (IVariable)s0);
-            Assert.IsNotNull((object)statementInlineBlock);
-            Assert.IsNotNull(statementInlineBlock.Statements);
-            Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
-        }
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void AddThrowsArgumentNullException78()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create();
-            this.Add(statementInlineBlock, (IVariable)null);
-        }
-        [TestMethod]
-        public void Add47202()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create();
-            this.Add(statementInlineBlock, (IStatement)statementInlineBlock);
-            Assert.IsNotNull((object)statementInlineBlock);
-            Assert.IsNotNull(statementInlineBlock.Statements);
-            Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void AddThrowsArgumentNullException313()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create();
-            this.Add(statementInlineBlock, (IStatement)null);
-        }
 
         [TestMethod]
         public void TestCodeItUp()
@@ -226,6 +145,55 @@ namespace LINQToTTreeLib.Statements
             b.Add(v2);
 
             Assert.AreEqual(2, b.DeclaredVariables.Count(), "incorrect number of variables");
+        }
+
+        [TestMethod]
+        public void TestSimpleBlockCombine()
+        {
+            /// Combine two statements in a single block. Make sure that
+            IStatement b1 = new StatementSimpleStatement("int");
+            IStatement b2 = new StatementSimpleStatement("dude");
+
+            var b = new StatementInlineBlock();
+            Assert.IsTrue(b.TryCombineStatement(b1), "should always be able to add extra statements");
+            Assert.IsTrue(b.TryCombineStatement(b2), "should always be able to add another extra statement");
+
+            Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
+        }
+
+        /// <summary>
+        /// Make sure to test adding statements with inline blocks both the type that we can do and can't, and also
+        /// simple single line statements.
+        /// </summary>
+        /// <param name="s"></param>
+        [PexMethod]
+        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementIfOnCount))]
+        public void TestAddSingleStatement(IStatement s)
+        {
+            var b = new StatementInlineBlock();
+            Assert.IsTrue(b.TryCombineStatement(s), "Failed to add statement");
+
+            ///
+            /// Now check...
+            /// 
+
+            if (s.GetType() == typeof(StatementInlineBlock))
+            {
+                /// Should lift everything out!
+
+                var first = s as StatementInlineBlock;
+                Assert.AreEqual(first.Statements.Count(), b.Statements.Count(), "# of statements");
+                Assert.AreEqual(first.DeclaredVariables.Count(), b.DeclaredVariables.Count(), "# of declared variables");
+            }
+            else
+            {
+                /// Just append!
+
+                Assert.AreEqual(1, b.Statements.Count(), "# of statements");
+                Assert.AreEqual(0, b.DeclaredVariables.Count(), "# of declared variables");
+            }
         }
     }
 }

@@ -82,5 +82,20 @@ namespace LINQToTTreeLib.Statements
                 Assert.AreEqual("if (one " + op.Item2 + " two)", result[0], "if statement is not correct");
             }
         }
+
+        [PexMethod]
+        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementIfOnCount))]
+        public void TestTryCombine(IStatement s)
+        {
+            /// We should never be able to combine any filter statements currently!
+
+            var val = new Variables.ValSimple("true", typeof(bool));
+            var statement = new StatementIfOnCount(new Variables.ValSimple("one", typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
+
+            Assert.IsFalse(statement.TryCombineStatement(s), "unable to do any combines for Filter");
+        }
+
     }
 }
