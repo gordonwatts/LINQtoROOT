@@ -190,5 +190,42 @@ namespace LINQToTTreeLib.Statements
             var r = b.CodeItUp().ToArray();
             Assert.AreEqual(3, r.Length, "# of statements");
         }
+
+        /// <summary>
+        /// Help with the next test
+        /// </summary>
+        class dummyVarName : IVariable
+        {
+            public dummyVarName(string name, Type t)
+            {
+                VariableName = name;
+                Type = t;
+            }
+            public string VariableName { get; set; }
+
+            public IValue InitialValue { get; set; }
+
+            public bool Declare { get; set; }
+
+            public string RawValue { get; set; }
+
+            public Type Type { get; set; }
+        }
+
+        [PexMethod, PexAllowedException(typeof(ArgumentException))]
+        public void TestSimpleVariableDoubleInsert([PexAssumeNotNull] string name1, [PexAssumeNotNull] string name2)
+        {
+            if (string.IsNullOrWhiteSpace(name1) || string.IsNullOrWhiteSpace(name2))
+                throw new ArgumentException("names must be something");
+
+            StatementInlineBlock b = new StatementInlineBlock();
+            var v1 = new dummyVarName(name1, typeof(int));
+            var v2 = new dummyVarName(name2, typeof(int));
+
+            b.Add(v1);
+            b.Add(v2);
+
+            Assert.AreEqual(2, b.DeclaredVariables.Count(), "incorrect number of variables");
+        }
     }
 }

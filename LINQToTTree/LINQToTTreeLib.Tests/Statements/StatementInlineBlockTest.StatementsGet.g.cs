@@ -17,21 +17,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementInlineBlockTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-        public void StatementsGet490()
-        {
-            StatementInlineBlock statementInlineBlock;
-            IEnumerable<IStatement> iEnumerable;
-            statementInlineBlock = StatementInlineBlockFactory.Create();
-            iEnumerable = this.StatementsGet(statementInlineBlock);
-            Assert.IsNotNull((object)iEnumerable);
-            Assert.IsNotNull((object)statementInlineBlock);
-            Assert.IsNotNull(statementInlineBlock.Statements);
-            Assert.IsTrue(
-                         object.ReferenceEquals(statementInlineBlock.Statements, (object)iEnumerable)
-                         );
-            Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
-        }
     }
 }

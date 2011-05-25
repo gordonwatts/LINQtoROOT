@@ -294,6 +294,9 @@
     <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">
+      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
     </Compile>

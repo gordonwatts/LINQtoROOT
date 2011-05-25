@@ -47,6 +47,12 @@ namespace LINQToTTreeLib.Statements
             if (variableToDeclare == null)
                 throw new ArgumentNullException("Must not declare a null variable");
 
+            var findOld = from v in _variables
+                          where v.VariableName == variableToDeclare.VariableName
+                          select v;
+            if (findOld.FirstOrDefault() != null)
+                throw new ArgumentException("Variable '" + variableToDeclare.VariableName + "' has already been declared in this block!");
+
             _variables.Add(variableToDeclare);
         }
 
