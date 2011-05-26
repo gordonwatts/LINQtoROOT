@@ -16,59 +16,5 @@ namespace LINQToTTreeLib.QueryVisitors
 {
     public partial class FormattingQueryVisitorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash974()
-{
-    this.TestQueryDoesntCrash(0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash617()
-{
-    this.TestQueryDoesntCrash(1);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash682()
-{
-    this.TestQueryDoesntCrash(6);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash294()
-{
-    this.TestQueryDoesntCrash(3);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash725()
-{
-    this.TestQueryDoesntCrash(2);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash677()
-{
-    this.TestQueryDoesntCrash(4);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash57()
-{
-    this.TestQueryDoesntCrash(5);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash700()
-{
-    this.TestQueryDoesntCrash(7);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void TestQueryDoesntCrash466()
-{
-    this.TestQueryDoesntCrash(8);
-}
     }
 }

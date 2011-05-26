@@ -144,6 +144,16 @@
     <Compile Include="CodeContextTest.TestRoundTrip.g.cs">
       <DependentUpon>CodeContextTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.AddGeneratedCode.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.CheckAddIncludeFiles.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.CheckAddSameVariableNamesToTransfer.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.cs" />
     <Compile Include="CPPTranslatorTest.Constructor.g.cs">
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
     </Compile>
@@ -165,6 +175,7 @@
     <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
     <Compile Include="Factories\ConstantExpressionFactory.cs" />
     <Compile Include="Factories\CPPTranslatorFactory.cs" />
     <Compile Include="Factories\GeneratedCodeFactory.cs" />

@@ -18,13 +18,5 @@ namespace LINQToTTreeLib
 {
     public partial class TTreeQueryExecutorTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-        public void Constructor266()
-        {
-            TTreeQueryExecutor tTreeQueryExecutor;
-            tTreeQueryExecutor = this.Constructor(2, 2, 3, "\0");
-            Assert.IsNotNull((object)tTreeQueryExecutor);
-        }
     }
 }

@@ -19,15 +19,5 @@ namespace LINQToTTreeLib.TypeHandlers
 {
     public partial class TypeHandlerHelpersTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
-[ExpectedException(typeof(NotImplementedException))]
-public void ProcessConstantReferenceThrowsNotImplementedException251()
-{
-    IValue iValue;
-    TypeHandlerHelpers s0 = new TypeHandlerHelpers();
-    iValue = this.ProcessConstantReference
-                 (s0, (ConstantExpression)null, (IGeneratedQueryCode)null);
-}
     }
 }

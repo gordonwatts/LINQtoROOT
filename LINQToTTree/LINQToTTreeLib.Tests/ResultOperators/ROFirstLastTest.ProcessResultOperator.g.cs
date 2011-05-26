@@ -20,16 +20,5 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROFirstLastTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(ROFirstLastTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ProcessResultOperatorThrowsArgumentNullException135()
-        {
-            IVariable iVariable;
-            ROFirstLast s0 = new ROFirstLast();
-            iVariable =
-              this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null,
-                                         (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-        }
     }
 }

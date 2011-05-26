@@ -20,48 +20,5 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException986()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    generatedCode =
-      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
-    this.Add(generatedCode, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException699()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    generatedCode =
-      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
-    this.Add(generatedCode, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Add170()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    generatedCode =
-      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    this.Add(generatedCode, (IStatement)statementIncrementInteger);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.AreEqual<int>(1, generatedCode.Depth);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-    Assert.IsNotNull(generatedCode.IncludeFiles);
-}
     }
 }

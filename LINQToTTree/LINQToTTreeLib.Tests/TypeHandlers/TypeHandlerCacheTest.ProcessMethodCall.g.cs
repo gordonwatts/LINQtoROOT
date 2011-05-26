@@ -19,32 +19,5 @@ namespace LINQToTTreeLib.TypeHandlers
 {
     public partial class TypeHandlerCacheTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessMethodCallThrowsArgumentNullException302()
-{
-    TypeHandlerCache typeHandlerCache;
-    Expression expression;
-    typeHandlerCache = new TypeHandlerCache();
-    IValue iValue = (IValue)null;
-    expression =
-      this.ProcessMethodCall(typeHandlerCache, (MethodCallExpression)null, 
-                             out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
-[ExpectedException(typeof(InvalidOperationException))]
-public void ProcessMethodCallThrowsInvalidOperationException128()
-{
-    TypeHandlerCache typeHandlerCache;
-    MethodCallExpression methodCallExpression;
-    Expression expression;
-    typeHandlerCache = new TypeHandlerCache();
-    methodCallExpression = MethodCallExpressionFactory.Create();
-    IValue iValue = (IValue)null;
-    expression = this.ProcessMethodCall(typeHandlerCache, methodCallExpression, 
-                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
-}
     }
 }
