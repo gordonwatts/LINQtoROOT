@@ -21,23 +21,36 @@ namespace LINQToTTreeLib
     {
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestChangeScopeThrowsArgumentNullException468()
+public void TestChangeScope170()
 {
     VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    this.TestChangeScope(generatedCode, (IStatement)null);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements);
+    this.TestChangeScope(generatedCode, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 public void TestChangeScope774()
 {
     VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements);
     StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
     this.TestChangeScope(generatedCode, (IStatement)statementInlineBlock);
     Assert.IsNotNull((object)generatedCode);
@@ -49,17 +62,91 @@ public void TestChangeScope774()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestChangeScope170()
+public void TestChangeScope17002()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
     StatementIncrementInteger statementIncrementInteger;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     this.TestChangeScope(generatedCode, (IStatement)statementIncrementInteger);
     Assert.IsNotNull((object)generatedCode);
     Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope17003()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, -7);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestChangeScope(generatedCode, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope17005()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementInlineBlock statementInlineBlock;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iStatements[1] = (IStatement)statementInlineBlock;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements);
+    this.TestChangeScope(generatedCode, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(2, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope17008()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementInlineBlock statementInlineBlock;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    IVariable[] iVariables = new IVariable[5];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements, iVariables);
+    IStatement[] iStatements1 = new IStatement[5];
+    iStatements1[0] = (IStatement)statementIncrementInteger;
+    iStatements1[1] = (IStatement)statementInlineBlock;
+    iStatements1[2] = (IStatement)statementInlineBlock;
+    iStatements1[3] = (IStatement)statementInlineBlock;
+    iStatements1[4] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements1);
+    this.TestChangeScope(generatedCode, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(4, generatedCode.Depth);
     Assert.IsNotNull(generatedCode.ResultValue);
     Assert.IsNotNull(generatedCode.CodeBody);
     Assert.IsNotNull(generatedCode.VariablesToTransfer);

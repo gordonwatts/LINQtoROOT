@@ -26,8 +26,9 @@ namespace LINQToTTreeLib.Statements
             IStatement statement
         )
         {
+            var oldCount = target.Statements.Count();
             target.Add(statement);
-            Assert.AreEqual(1, target.Statements.Count(), "Expected a statement to have been added");
+            Assert.AreEqual(oldCount + 1, target.Statements.Count(), "Expected a statement to have been added");
             Assert.IsFalse(target.Statements.Any(s => s == null), "Should never add a null statement");
         }
 

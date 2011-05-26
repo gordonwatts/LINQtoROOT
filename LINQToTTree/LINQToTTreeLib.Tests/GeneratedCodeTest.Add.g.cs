@@ -23,12 +23,25 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException128()
+public void AddThrowsArgumentNullException986()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
+    this.Add(generatedCode, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException699()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     this.Add(generatedCode, (IStatement)null);
 }
 [TestMethod]
@@ -38,8 +51,9 @@ public void Add170()
     VarInteger varInteger;
     GeneratedCode generatedCode;
     StatementIncrementInteger statementIncrementInteger;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     this.Add(generatedCode, (IStatement)statementIncrementInteger);
     Assert.IsNotNull((object)generatedCode);

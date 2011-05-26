@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -137,19 +138,26 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod]
-        [PexUseType(typeof(StatementIncrementInteger))]
         [PexUseType(typeof(StatementInlineBlock))]
-        public void TestChangeScope([PexAssumeUnderTest]GeneratedCode target, IStatement s)
+        [PexUseType(typeof(StatementIncrementInteger))]
+        public void TestChangeScope([PexAssumeUnderTest]GeneratedCode target, [PexAssumeNotNull] IStatement s)
         {
             var currentScope = target.CurrentScope;
-            var v = new VarInteger();
-            target.Add(v);
+
+            var deepestStatementLevel = TestUtils.GetDeepestStatementLevel(target);
+            var deepestDeclarLevel = TestUtils.GetDeepestBookingLevel(target);
+
+            var curVars = deepestDeclarLevel.DeclaredVariables.Count();
+            var curStatements = deepestStatementLevel.Statements.Count();
+            var v1 = new VarInteger();
+            target.Add(v1);
             target.Add(s);
             target.CurrentScope = currentScope;
-            target.Add(v);
+            var v2 = new VarInteger();
+            target.Add(v2);
             target.Add(s);
-            Assert.AreEqual(2, target.CodeBody.Statements.Count(), "Scope reset, should always be two statements here!");
-            Assert.AreEqual(2, target.CodeBody.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
+            Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
+            Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
         }
 
         [PexMethod]

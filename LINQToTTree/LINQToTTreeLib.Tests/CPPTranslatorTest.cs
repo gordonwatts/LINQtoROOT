@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
@@ -52,18 +51,6 @@ namespace LINQToTTreeLib
             Dictionary<string, object> result = target.TranslateGeneratedCode(code);
             return result;
             // TODO: add assertions to method CPPTranslatorTest.TranslateGeneratedCode(CPPTranslator, GeneratedCode)
-        }
-        [TestMethod]
-        public void TranslateGeneratedCodeThrowsNullReferenceException584()
-        {
-            CPPTranslator cPPTranslator;
-            VarInteger varInteger;
-            GeneratedCode generatedCode;
-            Dictionary<string, object> dictionary;
-            cPPTranslator = CPPTranslatorFactory.Create();
-            varInteger = new VarInteger();
-            generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-            dictionary = this.TranslateGeneratedCode(cPPTranslator, generatedCode);
         }
 
         [TestMethod]

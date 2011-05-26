@@ -20,19 +20,5 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class TakeSkipOperatorsTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-        [ExpectedException(typeof(ArgumentException))]
-        public void ProcessResultOperatorThrowsArgumentException614()
-        {
-            VarInteger varInteger;
-            GeneratedCode generatedCode;
-            IVariable iVariable;
-            varInteger = new VarInteger();
-            generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-            ROTakeSkipOperators s0 = new ROTakeSkipOperators();
-            iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null,
-                                                   (QueryModel)null, (IGeneratedQueryCode)generatedCode);
-        }
     }
 }

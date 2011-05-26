@@ -78,6 +78,7 @@
     <Compile Include="IArrayInfo.cs" />
     <Compile Include="IBookingStatementBlock.cs" />
     <Compile Include="ICodeContext.cs" />
+    <Compile Include="IExecutableCode.cs" />
     <Compile Include="IExpressionHolder.cs" />
     <Compile Include="IGeneratedQueryCode.cs" />
     <Compile Include="IQueryResultCache.cs" />

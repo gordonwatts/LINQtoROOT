@@ -19,32 +19,5 @@ namespace LINQToTTreeLib
 {
     public partial class CPPTranslatorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(CPPTranslatorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TranslateGeneratedCodeThrowsArgumentNullException838()
-{
-    CPPTranslator cPPTranslator;
-    Dictionary<string, object> dictionary;
-    cPPTranslator = CPPTranslatorFactory.Create();
-    dictionary = this.TranslateGeneratedCode(cPPTranslator, (GeneratedCode)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CPPTranslatorTest))]
-public void TranslateGeneratedCode241()
-{
-    CPPTranslator cPPTranslator;
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    Dictionary<string, object> dictionary;
-    cPPTranslator = CPPTranslatorFactory.Create();
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    dictionary = this.TranslateGeneratedCode(cPPTranslator, generatedCode);
-    Assert.IsNotNull((object)dictionary);
-    Assert.IsNotNull(dictionary.Comparer);
-    Assert.AreEqual<int>(3, dictionary.Count);
-    Assert.IsNotNull((object)cPPTranslator);
-}
     }
 }

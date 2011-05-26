@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Tests
@@ -28,5 +29,39 @@ namespace LINQToTTreeLib.Tests
                 Console.WriteLine("  " + l);
             }
         }
+
+        public static IStatementCompound GetDeepestStatementLevel(GeneratedCode target)
+        {
+            return GetDeepestStatementLevel(target.CodeBody);
+        }
+
+        public static IStatementCompound GetDeepestStatementLevel(IStatementCompound target)
+        {
+            IStatementCompound result = target;
+
+            IStatementCompound last = result;
+            while (last != null)
+            {
+                result = last;
+                last = result.Statements.LastOrDefault() as IStatementCompound;
+            }
+
+            return result;
+        }
+
+        public static IBookingStatementBlock GetDeepestBookingLevel(GeneratedCode target)
+        {
+            IBookingStatementBlock result = target.CodeBody;
+
+            IBookingStatementBlock last = result;
+            while (last != null)
+            {
+                result = last;
+                last = result.Statements.LastOrDefault() as IBookingStatementBlock;
+            }
+
+            return result;
+        }
+
     }
 }

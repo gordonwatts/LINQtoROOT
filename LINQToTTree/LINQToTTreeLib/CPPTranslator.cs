@@ -20,7 +20,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public Dictionary<string, object> TranslateGeneratedCode(GeneratedCode code)
+        public Dictionary<string, object> TranslateGeneratedCode(IExecutableCode code)
         {
             if (code == null)
                 throw new ArgumentNullException("code");
@@ -57,7 +57,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable, GeneratedCode gc)
+        private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable, IExecutableCode gc)
         {
             if (iVariable.Type.IsROOTClass())
             {
@@ -91,7 +91,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable, GeneratedCode gc)
+        private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable, IExecutableCode gc)
         {
             var saver = _saver.Get(iVariable);
 

@@ -256,6 +256,18 @@ namespace LINQToTTreeLib
                 }
             }
 
+            return ExecuteUncachedQuery<T>(result, key);
+        }
+
+        /// <summary>
+        /// Given the code to run, we will run it!
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="result"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private T ExecuteUncachedQuery<T>(IExecutableCode result, IQueryResultCacheKey key)
+        {
             CountExecutionRuns++;
 
             ///
@@ -532,7 +544,7 @@ namespace LINQToTTreeLib
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
         /// <param name="p"></param>
-        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, GeneratedCode code)
+        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, IExecutableCode code)
         {
             ///
             /// Get the template engine all setup

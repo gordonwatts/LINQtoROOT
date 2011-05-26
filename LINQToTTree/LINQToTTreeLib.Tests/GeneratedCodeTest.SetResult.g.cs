@@ -13,6 +13,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Statements;
 
 namespace LINQToTTreeLib
 {
@@ -21,12 +22,40 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void SetResultThrowsArgumentNullException835()
+public void SetResultThrowsArgumentNullException556()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException304()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException411()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements);
     this.SetResult(generatedCode, (IVariable)null);
 }
 [TestMethod]
@@ -35,8 +64,9 @@ public void SetResult164()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements);
     this.SetResult(generatedCode, (IVariable)varInteger);
     Assert.IsNotNull((object)generatedCode);
     Assert.AreEqual<int>(1, generatedCode.Depth);
@@ -44,6 +74,26 @@ public void SetResult164()
     Assert.IsNotNull(generatedCode.CodeBody);
     Assert.IsNotNull(generatedCode.VariablesToTransfer);
     Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException632()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, -9);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[6];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iStatements[1] = (IStatement)statementIncrementInteger;
+    iStatements[2] = (IStatement)statementIncrementInteger;
+    iStatements[3] = (IStatement)statementIncrementInteger;
+    iStatements[4] = (IStatement)statementIncrementInteger;
+    iStatements[5] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements);
+    this.SetResult(generatedCode, (IVariable)null);
 }
     }
 }

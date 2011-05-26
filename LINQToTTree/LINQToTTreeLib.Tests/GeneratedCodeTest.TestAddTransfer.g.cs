@@ -13,6 +13,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Statements;
 
 namespace LINQToTTreeLib
 {
@@ -21,35 +22,50 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException10()
+public void TestAddTransferThrowsArgumentNullException270()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     this.TestAddTransfer(generatedCode, (string)null, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void TestAddTransferThrowsArgumentException277()
+public void TestAddTransferThrowsArgumentException68()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     object s0 = new object();
     this.TestAddTransfer(generatedCode, (string)null, s0);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void TestAddTransferThrowsArgumentException615()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException694()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 1);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestAddTransferThrowsArgumentException472()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     object s0 = new object();
     this.TestAddTransfer(generatedCode, "", s0);
 }
@@ -59,8 +75,9 @@ public void TestAddTransfer439()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     object s0 = new object();
     this.TestAddTransfer(generatedCode, "\0", s0);
     Assert.IsNotNull((object)generatedCode);
@@ -72,13 +89,29 @@ public void TestAddTransfer439()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException828()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void TestAddTransferThrowsArgumentException843()
+public void TestAddTransferThrowsArgumentException689()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null);
     object s0 = new object();
     this.TestAddTransfer(generatedCode, "\t\t", s0);
 }
