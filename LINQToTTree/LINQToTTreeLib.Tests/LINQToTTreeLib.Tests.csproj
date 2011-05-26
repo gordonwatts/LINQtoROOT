@@ -147,13 +147,28 @@
     <Compile Include="CombinedGeneratedCodeTest.AddGeneratedCode.g.cs">
       <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.AddIncludeFile.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="CombinedGeneratedCodeTest.CheckAddIncludeFiles.g.cs">
       <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
     </Compile>
     <Compile Include="CombinedGeneratedCodeTest.CheckAddSameVariableNamesToTransfer.g.cs">
       <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.Constructor.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="CombinedGeneratedCodeTest.cs" />
+    <Compile Include="CombinedGeneratedCodeTest.IncludeFilesGet.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.ResultValuesGet.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.VariablesToTransferGet.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="CPPTranslatorTest.Constructor.g.cs">
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
     </Compile>

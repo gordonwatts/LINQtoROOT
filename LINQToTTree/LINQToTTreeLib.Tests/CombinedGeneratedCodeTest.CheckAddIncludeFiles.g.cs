@@ -16,5 +16,75 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void CheckAddIncludeFiles271()
+{
+    string[] ss = new string[0];
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void CheckAddIncludeFilesThrowsNullReferenceException991()
+{
+    string[] ss = new string[2];
+    ss[0] = "";
+    ss[1] = "";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void CheckAddIncludeFilesThrowsNullReferenceException909()
+{
+    string[] ss = new string[2];
+    ss[0] = "\0\0";
+    ss[1] = "";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void CheckAddIncludeFilesThrowsNullReferenceException604()
+{
+    string[] ss = new string[2];
+    ss[0] = "";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void CheckAddIncludeFilesThrowsNullReferenceException634()
+{
+    string[] ss = new string[2];
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void CheckAddIncludeFilesThrowsNullReferenceException938()
+{
+    string[] ss = new string[2];
+    ss[1] = "";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException578()
+{
+    string[] ss = new string[1];
+    ss[0] = "";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException469()
+{
+    string[] ss = new string[1];
+    this.CheckAddIncludeFiles(ss);
+}
     }
 }

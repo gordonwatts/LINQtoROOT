@@ -16,5 +16,110 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void CheckAddSameVariableNamesToTransfer37()
+{
+    string[] ss = new string[0];
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CheckAddSameVariableNamesToTransferThrowsArgumentException48()
+{
+    string[] ss = new string[1];
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CheckAddSameVariableNamesToTransferThrowsArgumentException923()
+{
+    string[] ss = new string[1];
+    ss[0] = "";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[Ignore]
+[PexDescription("the test state was: duplicate path")]
+public void CheckAddSameVariableNamesToTransferThrowsNullReferenceException277()
+{
+    string[] ss = new string[2];
+    ss[0] = "\u0102";
+    ss[1] = "\u0100";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CheckAddSameVariableNamesToTransferThrowsArgumentException796()
+{
+    string[] ss = new string[2];
+    ss[0] = "\0";
+    ss[1] = "\0";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void CheckAddSameVariableNamesToTransferThrowsNullReferenceException967()
+{
+    string[] ss = new string[2];
+    ss[0] = "\u0100";
+    ss[1] = "\u0100\0";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void CheckAddSameVariableNamesToTransferThrowsNullReferenceException782()
+{
+    string[] ss = new string[4];
+    ss[0] = "\u0089";
+    ss[1] = "\0\0\0\0\u0089";
+    ss[2] = "\0\0\0\0\u0089";
+    ss[3] = "\0\0\0\0\u0089";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException337()
+{
+    string[] ss = new string[1];
+    ss[0] = "\0";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException407()
+{
+    string[] ss = new string[2];
+    ss[0] = "\u0100";
+    ss[1] = "\u0100";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException991()
+{
+    string[] ss = new string[2];
+    ss[0] = "\u0100\u0100";
+    ss[1] = "\u0100";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException372()
+{
+    string[] ss = new string[1];
+    ss[0] = "\0\0";
+    this.CheckAddSameVariableNamesToTransfer(ss);
+}
     }
 }

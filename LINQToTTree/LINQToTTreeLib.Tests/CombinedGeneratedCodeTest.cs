@@ -53,7 +53,7 @@ namespace LINQToTTreeLib
             if (target.CodeStatements != null)
                 nStatments += target.CodeStatements.Statements.Count();
             if (code.CodeStatements != null)
-                nStatments++;
+                nStatments += code.CodeStatements.Statements.Count();
 
             ///
             /// Do the adding
