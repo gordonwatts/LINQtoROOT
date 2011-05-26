@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        private static IArrayInfo GetIArrayInfo(Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
+        private static IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
             /// Is it a simple array?
@@ -58,7 +58,7 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="gc"></param>
         /// <param name="cc"></param>
         /// <param name="container"></param>
-        public static void ParseArrayExpression(Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
+        public static void ParseArrayExpression(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ParseArrayExpression(null, expr, gc, cc, container);
         }
@@ -71,7 +71,7 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="gc"></param>
         /// <param name="cc"></param>
         /// <param name="container"></param>
-        public static void ParseArrayExpression(string indexName, Expression expr, IGeneratedCode gc, ICodeContext cc, CompositionContainer container)
+        public static void ParseArrayExpression(string indexName, Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             var result = GetIArrayInfo(expr, gc, cc, container);
             if (result == null && !string.IsNullOrEmpty(indexName))

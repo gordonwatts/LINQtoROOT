@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.ResultOperators
             ROFirstLast s0 = new ROFirstLast();
             iVariable =
               this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null,
-                                         (IGeneratedCode)null, (ICodeContext)null, (CompositionContainer)null);
+                                         (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
         }
     }
 }

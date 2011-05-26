@@ -20,7 +20,7 @@ namespace LINQToTTreeLib.TypeHandlers
             [PexAssumeUnderTest]TypeHandlerHelpers target,
             MethodCallExpression expr,
             out IValue result,
-            IGeneratedCode gc,
+            IGeneratedQueryCode gc,
             ICodeContext context
         )
         {
@@ -32,7 +32,7 @@ namespace LINQToTTreeLib.TypeHandlers
         internal IValue ProcessConstantReference(
             [PexAssumeUnderTest]TypeHandlerHelpers target,
             ConstantExpression expr,
-            IGeneratedCode codeEnv
+            IGeneratedQueryCode codeEnv
         )
         {
             IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);

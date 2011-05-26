@@ -28,7 +28,7 @@ public void ProcessMethodCallThrowsArgumentNullException314()
     TypeHandlerHelpers s0 = new TypeHandlerHelpers();
     IValue iValue = (IValue)null;
     expression = this.ProcessMethodCall(s0, (MethodCallExpression)null, 
-                                        out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
@@ -41,7 +41,7 @@ public void ProcessMethodCallThrowsNotImplementedException662()
     TypeHandlerHelpers s0 = new TypeHandlerHelpers();
     IValue iValue = (IValue)null;
     expression = this.ProcessMethodCall(s0, methodCallExpression, 
-                                        out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
     }
 }

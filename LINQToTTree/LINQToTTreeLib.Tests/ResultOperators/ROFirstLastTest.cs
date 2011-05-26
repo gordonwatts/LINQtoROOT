@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.ResultOperators
             [PexAssumeUnderTest]ROFirstLast target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
-            IGeneratedCode _codeEnv,
+            IGeneratedQueryCode _codeEnv,
             ICodeContext _codeContext,
             CompositionContainer container
         )

@@ -27,7 +27,7 @@ namespace LINQToTTreeLib
             [PexAssumeUnderTest]ROCount target,
             CountResultOperator resultOperator,
             QueryModel queryModel,
-            IGeneratedCode codeEnv
+            IGeneratedQueryCode codeEnv
         )
         {
             CodeContext c = new CodeContext();
@@ -71,7 +71,7 @@ namespace LINQToTTreeLib
             generatedCode = GeneratedCodeFactory.Create(new VarInteger());
             ROCount s0 = new ROCount();
             iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
-                                                   (QueryModel)null, (IGeneratedCode)generatedCode);
+                                                   (QueryModel)null, (IGeneratedQueryCode)generatedCode);
         }
         [TestMethod]
         public void ProcessResultOperator133()
@@ -82,7 +82,7 @@ namespace LINQToTTreeLib
             ROCount s0 = new ROCount();
             CountResultOperator s1 = new CountResultOperator();
             iVariable = this.ProcessResultOperator
-                            (s0, s1, (QueryModel)null, (IGeneratedCode)sGeneratedCode);
+                            (s0, s1, (QueryModel)null, (IGeneratedQueryCode)sGeneratedCode);
             Assert.IsNotNull((object)iVariable);
             Assert.IsNotNull((object)s0);
         }
@@ -95,7 +95,7 @@ namespace LINQToTTreeLib
             sGeneratedCode = new GeneratedCode();
             ROCount s0 = new ROCount();
             iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
-                                                   (QueryModel)null, (IGeneratedCode)sGeneratedCode);
+                                                   (QueryModel)null, (IGeneratedQueryCode)sGeneratedCode);
         }
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -104,7 +104,7 @@ namespace LINQToTTreeLib
             IVariable iVariable;
             ROCount s0 = new ROCount();
             iVariable = this.ProcessResultOperator
-                            (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedCode)null);
+                            (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedQueryCode)null);
         }
     }
 }

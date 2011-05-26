@@ -46,7 +46,7 @@ namespace LINQToTTreeLib.Utils
             }
 
 
-            public IVariable ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
+            public IVariable ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

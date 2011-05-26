@@ -33,7 +33,7 @@ public void ProcessConstantReference980()
     generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     iValue = this.ProcessConstantReference
-                 (s0, constantExpression, (IGeneratedCode)generatedCode);
+                 (s0, constantExpression, (IGeneratedQueryCode)generatedCode);
     Assert.IsNotNull((object)iValue);
     Assert.IsNotNull((object)s0);
 }
@@ -51,7 +51,7 @@ public void ProcessConstantReferenceThrowsArgumentException123()
     generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     iValue = this.ProcessConstantReference
-                 (s0, constantExpression, (IGeneratedCode)generatedCode);
+                 (s0, constantExpression, (IGeneratedQueryCode)generatedCode);
 }
     }
 }

@@ -45,7 +45,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         public IValue ProcessConstantReference(
             [PexAssumeUnderTest]TypeHandlerROOT target,
             [PexAssumeNotNull] ConstantExpression expr,
-            [PexAssumeNotNull] IGeneratedCode codeEnv
+            [PexAssumeNotNull] IGeneratedQueryCode codeEnv
         )
         {
             IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);

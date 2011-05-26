@@ -17,6 +17,6 @@ namespace LinqToTTreeInterfacesLib
         /// <returns></returns>
         bool CanHandle(Type resultOperatorType);
 
-        IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
+        IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
     }
 }

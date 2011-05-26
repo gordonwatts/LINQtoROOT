@@ -12,7 +12,7 @@ namespace LINQToTTreeLib.Tests
         /// Dump the code to the console - for debugging a test...
         /// </summary>
         /// <param name="code"></param>
-        public static void DumpCodeToConsole(this IGeneratedCode code)
+        public static void DumpCodeToConsole(this IGeneratedQueryCode code)
         {
             Console.WriteLine("Code:");
             foreach (var var in code.CodeBody.DeclaredVariables)

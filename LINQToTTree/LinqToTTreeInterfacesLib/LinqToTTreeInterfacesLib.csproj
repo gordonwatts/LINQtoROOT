@@ -79,7 +79,7 @@
     <Compile Include="IBookingStatementBlock.cs" />
     <Compile Include="ICodeContext.cs" />
     <Compile Include="IExpressionHolder.cs" />
-    <Compile Include="IGeneratedCode.cs" />
+    <Compile Include="IGeneratedQueryCode.cs" />
     <Compile Include="IQueryResultCache.cs" />
     <Compile Include="IQVCollectionResultOperator.cs" />
     <Compile Include="IQVScalarResultOperator.cs" />

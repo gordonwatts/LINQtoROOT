@@ -42,12 +42,12 @@ namespace LINQToTTreeLib.Tests
                 return t == typeof(Int32[]);
             }
 
-            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 return new Variables.ValSimple("35", typeof(int[]));
             }
 
-            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

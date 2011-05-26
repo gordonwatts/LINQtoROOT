@@ -34,7 +34,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode codeEnv, ICodeContext codeContext, CompositionContainer container)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode codeEnv, ICodeContext codeContext, CompositionContainer container)
         {
             if (codeEnv == null)
                 throw new ArgumentNullException("CodeEnv must not be null!");
@@ -53,7 +53,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// </summary>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public static IVariable ImplementCount(IGeneratedCode codeEnv)
+        public static IVariable ImplementCount(IGeneratedQueryCode codeEnv)
         {
             var intResult = new VarInteger();
 

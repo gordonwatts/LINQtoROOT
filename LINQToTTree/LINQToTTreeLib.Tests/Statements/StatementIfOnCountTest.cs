@@ -6,6 +6,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Pex.Framework.Using;
 
 namespace LINQToTTreeLib.Statements
 {

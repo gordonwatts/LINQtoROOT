@@ -44,7 +44,7 @@ namespace LINQToTTreeLib
 
         /// <summary>Test stub for GetExpression(Expression, IGeneratedCode)</summary>
         [PexMethod]
-        internal IValue GetExpression([PexAssumeNotNull]Expression expr, IGeneratedCode ce)
+        internal IValue GetExpression([PexAssumeNotNull]Expression expr, IGeneratedQueryCode ce)
         {
             IValue result = ExpressionToCPP.GetExpression(expr, ce, null, MEFUtilities.MEFContainer);
             return result;

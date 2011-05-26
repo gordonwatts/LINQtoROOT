@@ -32,7 +32,7 @@ namespace LINQToTTreeLib.ResultOperators
             generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
             ROTakeSkipOperators s0 = new ROTakeSkipOperators();
             iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null,
-                                                   (QueryModel)null, (IGeneratedCode)generatedCode);
+                                                   (QueryModel)null, (IGeneratedQueryCode)generatedCode);
         }
     }
 }

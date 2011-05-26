@@ -8,7 +8,7 @@ namespace LINQToTTreeLib
     /// <summary>
     /// Holds onto the code that we generate for a single query.
     /// </summary>
-    public class GeneratedCode : IGeneratedCode
+    public class GeneratedCode : IGeneratedQueryCode
     {
         public GeneratedCode()
         {

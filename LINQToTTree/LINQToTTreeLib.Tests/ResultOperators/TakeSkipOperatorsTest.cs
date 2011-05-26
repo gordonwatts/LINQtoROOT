@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.ResultOperators
             [PexAssumeUnderTest]ROTakeSkipOperators target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
-            [PexAssumeNotNull]IGeneratedCode codeEnv
+            [PexAssumeNotNull]IGeneratedQueryCode codeEnv
         )
         {
             if (codeEnv.ResultValue != null)

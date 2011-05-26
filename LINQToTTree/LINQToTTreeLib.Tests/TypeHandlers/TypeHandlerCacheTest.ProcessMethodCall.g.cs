@@ -30,7 +30,7 @@ public void ProcessMethodCallThrowsArgumentNullException302()
     IValue iValue = (IValue)null;
     expression =
       this.ProcessMethodCall(typeHandlerCache, (MethodCallExpression)null, 
-                             out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                             out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCacheTest))]
@@ -44,7 +44,7 @@ public void ProcessMethodCallThrowsInvalidOperationException128()
     methodCallExpression = MethodCallExpressionFactory.Create();
     IValue iValue = (IValue)null;
     expression = this.ProcessMethodCall(typeHandlerCache, methodCallExpression, 
-                                        out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
     }
 }

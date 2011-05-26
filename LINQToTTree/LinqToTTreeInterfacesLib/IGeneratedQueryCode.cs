@@ -12,7 +12,7 @@ namespace LinqToTTreeInterfacesLib
     /// <summary>
     /// Interface for implementing an object that will contain a complete single query
     /// </summary>
-    public interface IGeneratedCode
+    public interface IGeneratedQueryCode
     {
         /// <summary>
         /// Add a new statement to the current spot where the "writing" currsor is pointed.

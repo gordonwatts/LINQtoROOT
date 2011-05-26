@@ -30,7 +30,7 @@ namespace LINQToTTreeLib
             IVariable iVariable;
             ROCount s0 = new ROCount();
             iVariable = this.ProcessResultOperator
-                            (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedCode)null);
+                            (s0, (CountResultOperator)null, (QueryModel)null, (IGeneratedQueryCode)null);
         }
         [TestMethod]
         [PexGeneratedBy(typeof(ROCountTest))]
@@ -44,7 +44,7 @@ namespace LINQToTTreeLib
             generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
             ROCount s0 = new ROCount();
             iVariable = this.ProcessResultOperator(s0, (CountResultOperator)null,
-                                                   (QueryModel)null, (IGeneratedCode)generatedCode);
+                                                   (QueryModel)null, (IGeneratedQueryCode)generatedCode);
         }
         [TestMethod]
         [PexGeneratedBy(typeof(ROCountTest))]
@@ -58,7 +58,7 @@ namespace LINQToTTreeLib
             ROCount s0 = new ROCount();
             CountResultOperator s1 = new CountResultOperator();
             iVariable = this.ProcessResultOperator
-                            (s0, s1, (QueryModel)null, (IGeneratedCode)generatedCode);
+                            (s0, s1, (QueryModel)null, (IGeneratedQueryCode)generatedCode);
             Assert.IsNotNull((object)iVariable);
             Assert.IsNotNull((object)s0);
         }
