@@ -50,9 +50,9 @@ namespace LINQToTTreeLib
             }
 
             int nStatments = 0;
-            if (target.CodeBody != null)
-                nStatments += target.CodeBody.Statements.Count();
-            if (code.CodeBody != null)
+            if (target.CodeStatements != null)
+                nStatments += target.CodeStatements.Statements.Count();
+            if (code.CodeStatements != null)
                 nStatments++;
 
             ///
@@ -73,7 +73,7 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(includeSuperSet.Count, target.IncludeFiles.Count(), "improper # of include files");
 
-            Assert.AreEqual(nStatments, target.CodeBody.Statements.Count(), "improper # of statements");
+            Assert.AreEqual(nStatments, target.CodeStatements.Statements.Count(), "improper # of statements");
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentException))]

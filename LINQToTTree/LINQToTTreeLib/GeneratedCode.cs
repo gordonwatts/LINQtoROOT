@@ -41,6 +41,11 @@ namespace LINQToTTreeLib
         public IBookingStatementBlock CodeBody { get; private set; }
 
         /// <summary>
+        /// Just the statements from our top level.
+        /// </summary>
+        public IStatementCompound CodeStatements { get { return CodeBody; } }
+
+        /// <summary>
         /// Keeps track of the level where we are adding statements
         /// </summary>
         private IStatementCompound CurrentScopePointer;

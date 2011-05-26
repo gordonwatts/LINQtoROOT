@@ -28,7 +28,7 @@ namespace LINQToTTreeLib
 
             Dictionary<string, object> result = new Dictionary<string, object>();
             result["ResultVariable"] = TranslateVariable(code.ResultValues.FirstOrDefault(), code);
-            result["ProcessStatements"] = TranslateStatements(code.CodeBody);
+            result["ProcessStatements"] = TranslateStatements(code.CodeStatements);
             result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValues.FirstOrDefault(), code);
 
             return result;

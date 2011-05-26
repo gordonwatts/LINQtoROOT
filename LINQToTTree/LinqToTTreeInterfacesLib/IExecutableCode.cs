@@ -33,7 +33,7 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Return the code boy for the whole thing.
         /// </summary>
-        IBookingStatementBlock CodeBody { get; }
+        IStatementCompound CodeStatements { get; }
 
     }
 }
