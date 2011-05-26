@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 
@@ -26,9 +27,9 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("code");
 
             Dictionary<string, object> result = new Dictionary<string, object>();
-            result["ResultVariable"] = TranslateVariable(code.ResultValue, code);
+            result["ResultVariable"] = TranslateVariable(code.ResultValues.FirstOrDefault(), code);
             result["ProcessStatements"] = TranslateStatements(code.CodeBody);
-            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValue, code);
+            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValues.FirstOrDefault(), code);
 
             return result;
         }

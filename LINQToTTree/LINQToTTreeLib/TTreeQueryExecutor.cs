@@ -296,7 +296,7 @@ namespace LINQToTTreeLib
             /// Last job, extract all the variables! And save in the cache!
             /// 
 
-            var final = ExtractResult<T>(result.ResultValue, key);
+            var final = ExtractResult<T>(result.ResultValues.FirstOrDefault(), key);
 
             ///
             /// Ok, we are all done. We leave the query directory floating around

@@ -15,7 +15,7 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// The final result of this query.
         /// </summary>
-        IVariable ResultValue { get; }
+        IEnumerable<IVariable> ResultValues { get; }
 
         /// <summary>
         /// This include file should be added to the list of include files for

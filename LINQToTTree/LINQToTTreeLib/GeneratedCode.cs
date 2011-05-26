@@ -27,6 +27,14 @@ namespace LINQToTTreeLib
         public IVariable ResultValue { get; private set; }
 
         /// <summary>
+        /// We have only a single result value, so the return is pretty easy...
+        /// </summary>
+        public IEnumerable<IVariable> ResultValues
+        {
+            get { yield return ResultValue; }
+        }
+
+        /// <summary>
         /// The code body is basically a bunch of statements, which starts from our top level
         /// statement.
         /// </summary>
