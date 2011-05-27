@@ -223,6 +223,11 @@ namespace LINQToTTreeLib.Tests
             CheckSerialization(result, "GenerateClassesTestVectorIntAndDoubleAndShort");
         }
 
+#if false
+        ///
+        /// The problem with this test is that the vector<>'s are never written out as #pragma's.
+        /// So this can never be tested! :(
+        ///
         [TestMethod]
         public void TestForSTLVectorPickup()
         {
@@ -258,6 +263,7 @@ namespace LINQToTTreeLib.Tests
                 }
             }
         }
+#endif
 
         [TestMethod]
         public void TestGenerateSimpleItems()
