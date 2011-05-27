@@ -224,6 +224,42 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestForSTLVectorPickup()
+        {
+            ///
+            /// If a tree contains a vector<float> or similar, then that will generate
+            /// a #pragma link and link6 line. We need to make sure that our code correctly
+            /// removes that from the .h file and also adds them to the list of variables
+            /// that should be added later. This is due to a bug in the ROOT on windows that
+            /// means unloading the query after using one of these becomes unsafe (and unstable!).
+            ///
+
+            var t = TTreeParserCPPTests.CreateTrees.CreateVectorVectorTree();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.IsNotNull(result[0].ClassesToGenerate, "Expected some classes to generate");
+            Assert.AreEqual(3, result[0].ClassesToGenerate.Length, "expected 3 different vector class references");
+            Assert.IsTrue(result[0].ClassesToGenerate.All(c => c.includeFiles == "vector"), "vector needed to be the include file");
+
+            var names = new List<string>()
+            {
+                "vector<int>", "vector<short>", "vector<bool>"
+            };
+            Assert.IsTrue(result[0].ClassesToGenerate.All(c => names.Contains(c.classSpec)), "Some bad class spec names lifted from C++");
+
+            var fi = new FileInfo(result[0].NtupleProxyPath);
+            using (var reader = fi.OpenText())
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    Assert.IsFalse(line.Contains("#pragma") && line.Contains("vector"), "line '" + line + "' seems to have a bad pragma");
+                }
+            }
+        }
+
+        [TestMethod]
         public void TestGenerateSimpleItems()
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateSingleItemTree();

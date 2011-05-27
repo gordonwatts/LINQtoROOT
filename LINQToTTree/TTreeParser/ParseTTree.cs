@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using TTreeDataModel;
 
@@ -39,6 +41,14 @@ namespace TTreeParser
             masterClass.NtupleProxyPath = f.FullName;
 
             ///
+            /// Work around a ROOT bug that doesn't allow for unloading of classes
+            /// in the STL after a query is run. Actually, it will unload them, but somehow keeps
+            /// references in memory.
+            /// 
+
+            masterClass.ClassesToGenerate = ExtractSTLDictionaryReferences(f);
+
+            ///
             /// Analyze the TTree arrays.
             /// 
 
@@ -63,6 +73,79 @@ namespace TTreeParser
             /// 
 
             yield return masterClass;
+        }
+
+        /// <summary>
+        /// When an ntuple is parsed it contains many dictionary classes that have to be
+        /// generated. It turns out that if vector<int> and similar are generated then you end
+        /// up with the the query not being allowed to unload safely. To get around this we
+        /// remove dictionary generation for stl classes here and place them as dictoinaries that
+        /// are generated ahead of time.
+        /// 
+        /// We do a bunch of the work in memory as the files should be no more than a few
+        /// kilobytes.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        private ClassForDictionary[] ExtractSTLDictionaryReferences(FileInfo f)
+        {
+            var fixedFile = new StringBuilder();
+            List<ClassForDictionary> genRequests = new List<ClassForDictionary>();
+
+            var knownSTLHeaders = new string[] { "map", "vector", "list" };
+
+            using (var reader = f.OpenText())
+            {
+                /// #pragma link6 C++ class vector<float>;
+                var classExtractions = new Regex("(link|link6) C\\+\\+ class (?<cls>[^;]+);");
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    bool writeLine = true;
+                    if (line.StartsWith("#pragma link"))
+                    {
+                        var m = classExtractions.Match(line);
+                        if (m.Success)
+                        {
+                            var className = m.Groups["cls"].Value;
+                            writeLine = !knownSTLHeaders.Any(stlname => className.StartsWith(stlname));
+                            if (!writeLine)
+                            {
+                                var headers = new StringBuilder();
+                                foreach (var stl in knownSTLHeaders)
+                                {
+                                    if (className.Contains(stl))
+                                    {
+                                        if (headers.Length > 0)
+                                            headers.Append(",");
+                                        headers.Append(stl);
+                                    }
+                                }
+                                genRequests.Add(new ClassForDictionary() { classSpec = className, includeFiles = headers.ToString() });
+                            }
+                        }
+                    }
+
+                    if (writeLine)
+                        fixedFile.AppendLine(line);
+                }
+            }
+
+            ///
+            /// Now, replace the proxy file
+            /// 
+
+            using (var writer = f.CreateText())
+            {
+                writer.Write(fixedFile.ToString());
+                writer.Close();
+            }
+
+            ///
+            /// And return everything needed
+            /// 
+
+            return genRequests.ToArray();
         }
 
         /// <summary>
