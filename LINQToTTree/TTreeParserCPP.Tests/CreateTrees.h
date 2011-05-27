@@ -303,10 +303,12 @@ namespace TTreeParserCPPTests {
 		static ROOTNET::NTTree ^CreateVectorVectorTree()
 		{
 			vector<vector<double> > dvector;
+			vector<vector<float> > fvector;
 
 			TTree *t = new TTree("dude", "left field");
 
 			t->Branch("vector", &dvector);
+			t->Branch("vector2", &fvector);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
