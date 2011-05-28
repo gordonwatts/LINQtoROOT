@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LinqToTTreeInterfacesLib.Moles;
 
 namespace LINQToTTreeLib
 {
@@ -58,6 +59,25 @@ public void IncludeFilesGet21601()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void IncludeFilesGet992()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<string> iEnumerable;
+    string[] ss = new string[1];
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, ss, (string[])null, (IBookingStatementBlock)null);
+    iEnumerable = this.IncludeFilesGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.IncludeFiles, (object)iEnumerable));
+    Assert.IsNull(combinedGeneratedCode.CodeStatements);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 public void IncludeFilesGet21602()
 {
     CombinedGeneratedCode combinedGeneratedCode;
@@ -80,12 +100,13 @@ public void IncludeFilesGet21602()
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 public void IncludeFilesGet21603()
 {
+    SIBookingStatementBlock sIBookingStatementBlock;
     CombinedGeneratedCode combinedGeneratedCode;
     IEnumerable<string> iEnumerable;
-    string[] ss = new string[2];
-    ss[0] = "";
-    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                ((string[])null, (string[])null, ss, (IBookingStatementBlock)null);
+    sIBookingStatementBlock = new SIBookingStatementBlock();
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock)sIBookingStatementBlock);
     iEnumerable = this.IncludeFilesGet(combinedGeneratedCode);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)combinedGeneratedCode);
@@ -94,26 +115,7 @@ public void IncludeFilesGet21603()
     Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
     Assert.IsTrue(object.ReferenceEquals
                       (combinedGeneratedCode.IncludeFiles, (object)iEnumerable));
-    Assert.IsNull(combinedGeneratedCode.CodeStatements);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-public void IncludeFilesGet992()
-{
-    CombinedGeneratedCode combinedGeneratedCode;
-    IEnumerable<string> iEnumerable;
-    string[] ss = new string[1];
-    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                ((string[])null, ss, (string[])null, (IBookingStatementBlock)null);
-    iEnumerable = this.IncludeFilesGet(combinedGeneratedCode);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)combinedGeneratedCode);
-    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
-    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
-    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
-    Assert.IsTrue(object.ReferenceEquals
-                      (combinedGeneratedCode.IncludeFiles, (object)iEnumerable));
-    Assert.IsNull(combinedGeneratedCode.CodeStatements);
+    Assert.IsNotNull(combinedGeneratedCode.CodeStatements);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
@@ -138,18 +140,17 @@ public void IncludeFilesGet257()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-public void IncludeFilesGet21609()
+public void IncludeFilesGet25701()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     IEnumerable<string> iEnumerable;
-    string[] ss = new string[5];
-    ss[0] = "\0\0";
+    string[] ss = new string[2];
+    string[] ss1 = new string[2];
+    ss[0] = "";
     ss[1] = "";
-    ss[2] = "\0\0\0";
-    ss[3] = "\0\0\0\0";
-    ss[4] = "\0";
+    ss1[0] = "";
     combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                ((string[])null, (string[])null, ss, (IBookingStatementBlock)null);
+                                ((string[])null, ss, ss1, (IBookingStatementBlock)null);
     iEnumerable = this.IncludeFilesGet(combinedGeneratedCode);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)combinedGeneratedCode);

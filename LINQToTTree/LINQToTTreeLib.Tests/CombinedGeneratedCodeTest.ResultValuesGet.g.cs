@@ -13,6 +13,7 @@ using LinqToTTreeInterfacesLib;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LinqToTTreeInterfacesLib.Moles;
 
 namespace LINQToTTreeLib
 {
@@ -63,9 +64,70 @@ public void ResultValuesGet21601()
     CombinedGeneratedCode combinedGeneratedCode;
     IEnumerable<IVariable> iEnumerable;
     string[] ss = new string[1];
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, ss, (string[])null, (IBookingStatementBlock)null);
+    iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.ResultValues, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNull(combinedGeneratedCode.CodeStatements);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void ResultValuesGet21602()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<IVariable> iEnumerable;
+    string[] ss = new string[1];
     ss[0] = "";
     combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
                                 (ss, (string[])null, (string[])null, (IBookingStatementBlock)null);
+    iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.ResultValues, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNull(combinedGeneratedCode.CodeStatements);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void ResultValuesGet21603()
+{
+    SIBookingStatementBlock sIBookingStatementBlock;
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<IVariable> iEnumerable;
+    sIBookingStatementBlock = new SIBookingStatementBlock();
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock)sIBookingStatementBlock);
+    iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.ResultValues, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.CodeStatements);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void ResultValuesGet21604()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<IVariable> iEnumerable;
+    string[] ss = new string[2];
+    ss[0] = "";
+    ss[1] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, ss, (string[])null, (IBookingStatementBlock)null);
     iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)combinedGeneratedCode);
@@ -83,73 +145,12 @@ public void ResultValuesGet339()
     CombinedGeneratedCode combinedGeneratedCode;
     IEnumerable<IVariable> iEnumerable;
     string[] ss = new string[2];
-    ss[0] = "";
-    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                ((string[])null, (string[])null, ss, (IBookingStatementBlock)null);
-    iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)combinedGeneratedCode);
-    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
-    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
-    Assert.IsTrue(object.ReferenceEquals
-                      (combinedGeneratedCode.ResultValues, (object)iEnumerable));
-    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
-    Assert.IsNull(combinedGeneratedCode.CodeStatements);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-public void ResultValuesGet21603()
-{
-    CombinedGeneratedCode combinedGeneratedCode;
-    IEnumerable<IVariable> iEnumerable;
-    string[] ss = new string[1];
-    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                ((string[])null, ss, (string[])null, (IBookingStatementBlock)null);
-    iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)combinedGeneratedCode);
-    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
-    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
-    Assert.IsTrue(object.ReferenceEquals
-                      (combinedGeneratedCode.ResultValues, (object)iEnumerable));
-    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
-    Assert.IsNull(combinedGeneratedCode.CodeStatements);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-public void ResultValuesGet21605()
-{
-    CombinedGeneratedCode combinedGeneratedCode;
-    IEnumerable<IVariable> iEnumerable;
-    string[] ss = new string[2];
+    string[] ss1 = new string[2];
     ss[0] = "";
     ss[1] = "";
+    ss1[0] = "";
     combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                ((string[])null, ss, (string[])null, (IBookingStatementBlock)null);
-    iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)combinedGeneratedCode);
-    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
-    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
-    Assert.IsTrue(object.ReferenceEquals
-                      (combinedGeneratedCode.ResultValues, (object)iEnumerable));
-    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
-    Assert.IsNull(combinedGeneratedCode.CodeStatements);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-public void ResultValuesGet180()
-{
-    CombinedGeneratedCode combinedGeneratedCode;
-    IEnumerable<IVariable> iEnumerable;
-    string[] ss = new string[5];
-    ss[0] = "\0\0";
-    ss[1] = "";
-    ss[2] = "\0\0\0";
-    ss[3] = "\0\0\0\0";
-    ss[4] = "\0";
-    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                ((string[])null, (string[])null, ss, (IBookingStatementBlock)null);
+                                ((string[])null, ss, ss1, (IBookingStatementBlock)null);
     iEnumerable = this.ResultValuesGet(combinedGeneratedCode);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)combinedGeneratedCode);

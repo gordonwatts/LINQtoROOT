@@ -7,6 +7,7 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.ExtendedReflection.DataAccess;
 
 namespace LINQToTTreeLib
 {
@@ -19,25 +20,35 @@ namespace LINQToTTreeLib
     {
         /// <summary>Test stub for AddGeneratedCode(IGeneratedQueryCode)</summary>
         [PexMethod]
-        [PexUseType(typeof(GeneratedCode))]
+        [PexUseType(typeof(GeneratedCode)), PexAllowedException(typeof(ArgumentException)), PexAllowedException(typeof(TermDestructionException))]
         internal void AddGeneratedCode(
             [PexAssumeUnderTest]CombinedGeneratedCode target,
             [PexAssumeNotNull] IExecutableCode code
         )
         {
             ///
+            /// Some quick arg checking
+            /// 
+
+            if (code.ResultValues == null || target.ResultValues == null)
+                throw new ArgumentException("ResultValues can't be null");
+
+            ///
             /// Calculate the expected results
             /// 
 
             HashSet<string> includeSuperSet = new HashSet<string>(target.IncludeFiles);
-            foreach (var item in code.IncludeFiles)
-            {
-                includeSuperSet.Add(item);
-            }
+            if (code.IncludeFiles != null)
+                foreach (var item in code.IncludeFiles)
+                {
+                    includeSuperSet.Add(item);
+                }
 
             HashSet<string> resultNames = new HashSet<string>(target.ResultValues.Select(v => v.VariableName));
             foreach (var item in code.ResultValues)
             {
+                if (item == null)
+                    throw new ArgumentException("Can't be null");
                 resultNames.Add(item.VariableName);
             }
             var totalResultCount = target.ResultValues.Count() + code.ResultValues.Count();

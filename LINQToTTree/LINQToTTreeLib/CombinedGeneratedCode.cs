@@ -20,6 +20,8 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("code cannot be null");
             if (code.CodeStatements == null)
                 throw new ArgumentNullException("There is no code to be combined!");
+            if (code == this)
+                throw new ArgumentException("Can't add code to itself!");
 
             ///
             /// Variables that we need to queue for transfer
