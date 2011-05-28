@@ -214,6 +214,7 @@
     <Compile Include="FileUtilsTest.WriteTextIfNotDuplicate.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="FutureResultOperatorsTest.cs" />
     <Compile Include="GeneratedCodeTest.Add.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </Compile>

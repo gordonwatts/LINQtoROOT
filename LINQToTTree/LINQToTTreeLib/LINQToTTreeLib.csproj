@@ -90,6 +90,8 @@
     <Compile Include="Expressions\ExpressionStringConverter.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitor.cs" />
     <Compile Include="Expressions\ExpressionToCPP.cs" />
+    <Compile Include="FutureResultOperators.cs" />
+    <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

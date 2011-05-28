@@ -80,6 +80,7 @@
     <Compile Include="ICodeContext.cs" />
     <Compile Include="IExecutableCode.cs" />
     <Compile Include="IExpressionHolder.cs" />
+    <Compile Include="IFutureValue.cs" />
     <Compile Include="IGeneratedQueryCode.cs" />
     <Compile Include="IQueryResultCache.cs" />
     <Compile Include="IQVCollectionResultOperator.cs" />
