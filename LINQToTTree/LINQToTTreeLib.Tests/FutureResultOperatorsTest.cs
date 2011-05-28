@@ -45,20 +45,9 @@ namespace LINQToTTreeLib
             public static string[] _gCINTLines = null;
         }
 
-
         private QueriableTTree<SimpleEventNtup> NewTestQueryTTree()
         {
             return new QueriableTTree<SimpleEventNtup>(new FileInfo[] { new FileInfo(@"..\..\..\LINQToTTreeLib.Tests\testfile_intonly.root") }, "dude");
-        }
-
-        [TestMethod]
-        public void TestHarness()
-        {
-            /// Test to make sure that we have the override of our big-muscle query provider working correctly.
-            /// This is weird b/c we need the full infrastructure, but a way to dummy out the actual running!
-
-            var q = NewTestQueryTTree();
-            var dude = q.Count();
         }
 
         [TestMethod]
