@@ -108,20 +108,31 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public bool TryCombineStatement(IStatement statement)
         {
-            if (statement == (IStatement)null)
+            if (statement == null)
                 throw new ArgumentNullException("statement should not be null");
 
             if (statement.GetType() == typeof(StatementInlineBlock))
             {
                 var block = statement as StatementInlineBlock;
-                foreach (var s in block.Statements)
+                var statements = block.Statements;
+                if (statements != null)
                 {
-                    Add(s);
+                    if (statements == this.Statements)
+                        throw new ArgumentException("Can't add our own statements to ourselves");
+
+                    foreach (var s in statements)
+                    {
+                        Add(s);
+                    }
                 }
 
-                foreach (var v in block.DeclaredVariables)
+                var declVars = block.DeclaredVariables;
+                if (declVars != null)
                 {
-                    Add(v);
+                    foreach (var v in block.DeclaredVariables)
+                    {
+                        Add(v);
+                    }
                 }
             }
             else

@@ -23,22 +23,58 @@ namespace LINQToTTreeLib
             string[] ss = new string[0];
             this.CheckAddIncludeFiles(ss);
         }
-        [TestMethod]
-        [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void CheckAddIncludeFilesThrowsArgumentNullException187()
-        {
-            string[] ss = new string[1];
-            this.CheckAddIncludeFiles(ss);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void CheckAddIncludeFilesThrowsArgumentNullException347()
-        {
-            string[] ss = new string[1];
-            ss[0] = "";
-            this.CheckAddIncludeFiles(ss);
-        }
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CheckAddIncludeFilesThrowsArgumentException910()
+{
+    string[] ss = new string[1];
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CheckAddIncludeFilesThrowsArgumentException348()
+{
+    string[] ss = new string[1];
+    ss[0] = "";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException779()
+{
+    string[] ss = new string[1];
+    ss[0] = "\0";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException225()
+{
+    string[] ss = new string[1];
+    ss[0] = "\u0100";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException848()
+{
+    string[] ss = new string[1];
+    ss[0] = "\0\0";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException818()
+{
+    string[] ss = new string[1];
+    ss[0] = "\u0100\u0100";
+    this.CheckAddIncludeFiles(ss);
+}
     }
 }

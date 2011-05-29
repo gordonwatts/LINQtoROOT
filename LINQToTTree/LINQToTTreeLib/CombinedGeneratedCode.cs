@@ -16,18 +16,32 @@ namespace LINQToTTreeLib
         /// <param name="code"></param>
         public void AddGeneratedCode(IExecutableCode code)
         {
+            ///
+            /// We have some pretty stiff requirements on code
+            /// 
+
             if (code == null)
                 throw new ArgumentNullException("code cannot be null");
-            if (code.CodeStatements == null)
-                throw new ArgumentNullException("There is no code to be combined!");
             if (code == this)
                 throw new ArgumentException("Can't add code to itself!");
+
+            var varsToTrans = code.VariablesToTransfer;
+            if (varsToTrans == null)
+                throw new ArgumentNullException("Generated Code Varaibles to Transfer can't be null");
+
+            var includeFiles = code.IncludeFiles;
+            if (includeFiles == null)
+                throw new ArgumentNullException("Generated code Include Files can't be null");
+
+            var resultValues = code.ResultValues;
+            if (resultValues == null)
+                throw new ArgumentNullException("Generated code Result Values can't be null");
 
             ///
             /// Variables that we need to queue for transfer
             /// 
 
-            foreach (var v in code.VariablesToTransfer)
+            foreach (var v in varsToTrans)
             {
                 QueueVariableForTransfer(v);
             }
@@ -36,7 +50,7 @@ namespace LINQToTTreeLib
             /// Include Files - only add if we don't have them on the list already.
             /// 
 
-            foreach (var inc in code.IncludeFiles)
+            foreach (var inc in includeFiles)
             {
                 AddIncludeFile(inc);
             }
@@ -45,7 +59,7 @@ namespace LINQToTTreeLib
             /// Result values - killer if they are named the same thing!
             /// 
 
-            foreach (var item in code.ResultValues)
+            foreach (var item in resultValues)
             {
                 AddResult(item);
             }
