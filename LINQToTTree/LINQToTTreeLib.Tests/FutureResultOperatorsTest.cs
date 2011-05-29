@@ -7,6 +7,7 @@ using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NVelocity.App;
 
 namespace LINQToTTreeLib
 {
@@ -18,12 +19,100 @@ namespace LINQToTTreeLib
     public partial class FutureResultOperatorsTest
     {
         [TestInitialize]
-        public void TestSetup()
+        public void TestInit()
         {
-            using (var proxyWriter = File.CreateText("test.h"))
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+
+            var eng = new VelocityEngine();
+            eng.Init();
+
+            QueryResultCacheTest.SetupCacheDir();
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
+        /// <summary>
+        /// Dirt simply test ntuple. Actually matches one that exists on disk.
+        /// </summary>
+        public class TestNtupe
+        {
+#pragma warning disable 0169
+            public int run;
+#pragma warning restore 0169
+        }
+
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        private FileInfo CreateFileOfInt(int numberOfIter)
+        {
+            string filename = "intonly_" + numberOfIter.ToString() + ".root";
+            FileInfo result = new FileInfo(filename);
+            if (result.Exists)
+                return result;
+
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
+            var tree = TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter);
+            f.Write();
+            f.Close();
+            result.Refresh();
+            return result;
+        }
+
+        /// <summary>
+        /// Ntuple with emptys for everything.
+        /// </summary>
+        public class ntuple
+        {
+            public static string _gProxyFile = "";
+            public static string[] _gObjectFiles = { };
+            public static string[] _gCINTLines = { };
+
+            internal static void Reset()
             {
-                proxyWriter.WriteLine("You'd better never compile this!! :-)");
+                _gProxyFile = "";
+                _gObjectFiles = new string[0];
             }
+        }
+
+        /// <summary>
+        /// Given the root file and the root-tuple name, generate a proxy file 
+        /// </summary>
+        /// <param name="rootFile"></param>
+        /// <returns></returns>
+        private FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName)
+        {
+            ///
+            /// First, load up the TTree
+            /// 
+
+            var tfile = new ROOTNET.NTFile(rootFile.FullName, "READ");
+            var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
+            Assert.IsNotNull(tree, "Tree couldn't be found");
+
+            ///
+            /// Create the proxy sub-dir if not there already, and put the dummy macro in there
+            /// 
+
+            using (var w = File.CreateText("junk.C"))
+            {
+                w.Write("int junk() {return 10.0;}");
+                w.Close();
+            }
+
+            ///
+            /// Create the macro proxy now
+            /// 
+
+            tree.MakeProxy("scanner", "junk.C", null, "nohist");
+            return new FileInfo("scanner.h");
         }
 
         /// <summary>Test stub for FutureCount(IQueryable`1&lt;!!0&gt;)</summary>
@@ -45,57 +134,81 @@ namespace LINQToTTreeLib
             public static string[] _gCINTLines = null;
         }
 
-        private QueriableTTree<SimpleEventNtup> NewTestQueryTTree()
-        {
-            return new QueriableTTree<SimpleEventNtup>(new FileInfo[] { new FileInfo(@"..\..\..\LINQToTTreeLib.Tests\testfile_intonly.root") }, "dude");
-        }
-
         [TestMethod]
         public void TestSimpleSingleQuery()
         {
-            ///
-            /// Create a simple query, and make sure that nothing happen.s
-            /// 
+            int numberOfIter = 10;
 
-            var q = NewTestQueryTTree();
-            var dude = q.FutureCount();
-            Assert.IsNotNull(dude, "expected a future value back!");
+            var rootFile = CreateFileOfInt(numberOfIter);
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
 
-            Assert.IsNull(DummyQueryExectuor.LastQueryModel, "no query should have been executed up to now!");
-            var temp = dude.Value;
-            Assert.IsNotNull(DummyQueryExectuor.LastQueryModel, "a query should have been executed at this point");
-            Assert.IsTrue(dude.HasValue, "future should be marked as having a value");
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+
+            var result = exe.ExecuteScalarAsFuture<int>(query);
+
+            Assert.IsNotNull(result, "future should exist!");
+            Assert.IsFalse(result.HasValue, "future shoudl not have executed by now!");
+
+            var val = result.Value;
+            Assert.AreEqual(numberOfIter, val, "incorrect result came back.");
+            Assert.IsTrue(result.HasValue, "value should be marked by now!");
         }
 
         [TestMethod]
         public void TestWhereQuery()
         {
-            ///
-            /// Create a simple query, and make sure that nothing happen.s
-            /// 
+            int numberOfIter = 10;
 
-            var q = NewTestQueryTTree();
-            var dude = q.Where(v => v.run > 10).FutureCount();
+            var rootFile = CreateFileOfInt(numberOfIter);
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Where(v => v.run > 0).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
 
-            Assert.IsNull(DummyQueryExectuor.LastQueryModel, "no query should have been executed up to now!");
-            var temp = dude.Value;
-            Assert.IsNotNull(DummyQueryExectuor.LastQueryModel, "a query should have been executed at this point");
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+
+            var result = exe.ExecuteScalarAsFuture<int>(query);
+
+            Assert.IsNotNull(result, "future should exist!");
+            Assert.IsFalse(result.HasValue, "future shoudl not have executed by now!");
+
+            var val = result.Value;
+            Assert.AreEqual(numberOfIter, val, "incorrect result came back.");
+            Assert.IsTrue(result.HasValue, "value should be marked by now!");
         }
 
         [TestMethod]
         public void TestLinkedQuery()
         {
-            ///
-            /// Create a simple query, and make sure that nothing happen.s
-            /// 
+            int numberOfIter = 10;
 
-            var q = NewTestQueryTTree();
-            var dude1 = q.FutureCount();
-            var dude2 = q.Where(v => v.run > 10).FutureCount();
+            var rootFile = CreateFileOfInt(numberOfIter);
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var q = new QueriableDummy<TestNtupe>();
+            var dude1 = q.Count();
+            var query1 = DummyQueryExectuor.LastQueryModel;
 
-            Assert.IsNull(DummyQueryExectuor.LastQueryModel, "no query should have been executed up to now!");
-            var temp = dude1.Value;
-            Assert.IsTrue(dude2.HasValue, "Linked future should have also been evaluated");
+            var dude2 = q.Where(v => v.run > 0).Count();
+            var query2 = DummyQueryExectuor.LastQueryModel;
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+
+            var result1 = exe.ExecuteScalarAsFuture<int>(query1);
+            var result2 = exe.ExecuteScalarAsFuture<int>(query2);
+
+            Assert.IsFalse(result1.HasValue, "r1 should not have a value yet");
+            Assert.IsFalse(result2.HasValue, "r2 should not have a value yet");
+
+            var r1v = result1.Value;
+
+            Assert.IsTrue(result1.HasValue, "r1 should have a value");
+            Assert.IsTrue(result2.HasValue, "r2 should have a value");
         }
     }
 }
