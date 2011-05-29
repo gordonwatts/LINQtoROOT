@@ -221,6 +221,10 @@ namespace LINQToTTreeLib
         {
 
             void ExecuteQuery();
+
+            IExecutableCode Code { get; set; }
+
+            void ExtractResult();
         }
 
         /// <summary>
@@ -229,7 +233,7 @@ namespace LINQToTTreeLib
         class QueuedQuery<RType> : IQueuedQuery
         {
 
-            public GeneratedCode Code { get; set; }
+            public IExecutableCode Code { get; set; }
 
             public IQueryResultCacheKey CacheKey { get; set; }
 
@@ -237,7 +241,14 @@ namespace LINQToTTreeLib
 
             public void ExecuteQuery()
             {
-                Future.SetValue(Future.TreeExecutor.ExecuteUncachedQuery<RType>(Code, CacheKey));
+                Future.TreeExecutor.ExecuteQueuedQueries();
+            }
+
+
+            public void ExtractResult()
+            {
+                var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey);
+                Future.SetValue(final);
             }
         }
 
@@ -320,21 +331,20 @@ namespace LINQToTTreeLib
         /// </summary>
         internal void ExecuteQueuedQueries()
         {
+            ///
+            /// Get all the queries together, combined, and ready to run.
+            /// 
+
+            var combinedInfo = new CombinedGeneratedCode();
             foreach (var cq in _queuedQueries)
             {
-                cq.ExecuteQuery();
+                combinedInfo.AddGeneratedCode(cq.Code);
             }
-        }
 
-        /// <summary>
-        /// Given the code to run, we will run it!
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="result"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        private T ExecuteUncachedQuery<T>(IExecutableCode result, IQueryResultCacheKey key)
-        {
+            ///
+            /// Now, do the general running.
+            /// 
+
             CountExecutionRuns++;
 
             ///
@@ -350,20 +360,25 @@ namespace LINQToTTreeLib
             /// 
 
             CopyToQueryDirectory(_proxyFile);
-            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), result);
+            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
             CompileAndLoad(templateRunner);
 
             ///
             /// Fantastic! Now we need to run the object!
             /// 
 
-            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), result.VariablesToTransfer);
+            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer);
 
             ///
-            /// Last job, extract all the variables! And save in the cache!
+            /// Last job, extract all the variables! And save in the cache, and set the
+            /// future value so everyone else can use them!
             /// 
 
-            var final = ExtractResult<T>(result.ResultValues.FirstOrDefault(), key);
+            foreach (var cq in _queuedQueries)
+            {
+                cq.ExtractResult();
+            }
+            _queuedQueries.Clear();
 
             ///
             /// Ok, we are all done. We leave the query directory floating around
@@ -372,12 +387,6 @@ namespace LINQToTTreeLib
             /// 
 
             _queryDirectory = null;
-
-            ///
-            /// Return the result
-            /// 
-
-            return final;
         }
 
         /// <summary>
