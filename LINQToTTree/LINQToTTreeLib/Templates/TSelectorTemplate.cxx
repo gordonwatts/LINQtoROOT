@@ -39,8 +39,9 @@ public:
 		$baseClassName::SlaveBegin(t);
 
 		/// Init the variables that we are going to be carrying along with us.
-		$ResultVariable.VariableName = $ResultVariable.InitialValue;
-
+#foreach($v in $ResultVariables)
+		$v.VariableName = $v.InitialValue;
+#end
 	}
 
 	/// Called when we are closign the file and shutting down on the slave
@@ -100,7 +101,9 @@ private:
 	/// between entries of the ntuple. So things like the result that has
 	/// to be filled on each entry.
 
-	$ResultVariable.VariableType $ResultVariable.VariableName;
+#foreach($v in $ResultVariables)
+	$v.VariableType $v.VariableName;
+#end
 
 	/// Store an object to send back. We encase it in a FlowObject because the list
 	/// of objects that goes back is "flat" and FlowObject holds onto

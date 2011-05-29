@@ -193,7 +193,7 @@ namespace LINQToTTreeLib
             var dude1 = q.Count();
             var query1 = DummyQueryExectuor.LastQueryModel;
 
-            var dude2 = q.Where(v => v.run > 0).Count();
+            var dude2 = q.Where(v => v.run > 20).Count();
             var query2 = DummyQueryExectuor.LastQueryModel;
 
             ntuple._gProxyFile = proxyFile.FullName;
@@ -209,6 +209,9 @@ namespace LINQToTTreeLib
 
             Assert.IsTrue(result1.HasValue, "r1 should have a value");
             Assert.IsTrue(result2.HasValue, "r2 should have a value");
+
+            Assert.AreEqual(0, result2.Value, "incorrect r2");
+            Assert.AreEqual(numberOfIter, result1.Value, "incorrect r1");
         }
     }
 }

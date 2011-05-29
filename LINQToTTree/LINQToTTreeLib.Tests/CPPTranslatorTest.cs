@@ -63,9 +63,11 @@ namespace LINQToTTreeLib
 
             var r = TranslateGeneratedCode(target, code);
 
-            Assert.IsTrue(r.ContainsKey("ResultVariable"), "Result variable is missing");
-            Assert.IsInstanceOfType(r["ResultVariable"], typeof(CPPTranslator.VarInfo), "bad type for the result variable");
-            var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
+            Assert.IsTrue(r.ContainsKey("ResultVariables"), "Result variable is missing");
+            Assert.IsInstanceOfType(r["ResultVariables"], typeof(IEnumerable<CPPTranslator.VarInfo>), "bad type for the result variable");
+            var rList = r["ResultVariables"] as IEnumerable<CPPTranslator.VarInfo>;
+            Assert.AreEqual(1, rList.Count(), "incorrect # of result variables");
+            var rv = rList.First();
             Assert.AreEqual("2", rv.InitialValue, "initial value");
         }
 
@@ -101,7 +103,8 @@ namespace LINQToTTreeLib
 
             var r = TranslateGeneratedCode(target, code);
 
-            var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
+            var rlist = r["ResultVariables"] as IEnumerable<CPPTranslator.VarInfo>;
+            var rv = rlist.First();
             Assert.AreEqual("TH1F*", rv.VariableType, "type is not right");
             var inFiles = code.IncludeFiles.ToArray();
             foreach (var item in inFiles)
