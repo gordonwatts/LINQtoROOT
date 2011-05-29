@@ -217,6 +217,16 @@
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
     </Compile>
     <Compile Include="FutureResultOperatorsTest.cs" />
+    <Compile Include="FutureValueTTest.Constructor01.g.cs">
+      <DependentUpon>FutureValueTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FutureValueTTest.cs" />
+    <Compile Include="FutureValueTTest.SetValue.g.cs">
+      <DependentUpon>FutureValueTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FutureValueTTest.ValueGet.g.cs">
+      <DependentUpon>FutureValueTTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="GeneratedCodeTest.Add.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </Compile>
