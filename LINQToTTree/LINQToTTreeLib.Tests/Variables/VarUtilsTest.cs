@@ -182,5 +182,13 @@ namespace LINQToTTreeLib.Variables
             Assert.IsFalse(IsPointerType(typeof(float)), "int");
             Assert.IsTrue(IsPointerType(typeof(ntup)), "ntup");
         }
+
+        [TestMethod]
+        public void TestIsRootClass()
+        {
+            Assert.IsFalse(typeof(int).IsROOTClass(), "type int");
+            Assert.IsTrue(typeof(ROOTNET.NTH1F).IsROOTClass(), "type ROOTNET.NTH1F");
+            Assert.IsTrue(typeof(ROOTNET.Interface.NTH1F).IsROOTClass(), "type ROOTNET.Interface.NTH1F");
+        }
     }
 }
