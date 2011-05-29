@@ -200,12 +200,62 @@ namespace LINQToTTreeLib
         private IQueryResultCache _cache = new QueryResultCache();
 
         /// <summary>
-        /// Execute a scalar result. These are things that end in "count" or "aggregate", etc.
+        /// Execute a scalar result. Things like Count and Aggragate.
+        /// This is a direct request by the LINQ system - the user didn't use "Future". However,
+        /// internally we just queue it up as a Future request and thus run it along with anything
+        /// else the user had requeseted.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryModel"></param>
         /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
+        {
+            var r = ExecuteScalarAsFuture<T>(queryModel);
+            return r.Value;
+        }
+
+        /// <summary>
+        /// Interface to allow use easy access to cached queries.
+        /// </summary>
+        interface IQueuedQuery
+        {
+
+            void ExecuteQuery();
+        }
+
+        /// <summary>
+        /// Enough info to run a query at a later date.
+        /// </summary>
+        class QueuedQuery<RType> : IQueuedQuery
+        {
+
+            public GeneratedCode Code { get; set; }
+
+            public IQueryResultCacheKey CacheKey { get; set; }
+
+            public FutureValue<RType> Future { get; set; }
+
+            public void ExecuteQuery()
+            {
+                Future.SetValue(Future.TreeExecutor.ExecuteUncachedQuery<RType>(Code, CacheKey));
+            }
+        }
+
+        /// <summary>
+        /// The list of queires that haven't been run yet.
+        /// </summary>
+        List<IQueuedQuery> _queuedQueries = new List<IQueuedQuery>();
+
+        /// <summary>
+        /// Internal method to return a future to a query.
+        /// We first check the cache, if there is a hit, we assign the result
+        /// right away. Otherwise we queue up the query to be executed next time
+        /// all queries are executed.
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="qm"></param>
+        /// <returns></returns>
+        internal IFutureValue<TResult> ExecuteScalarAsFuture<TResult>(QueryModel queryModel)
         {
             ///
             /// We have to init everything - which means using MEF!
@@ -248,15 +298,32 @@ namespace LINQToTTreeLib
             }
             if (!IgnoreQueryCache)
             {
-                var cacheHit = _cache.Lookup<T>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
+                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;
-                    return cacheHit.Item2;
+                    return new FutureValue<TResult>(cacheHit.Item2);
                 }
             }
 
-            return ExecuteUncachedQuery<T>(result, key);
+            ///
+            /// Ok, no cache hit. So queue up the run.
+            /// 
+
+            var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this) };
+            _queuedQueries.Add(cq);
+            return cq.Future;
+        }
+
+        /// <summary>
+        /// Called when it is time to execut all the queries
+        /// </summary>
+        internal void ExecuteQueuedQueries()
+        {
+            foreach (var cq in _queuedQueries)
+            {
+                cq.ExecuteQuery();
+            }
         }
 
         /// <summary>

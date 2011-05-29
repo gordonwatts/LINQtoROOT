@@ -46,10 +46,12 @@ namespace LINQToTTreeLib
             var qm = qpb.GenerateQueryModel(expr);
 
             ///
-            /// Now, cache it and queue it up for building
+            /// Use the queriable t tree to get the value. This may include
+            /// doing a cache lookup, btw.
             /// 
 
-            return new FutureValue<int>(); /// coming soon
+            var ttree = qpb.Executor as TTreeQueryExecutor;
+            return ttree.ExecuteScalarAsFuture<int>(qm);
         }
 
     }
