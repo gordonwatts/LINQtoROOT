@@ -133,6 +133,9 @@ namespace LINQToTTreeLib
         /// <param name="includeName"></param>
         public void AddIncludeFile(string includeName)
         {
+            if (string.IsNullOrWhiteSpace(includeName))
+                throw new ArgumentException("Include filename is empty and thus illegal!");
+
             if (!_includeFiles.Contains(includeName))
                 _includeFiles.Add(includeName);
         }

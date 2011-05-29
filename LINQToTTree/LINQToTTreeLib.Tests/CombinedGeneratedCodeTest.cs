@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using Microsoft.ExtendedReflection.DataAccess;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.ExtendedReflection.DataAccess;
 
 namespace LINQToTTreeLib
 {
@@ -129,8 +129,11 @@ namespace LINQToTTreeLib
             string includeName
         )
         {
+            HashSet<string> hs = new HashSet<string>(target.IncludeFiles);
             target.AddIncludeFile(includeName);
-            // TODO: add assertions to method CombinedGeneratedCodeTest.AddIncludeFile(CombinedGeneratedCode, String)
+            Assert.IsFalse(string.IsNullOrWhiteSpace(includeName), "bad include file was successfully added");
+            hs.Add(includeName);
+            Assert.AreEqual(hs.Count, target.IncludeFiles.Count(), "incorrect # of include files");
         }
 
         /// <summary>Test stub for .ctor()</summary>
