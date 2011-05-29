@@ -114,5 +114,19 @@ namespace LINQToTTreeLib
 
             Assert.IsTrue(inFiles.Contains("TH1F.h"), "Missing include file");
         }
+
+        [TestMethod]
+        public void TestTranslateForIncludeFiles()
+        {
+            CPPTranslator target = new CPPTranslator();
+            VarObject obj = new VarObject(typeof(ROOTNET.NTH1F));
+            GeneratedCode code = new GeneratedCode();
+            code.SetResult(obj);
+
+            var r = TranslateGeneratedCode(target, code);
+
+            Assert.AreEqual(1, code.IncludeFiles.Count(), "# of include files");
+            Assert.AreEqual("TH1F.h", code.IncludeFiles.First(), "include file name is incorrect");
+        }
     }
 }

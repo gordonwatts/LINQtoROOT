@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Tests
 {
@@ -31,7 +32,7 @@ namespace LINQToTTreeLib.Tests
 
             public System.Collections.Generic.IEnumerable<string> IncludeFiles(IVariable iVariable)
             {
-                yield return "file.h";
+                return Enumerable.Empty<string>();
             }
 
             public T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj)

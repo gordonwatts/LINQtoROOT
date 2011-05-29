@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 
@@ -30,7 +31,35 @@ namespace LINQToTTreeLib
             result["ProcessStatements"] = TranslateStatements(code.CodeStatements);
             result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValues, code);
 
+            ///
+            /// Next, go through everything and extract the include files
+            /// 
+
+            AddIncludeFiles(code);
+
             return result;
+        }
+
+        /// <summary>
+        /// Look at all the sources we can of include files and make sure they get added
+        /// to the code base so they can be "included". :-)
+        /// </summary>
+        /// <param name="code"></param>
+        private void AddIncludeFiles(IExecutableCode code)
+        {
+            var includesFromResults = from v in code.ResultValues
+                                      where v.Type.IsROOTClass()
+                                      select v.Type.Name.Substring(1) + ".h";
+
+            var includesFromSavers = from v in code.ResultValues
+                                     let saver = _saver.Get(v)
+                                     from inc in saver.IncludeFiles(v)
+                                     select inc;
+
+            foreach (var incFile in includesFromResults.Concat(includesFromSavers))
+            {
+                code.AddIncludeFile(incFile);
+            }
         }
 
         /// <summary>
@@ -59,15 +88,8 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private IEnumerable<VarInfo> TranslateVariable(IEnumerable<LinqToTTreeInterfacesLib.IVariable> vars, IExecutableCode gc)
         {
-            foreach (var v in vars)
-            {
-                if (v.Type.IsROOTClass())
-                {
-                    gc.AddIncludeFile(v.Type.Name.Substring(1) + ".h");
-                }
-
-                yield return new VarInfo(v);
-            }
+            return from v in vars
+                   select new VarInfo(v);
         }
 
         /// <summary>
@@ -96,18 +118,10 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private IEnumerable<string> TranslateFinalizingVariables(IEnumerable<IVariable> iVariable, IExecutableCode gc)
         {
-            foreach (var v in iVariable)
-            {
-                var saver = _saver.Get(v);
-                foreach (var f in saver.IncludeFiles(v))
-                {
-                    gc.AddIncludeFile(f);
-                }
-                foreach (var line in saver.SaveToFile(v))
-                {
-                    yield return line;
-                }
-            }
+            return from v in iVariable
+                   let saver = _saver.Get(v)
+                   from line in saver.SaveToFile(v)
+                   select line;
         }
     }
 }
