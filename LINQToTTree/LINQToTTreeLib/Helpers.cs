@@ -127,7 +127,7 @@ namespace LINQToTTreeLib
         /// <param name="highBin"></param>
         /// <param name="getter"></param>
         /// <returns></returns>
-        public static ROOTNET.Interface.NTH1F Plot<TSource>
+        public static ROOTNET.NTH1F Plot<TSource>
             (
             this IQueryable<TSource> source,
             string plotID, string plotTitle,
@@ -161,7 +161,7 @@ namespace LINQToTTreeLib
         /// <param name="highBin"></param>
         /// <param name="getter"></param>
         /// <returns></returns>
-        public static IFutureValue<ROOTNET.Interface.NTH1F> FuturePlot<TSource>
+        public static IFutureValue<ROOTNET.NTH1F> FuturePlot<TSource>
             (
             this IQueryable<TSource> source,
             string plotID, string plotTitle,
@@ -178,8 +178,8 @@ namespace LINQToTTreeLib
             var fillMethod = typeof(ROOTNET.NTH1F).GetMethod("Fill", new Type[] { typeof(double) });
             var callFill = Expression.Call(hParameter, fillMethod, callGetter);
 
-            var lambda = Expression.Lambda<Action<ROOTNET.Interface.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            return source.FutureApplyToObject(new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin), lambda);
+            var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
+            return source.FutureApplyToObject(new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin) as ROOTNET.NTH1F, lambda);
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace LINQToTTreeLib
         /// <param name="yHighBin"></param>
         /// <param name="getter"></param>
         /// <returns></returns>
-        public static ROOTNET.Interface.NTH2F Plot<TSource>
+        public static ROOTNET.NTH2F Plot<TSource>
             (
             this IQueryable<TSource> source,
             string plotID, string plotTitle,
@@ -235,7 +235,7 @@ namespace LINQToTTreeLib
         /// <param name="yHighBin"></param>
         /// <param name="getter"></param>
         /// <returns></returns>
-        public static IFutureValue<ROOTNET.Interface.NTH2F> FuturePlot<TSource>
+        public static IFutureValue<ROOTNET.NTH2F> FuturePlot<TSource>
             (
             this IQueryable<TSource> source,
             string plotID, string plotTitle,
@@ -245,7 +245,7 @@ namespace LINQToTTreeLib
             Expression<Func<TSource, double>> yGetter
             )
         {
-            var hParameter = Expression.Parameter(typeof(ROOTNET.Interface.NTH2F), "h");
+            var hParameter = Expression.Parameter(typeof(ROOTNET.NTH2F), "h");
             var vParameter = Expression.Parameter(typeof(TSource), "v");
 
             var callXGetter = Expression.Invoke(xGetter, vParameter);
@@ -254,8 +254,8 @@ namespace LINQToTTreeLib
             var fillMethod = typeof(ROOTNET.NTH2F).GetMethod("Fill", new Type[] { typeof(double), typeof(double) });
             var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter);
 
-            var lambda = Expression.Lambda<Action<ROOTNET.Interface.NTH2F, TSource>>(callFill, hParameter, vParameter);
-            ROOTNET.Interface.NTH2F interfaceobj = new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
+            var lambda = Expression.Lambda<Action<ROOTNET.NTH2F, TSource>>(callFill, hParameter, vParameter);
+            var interfaceobj = new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
             return source.FutureApplyToObject(interfaceobj, lambda);
         }
 
@@ -270,7 +270,7 @@ namespace LINQToTTreeLib
         /// <param name="lowBin"></param>
         /// <param name="highBin"></param>
         /// <returns></returns>
-        public static ROOTNET.Interface.NTH1F Plot<T>
+        public static ROOTNET.NTH1F Plot<T>
             (
             this IQueryable<T> source,
             string plotID, string plotTitle,
@@ -292,7 +292,7 @@ namespace LINQToTTreeLib
         /// <param name="lowBin"></param>
         /// <param name="highBin"></param>
         /// <returns></returns>
-        public static IFutureValue<ROOTNET.Interface.NTH1F> FuturePlot<T>
+        public static IFutureValue<ROOTNET.NTH1F> FuturePlot<T>
             (
             this IQueryable<T> source,
             string plotID, string plotTitle,
