@@ -51,21 +51,6 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Aggregate, but don't return an item from our function... a secret way around a limitation in how
-        /// Expression Trees are parsed.
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="seed"></param>
-        /// <param name="apply"></param>
-        /// <returns></returns>
-        public static TResult Aggregate<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TResult>> seed, Action<TResult, TSource> apply)
-        {
-            return source.Aggregate(seed, (s, n) => ApplyReturnFirst(s, n, (s1, n1) => apply(s1, n1)));
-        }
-
-        /// <summary>
         /// given an object, apply each iteration to that object using a func, and return the object when done. Can
         /// be used much like Aggregate (o.Fill(arg)).
         /// </summary>
