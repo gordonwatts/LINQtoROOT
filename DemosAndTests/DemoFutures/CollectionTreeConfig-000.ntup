@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TTreeUserInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Groups>
+    <ArrayGroup>
+      <Name>ungrouped</Name>
+      <Variables>
+        <VariableInfo NETName="mubcid" TTreeName="mubcid" />
+        <VariableInfo NETName="CalRatio_eta" TTreeName="CalRatio_eta" />
+        <VariableInfo NETName="CalRatio_phi" TTreeName="CalRatio_phi" />
+        <VariableInfo NETName="CalRatio_erat" TTreeName="CalRatio_erat" />
+        <VariableInfo NETName="CalRatio_ET" TTreeName="CalRatio_ET" />
+        <VariableInfo NETName="Trackless_eta" TTreeName="Trackless_eta" />
+        <VariableInfo NETName="Trackless_phi" TTreeName="Trackless_phi" />
+        <VariableInfo NETName="Trackless_ET" TTreeName="Trackless_ET" />
+        <VariableInfo NETName="AllEvents_nRoI" TTreeName="AllEvents_nRoI" />
+        <VariableInfo NETName="trig_prescales" TTreeName="trig_prescales" />
+        <VariableInfo NETName="trig_bits" TTreeName="trig_bits" />
+        <VariableInfo NETName="caloCluster_emB0_time" TTreeName="caloCluster_emB0_time" />
+        <VariableInfo NETName="caloCluster_emB1_time" TTreeName="caloCluster_emB1_time" />
+        <VariableInfo NETName="caloCluster_emB2_time" TTreeName="caloCluster_emB2_time" />
+        <VariableInfo NETName="caloCluster_emB3_time" TTreeName="caloCluster_emB3_time" />
+        <VariableInfo NETName="caloCluster_emE0_time" TTreeName="caloCluster_emE0_time" />
+        <VariableInfo NETName="caloCluster_emE1_time" TTreeName="caloCluster_emE1_time" />
+        <VariableInfo NETName="caloCluster_emE2_time" TTreeName="caloCluster_emE2_time" />
+        <VariableInfo NETName="caloCluster_emE3_time" TTreeName="caloCluster_emE3_time" />
+        <VariableInfo NETName="caloCluster_emF0_time" TTreeName="caloCluster_emF0_time" />
+        <VariableInfo NETName="caloCluster_emF1_time" TTreeName="caloCluster_emF1_time" />
+        <VariableInfo NETName="caloCluster_emF2_time" TTreeName="caloCluster_emF2_time" />
+        <VariableInfo NETName="caloCluster_hadE0_time" TTreeName="caloCluster_hadE0_time" />
+        <VariableInfo NETName="caloCluster_hadE1_time" TTreeName="caloCluster_hadE1_time" />
+        <VariableInfo NETName="caloCluster_hadE2_time" TTreeName="caloCluster_hadE2_time" />
+        <VariableInfo NETName="caloCluster_hadE3_time" TTreeName="caloCluster_hadE3_time" />
+        <VariableInfo NETName="caloCluster_hadB0_time" TTreeName="caloCluster_hadB0_time" />
+        <VariableInfo NETName="caloCluster_hadB1_time" TTreeName="caloCluster_hadB1_time" />
+        <VariableInfo NETName="caloCluster_hadB2_time" TTreeName="caloCluster_hadB2_time" />
+        <VariableInfo NETName="caloCluster_hadGap1_time" TTreeName="caloCluster_hadGap1_time" />
+        <VariableInfo NETName="caloCluster_hadGap2_time" TTreeName="caloCluster_hadGap2_time" />
+        <VariableInfo NETName="caloCluster_hadGap3_time" TTreeName="caloCluster_hadGap3_time" />
+        <VariableInfo NETName="caloCluster_hadExB0_time" TTreeName="caloCluster_hadExB0_time" />
+        <VariableInfo NETName="caloCluster_hadExB1_time" TTreeName="caloCluster_hadExB1_time" />
+        <VariableInfo NETName="caloCluster_hadExB2_time" TTreeName="caloCluster_hadExB2_time" />
+        <VariableInfo NETName="cell_emB0_time" TTreeName="cell_emB0_time" />
+        <VariableInfo NETName="cell_emB1_time" TTreeName="cell_emB1_time" />
+        <VariableInfo NETName="cell_emB2_time" TTreeName="cell_emB2_time" />
+        <VariableInfo NETName="cell_emB3_time" TTreeName="cell_emB3_time" />
+        <VariableInfo NETName="cell_emE0_time" TTreeName="cell_emE0_time" />
+        <VariableInfo NETName="cell_emE1_time" TTreeName="cell_emE1_time" />
+        <VariableInfo NETName="cell_emE2_time" TTreeName="cell_emE2_time" />
+        <VariableInfo NETName="cell_emE3_time" TTreeName="cell_emE3_time" />
+        <VariableInfo NETName="cell_emF0_time" TTreeName="cell_emF0_time" />
+        <VariableInfo NETName="cell_emF1_time" TTreeName="cell_emF1_time" />
+        <VariableInfo NETName="cell_emF2_time" TTreeName="cell_emF2_time" />
+        <VariableInfo NETName="cell_hadE0_time" TTreeName="cell_hadE0_time" />
+        <VariableInfo NETName="cell_hadE1_time" TTreeName="cell_hadE1_time" />
+        <VariableInfo NETName="cell_hadE2_time" TTreeName="cell_hadE2_time" />
+        <VariableInfo NETName="cell_hadE3_time" TTreeName="cell_hadE3_time" />
+        <VariableInfo NETName="cell_hadB0_time" TTreeName="cell_hadB0_time" />
+        <VariableInfo NETName="cell_hadB1_time" TTreeName="cell_hadB1_time" />
+        <VariableInfo NETName="cell_hadB2_time" TTreeName="cell_hadB2_time" />
+        <VariableInfo NETName="cell_hadGap1_time" TTreeName="cell_hadGap1_time" />
+        <VariableInfo NETName="cell_hadGap2_time" TTreeName="cell_hadGap2_time" />
+        <VariableInfo NETName="cell_hadGap3_time" TTreeName="cell_hadGap3_time" />
+        <VariableInfo NETName="cell_hadExB0_time" TTreeName="cell_hadExB0_time" />
+        <VariableInfo NETName="cell_hadExB1_time" TTreeName="cell_hadExB1_time" />
+        <VariableInfo NETName="cell_hadExB2_time" TTreeName="cell_hadExB2_time" />
+        <VariableInfo NETName="Mu_d0" TTreeName="Mu_d0" />
+        <VariableInfo NETName="Mu_z0sinTh" TTreeName="Mu_z0sinTh" />
+        <VariableInfo NETName="Mu_a0" TTreeName="Mu_a0" />
+        <VariableInfo NETName="Mu_d0err" TTreeName="Mu_d0err" />
+        <VariableInfo NETName="Mu_isLoose" TTreeName="Mu_isLoose" />
+        <VariableInfo NETName="Mu_isMedium" TTreeName="Mu_isMedium" />
+        <VariableInfo NETName="Mu_isTight" TTreeName="Mu_isTight" />
+        <VariableInfo NETName="Mu_InDet_trk_Index" TTreeName="Mu_InDet_trk_Index" />
+        <VariableInfo NETName="Mu_beta_L2" TTreeName="Mu_beta_L2" />
+        <VariableInfo NETName="RunNumber" TTreeName="RunNumber" />
+        <VariableInfo NETName="EventNumber" TTreeName="EventNumber" />
+        <VariableInfo NETName="StreamESD_ref" TTreeName="StreamESD_ref" />
+        <VariableInfo NETName="Stream1_ref" TTreeName="Stream1_ref" />
+        <VariableInfo NETName="Token" TTreeName="Token" />
+        <VariableInfo NETName="PassedRoICluster" TTreeName="PassedRoICluster" />
+        <VariableInfo NETName="PassedCalRatio" TTreeName="PassedCalRatio" />
+        <VariableInfo NETName="PassedTracklessJet" TTreeName="PassedTracklessJet" />
+        <VariableInfo NETName="PassedMultiMuon" TTreeName="PassedMultiMuon" />
+        <VariableInfo NETName="PassGammaMuon" TTreeName="PassGammaMuon" />
+        <VariableInfo NETName="PassedCollisionVertex" TTreeName="PassedCollisionVertex" />
+        <VariableInfo NETName="MET_final" TTreeName="MET_final" />
+        <VariableInfo NETName="MET_final_phi" TTreeName="MET_final_phi" />
+        <VariableInfo NETName="MET_base" TTreeName="MET_base" />
+        <VariableInfo NETName="MET_base_phi" TTreeName="MET_base_phi" />
+        <VariableInfo NETName="MET_topo" TTreeName="MET_topo" />
+        <VariableInfo NETName="MET_topo_phi" TTreeName="MET_topo_phi" />
+        <VariableInfo NETName="AntiKt4TopoJets_nJets" TTreeName="AntiKt4TopoJets_nJets" />
+        <VariableInfo NETName="Mu_N" TTreeName="Mu_N" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group1</Name>
+      <Variables>
+        <VariableInfo NETName="RoICluster_eta" TTreeName="RoICluster_eta" />
+        <VariableInfo NETName="RoICluster_phi" TTreeName="RoICluster_phi" />
+        <VariableInfo NETName="RoICluster_nRoI" TTreeName="RoICluster_nRoI" />
+        <VariableInfo NETName="MBTSTimeFilter" TTreeName="MBTSTimeFilter" />
+        <VariableInfo NETName="trig_calo_ncellA" TTreeName="trig_calo_ncellA" />
+        <VariableInfo NETName="trig_calo_ncellC" TTreeName="trig_calo_ncellC" />
+        <VariableInfo NETName="trig_calo_timeA" TTreeName="trig_calo_timeA" />
+        <VariableInfo NETName="trig_calo_timeC" TTreeName="trig_calo_timeC" />
+        <VariableInfo NETName="trig_calo_energyA" TTreeName="trig_calo_energyA" />
+        <VariableInfo NETName="trig_calo_energyC" TTreeName="trig_calo_energyC" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group2</Name>
+      <Variables>
+        <VariableInfo NETName="rpc_prd_station" TTreeName="rpc_prd_station" />
+        <VariableInfo NETName="rpc_prd_eta" TTreeName="rpc_prd_eta" />
+        <VariableInfo NETName="rpc_prd_phi" TTreeName="rpc_prd_phi" />
+        <VariableInfo NETName="rpc_prd_doublr" TTreeName="rpc_prd_doublr" />
+        <VariableInfo NETName="rpc_prd_doublz" TTreeName="rpc_prd_doublz" />
+        <VariableInfo NETName="rpc_prd_doublphi" TTreeName="rpc_prd_doublphi" />
+        <VariableInfo NETName="rpc_prd_gasgap" TTreeName="rpc_prd_gasgap" />
+        <VariableInfo NETName="rpc_prd_measphi" TTreeName="rpc_prd_measphi" />
+        <VariableInfo NETName="rpc_prd_strip" TTreeName="rpc_prd_strip" />
+        <VariableInfo NETName="rpc_prd_time" TTreeName="rpc_prd_time" />
+        <VariableInfo NETName="rpc_prd_stripx" TTreeName="rpc_prd_stripx" />
+        <VariableInfo NETName="rpc_prd_stripy" TTreeName="rpc_prd_stripy" />
+        <VariableInfo NETName="rpc_prd_stripz" TTreeName="rpc_prd_stripz" />
+        <VariableInfo NETName="rpc_prd_triggerInfo" TTreeName="rpc_prd_triggerInfo" />
+        <VariableInfo NETName="rpc_prd_ambigFlag" TTreeName="rpc_prd_ambigFlag" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>Tracks</Name>
+      <Variables>
+        <VariableInfo NETName="pt" TTreeName="Track_pt" />
+        <VariableInfo NETName="eta" TTreeName="Track_eta" />
+        <VariableInfo NETName="phi" TTreeName="Track_phi" />
+        <VariableInfo NETName="E" TTreeName="Track_E" />
+        <VariableInfo NETName="chi2" TTreeName="Track_chi2" />
+        <VariableInfo NETName="nDoF" TTreeName="Track_nDoF" />
+        <VariableInfo NETName="d0" TTreeName="Track_d0" />
+        <VariableInfo NETName="z0" TTreeName="Track_z0" />
+        <VariableInfo NETName="nPixel" TTreeName="Track_nPixel" />
+        <VariableInfo NETName="nSCT" TTreeName="Track_nSCT" />
+        <VariableInfo NETName="nTRT" TTreeName="Track_nTRT" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group4</Name>
+      <Variables>
+        <VariableInfo NETName="trig_mbts_times" TTreeName="trig_mbts_times" />
+        <VariableInfo NETName="trig_mbts_energy" TTreeName="trig_mbts_energy" />
+        <VariableInfo NETName="trig_mbts_quality" TTreeName="trig_mbts_quality" />
+        <VariableInfo NETName="trig_mbts_eta" TTreeName="trig_mbts_eta" />
+        <VariableInfo NETName="trig_mbts_phi" TTreeName="trig_mbts_phi" />
+        <VariableInfo NETName="trig_mbts_channel" TTreeName="trig_mbts_channel" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group5</Name>
+      <Variables>
+        <VariableInfo NETName="cell_number" TTreeName="cell_number" />
+        <VariableInfo NETName="cell_sampling" TTreeName="cell_sampling" />
+        <VariableInfo NETName="cell_time" TTreeName="cell_time" />
+        <VariableInfo NETName="cell_energy" TTreeName="cell_energy" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>jet04</Name>
+      <Variables>
+        <VariableInfo NETName="isGood" TTreeName="isGood" />
+        <VariableInfo NETName="isUgly" TTreeName="isUgly" />
+        <VariableInfo NETName="isBad" TTreeName="isBad" />
+        <VariableInfo NETName="e" TTreeName="AntiKt4TopoJets_E" />
+        <VariableInfo NETName="p" TTreeName="AntiKt4TopoJets_p" />
+        <VariableInfo NETName="Et" TTreeName="AntiKt4TopoJets_Et" />
+        <VariableInfo NETName="pt" TTreeName="AntiKt4TopoJets_pt" />
+        <VariableInfo NETName="AntiKt4TopoJets_m" TTreeName="AntiKt4TopoJets_m" />
+        <VariableInfo NETName="AntiKt4TopoJets_y" TTreeName="AntiKt4TopoJets_y" />
+        <VariableInfo NETName="AntiKt4TopoJets_tanth" TTreeName="AntiKt4TopoJets_tanth" />
+        <VariableInfo NETName="AntiKt4TopoJets_eta" TTreeName="AntiKt4TopoJets_eta" />
+        <VariableInfo NETName="AntiKt4TopoJets_phi" TTreeName="AntiKt4TopoJets_phi" />
+        <VariableInfo NETName="AntiKt4TopoJets_Eh" TTreeName="AntiKt4TopoJets_Eh" />
+        <VariableInfo NETName="AntiKt4TopoJets_Eem" TTreeName="AntiKt4TopoJets_Eem" />
+        <VariableInfo NETName="AntiKt4TopoJets_px" TTreeName="AntiKt4TopoJets_px" />
+        <VariableInfo NETName="AntiKt4TopoJets_py" TTreeName="AntiKt4TopoJets_py" />
+        <VariableInfo NETName="AntiKt4TopoJets_pz" TTreeName="AntiKt4TopoJets_pz" />
+        <VariableInfo NETName="AntiKt4TopoJets_Ncon" TTreeName="AntiKt4TopoJets_Ncon" />
+        <VariableInfo NETName="AntiKt4TopoJets_ptcon" TTreeName="AntiKt4TopoJets_ptcon" />
+        <VariableInfo NETName="AntiKt4TopoJets_econ" TTreeName="AntiKt4TopoJets_econ" />
+        <VariableInfo NETName="AntiKt4TopoJets_etacon" TTreeName="AntiKt4TopoJets_etacon" />
+        <VariableInfo NETName="AntiKt4TopoJets_phicon" TTreeName="AntiKt4TopoJets_phicon" />
+        <VariableInfo NETName="AntiKt4TopoJets_weightcon" TTreeName="AntiKt4TopoJets_weightcon" />
+        <VariableInfo NETName="AntiKt4TopoJets_emfrac" TTreeName="AntiKt4TopoJets_emfrac" />
+        <VariableInfo NETName="AntiKt4TopoJets_moments" TTreeName="AntiKt4TopoJets_moments" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_PreSamplerB" TTreeName="AntiKt4TopoJets_e_PreSamplerB" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_EMB1" TTreeName="AntiKt4TopoJets_e_EMB1" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_EMB2" TTreeName="AntiKt4TopoJets_e_EMB2" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_EMB3" TTreeName="AntiKt4TopoJets_e_EMB3" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_PreSamplerE" TTreeName="AntiKt4TopoJets_e_PreSamplerE" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_EME1" TTreeName="AntiKt4TopoJets_e_EME1" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_EME2" TTreeName="AntiKt4TopoJets_e_EME2" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_EME3" TTreeName="AntiKt4TopoJets_e_EME3" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_HEC0" TTreeName="AntiKt4TopoJets_e_HEC0" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_HEC1" TTreeName="AntiKt4TopoJets_e_HEC1" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_HEC2" TTreeName="AntiKt4TopoJets_e_HEC2" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_HEC3" TTreeName="AntiKt4TopoJets_e_HEC3" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileBar0" TTreeName="AntiKt4TopoJets_e_TileBar0" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileBar1" TTreeName="AntiKt4TopoJets_e_TileBar1" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileBar2" TTreeName="AntiKt4TopoJets_e_TileBar2" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileGap1" TTreeName="AntiKt4TopoJets_e_TileGap1" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileGap2" TTreeName="AntiKt4TopoJets_e_TileGap2" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileGap3" TTreeName="AntiKt4TopoJets_e_TileGap3" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileExt0" TTreeName="AntiKt4TopoJets_e_TileExt0" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileExt1" TTreeName="AntiKt4TopoJets_e_TileExt1" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_TileExt2" TTreeName="AntiKt4TopoJets_e_TileExt2" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_FCAL0" TTreeName="AntiKt4TopoJets_e_FCAL0" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_FCAL1" TTreeName="AntiKt4TopoJets_e_FCAL1" />
+        <VariableInfo NETName="AntiKt4TopoJets_e_FCAL2" TTreeName="AntiKt4TopoJets_e_FCAL2" />
+        <VariableInfo NETName="AntiKt4TopoJets_time_calo" TTreeName="AntiKt4TopoJets_time_calo" />
+        <VariableInfo NETName="AntiKt4TopoJets_fbadQ" TTreeName="AntiKt4TopoJets_fbadQ" />
+        <VariableInfo NETName="AntiKt4TopoJets_hecF" TTreeName="AntiKt4TopoJets_hecF" />
+        <VariableInfo NETName="AntiKt4TopoJets_TileGap3F" TTreeName="AntiKt4TopoJets_TileGap3F" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group7</Name>
+      <Variables>
+        <VariableInfo NETName="LVL1MuonRoIeta" TTreeName="LVL1MuonRoIeta" />
+        <VariableInfo NETName="LVL1MuonRoIphi" TTreeName="LVL1MuonRoIphi" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group8</Name>
+      <Variables>
+        <VariableInfo NETName="IP_x" TTreeName="IP_x" />
+        <VariableInfo NETName="IP_y" TTreeName="IP_y" />
+        <VariableInfo NETName="IP_z" TTreeName="IP_z" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group9</Name>
+      <Variables>
+        <VariableInfo NETName="Mu_E" TTreeName="Mu_E" />
+        <VariableInfo NETName="Mu_p" TTreeName="Mu_p" />
+        <VariableInfo NETName="Mu_p_T" TTreeName="Mu_p_T" />
+        <VariableInfo NETName="Mu_p_x" TTreeName="Mu_p_x" />
+        <VariableInfo NETName="Mu_p_y" TTreeName="Mu_p_y" />
+        <VariableInfo NETName="Mu_p_z" TTreeName="Mu_p_z" />
+        <VariableInfo NETName="Mu_phi" TTreeName="Mu_phi" />
+        <VariableInfo NETName="Mu_eta" TTreeName="Mu_eta" />
+        <VariableInfo NETName="Mu_m" TTreeName="Mu_m" />
+        <VariableInfo NETName="Mu_charge" TTreeName="Mu_charge" />
+        <VariableInfo NETName="Mu_cone20" TTreeName="Mu_cone20" />
+        <VariableInfo NETName="Mu_cone30" TTreeName="Mu_cone30" />
+        <VariableInfo NETName="Mu_cone40" TTreeName="Mu_cone40" />
+        <VariableInfo NETName="Mu_trk10" TTreeName="Mu_trk10" />
+        <VariableInfo NETName="Mu_trk20" TTreeName="Mu_trk20" />
+        <VariableInfo NETName="Mu_trk30" TTreeName="Mu_trk30" />
+        <VariableInfo NETName="Mu_trk40" TTreeName="Mu_trk40" />
+        <VariableInfo NETName="Mu_matchchi2" TTreeName="Mu_matchchi2" />
+        <VariableInfo NETName="Mu_matchchi2DoverF" TTreeName="Mu_matchchi2DoverF" />
+        <VariableInfo NETName="Mu_chi2" TTreeName="Mu_chi2" />
+        <VariableInfo NETName="Mu_chi2DoverF" TTreeName="Mu_chi2DoverF" />
+        <VariableInfo NETName="Mu_energyDeposit" TTreeName="Mu_energyDeposit" />
+        <VariableInfo NETName="Mu_energySigma" TTreeName="Mu_energySigma" />
+        <VariableInfo NETName="Mu_x" TTreeName="Mu_x" />
+        <VariableInfo NETName="Mu_y" TTreeName="Mu_y" />
+        <VariableInfo NETName="Mu_z" TTreeName="Mu_z" />
+        <VariableInfo NETName="Mu_isCombined" TTreeName="Mu_isCombined" />
+        <VariableInfo NETName="Mu_isStandAlone" TTreeName="Mu_isStandAlone" />
+        <VariableInfo NETName="Mu_isLowPt" TTreeName="Mu_isLowPt" />
+        <VariableInfo NETName="Mu_isMuonLikelihood" TTreeName="Mu_isMuonLikelihood" />
+        <VariableInfo NETName="Mu_author" TTreeName="Mu_author" />
+        <VariableInfo NETName="Mu_allAuthors" TTreeName="Mu_allAuthors" />
+        <VariableInfo NETName="Mu_InDet_p_T" TTreeName="Mu_InDet_p_T" />
+        <VariableInfo NETName="Mu_InDet_phi" TTreeName="Mu_InDet_phi" />
+        <VariableInfo NETName="Mu_InDet_eta" TTreeName="Mu_InDet_eta" />
+        <VariableInfo NETName="Mu_InDet_pixelhits" TTreeName="Mu_InDet_pixelhits" />
+        <VariableInfo NETName="Mu_InDet_scthits" TTreeName="Mu_InDet_scthits" />
+        <VariableInfo NETName="Mu_InDet_blayerhits" TTreeName="Mu_InDet_blayerhits" />
+        <VariableInfo NETName="Mu_InDet_trthits" TTreeName="Mu_InDet_trthits" />
+        <VariableInfo NETName="Mu_InDet_trththits" TTreeName="Mu_InDet_trththits" />
+        <VariableInfo NETName="Mu_MuonSpec_p_T" TTreeName="Mu_MuonSpec_p_T" />
+        <VariableInfo NETName="Mu_MuonSpec_phi" TTreeName="Mu_MuonSpec_phi" />
+        <VariableInfo NETName="Mu_MuonSpec_eta" TTreeName="Mu_MuonSpec_eta" />
+        <VariableInfo NETName="Mu_MuonExtr_p_T" TTreeName="Mu_MuonExtr_p_T" />
+        <VariableInfo NETName="Mu_MuonExtr_phi" TTreeName="Mu_MuonExtr_phi" />
+        <VariableInfo NETName="Mu_MuonExtr_eta" TTreeName="Mu_MuonExtr_eta" />
+        <VariableInfo NETName="Mu_MuonExtr_p" TTreeName="Mu_MuonExtr_p" />
+        <VariableInfo NETName="Mu_MuonExtr_charge" TTreeName="Mu_MuonExtr_charge" />
+        <VariableInfo NETName="Mu_Combined_p_T" TTreeName="Mu_Combined_p_T" />
+        <VariableInfo NETName="Mu_Combined_phi" TTreeName="Mu_Combined_phi" />
+        <VariableInfo NETName="Mu_Combined_eta" TTreeName="Mu_Combined_eta" />
+        <VariableInfo NETName="Mu_beta" TTreeName="Mu_beta" />
+        <VariableInfo NETName="Mu_mdthits_N" TTreeName="Mu_mdthits_N" />
+        <VariableInfo NETName="Mu_cscetahits_N" TTreeName="Mu_cscetahits_N" />
+        <VariableInfo NETName="Mu_cschits_N" TTreeName="Mu_cschits_N" />
+        <VariableInfo NETName="Mu_rpchits_N" TTreeName="Mu_rpchits_N" />
+        <VariableInfo NETName="Mu_tgchits_N" TTreeName="Mu_tgchits_N" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group10</Name>
+      <Variables>
+        <VariableInfo NETName="muMSonly_px" TTreeName="muMSonly_px" />
+        <VariableInfo NETName="muMSonly_py" TTreeName="muMSonly_py" />
+        <VariableInfo NETName="muMSonly_pz" TTreeName="muMSonly_pz" />
+        <VariableInfo NETName="muMSonly_eta" TTreeName="muMSonly_eta" />
+        <VariableInfo NETName="muMSonly_phi" TTreeName="muMSonly_phi" />
+        <VariableInfo NETName="muMSonly_e" TTreeName="muMSonly_e" />
+        <VariableInfo NETName="muMSonly_charge" TTreeName="muMSonly_charge" />
+        <VariableInfo NETName="muMSonly_chi2" TTreeName="muMSonly_chi2" />
+        <VariableInfo NETName="muMSonly_ndof" TTreeName="muMSonly_ndof" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group11</Name>
+      <Variables>
+        <VariableInfo NETName="L2Track_pt" TTreeName="L2Track_pt" />
+        <VariableInfo NETName="L2Track_eta" TTreeName="L2Track_eta" />
+        <VariableInfo NETName="L2Track_phi" TTreeName="L2Track_phi" />
+        <VariableInfo NETName="L2Track_a0" TTreeName="L2Track_a0" />
+        <VariableInfo NETName="L2Track_z0" TTreeName="L2Track_z0" />
+        <VariableInfo NETName="L2Track_chi2" TTreeName="L2Track_chi2" />
+        <VariableInfo NETName="L2Track_nPixel" TTreeName="L2Track_nPixel" />
+        <VariableInfo NETName="L2Track_nSCT" TTreeName="L2Track_nSCT" />
+        <VariableInfo NETName="L2Track_nTRT" TTreeName="L2Track_nTRT" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group12</Name>
+      <Variables>
+        <VariableInfo NETName="MSvx_R" TTreeName="MSvx_R" />
+        <VariableInfo NETName="MSvx_z" TTreeName="MSvx_z" />
+        <VariableInfo NETName="MSvx_theta" TTreeName="MSvx_theta" />
+        <VariableInfo NETName="MSvx_phi" TTreeName="MSvx_phi" />
+        <VariableInfo NETName="MSvx_nTrks" TTreeName="MSvx_nTrks" />
+        <VariableInfo NETName="MSvx_chi2prob" TTreeName="MSvx_chi2prob" />
+        <VariableInfo NETName="MSvx_trk_px" TTreeName="MSvx_trk_px" />
+        <VariableInfo NETName="MSvx_trk_py" TTreeName="MSvx_trk_py" />
+        <VariableInfo NETName="MSvx_trk_pz" TTreeName="MSvx_trk_pz" />
+        <VariableInfo NETName="MSvx_trk_charge" TTreeName="MSvx_trk_charge" />
+        <VariableInfo NETName="MSvx_nMDT" TTreeName="MSvx_nMDT" />
+        <VariableInfo NETName="MSvx_nIMDT" TTreeName="MSvx_nIMDT" />
+        <VariableInfo NETName="MSvx_nMMDT" TTreeName="MSvx_nMMDT" />
+        <VariableInfo NETName="MSvx_nOMDT" TTreeName="MSvx_nOMDT" />
+        <VariableInfo NETName="MSvx_nRPC" TTreeName="MSvx_nRPC" />
+        <VariableInfo NETName="MSvx_nTGC" TTreeName="MSvx_nTGC" />
+      </Variables>
+    </ArrayGroup>
+    <ArrayGroup>
+      <Name>group13</Name>
+      <Variables>
+        <VariableInfo NETName="HVtrk_x" TTreeName="HVtrk_x" />
+        <VariableInfo NETName="HVtrk_y" TTreeName="HVtrk_y" />
+        <VariableInfo NETName="HVtrk_z" TTreeName="HVtrk_z" />
+        <VariableInfo NETName="HVtrk_pT" TTreeName="HVtrk_pT" />
+        <VariableInfo NETName="HVtrk_pz" TTreeName="HVtrk_pz" />
+        <VariableInfo NETName="HVtrk_charge" TTreeName="HVtrk_charge" />
+      </Variables>
+    </ArrayGroup>
+  </Groups>
+</TTreeUserInfo>
