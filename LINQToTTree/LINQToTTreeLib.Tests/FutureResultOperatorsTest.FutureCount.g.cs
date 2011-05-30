@@ -9,28 +9,22 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using LinqToTTreeInterfacesLib;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 
-namespace LINQToTTreeLib.Variables
+namespace LINQToTTreeLib
 {
-    public partial class ValSimpleTest
+    public partial class FutureResultOperatorsTest
     {
 [TestMethod]
-[PexGeneratedBy(typeof(ValSimpleTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException178()
+[PexGeneratedBy(typeof(FutureResultOperatorsTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void FutureCountThrowsArgumentException342()
 {
-    ValSimple valSimple;
-    valSimple = this.Constructor((string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ValSimpleTest))]
-public void Constructor899()
-{
-    ValSimple valSimple;
-    valSimple = this.Constructor("");
-    Assert.IsNotNull((object)valSimple);
+    IFutureValue<int> iFutureValue;
+    iFutureValue = this.FutureCount<int>((IQueryable<int>)null);
 }
     }
 }

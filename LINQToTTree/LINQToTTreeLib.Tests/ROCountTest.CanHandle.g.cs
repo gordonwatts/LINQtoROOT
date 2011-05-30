@@ -19,5 +19,25 @@ namespace LINQToTTreeLib
 {
     public partial class ROCountTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROCountTest))]
+public void CanHandle955()
+{
+    bool b;
+    ROCount s0 = new ROCount();
+    b = this.CanHandle(s0, (Type)null);
+    Assert.AreEqual<bool>(false, b);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROCountTest))]
+public void CanHandle11()
+{
+    bool b;
+    ROCount s0 = new ROCount();
+    b = this.CanHandle(s0, typeof(CountResultOperator));
+    Assert.AreEqual<bool>(true, b);
+    Assert.IsNotNull((object)s0);
+}
     }
 }

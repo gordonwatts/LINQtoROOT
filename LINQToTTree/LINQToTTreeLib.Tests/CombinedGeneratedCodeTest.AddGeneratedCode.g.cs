@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LinqToTTreeInterfacesLib.Moles;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables.Moles;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Generated;
@@ -768,6 +769,43 @@ namespace LINQToTTreeLib
                     .At(2,
                                                                                                                                                                                                                              "sIExecutableCode.LinqToTTreeInterfacesLib.IExecutableCode.get_ResultValues",
                                                                                                                                                                                                                              (object)iVariables);
+                this.AddGeneratedCode
+                    (combinedGeneratedCode, (IExecutableCode)sIExecutableCode);
+            }
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+        public void AddGeneratedCodeThrowsArgumentException566()
+        {
+            using (PexChooseBehavedBehavior.Setup())
+            {
+                SIBookingStatementBlock sIBookingStatementBlock;
+                CombinedGeneratedCode combinedGeneratedCode;
+                SIExecutableCode sIExecutableCode;
+                sIBookingStatementBlock = new SIBookingStatementBlock();
+                combinedGeneratedCode =
+                  CombinedGeneratedCodeFactory.Create((string[])null, (string[])null,
+                                                      (string[])null, (IBookingStatementBlock)sIBookingStatementBlock);
+                sIExecutableCode = new SIExecutableCode();
+                IPexChoiceRecorder choices = PexChoose.Replay.Setup();
+                KeyValuePair<string, object>[] keyValuePairs
+                   = new KeyValuePair<string, object>[0];
+                string[] ss = new string[0];
+                IVariable[] iVariables = new IVariable[0];
+                StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
+                choices.NextSegment(3).DefaultSession
+                    .At(0,
+                                                      "sIExecutableCode.LinqToTTreeInterfacesLib.IExecutableCode.get_VariablesToTransfer",
+                                                      (object)keyValuePairs)
+                    .At(1,
+                                                                                                                                             "sIExecutableCode.LinqToTTreeInterfacesLib.IExecutableCode.get_IncludeFiles",
+                                                                                                                                             (object)ss)
+                    .At(2,
+                                                                                                                                                                                                                             "sIExecutableCode.LinqToTTreeInterfacesLib.IExecutableCode.get_ResultValues",
+                                                                                                                                                                                                                             (object)iVariables)
+                    .At(3,
+                                                                                                                                                                                                                                                                                                             "sIExecutableCode.LinqToTTreeInterfacesLib.IExecutableCode.get_CodeStatements",
+                                                                                                                                                                                                                                                                                                             (object)statementInlineBlock);
                 this.AddGeneratedCode
                     (combinedGeneratedCode, (IExecutableCode)sIExecutableCode);
             }

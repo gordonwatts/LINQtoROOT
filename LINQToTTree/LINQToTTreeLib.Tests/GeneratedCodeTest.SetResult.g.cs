@@ -14,10 +14,172 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
+using LinqToTTreeInterfacesLib.Moles;
+using LINQToTTreeLib.Variables.Moles;
+using LINQToTTreeLib.Statements.Moles;
 
 namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException196()
+{
+    SIVariable sIVariable;
+    GeneratedCode generatedCode;
+    sIVariable = new SIVariable();
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException187()
+{
+    SIVariable sIVariable;
+    GeneratedCode generatedCode;
+    sIVariable = new SIVariable();
+    string[] ss = new string[1];
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sIVariable, (IStatement[])null, ss, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException696()
+{
+    SIVariable sIVariable;
+    GeneratedCode generatedCode;
+    sIVariable = new SIVariable();
+    string[] ss = new string[1];
+    ss[0] = "";
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sIVariable, (IStatement[])null, ss, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException208()
+{
+    SIVariable sIVariable;
+    GeneratedCode generatedCode;
+    sIVariable = new SIVariable();
+    string[] ss = new string[1];
+    ss[0] = "\0";
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException401()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)varInteger, (IStatement[])null, (string[])null, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException315()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)varInteger, (IStatement[])null, (string[])null, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException382()
+{
+    SVarInteger sVarInteger;
+    SIStatement sIStatement;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    sIStatement = new SIStatement();
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sIStatement;
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, (string[])null, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException623()
+{
+    SVarInteger sVarInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    sStatementIncrementInteger =
+      new SStatementIncrementInteger((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, (string[])null, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException962()
+{
+    SVarInteger sVarInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    statementIncrementInteger =
+      StatementIncrementIntegerFactory.Create((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, (string[])null, (string[])null);
+    this.SetResult(generatedCode, (IVariable)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void SetResult441()
+{
+    SIVariable sIVariable;
+    GeneratedCode generatedCode;
+    sIVariable = new SIVariable();
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, (string[])null);
+    this.SetResult(generatedCode, (IVariable)sIVariable);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void SetResultThrowsArgumentNullException321()
+{
+    SIVariable sIVariable;
+    GeneratedCode generatedCode;
+    sIVariable = new SIVariable();
+    string[] ss = new string[2];
+    ss[0] = "\u0100";
+    ss[1] = "\u0100";
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
+    this.SetResult(generatedCode, (IVariable)null);
+}
     }
 }

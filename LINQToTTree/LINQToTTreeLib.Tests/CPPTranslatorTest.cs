@@ -44,7 +44,7 @@ namespace LINQToTTreeLib
 
         /// <summary>Test stub for TranslateGeneratedCode(GeneratedCode)</summary>
         [PexMethod]
-        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementInlineBlock)), PexAllowedException(typeof(ArgumentNullException))]
         public Dictionary<string, object> TranslateGeneratedCode([PexAssumeUnderTest]CPPTranslator target, GeneratedCode code)
         {
             MEFUtilities.Compose(target);

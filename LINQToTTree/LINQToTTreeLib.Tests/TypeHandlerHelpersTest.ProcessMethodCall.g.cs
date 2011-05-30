@@ -19,5 +19,29 @@ namespace LINQToTTreeLib.TypeHandlers
 {
     public partial class TypeHandlerHelpersTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessMethodCallThrowsArgumentNullException980()
+{
+    Expression expression;
+    TypeHandlerHelpers s0 = new TypeHandlerHelpers();
+    IValue iValue = (IValue)null;
+    expression = this.ProcessMethodCall(s0, (MethodCallExpression)null, 
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
+[ExpectedException(typeof(NotImplementedException))]
+public void ProcessMethodCallThrowsNotImplementedException304()
+{
+    MethodCallExpression methodCallExpression;
+    Expression expression;
+    methodCallExpression = MethodCallExpressionFactory.Create();
+    TypeHandlerHelpers s0 = new TypeHandlerHelpers();
+    IValue iValue = (IValue)null;
+    expression = this.ProcessMethodCall(s0, methodCallExpression, 
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
+}
     }
 }

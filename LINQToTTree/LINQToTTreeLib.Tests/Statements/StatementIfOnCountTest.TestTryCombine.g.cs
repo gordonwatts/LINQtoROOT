@@ -9,28 +9,24 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LinqToTTreeInterfacesLib.Moles;
+using LINQToTTreeLib.Variables.Moles;
+using LINQToTTreeLib.Statements.Moles;
+using LINQToTTreeLib.Variables;
+using Microsoft.Pex.Framework.Moles;
 
-namespace LINQToTTreeLib.Variables
+namespace LINQToTTreeLib.Statements
 {
-    public partial class ValSimpleTest
+    public partial class StatementIfOnCountTest
     {
 [TestMethod]
-[PexGeneratedBy(typeof(ValSimpleTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException178()
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+public void TestTryCombine906()
 {
-    ValSimple valSimple;
-    valSimple = this.Constructor((string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ValSimpleTest))]
-public void Constructor899()
-{
-    ValSimple valSimple;
-    valSimple = this.Constructor("");
-    Assert.IsNotNull((object)valSimple);
+    this.TestTryCombine((IStatement)null);
 }
     }
 }

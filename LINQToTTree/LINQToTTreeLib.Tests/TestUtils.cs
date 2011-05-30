@@ -43,7 +43,14 @@ namespace LINQToTTreeLib.Tests
             while (last != null)
             {
                 result = last;
-                last = result.Statements.LastOrDefault() as IStatementCompound;
+                if (result.Statements == null)
+                {
+                    last = null;
+                }
+                else
+                {
+                    last = result.Statements.LastOrDefault() as IStatementCompound;
+                }
             }
 
             return result;

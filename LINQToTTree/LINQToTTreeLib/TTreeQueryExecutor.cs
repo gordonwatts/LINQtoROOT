@@ -77,6 +77,11 @@ namespace LINQToTTreeLib
             /// Basic checks
             /// 
 
+            if (string.IsNullOrWhiteSpace(treeName))
+                throw new ArgumentException("The tree name must be valid");
+            if (baseNtupleObject == null)
+                throw new ArgumentNullException("baseNtupleObject");
+
             if (rootFiles == null || rootFiles.Length == 0)
                 throw new ArgumentException("The TTree Query Exector was given an empty array of root files - a valid root files is required to work!");
 
@@ -102,12 +107,6 @@ namespace LINQToTTreeLib
                 throw new FileNotFoundException(bld.ToString());
 
             }
-            if (treeName == null)
-                throw new ArgumentNullException("The tree must have a valid name");
-            if (string.IsNullOrWhiteSpace(treeName))
-                throw new ArgumentException("The tree name must be valid");
-            if (baseNtupleObject == null)
-                throw new ArgumentNullException("baseNtupleObject");
 
             ///
             /// Make sure the object we are using is correct, and that it has non-null values

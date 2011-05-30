@@ -22,10 +22,23 @@ namespace LINQToTTreeLib
             DummyQueryExectuor.GlobalInitalized = false;
             ntuple.Reset();
 
-            /// Get the path for the other nutple guy correct!
-            DirectoryInfo projectDir = new DirectoryInfo(Environment.CurrentDirectory + @"\..\..\..\..");
+            /// Get the path for the other nutple guy correct! Since Pex and tests run from different places in the directory structure we have to
+            /// do some work to find the top leve!
+
+            var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
+            while (currentDir.FindAllFiles("LINQToTTree.sln").Count() == 0)
+            {
+                currentDir = currentDir.Parent;
+            }
+            var projectDir = currentDir.Parent;
+
             ntuple_with_proxy._gProxyFile = projectDir.FullName + @"\DemosAndTests\GenerateNtupleXMLSpec\ntuple_btag.h";
             Assert.IsTrue(File.Exists(ntuple_with_proxy._gProxyFile), "Proxy file we are using for testing isn't around!");
+
+
+            ntuple._gCINTLines = null;
+            ntuple._gObjectFiles = null;
+            ntuple._gProxyFile = null;
 
             var eng = new VelocityEngine();
             eng.Init();
@@ -40,8 +53,9 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod, PexAllowedException(typeof(FileNotFoundException))]
-        public TTreeQueryExecutor Constructor(int rootFileIndex, int ntupleProxyIndex, int ntupleExtraIndex, string treeName)
+        public TTreeQueryExecutor Constructor(FileInfo rootFile, string proxyLocation, string[] extraLocations, string treeName)
         {
+#if false
             FileInfo rootFile;
             switch (rootFileIndex)
             {
@@ -61,6 +75,9 @@ namespace LINQToTTreeLib
                     rootFile = null;
                     break;
             }
+#endif
+            ntuple._gProxyFile = proxyLocation;
+#if false
 
             FileInfo proxyFile = new FileInfo("Constructor_Test\\bogus.cpp");
             if (proxyFile.Directory.Exists)
@@ -88,7 +105,9 @@ namespace LINQToTTreeLib
                     ntuple._gProxyFile = "";
                     break;
             }
+#endif
 
+#if false
             FileInfo extraFile = new FileInfo("Constructor_Test\\extra.cpp");
             switch (ntupleExtraIndex)
             {
@@ -112,7 +131,8 @@ namespace LINQToTTreeLib
                     ntuple._gObjectFiles = new string[0];
                     break;
             }
-
+#endif
+            ntuple._gObjectFiles = extraLocations;
 
             TTreeQueryExecutor target = new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(ntuple));
 
@@ -126,14 +146,7 @@ namespace LINQToTTreeLib
                 Assert.IsTrue(ntuple._gObjectFiles.All(f => File.Exists(f)), "extra files must all exist");
             }
 
-            ///
-            /// Some post-tests to make sure things are "good".
-            /// 
-
-
-
             return target;
-            // TODO: add assertions to method TTreeQueryExecutorTest.Constructor(FileInfo, String)
         }
 
         /// <summary>

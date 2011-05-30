@@ -54,6 +54,7 @@ namespace LINQToTTreeLib.Variables.Savers
             // TODO: add assertions to method SaveVarObjectTest.IncludeFiles(SaveVarObject, IVariable)
         }
 
+#if false
         /// <summary>Test stub for LoadResult(IVariable, NTObject)</summary>
         [PexGenericArguments(typeof(int))]
         [PexMethod]
@@ -67,6 +68,7 @@ namespace LINQToTTreeLib.Variables.Savers
             return result;
             // TODO: add assertions to method SaveVarObjectTest.LoadResult(SaveVarObject, IVariable, NTObject)
         }
+#endif
 
         /// <summary>Test stub for SaveToFile(IVariable)</summary>
         [PexMethod]

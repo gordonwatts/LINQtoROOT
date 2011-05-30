@@ -217,6 +217,9 @@
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
     </Compile>
     <Compile Include="FutureResultOperatorsTest.cs" />
+    <Compile Include="FutureResultOperatorsTest.FutureCount.g.cs">
+      <DependentUpon>FutureResultOperatorsTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="FutureValueTTest.Constructor01.g.cs">
       <DependentUpon>FutureValueTTest.cs</DependentUpon>
     </Compile>
@@ -314,6 +317,9 @@
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementFilterTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.CodeItUp.g.cs">
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
@@ -321,6 +327,9 @@
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
     </Compile>

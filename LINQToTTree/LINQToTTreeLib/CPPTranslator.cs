@@ -48,10 +48,12 @@ namespace LINQToTTreeLib
         private void AddIncludeFiles(IExecutableCode code)
         {
             var includesFromResults = from v in code.ResultValues
+                                      where v != null
                                       where v.Type.IsROOTClass()
                                       select v.Type.Name.Substring(1) + ".h";
 
             var includesFromSavers = from v in code.ResultValues
+                                     where v != null
                                      let saver = _saver.Get(v)
                                      from inc in saver.IncludeFiles(v)
                                      select inc;

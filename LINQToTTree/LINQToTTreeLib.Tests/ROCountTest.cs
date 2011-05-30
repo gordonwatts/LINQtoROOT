@@ -27,13 +27,16 @@ namespace LINQToTTreeLib
             [PexAssumeUnderTest]ROCount target,
             CountResultOperator resultOperator,
             QueryModel queryModel,
-            IGeneratedQueryCode codeEnv
+            GeneratedCode codeEnv
         )
         {
+            int origCount = 0;
+            if (codeEnv != null)
+                origCount = codeEnv.CodeBody.Statements.Count();
             CodeContext c = new CodeContext();
             IVariable result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
-            Assert.AreEqual(1, codeEnv.CodeBody.Statements.Count(), "Expected an added statement!");
-            Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.First(), typeof(StatementIncrementInteger), "Statement to inc the integer must have been done!");
+            Assert.AreEqual(origCount + 1, codeEnv.CodeBody.Statements.Count(), "Expected an added statement!");
+            Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.Last(), typeof(StatementIncrementInteger), "Statement to inc the integer must have been done!");
             Assert.IsInstanceOfType(result, typeof(VarInteger), "Expected to be calculating an integer");
             return result;
         }

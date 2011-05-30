@@ -237,6 +237,8 @@ namespace LINQToTTreeLib.Variables
         /// <returns></returns>
         public static bool IsROOTClass(this Type t)
         {
+            if (t == null)
+                throw new ArgumentNullException("type must not be null");
             return t.Name.Substring(1).IsROOTClass();
         }
     }

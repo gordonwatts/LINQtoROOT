@@ -140,9 +140,51 @@ namespace LINQToTTreeLib
         [PexMethod]
         [PexUseType(typeof(StatementInlineBlock))]
         [PexUseType(typeof(StatementIncrementInteger))]
-        public void TestChangeScope([PexAssumeUnderTest]GeneratedCode target, [PexAssumeNotNull] IStatement s)
+        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s)
         {
+            ///
+            /// Check that scoping correctly moves back tot he right place and inserts the stements and
+            /// the variables.
+            /// 
+
+
+            ///
+            /// Initial setup - we need to do this to prevent some sort of funny insertion that Pex finds that
+            /// invalidates this test.
+            /// 
+
+            GeneratedCode target = new GeneratedCode();
+            foreach (var stat in initialStatements)
+            {
+                target.Add(stat);
+            }
+
+            ///
+            /// Now, mark where we are and count initial conditions
+            /// 
+
             var currentScope = target.CurrentScope;
+
+            ///
+            /// Now insert the statement twice and the variables too.
+            /// 
+
+            var v1 = new VarInteger();
+            target.Add(v1);
+            target.Add(s);
+            target.CurrentScope = currentScope;
+            var v2 = new VarInteger();
+            target.Add(v2);
+            target.Add(s);
+        }
+
+        [TestMethod]
+        public void TestChangeScopeSpecificTopLevel()
+        {
+            GeneratedCode target = new GeneratedCode();
+            IStatement s = new StatementInlineBlock();
+
+            var currentS = target.CurrentScope;
 
             var deepestStatementLevel = TestUtils.GetDeepestStatementLevel(target);
             var deepestDeclarLevel = TestUtils.GetDeepestBookingLevel(target);
@@ -152,7 +194,36 @@ namespace LINQToTTreeLib
             var v1 = new VarInteger();
             target.Add(v1);
             target.Add(s);
-            target.CurrentScope = currentScope;
+
+            target.CurrentScope = currentS;
+
+            var v2 = new VarInteger();
+            target.Add(v2);
+            target.Add(s);
+            Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
+            Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
+        }
+
+        [TestMethod]
+        public void TestChangeScopeSpecificNextLevel()
+        {
+            GeneratedCode target = new GeneratedCode();
+            target.Add(new StatementInlineBlock());
+            IStatement s = new StatementInlineBlock();
+
+            var deepestStatementLevel = TestUtils.GetDeepestStatementLevel(target);
+            var deepestDeclarLevel = TestUtils.GetDeepestBookingLevel(target);
+
+            var currentS = target.CurrentScope;
+
+            var curVars = deepestDeclarLevel.DeclaredVariables.Count();
+            var curStatements = deepestStatementLevel.Statements.Count();
+            var v1 = new VarInteger();
+            target.Add(v1);
+            target.Add(s);
+
+            target.CurrentScope = currentS;
+
             var v2 = new VarInteger();
             target.Add(v2);
             target.Add(s);
@@ -164,9 +235,11 @@ namespace LINQToTTreeLib
         public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, string name, object val)
         {
             int count = target.VariablesToTransfer.Count();
+            HashSet<string> names = new HashSet<string>(target.VariablesToTransfer.Select(v => v.Key));
             target.QueueForTransfer(name, val);
+            names.Add(name);
             Assert.IsNotNull(target.VariablesToTransfer.Last());
-            Assert.AreEqual(count + 1, target.VariablesToTransfer.Count());
+            Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
         }
 
         [TestMethod]

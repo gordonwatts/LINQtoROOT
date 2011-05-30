@@ -26,27 +26,7 @@ namespace LINQToTTreeLib
             [PexAssumeNotNull] IExecutableCode code
         )
         {
-            ///
-            /// Do the adding
-            /// 
-
             target.AddGeneratedCode(code);
-
-            ///
-            /// Check that it all went ok!
-            /// 
-
-#if false
-            Assert.AreEqual(originalVars, varNames.Count, "Non-unique variable names and no error");
-            Assert.AreEqual(originalVars, targetVarsToTransfer.Count(), "variables to transfer");
-
-            Assert.AreEqual(resultNames.Count, totalResultCount, "Some duplicate result values but no error");
-            Assert.AreEqual(resultNames.Count, target.ResultValues.Count(), "bad # of result values");
-
-            Assert.AreEqual(includeSuperSet.Count, target.IncludeFiles.Count(), "improper # of include files");
-
-            Assert.AreEqual(nStatments, target.CodeStatements.Statements.Count(), "improper # of statements");
-#endif
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentException))]

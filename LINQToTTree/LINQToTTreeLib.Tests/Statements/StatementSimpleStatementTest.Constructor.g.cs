@@ -9,12 +9,127 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Statements
 {
     public partial class StatementSimpleStatementTest
     {
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [PexRaisedException(typeof(AssertFailedException))]
+        public void ConstructorThrowsAssertFailedException575()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("\0\0\0\u0085\u0085;");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [PexRaisedException(typeof(AssertFailedException))]
+        public void ConstructorThrowsAssertFailedException309()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("\0\u0001\u0001\u00a0\u00a0;");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [PexRaisedException(typeof(AssertFailedException))]
+        public void ConstructorThrowsAssertFailedException351()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("\u0001\0;\u0085\u0085;");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [PexRaisedException(typeof(AssertFailedException))]
+        public void ConstructorThrowsAssertFailedException753()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("\0\0;\u0085\u0085;");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [PexRaisedException(typeof(AssertFailedException))]
+        public void ConstructorThrowsAssertFailedException979()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("\0\0\0;\u0085;");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [PexDescription("the test state was: path bounds exceeded")]
+        public void Constructor766()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("\u0100;");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [Ignore]
+        [PexDescription("the test state was: path bounds exceeded")]
+        public void Constructor76601()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("\0\0\0\0\u0100\u0100\u0100;");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ConstructorThrowsArgumentException709()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor("");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstructorThrowsArgumentNullException441()
+        {
+            StatementSimpleStatement statementSimpleStatement;
+            statementSimpleStatement = this.Constructor((string)null);
+        }
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+public void Constructor362()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor("\ufeff;");
+    Assert.IsNotNull((object)statementSimpleStatement);
+    Assert.AreEqual<string>("\ufeff", statementSimpleStatement.Line);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException303()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor(";\u0085");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException553()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor(";");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException595()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor(";;");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+public void Constructor397()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor("\u0001\u0001;\u0085\u0085;");
+    Assert.IsNotNull((object)statementSimpleStatement);
+    Assert.AreEqual<string>("\u0001\u0001", statementSimpleStatement.Line);
+}
     }
 }

@@ -15,10 +15,44 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
 using LINQToTTreeLib;
+using LinqToTTreeInterfacesLib.Moles;
+using Microsoft.Pex.Framework.Moles;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
     public partial class TypeHanlderROOTTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessConstantReferenceThrowsArgumentException306()
+{
+    ConstantExpression constantExpression;
+    SIGeneratedQueryCode sIGeneratedQueryCode;
+    IValue iValue;
+    constantExpression = ConstantExpressionFactory.Create(0);
+    sIGeneratedQueryCode = new SIGeneratedQueryCode();
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    iValue = this.ProcessConstantReference
+                 (s0, constantExpression, (IGeneratedQueryCode)sIGeneratedQueryCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+public void ProcessConstantReference129()
+{
+    using (PexChooseBehavedBehavior.Setup())
+    {
+      ConstantExpression constantExpression;
+      SIGeneratedQueryCode sIGeneratedQueryCode;
+      IValue iValue;
+      constantExpression = ConstantExpressionFactory.Create(1);
+      sIGeneratedQueryCode = new SIGeneratedQueryCode();
+      TypeHandlerROOT s0 = new TypeHandlerROOT();
+      iValue = this.ProcessConstantReference
+                   (s0, constantExpression, (IGeneratedQueryCode)sIGeneratedQueryCode);
+      Assert.IsNotNull((object)iValue);
+      Assert.IsNotNull((object)s0);
+    }
+}
     }
 }

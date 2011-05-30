@@ -49,11 +49,13 @@ namespace LINQToTTreeLib.ResultOperators
             [PexAssumeUnderTest]ROTakeSkipOperators target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
-            [PexAssumeNotNull]IGeneratedQueryCode codeEnv
+            [PexAssumeNotNull]GeneratedCode codeEnv
         )
         {
             if (codeEnv.ResultValue != null)
                 throw new ArgumentException("this should not b enull for this test");
+            if (codeEnv.CodeBody.DeclaredVariables == null)
+                throw new ArgumentException("Need this declare variables to be defined");
 
             ///
             /// We always expect to be inside a loop - and depend on it for doing our declares, so add something...

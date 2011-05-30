@@ -15,10 +15,48 @@ using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROFirstLastTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROFirstLastTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException432()
+{
+    IVariable iVariable;
+    ROFirstLast s0 = new ROFirstLast();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROFirstLastTest))]
+[ExpectedException(typeof(NotImplementedException))]
+public void ProcessResultOperatorThrowsNotImplementedException209()
+{
+    LastResultOperator lastResultOperator;
+    IVariable iVariable;
+    lastResultOperator = new LastResultOperator(false);
+    ROFirstLast s0 = new ROFirstLast();
+    iVariable = this.ProcessResultOperator
+                    (s0, (ResultOperatorBase)lastResultOperator, (QueryModel)null, 
+                     (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROFirstLastTest))]
+[ExpectedException(typeof(NotImplementedException))]
+public void ProcessResultOperatorThrowsNotImplementedException566()
+{
+    FirstResultOperator firstResultOperator;
+    IVariable iVariable;
+    firstResultOperator = new FirstResultOperator(false);
+    ROFirstLast s0 = new ROFirstLast();
+    iVariable = this.ProcessResultOperator
+                    (s0, (ResultOperatorBase)firstResultOperator, (QueryModel)null, 
+                     (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+}
     }
 }

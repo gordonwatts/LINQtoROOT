@@ -35,12 +35,15 @@ namespace LINQToTTreeLib.Statements
         {
             StatementSimpleStatement target = new StatementSimpleStatement(line);
             Assert.IsFalse(target.Line.EndsWith(";"), "semicolon should have been stripped off ('" + target.Line + "')");
+            Assert.AreNotEqual(0, target.Line, "empty line is not allowed");
             line = line.Trim();
             while (line.EndsWith(";"))
+            {
                 line = line.Substring(0, line.Length - 1);
-            Assert.AreEqual(line.Trim(), target.Line, "bad line set");
+                line = line.Trim();
+            }
+            Assert.AreEqual(line, target.Line, "bad line set");
             return target;
-            // TODO: add assertions to method StatementSimpleStatementTest.Constructor(String)
         }
 
         [TestMethod]
