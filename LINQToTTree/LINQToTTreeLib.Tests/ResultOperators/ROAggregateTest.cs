@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.ResultOperators
             [PexAssumeUnderTest]ROAggregate target,
             AggregateFromSeedResultOperator resultOperator,
             QueryModel queryModel,
-            IGeneratedCode _codeEnv
+            IGeneratedQueryCode _codeEnv
         )
         {
             CodeContext c = new CodeContext();

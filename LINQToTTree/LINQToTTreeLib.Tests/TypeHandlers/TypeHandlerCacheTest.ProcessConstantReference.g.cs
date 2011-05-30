@@ -22,18 +22,18 @@ namespace LINQToTTreeLib.TypeHandlers
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCacheTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessConstantReferenceThrowsArgumentNullException351()
+public void ProcessConstantReferenceThrowsArgumentNullException975()
 {
     TypeHandlerCache typeHandlerCache;
     IValue iValue;
     typeHandlerCache = new TypeHandlerCache();
     iValue = this.ProcessConstantReference
-                 (typeHandlerCache, (ConstantExpression)null, (IGeneratedCode)null);
+                 (typeHandlerCache, (ConstantExpression)null, (IGeneratedQueryCode)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCacheTest))]
 [ExpectedException(typeof(InvalidOperationException))]
-public void ProcessConstantReferenceThrowsInvalidOperationException881()
+public void ProcessConstantReferenceThrowsInvalidOperationException984()
 {
     TypeHandlerCache typeHandlerCache;
     ConstantExpression constantExpression;
@@ -41,12 +41,12 @@ public void ProcessConstantReferenceThrowsInvalidOperationException881()
     typeHandlerCache = new TypeHandlerCache();
     constantExpression = ConstantExpressionFactory.Create(0);
     iValue = this.ProcessConstantReference
-                 (typeHandlerCache, constantExpression, (IGeneratedCode)null);
+                 (typeHandlerCache, constantExpression, (IGeneratedQueryCode)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCacheTest))]
 [ExpectedException(typeof(InvalidOperationException))]
-public void ProcessConstantReferenceThrowsInvalidOperationException341()
+public void ProcessConstantReferenceThrowsInvalidOperationException378()
 {
     TypeHandlerCache typeHandlerCache;
     ConstantExpression constantExpression;
@@ -54,7 +54,7 @@ public void ProcessConstantReferenceThrowsInvalidOperationException341()
     typeHandlerCache = new TypeHandlerCache();
     constantExpression = ConstantExpressionFactory.Create(1);
     iValue = this.ProcessConstantReference
-                 (typeHandlerCache, constantExpression, (IGeneratedCode)null);
+                 (typeHandlerCache, constantExpression, (IGeneratedQueryCode)null);
 }
     }
 }

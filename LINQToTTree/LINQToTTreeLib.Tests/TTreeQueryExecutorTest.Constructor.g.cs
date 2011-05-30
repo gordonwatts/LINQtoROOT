@@ -18,13 +18,68 @@ namespace LINQToTTreeLib
 {
     public partial class TTreeQueryExecutorTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-        public void Constructor266()
-        {
-            TTreeQueryExecutor tTreeQueryExecutor;
-            tTreeQueryExecutor = this.Constructor(2, 2, 3, "\0");
-            Assert.IsNotNull((object)tTreeQueryExecutor);
-        }
+[TestMethod]
+[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException905()
+{
+    TTreeQueryExecutor tTreeQueryExecutor;
+    tTreeQueryExecutor =
+      this.Constructor((FileInfo)null, (string)null, (string[])null, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException119()
+{
+    TTreeQueryExecutor tTreeQueryExecutor;
+    tTreeQueryExecutor =
+      this.Constructor((FileInfo)null, (string)null, (string[])null, "");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException490()
+{
+    TTreeQueryExecutor tTreeQueryExecutor;
+    tTreeQueryExecutor =
+      this.Constructor((FileInfo)null, (string)null, (string[])null, "\0");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException275()
+{
+    TTreeQueryExecutor tTreeQueryExecutor;
+    tTreeQueryExecutor =
+      this.Constructor((FileInfo)null, (string)null, (string[])null, "\u0100");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException282()
+{
+    TTreeQueryExecutor tTreeQueryExecutor;
+    tTreeQueryExecutor =
+      this.Constructor((FileInfo)null, (string)null, (string[])null, "\u0100\0");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException718()
+{
+    TTreeQueryExecutor tTreeQueryExecutor;
+    tTreeQueryExecutor =
+      this.Constructor((FileInfo)null, (string)null, (string[])null, "\u0100\u0100");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException741()
+{
+    TTreeQueryExecutor tTreeQueryExecutor;
+    tTreeQueryExecutor = this.Constructor
+                             ((FileInfo)null, (string)null, (string[])null, "\u0100\u0100\0\0");
+}
     }
 }

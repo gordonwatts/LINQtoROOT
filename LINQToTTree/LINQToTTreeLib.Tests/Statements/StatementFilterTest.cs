@@ -6,6 +6,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Pex.Framework.Using;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -57,6 +58,20 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual("{", result[1], "open braket");
             Assert.AreEqual("  dude;", result[2], "statement isn't in the proper spot");
             Assert.AreEqual("}", result[3], "end of block not right");
+        }
+
+        [PexMethod]
+        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementIfOnCount))]
+        public void TestTryCombine(IStatement s)
+        {
+            /// We should never be able to combine any filter statements currently!
+
+            var val = new Variables.ValSimple("true", typeof(bool));
+            var statement = new StatementFilter(val);
+
+            Assert.IsFalse(statement.TryCombineStatement(s), "unable to do any combines for Filter");
         }
     }
 }

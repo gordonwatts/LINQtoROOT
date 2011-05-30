@@ -28,7 +28,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="codeEnv"></param>
         /// <returns></returns>
         IValue ProcessConstantReference(ConstantExpression expr,
-            IGeneratedCode codeEnv,
+            IGeneratedQueryCode codeEnv,
             ICodeContext context,
             CompositionContainer container);
 
@@ -42,6 +42,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="context"></param>
         /// <param name="container">If expression or others need to be built, this container will be needed for MEF</param>
         /// <returns></returns>
-        Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container);
+        Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container);
     }
 }

@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
         {
             ///
             /// The value is a reference that will do the loading.
@@ -72,7 +72,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
+        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
             var objRef = ExpressionToCPP.GetExpression(expr.Object, gc, context, container);
             StringBuilder bld = new StringBuilder();

@@ -25,7 +25,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Hold onto the code we are writing.
         /// </summary>
-        private IGeneratedCode _codeEnv;
+        private IGeneratedQueryCode _codeEnv;
 
         /// <summary>
         /// Keep track of the code context
@@ -36,7 +36,7 @@ namespace LINQToTTreeLib
         /// Create a new visitor and add our code to the current spot we are in the "code".
         /// </summary>
         /// <param name="code"></param>
-        public QueryVisitor(IGeneratedCode code, ICodeContext context, CompositionContainer container)
+        public QueryVisitor(IGeneratedQueryCode code, ICodeContext context, CompositionContainer container)
         {
             _codeEnv = code;
             _codeContext = context;
@@ -122,7 +122,7 @@ namespace LINQToTTreeLib
             /// <param name="env"></param>
             /// <param name="context"></param>
             /// <returns></returns>
-            public Expression AddLoop(IGeneratedCode env, ICodeContext context, CompositionContainer container)
+            public Expression AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
             {
                 return Expression.Variable(thisType, "this");
             }

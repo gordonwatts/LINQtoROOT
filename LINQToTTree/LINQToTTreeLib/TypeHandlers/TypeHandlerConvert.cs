@@ -28,7 +28,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
         {
             throw new NotImplementedException();
         }
@@ -42,7 +42,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
+        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
             if (expr.Method.Name == "ToDouble")
                 return ProcessToDouble(expr, out result, gc, context, container);
@@ -66,7 +66,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        private Expression ProcessToDouble(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
+        private Expression ProcessToDouble(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
             var srcExpr = expr.Arguments[0];
             if (srcExpr.NodeType != ExpressionType.Convert)

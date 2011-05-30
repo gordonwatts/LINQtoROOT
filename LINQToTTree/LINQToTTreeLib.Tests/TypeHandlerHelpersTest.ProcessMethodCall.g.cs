@@ -22,18 +22,18 @@ namespace LINQToTTreeLib.TypeHandlers
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessMethodCallThrowsArgumentNullException314()
+public void ProcessMethodCallThrowsArgumentNullException980()
 {
     Expression expression;
     TypeHandlerHelpers s0 = new TypeHandlerHelpers();
     IValue iValue = (IValue)null;
     expression = this.ProcessMethodCall(s0, (MethodCallExpression)null, 
-                                        out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessMethodCallThrowsNotImplementedException662()
+public void ProcessMethodCallThrowsNotImplementedException304()
 {
     MethodCallExpression methodCallExpression;
     Expression expression;
@@ -41,7 +41,7 @@ public void ProcessMethodCallThrowsNotImplementedException662()
     TypeHandlerHelpers s0 = new TypeHandlerHelpers();
     IValue iValue = (IValue)null;
     expression = this.ProcessMethodCall(s0, methodCallExpression, 
-                                        out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
     }
 }

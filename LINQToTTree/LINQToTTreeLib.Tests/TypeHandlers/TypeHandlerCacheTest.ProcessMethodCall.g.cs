@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCacheTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessMethodCallThrowsArgumentNullException302()
+public void ProcessMethodCallThrowsArgumentNullException707()
 {
     TypeHandlerCache typeHandlerCache;
     Expression expression;
@@ -30,12 +30,12 @@ public void ProcessMethodCallThrowsArgumentNullException302()
     IValue iValue = (IValue)null;
     expression =
       this.ProcessMethodCall(typeHandlerCache, (MethodCallExpression)null, 
-                             out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                             out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCacheTest))]
 [ExpectedException(typeof(InvalidOperationException))]
-public void ProcessMethodCallThrowsInvalidOperationException128()
+public void ProcessMethodCallThrowsInvalidOperationException379()
 {
     TypeHandlerCache typeHandlerCache;
     MethodCallExpression methodCallExpression;
@@ -44,7 +44,7 @@ public void ProcessMethodCallThrowsInvalidOperationException128()
     methodCallExpression = MethodCallExpressionFactory.Create();
     IValue iValue = (IValue)null;
     expression = this.ProcessMethodCall(typeHandlerCache, methodCallExpression, 
-                                        out iValue, (IGeneratedCode)null, (ICodeContext)null);
+                                        out iValue, (IGeneratedQueryCode)null, (ICodeContext)null);
 }
     }
 }

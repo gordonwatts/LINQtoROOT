@@ -102,7 +102,7 @@ namespace LINQToTTreeLib
                     || resultOperatorType == typeof(SkipResultOperator);
             }
 
-            public void ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            public void ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 ///
                 /// Look at the loop variable. It should be pointing to something that is going to loop

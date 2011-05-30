@@ -8,7 +8,7 @@ namespace LINQToTTreeLib
     /// <summary>
     /// Holds onto the code that we generate for a single query.
     /// </summary>
-    public class GeneratedCode : IGeneratedCode
+    public class GeneratedCode : IGeneratedQueryCode, IExecutableCode
     {
         public GeneratedCode()
         {
@@ -27,10 +27,23 @@ namespace LINQToTTreeLib
         public IVariable ResultValue { get; private set; }
 
         /// <summary>
+        /// We have only a single result value, so the return is pretty easy...
+        /// </summary>
+        public IEnumerable<IVariable> ResultValues
+        {
+            get { yield return ResultValue; }
+        }
+
+        /// <summary>
         /// The code body is basically a bunch of statements, which starts from our top level
         /// statement.
         /// </summary>
         public IBookingStatementBlock CodeBody { get; private set; }
+
+        /// <summary>
+        /// Just the statements from our top level.
+        /// </summary>
+        public IStatementCompound CodeStatements { get { return CodeBody; } }
 
         /// <summary>
         /// Keeps track of the level where we are adding statements

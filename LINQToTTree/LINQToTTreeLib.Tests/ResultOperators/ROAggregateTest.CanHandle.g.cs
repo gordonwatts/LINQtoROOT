@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.ResultOperators
     {
 [TestMethod]
 [PexGeneratedBy(typeof(ROAggregateTest))]
-public void CanHandle209()
+public void CanHandle930()
 {
     bool b;
     ROAggregate s0 = new ROAggregate();

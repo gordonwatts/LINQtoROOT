@@ -49,5 +49,15 @@ namespace LINQToTTreeLib.Statements
                 }
             }
         }
+
+        /// <summary>
+        /// We don't have code to carefully do checks - so we just blow off the combination here.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool TryCombineStatement(IStatement statement)
+        {
+            return false;
+        }
     }
 }

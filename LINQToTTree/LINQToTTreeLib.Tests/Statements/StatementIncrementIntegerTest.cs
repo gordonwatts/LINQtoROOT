@@ -1,12 +1,9 @@
 // <copyright file="StatementIncrementIntegerTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.Pex.Framework.Exceptions;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -22,23 +19,7 @@ namespace LINQToTTreeLib.Statements
         {
             StatementIncrementInteger target = new StatementIncrementInteger(i);
             Assert.AreEqual(i, target.Integer, "initial value not set correctly");
-            return target;
-        }
-        [TestMethod]
-        public void Constructor341()
-        {
-            StatementIncrementInteger statementIncrementInteger;
-            VarInteger s0 = new VarInteger();
-            statementIncrementInteger = this.Constructor(s0);
-            Assert.IsNotNull((object)statementIncrementInteger);
-            Assert.IsNotNull(statementIncrementInteger.Integer);
-        }
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ConstructorThrowsArgumentNullException49()
-        {
-            StatementIncrementInteger statementIncrementInteger;
-            statementIncrementInteger = this.Constructor((VarInteger)null);
+            return null;
         }
     }
 }

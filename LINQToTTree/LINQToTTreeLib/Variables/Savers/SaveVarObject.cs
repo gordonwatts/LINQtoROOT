@@ -69,6 +69,9 @@ namespace LINQToTTreeLib.Variables.Savers
             if (named == null)
                 throw new ArgumentException("Object isn't named");
 
+            if (iVariable == null)
+                throw new ArgumentNullException("Variable can't be null");
+
             var rootObjInfo = iVariable.InitialValue as ROOTObjectCopiedValue;
             if (rootObjInfo == null)
                 throw new InvalidOperationException("iVariable must be a ROOTObjectCopiedValue!");

@@ -71,6 +71,8 @@
     <Reference Include="libTreeWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="LinqToTTreeInterfacesLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -144,6 +146,31 @@
     <Compile Include="CodeContextTest.TestRoundTrip.g.cs">
       <DependentUpon>CodeContextTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.AddGeneratedCode.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.AddIncludeFile.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.CheckAddIncludeFiles.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.CheckAddSameVariableNamesToTransfer.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.Constructor.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.cs" />
+    <Compile Include="CombinedGeneratedCodeTest.IncludeFilesGet.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.ResultValuesGet.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CombinedGeneratedCodeTest.VariablesToTransferGet.g.cs">
+      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="CPPTranslatorTest.Constructor.g.cs">
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
     </Compile>
@@ -165,17 +192,20 @@
     <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
     <Compile Include="Factories\ConstantExpressionFactory.cs" />
     <Compile Include="Factories\CPPTranslatorFactory.cs" />
     <Compile Include="Factories\GeneratedCodeFactory.cs" />
     <Compile Include="Factories\MethodCallExpressionFactory.cs" />
     <Compile Include="Factories\NTObjectFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
+    <Compile Include="Factories\StatementIfOnCountFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
     <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
+    <Compile Include="Factories\VarIntegerFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
@@ -185,6 +215,20 @@
     </Compile>
     <Compile Include="FileUtilsTest.WriteTextIfNotDuplicate.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FutureResultOperatorsTest.cs" />
+    <Compile Include="FutureResultOperatorsTest.FutureCount.g.cs">
+      <DependentUpon>FutureResultOperatorsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FutureValueTTest.Constructor01.g.cs">
+      <DependentUpon>FutureValueTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FutureValueTTest.cs" />
+    <Compile Include="FutureValueTTest.SetValue.g.cs">
+      <DependentUpon>FutureValueTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FutureValueTTest.ValueGet.g.cs">
+      <DependentUpon>FutureValueTTest.cs</DependentUpon>
     </Compile>
     <Compile Include="GeneratedCodeTest.Add.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
@@ -273,6 +317,9 @@
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementFilterTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.CodeItUp.g.cs">
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
@@ -280,6 +327,9 @@
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
     </Compile>
@@ -292,6 +342,12 @@
     </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.cs" />
     <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
+      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.TestAddSingleStatement.g.cs">
+      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">

@@ -25,7 +25,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
         {
             // <pex>
             if (expr == (ConstantExpression)null)
@@ -43,7 +43,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
+        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
             // <pex>
             if (expr == (MethodCallExpression)null)

@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             [PexAssumeUnderTest]TypeHandlerReplacementCall target,
             MethodCallExpression expr,
             out IValue result,
-            IGeneratedCode gc,
+            IGeneratedQueryCode gc,
             ICodeContext context
         )
         {

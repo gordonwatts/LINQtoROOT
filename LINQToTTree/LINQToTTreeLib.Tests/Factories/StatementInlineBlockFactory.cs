@@ -1,6 +1,5 @@
-using System;
+using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
-using LINQToTTreeLib.Statements;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -9,9 +8,20 @@ namespace LINQToTTreeLib.Statements
     {
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementInlineBlock instances</summary>
         [PexFactoryMethod(typeof(StatementInlineBlock))]
-        public static StatementInlineBlock Create()
+        public static StatementInlineBlock Create(IStatement[] statements, IVariable[] vars)
         {
             StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
+
+            if (statements != null)
+                foreach (var s in statements)
+                {
+                    statementInlineBlock.Add(s);
+                }
+
+            if (vars != null)
+                foreach (var v in statements)
+                    statementInlineBlock.Add(v);
+
             return statementInlineBlock;
         }
     }

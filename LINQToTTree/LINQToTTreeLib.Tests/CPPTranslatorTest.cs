@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
@@ -45,25 +44,13 @@ namespace LINQToTTreeLib
 
         /// <summary>Test stub for TranslateGeneratedCode(GeneratedCode)</summary>
         [PexMethod]
-        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementInlineBlock)), PexAllowedException(typeof(ArgumentNullException))]
         public Dictionary<string, object> TranslateGeneratedCode([PexAssumeUnderTest]CPPTranslator target, GeneratedCode code)
         {
             MEFUtilities.Compose(target);
             Dictionary<string, object> result = target.TranslateGeneratedCode(code);
             return result;
             // TODO: add assertions to method CPPTranslatorTest.TranslateGeneratedCode(CPPTranslator, GeneratedCode)
-        }
-        [TestMethod]
-        public void TranslateGeneratedCodeThrowsNullReferenceException584()
-        {
-            CPPTranslator cPPTranslator;
-            VarInteger varInteger;
-            GeneratedCode generatedCode;
-            Dictionary<string, object> dictionary;
-            cPPTranslator = CPPTranslatorFactory.Create();
-            varInteger = new VarInteger();
-            generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-            dictionary = this.TranslateGeneratedCode(cPPTranslator, generatedCode);
         }
 
         [TestMethod]
@@ -76,9 +63,11 @@ namespace LINQToTTreeLib
 
             var r = TranslateGeneratedCode(target, code);
 
-            Assert.IsTrue(r.ContainsKey("ResultVariable"), "Result variable is missing");
-            Assert.IsInstanceOfType(r["ResultVariable"], typeof(CPPTranslator.VarInfo), "bad type for the result variable");
-            var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
+            Assert.IsTrue(r.ContainsKey("ResultVariables"), "Result variable is missing");
+            Assert.IsInstanceOfType(r["ResultVariables"], typeof(IEnumerable<CPPTranslator.VarInfo>), "bad type for the result variable");
+            var rList = r["ResultVariables"] as IEnumerable<CPPTranslator.VarInfo>;
+            Assert.AreEqual(1, rList.Count(), "incorrect # of result variables");
+            var rv = rList.First();
             Assert.AreEqual("2", rv.InitialValue, "initial value");
         }
 
@@ -114,7 +103,8 @@ namespace LINQToTTreeLib
 
             var r = TranslateGeneratedCode(target, code);
 
-            var rv = r["ResultVariable"] as CPPTranslator.VarInfo;
+            var rlist = r["ResultVariables"] as IEnumerable<CPPTranslator.VarInfo>;
+            var rv = rlist.First();
             Assert.AreEqual("TH1F*", rv.VariableType, "type is not right");
             var inFiles = code.IncludeFiles.ToArray();
             foreach (var item in inFiles)
@@ -123,6 +113,20 @@ namespace LINQToTTreeLib
             }
 
             Assert.IsTrue(inFiles.Contains("TH1F.h"), "Missing include file");
+        }
+
+        [TestMethod]
+        public void TestTranslateForIncludeFiles()
+        {
+            CPPTranslator target = new CPPTranslator();
+            VarObject obj = new VarObject(typeof(ROOTNET.NTH1F));
+            GeneratedCode code = new GeneratedCode();
+            code.SetResult(obj);
+
+            var r = TranslateGeneratedCode(target, code);
+
+            Assert.AreEqual(1, code.IncludeFiles.Count(), "# of include files");
+            Assert.AreEqual("TH1F.h", code.IncludeFiles.First(), "include file name is incorrect");
         }
     }
 }

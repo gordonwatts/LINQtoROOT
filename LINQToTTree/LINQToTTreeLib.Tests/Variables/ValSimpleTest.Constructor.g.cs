@@ -18,19 +18,19 @@ namespace LINQToTTreeLib.Variables
     {
 [TestMethod]
 [PexGeneratedBy(typeof(ValSimpleTest))]
-public void Constructor365()
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException178()
+{
+    ValSimple valSimple;
+    valSimple = this.Constructor((string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ValSimpleTest))]
+public void Constructor899()
 {
     ValSimple valSimple;
     valSimple = this.Constructor("");
     Assert.IsNotNull((object)valSimple);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ValSimpleTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException37()
-{
-    ValSimple valSimple;
-    valSimple = this.Constructor((string)null);
 }
     }
 }

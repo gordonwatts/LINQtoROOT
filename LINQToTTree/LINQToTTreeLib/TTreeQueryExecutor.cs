@@ -77,6 +77,11 @@ namespace LINQToTTreeLib
             /// Basic checks
             /// 
 
+            if (string.IsNullOrWhiteSpace(treeName))
+                throw new ArgumentException("The tree name must be valid");
+            if (baseNtupleObject == null)
+                throw new ArgumentNullException("baseNtupleObject");
+
             if (rootFiles == null || rootFiles.Length == 0)
                 throw new ArgumentException("The TTree Query Exector was given an empty array of root files - a valid root files is required to work!");
 
@@ -102,12 +107,6 @@ namespace LINQToTTreeLib
                 throw new FileNotFoundException(bld.ToString());
 
             }
-            if (treeName == null)
-                throw new ArgumentNullException("The tree must have a valid name");
-            if (string.IsNullOrWhiteSpace(treeName))
-                throw new ArgumentException("The tree name must be valid");
-            if (baseNtupleObject == null)
-                throw new ArgumentNullException("baseNtupleObject");
 
             ///
             /// Make sure the object we are using is correct, and that it has non-null values
@@ -200,12 +199,73 @@ namespace LINQToTTreeLib
         private IQueryResultCache _cache = new QueryResultCache();
 
         /// <summary>
-        /// Execute a scalar result. These are things that end in "count" or "aggregate", etc.
+        /// Execute a scalar result. Things like Count and Aggragate.
+        /// This is a direct request by the LINQ system - the user didn't use "Future". However,
+        /// internally we just queue it up as a Future request and thus run it along with anything
+        /// else the user had requeseted.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryModel"></param>
         /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
+        {
+            var r = ExecuteScalarAsFuture<T>(queryModel);
+            return r.Value;
+        }
+
+        /// <summary>
+        /// Interface to allow use easy access to cached queries.
+        /// </summary>
+        interface IQueuedQuery
+        {
+
+            void ExecuteQuery();
+
+            IExecutableCode Code { get; set; }
+
+            void ExtractResult();
+        }
+
+        /// <summary>
+        /// Enough info to run a query at a later date.
+        /// </summary>
+        class QueuedQuery<RType> : IQueuedQuery
+        {
+
+            public IExecutableCode Code { get; set; }
+
+            public IQueryResultCacheKey CacheKey { get; set; }
+
+            public FutureValue<RType> Future { get; set; }
+
+            public void ExecuteQuery()
+            {
+                Future.TreeExecutor.ExecuteQueuedQueries();
+            }
+
+
+            public void ExtractResult()
+            {
+                var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey);
+                Future.SetValue(final);
+            }
+        }
+
+        /// <summary>
+        /// The list of queires that haven't been run yet.
+        /// </summary>
+        List<IQueuedQuery> _queuedQueries = new List<IQueuedQuery>();
+
+        /// <summary>
+        /// Internal method to return a future to a query.
+        /// We first check the cache, if there is a hit, we assign the result
+        /// right away. Otherwise we queue up the query to be executed next time
+        /// all queries are executed.
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="qm"></param>
+        /// <returns></returns>
+        internal IFutureValue<TResult> ExecuteScalarAsFuture<TResult>(QueryModel queryModel)
         {
             ///
             /// We have to init everything - which means using MEF!
@@ -248,13 +308,41 @@ namespace LINQToTTreeLib
             }
             if (!IgnoreQueryCache)
             {
-                var cacheHit = _cache.Lookup<T>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
+                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;
-                    return cacheHit.Item2;
+                    return new FutureValue<TResult>(cacheHit.Item2);
                 }
             }
+
+            ///
+            /// Ok, no cache hit. So queue up the run.
+            /// 
+
+            var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this) };
+            _queuedQueries.Add(cq);
+            return cq.Future;
+        }
+
+        /// <summary>
+        /// Called when it is time to execut all the queries
+        /// </summary>
+        internal void ExecuteQueuedQueries()
+        {
+            ///
+            /// Get all the queries together, combined, and ready to run.
+            /// 
+
+            var combinedInfo = new CombinedGeneratedCode();
+            foreach (var cq in _queuedQueries)
+            {
+                combinedInfo.AddGeneratedCode(cq.Code);
+            }
+
+            ///
+            /// Now, do the general running.
+            /// 
 
             CountExecutionRuns++;
 
@@ -271,20 +359,25 @@ namespace LINQToTTreeLib
             /// 
 
             CopyToQueryDirectory(_proxyFile);
-            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), result);
+            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
             CompileAndLoad(templateRunner);
 
             ///
             /// Fantastic! Now we need to run the object!
             /// 
 
-            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), result.VariablesToTransfer);
+            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer);
 
             ///
-            /// Last job, extract all the variables! And save in the cache!
+            /// Last job, extract all the variables! And save in the cache, and set the
+            /// future value so everyone else can use them!
             /// 
 
-            var final = ExtractResult<T>(result.ResultValue, key);
+            foreach (var cq in _queuedQueries)
+            {
+                cq.ExtractResult();
+            }
+            _queuedQueries.Clear();
 
             ///
             /// Ok, we are all done. Delete the directory that we were just using
@@ -297,12 +390,6 @@ namespace LINQToTTreeLib
                 GetQueryDirectory().Delete(true);
             }
             _queryDirectory = null;
-
-            ///
-            /// Return the result
-            /// 
-
-            return final;
         }
 
         /// <summary>
@@ -579,7 +666,7 @@ namespace LINQToTTreeLib
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
         /// <param name="p"></param>
-        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, GeneratedCode code)
+        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, IExecutableCode code)
         {
             ///
             /// Get the template engine all setup

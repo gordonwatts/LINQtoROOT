@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 
@@ -20,17 +21,47 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public Dictionary<string, object> TranslateGeneratedCode(GeneratedCode code)
+        public Dictionary<string, object> TranslateGeneratedCode(IExecutableCode code)
         {
             if (code == null)
                 throw new ArgumentNullException("code");
 
             Dictionary<string, object> result = new Dictionary<string, object>();
-            result["ResultVariable"] = TranslateVariable(code.ResultValue, code);
-            result["ProcessStatements"] = TranslateStatements(code.CodeBody);
-            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValue, code);
+            result["ResultVariables"] = TranslateVariable(code.ResultValues, code);
+            result["ProcessStatements"] = TranslateStatements(code.CodeStatements);
+            result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValues, code);
+
+            ///
+            /// Next, go through everything and extract the include files
+            /// 
+
+            AddIncludeFiles(code);
 
             return result;
+        }
+
+        /// <summary>
+        /// Look at all the sources we can of include files and make sure they get added
+        /// to the code base so they can be "included". :-)
+        /// </summary>
+        /// <param name="code"></param>
+        private void AddIncludeFiles(IExecutableCode code)
+        {
+            var includesFromResults = from v in code.ResultValues
+                                      where v != null
+                                      where v.Type.IsROOTClass()
+                                      select v.Type.Name.Substring(1) + ".h";
+
+            var includesFromSavers = from v in code.ResultValues
+                                     where v != null
+                                     let saver = _saver.Get(v)
+                                     from inc in saver.IncludeFiles(v)
+                                     select inc;
+
+            foreach (var incFile in includesFromResults.Concat(includesFromSavers))
+            {
+                code.AddIncludeFile(incFile);
+            }
         }
 
         /// <summary>
@@ -55,16 +86,12 @@ namespace LINQToTTreeLib
         /// Trnaslate the variable type/name into something for our output code. If this variable requires an
         /// include file, then we need to make sure it goes in here!
         /// </summary>
-        /// <param name="iVariable"></param>
+        /// <param name="vars"></param>
         /// <returns></returns>
-        private VarInfo TranslateVariable(LinqToTTreeInterfacesLib.IVariable iVariable, GeneratedCode gc)
+        private IEnumerable<VarInfo> TranslateVariable(IEnumerable<LinqToTTreeInterfacesLib.IVariable> vars, IExecutableCode gc)
         {
-            if (iVariable.Type.IsROOTClass())
-            {
-                gc.AddIncludeFile(iVariable.Type.Name.Substring(1) + ".h");
-            }
-
-            return new VarInfo(iVariable);
+            return from v in vars
+                   select new VarInfo(v);
         }
 
         /// <summary>
@@ -91,16 +118,12 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private IEnumerable<string> TranslateFinalizingVariables(IVariable iVariable, GeneratedCode gc)
+        private IEnumerable<string> TranslateFinalizingVariables(IEnumerable<IVariable> iVariable, IExecutableCode gc)
         {
-            var saver = _saver.Get(iVariable);
-
-            foreach (var f in saver.IncludeFiles(iVariable))
-            {
-                gc.AddIncludeFile(f);
-            }
-
-            return saver.SaveToFile(iVariable);
+            return from v in iVariable
+                   let saver = _saver.Get(v)
+                   from line in saver.SaveToFile(v)
+                   select line;
         }
     }
 }

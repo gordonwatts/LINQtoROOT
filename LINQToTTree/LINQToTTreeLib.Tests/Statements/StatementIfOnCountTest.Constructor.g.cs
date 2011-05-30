@@ -13,6 +13,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
+using LinqToTTreeInterfacesLib.Moles;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -21,7 +22,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException634()
+public void ConstructorThrowsArgumentNullException374()
 {
     StatementIfOnCount statementIfOnCount;
     statementIfOnCount = this.Constructor((IValue)null, 
@@ -30,23 +31,23 @@ public void ConstructorThrowsArgumentNullException634()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException987()
+public void ConstructorThrowsArgumentNullException717()
 {
-    VarInteger varInteger;
+    SIValue sIValue;
     StatementIfOnCount statementIfOnCount;
-    varInteger = new VarInteger();
-    statementIfOnCount = this.Constructor((IValue)varInteger, 
+    sIValue = new SIValue();
+    statementIfOnCount = this.Constructor((IValue)sIValue, 
                                           (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void Constructor925()
+public void Constructor107()
 {
-    VarInteger varInteger;
+    SIValue sIValue;
     StatementIfOnCount statementIfOnCount;
-    varInteger = new VarInteger();
-    statementIfOnCount = this.Constructor((IValue)varInteger, 
-                                          (IValue)varInteger, StatementIfOnCount.ComparisonOperator.GreaterThan);
+    sIValue = new SIValue();
+    statementIfOnCount = this.Constructor((IValue)sIValue, 
+                                          (IValue)sIValue, StatementIfOnCount.ComparisonOperator.GreaterThan);
     Assert.IsNotNull((object)statementIfOnCount);
     Assert.IsNotNull(statementIfOnCount.ValLeft);
     Assert.IsNotNull(statementIfOnCount.ValRight);
@@ -57,6 +58,28 @@ public void Constructor925()
          statementIfOnCount.Comparison);
     Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
     Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException10()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIfOnCount = this.Constructor((IValue)varInteger, 
+                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException320()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIfOnCount = this.Constructor((IValue)varInteger, 
+                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
 }
     }
 }

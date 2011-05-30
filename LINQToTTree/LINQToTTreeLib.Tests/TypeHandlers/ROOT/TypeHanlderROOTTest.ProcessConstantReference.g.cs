@@ -15,6 +15,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
 using LINQToTTreeLib;
+using LinqToTTreeInterfacesLib.Moles;
+using Microsoft.Pex.Framework.Moles;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -22,36 +24,35 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
     {
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
-public void ProcessConstantReference980()
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessConstantReferenceThrowsArgumentException306()
 {
     ConstantExpression constantExpression;
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
+    SIGeneratedQueryCode sIGeneratedQueryCode;
     IValue iValue;
-    constantExpression = ConstantExpressionFactory.Create(1);
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
+    constantExpression = ConstantExpressionFactory.Create(0);
+    sIGeneratedQueryCode = new SIGeneratedQueryCode();
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     iValue = this.ProcessConstantReference
-                 (s0, constantExpression, (IGeneratedCode)generatedCode);
-    Assert.IsNotNull((object)iValue);
-    Assert.IsNotNull((object)s0);
+                 (s0, constantExpression, (IGeneratedQueryCode)sIGeneratedQueryCode);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ProcessConstantReferenceThrowsArgumentException123()
+public void ProcessConstantReference129()
 {
-    ConstantExpression constantExpression;
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    IValue iValue;
-    constantExpression = ConstantExpressionFactory.Create(0);
-    varInteger = new VarInteger();
-    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger);
-    TypeHandlerROOT s0 = new TypeHandlerROOT();
-    iValue = this.ProcessConstantReference
-                 (s0, constantExpression, (IGeneratedCode)generatedCode);
+    using (PexChooseBehavedBehavior.Setup())
+    {
+      ConstantExpression constantExpression;
+      SIGeneratedQueryCode sIGeneratedQueryCode;
+      IValue iValue;
+      constantExpression = ConstantExpressionFactory.Create(1);
+      sIGeneratedQueryCode = new SIGeneratedQueryCode();
+      TypeHandlerROOT s0 = new TypeHandlerROOT();
+      iValue = this.ProcessConstantReference
+                   (s0, constantExpression, (IGeneratedQueryCode)sIGeneratedQueryCode);
+      Assert.IsNotNull((object)iValue);
+      Assert.IsNotNull((object)s0);
+    }
 }
     }
 }

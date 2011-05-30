@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Variables
 [TestMethod]
 [PexGeneratedBy(typeof(VarSimpleTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException412()
+public void ConstructorThrowsArgumentNullException814()
 {
     VarSimple varSimple;
     varSimple = this.Constructor((Type)null);

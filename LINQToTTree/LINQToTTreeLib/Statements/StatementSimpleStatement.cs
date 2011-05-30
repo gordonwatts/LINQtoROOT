@@ -12,12 +12,28 @@ namespace LINQToTTreeLib.Statements
     {
         public StatementSimpleStatement(string line)
         {
-            if (string.IsNullOrWhiteSpace(line))
-                throw new ArgumentException("line can't be empty");
+            if (line == null)
+                throw new ArgumentNullException("line can't be null!");
+
+            ///
+            /// Strip off all ending semi-colons. They will get added back
+            /// in when we "codeitup".
+            /// 
 
             Line = line.Trim();
             while (Line.EndsWith(";"))
+            {
                 Line = Line.Substring(0, Line.Length - 1);
+                Line = Line.Trim();
+            }
+
+            ///
+            /// Empty lines just aren't allowed! :-)
+            /// 
+
+            if (string.IsNullOrWhiteSpace(Line))
+                throw new ArgumentException("line can't be empty");
+
         }
         public string Line { get; private set; }
 

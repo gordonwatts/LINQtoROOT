@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.TypeHandlers
         public IValue ProcessConstantReference(
             [PexAssumeUnderTest]TypeHandlerCache target,
             ConstantExpression expr,
-            IGeneratedCode codeEnv
+            IGeneratedQueryCode codeEnv
         )
         {
             IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
@@ -50,13 +50,13 @@ namespace LINQToTTreeLib.TypeHandlers
                 return true;
             }
 
-            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedCode codeEnv, ICodeContext context, CompositionContainer container)
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
             {
                 return new Variables.ValSimple("dude", expr.Type);
             }
 
 
-            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedCode gc, ICodeContext context, CompositionContainer container)
+            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
             {
                 result = new Variables.VarInteger();
                 return expr;
@@ -109,7 +109,7 @@ namespace LINQToTTreeLib.TypeHandlers
             [PexAssumeUnderTest]TypeHandlerCache target,
             MethodCallExpression expr,
             out IValue result,
-            IGeneratedCode gc,
+            IGeneratedQueryCode gc,
             ICodeContext cc
         )
         {

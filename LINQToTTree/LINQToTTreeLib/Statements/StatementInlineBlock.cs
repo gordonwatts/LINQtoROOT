@@ -47,6 +47,12 @@ namespace LINQToTTreeLib.Statements
             if (variableToDeclare == null)
                 throw new ArgumentNullException("Must not declare a null variable");
 
+            var findOld = from v in _variables
+                          where v.VariableName == variableToDeclare.VariableName
+                          select v;
+            if (findOld.FirstOrDefault() != null)
+                throw new ArgumentException("Variable '" + variableToDeclare.VariableName + "' has already been declared in this block!");
+
             _variables.Add(variableToDeclare);
         }
 
@@ -92,6 +98,48 @@ namespace LINQToTTreeLib.Statements
                 }
                 yield return "}";
             }
+        }
+
+        /// <summary>
+        /// Try to combine this statement with another statement. We do simple append unless it is
+        /// another inline block. In that case we make sure to lift things out.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public virtual bool TryCombineStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement should not be null");
+
+            if (statement.GetType() == typeof(StatementInlineBlock))
+            {
+                var block = statement as StatementInlineBlock;
+                var statements = block.Statements;
+                if (statements != null)
+                {
+                    if (statements == this.Statements)
+                        throw new ArgumentException("Can't add our own statements to ourselves");
+
+                    foreach (var s in statements)
+                    {
+                        Add(s);
+                    }
+                }
+
+                var declVars = block.DeclaredVariables;
+                if (declVars != null)
+                {
+                    foreach (var v in block.DeclaredVariables)
+                    {
+                        Add(v);
+                    }
+                }
+            }
+            else
+            {
+                Add(statement);
+            }
+            return true;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Utils
 [TestMethod]
 [PexGeneratedBy(typeof(FileUtilsTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void WriteTextIfNotDuplicateThrowsArgumentNullException848()
+public void WriteTextIfNotDuplicateThrowsArgumentNullException688()
 {
     using (PexDisposableContext disposables = PexDisposableContext.Create())
     {

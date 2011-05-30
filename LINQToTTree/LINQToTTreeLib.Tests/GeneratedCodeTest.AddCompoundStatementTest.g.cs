@@ -12,6 +12,8 @@ using System;
 using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Pex.Framework.Moles;
+using LinqToTTreeInterfacesLib.Moles;
 
 namespace LINQToTTreeLib
 {
@@ -20,7 +22,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void AddCompoundStatementTestThrowsArgumentNullException582()
+public void AddCompoundStatementTestThrowsArgumentNullException401()
 {
     this.AddCompoundStatementTest((IStatement)null);
 }
@@ -33,19 +35,30 @@ public void AddCompoundStatementTest805()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest8()
+{
+    using (PexChooseBehavedBehavior.Setup())
+    {
+      SIStatementCompound sIStatementCompound;
+      sIStatementCompound = new SIStatementCompound();
+      this.AddCompoundStatementTest((IStatement)sIStatementCompound);
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
 public void AddCompoundStatementTest818()
 {
-    GeneratedCodeTest.CompoundStatement compoundStatement;
-    compoundStatement = new GeneratedCodeTest.CompoundStatement();
-    this.AddCompoundStatementTest((IStatement)compoundStatement);
+    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
+    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
+    this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 public void AddCompoundStatementTest81801()
 {
-    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
-    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
-    this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
+    GeneratedCodeTest.CompoundStatement compoundStatement;
+    compoundStatement = new GeneratedCodeTest.CompoundStatement();
+    this.AddCompoundStatementTest((IStatement)compoundStatement);
 }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -50,6 +51,12 @@ namespace LINQToTTreeLib
             }
 
             public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public bool TryCombineStatement(IStatement statement)
             {
                 throw new NotImplementedException();
             }
@@ -131,28 +138,108 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod]
-        [PexUseType(typeof(StatementIncrementInteger))]
         [PexUseType(typeof(StatementInlineBlock))]
-        public void TestChangeScope([PexAssumeUnderTest]GeneratedCode target, IStatement s)
+        [PexUseType(typeof(StatementIncrementInteger))]
+        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s)
         {
+            ///
+            /// Check that scoping correctly moves back tot he right place and inserts the stements and
+            /// the variables.
+            /// 
+
+
+            ///
+            /// Initial setup - we need to do this to prevent some sort of funny insertion that Pex finds that
+            /// invalidates this test.
+            /// 
+
+            GeneratedCode target = new GeneratedCode();
+            foreach (var stat in initialStatements)
+            {
+                target.Add(stat);
+            }
+
+            ///
+            /// Now, mark where we are and count initial conditions
+            /// 
+
             var currentScope = target.CurrentScope;
-            var v = new VarInteger();
-            target.Add(v);
+
+            ///
+            /// Now insert the statement twice and the variables too.
+            /// 
+
+            var v1 = new VarInteger();
+            target.Add(v1);
             target.Add(s);
             target.CurrentScope = currentScope;
-            target.Add(v);
+            var v2 = new VarInteger();
+            target.Add(v2);
             target.Add(s);
-            Assert.AreEqual(2, target.CodeBody.Statements.Count(), "Scope reset, should always be two statements here!");
-            Assert.AreEqual(2, target.CodeBody.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
+        }
+
+        [TestMethod]
+        public void TestChangeScopeSpecificTopLevel()
+        {
+            GeneratedCode target = new GeneratedCode();
+            IStatement s = new StatementInlineBlock();
+
+            var currentS = target.CurrentScope;
+
+            var deepestStatementLevel = TestUtils.GetDeepestStatementLevel(target);
+            var deepestDeclarLevel = TestUtils.GetDeepestBookingLevel(target);
+
+            var curVars = deepestDeclarLevel.DeclaredVariables.Count();
+            var curStatements = deepestStatementLevel.Statements.Count();
+            var v1 = new VarInteger();
+            target.Add(v1);
+            target.Add(s);
+
+            target.CurrentScope = currentS;
+
+            var v2 = new VarInteger();
+            target.Add(v2);
+            target.Add(s);
+            Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
+            Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
+        }
+
+        [TestMethod]
+        public void TestChangeScopeSpecificNextLevel()
+        {
+            GeneratedCode target = new GeneratedCode();
+            target.Add(new StatementInlineBlock());
+            IStatement s = new StatementInlineBlock();
+
+            var deepestStatementLevel = TestUtils.GetDeepestStatementLevel(target);
+            var deepestDeclarLevel = TestUtils.GetDeepestBookingLevel(target);
+
+            var currentS = target.CurrentScope;
+
+            var curVars = deepestDeclarLevel.DeclaredVariables.Count();
+            var curStatements = deepestStatementLevel.Statements.Count();
+            var v1 = new VarInteger();
+            target.Add(v1);
+            target.Add(s);
+
+            target.CurrentScope = currentS;
+
+            var v2 = new VarInteger();
+            target.Add(v2);
+            target.Add(s);
+            Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
+            Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
         }
 
         [PexMethod]
         public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, string name, object val)
         {
             int count = target.VariablesToTransfer.Count();
+            HashSet<string> names = new HashSet<string>(target.VariablesToTransfer.Select(v => v.Key));
             target.QueueForTransfer(name, val);
+            names.Add(name);
             Assert.IsNotNull(target.VariablesToTransfer.Last());
-            Assert.AreEqual(count + 1, target.VariablesToTransfer.Count());
+            Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
         }
 
         [TestMethod]

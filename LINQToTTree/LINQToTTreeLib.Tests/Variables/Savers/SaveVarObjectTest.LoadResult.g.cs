@@ -8,41 +8,11 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ROOTNET.Interface;
-using ROOTNET;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
     public partial class SaveVarObjectTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(SaveVarObjectTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void LoadResultThrowsArgumentNullException993()
-        {
-            int i;
-            SaveVarObject s0 = new SaveVarObject();
-            i = this.LoadResult<int>(s0, (IVariable)null, (ROOTNET.Interface.NTObject)null);
-        }
-[TestMethod]
-[PexGeneratedBy(typeof(SaveVarObjectTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void LoadResultThrowsArgumentException640()
-{
-    using (PexDisposableContext disposables = PexDisposableContext.Create())
-    {
-        ROOTNET.Interface.NTObject nTObject;
-      int i;
-      nTObject = NTObjectFactory.Create();
-      disposables.Add((IDisposable)nTObject);
-      SaveVarObject s0 = new SaveVarObject();
-      i = this.LoadResult<int>(s0, (IVariable)null, (ROOTNET.Interface.NTObject)nTObject);
-      disposables.Dispose();
-    }
-}
+
     }
 }

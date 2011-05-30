@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public static IValue GetExpression(Expression expr, IGeneratedCode ce, ICodeContext cc, CompositionContainer container)
+        public static IValue GetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
             {
@@ -91,7 +91,7 @@ namespace LINQToTTreeLib.Expressions
         /// Sometimes we get sub-query expressions and other things that require us to write more than
         /// just plane functional code.
         /// </summary>
-        private IGeneratedCode _codeEnv;
+        private IGeneratedQueryCode _codeEnv;
 
         /// <summary>
         /// Keep the context (scope, parameters, etc.)
@@ -102,7 +102,7 @@ namespace LINQToTTreeLib.Expressions
         /// ctor - only called by our helper routine above.
         /// </summary>
         /// <param name="ce"></param>
-        private ExpressionToCPP(IGeneratedCode ce, ICodeContext cc)
+        private ExpressionToCPP(IGeneratedQueryCode ce, ICodeContext cc)
         {
             _codeEnv = ce;
             _codeContext = cc;

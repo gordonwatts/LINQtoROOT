@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using LINQToTTreeLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 // <copyright file="PexAssemblyInfo.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using Microsoft.Pex.Framework.Coverage;
@@ -14,8 +15,6 @@ using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.Pex.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
-using ROOTNET;
-using LINQToTTreeLib.Utils;
 
 // Microsoft.Pex.Framework.Settings
 [assembly: PexAssemblySettings(TestFramework = "VisualStudioUnitTest")]
@@ -52,8 +51,6 @@ using LINQToTTreeLib.Utils;
 [assembly: PexSuppressStaticFieldStore("System.ComponentModel.Composition.ContractNameServices", "typeIdentityCache")]
 [assembly: PexSuppressStaticFieldStore("System.Linq.EmptyEnumerable`1", "instance")]
 [assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.MEFUtilities", "_batch")]
-[assembly: PexAssemblyUnderTest("TTreeParser")]
-[assembly: PexUseType(typeof(NTObject))]
 [assembly: PexSuppressUninstrumentedMethodFromType(typeof(Buffer))]
 [assembly: PexSuppressStaticFieldStore("LINQToTTreeLib.Tests.DummyQueryExectuor", "GlobalInitalized")]
 [assembly: PexSuppressStaticFieldStore(typeof(TypeUtils), "_variableNameCounter")]

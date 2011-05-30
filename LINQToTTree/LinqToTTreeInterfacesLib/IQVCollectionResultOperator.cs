@@ -22,6 +22,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_codeEnv"></param>
         /// <param name="_codeContext"></param>
         /// <param name="container"></param>
-        void ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
+        void ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
     }
 }
