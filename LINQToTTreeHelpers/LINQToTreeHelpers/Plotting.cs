@@ -41,7 +41,18 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callGetter);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            return source.ApplyToObject(new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin), lambda);
+            var h = new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin);
+            ConfigureHisto(h);
+            return source.ApplyToObject(h, lambda);
+        }
+
+        /// <summary>
+        /// Configure the histogram - sumw2, for example.
+        /// </summary>
+        /// <param name="h"></param>
+        private static void ConfigureHisto(ROOTNET.Interface.NTH1 h)
+        {
+            h.Sumw2();
         }
 
         /// <summary>
@@ -75,7 +86,9 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callGetter);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            return source.FutureApplyToObject(new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin) as ROOTNET.NTH1F, lambda);
+            var h = new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin);
+            ConfigureHisto(h);
+            return source.FutureApplyToObject(h, lambda);
         }
 
         /// <summary>
@@ -114,7 +127,9 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH2F, TSource>>(callFill, hParameter, vParameter);
-            return source.ApplyToObject(new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin), lambda);
+            var h = new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
+            ConfigureHisto(h);
+            return source.ApplyToObject(h, lambda);
         }
 
         /// <summary>
@@ -154,6 +169,7 @@ namespace LINQToTreeHelpers
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH2F, TSource>>(callFill, hParameter, vParameter);
             var interfaceobj = new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
+            ConfigureHisto(interfaceobj);
             return source.FutureApplyToObject(interfaceobj, lambda);
         }
 
