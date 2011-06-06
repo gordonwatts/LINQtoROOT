@@ -49,6 +49,9 @@
     <Reference Include="LinqToTTreeInterfacesLib">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\LINQ\lib\LinqToTTreeInterfacesLib.dll</HintPath>
     </Reference>
+    <Reference Include="LINQToTTreeLib">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\LINQ\lib\LINQToTTreeLib.dll</HintPath>
+    </Reference>
     <Reference Include="Sprache">
       <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
     </Reference>
