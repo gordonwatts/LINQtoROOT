@@ -67,6 +67,7 @@ namespace LINQToTTreeLib
         /// <param name="treeName"></param>
         public TTreeQueryExecutor(FileInfo[] rootFiles, string treeName, Type baseNtupleObject)
         {
+            TraceHelpers.TraceInfo(2, "Initializing TTreeQueryExecutor");
             CleanupQuery = true;
             IgnoreQueryCache = false;
 
@@ -180,6 +181,7 @@ namespace LINQToTTreeLib
             _rootFiles = rootFiles;
             _treeName = treeName;
             _cintLines = cintLines;
+            TraceHelpers.TraceInfo(3, "Done Initializing TTreeQueryExecutor");
         }
 
         /// <summary>
@@ -209,8 +211,16 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            var r = ExecuteScalarAsFuture<T>(queryModel);
-            return r.Value;
+            TraceHelpers.TraceInfo(4, "Executing Scalar directly");
+            try
+            {
+                var r = ExecuteScalarAsFuture<T>(queryModel);
+                return r.Value;
+            }
+            finally
+            {
+                TraceHelpers.TraceInfo(5, "Done Executing Scalar directly");
+            }
         }
 
         /// <summary>
@@ -271,6 +281,7 @@ namespace LINQToTTreeLib
             /// We have to init everything - which means using MEF!
             /// 
 
+            TraceHelpers.TraceInfo(6, "ExecuteScalarAsFuture: Startup");
             Init();
             LocalInit();
 
@@ -295,12 +306,14 @@ namespace LINQToTTreeLib
             /// Parse the query
             /// 
 
+            TraceHelpers.TraceInfo(7, "ExecuteScalarAsFuture: Visiting query model");
             qv.VisitQueryModel(queryModel);
 
             ///
             /// Next, see if we have a cache for this
             /// 
 
+            TraceHelpers.TraceInfo(8, "ExecuteScalarAsFuture: Getting cache key");
             IQueryResultCacheKey key = null;
             {
                 object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
@@ -308,10 +321,12 @@ namespace LINQToTTreeLib
             }
             if (!IgnoreQueryCache)
             {
+                TraceHelpers.TraceInfo(9, "ExecuteScalarAsFuture: Looking for cache hit");
                 var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;
+                    TraceHelpers.TraceInfo(9, "ExecuteScalarAsFuture: Returning cache hit");
                     return new FutureValue<TResult>(cacheHit.Item2);
                 }
             }
@@ -320,6 +335,7 @@ namespace LINQToTTreeLib
             /// Ok, no cache hit. So queue up the run.
             /// 
 
+            TraceHelpers.TraceInfo(10, "ExecuteScalarAsFuture: Queuing scalar execution");
             var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this) };
             _queuedQueries.Add(cq);
             return cq.Future;
@@ -334,6 +350,7 @@ namespace LINQToTTreeLib
             /// Get all the queries together, combined, and ready to run.
             /// 
 
+            TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
             var combinedInfo = new CombinedGeneratedCode();
             foreach (var cq in _queuedQueries)
             {
@@ -350,6 +367,7 @@ namespace LINQToTTreeLib
             /// If we got back from that without an error, it is time to assemble the files and templates
             /// 
 
+            TraceHelpers.TraceInfo(12, "ExecuteQueuedQueries: Loading all extra objects");
             AssembleAndLoadExtraObjects();
 
             ///
@@ -358,7 +376,9 @@ namespace LINQToTTreeLib
             /// one we have been given.
             /// 
 
+            TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
             CopyToQueryDirectory(_proxyFile);
+            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - buiding the TSelector");
             var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
             CompileAndLoad(templateRunner);
 
@@ -366,6 +386,7 @@ namespace LINQToTTreeLib
             /// Fantastic! Now we need to run the object!
             /// 
 
+            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
             RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer);
 
             ///
@@ -373,6 +394,7 @@ namespace LINQToTTreeLib
             /// future value so everyone else can use them!
             /// 
 
+            TraceHelpers.TraceInfo(15, "ExecuteQueuedQueries: Extracting the query results");
             foreach (var cq in _queuedQueries)
             {
                 cq.ExtractResult();
@@ -384,12 +406,14 @@ namespace LINQToTTreeLib
             /// after unloading all the modules
             /// 
 
+            TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
             UnloadAllModules();
             if (CleanupQuery)
             {
                 GetQueryDirectory().Delete(true);
             }
             _queryDirectory = null;
+            TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
         }
 
         /// <summary>
@@ -542,6 +566,7 @@ namespace LINQToTTreeLib
             /// Create a new TSelector to run
             /// 
 
+            TraceHelpers.TraceInfo(18, "RunNtupleQuery: Startup - doing selector lookup");
             var cls = ROOTNET.NTClass.GetClass(tSelectorClassName);
             if (cls == null)
                 throw new InvalidOperationException("Unable find class '" + tSelectorClassName + "' in the ROOT TClass registry that was just successfully compiled - can't run ntuple query - major inconsistency");
@@ -552,6 +577,7 @@ namespace LINQToTTreeLib
             /// Create the chain and load file files into it.
             /// 
 
+            TraceHelpers.TraceInfo(19, "RunNtupleQuery: Creating the TChain");
             var tree = new ROOTNET.NTChain(_treeName);
             foreach (var f in _rootFiles)
             {
@@ -562,6 +588,7 @@ namespace LINQToTTreeLib
             /// If there are any objects we need to send to the selector, then send them on now
             /// 
 
+            TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
             var objInputList = new ROOTNET.NTList();
             foreach (var item in variablesToLoad)
             {
@@ -577,7 +604,9 @@ namespace LINQToTTreeLib
             /// Finally, run the whole thing
             /// 
 
+            TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
             tree.Process(selector);
+            TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
         }
 
         /// <summary>

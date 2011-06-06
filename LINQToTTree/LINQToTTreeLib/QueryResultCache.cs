@@ -60,6 +60,7 @@ namespace LINQToTTreeLib
             /// Quick check to make sure everything is good
             /// 
 
+            TraceHelpers.TraceInfo(23, "GetKey: Initial query calculation");
             if (rootfiles.Any(f => f == null))
                 throw new ArgumentException("one of the root files is null");
             if (string.IsNullOrWhiteSpace(treename))
@@ -71,6 +72,7 @@ namespace LINQToTTreeLib
             /// Build the hash, which is a bit of a pain in the butt.
             /// 
 
+            TraceHelpers.TraceInfo(24, "GetKey: Creating big string file name and calculating hash");
             int fnameLength = rootfiles.Select(f => f.FullName).Sum(w => w.Length) + 100;
             StringBuilder fullSourceName = new StringBuilder(fnameLength);
             foreach (var f in rootfiles)
@@ -86,6 +88,7 @@ namespace LINQToTTreeLib
 
             KeyInfo result = new KeyInfo();
 
+            TraceHelpers.TraceInfo(25, "GetKey: Saving descrition lines");
             result.DescriptionLines = (from f in rootfiles
                                        select f.FullName).ToArray();
 
@@ -94,6 +97,7 @@ namespace LINQToTTreeLib
             /// so to protect the caching we need to swap those out with a dummy.
             /// 
 
+            TraceHelpers.TraceInfo(26, "GetKey: Pretty printing the query");
             result.QueryText = FormattingQueryVisitor.Format(query);
             result.QueryText = result.QueryText.SwapOutWithUninqueString("\\<generated\\>_[0-9]+");
 
@@ -101,22 +105,27 @@ namespace LINQToTTreeLib
             /// And the directory name - we use the first name of the file.
             /// 
 
+            TraceHelpers.TraceInfo(27, "GetKey: Getting the cache directory");
             result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + hash + " - " + treename + "-" + Path.GetFileNameWithoutExtension(rootfiles[0].Name));
 
             ///
             /// Scan the files that we are input and find the oldest one there
             /// 
 
+            TraceHelpers.TraceInfo(28, "GetKey: calculating the most recent file dates");
             result.OldestSourceFileDate = GetRecentFileDates(rootfiles).Max();
 
             ///
             /// And now the file that the query should be cached in
             /// 
 
+            TraceHelpers.TraceInfo(29, "GetKey: Calculating queyr hash");
             var queryHash = result.QueryText.GetHashCode();
+            TraceHelpers.TraceInfo(30, "GetKey: Calculating the input object hash");
             string queryNameBase = @"\\query " + queryHash.ToString() + "-" + CalcObjectHash(inputObjects).ToString();
             result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + ".root");
 
+            TraceHelpers.TraceInfo(31, "GetKey: Done");
             return result;
         }
 

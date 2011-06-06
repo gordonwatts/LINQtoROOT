@@ -19,6 +19,7 @@ namespace LINQToTTreeLib
         public QueriableTTree(FileInfo rootFile, string treeName)
             : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
         {
+            TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with 1 file for tree '{0}'", treeName));
         }
 
         /// <summary>
@@ -29,6 +30,7 @@ namespace LINQToTTreeLib
         public QueriableTTree(FileInfo[] rootFiles, string treeName)
             : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
         {
+            TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with {1} file for tree '{0}'", treeName, rootFiles.Length));
         }
 
         /// <summary>
