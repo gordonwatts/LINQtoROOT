@@ -52,18 +52,6 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Do an immediate write to a root directory
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <param name="dir"></param>
-        public static void WriteToROOTDirectory<T>(this T obj, ROOTNET.Interface.NTDirectory dir)
-            where T : ROOTNET.Interface.NTObject
-        {
-            dir.WriteTObject(obj);
-        }
-
-        /// <summary>
         /// Add an item to a future dictionary
         /// </summary>
         /// <typeparam name="T"></typeparam>

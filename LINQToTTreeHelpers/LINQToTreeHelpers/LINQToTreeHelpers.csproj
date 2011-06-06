@@ -79,6 +79,7 @@
     <Compile Include="PlotStyleSetup.cs" />
     <Compile Include="Plotting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ROOTUtils.cs" />
     <Compile Include="StackedPlot.cs" />
   </ItemGroup>
   <ItemGroup>
