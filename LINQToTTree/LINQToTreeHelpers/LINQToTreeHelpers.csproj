@@ -67,12 +67,14 @@
     <Compile Include="ColorLoop.cs" />
     <Compile Include="ContinuousIterator.cs" />
     <Compile Include="DataSetFinder.cs" />
+    <Compile Include="FileHelpers.cs" />
     <Compile Include="FutureUtils\FutureDictionary.cs" />
     <Compile Include="FutureUtils\FutureTDirectory.cs" />
     <Compile Include="FutureUtils\FutureTFile.cs" />
     <Compile Include="FutureUtils\FutureUtils.cs" />
     <Compile Include="FutureUtils\Operators.cs" />
     <Compile Include="PlotStyleSetup.cs" />
+    <Compile Include="Plotting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StackedPlot.cs" />
   </ItemGroup>

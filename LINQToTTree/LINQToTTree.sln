@@ -47,8 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{D0CD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildTasks", "MSBuildTasks\MSBuildTasks.csproj", "{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQToTreeHelpers", "LINQToTreeHelpers\LINQToTreeHelpers.csproj", "{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = LINQToTTree.vsmdi
@@ -242,18 +240,6 @@ Global
 		{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}.Release|Win32.ActiveCfg = Release|Any CPU
 		{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}.Release|x86.ActiveCfg = Release|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Release|Win32.ActiveCfg = Release|Any CPU
-		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
