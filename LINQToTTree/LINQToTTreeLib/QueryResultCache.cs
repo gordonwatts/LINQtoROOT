@@ -138,7 +138,7 @@ namespace LINQToTTreeLib
         {
             foreach (var f in rootfiles)
             {
-                f.Refresh();
+                //f.Refresh();
                 yield return f.LastWriteTime;
             }
         }
