@@ -4,10 +4,10 @@
 
 LIB=$(SolutionDir)LINQToTreeHelpers\bin\$(Configuration)
 
-filelist = $(LIB)\LINQToTreeHelpers.dll $(LIB)\LINQToTreeHelpers.xml $(LIB)\LINQToTreeHelpers.pdb
+filelist = $(LIB)\LINQToTreeHelpers.dll $(LIB)\LINQToTreeHelpers.xml $(LIB)\LINQToTreeHelpers.pdb $(LIB)\Sprache.dll
 
 libDir = $(ROOTSYS)\NETWrappers\LINQ\lib
-destList = $(libDir)\LINQToTreeHelpers.dll $(libDir)\LINQToTreeHelpers.xml $(libDir)\LINQToTreeHelpers.pdb
+destList = $(libDir)\LINQToTreeHelpers.dll $(libDir)\LINQToTreeHelpers.xml $(libDir)\LINQToTreeHelpers.pdb $(libDir)\Sprache.dll
 
 #
 # Do the default building
