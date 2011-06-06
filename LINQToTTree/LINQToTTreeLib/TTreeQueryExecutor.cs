@@ -330,6 +330,10 @@ namespace LINQToTTreeLib
                     return new FutureValue<TResult>(cacheHit.Item2);
                 }
             }
+            else
+            {
+                Console.WriteLine("WARNING: IgnoreQueryCache is set to true - we are not looking for cache hits on this LINQtoTTree query!");
+            }
 
             ///
             /// Ok, no cache hit. So queue up the run.
