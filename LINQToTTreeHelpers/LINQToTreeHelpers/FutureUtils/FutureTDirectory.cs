@@ -12,8 +12,15 @@ namespace LINQToTreeHelpers.FutureUtils
     /// </summary>
     public class FutureTDirectory
     {
-        public ROOTNET.Interface.NTDirectory Directory { get; set; }
+        /// <summary>
+        /// Get the underlying ROOT TDirectory.
+        /// </summary>
+        public ROOTNET.Interface.NTDirectory Directory { get; private set; }
 
+        /// <summary>
+        /// Create a new future directory container that will write its objects to the given root directory
+        /// </summary>
+        /// <param name="dir"></param>
         public FutureTDirectory(ROOTNET.Interface.NTDirectory dir)
         {
             Directory = dir;
@@ -50,8 +57,9 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <summary>
         /// Add a tobject to the directory to be written out.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
+        /// <typeparam name="T">Type of the future falve</typeparam>
+        /// <param name="obj">Object that will be added to the directory</param>
+        /// <param name="tags">A list of string tags that can be used to retreive the future value at a later time</param>
         public void AddFuture<T>(IFutureValue<T> obj, string[] tags = null)
             where T : ROOTNET.Interface.NTObject
         {
@@ -73,6 +81,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="tag"></param>
+        /// <param name="recursive">If true this and all known subdirectories will be searched</param>
         /// <returns></returns>
         public IFutureValue<T>[] GetTaggedObjects<T>(string tag, bool recursive = false)
         {
@@ -110,9 +119,9 @@ namespace LINQToTreeHelpers.FutureUtils
         /// </summary>
         public void Write()
         {
-            ///
-            /// Local values
-            /// 
+            //
+            // Local values
+            // 
 
             foreach (var item in _heldValues)
             {
@@ -120,9 +129,9 @@ namespace LINQToTreeHelpers.FutureUtils
             }
             _heldValues.Clear();
 
-            ///
-            /// Next, the subdirectories
-            /// 
+            //
+            // Next, the subdirectories
+            // 
 
             if (_subDirs.IsValueCreated)
             {

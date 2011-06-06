@@ -12,20 +12,26 @@ namespace LINQToTreeHelpers
         /// Create a canvas that is a set of stacked plots.
         /// </summary>
         /// <param name="histos"></param>
+        /// <param name="canvasName">Name given to the canvas</param>
+        /// <param name="canvasTitle">Title that will be put at the top of the canvas</param>
+        /// <param name="colorize">True if colors should be automattically assigned to the canvas.</param>
+        /// <param name="logy">True if the y axis should be log scale</param>
+        /// <param name="normalize">True if the histograms should be set to normal area (1) before being plotted</param>
+        /// <param name="legendContainsOnlyUniqueTitleWords">If true, then common words in the  histogram titles are removed before they are used for the legend</param>
         /// <returns></returns>
         public static ROOTNET.Interface.NTCanvas PlotStacked(this ROOTNET.Interface.NTH1F[] histos, string canvasName, string canvasTitle,
             bool logy = false,
             bool normalize = false,
-            bool sparifyTitles = true,
+            bool legendContainsOnlyUniqueTitleWords = true,
             bool colorize = true)
         {
             if (histos == null || histos.Length == 0)
                 return null;
 
-            ///
-            /// Always build a clone... because that way if the histogram is modified after we look at it, the plot will be what
-            /// the user intended.
-            /// 
+            //
+            // Always build a clone... because that way if the histogram is modified after we look at it, the plot will be what
+            // the user intended.
+            // 
 
             var hToPlot = (from h in histos select h.Clone(string.Format("{0}{1}", h.Name, canvasName)) as ROOTNET.Interface.NTH1F).ToArray();
             foreach (var h in hToPlot)
@@ -33,9 +39,9 @@ namespace LINQToTreeHelpers
                 h.SetDirectory(null);
             }
 
-            ///
-            /// If we have to normalize first, we need to normalize first!
-            /// 
+            //
+            // If we have to normalize first, we need to normalize first!
+            // 
 
             if (normalize)
             {
@@ -43,9 +49,9 @@ namespace LINQToTreeHelpers
                            select h.Normalize()).ToArray();
             }
 
-            ///
-            /// Reset the colors on these guys
-            /// 
+            //
+            // Reset the colors on these guys
+            // 
 
             if (colorize)
             {
@@ -56,11 +62,11 @@ namespace LINQToTreeHelpers
                 }
             }
 
-            ///
-            /// Remove common words from the titles.
-            /// 
+            //
+            // Remove common words from the titles.
+            // 
 
-            if (sparifyTitles && hToPlot.Length > 1)
+            if (legendContainsOnlyUniqueTitleWords && hToPlot.Length > 1)
             {
                 var splitTitles = from h in hToPlot
                                   select h.Title.Split();
@@ -85,9 +91,9 @@ namespace LINQToTreeHelpers
                 }
             }
 
-            ///
-            /// Use the nice ROOT utility THStack to make the plot. Once we do this, the plot is now owned by the TCanvas.
-            /// 
+            //
+            // Use the nice ROOT utility THStack to make the plot. Once we do this, the plot is now owned by the TCanvas.
+            // 
 
             var stack = new ROOTNET.NTHStack(canvasName + "Stack", canvasTitle);
             foreach (var h in hToPlot)
@@ -96,11 +102,11 @@ namespace LINQToTreeHelpers
                 h.SetNull();
             }
 
-            ///
-            /// Now do the plotting. Use the THStack to get all the axis stuff correct.
-            /// If we are plotting a log plot, then make sure to set that first before
-            /// calling it as it will use that information during its painting.
-            /// 
+            //
+            // Now do the plotting. Use the THStack to get all the axis stuff correct.
+            // If we are plotting a log plot, then make sure to set that first before
+            // calling it as it will use that information during its painting.
+            // 
 
             var result = new ROOTNET.NTCanvas(canvasName, canvasTitle);
             result.FillColor = ROOTNET.NTStyle.gStyle.FrameFillColor; // This is not a sticky setting!
@@ -108,15 +114,15 @@ namespace LINQToTreeHelpers
                 result.Logy = 1;
             stack.Draw("nostack");
 
-            ///
-            /// And a legend!
-            /// 
+            //
+            // And a legend!
+            // 
 
             result.BuildLegend();
 
-            ///
-            /// Return the canvas so it can be saved to the file (or whatever).
-            /// 
+            //
+            // Return the canvas so it can be saved to the file (or whatever).
+            // 
 
             return result;
         }
@@ -125,6 +131,7 @@ namespace LINQToTreeHelpers
         /// Reformat the name.
         /// </summary>
         /// <param name="h"></param>
+        /// <param name="format">string.Format argument, arg {0} will be the old histogram name</param>
         /// <returns></returns>
         private static ROOTNET.Interface.NTH1F AppendName(ROOTNET.Interface.NTH1F h, string format)
         {
@@ -136,6 +143,7 @@ namespace LINQToTreeHelpers
         /// Normalize this histo and return it.
         /// </summary>
         /// <param name="histo"></param>
+        /// <param name="toArea">The area the histogram should be noramlized to</param>
         /// <returns></returns>
         public static ROOTNET.Interface.NTH1F Normalize(this ROOTNET.Interface.NTH1F histo, double toArea = 1.0)
         {

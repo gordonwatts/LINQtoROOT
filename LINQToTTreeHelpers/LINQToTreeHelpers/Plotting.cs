@@ -33,7 +33,7 @@ namespace LINQToTreeHelpers
             var hParameter = Expression.Parameter(typeof(ROOTNET.NTH1F), "h");
             var vParameter = Expression.Parameter(typeof(TSource), "v");
 
-            /// h.Fill(getter(v)) is what we want to code up
+            // h.Fill(getter(v)) is what we want to code up
 
             var callGetter = Expression.Invoke(getter, vParameter);
 
@@ -67,7 +67,7 @@ namespace LINQToTreeHelpers
             var hParameter = Expression.Parameter(typeof(ROOTNET.NTH1F), "h");
             var vParameter = Expression.Parameter(typeof(TSource), "v");
 
-            /// h.Fill(getter(v)) is what we want to code up
+            // h.Fill(getter(v)) is what we want to code up
 
             var callGetter = Expression.Invoke(getter, vParameter);
 
@@ -91,7 +91,8 @@ namespace LINQToTreeHelpers
         /// <param name="yNBins"></param>
         /// <param name="yLowBin"></param>
         /// <param name="yHighBin"></param>
-        /// <param name="getter"></param>
+        /// <param name="xGetter">Func that calculates the X value for the 2D histogram</param>
+        /// <param name="yGetter">Func that calculates the X value for the 2D histogram</param>
         /// <returns></returns>
         public static ROOTNET.NTH2F Plot<TSource>
             (
@@ -129,7 +130,8 @@ namespace LINQToTreeHelpers
         /// <param name="yNBins"></param>
         /// <param name="yLowBin"></param>
         /// <param name="yHighBin"></param>
-        /// <param name="getter"></param>
+        /// <param name="xGetter">Func that calculates the X value for the 2D histogram</param>
+        /// <param name="yGetter">Func that calculates the X value for the 2D histogram</param>
         /// <returns></returns>
         public static IFutureValue<ROOTNET.NTH2F> FuturePlot<TSource>
             (
@@ -158,7 +160,7 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Generate a TH1F from a stream of T's that can be converted to a double.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="plotID"></param>
         /// <param name="plotTitle"></param>
@@ -180,7 +182,7 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Generate a TH1F (in the future) from a stream of T's that can be converted to a double.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="plotID"></param>
         /// <param name="plotTitle"></param>

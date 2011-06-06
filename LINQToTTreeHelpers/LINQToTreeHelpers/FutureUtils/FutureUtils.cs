@@ -2,14 +2,19 @@
 
 namespace LINQToTreeHelpers.FutureUtils
 {
+    /// <summary>
+    /// Helper utilties for dealing with IFutureValue and FutureTDirectory objects. These
+    /// are extension methods.
+    /// </summary>
     public static class FutureTDirectoryUtils
     {
         /// <summary>
         /// Helper function to add a future to a directory for later writing.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <param name="dir"></param>
+        /// <typeparam name="T">Type of the future value</typeparam>
+        /// <param name="dir">Directory where this future value should be saved</param>
+        /// <param name="obj">Object to save</param>
+        /// <param name="tag">List of tags which can be used to retreive the object later</param>
         public static IFutureValue<T> SaveToROOTDirectory<T>(this IFutureValue<T> obj, FutureTDirectory dir, string tag = null)
             where T : ROOTNET.Interface.NTObject
         {

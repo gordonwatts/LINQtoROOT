@@ -17,8 +17,11 @@ namespace LINQToTreeHelpers.FutureUtils
             return f;
         }
 
-        private ROOTNET.Interface.NTFile _file;
-
+        /// <summary>
+        /// Creates a new ROOT file and attaches a future value container to it. This container
+        /// can be used to store future values that get evaluated at a later time.
+        /// </summary>
+        /// <param name="outputRootFile"></param>
         public FutureTFile(FileInfo outputRootFile)
             : base(CreateOpenFile(outputRootFile.FullName))
         {
@@ -29,9 +32,9 @@ namespace LINQToTreeHelpers.FutureUtils
         /// </summary>
         public void Close()
         {
-            ///
-            /// Write out this guy and close it!
-            /// 
+            //
+            // Write out this guy and close it!
+            // 
 
             Write();
             Directory.Close();

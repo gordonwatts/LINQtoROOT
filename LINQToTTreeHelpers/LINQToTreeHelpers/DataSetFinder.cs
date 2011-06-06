@@ -201,9 +201,9 @@ namespace LINQToTreeHelpers
         {
             var result = FindMachinesDatasets();
 
-            ///
-            /// Get the dataset from the listing
-            /// 
+            //
+            // Get the dataset from the listing
+            // 
 
             var ds = from d in result.DS
                      where d.Name == dsName
@@ -229,9 +229,9 @@ namespace LINQToTreeHelpers
         {
             LoadDSInfo();
 
-            ///
-            /// Find the machine.
-            /// 
+            //
+            // Find the machine.
+            // 
 
             var mname = System.Environment.MachineName;
             var result = FindROOTFilesForMachine(mname);
@@ -323,9 +323,9 @@ namespace LINQToTreeHelpers
         /// <returns></returns>
         private static FileInfo[] FindFilesInSearchString(string searchString)
         {
-            ///
-            /// Seperate out any leading "\\". In this case we need to do \\\\server\\share before we even get started
-            /// 
+            //
+            // Seperate out any leading "\\". In this case we need to do \\\\server\\share before we even get started
+            // 
 
             string leadingSpecifier = "";
             if (searchString.StartsWith("\\\\"))
@@ -340,9 +340,9 @@ namespace LINQToTreeHelpers
                 searchString = searchString.Substring(shareEnd + 1);
             }
 
-            ///
-            /// Great, now use recursion to build up the filename
-            /// 
+            //
+            // Great, now use recursion to build up the filename
+            // 
 
             return FindFilesRecursive(leadingSpecifier, searchString).ToArray();
         }
@@ -355,9 +355,9 @@ namespace LINQToTreeHelpers
         /// <returns></returns>
         private static IEnumerable<FileInfo> FindFilesRecursive(string leadingDir, string searchString)
         {
-            ///
-            /// First, if there is just a file spec left, then do the search!
-            /// 
+            //
+            // First, if there is just a file spec left, then do the search!
+            // 
 
             if (!searchString.Contains("\\"))
             {
@@ -369,18 +369,18 @@ namespace LINQToTreeHelpers
                 yield break;
             }
 
-            ///
-            /// Ok - so there is more work to do - pull off the next directory and see if we can't
-            /// find all directories that match its search string
-            /// 
+            //
+            // Ok - so there is more work to do - pull off the next directory and see if we can't
+            // find all directories that match its search string
+            // 
 
             int backslash = searchString.IndexOf('\\');
             string dirname = searchString.Substring(0, backslash);
             string restSearchString = searchString.Substring(backslash + 1);
 
-            ///
-            /// Ok, do the search for directories!
-            /// 
+            //
+            // Ok, do the search for directories!
+            // 
 
             foreach (var d in Directory.GetDirectories(leadingDir, dirname))
             {
@@ -466,9 +466,9 @@ namespace LINQToTreeHelpers
         /// <param name="fileInfo"></param>
         private static void LoadAFile(FileInfo fileInfo)
         {
-            ///
-            /// Load the dataset file
-            ///
+            //
+            // Load the dataset file
+            //
 
             string text = "";
             foreach (var line in ReadFromFile(fileInfo))
@@ -476,9 +476,9 @@ namespace LINQToTreeHelpers
                 text += line + "\r\n";
             }
 
-            ///
-            /// Parse it and add it to the list of known machines.
-            /// 
+            //
+            // Parse it and add it to the list of known machines.
+            // 
 
             try
             {

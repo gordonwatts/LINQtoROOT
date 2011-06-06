@@ -13,8 +13,8 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Returns all files below the base directory whose name (including extension) match the regex pattern.
         /// </summary>
-        /// <param name="baseDir"></param>
-        /// <param name="fileExtension"></param>
+        /// <param name="baseDir">THe directory from which to start the search</param>
+        /// <param name="pattern">The pattern all files should match</param>
         /// <returns></returns>
         public static IEnumerable<FileInfo> FindAllFiles(this DirectoryInfo baseDir, string pattern)
         {

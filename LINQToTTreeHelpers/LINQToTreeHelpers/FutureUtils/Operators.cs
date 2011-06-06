@@ -53,6 +53,17 @@ namespace LINQToTreeHelpers.FutureUtils
                 );
         }
 
+        /// <summary>
+        /// Returns a future value that uses two different future values to calculate a third. A Func does the
+        /// actual manipulation.
+        /// </summary>
+        /// <typeparam name="TSource1"></typeparam>
+        /// <typeparam name="TSource2"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source1"></param>
+        /// <param name="source2"></param>
+        /// <param name="extractor"></param>
+        /// <returns></returns>
         public static IFutureValue<TResult> ExtractValue<TSource1, TSource2, TResult>(this IFutureValue<TSource1> source1,
             IFutureValue<TSource2> source2,
             Func<TSource1, TSource2, TResult> extractor)
@@ -63,6 +74,15 @@ namespace LINQToTreeHelpers.FutureUtils
                 );
         }
 
+        /// <summary>
+        /// Returns a future value that uses a list of future values to calculate its result. A Func does the
+        /// actual work.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="extractor"></param>
+        /// <returns></returns>
         public static IFutureValue<TResult> ExtractValue<TSource, TResult>(this IFutureValue<TSource>[] source, Func<TSource[], TResult> extractor)
         {
             return new DoFutureOperator<TResult>(
@@ -96,8 +116,7 @@ namespace LINQToTreeHelpers.FutureUtils
             /// <summary>
             /// Future operator - will run the getResult guy when it is time to run.
             /// </summary>
-            /// <param name="genValue"></param>
-            public DoFutureOperator(Func<T> genValue, Func<bool> hasValue)
+            internal DoFutureOperator(Func<T> genValue, Func<bool> hasValue)
             {
                 _getResult = genValue;
                 _hasValue = hasValue;

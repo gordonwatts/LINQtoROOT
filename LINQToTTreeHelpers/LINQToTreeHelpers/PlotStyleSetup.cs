@@ -24,9 +24,9 @@ namespace LINQToTreeHelpers
             ROOTNET.NTStyle style = new ROOTNET.NTStyle(ROOTNET.NTStyle.gStyle);
             style.Name = "NicePlots";
 
-            ///
-            /// The background fill should be white!
-            /// 
+            //
+            // The background fill should be white!
+            // 
 
             short backgroundFill = (short)ROOTNET.EColor.kWhite;
             style.FillColor = backgroundFill;
@@ -34,9 +34,9 @@ namespace LINQToTreeHelpers
             style.HistFillColor = backgroundFill;
             style.TitleFillColor = backgroundFill;
 
-            ///
-            /// The histogram line size
-            /// 
+            //
+            // The histogram line size
+            // 
 
             style.HistLineWidth = 2;
 
