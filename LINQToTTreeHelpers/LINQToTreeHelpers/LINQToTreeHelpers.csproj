@@ -33,6 +33,12 @@
     <DocumentationFile>bin\Release\LINQToTreeHelpers.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Doddle.Reporting">
+      <HintPath>..\packages\DoddleReport.1.0.0\lib\Doddle.Reporting.dll</HintPath>
+    </Reference>
+    <Reference Include="Doddle.Reporting.AbcPdf">
+      <HintPath>..\packages\DoddleReport.1.0.0\lib\Doddle.Reporting.AbcPdf.dll</HintPath>
+    </Reference>
     <Reference Include="libCoreWrapper">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
     </Reference>
@@ -82,6 +88,9 @@
     <Compile Include="Plotting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ROOTUtils.cs" />
+    <Compile Include="SparseTables\SparseTable.cs" />
+    <Compile Include="SparseTables\SparseTableHelpers.cs" />
+    <Compile Include="SparseTables\SparseTableReportSource.cs" />
     <Compile Include="StackedPlot.cs" />
   </ItemGroup>
   <ItemGroup>
