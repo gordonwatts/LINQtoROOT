@@ -17,161 +17,154 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Generated;
 using Microsoft.Pex.Framework.Moles;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Variables.Moles;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void TestChangeScope693()
-        {
-            SIStatement sIStatement;
-            sIStatement = new SIStatement();
-            IStatement[] iStatements = new IStatement[0];
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestChangeScopeThrowsArgumentNullException371()
-        {
-            SIStatement sIStatement;
-            sIStatement = new SIStatement();
-            IStatement[] iStatements = new IStatement[1];
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void TestChangeScope522()
-        {
-            SIStatement sIStatement;
-            sIStatement = new SIStatement();
-            IStatement[] iStatements = new IStatement[1];
-            iStatements[0] = (IStatement)sIStatement;
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void TestChangeScope629()
-        {
-            SIStatement sIStatement;
-            SStatementInlineBlock sStatementInlineBlock;
-            sIStatement = new SIStatement();
-            sStatementInlineBlock = new SStatementInlineBlock();
-            IStatement[] iStatements = new IStatement[1];
-            iStatements[0] = (IStatement)sStatementInlineBlock;
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void TestChangeScope370()
-        {
-            SIStatement sIStatement;
-            StatementInlineBlock statementInlineBlock;
-            sIStatement = new SIStatement();
-            statementInlineBlock =
-              StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-            IStatement[] iStatements = new IStatement[1];
-            iStatements[0] = (IStatement)statementInlineBlock;
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestChangeScopeThrowsArgumentNullException798()
-        {
-            SIStatement sIStatement;
-            sIStatement = new SIStatement();
-            IStatement[] iStatements = new IStatement[2];
-            iStatements[0] = (IStatement)sIStatement;
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void TestChangeScope978()
-        {
-            SIStatement sIStatement;
-            sIStatement = new SIStatement();
-            IStatement[] iStatements = new IStatement[2];
-            iStatements[0] = (IStatement)sIStatement;
-            iStatements[1] = (IStatement)sIStatement;
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        public void TestChangeScope81()
-        {
-            SIStatement sIStatement;
-            sIStatement = new SIStatement();
-            IStatement[] iStatements = new IStatement[3];
-            iStatements[0] = (IStatement)sIStatement;
-            iStatements[1] = (IStatement)sIStatement;
-            iStatements[2] = (IStatement)sIStatement;
-            this.TestChangeScope(iStatements, (IStatement)sIStatement);
-        }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestChangeScope360()
+public void TestChangeScope547()
 {
-    using (PexChooseBehavedBehavior.Setup())
-    {
-      SIStatement sIStatement;
-      SIStatementCompound sIStatementCompound;
-      sIStatement = new SIStatement();
-      sIStatementCompound = new SIStatementCompound();
-      IStatement[] iStatements = new IStatement[1];
-      iStatements[0] = (IStatement)sIStatementCompound;
-      this.TestChangeScope(iStatements, (IStatement)sIStatement);
-    }
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestChangeScope89()
-{
-    SIStatement sIStatement;
-    SIBookingStatementBlock sIBookingStatementBlock;
-    sIStatement = new SIStatement();
-    sIBookingStatementBlock = new SIBookingStatementBlock();
-    IStatement[] iStatements = new IStatement[2];
-    iStatements[0] = (IStatement)sIStatement;
-    iStatements[1] = (IStatement)sIStatement;
-    this.TestChangeScope(iStatements, (IStatement)sIBookingStatementBlock);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestChangeScope690()
-{
-    using (PexChooseBehavedBehavior.Setup())
-    {
-      SIStatement sIStatement;
-      SIBookingStatementBlock sIBookingStatementBlock;
-      sIStatement = new SIStatement();
-      sIBookingStatementBlock = new SIBookingStatementBlock();
-      IStatement[] iStatements = new IStatement[2];
-      iStatements[0] = (IStatement)sIStatement;
-      iStatements[1] = (IStatement)sIBookingStatementBlock;
-      this.TestChangeScope(iStatements, (IStatement)sIBookingStatementBlock);
-    }
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[0];
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestChangeScopeThrowsArgumentNullException835()
+public void TestChangeScopeThrowsArgumentNullException433()
 {
-    SIStatement sIStatement;
-    sIStatement = new SIStatement();
-    IStatement[] iStatements = new IStatement[10];
-    iStatements[0] = (IStatement)sIStatement;
-    iStatements[1] = (IStatement)sIStatement;
-    iStatements[2] = (IStatement)sIStatement;
-    iStatements[3] = (IStatement)sIStatement;
-    iStatements[4] = (IStatement)sIStatement;
-    iStatements[5] = (IStatement)sIStatement;
-    iStatements[6] = (IStatement)sIStatement;
-    iStatements[7] = (IStatement)sIStatement;
-    iStatements[8] = (IStatement)sIStatement;
-    this.TestChangeScope(iStatements, (IStatement)sIStatement);
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[1];
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope599()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestChangeScopeThrowsArgumentNullException655()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope656()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    iStatements[1] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope726()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    StatementInlineBlock statementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)statementInlineBlock;
+    iStatements[1] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope540()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    SVarInteger sVarInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    sVarInteger = new SVarInteger();
+    sStatementIncrementInteger =
+      new SStatementIncrementInteger((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    iStatements[1] = (IStatement)sStatementIncrementInteger;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope54001()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    VarInteger varInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    varInteger = VarIntegerFactory.Create(false, 0);
+    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    iStatements[1] = (IStatement)sStatementIncrementInteger;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope54002()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    VarInteger varInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    varInteger = VarIntegerFactory.Create(false, 1);
+    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    iStatements[1] = (IStatement)sStatementIncrementInteger;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope852()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    SVarInteger sVarInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    sVarInteger = new SVarInteger();
+    statementIncrementInteger =
+      StatementIncrementIntegerFactory.Create((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    iStatements[1] = (IStatement)statementIncrementInteger;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope845()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    SVarInteger sVarInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    sVarInteger = new SVarInteger();
+    sStatementIncrementInteger =
+      new SStatementIncrementInteger((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementIncrementInteger);
 }
     }
 }

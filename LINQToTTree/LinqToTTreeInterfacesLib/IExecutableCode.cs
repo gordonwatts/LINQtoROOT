@@ -31,9 +31,8 @@ namespace LinqToTTreeInterfacesLib
         IEnumerable<string> IncludeFiles { get; }
 
         /// <summary>
-        /// Return the code boy for the whole thing.
+        /// Each iteration returns a new query code block.
         /// </summary>
-        IStatementCompound CodeStatements { get; }
-
+        IEnumerable<IStatementCompound> QueryCode();
     }
 }

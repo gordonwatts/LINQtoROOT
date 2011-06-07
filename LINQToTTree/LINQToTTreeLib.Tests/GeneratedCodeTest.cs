@@ -76,6 +76,17 @@ namespace LINQToTTreeLib
             }
         }
 
+        /// <summary>
+        /// No matter what, there should always be one statement in there!
+        /// </summary>
+        /// <param name="s"></param>
+        [PexMethod]
+        public void LookAtStatements([PexAssumeUnderTest] GeneratedCode target)
+        {
+            Assert.IsNotNull(target.QueryCode(), "always a good statement for jokes!");
+            Assert.AreEqual(1, target.QueryCode().Count(), "Single query should have a single statement at all times");
+            Assert.AreEqual(target.CodeBody, target.QueryCode().First(), "The code body is what we should be seeing here!");
+        }
 
         [PexMethod]
         [PexUseType(typeof(CompoundBookingStatement))]

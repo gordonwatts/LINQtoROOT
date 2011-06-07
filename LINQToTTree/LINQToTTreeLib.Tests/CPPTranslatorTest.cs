@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
@@ -72,6 +73,85 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestForFunctionNumber()
+        {
+            CPPTranslator target = new CPPTranslator();
+            VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
+            GeneratedCode code = new GeneratedCode();
+            code.SetResult(vInt);
+
+            var innerBlock = new StatementInlineBlock();
+            VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+            innerBlock.Add(vInt2);
+            code.Add(innerBlock);
+
+            var r = TranslateGeneratedCode(target, code);
+
+            Assert.IsTrue(r.ContainsKey("NumberOfQueryFunctions"), "Number of functions isn't here");
+            Assert.IsInstanceOfType(r["NumberOfQueryFunctions"], typeof(int), "# fucntsion type");
+            Assert.AreEqual(1, r["NumberOfQueryFunctions"], "# of functions");
+
+            Assert.IsTrue(r.ContainsKey("QueryFunctionBlocks"), "Missing query function blocks");
+            Assert.IsInstanceOfType(r["QueryFunctionBlocks"], typeof(IEnumerable<IEnumerable<string>>), "Type is incorrect");
+            var codeBlocks = r["QueryFunctionBlocks"] as IEnumerable<IEnumerable<string>>;
+            Assert.AreEqual(1, codeBlocks.Count(), "Wrong number of code blocks");
+        }
+
+        class tooManyStatemnets : IExecutableCode
+        {
+            public tooManyStatemnets()
+            {
+                VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
+                ResultValues = new IVariable[] { vInt };
+            }
+            public IEnumerable<KeyValuePair<string, object>> VariablesToTransfer
+            {
+                get { return Enumerable.Empty<KeyValuePair<string, object>>(); }
+            }
+
+            public IEnumerable<IVariable> ResultValues { get; set; }
+
+            public void AddIncludeFile(string includeName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<string> IncludeFiles
+            {
+                get { return Enumerable.Empty<string>(); }
+            }
+
+            public IEnumerable<IStatementCompound> QueryCode()
+            {
+                for (int i = 0; i < 300; i++)
+                {
+                    var innerBlock = new StatementInlineBlock();
+                    VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+                    innerBlock.Add(vInt2);
+                    yield return innerBlock;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure we get the "proper" number of code blocks when we have somethign WAY too bid.
+        /// </summary>
+        [TestMethod]
+        public void TestForTooManyCodeBlocks()
+        {
+            CPPTranslator target = new CPPTranslator();
+            MEFUtilities.Compose(target);
+
+            var toomany = new tooManyStatemnets();
+
+            var result = target.TranslateGeneratedCode(toomany);
+
+            Assert.IsTrue(((int)result["NumberOfQueryFunctions"]) > 1, string.Format("Number of queries was not larger than 1, it was {0}", result["NumberOfQueryFunctions"]));
+            var codeBlocks = result["QueryFunctionBlocks"] as IEnumerable<IEnumerable<string>>;
+            Assert.AreEqual(result["NumberOfQueryFunctions"], codeBlocks.Count(), "Non-matching number of code blocks");
+        }
+
+        [TestMethod]
         public void TestObjectInitalizerInInnerBlock()
         {
             CPPTranslator target = new CPPTranslator();
@@ -86,9 +166,7 @@ namespace LINQToTTreeLib
 
             var r = TranslateGeneratedCode(target, code);
 
-            Assert.IsTrue(r.ContainsKey("ProcessStatements"), "ProcessStatements missing");
-            Assert.IsInstanceOfType(r["ProcessStatements"], typeof(IEnumerable<string>), "bad processing statements type");
-            var st = (r["ProcessStatements"] as IEnumerable<string>).ToArray();
+            var st = (r["QueryFunctionBlocks"] as IEnumerable<IEnumerable<string>>).First().ToArray();
             Assert.AreEqual(5, st.Length, "incorrect number of statements");
             Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initalization");
         }

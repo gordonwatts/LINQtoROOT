@@ -41,11 +41,6 @@ namespace LINQToTTreeLib
         public IBookingStatementBlock CodeBody { get; private set; }
 
         /// <summary>
-        /// Just the statements from our top level.
-        /// </summary>
-        public IStatementCompound CodeStatements { get { return CodeBody; } }
-
-        /// <summary>
         /// Keeps track of the level where we are adding statements
         /// </summary>
         private IStatementCompound CurrentScopePointer;
@@ -211,6 +206,16 @@ namespace LINQToTTreeLib
         public IEnumerable<string> IncludeFiles
         {
             get { return _includeFiles; }
+        }
+
+        /// <summary>
+        /// We are a single query - so we return a single query block. Always. Someone else is smart
+        /// enough to try to combine the blocks.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IStatementCompound> QueryCode()
+        {
+            yield return CodeBody;
         }
     }
 }

@@ -26,9 +26,26 @@ namespace LINQToTTreeLib
             if (code == null)
                 throw new ArgumentNullException("code");
 
+            ///
+            /// Get the variables that we are going to be shipping back and forth.
+            /// 
+
             Dictionary<string, object> result = new Dictionary<string, object>();
             result["ResultVariables"] = TranslateVariable(code.ResultValues, code);
-            result["ProcessStatements"] = TranslateStatements(code.CodeStatements);
+
+            ///
+            /// The actual code. This is just a sequence of loops. It would be, under normal circumstances, just that. However,
+            /// there is a limitation in the code generator that means you can't have more than 250 loops in one function. If we aren't
+            /// combining loops it is easy to have more than 250 plots. So we split this up into functions of about 100 outter loops
+            /// per function. We then call these functions from the main loop. Fortunately, there are no local variables. :-)
+            /// We cache the codeing blocks here b/c we have to access them several times.
+            /// 
+
+            const int queriesPerFunction = 100;
+            var queryBlocks = code.QueryCode().ToArray();
+            int numberOfBlocks = 1 + queryBlocks.Length / queriesPerFunction;
+            result["NumberOfQueryFunctions"] = numberOfBlocks;
+            result["QueryFunctionBlocks"] = TranslateQueryBlocks(queryBlocks, queriesPerFunction, numberOfBlocks);
             result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValues, code);
 
             ///
@@ -38,6 +55,31 @@ namespace LINQToTTreeLib
             AddIncludeFiles(code);
 
             return result;
+        }
+
+        /// <summary>
+        /// Chunk the quries up into blocks and return a function block (2D array).
+        /// </summary>
+        /// <param name="queryBlocks"></param>
+        /// <param name="queriesPerFunction"></param>
+        /// <returns></returns>
+        private IEnumerable<IEnumerable<string>> TranslateQueryBlocks(IStatementCompound[] queryBlocks, int queriesPerFunction, int numberBlocks)
+        {
+            for (int i = 0; i < numberBlocks; i++)
+            {
+                var queires = queryBlocks.Skip(queriesPerFunction * i).Take(queriesPerFunction);
+                yield return TranslateOneQueryBlockSet(queires);
+            }
+        }
+
+        /// <summary>
+        /// Return a set of strings for a function block. This is just flattening them all out.
+        /// </summary>
+        /// <param name="queires"></param>
+        /// <returns></returns>
+        private IEnumerable<string> TranslateOneQueryBlockSet(IEnumerable<IStatementCompound> queires)
+        {
+            return queires.SelectMany(q => q.CodeItUp());
         }
 
         /// <summary>
@@ -92,16 +134,6 @@ namespace LINQToTTreeLib
         {
             return from v in vars
                    select new VarInfo(v);
-        }
-
-        /// <summary>
-        /// Translate the incoming statements into somethiRawng that can be send to the C++ compiler.
-        /// </summary>
-        /// <param name="statements"></param>
-        /// <returns></returns>
-        private IEnumerable<string> TranslateStatements(IStatement statements)
-        {
-            return statements.CodeItUp();
         }
 
         /// <summary>

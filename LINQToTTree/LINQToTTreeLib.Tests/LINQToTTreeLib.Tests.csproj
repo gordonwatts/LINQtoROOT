@@ -243,6 +243,9 @@
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </Compile>
     <Compile Include="GeneratedCodeTest.cs" />
+    <Compile Include="GeneratedCodeTest.LookAtStatements.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="GeneratedCodeTest.SetResult.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </Compile>

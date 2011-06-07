@@ -25,89 +25,6 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException168()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, (string[])null);
-    this.TestAddTransfer(generatedCode, (string)null, (object)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void TestAddTransferThrowsArgumentException516()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, (string[])null);
-    object s0 = new object();
-    this.TestAddTransfer(generatedCode, (string)null, s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void TestAddTransferThrowsArgumentException886()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, (string[])null);
-    object s0 = new object();
-    this.TestAddTransfer(generatedCode, "", s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer439()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, (string[])null);
-    object s0 = new object();
-    this.TestAddTransfer(generatedCode, "\0", s0);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.AreEqual<int>(1, generatedCode.Depth);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-    Assert.IsNotNull(generatedCode.IncludeFiles);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException801()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    string[] ss = new string[1];
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, ss, (string[])null);
-    this.TestAddTransfer(generatedCode, (string)null, (object)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException14()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    string[] ss = new string[1];
-    ss[0] = "\0";
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
-    this.TestAddTransfer(generatedCode, (string)null, (object)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
 public void TestAddTransferThrowsArgumentNullException972()
 {
     VarInteger varInteger;
@@ -127,22 +44,6 @@ public void TestAddTransferThrowsArgumentNullException663()
     varInteger = VarIntegerFactory.Create(false, 1);
     generatedCode = GeneratedCodeFactory.Create
                         ((IVariable)varInteger, (IStatement[])null, (string[])null, (string[])null);
-    this.TestAddTransfer(generatedCode, (string)null, (object)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException598()
-{
-    SIVariable sIVariable;
-    SIStatement sIStatement;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    sIStatement = new SIStatement();
-    IStatement[] iStatements = new IStatement[1];
-    iStatements[0] = (IStatement)sIStatement;
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, iStatements, (string[])null, (string[])null);
     this.TestAddTransfer(generatedCode, (string)null, (object)null);
 }
 [TestMethod]
@@ -182,108 +83,191 @@ public void TestAddTransferThrowsArgumentNullException997()
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException474()
+public void TestAddTransferThrowsArgumentNullException670()
 {
-    SIVariable sIVariable;
+    SVarInteger sVarInteger;
     GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    string[] ss = new string[2];
-    ss[0] = "\u0100";
-    ss[1] = "\u0100";
+    sVarInteger = new SVarInteger();
+    IStatement[] iStatements = new IStatement[0];
     generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
+                        ((IVariable)sVarInteger, iStatements, (string[])null, (string[])null);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestAddTransferThrowsArgumentException904()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    IStatement[] iStatements = new IStatement[0];
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, (string[])null, (string[])null);
+    object s0 = new object();
+    this.TestAddTransfer(generatedCode, (string)null, s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException546()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    IStatement[] iStatements = new IStatement[0];
+    string[] ss = new string[1];
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, ss, (string[])null);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestAddTransferThrowsArgumentException893()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    IStatement[] iStatements = new IStatement[0];
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, (string[])null, (string[])null);
+    object s0 = new object();
+    this.TestAddTransfer(generatedCode, "", s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestAddTransfer43901()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    IStatement[] iStatements = new IStatement[0];
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, (string[])null, (string[])null);
+    object s0 = new object();
+    this.TestAddTransfer(generatedCode, "\0", s0);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(1, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException190()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    IStatement[] iStatements = new IStatement[0];
+    string[] ss = new string[1];
+    ss[0] = "\0";
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, iStatements, (string[])null, ss);
     this.TestAddTransfer(generatedCode, (string)null, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException529()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    string[] ss = new string[2];
-    ss[0] = "\u0101";
-    ss[1] = "\u0100";
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
-    this.TestAddTransfer(generatedCode, (string)null, (object)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException896()
-{
-    SIVariable sIVariable;
-    GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    string[] ss = new string[2];
-    ss[0] = "\ucf1a";
-    ss[1] = "\u4aaf";
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
-    this.TestAddTransfer(generatedCode, (string)null, (object)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException763()
+public void TestAddTransferThrowsArgumentNullException601()
 {
     SVarInteger sVarInteger;
     GeneratedCode generatedCode;
     sVarInteger = new SVarInteger();
     string[] ss = new string[2];
     ss[0] = "\u0100";
-    ss[1] = "\u0100\0";
+    ss[1] = "\u0100";
     generatedCode = GeneratedCodeFactory.Create
                         ((IVariable)sVarInteger, (IStatement[])null, (string[])null, ss);
     this.TestAddTransfer(generatedCode, (string)null, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer765()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException446()
 {
-    SIVariable sIVariable;
+    SVarInteger sVarInteger;
     GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    string[] ss = new string[4];
-    ss[0] = "\u0bbf";
-    ss[1] = "\u0bbf";
-    ss[2] = "\u0bbf";
-    ss[3] = "\u0bbf";
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[2];
+    ss[0] = "\u0101";
+    ss[1] = "\u0100";
     generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
-    object s0 = new object();
-    this.TestAddTransfer(generatedCode, "\u0bbf", s0);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.AreEqual<int>(1, generatedCode.Depth);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-    Assert.IsNotNull(generatedCode.IncludeFiles);
+                        ((IVariable)sVarInteger, (IStatement[])null, (string[])null, ss);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer506()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException584()
 {
-    SIVariable sIVariable;
+    SVarInteger sVarInteger;
     GeneratedCode generatedCode;
-    sIVariable = new SIVariable();
-    string[] ss = new string[4];
-    ss[0] = "\uf9a0";
-    ss[1] = "\uf9a0";
-    ss[2] = "\uf9a0";
-    ss[3] = "\uf9a0";
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[2];
+    ss[0] = "\uceba";
+    ss[1] = "\u4aaf";
     generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)sIVariable, (IStatement[])null, (string[])null, ss);
-    object s0 = new object();
-    this.TestAddTransfer(generatedCode, "\ua3ef", s0);
-    Assert.IsNotNull((object)generatedCode);
-    Assert.AreEqual<int>(1, generatedCode.Depth);
-    Assert.IsNotNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-    Assert.IsNotNull(generatedCode.IncludeFiles);
+                        ((IVariable)sVarInteger, (IStatement[])null, (string[])null, ss);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException765()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[5];
+    ss[0] = "\u0100";
+    ss[1] = "\u0100";
+    ss[2] = "\u0100";
+    ss[3] = "\u0089";
+    ss[4] = "\0\u0100";
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, (IStatement[])null, (string[])null, ss);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException367()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[6];
+    ss[0] = "\u0100";
+    ss[1] = "\u0100";
+    ss[2] = "\u0100";
+    ss[3] = "\u0089";
+    ss[4] = "\u0080\u0101";
+    ss[5] = "\0\u0100";
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, (IStatement[])null, (string[])null, ss);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException151()
+{
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[5];
+    ss[0] = "\u0100";
+    ss[1] = "\u0100";
+    ss[2] = "\u0100";
+    ss[3] = "\u0100";
+    ss[4] = "\u0100\0";
+    generatedCode = GeneratedCodeFactory.Create
+                        ((IVariable)sVarInteger, (IStatement[])null, (string[])null, ss);
+    this.TestAddTransfer(generatedCode, (string)null, (object)null);
 }
     }
 }

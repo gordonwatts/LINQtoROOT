@@ -16,17 +16,17 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
-        [TestMethod]
-        [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-        public void CheckAddIncludeFiles271()
-        {
-            string[] ss = new string[0];
-            this.CheckAddIncludeFiles(ss);
-        }
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void CheckAddIncludeFiles271()
+{
+    string[] ss = new string[0];
+    this.CheckAddIncludeFiles(ss);
+}
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void CheckAddIncludeFilesThrowsArgumentException910()
+public void CheckAddIncludeFilesThrowsArgumentException477()
 {
     string[] ss = new string[1];
     this.CheckAddIncludeFiles(ss);
@@ -34,7 +34,7 @@ public void CheckAddIncludeFilesThrowsArgumentException910()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void CheckAddIncludeFilesThrowsArgumentException348()
+public void CheckAddIncludeFilesThrowsArgumentException438()
 {
     string[] ss = new string[1];
     ss[0] = "";
@@ -43,7 +43,7 @@ public void CheckAddIncludeFilesThrowsArgumentException348()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException779()
+public void CheckAddIncludeFilesThrowsArgumentNullException840()
 {
     string[] ss = new string[1];
     ss[0] = "\0";
@@ -52,7 +52,7 @@ public void CheckAddIncludeFilesThrowsArgumentNullException779()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException225()
+public void CheckAddIncludeFilesThrowsArgumentNullException829()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100";
@@ -61,7 +61,7 @@ public void CheckAddIncludeFilesThrowsArgumentNullException225()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException848()
+public void CheckAddIncludeFilesThrowsArgumentNullException115()
 {
     string[] ss = new string[1];
     ss[0] = "\0\0";
@@ -70,7 +70,7 @@ public void CheckAddIncludeFilesThrowsArgumentNullException848()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException818()
+public void CheckAddIncludeFilesThrowsArgumentNullException602()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100\u0100";

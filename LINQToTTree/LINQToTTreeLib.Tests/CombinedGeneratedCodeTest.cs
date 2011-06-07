@@ -26,7 +26,9 @@ namespace LINQToTTreeLib
             [PexAssumeNotNull] IExecutableCode code
         )
         {
+            int initialQueryCount = target.QueryCode().Count();
             target.AddGeneratedCode(code);
+            Assert.AreEqual(initialQueryCount + 1, target.QueryCode().Count(), "Should always increase the query count by one");
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentException))]

@@ -37,6 +37,8 @@ namespace LINQToTTreeLib
             if (resultValues == null)
                 throw new ArgumentNullException("Generated code Result Values can't be null");
 
+            var codeItems = code.QueryCode().ToArray();
+
             ///
             /// Variables that we need to queue for transfer
             /// 
@@ -65,25 +67,25 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// Finally, combine the code!
+            /// Finally, we need to combine the query code. Now, there is a limitation (by design) in the C++ compiler:
+            /// http://connect.microsoft.com/VisualStudio/feedback/details/100734/c-function-with-many-unnested-loops-generates-error-fatal-error-c1061-compiler-limit-blocks-nested-too-deeply
+            /// 
+            /// So - if we want to generate more than 250 plots in one run, and we are doing no loop combining, then we will be in trouble. To get around this
+            /// Anything that can't folded into itself has to be kept "seperate". Sucks, but what can you do?
             /// 
 
-            AddCodeStatement(code.CodeStatements);
+            AddQueryBlocks(codeItems);
         }
 
         /// <summary>
-        /// Adds a new code statement to our block
+        /// Add in the code blocks. Must not be null.
         /// </summary>
-        /// <param name="code"></param>
-        public void AddCodeStatement(IStatement code)
+        /// <param name="codeBlocks"></param>
+        internal void AddQueryBlocks(IStatementCompound[] codeBlocks)
         {
-            if (CodeStatements == null)
-            {
-                CodeStatements = new Statements.StatementInlineBlock();
-            }
-
-            if (!CodeStatements.TryCombineStatement(code))
-                throw new ArgumentException("Unable to add a new code body to the combined code block - The combine failed!");
+            if (codeBlocks == null || codeBlocks.Any(i => i == null) || codeBlocks.Length == 0)
+                throw new ArgumentException("Queries must have code blocks and they can't be null and there must be at least one");
+            _queryBlocks.AddRange(codeBlocks);
         }
 
         /// <summary>
@@ -165,8 +167,17 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Returns the code body of this guy.
+        /// List of query blocks - 1 per query.
         /// </summary>
-        public IStatementCompound CodeStatements { get; private set; }
+        private List<IStatementCompound> _queryBlocks = new List<IStatementCompound>();
+
+        /// <summary>
+        /// Return, one after the other, the query code.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IStatementCompound> QueryCode()
+        {
+            return _queryBlocks;
+        }
     }
 }

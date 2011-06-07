@@ -85,8 +85,10 @@ public:
 		/// Run the processing code
 		///
 
-#foreach($s in $ProcessStatements)
-		$s
+#set ( $blockIndex = 0 )
+#foreach($block in $QueryFunctionBlocks)
+		ExecuteQueryBlock$blockIndex ();
+#set ( $blockIndex = $blockIndex + 1 )
 #end
 
 		///
@@ -97,6 +99,21 @@ public:
 	}
 
 private:
+
+	///
+	/// The query block functions
+	///
+#set ( $blockIndex = 0 )
+#foreach($block in $QueryFunctionBlocks)
+	void ExecuteQueryBlock$blockIndex ()
+	{
+#foreach($s in $block)
+		$s
+#end
+	}
+
+#set ( $blockIndex = $blockIndex + 1 )
+#end
 	/// Here are the variables that hold things we need to keep around
 	/// between entries of the ntuple. So things like the result that has
 	/// to be filled on each entry.

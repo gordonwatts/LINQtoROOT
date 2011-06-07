@@ -35,17 +35,6 @@ public void AddCompoundStatementTest805()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void AddCompoundStatementTest8()
-{
-    using (PexChooseBehavedBehavior.Setup())
-    {
-      SIStatementCompound sIStatementCompound;
-      sIStatementCompound = new SIStatementCompound();
-      this.AddCompoundStatementTest((IStatement)sIStatementCompound);
-    }
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
 public void AddCompoundStatementTest818()
 {
     GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
