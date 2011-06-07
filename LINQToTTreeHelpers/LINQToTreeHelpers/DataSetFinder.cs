@@ -20,6 +20,21 @@ namespace LINQToTreeHelpers
         /// </summary>
         private static readonly Parser<string> Identifier = (Parse.LetterOrDigit.Or(Parse.Char('_'))).AtLeastOnce().Text().Token();
 
+        private static readonly Parser<string[]> IdentifierListSingle =
+            from id1 in Identifier
+            select new string[] { id1 };
+
+        private static readonly Parser<string[]> IdenifierListMoreThanOne =
+            from id1 in IdentifierListSingle
+            from wh1 in Parse.WhiteSpace.Many()
+            from comma in Parse.Char(',')
+            from wh2 in Parse.WhiteSpace.Many()
+            from idRest in IdentifierList
+            select id1.Concat(idRest).ToArray();
+
+        private static readonly Parser<string[]> IdentifierList =
+            IdenifierListMoreThanOne.Or(IdentifierListSingle);
+
         /// <summary>
         /// A file path. It might be surrounded by quotes, actually...
         /// </summary>
@@ -109,9 +124,9 @@ namespace LINQToTreeHelpers
 
         private static readonly Parser<string[]> TagListParser =
             from openParen1 in Parse.Char('(')
-            from tagName in Identifier
+            from tagNames in IdentifierList
             from openParen in Parse.Char(')')
-            select new string[] { tagName };
+            select tagNames;
 
         private static readonly Parser<DataSetDefinition> DataSetDefinitionWithTagParser =
             from n in Identifier
@@ -174,6 +189,19 @@ namespace LINQToTreeHelpers
             select new Machine() { Name = "", DS = ds.ToArray() };
 
         /// <summary>
+        /// Get/Set the name of the machine we are running on. Defaults to current machine name.
+        /// </summary>
+        public static string MachineName { get; set; }
+
+        /// <summary>
+        /// Some inital configuration. Not efficient, but since we are all about static here...
+        /// </summary>
+        static DataSetFinder()
+        {
+            MachineName = System.Environment.MachineName;
+        }
+
+        /// <summary>
         /// Return the "proper" item
         /// </summary>
         /// <param name="nv"></param>
@@ -190,7 +218,15 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Files that we will load
         /// </summary>
-        private static string[] gFiles = new string[] { "dataset-list.txt" };
+        private static List<string> gFiles = new List<string>() { "dataset-list.txt" };
+
+        /// <summary>
+        /// Clear out all the files.
+        /// </summary>
+        public static void ClearFileList()
+        {
+            gFiles.Clear();
+        }
 
         /// <summary>
         /// Look at the dataset files and fine the dsName and return the files. They are sorted in alpha order.
@@ -210,7 +246,7 @@ namespace LINQToTreeHelpers
                      select d;
             var resultDS = ds.FirstOrDefault();
             if (resultDS == null)
-                throw new ArgumentException("Dataset '" + dsName + "' was not known in this file for the machine '" + System.Environment.MachineName + "'.");
+                throw new ArgumentException("Dataset '" + dsName + "' was not known in this file for the machine '" + MachineName + "'.");
 
             var macroReplacedSearchStrings = resultDS.SearchStrings.Select(s => MacroReplacement(s, result.Macros));
 
@@ -233,7 +269,7 @@ namespace LINQToTreeHelpers
             // Find the machine.
             // 
 
-            var mname = System.Environment.MachineName;
+            var mname = MachineName;
             var result = FindROOTFilesForMachine(mname);
             if (result == null)
                 result = FindROOTFilesForMachine("");
@@ -424,13 +460,13 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Return a list of data set names for each tag.
         /// </summary>
-        /// <param name="tag"></param>
+        /// <param name="tags"></param>
         /// <returns></returns>
-        public static string[] DatasetNamesForTag(string tag)
+        public static string[] DatasetNamesForTag(params string[] tags)
         {
             var machine = FindMachinesDatasets();
             var allds = from ds in machine.DS
-                        where ds.Tags.Contains(tag)
+                        where tags.All(t => ds.Tags.Contains(t))
                         select ds.Name;
             return allds.ToArray();
         }
@@ -461,6 +497,15 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
+        /// Clear out the read in files, re-prime the read in.
+        /// </summary>
+        public static void ResetCache()
+        {
+            gFilesLoaded = false;
+            gLoadedMachines.Clear();
+        }
+
+        /// <summary>
         /// Load a single file up
         /// </summary>
         /// <param name="fileInfo"></param>
@@ -482,15 +527,25 @@ namespace LINQToTreeHelpers
 
             try
             {
-                var result = ParseNoMachineDef.Many().Or(MachineParser.Many()).End().Parse(text);
-                foreach (var item in result)
-                {
-                    gLoadedMachines.Add(item);
-                }
+                ParseSpecFromString(text);
             }
             catch (Exception e)
             {
                 Console.WriteLine(string.Format("Parse error in file {0}: {1}", fileInfo.FullName, e.Message));
+            }
+        }
+
+        /// <summary>
+        /// Parse a string for dataset definitions. NOTE: there is no attempt to remove
+        /// comments - this should be pure text by now!
+        /// </summary>
+        /// <param name="text">The text that we will parse</param>
+        public static void ParseSpecFromString(string text)
+        {
+            var result = ParseNoMachineDef.Many().Or(MachineParser.Many()).End().Parse(text);
+            foreach (var item in result)
+            {
+                gLoadedMachines.Add(item);
             }
         }
 

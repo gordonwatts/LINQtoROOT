@@ -72,6 +72,27 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestLetOperator()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                let qtest = new ROOTNET.NTH1F("hi", "there", 20, 0.0, q.run)
+                from qvlist in q.vals
+                select qvlist + qtest.NbinsX).Aggregate(0, (acc, va) => acc + va));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+
+            qv.VisitQueryModel(model);
+        }
+
+        [TestMethod]
         public void TestSetMainLoopVariable()
         {
             var model = GetModel(() => (new QueriableDummy<dummyntup>().Count()));

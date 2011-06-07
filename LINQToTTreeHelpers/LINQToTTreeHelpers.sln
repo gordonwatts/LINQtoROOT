@@ -8,7 +8,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CopyToLINQDirectories", "Co
 		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA} = {2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQToTreeHelpers.Tests", "LINQToTreeHelpers.Tests\LINQToTreeHelpers.Tests.csproj", "{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F17E455C-E38F-46CA-BE98-306C2A6F3B5F}"
+	ProjectSection(SolutionItems) = preProject
+		LINQToTTreeHelpers.vsmdi = LINQToTTreeHelpers.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = LINQToTTreeHelpers.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -37,6 +49,16 @@ Global
 		{50E355DE-0038-4CB3-8C3E-E24D2902F4E0}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{50E355DE-0038-4CB3-8C3E-E24D2902F4E0}.Release|Win32.ActiveCfg = Release|Win32
 		{50E355DE-0038-4CB3-8C3E-E24D2902F4E0}.Release|Win32.Build.0 = Release|Win32
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
