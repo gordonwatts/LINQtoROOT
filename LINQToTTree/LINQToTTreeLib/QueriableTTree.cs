@@ -64,6 +64,23 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Get/Set flag telling the query processor to re-check the dates of the input file list when deciding
+        /// if a cache result is valie... This can
+        /// dramatically slow down a run if the files are accross the network (and there are 100's of input files).
+        /// </summary>
+        public bool RecheckFileDatesOnEachQuery
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).RecheckFileDatesOnEachQuery = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).RecheckFileDatesOnEachQuery;
+            }
+        }
+
+        /// <summary>
         /// Called by the LINQ infrastructure. No need to do much of anything here.
         /// </summary>
         /// <param name="provider"></param>

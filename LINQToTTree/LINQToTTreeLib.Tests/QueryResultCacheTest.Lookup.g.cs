@@ -22,13 +22,13 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(QueryResultCacheTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void LookupThrowsArgumentException556()
+public void LookupThrowsArgumentException137()
 {
     QueryResultCache queryResultCache;
     Tuple<bool, int> tuple;
     queryResultCache = new QueryResultCache();
     tuple = this.Lookup<int>(queryResultCache, (FileInfo)null, (string)null, 
-                             (object[])null, (QueryModel)null, (IVariableSaver)null);
+                             (object[])null, (QueryModel)null, (IVariableSaver)null, false);
 }
     }
 }

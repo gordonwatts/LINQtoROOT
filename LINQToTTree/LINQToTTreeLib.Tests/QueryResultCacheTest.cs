@@ -64,10 +64,11 @@ namespace LINQToTTreeLib
             string treeName,
             object[] inputObjects,
             QueryModel queryModel,
-            IVariableSaver varSaver
+            IVariableSaver varSaver,
+            bool checkDates = false
         )
         {
-            var result = target.Lookup<T>(target.GetKey(new FileInfo[] { _rootFile }, treeName, inputObjects, queryModel), varSaver, null);
+            var result = target.Lookup<T>(target.GetKey(new FileInfo[] { _rootFile }, treeName, inputObjects, queryModel, recheckDates: checkDates), varSaver, null);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
             // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
@@ -282,8 +283,35 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test", null, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", null, query, new DummySaver(), checkDates: true);
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
+        }
+
+        [TestMethod]
+        public void TestForFileOutOfDateNoCheck()
+        {
+            var f = MakeRootFile("TestForFileOutOfDate");
+            var query = MakeQuery(0);
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+            var q = new QueryResultCache();
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, query), h);
+
+            /// Modify the file
+
+            using (var w = f.CreateText())
+            {
+                w.WriteLine("fork it!");
+                w.Close();
+            }
+
+            /// And make sure the lookup fails now!
+
+            var r = Lookup<int>(q, f, "test", null, query, new DummySaver());
+            Assert.IsTrue(r.Item1, "altered file should not have triggered the re-check");
         }
 
         [TestMethod]

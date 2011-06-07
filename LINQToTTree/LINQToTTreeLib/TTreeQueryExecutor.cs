@@ -61,6 +61,13 @@ namespace LINQToTTreeLib
         public int CountExecutionRuns { get; set; }
 
         /// <summary>
+        /// Get/Set a flag that tells the system to re-check the file dates each time a query
+        /// is run, rather than just the first query. Over a network this can dramatically slow
+        /// down the system if checking is turned on.
+        /// </summary>
+        public bool RecheckFileDatesOnEachQuery { get; set; }
+
+        /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
         /// <param name="rootFiles"></param>
@@ -70,6 +77,7 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(2, "Initializing TTreeQueryExecutor");
             CleanupQuery = true;
             IgnoreQueryCache = false;
+            RecheckFileDatesOnEachQuery = false;
 
             CountCacheHits = 0;
             CountExecutionRuns = 0;

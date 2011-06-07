@@ -54,7 +54,7 @@ namespace LINQToTTreeLib
         /// <param name="inputObjects"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query)
+        public IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query, bool recheckDates = false)
         {
             ///
             /// Quick check to make sure everything is good
@@ -113,7 +113,7 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(28, "GetKey: calculating the most recent file dates");
-            result.OldestSourceFileDate = GetRecentFileDates(rootfiles).Max();
+            result.OldestSourceFileDate = GetRecentFileDates(rootfiles, recheckDates).Max();
 
             ///
             /// And now the file that the query should be cached in
@@ -134,11 +134,12 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="rootfiles"></param>
         /// <returns></returns>
-        private IEnumerable<DateTime> GetRecentFileDates(FileInfo[] rootfiles)
+        private IEnumerable<DateTime> GetRecentFileDates(FileInfo[] rootfiles, bool recheckDates)
         {
             foreach (var f in rootfiles)
             {
-                //f.Refresh();
+                if (recheckDates)
+                    f.Refresh();
                 yield return f.LastWriteTime;
             }
         }
