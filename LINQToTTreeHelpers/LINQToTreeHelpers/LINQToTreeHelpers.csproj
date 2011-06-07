@@ -33,11 +33,8 @@
     <DocumentationFile>bin\Release\LINQToTreeHelpers.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Doddle.Reporting">
-      <HintPath>..\packages\DoddleReport.1.0.0\lib\Doddle.Reporting.dll</HintPath>
-    </Reference>
-    <Reference Include="Doddle.Reporting.AbcPdf">
-      <HintPath>..\packages\DoddleReport.1.0.0\lib\Doddle.Reporting.AbcPdf.dll</HintPath>
+    <Reference Include="Doddle.Reporting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=183ffec7490b24a9, processorArchitecture=MSIL">
+      <HintPath>..\Libraries\Doddle.Reporting.dll</HintPath>
     </Reference>
     <Reference Include="libCoreWrapper">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
