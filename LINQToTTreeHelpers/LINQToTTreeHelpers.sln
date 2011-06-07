@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQToTreeHelpers", "LINQToTreeHelpers\LINQToTreeHelpers.csproj", "{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CopyToLINQDirectories", "CopyToLINQDirectories\CopyToLINQDirectories.vcxproj", "{50E355DE-0038-4CB3-8C3E-E24D2902F4E0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA} = {2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
