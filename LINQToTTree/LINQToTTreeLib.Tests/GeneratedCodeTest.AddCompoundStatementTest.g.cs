@@ -8,46 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Moles;
-using LinqToTTreeInterfacesLib.Moles;
 
 namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void AddCompoundStatementTestThrowsArgumentNullException401()
-{
-    this.AddCompoundStatementTest((IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void AddCompoundStatementTest805()
-{
-    GeneratedCodeTest.SimpleStatement s0 = new GeneratedCodeTest.SimpleStatement();
-    this.AddCompoundStatementTest((IStatement)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void AddCompoundStatementTest818()
-{
-    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
-    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
-    this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void AddCompoundStatementTest81801()
-{
-    GeneratedCodeTest.CompoundStatement compoundStatement;
-    compoundStatement = new GeneratedCodeTest.CompoundStatement();
-    this.AddCompoundStatementTest((IStatement)compoundStatement);
-}
     }
 }

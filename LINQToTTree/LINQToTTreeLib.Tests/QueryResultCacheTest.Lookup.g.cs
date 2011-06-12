@@ -19,16 +19,5 @@ namespace LINQToTTreeLib
 {
     public partial class QueryResultCacheTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(QueryResultCacheTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void LookupThrowsArgumentException137()
-{
-    QueryResultCache queryResultCache;
-    Tuple<bool, int> tuple;
-    queryResultCache = new QueryResultCache();
-    tuple = this.Lookup<int>(queryResultCache, (FileInfo)null, (string)null, 
-                             (object[])null, (QueryModel)null, (IVariableSaver)null, false);
-}
     }
 }

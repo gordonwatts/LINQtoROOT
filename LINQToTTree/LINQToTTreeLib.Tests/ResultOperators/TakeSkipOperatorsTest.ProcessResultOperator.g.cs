@@ -8,88 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Linq;
-using Remotion.Linq.Clauses;
-using Microsoft.Pex.Framework.Moles;
-using LinqToTTreeInterfacesLib.Moles;
-using Remotion.Linq.Clauses.ResultOperators;
-using Remotion.Data.Linq.Clauses.ResultOperators;
-using Microsoft.Pex.Framework;
-using LINQToTTreeLib.Variables.Moles;
-using LINQToTTreeLib.Statements.Moles;
-using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework.Exceptions;
-using LINQToTTreeLib.Moles;
-using LINQToTTreeLib;
 
 namespace LINQToTTreeLib.ResultOperators
 {
     public partial class TakeSkipOperatorsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException479()
-{
-    SGeneratedCode sGeneratedCode;
-    IVariable iVariable;
-    sGeneratedCode = new SGeneratedCode();
-    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
-    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
-                                           (QueryModel)null, (GeneratedCode)sGeneratedCode);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-public void ProcessResultOperator996()
-{
-    SGeneratedCode sGeneratedCode;
-    TakeResultOperator takeResultOperator;
-    IVariable iVariable;
-    sGeneratedCode = new SGeneratedCode();
-    takeResultOperator = TakeResultOperatorFactory.Create(0);
-    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
-    iVariable =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)takeResultOperator, 
-                                 (QueryModel)null, (GeneratedCode)sGeneratedCode);
-    Assert.IsNull((object)iVariable);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-public void ProcessResultOperator99601()
-{
-    SGeneratedCode sGeneratedCode;
-    TakeResultOperator takeResultOperator;
-    IVariable iVariable;
-    sGeneratedCode = new SGeneratedCode();
-    takeResultOperator = TakeResultOperatorFactory.Create(1);
-    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
-    iVariable =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)takeResultOperator, 
-                                 (QueryModel)null, (GeneratedCode)sGeneratedCode);
-    Assert.IsNull((object)iVariable);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
-public void ProcessResultOperator846()
-{
-    SGeneratedCode sGeneratedCode;
-    SkipResultOperator skipResultOperator;
-    IVariable iVariable;
-    sGeneratedCode = new SGeneratedCode();
-    skipResultOperator = SkipResultOperatorFactory.Create(0);
-    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
-    iVariable =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)skipResultOperator, 
-                                 (QueryModel)null, (GeneratedCode)sGeneratedCode);
-    Assert.IsNull((object)iVariable);
-    Assert.IsNotNull((object)s0);
-}
     }
 }

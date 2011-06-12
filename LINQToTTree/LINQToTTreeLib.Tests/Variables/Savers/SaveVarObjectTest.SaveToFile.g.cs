@@ -18,15 +18,5 @@ namespace LINQToTTreeLib.Variables.Savers
 {
     public partial class SaveVarObjectTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(SaveVarObjectTest))]
-public void SaveToFile391()
-{
-    IEnumerable<string> iEnumerable;
-    SaveVarObject s0 = new SaveVarObject();
-    iEnumerable = this.SaveToFile(s0, (IVariable)null);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)s0);
-}
     }
 }
