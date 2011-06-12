@@ -1,0 +1,590 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LinqToTTreeInterfacesLib.Moles</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Moles.Framework.LinqToTTreeInterfacesLibDelegates">
+            <summary>Contains custom delegates used for the stubs and moles of LinqToTTreeInterfacesLib</summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIArrayInfo">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IArrayInfo"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIArrayInfo.#ctor">
+            <summary>Initializes a new instance of type SIArrayInfo</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIArrayInfo.AddLoopIGeneratedQueryCodeICodeContextCompositionContainer">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IArrayInfo.AddLoop(LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIArrayInfo.ltttil::LinqToTTreeInterfacesLib#IArrayInfo#AddLoop(LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IArrayInfo.AddLoop(LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IBookingStatementBlock"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.#ctor">
+            <summary>Initializes a new instance of type SIBookingStatementBlock</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.AddIStatement">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.AddIVariable">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IBookingStatementBlock.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.CodeItUp">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatement.CodeItUp"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.DeclaredVariablesGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IBookingStatementBlock.DeclaredVariables"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.ltttil::LinqToTTreeInterfacesLib#IBookingStatementBlock#Add(LinqToTTreeInterfacesLib.IVariable)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IBookingStatementBlock.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.ltttil::LinqToTTreeInterfacesLib#IStatement#CodeItUp">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatement.CodeItUp"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.ltttil::LinqToTTreeInterfacesLib#IStatementCompound#Add(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.ltttil::LinqToTTreeInterfacesLib#IStatementCompound#TryCombineStatement(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.TryCombineStatement(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.StatementsGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IStatementCompound.Statements"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.TryCombineStatementIStatement">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.TryCombineStatement(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.ltttil::LinqToTTreeInterfacesLib#IBookingStatementBlock#DeclaredVariables">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IBookingStatementBlock.DeclaredVariables"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIBookingStatementBlock.ltttil::LinqToTTreeInterfacesLib#IStatementCompound#Statements">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IStatementCompound.Statements"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SICodeContext">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.ICodeContext"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SICodeContext.#ctor">
+            <summary>Initializes a new instance of type SICodeContext</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SICodeContext.AddStringExpression">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.Add(System.String,System.Linq.Expressions.Expression)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SICodeContext.AddStringIValue">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.Add(System.String,LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SICodeContext.GetReplacementString">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.GetReplacement(System.String)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SICodeContext.GetReplacementStringType">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.GetReplacement(System.String,System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SICodeContext.ltttil::LinqToTTreeInterfacesLib#ICodeContext#Add(System.String,LinqToTTreeInterfacesLib.IValue)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.Add(System.String,LinqToTTreeInterfacesLib.IValue)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SICodeContext.ltttil::LinqToTTreeInterfacesLib#ICodeContext#Add(System.String,System.Linq.Expressions.Expression)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.Add(System.String,System.Linq.Expressions.Expression)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SICodeContext.ltttil::LinqToTTreeInterfacesLib#ICodeContext#GetReplacement(System.String,System.Type)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.GetReplacement(System.String,System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SICodeContext.ltttil::LinqToTTreeInterfacesLib#ICodeContext#GetReplacement(System.String)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.GetReplacement(System.String)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SICodeContext.ltttil::LinqToTTreeInterfacesLib#ICodeContext#Remove(System.String)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.Remove(System.String)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SICodeContext.ltttil::LinqToTTreeInterfacesLib#ICodeContext#SetLoopVariable(System.Linq.Expressions.Expression)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.SetLoopVariable(System.Linq.Expressions.Expression)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SICodeContext.LoopVariableGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.ICodeContext.LoopVariable"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SICodeContext.RemoveString">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.Remove(System.String)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SICodeContext.SetLoopVariableExpression">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ICodeContext.SetLoopVariable(System.Linq.Expressions.Expression)"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SICodeContext.ltttil::LinqToTTreeInterfacesLib#ICodeContext#LoopVariable">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.ICodeContext.LoopVariable"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIExecutableCode">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IExecutableCode"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.#ctor">
+            <summary>Initializes a new instance of type SIExecutableCode</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.AddIncludeFileString">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IExecutableCode.AddIncludeFile(System.String)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.CodeStatementsGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.CodeStatements"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.IncludeFilesGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.IncludeFiles"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.ltttil::LinqToTTreeInterfacesLib#IExecutableCode#AddIncludeFile(System.String)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IExecutableCode.AddIncludeFile(System.String)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.ResultValuesGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.ResultValues"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.VariablesToTransferGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.VariablesToTransfer"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.ltttil::LinqToTTreeInterfacesLib#IExecutableCode#CodeStatements">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.CodeStatements"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.ltttil::LinqToTTreeInterfacesLib#IExecutableCode#IncludeFiles">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.IncludeFiles"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.ltttil::LinqToTTreeInterfacesLib#IExecutableCode#ResultValues">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.ResultValues"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIExecutableCode.ltttil::LinqToTTreeInterfacesLib#IExecutableCode#VariablesToTransfer">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExecutableCode.VariablesToTransfer"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIExpressionHolder">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IExpressionHolder"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIExpressionHolder.#ctor">
+            <summary>Initializes a new instance of type SIExpressionHolder</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIExpressionHolder.HeldExpressionGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExpressionHolder.HeldExpression"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIExpressionHolder.ltttil::LinqToTTreeInterfacesLib#IExpressionHolder#HeldExpression">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IExpressionHolder.HeldExpression"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIFutureValue`1">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IFutureValue`1"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIFutureValue`1.#ctor">
+            <summary>Initializes a new instance of type SIFutureValue</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIFutureValue`1.HasValueGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IFutureValue`1.HasValue"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIFutureValue`1.ValueGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IFutureValue`1.Value"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIFutureValue`1.ltttil::LinqToTTreeInterfacesLib#IFutureValue{T}#HasValue">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IFutureValue`1.HasValue"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIFutureValue`1.ltttil::LinqToTTreeInterfacesLib#IFutureValue{T}#Value">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IFutureValue`1.Value"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IGeneratedQueryCode"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.#ctor">
+            <summary>Initializes a new instance of type SIGeneratedQueryCode</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.AddIStatement">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.AddIVariable">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.AddIncludeFileString">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.AddIncludeFile(System.String)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.AddOneLevelUpIVariable">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.AddOneLevelUp(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.AttachBackingFieldToCurrentScope">
+            <summary>Attaches delegates to emulate SIGeneratedQueryCode.CurrentScope as a property with a backing field</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.CodeBodyGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.CodeBody"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.CurrentScopeGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.CurrentScope"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.CurrentScopeSetIScopeInfo">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.CurrentScope"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.DepthGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.Depth"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#Add(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#Add(LinqToTTreeInterfacesLib.IVariable)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.Add(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#AddIncludeFile(System.String)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.AddIncludeFile(System.String)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#AddOneLevelUp(LinqToTTreeInterfacesLib.IVariable)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.AddOneLevelUp(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#QueueForTransfer(System.String,System.Object)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.QueueForTransfer(System.String,System.Object)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#ResetResult">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.ResetResult"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#SetResult(LinqToTTreeInterfacesLib.IVariable)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.SetResult(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.QueueForTransferStringObject">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.QueueForTransfer(System.String,System.Object)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ResetResult">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.ResetResult"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ResultValueGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.ResultValue"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.SetResultIVariable">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IGeneratedQueryCode.SetResult(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#CodeBody">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.CodeBody"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#CurrentScope">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.CurrentScope"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#Depth">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.Depth"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIGeneratedQueryCode.ltttil::LinqToTTreeInterfacesLib#IGeneratedQueryCode#ResultValue">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IGeneratedQueryCode.ResultValue"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIQVCollectionResultOperator">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IQVCollectionResultOperator"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIQVCollectionResultOperator.#ctor">
+            <summary>Initializes a new instance of type SIQVCollectionResultOperator</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIQVCollectionResultOperator.CanHandleType">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVCollectionResultOperator.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIQVCollectionResultOperator.ltttil::LinqToTTreeInterfacesLib#IQVCollectionResultOperator#CanHandle(System.Type)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVCollectionResultOperator.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIQVCollectionResultOperator.ltttil::LinqToTTreeInterfacesLib#IQVCollectionResultOperator#ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase,Remotion.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVCollectionResultOperator.ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase,Remotion.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIQVCollectionResultOperator.ProcessResultOperatorResultOperatorBaseQueryModelIGeneratedQueryCodeICodeContextCompositionContainer">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVCollectionResultOperator.ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase,Remotion.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIQVScalarResultOperator">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IQVScalarResultOperator"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIQVScalarResultOperator.#ctor">
+            <summary>Initializes a new instance of type SIQVScalarResultOperator</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIQVScalarResultOperator.CanHandleType">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVScalarResultOperator.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIQVScalarResultOperator.ltttil::LinqToTTreeInterfacesLib#IQVScalarResultOperator#CanHandle(System.Type)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVScalarResultOperator.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIQVScalarResultOperator.ltttil::LinqToTTreeInterfacesLib#IQVScalarResultOperator#ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase,Remotion.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVScalarResultOperator.ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase,Remotion.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIQVScalarResultOperator.ProcessResultOperatorResultOperatorBaseQueryModelIGeneratedQueryCodeICodeContextCompositionContainer">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IQVScalarResultOperator.ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase,Remotion.Linq.QueryModel,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIQueryResultCacheKey">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IQueryResultCacheKey"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIQueryResultCacheKey.#ctor">
+            <summary>Initializes a new instance of type SIQueryResultCacheKey</summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIScopeInfo">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IScopeInfo"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIScopeInfo.#ctor">
+            <summary>Initializes a new instance of type SIScopeInfo</summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIStatement">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IStatement"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIStatement.#ctor">
+            <summary>Initializes a new instance of type SIStatement</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIStatement.CodeItUp">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatement.CodeItUp"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIStatement.ltttil::LinqToTTreeInterfacesLib#IStatement#CodeItUp">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatement.CodeItUp"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIStatementCompound">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IStatementCompound"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.#ctor">
+            <summary>Initializes a new instance of type SIStatementCompound</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.AddIStatement">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.CodeItUp">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatement.CodeItUp"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.ltttil::LinqToTTreeInterfacesLib#IStatement#CodeItUp">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatement.CodeItUp"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.ltttil::LinqToTTreeInterfacesLib#IStatementCompound#Add(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.Add(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.ltttil::LinqToTTreeInterfacesLib#IStatementCompound#TryCombineStatement(LinqToTTreeInterfacesLib.IStatement)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.TryCombineStatement(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.StatementsGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IStatementCompound.Statements"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.TryCombineStatementIStatement">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IStatementCompound.TryCombineStatement(LinqToTTreeInterfacesLib.IStatement)"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIStatementCompound.ltttil::LinqToTTreeInterfacesLib#IStatementCompound#Statements">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IStatementCompound.Statements"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SITypeHandler">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.ITypeHandler"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SITypeHandler.#ctor">
+            <summary>Initializes a new instance of type SITypeHandler</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SITypeHandler.CanHandleType">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ITypeHandler.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SITypeHandler.ltttil::LinqToTTreeInterfacesLib#ITypeHandler#CanHandle(System.Type)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ITypeHandler.CanHandle(System.Type)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SITypeHandler.ltttil::LinqToTTreeInterfacesLib#ITypeHandler#ProcessConstantReference(System.Linq.Expressions.ConstantExpression,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ITypeHandler.ProcessConstantReference(System.Linq.Expressions.ConstantExpression,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SITypeHandler.ltttil::LinqToTTreeInterfacesLib#ITypeHandler#ProcessMethodCall(System.Linq.Expressions.MethodCallExpression,LinqToTTreeInterfacesLib.IValue@,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ITypeHandler.ProcessMethodCall(System.Linq.Expressions.MethodCallExpression,LinqToTTreeInterfacesLib.IValue@,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SITypeHandler.ProcessConstantReferenceConstantExpressionIGeneratedQueryCodeICodeContextCompositionContainer">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ITypeHandler.ProcessConstantReference(System.Linq.Expressions.ConstantExpression,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SITypeHandler.ProcessMethodCallMethodCallExpressionIValueOutIGeneratedQueryCodeICodeContextCompositionContainer">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.ITypeHandler.ProcessMethodCall(System.Linq.Expressions.MethodCallExpression,LinqToTTreeInterfacesLib.IValue@,LinqToTTreeInterfacesLib.IGeneratedQueryCode,LinqToTTreeInterfacesLib.ICodeContext,System.ComponentModel.Composition.Hosting.CompositionContainer)"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIValue">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IValue"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIValue.#ctor">
+            <summary>Initializes a new instance of type SIValue</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIValue.RawValueGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.RawValue"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIValue.TypeGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.Type"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIValue.ltttil::LinqToTTreeInterfacesLib#IValue#RawValue">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIValue.ltttil::LinqToTTreeInterfacesLib#IValue#Type">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.Type"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIVariable">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IVariable"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIVariable.#ctor">
+            <summary>Initializes a new instance of type SIVariable</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIVariable.AttachBackingFieldToDeclare">
+            <summary>Attaches delegates to emulate SIVariable.Declare as a property with a backing field</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIVariable.AttachBackingFieldToInitialValue">
+            <summary>Attaches delegates to emulate SIVariable.InitialValue as a property with a backing field</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariable.DeclareGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.Declare"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariable.DeclareSetBoolean">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.Declare"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariable.InitialValueGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.InitialValue"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariable.InitialValueSetIValue">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.InitialValue"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariable.RawValueGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.RawValue"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariable.TypeGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.Type"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariable.VariableNameGet">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.VariableName"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIVariable.ltttil::LinqToTTreeInterfacesLib#IVariable#Declare">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.Declare"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIVariable.ltttil::LinqToTTreeInterfacesLib#IVariable#InitialValue">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.InitialValue"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIVariable.ltttil::LinqToTTreeInterfacesLib#IValue#RawValue">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.RawValue"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIVariable.ltttil::LinqToTTreeInterfacesLib#IValue#Type">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IValue.Type"/>
+            </summary>
+        </member>
+        <member name="P:LinqToTTreeInterfacesLib.Moles.SIVariable.ltttil::LinqToTTreeInterfacesLib#IVariable#VariableName">
+            <summary>Sets the stub of <see cref="P:LinqToTTreeInterfacesLib.IVariable.VariableName"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIVariableSaverManager">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IVariableSaverManager"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIVariableSaverManager.#ctor">
+            <summary>Initializes a new instance of type SIVariableSaverManager</summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariableSaverManager.GetIVariable">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IVariableSaverManager.Get(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIVariableSaverManager.ltttil::LinqToTTreeInterfacesLib#IVariableSaverManager#Get(LinqToTTreeInterfacesLib.IVariable)">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IVariableSaverManager.Get(LinqToTTreeInterfacesLib.IVariable)"/>
+            </summary>
+        </member>
+        <member name="T:LinqToTTreeInterfacesLib.Moles.SIVariableScopeHolder">
+            <summary>Stub type of <see cref="T:LinqToTTreeInterfacesLib.IVariableScopeHolder"/>
+            .</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIVariableScopeHolder.#ctor">
+            <summary>Initializes a new instance of type SIVariableScopeHolder</summary>
+        </member>
+        <member name="M:LinqToTTreeInterfacesLib.Moles.SIVariableScopeHolder.ltttil::LinqToTTreeInterfacesLib#IVariableScopeHolder#Pop">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IVariableScopeHolder.Pop"/>
+            </summary>
+        </member>
+        <member name="F:LinqToTTreeInterfacesLib.Moles.SIVariableScopeHolder.Pop">
+            <summary>Sets the stub of <see cref="M:LinqToTTreeInterfacesLib.IVariableScopeHolder.Pop"/>
+            </summary>
+        </member>
+    </members>
+</doc>
