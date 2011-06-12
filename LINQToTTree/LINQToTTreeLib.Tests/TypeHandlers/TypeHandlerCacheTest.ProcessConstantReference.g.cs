@@ -19,5 +19,42 @@ namespace LINQToTTreeLib.TypeHandlers
 {
     public partial class TypeHandlerCacheTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessConstantReferenceThrowsArgumentNullException262()
+{
+    TypeHandlerCache typeHandlerCache;
+    IValue iValue;
+    typeHandlerCache = new TypeHandlerCache();
+    iValue = this.ProcessConstantReference
+                 (typeHandlerCache, (ConstantExpression)null, (IGeneratedQueryCode)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
+[ExpectedException(typeof(InvalidOperationException))]
+public void ProcessConstantReferenceThrowsInvalidOperationException250()
+{
+    TypeHandlerCache typeHandlerCache;
+    ConstantExpression constantExpression;
+    IValue iValue;
+    typeHandlerCache = new TypeHandlerCache();
+    constantExpression = ConstantExpressionFactory.Create(0);
+    iValue = this.ProcessConstantReference
+                 (typeHandlerCache, constantExpression, (IGeneratedQueryCode)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
+[ExpectedException(typeof(InvalidOperationException))]
+public void ProcessConstantReferenceThrowsInvalidOperationException705()
+{
+    TypeHandlerCache typeHandlerCache;
+    ConstantExpression constantExpression;
+    IValue iValue;
+    typeHandlerCache = new TypeHandlerCache();
+    constantExpression = ConstantExpressionFactory.Create(1);
+    iValue = this.ProcessConstantReference
+                 (typeHandlerCache, constantExpression, (IGeneratedQueryCode)null);
+}
     }
 }
