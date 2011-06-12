@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CanHandleThrowsArgumentNullException60()
+public void CanHandleThrowsArgumentNullException184()
 {
     bool b;
     TypeHandlerROOT s0 = new TypeHandlerROOT();
