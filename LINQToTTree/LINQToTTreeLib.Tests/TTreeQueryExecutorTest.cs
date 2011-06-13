@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -339,6 +340,48 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
+        }
+
+        [CPPHelperClass]
+        public static class CPPHelperFunctions
+        {
+            [CPPCode(Code = new string[] { "result = arg*2;" })]
+            public static int Calc(int arg)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void TestInclusiveCPPInfo()
+        {
+            var rootFile = CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var listing = from evt in q
+                          where CPPHelperFunctions.Calc(evt.run) > 10.0
+                          select evt;
+            var dude = listing.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
         }
 
         [TestMethod]
