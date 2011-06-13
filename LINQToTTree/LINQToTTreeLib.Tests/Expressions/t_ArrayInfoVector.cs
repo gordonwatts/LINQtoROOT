@@ -53,6 +53,12 @@ namespace LINQToTTreeLib.Tests
             {
                 throw new NotImplementedException();
             }
+
+
+            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestCleanup]

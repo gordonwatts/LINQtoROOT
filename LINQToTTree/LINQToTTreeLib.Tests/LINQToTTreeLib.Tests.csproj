@@ -65,6 +65,7 @@
     </Reference>
     <Reference Include="libMathCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libNetWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="libPhysicsWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libRIOWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libRIOWrapper.dll</HintPath>
     </Reference>

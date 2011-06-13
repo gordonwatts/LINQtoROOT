@@ -53,5 +53,19 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// The IExpressionHolder should never be pushed over - so bomb!
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

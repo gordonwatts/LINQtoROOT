@@ -61,6 +61,12 @@ namespace LINQToTTreeLib.TypeHandlers
                 result = new Variables.VarInteger();
                 return expr;
             }
+
+
+            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 
