@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
     public partial class TypeHandlerCPPCodeTest
     {
         /// <summary>Test stub for CanHandle(Type)</summary>
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         internal bool CanHandle([PexAssumeUnderTest]TypeHandlerCPPCode target, Type t)
         {
             bool result = target.CanHandle(t);
@@ -63,7 +63,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         }
 
         /// <summary>Test stub for ProcessConstantReference(ConstantExpression, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(NotImplementedException))]
         internal IValue ProcessConstantReference(
             [PexAssumeUnderTest]TypeHandlerCPPCode target,
             ConstantExpression expr,
@@ -130,7 +130,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         }
 
         /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(NotImplementedException))]
         internal Expression ProcessNew(
             [PexAssumeUnderTest]TypeHandlerCPPCode target,
             NewExpression expression,

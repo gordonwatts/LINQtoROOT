@@ -51,6 +51,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// <returns></returns>
         public System.Linq.Expressions.Expression ProcessMethodCall(System.Linq.Expressions.MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
         {
+            if (expr == null)
+                throw new ArgumentNullException("expr");
+
             ///
             /// Get the coding attribute off the method
             /// 

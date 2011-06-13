@@ -45,6 +45,9 @@ namespace LINQToTTreeLib.Utils
         public static T TypeHasAttribute<T>(this System.Type classType)
             where T : class
         {
+            if (classType == null)
+                throw new ArgumentNullException("classType");
+
             var attr = classType.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
             return attr;
         }
