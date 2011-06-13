@@ -342,6 +342,39 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestNewOfObject()
+        {
+            /// Make sure the "new" gets translated to C++ correctly and there are no errors!
+
+            var rootFile = CreateFileOfInt(5);
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var letResult = from evt in q
+                            let temp = new ROOTNET.NTLorentzVector(evt.run, evt.run, evt.run)
+                            where temp.Pt() > 0.0
+                            select temp;
+            var cnt = letResult.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var result = exe.ExecuteScalar<int>(query);
+
+            Assert.AreEqual(1, exe.CountExecutionRuns, "exe after exe run");
+            Assert.AreEqual(5, result, "count incorrect");
+        }
+
+        [TestMethod]
         public void TestCachingOfSimpleHisto()
         {
             /// Do two identical queries. Make sure only one causes an actual run!
