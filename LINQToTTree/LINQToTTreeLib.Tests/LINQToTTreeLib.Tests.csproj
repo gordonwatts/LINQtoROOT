@@ -373,6 +373,7 @@
     <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.cs" />
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.CanHandle.g.cs">
       <DependentUpon>TypeHandlerReplacementCallTest.cs</DependentUpon>
     </Compile>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.TypeHandlers.CPPCode;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
@@ -50,6 +51,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
                 MEFUtilities.AddPart(new TypeHandlerCache());
+                MEFUtilities.AddPart(new TypeHandlerCPPCode());
                 MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             }
 

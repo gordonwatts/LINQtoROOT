@@ -345,7 +345,7 @@ namespace LINQToTTreeLib
         [CPPHelperClass]
         public static class CPPHelperFunctions
         {
-            [CPPCode(Code = new string[] { "result = arg*2;" })]
+            [CPPCode(Code = new string[] { "Calc = arg*2;" })]
             public static int Calc(int arg)
             {
                 throw new NotImplementedException();

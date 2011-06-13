@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -32,5 +34,33 @@ namespace LINQToTTreeLib.Utils
             _variableNameCounter += 1;
             return varbasename + "_" + _variableNameCounter.ToString();
         }
+
+        /// <summary>
+        /// Check to see if the class has the type attached to it (as an attribute). If so,
+        /// return it.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="type_2"></param>
+        /// <returns></returns>
+        public static T TypeHasAttribute<T>(this System.Type classType)
+            where T : class
+        {
+            var attr = classType.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
+            return attr;
+        }
+
+        /// <summary>
+        /// Check to see if the method has a custom attribute.
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="memberInfo"></param>
+        /// <returns></returns>
+        public static T TypeHasAttribute<T>(this MemberInfo memberInfo)
+            where T : class
+        {
+            var attr = memberInfo.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
+            return attr;
+        }
+
     }
 }
