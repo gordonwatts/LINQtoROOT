@@ -8,6 +8,7 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
@@ -76,13 +77,14 @@ namespace LINQToTTreeLib
         {
             var model = GetModel(() => (
                 from q in new QueriableDummy<dummyntup>()
-                let qtest = new ROOTNET.NTH1F("hi", "there", 20, 0.0, q.run)
+                let qtest = new ROOTNET.NTLorentzVector(q.run, q.run, q.run)
                 from qvlist in q.vals
-                select qvlist + qtest.NbinsX).Aggregate(0, (acc, va) => acc + va));
+                select qvlist + qtest.Pt()).Aggregate(0, (acc, va) => acc + (int)va));
 
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new TypeHandlerROOT());
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();

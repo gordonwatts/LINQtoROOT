@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using LINQToTTreeLib.CodeAttributes;
 using Remotion.Linq.Parsing;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib
 {
@@ -90,7 +91,7 @@ namespace LINQToTTreeLib
             /// See if the source has a "translated-to" class on it?
             /// 
 
-            var attr = TypeHasAttribute<TranslateToClassAttribute>(expression.Expression.Type);
+            var attr = expression.Expression.Type.TypeHasAttribute<TranslateToClassAttribute>();
             if (attr != null)
             {
                 return RecodeClass(expression, attr);
@@ -100,7 +101,7 @@ namespace LINQToTTreeLib
             /// Ok, next see if this is an array recoding
             /// 
 
-            var attrV = TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member);
+            var attrV = expression.Member.TypeHasAttribute<TTreeVariableGroupingAttribute>();
             if (attrV != null)
             {
                 ///
@@ -156,10 +157,10 @@ namespace LINQToTTreeLib
             if (!expression.Type.IsArray)
                 return false;
 
-            if (TypeHasAttribute<TranslateToClassAttribute>(expression.Expression.Type) == null)
+            if (expression.Expression.Type.TypeHasAttribute<TranslateToClassAttribute>() == null)
                 return false;
 
-            if (TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member) == null)
+            if (TypeUtils.TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member) == null)
                 return false;
 
             return true;
@@ -209,7 +210,7 @@ namespace LINQToTTreeLib
                 return null;
 
             var indexMember = indexMemberExpression.Member;
-            var attrIndexReferences = TypeHasAttribute<IndexToOtherObjectArrayAttribute>(indexMember);
+            var attrIndexReferences = TypeUtils.TypeHasAttribute<IndexToOtherObjectArrayAttribute>(indexMember);
             if (attrIndexReferences == null)
                 throw new NotImplementedException("Index variable '" + indexMember.Name + "' was not marked with the IndexToOtherObjectArray attribute");
 
@@ -317,7 +318,7 @@ namespace LINQToTTreeLib
             if (memberAccessArray == null)
                 return null;
 
-            var translateAttribute = TypeHasAttribute<TranslateToClassAttribute>(memberAccessArray.Expression.Type);
+            var translateAttribute = TypeUtils.TypeHasAttribute<TranslateToClassAttribute>(memberAccessArray.Expression.Type);
             if (translateAttribute == null)
                 return null;
 
@@ -346,7 +347,7 @@ namespace LINQToTTreeLib
         {
             string targetMemberName = memberInfo.Name;
 
-            var attr = TypeHasAttribute<RenameVariableAttribute>(memberInfo);
+            var attr = TypeUtils.TypeHasAttribute<RenameVariableAttribute>(memberInfo);
             if (attr != null)
             {
                 targetMemberName = attr.RenameTo;
@@ -432,9 +433,9 @@ namespace LINQToTTreeLib
             if (rootExpression is MemberExpression)
             {
                 var memberExpr = rootExpression as MemberExpression;
-                var attrClassTranslate = TypeHasAttribute<TranslateToClassAttribute>(memberExpr.Expression.Type);
-                var attrMemberTypeGrouping = TypeHasAttribute<TTreeVariableGroupingAttribute>(memberExpr.Member);
-                var attrMemberIsIndex = TypeHasAttribute<IndexToOtherObjectArrayAttribute>(memberExpr.Member);
+                var attrClassTranslate = TypeUtils.TypeHasAttribute<TranslateToClassAttribute>(memberExpr.Expression.Type);
+                var attrMemberTypeGrouping = TypeUtils.TypeHasAttribute<TTreeVariableGroupingAttribute>(memberExpr.Member);
+                var attrMemberIsIndex = TypeUtils.TypeHasAttribute<IndexToOtherObjectArrayAttribute>(memberExpr.Member);
 
                 ///
                 /// If this is a deep level index re-direct, and we are here, that means we have a 2D index that we are trying
@@ -520,7 +521,7 @@ namespace LINQToTTreeLib
             /// First, we need to find the base class that does the translation for us.
             /// 
 
-            var classToTranslateTo = TypeHasAttribute<TranslateToClassAttribute>(attr.BaseType);
+            var classToTranslateTo = TypeUtils.TypeHasAttribute<TranslateToClassAttribute>(attr.BaseType);
             if (classToTranslateTo == null)
                 throw new NotImplementedException("Unable to translate '" + memberExpr + "' for an array length because the translation base type '" + attr.BaseType.Name + "' doesn't have a translate class attribute");
 
@@ -632,33 +633,6 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Check to see if the class has the type attached to it (as an attribute). If so,
-        /// return it.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="type_2"></param>
-        /// <returns></returns>
-        private static T TypeHasAttribute<T>(System.Type classType)
-            where T : class
-        {
-            var attr = classType.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
-            return attr;
-        }
-
-        /// <summary>
-        /// Check to see if the method has a custom attribute.
-        /// </summary>
-        /// <typeparam name="T1"></typeparam>
-        /// <param name="memberInfo"></param>
-        /// <returns></returns>
-        private T TypeHasAttribute<T>(MemberInfo memberInfo)
-            where T : class
-        {
-            var attr = memberInfo.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
-            return attr;
-        }
-
-        /// <summary>
         /// Check to see if the class passed to us needs to
         /// be translated.
         /// </summary>
@@ -666,7 +640,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public static bool NeedsTranslation(Type type)
         {
-            return TypeHasAttribute<TranslateToClassAttribute>(type) != null;
+            return TypeUtils.TypeHasAttribute<TranslateToClassAttribute>(type) != null;
         }
     }
 }

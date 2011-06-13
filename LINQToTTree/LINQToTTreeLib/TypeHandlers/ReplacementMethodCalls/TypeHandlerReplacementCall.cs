@@ -8,8 +8,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 {
@@ -387,6 +387,20 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                     line = reader.ReadLine();
                 } while (line != null);
             }
+        }
+
+        /// <summary>
+        /// Static classes - so a new would be *very* bad! :-)
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -43,5 +43,17 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="container">If expression or others need to be built, this container will be needed for MEF</param>
         /// <returns></returns>
         Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container);
+
+        /// <summary>
+        /// Process an object creation call. The result, which is the resulting expression. Note that when
+        /// this area of code goes out of scope the object should automatically be deleted! :-)
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container);
     }
 }
