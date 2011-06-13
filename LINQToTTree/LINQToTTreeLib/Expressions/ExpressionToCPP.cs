@@ -139,6 +139,10 @@ namespace LINQToTTreeLib.Expressions
                     _result = new ValSimple("false", typeof(bool));
                 }
             }
+            else if (expression.Type == typeof(string))
+            {
+                _result = new ValSimple(expression.Value as string, typeof(string));
+            }
             else
             {
                 _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv, _codeContext, MEFContainer);
