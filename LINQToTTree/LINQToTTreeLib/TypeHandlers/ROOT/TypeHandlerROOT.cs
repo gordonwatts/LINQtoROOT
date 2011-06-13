@@ -96,6 +96,15 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
             ///
+            /// Do checks
+            ///
+
+            if (gc == null)
+                throw new ArgumentException("gc");
+            if (context == null)
+                throw new ArgumentException("context");
+
+            ///
             /// Figure out the type. We can only get here if we get through ROOTNET.xxx
             /// 
 

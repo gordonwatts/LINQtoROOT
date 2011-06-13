@@ -388,6 +388,9 @@
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessNew.g.cs">
+      <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
