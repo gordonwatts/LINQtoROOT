@@ -1,5 +1,6 @@
 // <copyright file="TypeHanlderROOTTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
@@ -70,6 +71,49 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var returned = target.ProcessMethodCall(theCall, out resultOfCall, gc, cc, MEFUtilities.MEFContainer);
 
             Assert.AreEqual("(*myvar).GetEntries()", resultOfCall.RawValue, "call is incorrect");
+        }
+
+        [TestMethod]
+        public void TestBasicProcessNew()
+        {
+            /// Test a very simple process new
+
+            var createTLZ = Expression.New(typeof(ROOTNET.NTLorentzVector).GetConstructor(new Type[0]));
+            var target = new TypeHandlerROOT();
+            IValue resultOfCall;
+            var gc = new GeneratedCode();
+            var cc = new CodeContext();
+            var expr = target.ProcessNew(createTLZ, out resultOfCall, gc, cc, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(createTLZ.ToString(), expr.ToString(), "Returned expression");
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of coded statements");
+            var s1 = gc.CodeBody.Statements.First();
+            var s2 = gc.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(s1, typeof(Statements.StatementSimpleStatement), "s1 type");
+            Assert.IsInstanceOfType(s2, typeof(Statements.StatementSimpleStatement), "s1 type");
+            var s1s = s1 as Statements.StatementSimpleStatement;
+            var s2s = s2 as Statements.StatementSimpleStatement;
+
+            Assert.IsTrue(s1s.Line.Contains("TLorentzVector"), "first line is not that good");
+            Assert.IsTrue(s2s.Line.Contains("TLorentzVector *"), "second line is not that good");
+        }
+
+        /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
+        [PexMethod]
+        public Expression ProcessNew(
+            [PexAssumeUnderTest]TypeHandlerROOT target,
+            NewExpression expression,
+            out IValue result,
+            GeneratedCode gc,
+            CodeContext context
+        )
+        {
+            Expression result01
+               = target.ProcessNew(expression, out result, gc, context, MEFUtilities.MEFContainer);
+
+            return result01;
         }
     }
 }
