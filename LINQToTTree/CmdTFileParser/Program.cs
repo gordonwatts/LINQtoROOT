@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using TTreeDataModel;
+using TTreeParser;
 
 namespace CmdTFileParser
 {
@@ -57,7 +57,7 @@ namespace CmdTFileParser
                 FileInfo f = new FileInfo(arg);
                 if (doExistanceCheck && !f.Exists)
                 {
-                    Console.WriteLine("Could not file file {0}", f.FullName);
+                    SimpleLogging.Log("Could not file file {0}", f.FullName);
                     return;
                 }
                 doExistanceCheck = true;
@@ -80,7 +80,7 @@ namespace CmdTFileParser
 
             if (rootFiles.Count == 0)
             {
-                Console.WriteLine("no input root files to scan!");
+                SimpleLogging.Log("no input root files to scan!");
                 return;
             }
 
@@ -88,60 +88,75 @@ namespace CmdTFileParser
                 outputFile = new FileInfo(Path.ChangeExtension(rootFiles[0].FullName, "ntupom"));
 
             ///
-            /// Next, load up all the libraries
+            /// Make sure to write everything to a log file for the next step!
             /// 
 
-            var gSystem = ROOTNET.NTSystem.gSystem;
-            foreach (var lib in libraries)
+            using (var logFile = File.CreateText(Path.ChangeExtension(rootFiles[0].FullName, ".log")))
             {
-                gSystem.Load(lib.FullName);
-            }
+                SimpleLogging.AddStream(logFile);
 
-            ///
-            /// Next, we need to find all the classes that are in those libraries,
-            /// and then figure out where the location of the classes is.
-            /// 
+                ///
+                /// Next, load up all the libraries
+                /// 
 
-            var loadedNames = (from s in libraries
-                               select Path.GetFileNameWithoutExtension(s.Name)).ToArray();
+                var gSystem = ROOTNET.NTSystem.gSystem;
+                foreach (var lib in libraries)
+                {
+                    gSystem.Load(lib.FullName);
+                }
 
-            var usedClasses = from cls in ROOTNET.NTROOT.gROOT.ListOfClasses.Cast<ROOTNET.Interface.NTClass>()
-                              let shared = cls.SharedLibs
-                              where shared != null
-                              let name = Path.GetFileNameWithoutExtension(shared.Split().First())
-                              where loadedNames.Contains(name)
-                              select cls;
+                ///
+                /// Next, we need to find all the classes that are in those libraries,
+                /// and then figure out where the location of the classes is.
+                /// 
 
-            var sourcefiles = from cls in usedClasses
-                              select cls.GetImplFileName();
+                var loadedNames = (from s in libraries
+                                   select Path.GetFileNameWithoutExtension(s.Name)).ToArray();
 
-            ///
-            /// And now process the root files!
-            /// 
+                var usedClasses = from cls in ROOTNET.NTROOT.gROOT.ListOfClasses.Cast<ROOTNET.Interface.NTClass>()
+                                  let shared = cls.SharedLibs
+                                  where shared != null
+                                  let name = Path.GetFileNameWithoutExtension(shared.Split().First())
+                                  where loadedNames.Contains(name)
+                                  select cls;
 
-            var converter = new TTreeParser.ParseTFile();
-            converter.ProxyGenerationLocation = outputDir;
+                var sourcefiles = from cls in usedClasses
+                                  select cls.GetImplFileName();
 
-            var rootClassList = from f in rootFiles
-                                from c in converter.ParseFile(f)
-                                select c;
-            var allClasses = rootClassList.ToArray();
-            if (allClasses.Length == 0)
-            {
-                Console.WriteLine("No classes were found in the input files!");
-                return;
-            }
+                ///
+                /// And now process the root files!
+                /// 
 
-            ///
-            /// Write out the output xml file now
-            /// 
+                var converter = new TTreeParser.ParseTFile();
+                converter.ProxyGenerationLocation = outputDir;
 
-            NtupleTreeInfo results = new NtupleTreeInfo() { Classes = allClasses, ClassImplimintationFiles = sourcefiles.ToArray() };
-            XmlSerializer xmlout = new XmlSerializer(typeof(NtupleTreeInfo));
-            using (var output = outputFile.CreateText())
-            {
-                xmlout.Serialize(output, results);
-                output.Close();
+                var rootClassList = from f in rootFiles
+                                    from c in converter.ParseFile(f)
+                                    select c;
+                var allClasses = rootClassList.ToArray();
+                if (allClasses.Length == 0)
+                {
+                    SimpleLogging.Log("No classes were found in the input files!");
+                    return;
+                }
+
+                ///
+                /// Write out the output xml file now
+                /// 
+
+                NtupleTreeInfo results = new NtupleTreeInfo() { Classes = allClasses, ClassImplimintationFiles = sourcefiles.ToArray() };
+                XmlSerializer xmlout = new XmlSerializer(typeof(NtupleTreeInfo));
+                using (var output = outputFile.CreateText())
+                {
+                    xmlout.Serialize(output, results);
+                    output.Close();
+                }
+
+                ///
+                /// Make sure the log file gets it done
+                /// 
+
+                logFile.Close();
             }
         }
     }

@@ -322,7 +322,7 @@ namespace TTreeParser
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Warning: Unable to transltae ntuple leaf '" + leaf.Name + "': " + e.Message);
+                            SimpleLogging.Log("Warning: Unable to transltae ntuple leaf '" + leaf.Name + "': " + e.Message);
                         }
                     }
                 }
