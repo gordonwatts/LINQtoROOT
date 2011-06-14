@@ -49,6 +49,12 @@ namespace LINQToTTreeLib.ResultOperators
             if (cc == null)
                 throw new ArgumentNullException("cc");
 
+            if (gc == null)
+                throw new ArgumentNullException("gc");
+
+            if (gc.Depth == 1)
+                throw new ArgumentException("The Max/Min operators can't be used as result operators for a query - they can only be used in a sub-query");
+
             ///
             /// Is it min or max?
             /// 

@@ -79,8 +79,9 @@ namespace LINQToTTreeLib.Tests
         /// <returns></returns>
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
-            CommonExecute(queryModel);
-            return default(T);
+            //CommonExecute(queryModel);
+            //return default(T);
+            throw new NotImplementedException("You can't use this query '{0}' as it returns a Single element rather than a scalar. Use a different result operator (like Count, for example)");
         }
     }
 }
