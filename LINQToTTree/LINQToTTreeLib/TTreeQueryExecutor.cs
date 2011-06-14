@@ -300,9 +300,10 @@ namespace LINQToTTreeLib
             /// 
 
             var result = new GeneratedCode();
+            var codeContext = new CodeContext();
 
             CompositionBatch b = new CompositionBatch();
-            var qv = new QueryVisitor(result, null, _gContainer);
+            var qv = new QueryVisitor(result, codeContext, _gContainer);
             b.AddPart(qv);
 
             if (_cppTranslator == null)
@@ -325,7 +326,7 @@ namespace LINQToTTreeLib
             IQueryResultCacheKey key = null;
             {
                 object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
-                key = _cache.GetKey(_rootFiles, _treeName, inputs, queryModel);
+                key = _cache.GetKey(_rootFiles, _treeName, inputs, codeContext.CacheCookies.ToArray(), queryModel);
             }
             if (!IgnoreQueryCache)
             {

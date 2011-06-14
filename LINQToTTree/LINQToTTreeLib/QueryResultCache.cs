@@ -54,7 +54,7 @@ namespace LINQToTTreeLib
         /// <param name="inputObjects"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public IQueryResultCacheKey GetKey(FileInfo[] unsortedRootfiles, string treename, object[] inputObjects, QueryModel query, bool recheckDates = false)
+        public IQueryResultCacheKey GetKey(FileInfo[] unsortedRootfiles, string treename, object[] inputObjects, string[] unsortedCrumbs, QueryModel query, bool recheckDates = false)
         {
             ///
             /// Quick check to make sure everything is good
@@ -86,7 +86,29 @@ namespace LINQToTTreeLib
                 fullSourceName.Append(f.FullName);
             }
 
-            var hash = fullSourceName.ToString().GetHashCode();
+            var flieHash = fullSourceName.ToString().GetHashCode();
+
+            //
+            // Next, the crumbs. They shuld also be sorted in order, and we will need
+            // a hash code for them too.
+            //
+
+            string[] crumbs = null;
+            int crumbHash = 0;
+            if (unsortedCrumbs == null)
+            {
+                crumbs = new string[0];
+            }
+            else
+            {
+                crumbs = (from c in unsortedCrumbs orderby c select c).ToArray();
+                StringBuilder crumbString = new StringBuilder();
+                foreach (var c in crumbs)
+                {
+                    crumbString.Append(c);
+                }
+                crumbHash = crumbString.ToString().GetHashCode();
+            }
 
             ///
             /// Save the names of the files for a descriptor we will write out.
@@ -96,7 +118,7 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(25, "GetKey: Saving descrition lines");
             result.DescriptionLines = (from f in rootfiles
-                                       select f.FullName).ToArray();
+                                       select f.FullName).Concat(crumbs).ToArray();
 
             ///
             /// Text for the query. There are strings like "generated_x" where x is a number. These get incremented each time they are used,
@@ -112,7 +134,7 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(27, "GetKey: Getting the cache directory");
-            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + hash + " - " + treename + "-" + Path.GetFileNameWithoutExtension(rootfiles[0].Name));
+            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + flieHash + " - " + treename + "-" + Path.GetFileNameWithoutExtension(rootfiles[0].Name));
 
             ///
             /// Scan the files that we are input and find the oldest one there
@@ -128,7 +150,7 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(29, "GetKey: Calculating queyr hash");
             var queryHash = result.QueryText.GetHashCode();
             TraceHelpers.TraceInfo(30, "GetKey: Calculating the input object hash");
-            string queryNameBase = @"\\query " + queryHash.ToString() + "-" + CalcObjectHash(inputObjects).ToString();
+            string queryNameBase = string.Format(@"\\query {0}-inp{1}-crm{2}", queryHash.ToString(), CalcObjectHash(inputObjects), crumbHash);
             result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + ".root");
 
             TraceHelpers.TraceInfo(31, "GetKey: Done");

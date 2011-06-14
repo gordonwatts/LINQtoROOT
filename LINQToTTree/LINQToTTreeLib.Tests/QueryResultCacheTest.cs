@@ -42,16 +42,17 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>Test stub for CacheItem(FileInfo, QueryModel, NTObject)</summary>
-        ///[PexMethod]
+        [PexMethod]
         internal void CacheItem(
             [PexAssumeUnderTest]QueryResultCache target,
             object[] inputObjs,
             FileInfo _rootFile,
+            string[] cachecookies,
             QueryModel qm,
             NTObject o
         )
         {
-            target.CacheItem(target.GetKey(new FileInfo[] { _rootFile }, "test", inputObjs, qm), o);
+            target.CacheItem(target.GetKey(new FileInfo[] { _rootFile }, "test", inputObjs, cachecookies, qm), o);
             // TODO: add assertions to method QueryResultCacheTest.CacheItem(QueryResultCache, FileInfo, QueryModel, NTObject)
         }
 
@@ -63,12 +64,13 @@ namespace LINQToTTreeLib
             FileInfo _rootFile,
             string treeName,
             object[] inputObjects,
+            string[] cacheStrings,
             QueryModel queryModel,
             IVariableSaver varSaver,
             bool checkDates = false
         )
         {
-            var result = target.Lookup<T>(target.GetKey(new FileInfo[] { _rootFile }, treeName, inputObjects, queryModel, recheckDates: checkDates), varSaver, null);
+            var result = target.Lookup<T>(target.GetKey(new FileInfo[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates), varSaver, null);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
             // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
@@ -148,7 +150,7 @@ namespace LINQToTTreeLib
             var f = MakeRootFile("TestNoHit");
             var query = MakeQuery(0);
 
-            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", null, query, new DummySaver()).Item1, "cache should be empty for this guy!");
+            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", null, null, query, new DummySaver()).Item1, "cache should be empty for this guy!");
         }
 
         /// <summary>
@@ -253,9 +255,9 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
 
-            var r = Lookup<int>(q, f, "test", null, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
         }
@@ -272,8 +274,8 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            var k1 = q.GetKey(new FileInfo[] { f1, f2 }, "test", null, query);
-            var k2 = q.GetKey(new FileInfo[] { f2, f1 }, "test", null, query);
+            var k1 = q.GetKey(new FileInfo[] { f1, f2 }, "test", null, null, query);
+            var k2 = q.GetKey(new FileInfo[] { f2, f1 }, "test", null, null, query);
             q.CacheItem(k1, h);
 
             //
@@ -297,7 +299,7 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
 
             /// Modify the file
 
@@ -309,7 +311,7 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test", null, query, new DummySaver(), checkDates: true);
+            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
         }
 
@@ -324,7 +326,7 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
 
             /// Modify the file
 
@@ -336,7 +338,7 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test", null, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "altered file should not have triggered the re-check");
         }
 
@@ -351,11 +353,11 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test1", null, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test1", null, null, query, new DummySaver());
             Assert.IsFalse(r.Item1, "different tree should have made this fail");
         }
 
@@ -378,14 +380,14 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now!
 
             var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
             hInputLookup.SetBinContent(2, 5.0);
 
-            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "Cache should have been there");
 
         }
@@ -409,14 +411,14 @@ namespace LINQToTTreeLib
                 var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
                 h.SetBinContent(1, 5.0);
 
-                q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, query), h);
+                q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
             }
 
             /// And make sure the lookup works now!
 
             var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
 
-            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "Cache should have been there");
 
         }
@@ -440,14 +442,14 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now!
 
             var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
             hInputLookup.SetBinContent(2, 5.5);
 
-            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, query, new DummySaver());
+            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsFalse(r.Item1, "Cache should have been there");
         }
 
@@ -465,13 +467,13 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
 
             var query1 = MakeQuery(3);
-            var r = Lookup<int>(q, f, "test", new object[0], query1, new DummySaver());
+            var r = Lookup<int>(q, f, "test", new object[0], null, query1, new DummySaver());
             Assert.IsFalse(r.Item1, "Unexpected cache hit");
         }
 
@@ -489,13 +491,13 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
 
             var query1 = MakeQuery(4);
-            var r = Lookup<int>(q, f, "test", new object[0], query1, new DummySaver());
+            var r = Lookup<int>(q, f, "test", new object[0], null, query1, new DummySaver());
             Assert.IsTrue(r.Item1, "Expected a cache hit");
         }
 
@@ -514,9 +516,9 @@ namespace LINQToTTreeLib
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, query), h);
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
 
-            var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, query, new DummyHistoSaver());
+            var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual("hi", r.Item2.Name, "inproper histo came back");
 
