@@ -20,8 +20,8 @@ MSBuildTask=$(SolutionDir)\MSBuildTasks\bin\$(BuildConfig)
 all: $(SolutionDir)\$(ResultName)-$(BuildConfig).zip
 
 clean:
-	del /Q $(SolutionDir)\$(ResultName)-$(BuildConfig).zip
-	rmdir /S /Q $(ResultDirectoryName)
+	if EXIST $(SolutionDir)\$(ResultName)-$(BuildConfig).zip del /Q $(SolutionDir)\$(ResultName)-$(BuildConfig).zip
+	if EXIST $(ResultDirectoryName) ( rmdir /S /Q $(ResultDirectoryName) )
 
 #
 # Create a zip file for uploading
