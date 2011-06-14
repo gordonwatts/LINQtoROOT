@@ -54,14 +54,14 @@ namespace LINQToTTreeLib
         /// <param name="inputObjects"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public IQueryResultCacheKey GetKey(FileInfo[] rootfiles, string treename, object[] inputObjects, QueryModel query, bool recheckDates = false)
+        public IQueryResultCacheKey GetKey(FileInfo[] unsortedRootfiles, string treename, object[] inputObjects, QueryModel query, bool recheckDates = false)
         {
             ///
             /// Quick check to make sure everything is good
             /// 
 
             TraceHelpers.TraceInfo(23, "GetKey: Initial query calculation");
-            if (rootfiles.Any(f => f == null))
+            if (unsortedRootfiles.Any(f => f == null))
                 throw new ArgumentException("one of the root files is null");
             if (string.IsNullOrWhiteSpace(treename))
                 throw new ArgumentException("treename must be valid");
@@ -70,7 +70,13 @@ namespace LINQToTTreeLib
 
             ///
             /// Build the hash, which is a bit of a pain in the butt.
+            /// For the root files we don't care aobu teh order given to us in or the order they
+            /// are processed in. What we care about is what is there!
             /// 
+
+            var rootfiles = (from r in unsortedRootfiles
+                             orderby r.FullName ascending
+                             select r).ToArray();
 
             TraceHelpers.TraceInfo(24, "GetKey: Creating big string file name and calculating hash");
             int fnameLength = rootfiles.Select(f => f.FullName).Sum(w => w.Length) + 100;

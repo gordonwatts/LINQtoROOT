@@ -261,6 +261,32 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestForFilesInDifferentOrders()
+        {
+            var f1 = MakeRootFile("TestHitDriver1");
+            var f2 = MakeRootFile("TestHitDriver2");
+            var query = MakeQuery(0);
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.SetBinContent(1, 5.0);
+            var q = new QueryResultCache();
+            var k1 = q.GetKey(new FileInfo[] { f1, f2 }, "test", null, query);
+            var k2 = q.GetKey(new FileInfo[] { f2, f1 }, "test", null, query);
+            q.CacheItem(k1, h);
+
+            //
+            // Now, do the lookup, but with files in a different order.
+            //
+
+            var r1 = q.Lookup<int>(k1, new DummySaver(), null);
+            var r2 = q.Lookup<int>(k2, new DummySaver(), null);
+            Assert.IsTrue(r1.Item1, "expected hit for same key");
+            Assert.IsTrue(r2.Item1, "expected hit for second key with different files");
+        }
+
+        [TestMethod]
         public void TestForFileOutOfDate()
         {
             var f = MakeRootFile("TestForFileOutOfDate");
