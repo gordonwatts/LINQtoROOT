@@ -4,8 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using LINQToTTreeLib.CodeAttributes;
-using Remotion.Linq.Parsing;
 using LINQToTTreeLib.Utils;
+using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib
 {
@@ -20,11 +20,22 @@ namespace LINQToTTreeLib
         /// are not trnaslated, however!
         /// </summary>
         /// <param name="expr"></param>
+        /// <param name="cookies">List of cookies - a trail of variable renames we've done</param>
         /// <returns></returns>
-        public static Expression Translate(Expression expr)
+        public static Expression Translate(Expression expr, List<string> cookies)
         {
             var trans = new TranslatingExpressionVisitor();
-            return trans.VisitExpression(expr);
+            var result = trans.VisitExpression(expr);
+            cookies.AddRange(trans.RenameList);
+            return result;
+        }
+
+        /// <summary>
+        /// Get the minor stuff up and running
+        /// </summary>
+        public TranslatingExpressionVisitor()
+        {
+            RenameList = new List<string>();
         }
 
         /// <summary>
@@ -351,6 +362,7 @@ namespace LINQToTTreeLib
             if (attr != null)
             {
                 targetMemberName = attr.RenameTo;
+                RenameList.Add(string.Format("{0}->{1}", memberInfo.Name, targetMemberName));
             }
 
             return fromType.GetMember(targetMemberName).FirstOrDefault();
@@ -642,5 +654,11 @@ namespace LINQToTTreeLib
         {
             return TypeUtils.TypeHasAttribute<TranslateToClassAttribute>(type) != null;
         }
+
+        /// <summary>
+        /// Keep track of a list of the renames we've done. This is so, in the end,
+        /// we can make sure nothing has shifted out from under us!
+        /// </summary>
+        public List<string> RenameList { get; private set; }
     }
 }

@@ -271,5 +271,16 @@ namespace LINQToTTreeLib
                 return null;
             return _expressionReplacement[varname];
         }
+
+        private List<string> _cachedCookies = new List<string>();
+
+        /// <summary>
+        /// Cookies left behind from the translation that should be used when we
+        /// calculate a cache hit for this item.
+        /// </summary>
+        public List<string> CacheCookies
+        {
+            get { return _cachedCookies; }
+        }
     }
 }

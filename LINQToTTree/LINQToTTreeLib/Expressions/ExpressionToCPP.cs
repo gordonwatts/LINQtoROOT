@@ -42,7 +42,7 @@ namespace LINQToTTreeLib.Expressions
             while (expr.ToString() != oldExpr)
             {
                 oldExpr = expr.ToString();
-                expr = TranslatingExpressionVisitor.Translate(expr);
+                expr = TranslatingExpressionVisitor.Translate(expr, cc.CacheCookies);
             }
 
             ///
