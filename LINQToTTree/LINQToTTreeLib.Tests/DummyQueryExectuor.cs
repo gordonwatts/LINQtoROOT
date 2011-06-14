@@ -36,6 +36,12 @@ namespace LINQToTTreeLib.Tests
         /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
+            CommonExecute(queryModel);
+            return default(T);
+        }
+
+        private void CommonExecute(QueryModel queryModel)
+        {
             LastQueryModel = queryModel;
 
             Result = new GeneratedCode();
@@ -47,6 +53,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new ROCount());
                 MEFUtilities.AddPart(new ROTakeSkipOperators());
                 MEFUtilities.AddPart(new ROAggregate());
+                MEFUtilities.AddPart(new ROMinMax());
 
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
@@ -61,12 +68,19 @@ namespace LINQToTTreeLib.Tests
             qv.VisitQueryModel(queryModel);
 
             FinalResult = Result;
-            return default(T);
         }
 
+        /// <summary>
+        /// Allow a single guy to run as well.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryModel"></param>
+        /// <param name="returnDefaultWhenEmpty"></param>
+        /// <returns></returns>
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
-            throw new NotImplementedException();
+            CommonExecute(queryModel);
+            return default(T);
         }
     }
 }

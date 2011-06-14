@@ -297,6 +297,13 @@
     <Compile Include="ResultOperators\ROFirstLastTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROFirstLastTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\ROMinMaxTest.CanHandle.g.cs">
+      <DependentUpon>ROMinMaxTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROMinMaxTest.cs" />
+    <Compile Include="ResultOperators\ROMinMaxTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROMinMaxTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>

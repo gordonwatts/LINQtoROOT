@@ -104,7 +104,9 @@
     <Compile Include="ResultOperators\ROAggregate.cs" />
     <Compile Include="ResultOperators\ROCount.cs" />
     <Compile Include="ResultOperators\ROFirstLast.cs" />
+    <Compile Include="ResultOperators\ROMinMax.cs" />
     <Compile Include="ResultOperators\ROTakeSkipOperators.cs" />
+    <Compile Include="Statements\StatementMinMaxTest.cs" />
     <Compile Include="Statements\StatementAssign.cs" />
     <Compile Include="Statements\StatementFilter.cs" />
     <Compile Include="Statements\StatementIfOnCount.cs" />
