@@ -1,10 +1,7 @@
 // <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -64,7 +61,7 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
             // TODO: add assertions to method ROFirstLastTest.ProcessResultOperator(ROFirstLast, ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)
         }
-
+#if false
         public class ntup2
         {
             public int[] run;
@@ -136,5 +133,6 @@ namespace LINQToTTreeLib.ResultOperators
 
             Assert.Inconclusive();
         }
+#endif
     }
 }
