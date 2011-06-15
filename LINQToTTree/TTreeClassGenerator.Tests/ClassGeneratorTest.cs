@@ -280,6 +280,62 @@ namespace TTreeClassGenerator
         }
 
         [TestMethod]
+        public void TestColonsInVarNameWRename()
+        {
+            ItemSimpleType simple = new ItemSimpleType("dude::fork", "int[]");
+            FileInfo proxyFile = new FileInfo("TestColonsInVarNameWRename.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", Variables = new VariableInfo[] { new VariableInfo() { NETName = "myvar", TTreeName = "dude::fork" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestSimpleGroupAndRename.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleGroupAndRename", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsFalse(FindInFile(outputFile, "dude::fork"), "Saw the double colon!!");
+            Assert.IsTrue(FindInFile(outputFile, "dude__fork"), "Missing the variable!!");
+        }
+
+        [TestMethod]
+        public void TestColonsInVarName()
+        {
+            ItemSimpleType simple = new ItemSimpleType("dude::fork", "int[]");
+            FileInfo proxyFile = new FileInfo("TestColonsInVarName.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", Variables = new VariableInfo[] { new VariableInfo() { NETName = "dude::fork", TTreeName = "dude::fork" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestSimpleGroupAndRename.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleGroupAndRename", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsFalse(FindInFile(outputFile, "dude::fork"), "Saw the double colon!!");
+            Assert.IsTrue(FindInFile(outputFile, "dude__fork"), "Missing the variable!!");
+        }
+
+        [TestMethod]
         public void TestSimpleGroupAndRename()
         {
             /// Create simple user info - but don't do anything with it!

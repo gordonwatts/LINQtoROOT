@@ -461,7 +461,7 @@ namespace TTreeClassGenerator
 
             if (v.NETName != v.TTreeName)
             {
-                comment += string.Format("(TTree Leaf name: {0})", v.TTreeName);
+                comment += string.Format("(TTree Leaf name: {0})", v.TTreeName.FixupLeafName());
             }
 
             if (!string.IsNullOrWhiteSpace(comment))
@@ -479,7 +479,7 @@ namespace TTreeClassGenerator
             if (v.NETName != v.TTreeName)
             {
                 cppVarName = v.TTreeName;
-                output.WriteLine("    [RenameVariable(\"{0}\")]", v.TTreeName);
+                output.WriteLine("    [RenameVariable(\"{0}\")]", v.TTreeName.FixupLeafName());
             }
 
             ///
@@ -521,7 +521,7 @@ namespace TTreeClassGenerator
                 typeName = typeName.Substring(0, typeName.Length - 2);
             }
 
-            output.WriteLine("    public {0} {1};", typeName, v.NETName);
+            output.WriteLine("    public {0} {1};", typeName, v.NETName.FixupLeafName());
         }
 
         /// <summary>
@@ -568,7 +568,7 @@ namespace TTreeClassGenerator
                 throw new ArgumentNullException("item - can't have a null item in an ntuple!");
 
             string t = item.ItemType;
-            output.WriteLine("    public {0} {1};", t, item.Name);
+            output.WriteLine("    public {0} {1};", t, item.Name.FixupLeafName());
         }
 
         /// <summary>

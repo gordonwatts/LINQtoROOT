@@ -90,6 +90,21 @@ namespace LINQToTTreeLib.Tests
             CheckSerialization(result, "GenerateClassesTestSingleBasicType");
         }
 
+#if false
+        /// Test case doesn't work b/c I don't know how to create a tree with a leaf name that contains a "::".
+        [TestMethod]
+        public void TestClassWithDoubleColonName()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithDoubleColorName();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            var cls = result[0];
+            var item = cls.Items[0];
+            Assert.AreEqual("dude__fork", item.Name, "Name not translated correctly");
+        }
+#endif
+
         [TestMethod]
         public void TestSingleBasicTypeIsUngrouped()
         {
