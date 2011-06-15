@@ -290,6 +290,13 @@
       <DependentUpon>ROAggregateTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\ROAggregateTest.cs" />
+    <Compile Include="ResultOperators\ROAnyAllTest.CanHandle.g.cs">
+      <DependentUpon>ROAnyAllTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROAnyAllTest.cs" />
+    <Compile Include="ResultOperators\ROAnyAllTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROAnyAllTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\ROFirstLastTest.CanHandle.g.cs">
       <DependentUpon>ROFirstLastTest.cs</DependentUpon>
     </Compile>
