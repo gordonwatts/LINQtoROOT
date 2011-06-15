@@ -35,7 +35,6 @@ namespace TTreeParserCPPTests {
 	{
 	public:
 
-		///
 		/// Create a tree with some number of int's.
 		static ROOTNET::NTTree ^CreateWithIntOnly(int numberOfInts)
 		{
@@ -50,6 +49,25 @@ namespace TTreeParserCPPTests {
 			}
 			bogus = 10;
 			t->Fill();
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with double-colon name number of int's.
+		static ROOTNET::NTTree ^CreateTreeWithDoubleColorName()
+		{
+			int bogus;
+
+			TTree *t = new TTree("dude", "left field");
+
+			auto b = t->Branch("fork", &bogus);
+			b->SetName("dude::fork");
+			b->SetTitle("dude::fork");
+
+			for (int i = 0; i < 10; i++) {
+				bogus = i;
+				t->Fill();
+			}
 
 			return gcnew ROOTNET::NTTree(t);
 		}
