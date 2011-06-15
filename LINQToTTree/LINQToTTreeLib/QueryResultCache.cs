@@ -43,6 +43,8 @@ namespace LINQToTTreeLib
 
             public string[] DescriptionLines { get; set; }
 
+            public string[] ExtraQueryInfoLines { get; set; }
+
             public string QueryText { get; set; }
         }
 
@@ -118,7 +120,8 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(25, "GetKey: Saving descrition lines");
             result.DescriptionLines = (from f in rootfiles
-                                       select f.FullName).Concat(crumbs).ToArray();
+                                       select f.FullName).ToArray();
+            result.ExtraQueryInfoLines = crumbs;
 
             ///
             /// Text for the query. There are strings like "generated_x" where x is a number. These get incremented each time they are used,
@@ -306,10 +309,6 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("The key must be valid to cache an item");
 
             ///
-            /// See if teh directory exists
-            /// 
-
-            ///
             /// Now, write out the text file that tells everyone what files are here. Do that only
             /// if the thing isn't there already.
             /// 
@@ -332,12 +331,16 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// Write out the query
+            /// Write out the query and any extra info so the user can see when debugging.
             /// 
 
             using (var writer = File.CreateText(Path.ChangeExtension(key.RootFile.FullName, "txt")))
             {
                 writer.WriteLine(key.QueryText);
+                foreach (var r in key.ExtraQueryInfoLines)
+                {
+                    writer.WriteLine(r);
+                }
             }
 
             ///
