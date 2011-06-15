@@ -72,7 +72,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// The result is a simple bool. This is what we will be handing back.
             /// 
 
-            var aresult = new Variables.VarSimple(typeof(bool));
+            var aresult = new Variables.VarSimple(typeof(bool)) { Declare = true };
             aresult.InitialValue = new Variables.ValSimple(initialValue, typeof(bool));
 
             ///

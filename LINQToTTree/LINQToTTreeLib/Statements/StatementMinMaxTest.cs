@@ -45,8 +45,8 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("{0} {1} = {2}", TempVariable.Type.AsCPPType(), TempVariable.RawValue, exprToMinOrMaximize.RawValue);
-            yield return string.Format("if (!{0} || ({1} {2} {3}) {{", vIsFilled.RawValue, TempVariable.RawValue, CompareOperator, vMaxMin.RawValue);
+            yield return string.Format("{0} {1} = {2};", TempVariable.Type.AsCPPType(), TempVariable.RawValue, exprToMinOrMaximize.RawValue);
+            yield return string.Format("if (!{0} || ({1} {2} {3})) {{", vIsFilled.RawValue, TempVariable.RawValue, CompareOperator, vMaxMin.RawValue);
             yield return string.Format("  {0} = true;", vIsFilled.RawValue);
             yield return string.Format("  {0} = {1};", vMaxMin.RawValue, TempVariable.RawValue);
             yield return "}";

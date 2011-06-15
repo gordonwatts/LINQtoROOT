@@ -88,9 +88,9 @@ namespace LINQToTTreeLib.ResultOperators
             /// externally.
             /// 
 
-            var vIsFilled = new Variables.VarSimple(typeof(bool));
+            var vIsFilled = new Variables.VarSimple(typeof(bool)) { Declare = true };
             vIsFilled.InitialValue = new Variables.ValSimple("false", typeof(bool));
-            var vMaxMin = new Variables.VarSimple(valueExpr.Type);
+            var vMaxMin = new Variables.VarSimple(valueExpr.Type) { Declare = true };
             vMaxMin.InitialValue = new Variables.ValSimple("0", valueExpr.Type);
 
             gc.AddOneLevelUp(vIsFilled);
