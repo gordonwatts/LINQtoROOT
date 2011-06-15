@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -8,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementAssign : IStatement
     {
-        public StatementAssign(IVariable accumulator, IValue funcResolved)
+        public StatementAssign(ParameterExpression accumulator, IValue funcResolved)
         {
             ResultVariable = accumulator;
             Expression = funcResolved;
@@ -17,7 +18,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The guy that will be set.
         /// </summary>
-        public IVariable ResultVariable { get; private set; }
+        public ParameterExpression ResultVariable { get; private set; }
 
         /// <summary>
         /// Get the expression that we will be making things equiv to!
@@ -30,7 +31,7 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            var result = ResultVariable.RawValue;
+            var result = ResultVariable.Name;
             var setTo = Expression.RawValue;
 
             if (result != setTo)
@@ -39,7 +40,7 @@ namespace LINQToTTreeLib.Statements
 
         public override string ToString()
         {
-            return ResultVariable.RawValue + "=" + Expression.RawValue;
+            return ResultVariable + "=" + Expression.RawValue;
         }
     }
 }

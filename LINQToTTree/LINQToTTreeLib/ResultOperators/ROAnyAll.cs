@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="cc"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public Tuple<Expression, IValue> ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
                 throw new ArgumentNullException("_codeContext");
@@ -72,8 +72,8 @@ namespace LINQToTTreeLib.ResultOperators
             /// The result is a simple bool. This is what we will be handing back.
             /// 
 
-            var aresult = new Variables.VarSimple(typeof(bool)) { Declare = true };
-            aresult.InitialValue = new Variables.ValSimple(initialValue, typeof(bool));
+            var aresult = Expression.Variable(typeof(bool), typeof(bool).CreateUniqueVariableName());
+            var initialValue = new Variables.ValSimple(initialValue, typeof(bool));
 
             ///
             /// And the statements now

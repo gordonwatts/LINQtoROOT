@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -34,7 +35,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext context, CompositionContainer container)
+        public Tuple<Expression, IValue> ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext context, CompositionContainer container)
         {
             ///
             /// Basic code checks
@@ -62,16 +63,8 @@ namespace LINQToTTreeLib.ResultOperators
             /// Finally, if there is a final funciton, we need to call that after the loop is done!
             ///
 
-            IVariable accumulator = null;
-            if (a.Seed.Type.IsPointerType())
-            {
-                accumulator = new Variables.VarObject(a.Seed.Type);
-            }
-            else
-            {
-                accumulator = new Variables.VarSimple(a.Seed.Type);
-            }
-            accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
+            var accumulator = Expression.Variable(a.Seed.Type, a.Seed.Type.CreateUniqueVariableName());
+            var initialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
 
             ///
             /// Now, parse the lambda expression, doing a substitution with this guy! Note that the only argument is our
@@ -84,8 +77,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             _codeEnv.Add(new StatementAssign(accumulator, funcResolved));
 
-            return accumulator;
-
+            return Tuple.Create((Expression)accumulator, initialValue);
         }
     }
 }
