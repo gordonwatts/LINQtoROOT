@@ -174,6 +174,16 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 tlz.SetPtEtaPhiE(pt, eta, phi, E);
                 return tlz;
             }
+
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+                Code = new string[]{
+                "E = 55",
+                "int tlzUnique = pt"
+            })]
+            public static ROOTNET.NTLorentzVector CreateTLZBE(double pt, double eta, double phi, double E)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -204,7 +214,29 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         [TestMethod]
         public void TestArgReplacementAtStartAndEnd()
         {
-            Assert.Inconclusive();
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = Expression.Parameter(typeof(double), "ptParam");
+            var p_eta = Expression.Parameter(typeof(double), "etaParam");
+            var p_phi = Expression.Parameter(typeof(double), "phiParam");
+            var p_E = Expression.Parameter(typeof(double), "EParam");
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZBE"), p_pt, p_eta, p_phi, p_E);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "# of statements total");
+            var atBeginning = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
+            var atEnding = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
+            Assert.IsNotNull(atBeginning, "Bad type for 3rd statement");
+            Assert.IsNotNull(atEnding, "Bad type for 3rd statement");
+            Assert.IsTrue(atBeginning.Line.StartsWith("EParam"), string.Format("Line '{0}' doesn't start with param replacement", atBeginning.Line));
+            Assert.IsTrue(atEnding.Line.EndsWith("ptParam"), string.Format("Line '{0}' doesn't ends with param replacement", atBeginning.Line));
         }
     }
 }
