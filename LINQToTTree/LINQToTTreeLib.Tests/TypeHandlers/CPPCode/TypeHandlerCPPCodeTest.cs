@@ -164,7 +164,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
                 Code = new string[]{
                 "TLorentzVector tlzUnique;",
-                "tlzUnique.SetPtEtaPhi(pt, eta, phi, E);",
+                "tlzUnique.SetPtEtaPhiE(pt, eta, phi, E);",
                 "CreateTLZ = &tlzUnique;"
             })]
             public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi, double E)
@@ -183,10 +183,10 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var gc = new GeneratedCode();
             var context = new CodeContext();
 
-            var p_pt = Expression.Parameter(typeof(double), "pt");
-            var p_eta = Expression.Parameter(typeof(double), "eta");
-            var p_phi = Expression.Parameter(typeof(double), "phi");
-            var p_E = Expression.Parameter(typeof(double), "E");
+            var p_pt = Expression.Parameter(typeof(double), "ptParam");
+            var p_eta = Expression.Parameter(typeof(double), "etaParam");
+            var p_phi = Expression.Parameter(typeof(double), "phiParam");
+            var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
 
             IValue result;
@@ -198,7 +198,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.AreEqual(4, gc.CodeBody.Statements.Count(), "# of statements total");
             var setStatement = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
             Assert.IsNotNull(setStatement, "Bad type for 3rd statement");
-            Assert.IsTrue(setStatement.Line.Contains("SetPtEtaPhi(pt, eta, phi, E)"), string.Format("Line '{0}' doesn't have correct set statement.", setStatement.Line));
+            Assert.IsTrue(setStatement.Line.Contains("SetPtEtaPhiE(ptParam, etaParam, phiParam, EParam)"), string.Format("Line '{0}' doesn't have correct set statement.", setStatement.Line));
         }
     }
 }
