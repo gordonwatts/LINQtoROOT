@@ -7,7 +7,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// The return value can be used in the code.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
-    sealed class CPPCodeAttribute : Attribute
+    public sealed class CPPCodeAttribute : Attribute
     {
         /// <summary>
         /// Create the attribute

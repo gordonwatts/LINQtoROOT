@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// query.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    sealed class CPPHelperClassAttribute : Attribute
+    public sealed class CPPHelperClassAttribute : Attribute
     {
         // This is a positional argument
         public CPPHelperClassAttribute()
