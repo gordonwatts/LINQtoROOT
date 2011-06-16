@@ -200,5 +200,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.IsNotNull(setStatement, "Bad type for 3rd statement");
             Assert.IsTrue(setStatement.Line.Contains("SetPtEtaPhiE(ptParam, etaParam, phiParam, EParam)"), string.Format("Line '{0}' doesn't have correct set statement.", setStatement.Line));
         }
+
+        [TestMethod]
+        public void TestArgReplacementAtStartAndEnd()
+        {
+            Assert.Inconclusive();
+        }
     }
 }

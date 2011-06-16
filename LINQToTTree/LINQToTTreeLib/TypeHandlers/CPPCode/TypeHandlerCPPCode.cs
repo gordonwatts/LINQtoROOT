@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
@@ -106,15 +107,24 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             result = new ValSimple(resultName, expr.Type);
 
             ///
-            /// Now, go through the lines of code and translate things!
+            /// Now, go through the lines of code and translate things. We have to be careful 
+            /// in the replacement. For example, if the parameter is "E", don't replace the "E"
+            /// in SetPtPhiEtaE method name!
             /// 
+
+            var paramReplaceRegex = (from kv in paramLookup
+                                     select new
+                                     {
+                                         Key = kv.Key,
+                                         Value = new Regex(string.Format(@"\b{0}\b", kv.Key))
+                                     }).ToDictionary(k => k.Key, v => v.Value);
 
             foreach (var line in code.Code)
             {
                 var tline = line;
                 foreach (var k in paramLookup.Keys)
                 {
-                    tline = tline.Replace(k, paramLookup[k]);
+                    tline = paramReplaceRegex[k].Replace(tline, paramLookup[k]);
                 }
                 gc.Add(new Statements.StatementSimpleStatement(tline));
             }
