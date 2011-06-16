@@ -424,7 +424,17 @@ namespace LINQToTreeHelpers
             // Ok, do the search for directories!
             // 
 
-            foreach (var d in Directory.GetDirectories(leadingDir, dirname))
+            string[] alldirectories;
+            try
+            {
+                alldirectories = Directory.GetDirectories(leadingDir, dirname);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("Failed to load the directories in path '{0}' with a name like '{1}'.", leadingDir, dirname), e);
+            }
+
+            foreach (var d in alldirectories)
             {
                 foreach (var f in FindFilesRecursive(d, restSearchString))
                 {
