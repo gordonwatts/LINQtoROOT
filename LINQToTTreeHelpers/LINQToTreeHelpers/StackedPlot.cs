@@ -109,9 +109,6 @@ namespace LINQToTreeHelpers
                 h.SetNull();
             }
 
-            stack.Xaxis.Title = xaxisTitle;
-            stack.Yaxis.Title = yaxisTitle;
-
             //
             // Now do the plotting. Use the THStack to get all the axis stuff correct.
             // If we are plotting a log plot, then make sure to set that first before
@@ -122,6 +119,13 @@ namespace LINQToTreeHelpers
             result.FillColor = ROOTNET.NTStyle.gStyle.FrameFillColor; // This is not a sticky setting!
             if (logy)
                 result.Logy = 1;
+            stack.Draw("nostack");
+
+            if (!string.IsNullOrWhiteSpace(xaxisTitle))
+                stack.Xaxis.Title = xaxisTitle;
+            if (!string.IsNullOrWhiteSpace(yaxisTitle))
+                stack.Yaxis.Title = yaxisTitle;
+
             stack.Draw("nostack");
 
             //
