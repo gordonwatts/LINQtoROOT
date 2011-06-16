@@ -92,6 +92,13 @@ namespace LINQToTreeHelpers
             }
 
             //
+            // Grab the x and y axis titles from the first histogram
+            //
+
+            var xaxisTitle = hToPlot[0].Xaxis.Title;
+            var yaxisTitle = hToPlot[0].Yaxis.Title;
+
+            //
             // Use the nice ROOT utility THStack to make the plot. Once we do this, the plot is now owned by the TCanvas.
             // 
 
@@ -101,6 +108,9 @@ namespace LINQToTreeHelpers
                 stack.Add(h);
                 h.SetNull();
             }
+
+            stack.Xaxis.Title = xaxisTitle;
+            stack.Yaxis.Title = yaxisTitle;
 
             //
             // Now do the plotting. Use the THStack to get all the axis stuff correct.
