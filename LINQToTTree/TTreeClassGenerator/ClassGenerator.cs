@@ -428,8 +428,7 @@ namespace TTreeClassGenerator
                 output.WriteLine("#pragma warning disable 0649");
                 foreach (var v in grp.Variables)
                 {
-                    output.WriteLine("    [TTreeVariableGrouping]");
-                    WriteVariableRenameDefinition(output, v, varTypes, className, true, tTreeUserInfo);
+                    WriteVariableRenameDefinition(output, v, varTypes, className, true, tTreeUserInfo, "[TTreeVariableGrouping]");
                 }
                 output.WriteLine("#pragma warning restore 0649");
 
@@ -440,16 +439,18 @@ namespace TTreeClassGenerator
         }
 
         /// <summary>
-        /// Write out a variable definition
+        /// Write out a variable definition.
         /// </summary>
         /// <param name="output"></param>
         /// <param name="v"></param>
+        /// <param name="extraAttributes">Extra attributes to be written before the funciton. Important to do them here otherwise any XML comments we write won't actually be recognized as such!</param>
         private void WriteVariableRenameDefinition(TextWriter output,
             VariableInfo v,
             IDictionary<string, string> varTypes,
             string baseTypeName,
             bool removeOneArrayDecl,
-            TTreeUserInfo groupInfo)
+            TTreeUserInfo groupInfo,
+            params string[] extraAttributes)
         {
             ///
             /// Figure out the comment that we put at the top
@@ -469,6 +470,15 @@ namespace TTreeClassGenerator
                 output.WriteLine("    /// <summary>");
                 output.WriteLine("    /// {0}", comment);
                 output.WriteLine("    /// </summary>");
+            }
+
+            //
+            // Write out extra attributes
+            //
+
+            foreach (var att in extraAttributes)
+            {
+                output.WriteLine("    {0}", att);
             }
 
             ///
