@@ -12,6 +12,9 @@ Targets to build the data model C# files from ntuple TTree spec files
     <BuildTTreeDataModel InputFiles="@(ROOTFileDataModel)" OutputFiles="@(ROOTFileDataModel->'$(IntermediateOutputPath)%(FileName).dm.cs')">
       <Output ItemName="Compile" TaskParameter="OutputFiles" />
     </BuildTTreeDataModel>
+    <ItemGroup>
+      <FileWrites Include="@(ROOTFileDataModel->'$(IntermediateOutputPath)%(FileName).dm.cs')"/>
+    </ItemGroup>
   </Target>
   <ItemGroup>
     <Compile Include="@(ROOTFileDataModel)" />

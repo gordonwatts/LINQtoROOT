@@ -68,7 +68,7 @@ namespace CmdTFileParser
                         outputFile = f;
                     specialFile = "";
                 }
-                else if (f.Extension == ".root")
+                else if (f.Extension == ".root" || f.Name.Contains(".root."))
                 {
                     rootFiles.Add(f);
                 }

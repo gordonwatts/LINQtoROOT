@@ -68,7 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(ROOTSYS)\NETWrappers\LINQ\build\LINQTargets.targets" />
+  <Import Project="C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT\LINQToTTree\MSBuildTasks\LINQTargets.targets" />
   <ItemGroup>
     <TTreeGroupSpec Include="CollectionTreeConfig-000.ntup" />
     <ROOTFileDataModel Include="hvsample.ntupom" />
