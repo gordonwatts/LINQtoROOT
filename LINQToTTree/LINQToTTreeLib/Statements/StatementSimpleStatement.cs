@@ -10,10 +10,12 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementSimpleStatement : IStatement
     {
-        public StatementSimpleStatement(string line)
+        public StatementSimpleStatement(string line, bool addSemicolon = true)
         {
             if (line == null)
                 throw new ArgumentNullException("line can't be null!");
+
+            AddSemicolon = addSemicolon;
 
             ///
             /// Strip off all ending semi-colons. They will get added back
@@ -21,10 +23,13 @@ namespace LINQToTTreeLib.Statements
             /// 
 
             Line = line.Trim();
-            while (Line.EndsWith(";"))
+            if (addSemicolon)
             {
-                Line = Line.Substring(0, Line.Length - 1);
-                Line = Line.Trim();
+                while (Line.EndsWith(";"))
+                {
+                    Line = Line.Substring(0, Line.Length - 1);
+                    Line = Line.Trim();
+                }
             }
 
             ///
@@ -38,12 +43,18 @@ namespace LINQToTTreeLib.Statements
         public string Line { get; private set; }
 
         /// <summary>
+        /// Will a semicolon be added to this line when it is dumped?
+        /// </summary>
+        public bool AddSemicolon { get; private set; }
+
+        /// <summary>
         /// Return the simple statement, along with a semi-colon!
         /// </summary>
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            yield return Line + ";";
+            string semi = AddSemicolon ? ";" : "";
+            yield return Line + semi;
         }
     }
 }

@@ -112,6 +112,15 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             result = new ValSimple(resultName, expr.Type);
 
             //
+            // Make sure a result exists in here!
+            //
+
+            var lookForResult = new Regex(string.Format(@"\b{0}\b", expr.Method.Name));
+            bool didReference = code.Code.Any(l => lookForResult.Match(l).Success);
+            if (!didReference)
+                throw new ArgumentException(string.Format("The C++ code attached to the method '{0}' doesn't seem to set a result.", expr.Method.Name));
+
+            //
             // Figure out if there are any Unique variables. If there are, then we need to do
             // a replacement on them.
             //
@@ -148,7 +157,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 {
                     tline = paramReplaceRegex[k].Replace(tline, paramLookup[k]);
                 }
-                gc.Add(new Statements.StatementSimpleStatement(tline));
+                gc.Add(new Statements.StatementSimpleStatement(tline, false));
             }
 
             return expr;

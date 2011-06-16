@@ -175,20 +175,72 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         [TestMethod]
         public void TestTwoUniqueReplacements()
         {
-            // and more than one replacement on a line
-            Assert.Inconclusive();
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = Expression.Parameter(typeof(double), "ptParam");
+            var p_eta = Expression.Parameter(typeof(double), "etaParam");
+            var p_phi = Expression.Parameter(typeof(double), "phiParam");
+            var p_E = Expression.Parameter(typeof(double), "EParam");
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZUniqueTest"), p_pt, p_eta, p_phi, p_E);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            foreach (var line in gc.CodeBody.Statements)
+            {
+                var st = line as Statements.StatementSimpleStatement;
+                Assert.IsNotNull(st, "bad statement type");
+                Assert.IsFalse(st.Line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", st.Line));
+            }
         }
 
         [TestMethod]
         public void TestScopingBlock()
         {
-            Assert.Inconclusive();
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = Expression.Parameter(typeof(double), "ptParam");
+            var p_eta = Expression.Parameter(typeof(double), "etaParam");
+            var p_phi = Expression.Parameter(typeof(double), "phiParam");
+            var p_E = Expression.Parameter(typeof(double), "EParam");
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("TestIF"), p_pt, p_eta, p_phi, p_E);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            var ifstatement = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
+            Assert.IsFalse(ifstatement.Line.EndsWith(";"), string.Format("Line '{0}' ends with a semicolon", ifstatement.Line));
+            string line = ifstatement.CodeItUp().First();
+            Assert.IsFalse(line.EndsWith(";"), string.Format("Line '{0}' ends with a semicolon", line));
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
         public void TestForMissingResult()
         {
-            Assert.Inconclusive();
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = Expression.Parameter(typeof(double), "ptParam");
+            var p_eta = Expression.Parameter(typeof(double), "etaParam");
+            var p_phi = Expression.Parameter(typeof(double), "phiParam");
+            var p_E = Expression.Parameter(typeof(double), "EParam");
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZNoResult"), p_pt, p_eta, p_phi, p_E);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
         }
 
         [CPPHelperClass]
@@ -210,10 +262,51 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
                 Code = new string[]{
-                "E = 55",
-                "int tlzUnique = pt"
+                "if (int != dude) {",
+                "  tlzUnique.SetPtEtaPhiE(pt, eta, phi, E);",
+                "}",
+                "TestIF = &tlzUnique;"
             })]
+            public static ROOTNET.NTLorentzVector TestIF(double pt, double eta, double phi, double E)
+            {
+                throw new NotImplementedException("This should never get called!");
+                var tlz = new ROOTNET.NTLorentzVector();
+                tlz.SetPtEtaPhiE(pt, eta, phi, E);
+                return tlz;
+            }
+
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+                Code = new string[]{
+                "TLorentzVector tlzUnique;",
+                "tlzUnique.SetPtEtaPhiE(pt, eta, phi, E);",
+            })]
+            public static ROOTNET.NTLorentzVector CreateTLZNoResult(double pt, double eta, double phi, double E)
+            {
+                throw new NotImplementedException("This should never get called!");
+                var tlz = new ROOTNET.NTLorentzVector();
+                tlz.SetPtEtaPhiE(pt, eta, phi, E);
+                return tlz;
+            }
+
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+                Code = new string[]{
+                "E = 55",
+                "int tlzUnique = pt",
+                "CreateTLZBE = 10;"
+            })]
+
             public static ROOTNET.NTLorentzVector CreateTLZBE(double pt, double eta, double phi, double E)
+            {
+                throw new NotImplementedException();
+            }
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+                Code = new string[]{
+                "int ttUnique, zzUnique;",
+                "ttUnique = 10;",
+                "zzUnique = 20;",
+                "CreateTLZUniqueTest = 10;"
+            })]
+            public static ROOTNET.NTLorentzVector CreateTLZUniqueTest(double pt, double eta, double phi, double E)
             {
                 throw new NotImplementedException();
             }
@@ -263,7 +356,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "# of statements total");
+            Assert.AreEqual(4, gc.CodeBody.Statements.Count(), "# of statements total");
             var atBeginning = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
             var atEnding = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
             Assert.IsNotNull(atBeginning, "Bad type for 3rd statement");
