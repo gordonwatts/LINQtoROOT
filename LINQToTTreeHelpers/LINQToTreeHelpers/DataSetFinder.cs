@@ -249,12 +249,18 @@ namespace LINQToTreeHelpers
                 throw new ArgumentException("Dataset '" + dsName + "' was not known in this file for the machine '" + MachineName + "'.");
 
             var macroReplacedSearchStrings = resultDS.SearchStrings.Select(s => MacroReplacement(s, result.Macros));
-
-            var files = FindFilesInSearchStrings(macroReplacedSearchStrings.ToArray());
-            var sortedFiles = from f in files
-                              orderby f.FullName ascending
-                              select f;
-            return sortedFiles.ToArray();
+            try
+            {
+                var files = FindFilesInSearchStrings(macroReplacedSearchStrings.ToArray());
+                var sortedFiles = from f in files
+                                  orderby f.FullName ascending
+                                  select f;
+                return sortedFiles.ToArray();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while searching for root files in data set " + dsName, e);
+            }
         }
 
         /// <summary>
