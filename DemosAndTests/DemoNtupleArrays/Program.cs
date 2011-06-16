@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 
 /// Includes things in the Helper object, which has some nice extension methods
-using LINQToTTreeLib;
+using LINQToTreeHelpers;
 
 namespace DemoNtupleArrays
 {

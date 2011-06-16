@@ -43,6 +43,9 @@
     <Reference Include="libRIOWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libRIOWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="LINQToTreeHelpers">
+      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\LINQ\lib\LINQToTreeHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="LinqToTTreeInterfacesLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LinqToTTreeInterfacesLib.dll</HintPath>
     </Reference>
