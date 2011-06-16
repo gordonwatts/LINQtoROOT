@@ -42,6 +42,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         }
 
         /// <summary>
+        /// Keep track of how many unique variables we've replaced!
+        /// </summary>
+        private int _uniqueCounter = 0;
+
+        /// <summary>
         /// Where the real work happens!
         /// </summary>
         /// <param name="expr"></param>
@@ -105,6 +110,23 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             paramLookup.Add(expr.Method.Name, resultName);
 
             result = new ValSimple(resultName, expr.Type);
+
+            //
+            // Figure out if there are any Unique variables. If there are, then we need to do
+            // a replacement on them.
+            //
+
+            var findUnique = new Regex(@"\b\w*Unique\b");
+            var varUniqueRequests = (from l in code.Code
+                                     let matches = findUnique.Matches(l)
+                                     from m in Enumerable.Range(0, matches.Count)
+                                     select matches[m].Value).Distinct();
+            foreach (var varRepl in varUniqueRequests)
+            {
+                var uniqueName = varRepl.Substring(0, varRepl.Length - "Unique".Length);
+                paramLookup.Add(varRepl, uniqueName + _uniqueCounter.ToString());
+                _uniqueCounter++;
+            }
 
             ///
             /// Now, go through the lines of code and translate things. We have to be careful 

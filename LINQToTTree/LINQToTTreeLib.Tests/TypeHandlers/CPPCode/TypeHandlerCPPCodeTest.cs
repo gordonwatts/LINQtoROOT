@@ -149,7 +149,40 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         [TestMethod]
         public void TestForUniqueReplacement()
         {
-            Assert.Inconclusive("Look for xxxUnique replacement - several lines and different replcaements");
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = Expression.Parameter(typeof(double), "ptParam");
+            var p_eta = Expression.Parameter(typeof(double), "etaParam");
+            var p_phi = Expression.Parameter(typeof(double), "phiParam");
+            var p_E = Expression.Parameter(typeof(double), "EParam");
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            var declStatement = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
+            var setStatement = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
+
+            Assert.IsFalse(declStatement.Line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", declStatement.Line));
+            Assert.IsFalse(setStatement.Line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", setStatement.Line));
+        }
+
+        [TestMethod]
+        public void TestTwoUniqueReplacements()
+        {
+            // and more than one replacement on a line
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void TestScopingBlock()
+        {
+            Assert.Inconclusive();
         }
 
         [TestMethod]
