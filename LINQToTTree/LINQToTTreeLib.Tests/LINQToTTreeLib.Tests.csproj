@@ -65,14 +65,13 @@
     </Reference>
     <Reference Include="libMathCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libNetWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="libPhysicsWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libRIOWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libRIOWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="LinqToTTreeInterfacesLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -299,12 +298,26 @@
       <DependentUpon>ROAggregateTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\ROAggregateTest.cs" />
+    <Compile Include="ResultOperators\ROAnyAllTest.CanHandle.g.cs">
+      <DependentUpon>ROAnyAllTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROAnyAllTest.cs" />
+    <Compile Include="ResultOperators\ROAnyAllTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROAnyAllTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\ROFirstLastTest.CanHandle.g.cs">
       <DependentUpon>ROFirstLastTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\ROFirstLastTest.cs" />
     <Compile Include="ResultOperators\ROFirstLastTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROFirstLastTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROMinMaxTest.CanHandle.g.cs">
+      <DependentUpon>ROMinMaxTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROMinMaxTest.cs" />
+    <Compile Include="ResultOperators\ROMinMaxTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROMinMaxTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
@@ -382,6 +395,19 @@
     <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
       <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.CanHandle.g.cs">
+      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.cs" />
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessConstantReference.g.cs">
+      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessMethodCall.g.cs">
+      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessNew.g.cs">
+      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.CanHandle.g.cs">
       <DependentUpon>TypeHandlerReplacementCallTest.cs</DependentUpon>
     </Compile>
@@ -395,6 +421,9 @@
     </Compile>
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.cs" />
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessConstantReference.g.cs">
+      <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessNew.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
     </Compile>
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.cs" />
@@ -454,7 +483,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

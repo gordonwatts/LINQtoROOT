@@ -55,6 +55,25 @@ namespace LINQToTTreeLib.TypeHandlers
         }
 
         /// <summary>
+        /// Process a new against an expression - that hopefully we know!
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        internal Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            if (expression == null)
+                throw new ArgumentNullException("expression");
+
+            var h = FindHandler(expression.Type);
+            return h.ProcessNew(expression, out result, gc, context, container);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Find the handler. Acc-vio if we can't!
         /// </summary>
         /// <param name="type"></param>

@@ -60,6 +60,24 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestQueryWithTwoRangeVariablesNamedSameThing()
+        {
+            var q = new QueriableDummy<ntup>();
+            var result1 = from evt in q
+                          where evt.run > 5
+                          select evt;
+            var result2 = from evt in result1
+                          where evt.run > 10
+                          select evt;
+            var c = result2.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            /// Looking for an infinite loop!
+        }
+
+        [TestMethod]
         public void TestWhere()
         {
             var q = new QueriableDummy<ntup>();

@@ -64,6 +64,12 @@ namespace LINQToTTreeLib.ResultOperators
             /// valid.
             /// 
 
+            ///
+            /// This is major work - we need to return an Expression here, not an IValue. The reason
+            /// is that we might be returning an object like a jet, and we don't want to do the
+            /// translation too early - before the full object is known.
+            /// 
+
             throw new NotImplementedException();
         }
     }

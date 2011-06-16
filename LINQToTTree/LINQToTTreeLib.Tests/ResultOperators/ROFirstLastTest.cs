@@ -61,5 +61,78 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
             // TODO: add assertions to method ROFirstLastTest.ProcessResultOperator(ROFirstLast, ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)
         }
+#if false
+        public class ntup2
+        {
+            public int[] run;
+        }
+
+        [TestMethod]
+        public void TestSimpleFirst()
+        {
+            var q = new QueriableDummy<ntup2>();
+
+            var result = from evt in q
+                         where evt.run.First() > 10
+                         select evt;
+            var c = result.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+            res.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+
+        [TranslateToClass(typeof(ResultType1))]
+        class SourceType1
+        {
+#pragma warning disable 0649
+            [TTreeVariableGrouping]
+            public SourceType1SubType[] jets;
+#pragma warning restore 0649
+        }
+
+        class SourceType1SubType
+        {
+#pragma warning disable 0649
+            [TTreeVariableGrouping]
+            public int val1;
+#pragma warning restore 0649
+        }
+
+        class ResultType1 : IExpressionHolder
+        {
+            public ResultType1(Expression holder)
+            { HeldExpression = holder; }
+
+#pragma warning disable 0649
+            public int[] val1;
+#pragma warning restore 0649
+
+            public Expression HeldExpression
+            {
+                get;
+                private set;
+            }
+        }
+
+        [TestMethod]
+        public void TestTranslatedObjectFirst()
+        {
+            var q = new QueriableDummy<SourceType1>();
+
+            var result = from evt in q
+                         where (evt.jets.First().val1 > 5)
+                         select evt;
+            var c = result.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+            res.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+#endif
     }
 }

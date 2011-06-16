@@ -20,8 +20,8 @@ MSBuildTask=$(SolutionDir)\MSBuildTasks\bin\$(BuildConfig)
 all: $(SolutionDir)\$(ResultName)-$(BuildConfig).zip
 
 clean:
-	del /Q $(SolutionDir)\$(ResultName)-$(BuildConfig).zip
-	rmdir /S /Q $(ResultDirectoryName)
+	if EXIST $(SolutionDir)\$(ResultName)-$(BuildConfig).zip del /Q $(SolutionDir)\$(ResultName)-$(BuildConfig).zip
+	if EXIST $(ResultDirectoryName) ( rmdir /S /Q $(ResultDirectoryName) )
 
 #
 # Create a zip file for uploading
@@ -46,7 +46,10 @@ $(ResultDirectoryName)\date.txt : $(LINQToTTreeLibDir)\LINQToTTreeLib.dll \
 	if NOT EXIST $(ResultDirectoryName)\bin mkdir $(ResultDirectoryName)\bin
 	if NOT EXIST $(ResultDirectoryName)\lib mkdir $(ResultDirectoryName)\lib
 	if NOT EXIST $(ResultDirectoryName)\build mkdir $(ResultDirectoryName)\build
-	copy $(LINQToTTreeLibDir) $(ResultDirectoryName)\lib
+	copy $(LINQToTTreeLibDir)\LinqToTTreeInterfacesLib.* $(ResultDirectoryName)\lib
+	copy $(LINQToTTreeLibDir)\LINQToTTreeLib.* $(ResultDirectoryName)\lib
+	copy $(LINQToTTreeLibDir)\NVelocity.* $(ResultDirectoryName)\lib
+	copy $(LINQToTTreeLibDir)\Remotion.Linq.* $(ResultDirectoryName)\lib
 	copy $(CmdGenerateLINQClassesDir) $(ResultDirectoryName)\bin
 	copy $(CmdTFileParser) $(ResultDirectoryName)\bin
 	copy $(MSBuildTask) $(ResultDirectoryName)\build

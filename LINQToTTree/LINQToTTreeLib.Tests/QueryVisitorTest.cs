@@ -8,6 +8,7 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
@@ -76,13 +77,14 @@ namespace LINQToTTreeLib
         {
             var model = GetModel(() => (
                 from q in new QueriableDummy<dummyntup>()
-                let qtest = new ROOTNET.NTH1F("hi", "there", 20, 0.0, q.run)
+                let qtest = new ROOTNET.NTLorentzVector(q.run, q.run, q.run)
                 from qvlist in q.vals
-                select qvlist + qtest.NbinsX).Aggregate(0, (acc, va) => acc + va));
+                select qvlist + qtest.Pt()).Aggregate(0, (acc, va) => acc + (int)va));
 
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new TypeHandlerROOT());
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
@@ -407,5 +409,48 @@ namespace LINQToTTreeLib
             var ass = outterfloop.Statements.First() as Statements.StatementAssign;
             Assert.IsFalse(ass.Expression.RawValue.Contains("jets"), "jets should be missing from the expression - " + ass.Expression.RawValue);
         }
+
+        [TestMethod]
+        public void TestQueryWithTwoRangeVariablesNamedSameThingTranslating()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var result1 = from evt in q
+                          from jet in evt.jets
+                          select jet;
+            var result2 = from jet in result1
+                          where jet.var1 > 0.0
+                          select jet;
+            var result3 = from jet in result2
+                          where jet.var1 > 1.0
+                          select jet;
+            var c = result3.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            /// Looking for an infinite loop!
+        }
+
+        [TestMethod]
+        public void TestQueryWithTwoRangeVariablesNamedSameThingTranslatingMainVar()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var result1 = from evt in q
+                          where (from jet in evt.jets where jet.var1 > 1.0 select jet).Count() > 1
+                          select evt;
+            var result2 = from evt in result1
+                          from jet in evt.jets
+                          select jet;
+            var result3 = from jet in result2
+                          where jet.var1 > 1.0
+                          select jet;
+            var c = result3.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            /// Looking for an infinite loop!
+        }
+
     }
 }

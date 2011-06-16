@@ -76,22 +76,105 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         {
             var objRef = ExpressionToCPP.GetExpression(expr.Object, gc, context, container);
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("{0}.{1}(", objRef.AsObjectReference(), expr.Method.Name);
+            bld.AppendFormat("{0}.{1}", objRef.AsObjectReference(), expr.Method.Name);
 
-            bool first = true;
-            foreach (var a in expr.Arguments)
-            {
-                if (!first)
-                {
-                    bld.Append(",");
-                }
-                first = false;
-                bld.Append(ExpressionToCPP.GetExpression(a, gc, context, container).CastToType(a));
-            }
-            bld.Append(")");
+            AddMethodArguments(expr.Arguments, gc, context, container, bld);
 
             result = new ValSimple(bld.ToString(), expr.Type);
             return expr;
+        }
+
+        /// <summary>
+        /// New a ROOT object. Make sure that it gets dtor'd!
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            ///
+            /// Do checks
+            ///
+
+            if (gc == null)
+                throw new ArgumentException("gc");
+            if (context == null)
+                throw new ArgumentException("context");
+
+            ///
+            /// Figure out the type. We can only get here if we get through ROOTNET.xxx
+            /// 
+
+            result = null;
+            string tname = expression.Type.FullName.Substring(8);
+            if (tname[0] != 'N')
+            {
+                throw new ArgumentException(string.Format("Don't know how to translate to a ROOT type '{0}'", expression.Type.FullName));
+            }
+            tname = tname.Substring(1);
+
+            ///
+            /// We assume the include file "just works" - this is ROOT, after all. But lets hope.
+            /// This is something we might have to deal with later. :-)
+            /// 
+
+            gc.AddIncludeFile(string.Format("{0}.h", tname));
+
+            ///
+            /// Now, build the ctor, and add it to the statement list.
+            /// 
+
+            var ctor = new StringBuilder();
+            var ctorName = expression.Type.CreateUniqueVariableName();
+            ctor.AppendFormat("{0} {1}", tname, ctorName);
+
+            AddMethodArguments(expression.Arguments, gc, context, container, ctor);
+
+            gc.Add(new Statements.StatementSimpleStatement(ctor.ToString()));
+
+            ///
+            /// Now, everything in the C++ translation is a pointer, so we will
+            /// not create a pointer to this guy.
+            /// 
+
+            var ptrDecl = new StringBuilder();
+            var ptrName = expression.Type.CreateUniqueVariableName();
+            ptrDecl.AppendFormat("{0} *{1} = &{2}", tname, ptrName, ctorName);
+            gc.Add(new Statements.StatementSimpleStatement(ptrDecl.ToString()));
+
+            ///
+            /// That pointer is what we return for later use!
+            /// 
+
+            result = new ValSimple(ptrName, expression.Type);
+            return expression;
+        }
+
+        /// <summary>
+        /// Add the arguments for call
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <param name="builtArgs"></param>
+        private void AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container, StringBuilder builtArgs)
+        {
+            builtArgs.Append("(");
+            bool first = true;
+            foreach (var a in args)
+            {
+                if (!first)
+                {
+                    builtArgs.Append(",");
+                }
+                first = false;
+                builtArgs.Append(ExpressionToCPP.GetExpression(a, gc, context, container).CastToType(a));
+            }
+            builtArgs.Append(")");
         }
     }
 }

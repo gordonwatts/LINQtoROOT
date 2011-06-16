@@ -42,7 +42,7 @@ namespace LINQToTTreeLib.Expressions
             while (expr.ToString() != oldExpr)
             {
                 oldExpr = expr.ToString();
-                expr = TranslatingExpressionVisitor.Translate(expr);
+                expr = TranslatingExpressionVisitor.Translate(expr, cc.CacheCookies);
             }
 
             ///
@@ -61,18 +61,6 @@ namespace LINQToTTreeLib.Expressions
 
             visitor.VisitExpression(expr);
             return visitor.Result;
-        }
-
-        /// <summary>
-        /// Someone is doing a new in the middle of this LINQ operation... we need to handle that, I guess,
-        /// and translate it to a new in C++.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitNewExpression(NewExpression expression)
-        {
-            //TypeHandlers.ProcessNew(expression);
-            return base.VisitNewExpression(expression);
         }
 
         /// <summary>
@@ -150,6 +138,10 @@ namespace LINQToTTreeLib.Expressions
                 {
                     _result = new ValSimple("false", typeof(bool));
                 }
+            }
+            else if (expression.Type == typeof(string))
+            {
+                _result = new ValSimple(expression.Value as string, typeof(string));
             }
             else
             {
@@ -284,11 +276,11 @@ namespace LINQToTTreeLib.Expressions
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-" + GetExpression(expression.Operand).CastToType(expression), expression.Type);
+                    _result = new ValSimple("-(" + GetExpression(expression.Operand).CastToType(expression) + ")", expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!" + GetExpression(expression.Operand).CastToType(expression), expression.Type);
+                    _result = new ValSimple("!(" + GetExpression(expression.Operand).CastToType(expression) + ")", expression.Type);
                     break;
 
                 case ExpressionType.Convert:
@@ -454,6 +446,18 @@ namespace LINQToTTreeLib.Expressions
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
             var exprOut = TypeHandlers.ProcessMethodCall(expression, out _result, _codeEnv, _codeContext, MEFContainer);
+            return exprOut;
+        }
+
+        /// <summary>
+        /// Someone is doing a new in the middle of this LINQ operation... we need to handle that, I guess,
+        /// and translate it to a new in C++.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitNewExpression(NewExpression expression)
+        {
+            var exprOut = TypeHandlers.ProcessNew(expression, out _result, _codeEnv, _codeContext, MEFContainer);
             return exprOut;
         }
 

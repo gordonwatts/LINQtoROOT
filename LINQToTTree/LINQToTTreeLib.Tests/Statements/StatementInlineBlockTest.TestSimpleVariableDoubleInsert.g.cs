@@ -19,14 +19,14 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void TestSimpleVariableDoubleInsertThrowsArgumentException965()
+public void TestSimpleVariableDoubleInsertThrowsArgumentException847()
 {
     this.TestSimpleVariableDoubleInsert("", "");
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void TestSimpleVariableDoubleInsertThrowsArgumentException485()
+public void TestSimpleVariableDoubleInsertThrowsArgumentException68()
 {
     this.TestSimpleVariableDoubleInsert("\0", "\0");
 }
@@ -39,7 +39,7 @@ public void TestSimpleVariableDoubleInsert332()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void TestSimpleVariableDoubleInsertThrowsArgumentException194()
+public void TestSimpleVariableDoubleInsertThrowsArgumentException607()
 {
     this.TestSimpleVariableDoubleInsert("\u0100", "\u0100");
 }

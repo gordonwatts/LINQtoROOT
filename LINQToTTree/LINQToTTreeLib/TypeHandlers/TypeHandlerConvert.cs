@@ -86,5 +86,19 @@ namespace LINQToTTreeLib.TypeHandlers
 
             return expr;
         }
+
+        /// <summary>
+        /// Convert - should never try to new a static class! :-)
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

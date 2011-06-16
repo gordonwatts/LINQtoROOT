@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.TypeHandlers.CPPCode;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
@@ -35,6 +36,12 @@ namespace LINQToTTreeLib.Tests
         /// <returns></returns>
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
+            CommonExecute(queryModel);
+            return default(T);
+        }
+
+        private void CommonExecute(QueryModel queryModel)
+        {
             LastQueryModel = queryModel;
 
             Result = new GeneratedCode();
@@ -46,10 +53,13 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new ROCount());
                 MEFUtilities.AddPart(new ROTakeSkipOperators());
                 MEFUtilities.AddPart(new ROAggregate());
+                MEFUtilities.AddPart(new ROMinMax());
+                MEFUtilities.AddPart(new ROAnyAll());
 
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
                 MEFUtilities.AddPart(new TypeHandlerCache());
+                MEFUtilities.AddPart(new TypeHandlerCPPCode());
                 MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             }
 
@@ -59,12 +69,20 @@ namespace LINQToTTreeLib.Tests
             qv.VisitQueryModel(queryModel);
 
             FinalResult = Result;
-            return default(T);
         }
 
+        /// <summary>
+        /// Allow a single guy to run as well.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queryModel"></param>
+        /// <param name="returnDefaultWhenEmpty"></param>
+        /// <returns></returns>
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
-            throw new NotImplementedException();
+            //CommonExecute(queryModel);
+            //return default(T);
+            throw new NotImplementedException("You can't use this query '{0}' as it returns a Single element rather than a scalar. Use a different result operator (like Count, for example)");
         }
     }
 }

@@ -127,5 +127,19 @@ namespace LINQToTTreeLib.TypeHandlers
                 throw new ArgumentException("Unknown object - can't deal! - '" + expression.GetType().FullName + "'");
             }
         }
+
+        /// <summary>
+        /// No one should ever be trying to pass a new of these guys over! :-)
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="result"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

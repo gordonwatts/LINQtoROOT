@@ -61,6 +61,12 @@ namespace LINQToTTreeLib.TypeHandlers
                 result = new Variables.VarInteger();
                 return expr;
             }
+
+
+            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 
@@ -116,6 +122,23 @@ namespace LINQToTTreeLib.TypeHandlers
             Expression result01 = target.ProcessMethodCall(expr, out result, gc, cc, null);
             return result01;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessMethodCall(TypeHandlerCache, MethodCallExpression, IValue&, IGeneratedCode)
+        }
+
+        /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
+        [PexMethod]
+        internal Expression ProcessNew(
+            [PexAssumeUnderTest]TypeHandlerCache target,
+            NewExpression expression,
+            out IValue _result,
+            IGeneratedQueryCode _codeEnv,
+            ICodeContext _codeContext,
+            CompositionContainer MEFContainer
+        )
+        {
+            Expression result = target.ProcessNew
+                                    (expression, out _result, _codeEnv, _codeContext, MEFContainer);
+            return result;
+            // TODO: add assertions to method TypeHandlerCacheTest.ProcessNew(TypeHandlerCache, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
     }
 }

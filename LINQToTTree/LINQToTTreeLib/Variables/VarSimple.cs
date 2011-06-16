@@ -21,6 +21,7 @@ namespace LINQToTTreeLib.Variables
             Type = type;
             VariableName = type.CreateUniqueVariableName();
             RawValue = VariableName;
+            Declare = false;
         }
 
 
