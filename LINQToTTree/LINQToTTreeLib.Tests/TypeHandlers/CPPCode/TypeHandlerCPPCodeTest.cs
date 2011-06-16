@@ -105,7 +105,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.AreEqual("int " + vname, st1.Line, "line #1 is incorrect");
 
             var expected = new StringBuilder();
-            expected.AppendFormat("{0} = p*2", vname);
+            expected.AppendFormat("{0} = p*2;", vname);
             Assert.AreEqual(expected.ToString(), st2.Line, "statement line incorrect");
 
             Assert.AreEqual(1, gc.IncludeFiles.Count(), "# of include files");
