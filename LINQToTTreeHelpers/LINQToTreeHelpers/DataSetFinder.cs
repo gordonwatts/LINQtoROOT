@@ -381,6 +381,11 @@ namespace LINQToTreeHelpers
                 leadingSpecifier = searchString.Substring(0, shareEnd);
                 searchString = searchString.Substring(shareEnd + 1);
             }
+            else if (searchString.Contains(":\\"))
+            {
+                leadingSpecifier = searchString.Substring(0, 3);
+                searchString = searchString.Substring(3);
+            }
 
             //
             // Great, now use recursion to build up the filename
