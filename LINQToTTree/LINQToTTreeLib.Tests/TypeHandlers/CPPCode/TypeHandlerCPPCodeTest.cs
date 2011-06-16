@@ -145,5 +145,60 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             return result01;
             // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessNew(TypeHandlerCPPCode, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
+
+        [TestMethod]
+        public void TestForUniqueReplacement()
+        {
+            Assert.Inconclusive("Look for xxxUnique replacement - several lines and different replcaements");
+        }
+
+        [TestMethod]
+        public void TestForMissingResult()
+        {
+            Assert.Inconclusive();
+        }
+
+        [CPPHelperClass]
+        static class TLZHelper
+        {
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+                Code = new string[]{
+                "TLorentzVector tlzUnique;",
+                "tlzUnique.SetPtEtaPhi(pt, eta, phi, E);",
+                "CreateTLZ = &tlzUnique;"
+            })]
+            public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi, double E)
+            {
+                throw new NotImplementedException("This should never get called!");
+                var tlz = new ROOTNET.NTLorentzVector();
+                tlz.SetPtEtaPhiE(pt, eta, phi, E);
+                return tlz;
+            }
+        }
+
+        [TestMethod]
+        public void TestComplexArgumentReplacement()
+        {
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = Expression.Parameter(typeof(double), "pt");
+            var p_eta = Expression.Parameter(typeof(double), "eta");
+            var p_phi = Expression.Parameter(typeof(double), "phi");
+            var p_E = Expression.Parameter(typeof(double), "E");
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(4, gc.CodeBody.Statements.Count(), "# of statements total");
+            var setStatement = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
+            Assert.IsNotNull(setStatement, "Bad type for 3rd statement");
+            Assert.IsTrue(setStatement.Line.Contains("SetPtEtaPhi(pt, eta, phi, E)"), string.Format("Line '{0}' doesn't have correct set statement.", setStatement.Line));
+        }
     }
 }
