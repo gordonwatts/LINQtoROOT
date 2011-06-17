@@ -54,9 +54,7 @@ namespace LINQToTTreeLib.Expressions
 
             if (container != null)
             {
-                CompositionBatch b = new CompositionBatch();
-                b.AddPart(visitor);
-                container.Compose(b);
+                container.SatisfyImportsOnce(visitor);
             }
 
             visitor.VisitExpression(expr);
@@ -473,10 +471,8 @@ namespace LINQToTTreeLib.Expressions
                 throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
 
             QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext, MEFContainer);
-            CompositionBatch b = new CompositionBatch();
-            b.AddPart(qv);
             qv.SubExpressionParse = true;
-            MEFContainer.Compose(b);
+            MEFContainer.SatisfyImportsOnce(qv);
 
             ///
             /// Run it - since this result is out of this loop, we pop-back-out when done.

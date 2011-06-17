@@ -302,14 +302,8 @@ namespace LINQToTTreeLib
             var result = new GeneratedCode();
             var codeContext = new CodeContext();
 
-            CompositionBatch b = new CompositionBatch();
             var qv = new QueryVisitor(result, codeContext, _gContainer);
-            b.AddPart(qv);
-
-            if (_cppTranslator == null)
-                b.AddPart(this);
-
-            _gContainer.Compose(b);
+            _gContainer.SatisfyImportsOnce(qv);
 
             ///
             /// Parse the query
@@ -486,6 +480,12 @@ namespace LINQToTTreeLib
         {
             if (_executorInited)
                 return;
+
+            ///
+            /// Compose us!
+            /// 
+
+            _gContainer.ComposeParts(this);
 
             ///
             /// Generate any dictionaries that are requested.
