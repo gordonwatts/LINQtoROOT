@@ -29,8 +29,7 @@ namespace LINQToTreeHelpers
         /// <returns></returns>
         public static ROOTNET.Interface.NTH1 SaveToROOTDirectory(this ROOTNET.Interface.NTH1 hist, ROOTNET.Interface.NTDirectory dir)
         {
-            hist.SetDirectory(dir);
-            hist.SetNull();
+            hist.InternalWriteObject(dir);
             return null;
         }
 
@@ -43,7 +42,7 @@ namespace LINQToTreeHelpers
         public static void WriteToROOTDirectory<T>(this T obj, ROOTNET.Interface.NTDirectory dir)
             where T : ROOTNET.Interface.NTObject
         {
-            dir.WriteTObject(obj);
+            obj.InternalWriteObject(dir);
         }
 
     }

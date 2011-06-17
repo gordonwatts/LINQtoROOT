@@ -89,6 +89,7 @@
     <Compile Include="SparseTables\SparseTableHelpers.cs" />
     <Compile Include="SparseTables\SparseTableReportSource.cs" />
     <Compile Include="StackedPlot.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -33,7 +33,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             public void Save(ROOTNET.Interface.NTDirectory dir)
             {
-                dir.WriteTObject(AsTObject);
+                AsTObject.InternalWriteObject(dir);
             }
 
             public abstract ROOTNET.Interface.NTObject AsTObject { get; }
