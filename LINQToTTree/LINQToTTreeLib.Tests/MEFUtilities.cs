@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -25,6 +26,15 @@ namespace LINQToTTreeLib.Tests
         private static CompositionBatch _batch = null;
 
         private static AggregateCatalog _catalog;
+
+        /// <summary>
+        /// Attempt to count the # of catalogs around.
+        /// </summary>
+        /// <returns></returns>
+        public static int CountParts()
+        {
+            return _catalog.Catalogs.Sum(c => c.Parts.Count());
+        }
 
         /// <summary>
         /// Call this at the start of the class in order to get MEF setup.

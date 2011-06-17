@@ -66,10 +66,14 @@ namespace LINQToTTreeLib.Tests
             var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
+            MEFInitialPartCount = MEFUtilities.CountParts();
+
             qv.VisitQueryModel(queryModel);
 
             FinalResult = Result;
         }
+
+        public static int MEFInitialPartCount { get; private set; }
 
         /// <summary>
         /// Allow a single guy to run as well.

@@ -72,6 +72,33 @@ namespace LINQToTTreeLib
             qv.VisitQueryModel(model);
         }
 
+#if false
+        /// Don't know how to count the # of parts in the catalog.
+        [TestMethod]
+        public void TestMEFContainerIsQuiet()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                select q.vals.Count()).Aggregate(0, (acc, va) => acc + va));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+
+            int originalCount = MEFUtilities.CountParts();
+
+            qv.VisitQueryModel(model);
+
+            Assert.AreEqual(originalCount, MEFUtilities.CountParts(), "# of parts in MEF container");
+            Assert.Inconclusive("Can't figure out how to count the # of parts");
+        }
+#endif
+
         [TestMethod]
         public void TestLetOperator()
         {
