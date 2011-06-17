@@ -173,6 +173,30 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         }
 
         [TestMethod]
+        public void TestReturnVariableDecl()
+        {
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = Expression.Parameter(typeof(double), "ptParam");
+            var p_eta = Expression.Parameter(typeof(double), "etaParam");
+            var p_phi = Expression.Parameter(typeof(double), "phiParam");
+            var p_E = Expression.Parameter(typeof(double), "EParam");
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            var declStatement = gc.CodeBody.Statements.First() as Statements.StatementSimpleStatement;
+
+            Assert.IsTrue(declStatement.CodeItUp().First().StartsWith("TLorentzVector* aNTLorentzVector"), "return variable decl in correct");
+        }
+
+        [TestMethod]
         public void TestTwoUniqueReplacements()
         {
             var target = new TypeHandlerCPPCode();

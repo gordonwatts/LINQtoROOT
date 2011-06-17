@@ -100,10 +100,6 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// 
 
             var cppType = expr.Type.AsCPPType();
-            if (expr.Type.IsPointerType())
-            {
-                cppType = cppType + " *";
-            }
             var resultName = expr.Type.CreateUniqueVariableName();
             gc.Add(new Statements.StatementSimpleStatement(string.Format("{0} {1}", cppType, resultName)));
 
