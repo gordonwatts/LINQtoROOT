@@ -158,6 +158,12 @@ namespace LINQToTreeHelpers.FutureUtils
         public FutureTDirectory mkdir(string subdirname)
         {
             var rootDir = Directory.mkdir(subdirname);
+            if (rootDir == null)
+            {
+                rootDir = Directory.Get(subdirname) as ROOTNET.Interface.NTDirectory;
+                if (rootDir == null)
+                    throw new ArgumentException("Unable to create directory '" + subdirname + "' because something with that name already exists in '" + Directory.Name + "'.");
+            }
             var future = new FutureTDirectory(rootDir);
             _subDirs.Value.Add(future);
 
