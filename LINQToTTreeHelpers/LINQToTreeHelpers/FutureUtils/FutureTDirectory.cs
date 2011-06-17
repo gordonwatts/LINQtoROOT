@@ -23,6 +23,9 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <param name="dir"></param>
         public FutureTDirectory(ROOTNET.Interface.NTDirectory dir)
         {
+            if (dir == null)
+                throw new ArgumentNullException("Can't create a new FutureTDirectory pointing to a null directory");
+
             Directory = dir;
         }
 
