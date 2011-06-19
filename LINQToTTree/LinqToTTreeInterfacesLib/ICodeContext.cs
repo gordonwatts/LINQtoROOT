@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace LinqToTTreeInterfacesLib
@@ -74,6 +75,6 @@ namespace LinqToTTreeInterfacesLib
         /// Keep track of cookies that should be taken into account when
         /// calculating the cache.
         /// </summary>
-        System.Collections.Generic.List<string> CacheCookies { get; }
+        List<string> CacheCookies { get; }
     }
 }
