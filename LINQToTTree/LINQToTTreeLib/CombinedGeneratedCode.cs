@@ -66,6 +66,15 @@ namespace LINQToTTreeLib
                 AddResult(item);
             }
 
+            //
+            // Add the referenced leaf names
+            //
+
+            foreach (var leaf in code.ReferencedLeafNames)
+            {
+                _leavesReferenced.Add(leaf);
+            }
+
             ///
             /// Finally, we need to combine the query code. Now, there is a limitation (by design) in the C++ compiler:
             /// http://connect.microsoft.com/VisualStudio/feedback/details/100734/c-function-with-many-unnested-loops-generates-error-fatal-error-c1061-compiler-limit-blocks-nested-too-deeply
@@ -180,10 +189,18 @@ namespace LINQToTTreeLib
             return _queryBlocks;
         }
 
+        /// <summary>
+        /// Copy of the leaf names referenced.
+        /// </summary>
+        private HashSet<string> _leavesReferenced = new HashSet<string>();
 
+        /// <summary>
+        /// Return a uniqe list of the names referenced by this
+        /// set of code blocks.
+        /// </summary>
         public IEnumerable<string> ReferencedLeafNames
         {
-            get { throw new NotImplementedException(); }
+            get { return _leavesReferenced; }
         }
     }
 }
