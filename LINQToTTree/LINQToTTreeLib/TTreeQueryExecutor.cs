@@ -354,6 +354,12 @@ namespace LINQToTTreeLib
         internal void ExecuteQueuedQueries()
         {
             ///
+            /// Make sure we are setup and ready to go.
+            /// 
+
+            PreExecutionInit();
+
+            ///
             /// Get all the queries together, combined, and ready to run.
             /// 
 
@@ -487,6 +493,24 @@ namespace LINQToTTreeLib
 
             _gContainer.ComposeParts(this);
 
+            _executorInited = true;
+        }
+
+
+        /// <summary>
+        /// True after we've done pre-execution initalization.
+        /// </summary>
+        private bool _preExeInitDone = false;
+
+        /// <summary>
+        /// This init needs to be done before we actually compile anything!
+        /// </summary>
+        private void PreExecutionInit()
+        {
+            if (_preExeInitDone)
+                return;
+            _preExeInitDone = true;
+
             ///
             /// Generate any dictionaries that are requested.
             /// 
@@ -506,8 +530,6 @@ namespace LINQToTTreeLib
                     }
                 }
             }
-
-            _executorInited = true;
         }
 
         /// <summary>
