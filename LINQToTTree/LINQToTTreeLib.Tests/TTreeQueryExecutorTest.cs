@@ -1020,6 +1020,42 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestUniqueCombinations()
+        {
+            const int numberOfIter = 25;
+            var rootFile = CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// We are looking at an array that has 10 entries in it. So if we create a
+            /// unique combo, then we will have 9 + 8 + 7 + 6 + 5 + 4 + 3 + 2 + 1 items,
+            /// or 45 items.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (evt.myvectorofint.UniqueCombinations().Count() == 45)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
         public void TestInitalizerWithROOTVariable()
         {
             const int numberOfIter = 25;

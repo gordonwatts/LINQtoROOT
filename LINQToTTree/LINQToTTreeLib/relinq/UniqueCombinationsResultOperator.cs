@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.StreamedData;
@@ -29,7 +30,6 @@ namespace LINQToTTreeLib.relinq
         /// <returns></returns>
         public override IStreamedDataInfo GetOutputDataInfo(IStreamedDataInfo inputInfo)
         {
-#if false
             //
             // Build up the tuple type
             // 
@@ -39,15 +39,21 @@ namespace LINQToTTreeLib.relinq
                 throw new ArgumentException("Input info is not of type StreamSequenceInfo");
             var seqType = seqInfo.ItemExpression.Type;
 
-            var tupleType = typeof(Tuple<>).MakeGenericType(seqType, seqType);
+            var tupleType = typeof(Tuple<,>).MakeGenericType(seqType, seqType);
+
+            //
+            // Now we have to build an expression that does the transformation.
+            //
+
+            var newTutpleExpr = Expression.New(tupleType.GetConstructor(new Type[] { seqType, seqType }),
+                seqInfo.ItemExpression,
+                seqInfo.ItemExpression);
 
             //
             // Return the stream info
             //
 
-            return new StreamedSequenceInfo(typeof(IQueryable<>).MakeGenericType(tupleType), seqInfo.ItemExpression);
-#endif
-            throw new NotImplementedException();
+            return new StreamedSequenceInfo(typeof(IQueryable<>).MakeGenericType(tupleType), newTutpleExpr);
         }
 
         /// <summary>

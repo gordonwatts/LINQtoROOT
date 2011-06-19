@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -42,6 +43,27 @@ namespace LINQToTTreeLib
             return source.Provider.CreateQuery<Tuple<T, T>>(
                 Expression.Call(((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
                 source.Expression));
+        }
+
+        /// <summary>
+        /// Applied to a sequence of items, this will return a list of pairs - every unique pair. For example, if
+        /// the sequence o1, o2, o3 comes in, it will return (o1, o2), (o1, o3), (o2, o3). Can be used, for example,
+        /// it examine all pairs of jets in an event.
+        /// WARNING: do not use @ top level (i.e. to make all pairs of events).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<Tuple<T, T>> UniqueCombinations<T>(this IEnumerable<T> source)
+        {
+            var inputs = source.ToArray();
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                for (int j = i + 1; j < inputs.Length; j++)
+                {
+                    yield return Tuple.Create(inputs[i], inputs[j]);
+                }
+            }
         }
 
         /// <summary>

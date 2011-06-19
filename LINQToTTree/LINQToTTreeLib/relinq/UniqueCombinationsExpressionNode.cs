@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
@@ -15,7 +17,8 @@ namespace LINQToTTreeLib.relinq
         /// </summary>
         public static MethodInfo[] SupportedMethods = new[]
             {
-                typeof(Helpers).GetMethod("UniqueCombinations")
+                GetSupportedMethod (() => Helpers.UniqueCombinations<object>((IEnumerable<object>) null)),
+                GetSupportedMethod (() => Helpers.UniqueCombinations<object>((IQueryable<object>) null))
             };
 
         public UniqueCombinationsExpressionNode(MethodCallExpressionParseInfo parseInfo)

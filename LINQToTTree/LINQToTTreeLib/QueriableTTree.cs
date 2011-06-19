@@ -99,7 +99,7 @@ namespace LINQToTTreeLib
         /// some operators or other custom things into the parser, this is where it is done.
         /// See https://www.re-motion.org/jira/browse/RM-3724 for sample code.
         /// </summary>
-        private static IQueryParser CreateLINQToTTreeParser()
+        internal static IQueryParser CreateLINQToTTreeParser()
         {
             //
             // Provider for our classes, and they also go into the whole pot of soup
@@ -107,7 +107,7 @@ namespace LINQToTTreeLib
 
             var ourProviders = new INodeTypeProvider[]
             {
-                MethodNameBasedNodeTypeRegistry.CreateFromTypes(new Type[] {typeof(UniqueCombinationsExpressionNode)})
+                MethodInfoBasedNodeTypeRegistry.CreateFromTypes(new Type[] {typeof(UniqueCombinationsExpressionNode)})
             };
 
             var defaultNodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
