@@ -229,13 +229,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestArrayLengthReference()
-        {
-            /// When we move over an array, make sure that nothing funny happens there!
-            Assert.Inconclusive();
-        }
-
-        [TestMethod]
         public void TestArrayReference()
         {
             /// When we index into an array
@@ -446,11 +439,10 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestSimpleArrayLength()
+        public void TestSimpleArrayLengthReferenceRecorded()
         {
             Expression<Func<int[], int>> arrayLenLambda = arr => arr.Length;
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
-            Assert.AreEqual("(*arr).size()", result.RawValue, "actual translation incorrect");
         }
 
         private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)
@@ -483,6 +475,26 @@ namespace LINQToTTreeLib
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        [TestMethod]
+        public void TestSimpleArrayLengthReference()
+        {
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
         }
 
         [TranslateToClass(typeof(ResultType1))]
