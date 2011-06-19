@@ -229,13 +229,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestArrayReference()
-        {
-            /// When we index into an array
-            Assert.Inconclusive();
-        }
-
-        [TestMethod]
         public void TestObjectLeafReference()
         {
             /// If we ref a TLZ, is that leaf name recorded properly?
@@ -438,13 +431,6 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");
         }
 
-        [TestMethod]
-        public void TestSimpleArrayLengthReferenceRecorded()
-        {
-            Expression<Func<int[], int>> arrayLenLambda = arr => arr.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
-        }
-
         private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)
         {
             MEFUtilities.AddPart(new QVResultOperators());
@@ -481,6 +467,26 @@ namespace LINQToTTreeLib
         public void TestSimpleArrayLengthReference()
         {
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
+        }
+
+        [TestMethod]
+        public void TestArrayReferenceRecorded()
+        {
+            Expression<Func<ResultType0, int, int>> arrayLenLambda = (arr, index) => arr.val1[index];
 
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
