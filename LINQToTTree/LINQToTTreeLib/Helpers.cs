@@ -26,6 +26,20 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Applied to a sequence of items, this will return a list of pairs - every unique pair. For example, if
+        /// the sequence o1, o2, o3 comes in, it will return (o1, o2), (o1, o3), (o2, o3). Can be used, for example,
+        /// it examine all pairs of jets in an event.
+        /// WARNING: do not use @ top level (i.e. to make all pairs of events).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IQueryable<Tuple<T, T>> UniqueCombinations<T>(this IQueryable<T> source)
+        {
+            throw new NotImplementedException("Not yet");
+        }
+
+        /// <summary>
         /// given an object, apply each iteration to that object using a func, and return the object when done. Can
         /// be used much like Aggregate (o.Fill(arg)).
         /// </summary>
