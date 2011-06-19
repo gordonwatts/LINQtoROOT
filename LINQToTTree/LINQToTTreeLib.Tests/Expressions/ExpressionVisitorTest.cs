@@ -229,13 +229,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestObjectLeafReference()
-        {
-            /// If we ref a TLZ, is that leaf name recorded properly?
-            Assert.Inconclusive();
-        }
-
-        [TestMethod]
         public void TestMemberEnumerable()
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");
@@ -472,6 +465,54 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
+        }
+
+        class ResultTypeTLZ
+        {
+#pragma warning disable 0649
+            public ROOTNET.NTLorentzVector[] val1;
+#pragma warning restore 0649
+        }
+
+        [TestMethod]
+        public void TestObjectLeafLengthReference()
+        {
+            Expression<Func<ResultTypeTLZ, int>> arrayLenLambda = arr => arr.val1.Length;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
+        }
+
+        [TestMethod]
+        public void TestObjectLeafReference()
+        {
+            Expression<Func<ResultTypeTLZ, int, double>> arrayLenLambda = (arr, index) => arr.val1[index].Pt();
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            MEFUtilities.AddPart(new TypeHandlerROOT());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
