@@ -103,7 +103,7 @@ namespace LINQToTTreeLib
             }
             else
             {
-                crumbs = (from c in unsortedCrumbs orderby c select c).ToArray();
+                crumbs = (from c in unsortedCrumbs orderby c select c).Distinct().ToArray();
                 StringBuilder crumbString = new StringBuilder();
                 foreach (var c in crumbs)
                 {
