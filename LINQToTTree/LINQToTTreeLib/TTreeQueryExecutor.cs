@@ -391,7 +391,7 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
             CopyToQueryDirectory(_proxyFile);
-            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - buiding the TSelector");
+            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
             var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
             CompileAndLoad(templateRunner);
 
