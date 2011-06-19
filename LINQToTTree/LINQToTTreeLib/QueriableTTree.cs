@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using LINQToTTreeLib.relinq;
 using Remotion.Linq;
+using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using Remotion.Linq.Parsing.Structure;
+using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
 
 namespace LINQToTTreeLib
 {
@@ -97,11 +101,35 @@ namespace LINQToTTreeLib
         /// </summary>
         private static IQueryParser CreateLINQToTTreeParser()
         {
+            //
+            // Provider for our classes, and they also go into the whole pot of soup
+            //
+
+            var ourProviders = new INodeTypeProvider[]
+            {
+                MethodNameBasedNodeTypeRegistry.CreateFromTypes(new Type[] {typeof(UniqueCombinationsExpressionNode)})
+            };
+
+            var defaultNodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
+
+            var newProvider = new CompoundNodeTypeProvider(ourProviders.Concat(new INodeTypeProvider[] { defaultNodeTypeProvider }));
+
+            //
+            // Create the query provider
+            //
+
+            var transformerRegistry = ExpressionTransformerRegistry.CreateDefault();
+            var expressionTreeParser = new ExpressionTreeParser(
+                newProvider,
+                ExpressionTreeParser.CreateDefaultProcessor(transformerRegistry));
+
+            return new QueryParser(expressionTreeParser);
+
             ///
             /// Right now we are not doing anything special, so just do the default!
             /// 
 
-            return QueryParser.CreateDefault();
+            //return QueryParser.CreateDefault();
             ///(this.Provider as DefaultQueryProvider).ExpressionTreeParser.NodeTypeRegistry.Register(xxx.SupportedMethods, typeof(xxx));
         }
     }

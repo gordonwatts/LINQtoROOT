@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib
@@ -36,7 +37,11 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public static IQueryable<Tuple<T, T>> UniqueCombinations<T>(this IQueryable<T> source)
         {
-            throw new NotImplementedException("Not yet");
+            // Template for code from fabian's blog: https://www.re-motion.org/blogs/mix/2010/10/28/re-linq-extensibility-custom-query-operators
+            // This is a full-on result operator, so it is parsed more deeply by the linq infrastructure and the re-linq infrastructure.
+            return source.Provider.CreateQuery<Tuple<T, T>>(
+                Expression.Call(((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
+                source.Expression));
         }
 
         /// <summary>
