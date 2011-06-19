@@ -1,5 +1,6 @@
-﻿using System.IO;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -121,5 +122,24 @@ namespace LINQToTTreeLib.Utils
                 }
             }
         }
+
+        /// <summary>
+        /// Iterator to read the lines from a file.
+        /// </summary>
+        /// <param name="input">Existing file to read</param>
+        /// <returns></returns>
+        public static IEnumerable<string> EnumerateTextFile(this FileInfo input)
+        {
+            using (var reader = input.OpenText())
+            {
+                var line = reader.ReadLine();
+                while (line != null)
+                {
+                    yield return line;
+                    line = reader.ReadLine();
+                }
+            }
+        }
     }
+
 }
