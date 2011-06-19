@@ -327,11 +327,11 @@
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\TestCount.cs" />
-    <Compile Include="ROCountTest.CanHandle.g.cs">
+    <Compile Include="ResultOperators\ROCountTest.CanHandle.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ROCountTest.cs" />
-    <Compile Include="ROCountTest.ProcessResultOperator.g.cs">
+    <Compile Include="ResultOperators\ROCountTest.cs" />
+    <Compile Include="ResultOperators\ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
