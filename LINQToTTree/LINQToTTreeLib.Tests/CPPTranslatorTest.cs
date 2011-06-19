@@ -131,6 +131,12 @@ namespace LINQToTTreeLib
                     yield return innerBlock;
                 }
             }
+
+
+            public IEnumerable<string> ReferencedLeafNames
+            {
+                get { throw new NotImplementedException(); }
+            }
         }
 
         /// <summary>

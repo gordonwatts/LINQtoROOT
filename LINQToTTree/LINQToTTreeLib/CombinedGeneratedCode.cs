@@ -179,5 +179,11 @@ namespace LINQToTTreeLib
         {
             return _queryBlocks;
         }
+
+
+        public IEnumerable<string> ReferencedLeafNames
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

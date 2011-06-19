@@ -217,5 +217,11 @@ namespace LINQToTTreeLib
         {
             yield return CodeBody;
         }
+
+
+        public IEnumerable<string> ReferencedLeafNames
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }
