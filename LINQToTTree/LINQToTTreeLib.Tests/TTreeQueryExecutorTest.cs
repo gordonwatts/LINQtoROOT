@@ -1056,6 +1056,13 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestUniqueCombinationsWithBreak()
+        {
+            // Make sure if we use somethign like an Any that issues a break it is correctly dealt with.
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestInitalizerWithROOTVariable()
         {
             const int numberOfIter = 25;

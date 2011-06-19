@@ -109,6 +109,7 @@
     <Compile Include="ResultOperators\ROFirstLast.cs" />
     <Compile Include="ResultOperators\ROMinMax.cs" />
     <Compile Include="ResultOperators\ROTakeSkipOperators.cs" />
+    <Compile Include="ResultOperators\ROUniqueCombinations.cs" />
     <Compile Include="Statements\StatementBreak.cs" />
     <Compile Include="Statements\StatementFlipBool.cs" />
     <Compile Include="Statements\StatementMinMaxTest.cs" />
