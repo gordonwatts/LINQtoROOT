@@ -218,6 +218,38 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestMemberAndRefereceRecorded()
+        {
+            var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "run");
+            GeneratedCode gc = new GeneratedCode();
+            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            var refLeaves = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refLeaves.Length, "# of referenced leaves is incorrect");
+            Assert.AreEqual("run", refLeaves[0], "Referenced leaf name incorrect");
+        }
+
+        [TestMethod]
+        public void TestArrayLengthReference()
+        {
+            /// When we move over an array, make sure that nothing funny happens there!
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void TestArrayReference()
+        {
+            /// When we index into an array
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void TestObjectLeafReference()
+        {
+            /// If we ref a TLZ, is that leaf name recorded properly?
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestMemberEnumerable()
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");

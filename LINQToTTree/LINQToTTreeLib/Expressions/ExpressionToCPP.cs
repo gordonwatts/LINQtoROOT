@@ -360,7 +360,9 @@ namespace LINQToTTreeLib.Expressions
 
             if (_result == null)
             {
-                _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                var leafName = expression.Member.Name;
+                _result = new ValSimple(baseExpr.AsObjectReference() + "." + leafName, expression.Type);
+                _codeEnv.AddReferencedLeaf(leafName);
             }
 
             return expression;
