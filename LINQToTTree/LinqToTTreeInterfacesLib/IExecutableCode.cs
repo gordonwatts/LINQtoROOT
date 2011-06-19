@@ -34,5 +34,10 @@ namespace LinqToTTreeInterfacesLib
         /// Each iteration returns a new query code block.
         /// </summary>
         IEnumerable<IStatementCompound> QueryCode();
+
+        /// <summary>
+        /// Returns the list of TTree leaves referenced by this query
+        /// </summary>
+        IEnumerable<string> ReferencedLeafNames { get; }
     }
 }

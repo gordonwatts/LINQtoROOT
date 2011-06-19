@@ -217,5 +217,23 @@ namespace LINQToTTreeLib
         {
             yield return CodeBody;
         }
+
+        /// <summary>
+        /// Keep a unique list of all leaves that this expression references.
+        /// </summary>
+        private HashSet<string> _referencedLeavs = new HashSet<string>();
+
+        public void AddReferencedLeaf(string leafName)
+        {
+            _referencedLeavs.Add(leafName);
+        }
+
+        /// <summary>
+        /// Returns a set of leaves that can be accessed.
+        /// </summary>
+        public IEnumerable<string> ReferencedLeafNames
+        {
+            get { return _referencedLeavs; }
+        }
     }
 }

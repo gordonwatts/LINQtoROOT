@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Linq;
@@ -390,8 +391,8 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
-            CopyToQueryDirectory(_proxyFile);
-            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - buiding the TSelector");
+            SlimProxyFile(combinedInfo.ReferencedLeafNames.ToArray());
+            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
             var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
             CompileAndLoad(templateRunner);
 
@@ -427,6 +428,104 @@ namespace LINQToTTreeLib
             }
             _queryDirectory = null;
             TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
+        }
+
+        /// <summary>
+        /// Given the list of leaf names that are used in this query, we will slim down the
+        /// proxy file so that only those leaves are defined. In a large ntuple (with 100's of items) this can
+        /// change compile times from 45 seconds to 8 seconds - so is a big deal during incremental testing, etc.
+        /// </summary>
+        private void SlimProxyFile(string[] leafNames)
+        {
+            //
+            // Create search's for the various proxy names
+            //
+
+            var goodLeafFinders = (from l in leafNames
+                                   select new Regex(string.Format(@"\b{0}\b", l))).ToArray();
+
+            //
+            // Copy over the file, emitting only the lines we need to emit.
+            //
+
+            FileInfo destFile = new FileInfo(GetQueryDirectory().FullName + "\\" + _proxyFile.Name);
+            using (var writer = destFile.CreateText())
+            {
+                // State variables
+                bool proxydef = false; // True when we are looking at code to define the proxy files
+                bool proxyinit = false; // True when we are scanning the proxying ctor variables
+
+                List<string> proxyInitStatements = new List<string>();
+
+                foreach (var line in _proxyFile.EnumerateTextFile())
+                {
+                    bool writeLine = true;
+
+                    //
+                    // Alter our state at start of line reading
+                    //
+
+                    if (proxydef && string.IsNullOrWhiteSpace(line))
+                        proxydef = false;
+                    if (proxyinit && line.Contains("{") && line.Contains("}"))
+                    {
+                        proxyinit = false;
+                        if (proxyInitStatements.Count > 0)
+                        {
+                            var lastinit = proxyInitStatements[proxyInitStatements.Count - 1];
+                            proxyInitStatements[proxyInitStatements.Count - 1] = lastinit.Substring(0, lastinit.Length - 1);
+                            foreach (var l in proxyInitStatements)
+                            {
+                                writer.WriteLine(l);
+                            }
+                        }
+                    }
+
+                    //
+                    // If in the proxy def state, only include lines that have a proxy defined!
+                    //
+
+                    if (proxydef)
+                    {
+                        writeLine = goodLeafFinders.Where(lf => lf.Match(line).Success).Any();
+                    }
+                    if (proxyinit)
+                    {
+                        writeLine = false;
+                        var keepline = goodLeafFinders.Where(lf => lf.Match(line).Success).Any();
+                        if (keepline)
+                        {
+                            var tline = line.TrimEnd();
+                            if (!tline.EndsWith(","))
+                                tline = tline + ",";
+                            proxyInitStatements.Add(tline);
+                        }
+                    }
+
+                    //
+                    // Alter state @ end of line reading
+                    //
+
+                    if (line.Contains("Proxy for each of the branches, leaves and friends of the tree"))
+                        proxydef = true;
+
+                    if (line.Contains("fClass") && line.Contains("(TClass::GetClass("))
+                    {
+                        proxyinit = true;
+                        writeLine = false;
+                        proxyInitStatements.Add(line);
+                    }
+
+                    //
+                    // Write out the line if it was marked as "good"
+                    //
+
+                    if (writeLine)
+                        writer.WriteLine(line);
+
+                }
+                writer.Close();
+            }
         }
 
         /// <summary>

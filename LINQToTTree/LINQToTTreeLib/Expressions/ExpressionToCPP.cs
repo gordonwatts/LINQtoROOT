@@ -337,11 +337,14 @@ namespace LINQToTTreeLib.Expressions
             /// 
 
             _result = null;
+            var leafName = expression.Member.Name;
+            _codeEnv.AddReferencedLeaf(leafName);
+
             if (expression.Type.IsGenericType)
             {
                 if (expression.Type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
-                    _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                    _result = new ValSimple(baseExpr.AsObjectReference() + "." + leafName, expression.Type);
                 }
                 else
                 {
@@ -350,7 +353,7 @@ namespace LINQToTTreeLib.Expressions
             }
             else if (expression.Type.IsArray)
             {
-                _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                _result = new ValSimple(baseExpr.AsObjectReference() + "." + leafName, expression.Type);
             }
 
             ///
@@ -360,7 +363,7 @@ namespace LINQToTTreeLib.Expressions
 
             if (_result == null)
             {
-                _result = new ValSimple(baseExpr.AsObjectReference() + "." + expression.Member.Name, expression.Type);
+                _result = new ValSimple(baseExpr.AsObjectReference() + "." + leafName, expression.Type);
             }
 
             return expression;

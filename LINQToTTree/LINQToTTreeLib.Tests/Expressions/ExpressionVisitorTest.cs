@@ -218,6 +218,17 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestMemberAndRefereceRecorded()
+        {
+            var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "run");
+            GeneratedCode gc = new GeneratedCode();
+            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            var refLeaves = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refLeaves.Length, "# of referenced leaves is incorrect");
+            Assert.AreEqual("run", refLeaves[0], "Referenced leaf name incorrect");
+        }
+
+        [TestMethod]
         public void TestMemberEnumerable()
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");
@@ -413,14 +424,6 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");
         }
 
-        [TestMethod]
-        public void TestSimpleArrayLength()
-        {
-            Expression<Func<int[], int>> arrayLenLambda = arr => arr.Length;
-            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
-            Assert.AreEqual("(*arr).size()", result.RawValue, "actual translation incorrect");
-        }
-
         private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)
         {
             MEFUtilities.AddPart(new QVResultOperators());
@@ -451,6 +454,94 @@ namespace LINQToTTreeLib
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        [TestMethod]
+        public void TestSimpleArrayLengthReference()
+        {
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
+        }
+
+        class ResultTypeTLZ
+        {
+#pragma warning disable 0649
+            public ROOTNET.NTLorentzVector[] val1;
+#pragma warning restore 0649
+        }
+
+        [TestMethod]
+        public void TestObjectLeafLengthReference()
+        {
+            Expression<Func<ResultTypeTLZ, int>> arrayLenLambda = arr => arr.val1.Length;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
+        }
+
+        [TestMethod]
+        public void TestObjectLeafReference()
+        {
+            Expression<Func<ResultTypeTLZ, int, double>> arrayLenLambda = (arr, index) => arr.val1[index].Pt();
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            MEFUtilities.AddPart(new TypeHandlerROOT());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
+        }
+
+        [TestMethod]
+        public void TestArrayReferenceRecorded()
+        {
+            Expression<Func<ResultType0, int, int>> arrayLenLambda = (arr, index) => arr.val1[index];
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+
+            var refVars = gc.ReferencedLeafNames.ToArray();
+            Assert.AreEqual(1, refVars.Length, "# of referenced leaves");
+            Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
         }
 
         [TranslateToClass(typeof(ResultType1))]

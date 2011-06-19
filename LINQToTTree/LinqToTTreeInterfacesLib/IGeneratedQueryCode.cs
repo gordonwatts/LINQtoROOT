@@ -75,5 +75,11 @@ namespace LinqToTTreeInterfacesLib
         /// How far down in the hierarchy of statements are we?
         /// </summary>
         int Depth { get; }
+
+        /// <summary>
+        /// Add a leaf reference. Tracking for later optimization
+        /// </summary>
+        /// <param name="leafName">Name of the ntuple leaf - should be exactly as it appears in the code</param>
+        void AddReferencedLeaf(string leafName);
     }
 }
