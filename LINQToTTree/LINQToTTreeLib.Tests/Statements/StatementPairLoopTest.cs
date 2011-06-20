@@ -45,7 +45,21 @@ namespace LINQToTTreeLib.Tests.Statements
             var index2 = new VarInteger();
             var t = new StatementPairLoop(array, index1, index2);
             t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
-            Assert.AreEqual(5, t.CodeItUp().Count(), "# of lines incorrect");
+            Assert.AreEqual(13, t.CodeItUp().Count(), "# of lines incorrect");
+        }
+        
+        [TestMethod]
+        public void TestForBreakPlacement()
+        {
+            var array = new VarArray(typeof(int));
+            var index1 = new VarInteger();
+            var index2 = new VarInteger();
+            var t = new StatementPairLoop(array, index1, index2);
+            t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
+            var statements = t.CodeItUp().ToArray();
+            Assert.AreEqual(13, statements.Count(), "# of statements");
+            var postdir = statements.SkipWhile(l => !l.Contains("dir;")).Skip(2).ToArray();
+            Assert.IsTrue(postdir[0].Contains("breakSeen = false"), "seen break line not reset '" + postdir[0] + "'.");
         }
     }
 }
