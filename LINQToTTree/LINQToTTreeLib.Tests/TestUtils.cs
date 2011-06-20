@@ -34,7 +34,14 @@ namespace LINQToTTreeLib.Tests
             {
                 Console.WriteLine("  " + l);
             }
-            Console.WriteLine("Result Variable: ", code.ResultValue.ToString());
+            if (code.ResultValue == null)
+            {
+                Console.WriteLine("Result Variable: <not set (null)>");
+            }
+            else
+            {
+                Console.WriteLine("Result Variable: ", code.ResultValue.ToString());
+            }
         }
 
         public static IStatementCompound GetDeepestStatementLevel(GeneratedCode target)
