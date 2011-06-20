@@ -144,6 +144,12 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestTranslateNewPair()
+        {
+
+        }
+
+        [TestMethod]
         public void TestNoTranslate2DArrayIndex()
         {
             Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val2D[1][1];

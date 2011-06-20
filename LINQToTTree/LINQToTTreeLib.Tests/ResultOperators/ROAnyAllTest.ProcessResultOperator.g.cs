@@ -23,16 +23,5 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROAnyAllTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROAnyAllTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException823()
-{
-    IVariable iVariable;
-    ROAnyAll s0 = new ROAnyAll();
-    iVariable =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
-                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
     }
 }

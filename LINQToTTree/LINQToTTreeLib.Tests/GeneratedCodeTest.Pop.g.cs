@@ -21,43 +21,5 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void PopThrowsArgumentNullException406()
-{
-    this.Pop((IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Pop28201()
-{
-    SVarInteger sVarInteger;
-    SStatementIncrementInteger sStatementIncrementInteger;
-    sVarInteger = new SVarInteger();
-    sStatementIncrementInteger =
-      new SStatementIncrementInteger((VarInteger)sVarInteger);
-    this.Pop((IStatement)sStatementIncrementInteger);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Pop28202()
-{
-    VarInteger varInteger;
-    SStatementIncrementInteger sStatementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
-    this.Pop((IStatement)sStatementIncrementInteger);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Pop28203()
-{
-    VarInteger varInteger;
-    SStatementIncrementInteger sStatementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
-    this.Pop((IStatement)sStatementIncrementInteger);
-}
     }
 }

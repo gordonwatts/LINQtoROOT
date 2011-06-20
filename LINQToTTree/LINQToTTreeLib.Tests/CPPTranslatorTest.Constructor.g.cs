@@ -15,13 +15,5 @@ namespace LINQToTTreeLib
 {
     public partial class CPPTranslatorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(CPPTranslatorTest))]
-public void Constructor933()
-{
-    CPPTranslator cPPTranslator;
-    cPPTranslator = this.Constructor();
-    Assert.IsNotNull((object)cPPTranslator);
-}
     }
 }
