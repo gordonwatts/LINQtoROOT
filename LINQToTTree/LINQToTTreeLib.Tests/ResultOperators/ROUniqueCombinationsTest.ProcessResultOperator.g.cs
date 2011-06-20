@@ -22,5 +22,32 @@ namespace LINQToTTreeLib.Tests.ResultOperators
 {
     public partial class ROUniqueCombinationsTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROUniqueCombinationsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException700()
+{
+    SGeneratedCode sGeneratedCode;
+    IVariable iVariable;
+    sGeneratedCode = new SGeneratedCode();
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, (GeneratedCode)sGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROUniqueCombinationsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException158()
+{
+    SGeneratedCode sGeneratedCode;
+    SCodeContext sCodeContext;
+    IVariable iVariable;
+    sGeneratedCode = new SGeneratedCode();
+    sCodeContext = new SCodeContext();
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                                               (CodeContext)sCodeContext, (GeneratedCode)sGeneratedCode);
+}
     }
 }

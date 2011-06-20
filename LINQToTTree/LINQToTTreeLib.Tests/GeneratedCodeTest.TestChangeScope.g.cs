@@ -21,5 +21,128 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope547()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[0];
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestChangeScopeThrowsArgumentNullException391()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[1];
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope599()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestChangeScopeThrowsArgumentNullException88()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope656()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    iStatements[1] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope498()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    StatementInlineBlock statementInlineBlock;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)statementInlineBlock;
+    iStatements[1] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope84501()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    SVarInteger sVarInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    sVarInteger = new SVarInteger();
+    sStatementIncrementInteger =
+      new SStatementIncrementInteger((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope84502()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    VarInteger varInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    varInteger = VarIntegerFactory.Create(false, 0);
+    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope84503()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    VarInteger varInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    varInteger = VarIntegerFactory.Create(false, 1);
+    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)sStatementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void TestChangeScope802()
+{
+    SStatementInlineBlock sStatementInlineBlock;
+    SVarInteger sVarInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    sStatementInlineBlock = new SStatementInlineBlock();
+    sVarInteger = new SVarInteger();
+    statementIncrementInteger =
+      StatementIncrementIntegerFactory.Create((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementInlineBlock;
+    this.TestChangeScope(iStatements, (IStatement)statementIncrementInteger);
+}
     }
 }

@@ -16,5 +16,21 @@ namespace LINQToTTreeLib
 {
     public partial class FutureValueTTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(FutureValueTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void Constructor01ThrowsArgumentException771()
+{
+    FutureValue<int> futureValue;
+    futureValue = this.Constructor01<int>((TTreeQueryExecutor)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(FutureValueTTest))]
+public void Constructor227()
+{
+    FutureValue<int> futureValue;
+    futureValue = this.Constructor<int>(0);
+    Assert.IsNotNull((object)futureValue);
+}
     }
 }

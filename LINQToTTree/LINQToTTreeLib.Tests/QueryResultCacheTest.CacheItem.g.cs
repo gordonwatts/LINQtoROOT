@@ -9,10 +9,25 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using System.IO;
+using Remotion.Linq;
+using ROOTNET.Interface;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib
 {
     public partial class QueryResultCacheTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(QueryResultCacheTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CacheItemThrowsArgumentException827()
+{
+    QueryResultCache queryResultCache;
+    queryResultCache = new QueryResultCache();
+    this.CacheItem(queryResultCache, (object[])null, (FileInfo)null, 
+                   (string[])null, (QueryModel)null, (NTObject)null);
+}
     }
 }

@@ -16,5 +16,11 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+public void TestTryCombine906()
+{
+    this.TestTryCombine((IStatement)null);
+}
     }
 }

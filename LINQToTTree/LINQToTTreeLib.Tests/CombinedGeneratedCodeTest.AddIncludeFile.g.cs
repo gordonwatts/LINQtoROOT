@@ -17,5 +17,136 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddIncludeFileThrowsArgumentException839()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[0];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddIncludeFile(combinedGeneratedCode, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddIncludeFileThrowsArgumentException514()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddIncludeFile(combinedGeneratedCode, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddIncludeFileThrowsArgumentException950()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[0];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddIncludeFile(combinedGeneratedCode, "");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void AddIncludeFile554()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[0];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddIncludeFile(combinedGeneratedCode, "\0");
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddIncludeFileThrowsArgumentException338()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[2];
+    ss[0] = "";
+    ss[1] = "";
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddIncludeFile(combinedGeneratedCode, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddIncludeFileThrowsArgumentException108()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, (string[])null, ss, (IBookingStatementBlock[])null, ss1);
+    this.AddIncludeFile(combinedGeneratedCode, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddIncludeFileThrowsArgumentException472()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    string[] ss2 = new string[1];
+    ss[0] = "\u0100";
+    ss1[0] = "\u0100";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, ss1, (string[])null, (IBookingStatementBlock[])null, ss2);
+    this.AddIncludeFile(combinedGeneratedCode, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void AddIncludeFile632()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    string[] ss2 = new string[2];
+    ss[0] = "\u0100";
+    ss1[0] = "\u0100";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, ss1, (string[])null, (IBookingStatementBlock[])null, ss2);
+    this.AddIncludeFile(combinedGeneratedCode, "\u0100");
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void AddIncludeFile63203()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    string[] ss2 = new string[2];
+    ss[0] = "\u0100";
+    ss1[0] = "\u0200";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, ss1, (string[])null, (IBookingStatementBlock[])null, ss2);
+    this.AddIncludeFile(combinedGeneratedCode, "\u0100");
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
     }
 }

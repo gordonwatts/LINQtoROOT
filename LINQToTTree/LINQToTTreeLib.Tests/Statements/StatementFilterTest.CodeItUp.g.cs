@@ -18,5 +18,19 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+public void CodeItUp280()
+{
+    StatementFilter statementFilter;
+    IEnumerable<string> iEnumerable;
+    statementFilter = new StatementFilter((IValue)null);
+    iEnumerable = this.CodeItUp(statementFilter);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)statementFilter);
+    Assert.IsNull(statementFilter.TestExpression);
+    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+}
     }
 }

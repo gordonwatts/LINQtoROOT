@@ -103,6 +103,8 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                 throw new ArgumentException("gc");
             if (context == null)
                 throw new ArgumentException("context");
+            if (expression == null)
+                throw new ArgumentNullException("expression");
 
             ///
             /// Figure out the type. We can only get here if we get through ROOTNET.xxx

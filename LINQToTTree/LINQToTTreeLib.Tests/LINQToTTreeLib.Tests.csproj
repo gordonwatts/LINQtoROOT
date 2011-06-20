@@ -453,6 +453,9 @@
     <Compile Include="Expressions\t_ArrayExpressionParser.cs" />
     <Compile Include="Expressions\t_ArrayInfoVector.cs" />
     <Compile Include="Expressions\t_TranslatingExpressionVisitor.cs" />
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessNew.g.cs">
+      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />

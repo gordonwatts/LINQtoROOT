@@ -17,5 +17,25 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROFirstLastTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROFirstLastTest))]
+public void CanHandle853()
+{
+    bool b;
+    ROFirstLast s0 = new ROFirstLast();
+    b = this.CanHandle(s0, (Type)null);
+    Assert.AreEqual<bool>(false, b);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROFirstLastTest))]
+public void CanHandle471()
+{
+    bool b;
+    ROFirstLast s0 = new ROFirstLast();
+    b = this.CanHandle(s0, typeof(FirstResultOperator));
+    Assert.AreEqual<bool>(true, b);
+    Assert.IsNotNull((object)s0);
+}
     }
 }

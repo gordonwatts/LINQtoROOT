@@ -15,22 +15,21 @@ using System.ComponentModel.Composition.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 
-namespace LINQToTTreeLib.TypeHandlers.CPPCode
+namespace LINQToTTreeLib.TypeHandlers
 {
-    public partial class TypeHandlerCPPCodeTest
+    public partial class TypeHandlerCacheTest
     {
 [TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
-[ExpectedException(typeof(NotImplementedException))]
-public void ProcessNewThrowsNotImplementedException133()
+[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessNewThrowsArgumentNullException909()
 {
-    TypeHandlerCPPCode typeHandlerCPPCode;
+    TypeHandlerCache typeHandlerCache;
     Expression expression;
-    typeHandlerCPPCode = new TypeHandlerCPPCode();
+    typeHandlerCache = new TypeHandlerCache();
     IValue iValue = (IValue)null;
-    expression =
-      this.ProcessNew(typeHandlerCPPCode, (NewExpression)null, out iValue, 
-                      (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+    expression = this.ProcessNew(typeHandlerCache, (NewExpression)null, out iValue, 
+                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
 }
     }
 }
