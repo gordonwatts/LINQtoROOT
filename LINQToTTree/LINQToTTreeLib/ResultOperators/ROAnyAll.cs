@@ -39,7 +39,9 @@ namespace LINQToTTreeLib.ResultOperators
         public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
-                throw new ArgumentNullException("_codeContext");
+                throw new ArgumentNullException("cc");
+            if (gc == null)
+                throw new ArgumentNullException("gc");
 
             var all = resultOperator as AllResultOperator;
             var any = resultOperator as AnyResultOperator;

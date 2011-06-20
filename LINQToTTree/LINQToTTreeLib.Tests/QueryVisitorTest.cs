@@ -32,6 +32,7 @@ namespace LINQToTTreeLib
         public void Setup()
         {
             MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
         }
 
         [TestCleanup]

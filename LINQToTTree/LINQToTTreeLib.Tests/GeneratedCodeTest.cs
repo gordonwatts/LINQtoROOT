@@ -269,5 +269,54 @@ namespace LINQToTTreeLib
             gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
             Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level decl");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestPopUpOneLevel()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            gc.Pop();
+        }
+
+        [PexMethod]
+        public void Pop([PexAssumeNotNull]IStatement s)
+        {
+            var gc = new GeneratedCode();
+            int depth = gc.Depth;
+            gc.Add(s);
+
+            bool good = s is IBookingStatementBlock;
+            try
+            {
+                gc.Pop();
+                Assert.AreEqual(depth, gc.Depth, "Depth isn't set correctly");
+                Assert.IsTrue(good, "booking statement");
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.IsFalse(good, "a booking statement");
+            }
+        }
+
+        [TestMethod]
+        public void TestCompoundStatemet()
+        {
+            Pop(new LINQToTTreeLib.Statements.StatementInlineBlock());
+        }
+
+        [TestMethod]
+        public void TestCompoundPostInsert()
+        {
+            var gc = new GeneratedCode();
+            gc.Add(new Statements.StatementSimpleStatement("dir"));
+            var block = new Statements.StatementInlineBlock();
+            gc.Add(block);
+            gc.Add(new Statements.StatementSimpleStatement("dir"));
+            gc.Add(new Statements.StatementSimpleStatement("fork"));
+            gc.Pop();
+            gc.Add(new Statements.StatementSimpleStatement("dir"));
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "# of statements");
+        }
     }
 }

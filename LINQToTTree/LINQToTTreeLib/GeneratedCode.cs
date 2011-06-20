@@ -121,6 +121,11 @@ namespace LINQToTTreeLib
             /// Change the statement scope if there something that goes down a level.
             /// 
 
+            if (s is IBookingStatementBlock)
+            {
+                _scopeState.Push(CurrentScope);
+            }
+
             if (s is IStatementCompound)
                 CurrentScopePointer = s as IStatementCompound;
             if (s is IBookingStatementBlock)
@@ -234,6 +239,21 @@ namespace LINQToTTreeLib
         public IEnumerable<string> ReferencedLeafNames
         {
             get { return _referencedLeavs; }
+        }
+
+        /// <summary>
+        /// Keep track of where our current scope is.
+        /// </summary>
+        private Stack<IScopeInfo> _scopeState = new Stack<IScopeInfo>();
+
+        /// <summary>
+        /// Pop one level of booking statements off our pointer - where our current scope is!
+        /// </summary>
+        public void Pop()
+        {
+            if (_scopeState.Count == 0)
+                throw new InvalidOperationException("Unable to pop a level up in generated code when we've not gone down a level");
+            CurrentScope = _scopeState.Pop();
         }
     }
 }

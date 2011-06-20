@@ -21,7 +21,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(FutureResultOperatorsTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void FutureCountThrowsArgumentException236()
+public void FutureCountThrowsArgumentException598()
 {
     IFutureValue<int> iFutureValue;
     iFutureValue = this.FutureCount<int>((IQueryable<int>)null);

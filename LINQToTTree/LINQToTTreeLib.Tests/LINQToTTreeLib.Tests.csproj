@@ -72,6 +72,7 @@
     <Reference Include="libTreeWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -209,9 +210,11 @@
     <Compile Include="Factories\StatementIfOnCountFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
+    <Compile Include="Factories\StatementPairLoopFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
     <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
+    <Compile Include="Factories\VarArrayFactory.cs" />
     <Compile Include="Factories\VarIntegerFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
@@ -251,6 +254,9 @@
     </Compile>
     <Compile Include="GeneratedCodeTest.cs" />
     <Compile Include="GeneratedCodeTest.LookAtStatements.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.Pop.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </Compile>
     <Compile Include="GeneratedCodeTest.SetResult.g.cs">
@@ -319,6 +325,13 @@
     <Compile Include="ResultOperators\ROMinMaxTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROMinMaxTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\ROUniqueCombinationsTest.CanHandle.g.cs">
+      <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROUniqueCombinationsTest.cs" />
+    <Compile Include="ResultOperators\ROUniqueCombinationsTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>
@@ -327,11 +340,11 @@
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\TestCount.cs" />
-    <Compile Include="ROCountTest.CanHandle.g.cs">
+    <Compile Include="ResultOperators\ROCountTest.CanHandle.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ROCountTest.cs" />
-    <Compile Include="ROCountTest.ProcessResultOperator.g.cs">
+    <Compile Include="ResultOperators\ROCountTest.cs" />
+    <Compile Include="ResultOperators\ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
@@ -373,6 +386,10 @@
     </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementPairLoopTest.cs" />
+    <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">
+      <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
@@ -436,6 +453,9 @@
     <Compile Include="Expressions\t_ArrayExpressionParser.cs" />
     <Compile Include="Expressions\t_ArrayInfoVector.cs" />
     <Compile Include="Expressions\t_TranslatingExpressionVisitor.cs" />
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessNew.g.cs">
+      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />

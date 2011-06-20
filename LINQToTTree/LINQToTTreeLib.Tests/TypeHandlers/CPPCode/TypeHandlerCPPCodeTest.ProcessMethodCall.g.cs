@@ -21,27 +21,31 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
     {
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
-[ExpectedException(typeof(InvalidOperationException))]
-public void ProcessMethodCallThrowsInvalidOperationException779()
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessMethodCallThrowsArgumentNullException600()
 {
-    MethodCallExpression methodCallExpression;
+    TypeHandlerCPPCode typeHandlerCPPCode;
     Expression expression;
-    methodCallExpression = MethodCallExpressionFactory.Create();
-    TypeHandlerCPPCode s0 = new TypeHandlerCPPCode();
+    typeHandlerCPPCode = new TypeHandlerCPPCode();
     IValue iValue = (IValue)null;
-    expression = this.ProcessMethodCall(s0, methodCallExpression, out iValue, 
-                                        (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+    expression = this.ProcessMethodCall
+                     (typeHandlerCPPCode, (MethodCallExpression)null, out iValue, 
+                      (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessMethodCallThrowsArgumentNullException933()
+[ExpectedException(typeof(InvalidOperationException))]
+public void ProcessMethodCallThrowsInvalidOperationException731()
 {
+    TypeHandlerCPPCode typeHandlerCPPCode;
+    MethodCallExpression methodCallExpression;
     Expression expression;
-    TypeHandlerCPPCode s0 = new TypeHandlerCPPCode();
+    typeHandlerCPPCode = new TypeHandlerCPPCode();
+    methodCallExpression = MethodCallExpressionFactory.Create();
     IValue iValue = (IValue)null;
-    expression = this.ProcessMethodCall(s0, (MethodCallExpression)null, out iValue, 
-                                        (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+    expression =
+      this.ProcessMethodCall(typeHandlerCPPCode, methodCallExpression, out iValue, 
+                             (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
 }
     }
 }

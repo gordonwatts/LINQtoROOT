@@ -18,6 +18,9 @@ using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
 using LINQToTTreeLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Moles;
+using LINQToTTreeLib.Variables.Moles;
+using LINQToTTreeLib.Statements.Moles;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -26,13 +29,198 @@ namespace LINQToTTreeLib.ResultOperators
 [TestMethod]
 [PexGeneratedBy(typeof(ROAnyAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException823()
+public void ProcessResultOperatorThrowsArgumentNullException324()
 {
     IVariable iVariable;
     ROAnyAll s0 = new ROAnyAll();
     iVariable =
       this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
                                  (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator861()
+{
+    SCodeContext sCodeContext;
+    SGeneratedCode sGeneratedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    sGeneratedCode = new SGeneratedCode();
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)sGeneratedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator117()
+{
+    SCodeContext sCodeContext;
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    sVarInteger = new SVarInteger();
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, (string[])null);
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)generatedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator11701()
+{
+    SCodeContext sCodeContext;
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, ss);
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)generatedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator11702()
+{
+    SCodeContext sCodeContext;
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, (IStatement[])null, 
+                                  ss, (string[])null, (string[])null);
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)generatedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator11703()
+{
+    SCodeContext sCodeContext;
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[1];
+    ss[0] = "\0";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, (IStatement[])null, 
+                                  (string[])null, ss, (string[])null);
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)generatedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator11704()
+{
+    SCodeContext sCodeContext;
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, (string[])null);
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)generatedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator11705()
+{
+    SCodeContext sCodeContext;
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    varInteger = VarIntegerFactory.Create(false, 1);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, (string[])null);
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)generatedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException887()
+{
+    SCodeContext sCodeContext;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)null, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROAnyAllTest))]
+public void ProcessResultOperator11717()
+{
+    SCodeContext sCodeContext;
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    sCodeContext = new SCodeContext();
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[2];
+    ss[0] = "\u0100";
+    ss[1] = "\u0100";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, (IStatement[])null, 
+                                  (string[])null, ss, (string[])null);
+    ROAnyAll s0 = new ROAnyAll();
+    iVariable =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)generatedCode, 
+                                 (ICodeContext)sCodeContext, (CompositionContainer)null);
+    Assert.IsNotNull((object)iVariable);
+    Assert.IsNotNull((object)s0);
 }
     }
 }

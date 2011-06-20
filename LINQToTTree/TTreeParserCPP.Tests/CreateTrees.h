@@ -167,6 +167,24 @@ namespace TTreeParserCPPTests {
 
 			return gcnew ROOTNET::NTTree(t);
 		}
+		static ROOTNET::NTTree ^CreateTreeWithSimpleSingleVector(int entries, int vectorsize)
+		{
+			vector<int> bogus;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddr = t->Branch ("myvectorofint", &bogus);
+
+			for (int i = 0; i < entries; i++) {
+				bogus.clear();
+				for (int j = 0; j < vectorsize; j++) {
+					bogus.push_back(j);
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
 
 		/// Create a tree with two vectors
 		static ROOTNET::NTTree ^CreateTreeWithSimpleDoubleVector(int entries)

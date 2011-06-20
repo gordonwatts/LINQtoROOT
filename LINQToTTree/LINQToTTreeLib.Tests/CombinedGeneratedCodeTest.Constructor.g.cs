@@ -25,6 +25,7 @@ public void Constructor808()
     Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
     Assert.IsNotNull(combinedGeneratedCode.ResultValues);
     Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
 }
     }
 }

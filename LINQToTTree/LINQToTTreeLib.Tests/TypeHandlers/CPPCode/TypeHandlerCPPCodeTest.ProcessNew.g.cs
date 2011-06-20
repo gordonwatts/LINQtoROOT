@@ -22,13 +22,15 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessNewThrowsNotImplementedException56()
+public void ProcessNewThrowsNotImplementedException133()
 {
+    TypeHandlerCPPCode typeHandlerCPPCode;
     Expression expression;
-    TypeHandlerCPPCode s0 = new TypeHandlerCPPCode();
+    typeHandlerCPPCode = new TypeHandlerCPPCode();
     IValue iValue = (IValue)null;
-    expression = this.ProcessNew(s0, (NewExpression)null, out iValue, 
-                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+    expression =
+      this.ProcessNew(typeHandlerCPPCode, (NewExpression)null, out iValue, 
+                      (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
 }
     }
 }

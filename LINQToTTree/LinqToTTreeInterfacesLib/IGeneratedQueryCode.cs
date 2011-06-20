@@ -81,5 +81,10 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="leafName">Name of the ntuple leaf - should be exactly as it appears in the code</param>
         void AddReferencedLeaf(string leafName);
+
+        /// <summary>
+        /// Pop up one level in the nesting hierarchy. This means one full booking level (it has to be a booking level).
+        /// </summary>
+        void Pop();
     }
 }

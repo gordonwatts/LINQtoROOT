@@ -72,7 +72,7 @@ namespace LINQToTTreeLib
 
             foreach (var leaf in code.ReferencedLeafNames)
             {
-                _leavesReferenced.Add(leaf);
+                AddReferencedLeaf(leaf);
             }
 
             ///
@@ -84,6 +84,15 @@ namespace LINQToTTreeLib
             /// 
 
             AddQueryBlocks(codeItems);
+        }
+
+        /// <summary>
+        /// Add a leaf reference. Trivial, but it makes this object more testable too. :-)
+        /// </summary>
+        /// <param name="leaf"></param>
+        internal void AddReferencedLeaf(string leaf)
+        {
+            _leavesReferenced.Add(leaf);
         }
 
         /// <summary>

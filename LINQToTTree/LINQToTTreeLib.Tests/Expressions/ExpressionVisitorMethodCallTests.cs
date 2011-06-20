@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -54,8 +54,8 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("myhist", result.RawValue, "didn't get back the accumulator!");
 
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expected a statement body to do the filling!");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementSimpleStatement), "incorrect statement saved");
-            var statement = gc.CodeBody.Statements.First() as Statements.StatementSimpleStatement;
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(LINQToTTreeLib.Statements.StatementSimpleStatement), "incorrect statement saved");
+            var statement = gc.CodeBody.Statements.First() as LINQToTTreeLib.Statements.StatementSimpleStatement;
             Assert.AreEqual("(*myhist).Fill(10.2)", statement.Line, "incorrect fill statement");
         }
     }

@@ -144,6 +144,28 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestTranslateNewPair1()
+        {
+            Expression<Func<int>> lambaExpr = () => new Tuple<int, int>(5, 10).Item1;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+            Assert.AreEqual(5, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        [TestMethod]
+        public void TestTranslateNewPair2()
+        {
+            Expression<Func<int>> lambaExpr = () => new Tuple<int, int>(5, 10).Item2;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+            Assert.AreEqual(10, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        [TestMethod]
         public void TestNoTranslate2DArrayIndex()
         {
             Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val2D[1][1];

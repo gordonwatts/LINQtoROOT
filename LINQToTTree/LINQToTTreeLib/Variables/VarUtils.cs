@@ -165,50 +165,54 @@ namespace LINQToTTreeLib.Variables
         {
             if (t == null)
                 throw new ArgumentNullException("Type must not be null");
+
+            //
+            // Simple type or array?
+            //
+
             if (t.IsArray)
-                throw new ArgumentException("Type '" + t.Name + "' is an array - clean conversion to C++ is not possible!");
-
-            if (t == typeof(int))
             {
-                return "int";
+                return string.Format("vector<{0}>", t.GetElementType().AsCPPType());
             }
-            else if (t == typeof(double))
+            else
             {
-                return "double";
+
+                if (t == typeof(int))
+                {
+                    return "int";
+                }
+                else if (t == typeof(double))
+                {
+                    return "double";
+                }
+                else if (t == typeof(float))
+                {
+                    return "float";
+                }
+                else if (t == typeof(bool))
+                {
+                    return "bool";
+                }
+
+                ///
+                /// Is this a ROOT type? then translate it as well!
+                /// 
+
+                if (t.FullName.StartsWith("ROOTNET.N"))
+                {
+                    return t.FullName.Substring(9) + "*";
+                }
+                if (t.FullName.StartsWith("ROOTNET.Interface.N"))
+                {
+                    return t.FullName.Substring(19) + "*";
+                }
+
+                ///
+                /// Ok - if this is an object, for example, the enclosing ntuple object
+                /// 
+
+                return t.Name;
             }
-            else if (t == typeof(float))
-            {
-                return "float";
-            }
-            else if (t == typeof(bool))
-            {
-                return "bool";
-            }
-
-            ///
-            /// Is this a ROOT type? then translate it as well!
-            /// 
-
-            if (t.FullName.StartsWith("ROOTNET.N"))
-            {
-                return t.FullName.Substring(9) + "*";
-            }
-            if (t.FullName.StartsWith("ROOTNET.Interface.N"))
-            {
-                return t.FullName.Substring(19) + "*";
-            }
-
-            ///
-            /// Ok - if this is an object, for example, the enclosing ntuple object
-            /// 
-
-            return t.Name;
-
-            ///
-            /// No good. We are outta here!
-            /// 
-
-            throw new ArgumentException("Unknown type '" + t.ToString() + "' - don't know how to convert!!");
         }
 
         public static bool IsPointerType(this Type t)

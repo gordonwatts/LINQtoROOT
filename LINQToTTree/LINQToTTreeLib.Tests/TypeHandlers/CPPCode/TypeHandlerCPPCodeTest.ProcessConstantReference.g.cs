@@ -22,12 +22,14 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessConstantReferenceThrowsNotImplementedException199()
+public void ProcessConstantReferenceThrowsNotImplementedException()
 {
+    TypeHandlerCPPCode typeHandlerCPPCode;
     IValue iValue;
-    TypeHandlerCPPCode s0 = new TypeHandlerCPPCode();
-    iValue = this.ProcessConstantReference
-                 (s0, (ConstantExpression)null, (GeneratedCode)null, (CodeContext)null);
+    typeHandlerCPPCode = new TypeHandlerCPPCode();
+    iValue =
+      this.ProcessConstantReference(typeHandlerCPPCode, (ConstantExpression)null, 
+                                    (GeneratedCode)null, (CodeContext)null);
 }
     }
 }

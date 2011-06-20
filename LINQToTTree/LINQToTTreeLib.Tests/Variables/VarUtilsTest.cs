@@ -44,10 +44,9 @@ namespace LINQToTTreeLib.Variables
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestCPPArrayType()
         {
-            AsCPPType(typeof(float[]));
+            Assert.AreEqual("vector<int>", AsCPPType(typeof(int[])), "int array");
         }
 
         [TestMethod]

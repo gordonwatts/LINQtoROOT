@@ -19,11 +19,12 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CanHandleThrowsArgumentNullException717()
+public void CanHandleThrowsArgumentNullException78()
 {
+    TypeHandlerCPPCode typeHandlerCPPCode;
     bool b;
-    TypeHandlerCPPCode s0 = new TypeHandlerCPPCode();
-    b = this.CanHandle(s0, (Type)null);
+    typeHandlerCPPCode = new TypeHandlerCPPCode();
+    b = this.CanHandle(typeHandlerCPPCode, (Type)null);
 }
     }
 }

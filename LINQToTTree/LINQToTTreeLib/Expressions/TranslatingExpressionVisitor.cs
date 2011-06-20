@@ -149,6 +149,19 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException("Member '" + expression.Member.Name + "' is marked for array recoding, but we can't figure out what to do.");
             }
 
+            //
+            // If this is an item reference to a tuple type, and it is on top of a new for the tuple, then
+            // extract the new value argument.
+            //
+
+            var exprType = expression.Expression.Type;
+            if (exprType.Name.StartsWith("Tuple`") && expression.Expression.NodeType == ExpressionType.New)
+            {
+                int itemIndex = Convert.ToInt32(expression.Member.Name.Substring(4));
+                var newExpr = expression.Expression as NewExpression;
+                return newExpr.Arguments[itemIndex-1];
+            }
+
             ///
             /// Hopefully the default behavior is the right thing to do here!
             /// 

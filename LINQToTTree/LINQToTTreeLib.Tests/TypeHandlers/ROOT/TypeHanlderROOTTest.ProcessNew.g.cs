@@ -16,6 +16,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Moles;
+using LINQToTTreeLib.Variables.Moles;
+using LINQToTTreeLib.Statements.Moles;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -24,7 +27,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException798()
+public void ProcessNewThrowsArgumentException256()
 {
     Expression expression;
     TypeHandlerROOT s0 = new TypeHandlerROOT();
@@ -35,14 +38,28 @@ public void ProcessNewThrowsArgumentException798()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException70()
+public void ProcessNewThrowsArgumentException815()
+{
+    SGeneratedCode sGeneratedCode;
+    Expression expression;
+    sGeneratedCode = new SGeneratedCode();
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    IValue iValue = (IValue)null;
+    expression = this.ProcessNew(s0, (NewExpression)null, 
+                                 out iValue, (GeneratedCode)sGeneratedCode, (CodeContext)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessNewThrowsArgumentException988()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
     Expression expression;
     varInteger = VarIntegerFactory.Create(false, 0);
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, (IStatement[])null, (string[])null, (string[])null);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, (string[])null);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     IValue iValue = (IValue)null;
     expression = this.ProcessNew
@@ -51,14 +68,33 @@ public void ProcessNewThrowsArgumentException70()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException696()
+public void ProcessNewThrowsArgumentException24()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    Expression expression;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, ss);
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    IValue iValue = (IValue)null;
+    expression = this.ProcessNew
+                     (s0, (NewExpression)null, out iValue, generatedCode, (CodeContext)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessNewThrowsArgumentException145()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
     Expression expression;
     varInteger = VarIntegerFactory.Create(false, 1);
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, (IStatement[])null, (string[])null, (string[])null);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, (string[])null);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     IValue iValue = (IValue)null;
     expression = this.ProcessNew
@@ -67,33 +103,17 @@ public void ProcessNewThrowsArgumentException696()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException312()
+public void ProcessNewThrowsArgumentException78()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
     Expression expression;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    string[] ss = new string[1];
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, (IStatement[])null, ss, (string[])null);
-    TypeHandlerROOT s0 = new TypeHandlerROOT();
-    IValue iValue = (IValue)null;
-    expression = this.ProcessNew
-                     (s0, (NewExpression)null, out iValue, generatedCode, (CodeContext)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException183()
-{
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    Expression expression;
-    varInteger = VarIntegerFactory.Create(false, 0);
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     string[] ss = new string[1];
     ss[0] = "";
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, (IStatement[])null, ss, (string[])null);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, ss);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     IValue iValue = (IValue)null;
     expression = this.ProcessNew
@@ -102,7 +122,7 @@ public void ProcessNewThrowsArgumentException183()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException468()
+public void ProcessNewThrowsArgumentException805()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
@@ -110,8 +130,9 @@ public void ProcessNewThrowsArgumentException468()
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     string[] ss = new string[1];
     ss[0] = "\0";
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, (IStatement[])null, (string[])null, ss);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, ss, (string[])null);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     IValue iValue = (IValue)null;
     expression = this.ProcessNew
@@ -120,18 +141,60 @@ public void ProcessNewThrowsArgumentException468()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException867()
+public void ProcessNewThrowsArgumentException860()
 {
     VarInteger varInteger;
+    GeneratedCode generatedCode;
+    Expression expression;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  ss, (string[])null, (string[])null);
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    IValue iValue = (IValue)null;
+    expression = this.ProcessNew
+                     (s0, (NewExpression)null, out iValue, generatedCode, (CodeContext)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessNewThrowsArgumentException619()
+{
+    SVarInteger sVarInteger;
+    SStatementIncrementInteger sStatementIncrementInteger;
+    GeneratedCode generatedCode;
+    Expression expression;
+    sVarInteger = new SVarInteger();
+    sStatementIncrementInteger =
+      new SStatementIncrementInteger((VarInteger)sVarInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)sStatementIncrementInteger;
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, iStatements, 
+                                  (string[])null, (string[])null, (string[])null);
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    IValue iValue = (IValue)null;
+    expression = this.ProcessNew
+                     (s0, (NewExpression)null, out iValue, generatedCode, (CodeContext)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessNewThrowsArgumentException347()
+{
+    SVarInteger sVarInteger;
     StatementIncrementInteger statementIncrementInteger;
     GeneratedCode generatedCode;
     Expression expression;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    sVarInteger = new SVarInteger();
+    statementIncrementInteger =
+      StatementIncrementIntegerFactory.Create((VarInteger)sVarInteger);
     IStatement[] iStatements = new IStatement[1];
     iStatements[0] = (IStatement)statementIncrementInteger;
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, iStatements, (string[])null, (string[])null);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, iStatements, 
+                                  (string[])null, (string[])null, (string[])null);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     IValue iValue = (IValue)null;
     expression = this.ProcessNew
@@ -140,17 +203,18 @@ public void ProcessNewThrowsArgumentException867()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException220()
+public void ProcessNewThrowsArgumentException396()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
     Expression expression;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     string[] ss = new string[2];
-    ss[0] = "\u0100";
-    ss[1] = "\u0100";
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, (IStatement[])null, (string[])null, ss);
+    ss[0] = "";
+    ss[1] = "";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (string[])null, ss);
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     IValue iValue = (IValue)null;
     expression = this.ProcessNew
@@ -158,22 +222,18 @@ public void ProcessNewThrowsArgumentException220()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHanlderROOTTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ProcessNewThrowsArgumentException138()
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessNewThrowsArgumentNullException993()
 {
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
+    SGeneratedCode sGeneratedCode;
+    SCodeContext sCodeContext;
     Expression expression;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    string[] ss = new string[2];
-    ss[0] = "\0";
-    ss[1] = "\0";
-    generatedCode = GeneratedCodeFactory.Create
-                        ((IVariable)varInteger, (IStatement[])null, (string[])null, ss);
+    sGeneratedCode = new SGeneratedCode();
+    sCodeContext = new SCodeContext();
     TypeHandlerROOT s0 = new TypeHandlerROOT();
     IValue iValue = (IValue)null;
-    expression = this.ProcessNew
-                     (s0, (NewExpression)null, out iValue, generatedCode, (CodeContext)null);
+    expression = this.ProcessNew(s0, (NewExpression)null, 
+                                 out iValue, (GeneratedCode)sGeneratedCode, (CodeContext)sCodeContext);
 }
     }
 }
