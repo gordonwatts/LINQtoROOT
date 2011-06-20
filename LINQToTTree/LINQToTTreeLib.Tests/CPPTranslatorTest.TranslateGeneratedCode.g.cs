@@ -245,5 +245,50 @@ public void TranslateGeneratedCode55008()
     Assert.AreEqual<int>(4, dictionary.Count);
     Assert.IsNotNull((object)cPPTranslator);
 }
+[TestMethod]
+[PexGeneratedBy(typeof(CPPTranslatorTest))]
+public void TranslateGeneratedCode55012()
+{
+    CPPTranslator cPPTranslator;
+    SVarInteger sVarInteger;
+    GeneratedCode generatedCode;
+    Dictionary<string, object> dictionary;
+    cPPTranslator = CPPTranslatorFactory.Create();
+    sVarInteger = new SVarInteger();
+    string[] ss = new string[1];
+    ss[0] = "\0";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, (IStatement[])null, 
+                                  (string[])null, ss, (string[])null);
+    dictionary = this.TranslateGeneratedCode(cPPTranslator, generatedCode);
+    Assert.IsNotNull((object)dictionary);
+    Assert.IsNotNull(dictionary.Comparer);
+    Assert.AreEqual<int>(4, dictionary.Count);
+    Assert.IsNotNull((object)cPPTranslator);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CPPTranslatorTest))]
+public void TranslateGeneratedCode55017()
+{
+    CPPTranslator cPPTranslator;
+    SVarInteger sVarInteger;
+    StatementInlineBlock statementInlineBlock;
+    GeneratedCode generatedCode;
+    Dictionary<string, object> dictionary;
+    cPPTranslator = CPPTranslatorFactory.Create();
+    sVarInteger = new SVarInteger();
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementInlineBlock;
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)sVarInteger, iStatements, 
+                                  (string[])null, (string[])null, (string[])null);
+    dictionary = this.TranslateGeneratedCode(cPPTranslator, generatedCode);
+    Assert.IsNotNull((object)dictionary);
+    Assert.IsNotNull(dictionary.Comparer);
+    Assert.AreEqual<int>(4, dictionary.Count);
+    Assert.IsNotNull((object)cPPTranslator);
+}
     }
 }
