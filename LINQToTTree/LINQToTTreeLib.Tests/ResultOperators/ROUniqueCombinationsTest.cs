@@ -82,7 +82,7 @@ namespace LINQToTTreeLib.Tests.ResultOperators
 
             Assert.AreEqual(1, innerloop.Statements.Count(), "# of statements in the inner loop - the push statement");
 
-            var last = code.Statements.Skip(3).First();
+            var last = code.Statements.Skip(2).First();
             Assert.IsInstanceOfType(last, typeof(LINQToTTreeLib.Statements.StatementPairLoop), "last statement incorrect");
 
             var res = DummyQueryExectuor.FinalResult.ResultValue;
