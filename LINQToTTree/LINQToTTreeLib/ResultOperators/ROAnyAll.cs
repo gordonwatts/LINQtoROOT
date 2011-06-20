@@ -58,16 +58,19 @@ namespace LINQToTTreeLib.ResultOperators
 
             IValue predicate = null;
             string initialValue = "";
+            string markedValue = "";
             if (all != null)
             {
                 var notPredicate = Expression.Not(all.Predicate);
                 predicate = ExpressionToCPP.GetExpression(notPredicate, gc, cc, container);
                 initialValue = "true";
+                markedValue = "false";
             }
             else
             {
                 predicate = new Variables.ValSimple("true", typeof(bool));
                 initialValue = "false";
+                markedValue = "true";
             }
 
             ///
@@ -82,7 +85,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var ifstatement = new Statements.StatementFilter(predicate);
-            ifstatement.Add(new Statements.StatementFlipBool(aresult));
+            ifstatement.Add(new Statements.StatementAssign(aresult, new Variables.ValSimple(markedValue, typeof(bool))));
             ifstatement.Add(new Statements.StatementBreak());
 
             gc.Add(ifstatement);
