@@ -82,8 +82,8 @@ namespace LINQToTTreeLib.ResultOperators
             // but with the other index properties. Other bits will have to do the translation for us. :-)
             //
 
-            var item1 = Expression.ArrayAccess(arrayLookup.Left, Expression.Parameter(typeof(int), index1.RawValue));
-            var item2 = Expression.ArrayAccess(arrayLookup.Left, Expression.Parameter(typeof(int), index2.RawValue));
+            var item1 = Expression.ArrayIndex(arrayLookup.Left, Expression.Parameter(typeof(int), index1.RawValue));
+            var item2 = Expression.ArrayIndex(arrayLookup.Left, Expression.Parameter(typeof(int), index2.RawValue));
 
             var tupleType = typeof(Tuple<,>).MakeGenericType(cc.LoopVariable.Type, cc.LoopVariable.Type);
             var newTuple = Expression.New(tupleType.GetConstructor(new Type[] { arrayLookup.Type, arrayLookup.Type }), item1, item2);
