@@ -282,12 +282,14 @@ namespace LINQToTTreeLib
         public void Pop([PexAssumeNotNull]IStatement s)
         {
             var gc = new GeneratedCode();
+            int depth = gc.Depth;
             gc.Add(s);
 
             bool good = s is IBookingStatementBlock;
             try
             {
                 gc.Pop();
+                Assert.AreEqual(depth, gc.Depth, "Depth isn't set correctly");
                 Assert.IsTrue(good, "booking statement");
             }
             catch (InvalidOperationException e)
@@ -300,6 +302,21 @@ namespace LINQToTTreeLib
         public void TestCompoundStatemet()
         {
             Pop(new LINQToTTreeLib.Statements.StatementInlineBlock());
+        }
+
+        [TestMethod]
+        public void TestCompoundPostInsert()
+        {
+            var gc = new GeneratedCode();
+            gc.Add(new Statements.StatementSimpleStatement("dir"));
+            var block = new Statements.StatementInlineBlock();
+            gc.Add(block);
+            gc.Add(new Statements.StatementSimpleStatement("dir"));
+            gc.Add(new Statements.StatementSimpleStatement("fork"));
+            gc.Pop();
+            gc.Add(new Statements.StatementSimpleStatement("dir"));
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "# of statements");
         }
     }
 }

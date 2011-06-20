@@ -121,11 +121,15 @@ namespace LINQToTTreeLib
             /// Change the statement scope if there something that goes down a level.
             /// 
 
+            if (s is IBookingStatementBlock)
+            {
+                _scopeState.Push(CurrentScope);
+            }
+
             if (s is IStatementCompound)
                 CurrentScopePointer = s as IStatementCompound;
             if (s is IBookingStatementBlock)
             {
-                _scopeState.Push(CurrentScope);
                 PreviousDeclarationScopePointer = CurrentDeclarationScopePointer;
                 CurrentDeclarationScopePointer = s as IBookingStatementBlock;
                 Depth++;

@@ -110,6 +110,9 @@
     <Compile Include="ResultOperators\ROMinMax.cs" />
     <Compile Include="ResultOperators\ROTakeSkipOperators.cs" />
     <Compile Include="ResultOperators\ROUniqueCombinations.cs" />
+    <Compile Include="Variables\VarArray.cs" />
+    <Compile Include="Statements\StatementPairLoop.cs" />
+    <Compile Include="Statements\StatementRecordIndicies.cs" />
     <Compile Include="Statements\StatementBreak.cs" />
     <Compile Include="Statements\StatementFlipBool.cs" />
     <Compile Include="Statements\StatementMinMaxTest.cs" />

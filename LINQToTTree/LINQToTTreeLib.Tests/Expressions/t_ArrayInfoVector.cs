@@ -7,6 +7,7 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -131,7 +132,7 @@ namespace LINQToTTreeLib.Tests
             /// Add a dumb statement to force the rendering of the loop (empty loops don't render)
             /// 
 
-            gc.Add(new Statements.StatementSimpleStatement("d = d"));
+            gc.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("d = d"));
 
             ///
             /// Make sure the index variable comes back correctly

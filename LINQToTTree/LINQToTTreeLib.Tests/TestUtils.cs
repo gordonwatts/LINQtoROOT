@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Tests
         /// <param name="code"></param>
         public static void DumpCodeToConsole(this IGeneratedQueryCode code)
         {
-            Console.WriteLine("Code:");
+            Console.WriteLine("Declared Variables:");
             foreach (var var in code.CodeBody.DeclaredVariables)
             {
                 string initalValue = "default()";
@@ -28,10 +28,13 @@ namespace LINQToTTreeLib.Tests
 
                 Console.WriteLine(var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
             }
+            Console.WriteLine("Code:");
+
             foreach (var l in code.CodeBody.CodeItUp())
             {
                 Console.WriteLine("  " + l);
             }
+            Console.WriteLine("Result Variable: ", code.ResultValue.ToString());
         }
 
         public static IStatementCompound GetDeepestStatementLevel(GeneratedCode target)

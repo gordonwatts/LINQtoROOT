@@ -209,9 +209,11 @@
     <Compile Include="Factories\StatementIfOnCountFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
+    <Compile Include="Factories\StatementPairLoopFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
     <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
+    <Compile Include="Factories\VarArrayFactory.cs" />
     <Compile Include="Factories\VarIntegerFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
@@ -251,6 +253,9 @@
     </Compile>
     <Compile Include="GeneratedCodeTest.cs" />
     <Compile Include="GeneratedCodeTest.LookAtStatements.g.cs">
+      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratedCodeTest.Pop.g.cs">
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </Compile>
     <Compile Include="GeneratedCodeTest.SetResult.g.cs">
@@ -319,6 +324,13 @@
     <Compile Include="ResultOperators\ROMinMaxTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROMinMaxTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\ROUniqueCombinationsTest.CanHandle.g.cs">
+      <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROUniqueCombinationsTest.cs" />
+    <Compile Include="ResultOperators\ROUniqueCombinationsTest.ProcessResultOperator.g.cs">
+      <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>
@@ -373,6 +385,10 @@
     </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementPairLoopTest.cs" />
+    <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">
+      <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
