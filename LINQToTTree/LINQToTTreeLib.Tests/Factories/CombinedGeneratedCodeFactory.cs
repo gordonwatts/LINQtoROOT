@@ -32,7 +32,7 @@ namespace LINQToTTreeLib
 
         /// <summary>A factory for LINQToTTreeLib.CombinedGeneratedCode instances</summary>
         [PexFactoryMethod(typeof(Helpers), "LINQToTTreeLib.CombinedGeneratedCode")]
-        public static CombinedGeneratedCode Create(string[] varNamesToTransfer, string[] includeFileNames, string[] resultNames, IBookingStatementBlock[] statementBlocks)
+        public static CombinedGeneratedCode Create(string[] varNamesToTransfer, string[] includeFileNames, string[] resultNames, IBookingStatementBlock[] statementBlocks, string[] leafnames)
         {
             CombinedGeneratedCode combinedGeneratedCode = new CombinedGeneratedCode();
 
@@ -56,6 +56,11 @@ namespace LINQToTTreeLib
 
             if (statementBlocks != null)
                 combinedGeneratedCode.AddQueryBlocks(statementBlocks);
+
+            foreach (var item in leafnames)
+            {
+                combinedGeneratedCode.AddReferencedLeaf(item);
+            }
 
             return combinedGeneratedCode;
         }
