@@ -269,5 +269,37 @@ namespace LINQToTTreeLib
             gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
             Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level decl");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestPopUpOneLevel()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            gc.Pop();
+        }
+
+        [PexMethod]
+        public void Pop([PexAssumeNotNull]IStatement s)
+        {
+            var gc = new GeneratedCode();
+            gc.Add(s);
+
+            bool good = s is IBookingStatementBlock;
+            try
+            {
+                gc.Pop();
+                Assert.IsTrue(good, "booking statement");
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.IsFalse(good, "a booking statement");
+            }
+        }
+
+        [TestMethod]
+        public void TestCompoundStatemet()
+        {
+            Pop(new LINQToTTreeLib.Statements.StatementInlineBlock());
+        }
     }
 }
