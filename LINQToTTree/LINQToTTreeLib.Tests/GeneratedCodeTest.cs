@@ -292,7 +292,7 @@ namespace LINQToTTreeLib
                 Assert.AreEqual(depth, gc.Depth, "Depth isn't set correctly");
                 Assert.IsTrue(good, "booking statement");
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 Assert.IsFalse(good, "a booking statement");
             }

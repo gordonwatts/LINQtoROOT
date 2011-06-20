@@ -279,9 +279,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi, double E)
             {
                 throw new NotImplementedException("This should never get called!");
+#pragma warning disable 0162
                 var tlz = new ROOTNET.NTLorentzVector();
                 tlz.SetPtEtaPhiE(pt, eta, phi, E);
                 return tlz;
+#pragma warning disable 0162
             }
 
             [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },

@@ -60,7 +60,9 @@ namespace LINQToTTreeLib.Tests.ResultOperators
 
         class ntupArray
         {
+#pragma warning disable 0649
             public int[] run;
+#pragma warning restore 0649
         }
 
         [TestMethod]

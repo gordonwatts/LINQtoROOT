@@ -22,7 +22,6 @@ namespace LINQToTTreeLib.ResultOperators
         /// <returns></returns>
         public bool CanHandle(Type resultOperatorType)
         {
-            AggregateFromSeedResultOperator junk;
             if (resultOperatorType == typeof(MaxResultOperator)
                 || resultOperatorType == typeof(MinResultOperator))
                 return true;

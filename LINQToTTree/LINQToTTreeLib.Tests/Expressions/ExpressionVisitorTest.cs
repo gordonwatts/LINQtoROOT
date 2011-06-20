@@ -723,7 +723,9 @@ namespace LINQToTTreeLib
             {
                 HeldExpression = holder;
             }
+#pragma warning disable 0649
             public float[] values;
+#pragma warning restore 0649
 
             public Expression HeldExpression { get; private set; }
         }
@@ -731,14 +733,18 @@ namespace LINQToTTreeLib
         class SourceMuonsIAT
         {
             [TTreeVariableGrouping()]
+#pragma warning disable 0649
             public float values;
+#pragma warning restore 0649
         }
 
         [TranslateToClass(typeof(ResultIAT))]
         class SourceIAT
         {
             [TTreeVariableGrouping()]
+#pragma warning disable 0649
             public SourceMuonsIAT[] muons;
+#pragma warning restore 0649
         }
 
         [TestMethod]

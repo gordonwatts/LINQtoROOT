@@ -127,7 +127,9 @@ namespace LINQToTTreeLib
 
         class SimpleEventNtup
         {
+#pragma warning disable 0649
             public int run;
+#pragma warning restore 0649
 
             public static string _gProxyFile = "test.h";
             public static string[] _gObjectFiles = null;
