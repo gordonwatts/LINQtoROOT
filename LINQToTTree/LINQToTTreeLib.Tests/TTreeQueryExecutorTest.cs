@@ -1107,7 +1107,8 @@ namespace LINQToTTreeLib
             //
 
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter, 9);
+            const int vecSize = 10;
+            var rootFile = CreateFileOfVectorInt(numberOfIter, vecSize);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -1123,7 +1124,7 @@ namespace LINQToTTreeLib
 
             var q = new QueriableDummy<TestNtupeArr>();
             var dudeQ = from evt in q
-                        where (from cmb in evt.myvectorofint.PairWiseAll((i1, i2) => i1 != i2) select cmb).All(i => i > 0)
+                        where (from cmb in evt.myvectorofint.PairWiseAll((i1, i2) => i1 != i2) select cmb).Count() == vecSize
                         select evt;
             var dude = dudeQ.Count();
 
@@ -1137,13 +1138,7 @@ namespace LINQToTTreeLib
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(result, numberOfIter);
-        }
-
-        [TestMethod]
-        public void TestPairWiseAllBreak()
-        {
-            Assert.Inconclusive();
+            Assert.AreEqual(numberOfIter, result);
         }
 
         [TestMethod]
