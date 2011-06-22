@@ -72,7 +72,6 @@
     <Reference Include="libTreeWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -317,6 +316,12 @@
     <Compile Include="ResultOperators\ROMinMaxTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROMinMaxTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\ROPairWiseAllTest.CanHandle.g.cs">
+      <DependentUpon>t_ROPairWiseAll.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROPairWiseAllTest.ProcessResultOperator.g.cs">
+      <DependentUpon>t_ROPairWiseAll.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\ROUniqueCombinationsTest.CanHandle.g.cs">
       <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
     </Compile>
@@ -448,6 +453,7 @@
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessNew.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />

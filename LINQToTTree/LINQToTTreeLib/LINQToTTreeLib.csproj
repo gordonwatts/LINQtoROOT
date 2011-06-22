@@ -101,6 +101,8 @@
     <Compile Include="QueryResultCache.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
+    <Compile Include="relinq\PairWiseAllExpressionNode.cs" />
+    <Compile Include="relinq\PairWiseAllResultOperator.cs" />
     <Compile Include="relinq\UniqueCombinationsExpressionNode.cs" />
     <Compile Include="relinq\UniqueCombinationsResultOperator.cs" />
     <Compile Include="ResultOperators\ROAggregate.cs" />
@@ -108,8 +110,11 @@
     <Compile Include="ResultOperators\ROCount.cs" />
     <Compile Include="ResultOperators\ROFirstLast.cs" />
     <Compile Include="ResultOperators\ROMinMax.cs" />
+    <Compile Include="ResultOperators\ROPairWiseAll.cs" />
     <Compile Include="ResultOperators\ROTakeSkipOperators.cs" />
     <Compile Include="ResultOperators\ROUniqueCombinations.cs" />
+    <Compile Include="Statements\StatementCheckPairwise.cs" />
+    <Compile Include="Statements\StatementLoopOverGood.cs" />
     <Compile Include="Variables\VarArray.cs" />
     <Compile Include="Statements\StatementPairLoop.cs" />
     <Compile Include="Statements\StatementRecordIndicies.cs" />

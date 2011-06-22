@@ -9,22 +9,24 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using LINQToTTreeLib.ResultOperators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.relinq;
 
-namespace LINQToTTreeLib.TypeHandlers.CPPCode
+namespace LINQToTTreeLib.Tests
 {
-    public partial class TypeHandlerCPPCodeTest
+    public partial class ROPairWiseAllTest
     {
 [TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void CanHandleThrowsArgumentNullException599()
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+public void CanHandle657()
 {
-    TypeHandlerCPPCode typeHandlerCPPCode;
     bool b;
-    typeHandlerCPPCode = new TypeHandlerCPPCode();
-    b = this.CanHandle(typeHandlerCPPCode, (Type)null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    b = this.CanHandle(s0, (Type)null);
+    Assert.AreEqual<bool>(false, b);
+    Assert.IsNotNull((object)s0);
 }
     }
 }

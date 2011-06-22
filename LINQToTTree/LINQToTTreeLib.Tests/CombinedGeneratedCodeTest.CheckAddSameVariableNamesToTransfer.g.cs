@@ -26,7 +26,7 @@ public void CheckAddSameVariableNamesToTransfer37()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void CheckAddSameVariableNamesToTransferThrowsArgumentException260()
+public void CheckAddSameVariableNamesToTransferThrowsArgumentException70()
 {
     string[] ss = new string[1];
     this.CheckAddSameVariableNamesToTransfer(ss);
@@ -34,7 +34,7 @@ public void CheckAddSameVariableNamesToTransferThrowsArgumentException260()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void CheckAddSameVariableNamesToTransferThrowsArgumentException195()
+public void CheckAddSameVariableNamesToTransferThrowsArgumentException455()
 {
     string[] ss = new string[1];
     ss[0] = "";
@@ -43,7 +43,7 @@ public void CheckAddSameVariableNamesToTransferThrowsArgumentException195()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException352()
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException17()
 {
     string[] ss = new string[1];
     ss[0] = "\0";
@@ -52,7 +52,7 @@ public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException352()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException323()
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException126()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100";
@@ -61,7 +61,7 @@ public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException323()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException76()
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException311()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100\0";
@@ -70,7 +70,7 @@ public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException76()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException430()
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException231()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100\u0100";
@@ -79,7 +79,7 @@ public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException430()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException865()
+public void CheckAddSameVariableNamesToTransferThrowsArgumentNullException806()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100\0\0";

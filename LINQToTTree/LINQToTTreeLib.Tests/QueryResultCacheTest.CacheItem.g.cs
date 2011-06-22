@@ -22,7 +22,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(QueryResultCacheTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void CacheItemThrowsArgumentException827()
+public void CacheItemThrowsArgumentException754()
 {
     QueryResultCache queryResultCache;
     queryResultCache = new QueryResultCache();

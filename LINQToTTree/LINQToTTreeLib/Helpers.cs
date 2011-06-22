@@ -67,6 +67,38 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Test each jet in comparison with the other. It must satisfy the test with every other item
+        /// in the list. If it passes the test with all other objects then it is "good" and it is
+        /// returned.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="mustBeGoodForAll"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> PairWiseAll<T>(this IEnumerable<T> source, Expression<Func<T, T, bool>> mustBeGoodForAll)
+        {
+            throw new NotImplementedException();
+#if false
+            var inputs = source.ToArray();
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                bool onefalse = false;
+                for (int j = 0; j < inputs.Length; j++)
+                {
+                    if (i != j)
+                    {
+                        if (!mustBeGoodForAll(inputs[i], inputs[j]))
+                        {
+                            onefalse = true;
+                        }
+                    }
+                }
+                if (!onefalse) yield return inputs[i];
+            }
+#endif
+        }
+
+        /// <summary>
         /// given an object, apply each iteration to that object using a func, and return the object when done. Can
         /// be used much like Aggregate (o.Fill(arg)).
         /// </summary>

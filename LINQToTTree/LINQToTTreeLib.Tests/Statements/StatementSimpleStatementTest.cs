@@ -23,8 +23,6 @@ namespace LINQToTTreeLib.Statements
             var lines = result.ToArray();
 
             Assert.AreEqual(1, lines.Length, "bad # of lines");
-            Assert.AreEqual(target.Line + ";", lines[0], "bad line");
-
             return result;
             // TODO: add assertions to method StatementSimpleStatementTest.CodeItUp(StatementSimpleStatement)
         }

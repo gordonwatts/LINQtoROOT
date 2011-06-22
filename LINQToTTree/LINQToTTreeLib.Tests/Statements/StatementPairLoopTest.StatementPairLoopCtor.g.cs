@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Tests.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException108()
+public void StatementPairLoopCtorThrowsArgumentNullException380()
 {
     StatementPairLoop statementPairLoop;
     statementPairLoop =
@@ -31,7 +31,7 @@ public void StatementPairLoopCtorThrowsArgumentNullException108()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException85()
+public void StatementPairLoopCtorThrowsArgumentNullException728()
 {
     VarArray varArray;
     StatementPairLoop statementPairLoop;
@@ -42,7 +42,7 @@ public void StatementPairLoopCtorThrowsArgumentNullException85()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException866()
+public void StatementPairLoopCtorThrowsArgumentNullException137()
 {
     VarArray varArray;
     StatementPairLoop statementPairLoop;

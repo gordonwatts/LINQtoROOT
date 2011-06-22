@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessMethodCallThrowsArgumentNullException600()
+public void ProcessMethodCallThrowsArgumentNullException569()
 {
     TypeHandlerCPPCode typeHandlerCPPCode;
     Expression expression;
@@ -35,7 +35,7 @@ public void ProcessMethodCallThrowsArgumentNullException600()
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
 [ExpectedException(typeof(InvalidOperationException))]
-public void ProcessMethodCallThrowsInvalidOperationException731()
+public void ProcessMethodCallThrowsInvalidOperationException659()
 {
     TypeHandlerCPPCode typeHandlerCPPCode;
     MethodCallExpression methodCallExpression;

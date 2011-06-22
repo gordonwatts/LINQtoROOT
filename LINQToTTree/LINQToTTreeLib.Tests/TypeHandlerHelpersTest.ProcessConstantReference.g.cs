@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerHelpersTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessConstantReferenceThrowsNotImplementedException662()
+public void ProcessConstantReferenceThrowsNotImplementedException859()
 {
     IValue iValue;
     TypeHandlerHelpers s0 = new TypeHandlerHelpers();

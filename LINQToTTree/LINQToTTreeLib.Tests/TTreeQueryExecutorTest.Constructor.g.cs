@@ -21,7 +21,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException880()
+public void ConstructorThrowsArgumentException296()
 {
     TTreeQueryExecutor tTreeQueryExecutor;
     tTreeQueryExecutor =
@@ -30,7 +30,7 @@ public void ConstructorThrowsArgumentException880()
 [TestMethod]
 [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException675()
+public void ConstructorThrowsArgumentException788()
 {
     TTreeQueryExecutor tTreeQueryExecutor;
     tTreeQueryExecutor =
@@ -39,7 +39,7 @@ public void ConstructorThrowsArgumentException675()
 [TestMethod]
 [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException951()
+public void ConstructorThrowsArgumentNullException880()
 {
     TTreeQueryExecutor tTreeQueryExecutor;
     tTreeQueryExecutor =
@@ -48,7 +48,7 @@ public void ConstructorThrowsArgumentNullException951()
 [TestMethod]
 [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException109()
+public void ConstructorThrowsArgumentNullException986()
 {
     TTreeQueryExecutor tTreeQueryExecutor;
     tTreeQueryExecutor =
@@ -57,7 +57,7 @@ public void ConstructorThrowsArgumentNullException109()
 [TestMethod]
 [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException902()
+public void ConstructorThrowsArgumentNullException470()
 {
     TTreeQueryExecutor tTreeQueryExecutor;
     tTreeQueryExecutor =
@@ -66,7 +66,7 @@ public void ConstructorThrowsArgumentNullException902()
 [TestMethod]
 [PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException208()
+public void ConstructorThrowsArgumentNullException302()
 {
     TTreeQueryExecutor tTreeQueryExecutor;
     tTreeQueryExecutor =
