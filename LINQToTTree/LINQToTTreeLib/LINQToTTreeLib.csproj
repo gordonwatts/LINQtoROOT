@@ -101,6 +101,8 @@
     <Compile Include="QueryResultCache.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
+    <Compile Include="relinq\PairWiseAllExpressionNode.cs" />
+    <Compile Include="relinq\PairWiseAllResultOperator.cs" />
     <Compile Include="relinq\UniqueCombinationsExpressionNode.cs" />
     <Compile Include="relinq\UniqueCombinationsResultOperator.cs" />
     <Compile Include="ResultOperators\ROAggregate.cs" />

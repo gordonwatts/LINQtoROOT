@@ -1081,7 +1081,7 @@ namespace LINQToTTreeLib
 
             var q = new QueriableDummy<TestNtupeArr>();
             var dudeQ = from evt in q
-                        where (from cmb in evt.myvectorofint.UniqueCombinations() where (cmb.Item1+cmb.Item2 < 4) select cmb).Any()
+                        where (from cmb in evt.myvectorofint.UniqueCombinations() where (cmb.Item1 + cmb.Item2 < 4) select cmb).Any()
                         select evt;
             var dude = dudeQ.Count();
 
@@ -1096,6 +1096,54 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
+        public void TestPairWiseAll()
+        {
+            //
+            // The way the unique combo works is it builds in a double loop. So if something inside that loop
+            // throws a break it has to be transmitted out two levels. This is meant to test for that.
+            //
+
+            const int numberOfIter = 25;
+            var rootFile = CreateFileOfVectorInt(numberOfIter, 9);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// We are looking at an array that has 10 entries in it. So if we create a
+            /// unique combo, then we will have 9 + 8 + 7 + 6 + 5 + 4 + 3 + 2 + 1 items,
+            /// or 45 items.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (from cmb in evt.myvectorofint.PairWiseAll((i1, i2) => i1 != i2) select cmb).All(i => i > 0)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
+        public void TestPairWiseAllBreak()
+        {
+            Assert.Inconclusive();
         }
 
         [TestMethod]
