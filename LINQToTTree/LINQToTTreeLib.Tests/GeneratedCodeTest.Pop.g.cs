@@ -8,49 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Statements.Moles;
-using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Pop282()
-{
-    SVarInteger sVarInteger;
-    SStatementIncrementInteger sStatementIncrementInteger;
-    sVarInteger = new SVarInteger();
-    sStatementIncrementInteger =
-      new SStatementIncrementInteger((VarInteger)sVarInteger);
-    this.Pop((IStatement)sStatementIncrementInteger);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Pop28201()
-{
-    VarInteger varInteger;
-    SStatementIncrementInteger sStatementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
-    this.Pop((IStatement)sStatementIncrementInteger);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Pop28202()
-{
-    VarInteger varInteger;
-    SStatementIncrementInteger sStatementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    sStatementIncrementInteger = new SStatementIncrementInteger(varInteger);
-    this.Pop((IStatement)sStatementIncrementInteger);
-}
     }
 }

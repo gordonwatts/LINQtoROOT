@@ -17,13 +17,5 @@ namespace LINQToTTreeLib.QueryVisitors
 {
     public partial class FormattingQueryVisitorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(FormattingQueryVisitorTest))]
-public void Format462()
-{
-    string s;
-    s = this.Format((QueryModel)null);
-    Assert.AreEqual<string>("QueryModel(null)", s);
-}
     }
 }

@@ -16,11 +16,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestTryCombine906()
-{
-    this.TestTryCombine((IStatement)null);
-}
     }
 }
