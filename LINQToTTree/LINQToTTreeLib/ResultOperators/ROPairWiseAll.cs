@@ -67,6 +67,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var passAll = new VarArray(typeof(bool)) { Declare = true };
+            gc.Add(passAll);
             var index1 = new Variables.VarSimple(typeof(int));
             var index2 = new Variables.VarSimple(typeof(int));
 

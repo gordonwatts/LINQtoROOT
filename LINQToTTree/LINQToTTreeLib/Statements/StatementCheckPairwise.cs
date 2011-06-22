@@ -47,7 +47,7 @@ namespace LINQToTTreeLib.Statements
             // are called.
             //
 
-            yield return string.Format("for(int index = 0; index < {0}.size(); index++) {1}.push_back(true);", _indciesToInspect.RawValue, _whatIsGood.RawValue);
+            yield return string.Format("for (int index = 0; index < {0}.size(); index++) {1}.push_back(true);", _indciesToInspect.RawValue, _whatIsGood.RawValue);
 
             //
             // Loop over each one, only do it if it is still marked good. Note that for the inner loop
@@ -61,15 +61,15 @@ namespace LINQToTTreeLib.Statements
             yield return "{";
             yield return string.Format("  if({0}[index1])", _whatIsGood.RawValue);
             yield return "  {";
-            yield return string.Format("    for(int index2 = index1+1; index2 < {0}.size(); index2++)", _indciesToInspect.RawValue);
+            yield return string.Format("    for (int index2 = index1+1; index2 < {0}.size(); index2++)", _indciesToInspect.RawValue);
             yield return "    {";
 
             //
             // Now the test. If the test fails not really worth it to go on further.
             //
 
-            yield return string.Format("        {0} = {1}[index1];", _index1.RawValue, _indciesToInspect.RawValue);
-            yield return string.Format("        {0} = {1}[index2];", _index2.RawValue, _indciesToInspect.RawValue);
+            yield return string.Format("        int {0} = {1}[index1];", _index1.RawValue, _indciesToInspect.RawValue);
+            yield return string.Format("        int {0} = {1}[index2];", _index2.RawValue, _indciesToInspect.RawValue);
             yield return string.Format("        if (!({0}))", _test.RawValue);
             yield return "        {";
             yield return string.Format("          {0}[index1] = false;", _whatIsGood.RawValue);

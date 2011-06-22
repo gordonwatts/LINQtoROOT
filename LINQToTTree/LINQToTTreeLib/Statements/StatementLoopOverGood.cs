@@ -30,11 +30,11 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("for (index=0; index < {0}.size(); index++)", _indiciesToCheck.RawValue);
+            yield return string.Format("for (int index=0; index < {0}.size(); index++)", _indiciesToCheck.RawValue);
             yield return "{";
             yield return string.Format("  if ({0}[index])", _indexIsGood.RawValue);
             yield return "  {";
-            yield return string.Format("    {0} = {1}[index];", _index.RawValue, _indiciesToCheck.RawValue);
+            yield return string.Format("    int {0} = {1}[index];", _index.RawValue, _indiciesToCheck.RawValue);
             foreach (var l in base.CodeItUp())
             {
                 yield return "    " + l;
