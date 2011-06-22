@@ -44,5 +44,16 @@ namespace LINQToTTreeLib.Statements
         {
             yield return string.Format("{0}.push_back({1});", _storageArray.RawValue, _intToRecord.RawValue);
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RenameVariable(string originalName, string newName)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

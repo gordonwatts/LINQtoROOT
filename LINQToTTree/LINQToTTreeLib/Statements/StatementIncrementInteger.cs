@@ -35,5 +35,16 @@ namespace LINQToTTreeLib.Statements
         {
             yield return Integer.RawValue + "++;";
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RenameVariable(string originalName, string newName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -56,5 +56,16 @@ namespace LINQToTTreeLib.Statements
             string semi = AddSemicolon ? ";" : "";
             yield return Line + semi;
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RenameVariable(string originalName, string newName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

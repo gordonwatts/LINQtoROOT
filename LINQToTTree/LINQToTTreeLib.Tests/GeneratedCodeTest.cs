@@ -35,6 +35,17 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+
+            public bool IsSameStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class CompoundStatement : IStatementCompound
@@ -57,6 +68,17 @@ namespace LINQToTTreeLib
 
 
             public bool TryCombineStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public bool IsSameStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
             {
                 throw new NotImplementedException();
             }

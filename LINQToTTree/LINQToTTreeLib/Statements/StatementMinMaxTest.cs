@@ -51,5 +51,16 @@ namespace LINQToTTreeLib.Statements
             yield return string.Format("  {0} = {1};", vMaxMin.RawValue, TempVariable.RawValue);
             yield return "}";
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RenameVariable(string originalName, string newName)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

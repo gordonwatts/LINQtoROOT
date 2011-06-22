@@ -27,5 +27,16 @@ namespace LINQToTTreeLib.Statements
         {
             yield return string.Format("{0} = !{0};", _var.RawValue);
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RenameVariable(string originalName, string newName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
