@@ -31,10 +31,7 @@ namespace LINQToTTreeLib.relinq
 
         protected override Remotion.Linq.Clauses.ResultOperatorBase CreateResultOperator(ClauseGenerationContext clauseGenerationContext)
         {
-            var resolvedTestP1 = Source.Resolve(_test.Parameters[0], _test.Body, clauseGenerationContext);
-            var resolvedTest = Source.Resolve(_test.Parameters[1], resolvedTestP1, clauseGenerationContext);
-
-            return new PairWiseAllResultOperator(resolvedTest);
+            return new PairWiseAllResultOperator(_test);
         }
 
         public override System.Linq.Expressions.Expression Resolve(System.Linq.Expressions.ParameterExpression inputParameter, System.Linq.Expressions.Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
