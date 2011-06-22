@@ -1,7 +1,6 @@
 ﻿
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -19,14 +18,14 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The array to be storing things in
         /// </summary>
-        private Variables.VarArray _storageArray;
+        private IValue _storageArray;
 
         /// <summary>
         /// Create a statement that will record this index into this array each time through.
         /// </summary>
         /// <param name="intToRecord">Integer that should be cached on each time through</param>
         /// <param name="storageArray">The array where the indicies should be written</param>
-        public StatementRecordIndicies(IValue intToRecord, VarArray storageArray)
+        public StatementRecordIndicies(IValue intToRecord, IValue storageArray)
         {
             _intToRecord = intToRecord;
             _storageArray = storageArray;

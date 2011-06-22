@@ -72,7 +72,6 @@
     <Reference Include="libTreeWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -88,14 +87,6 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NVelocity, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\NVelocity.1.0.3\lib\NVelocity.dll</HintPath>
-    </Reference>
-    <Reference Include="oldLinqToTTreeInterfacesLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>MolesAssemblies\oldLinqToTTreeInterfacesLib.Moles.dll</HintPath>
-    </Reference>
-    <Reference Include="oldLINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>MolesAssemblies\oldLINQToTTreeLib.Moles.dll</HintPath>
     </Reference>
     <Reference Include="Remotion.Linq">
       <HintPath>..\Relinq_1.13.102\net-3.5\bin\debug\Remotion.Linq.dll</HintPath>
@@ -456,6 +447,7 @@
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessNew.g.cs">
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
