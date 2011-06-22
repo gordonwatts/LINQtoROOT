@@ -344,6 +344,10 @@
     <Compile Include="ResultOperators\ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\IStatementCombineTest.cs" />
+    <Compile Include="Statements\IStatementCombineTest.TestRename.g.cs">
+      <DependentUpon>IStatementCombineTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
