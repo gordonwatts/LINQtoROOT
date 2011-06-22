@@ -7,6 +7,7 @@ using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using Microsoft.Pex.Framework.Validation;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -18,7 +19,7 @@ namespace LINQToTTreeLib.Tests
     ///</summary>
     [TestClass]
     [PexClass(typeof(ROUniqueCombinations))]
-    public class ROPairWiseAllTest
+    public partial class ROPairWiseAllTest
     {
         [TestInitialize]
         public void TestInit()
@@ -53,10 +54,7 @@ namespace LINQToTTreeLib.Tests
         {
             bool result = target.CanHandle(resultOperatorType);
 
-            if (resultOperatorType == typeof(PairWiseAllResultOperator))
-                Assert.IsTrue(result, "Should be good to go!");
-            else
-                Assert.IsFalse(result, "Bad input type - should not have taken it!");
+            Assert.AreEqual(resultOperatorType == typeof(PairWiseAllResultOperator), result, "bad return from CanHandle");
 
             return result;
         }
@@ -64,7 +62,7 @@ namespace LINQToTTreeLib.Tests
         /// <summary>
         ///A test for ProcessResultOperator
         ///</summary>
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         internal IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROUniqueCombinations target,
             ResultOperatorBase resultOperator,

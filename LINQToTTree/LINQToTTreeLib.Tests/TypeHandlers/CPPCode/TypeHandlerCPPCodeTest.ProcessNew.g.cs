@@ -19,5 +19,18 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
     public partial class TypeHandlerCPPCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
+[ExpectedException(typeof(NotImplementedException))]
+public void ProcessNewThrowsNotImplementedException820()
+{
+    TypeHandlerCPPCode typeHandlerCPPCode;
+    Expression expression;
+    typeHandlerCPPCode = new TypeHandlerCPPCode();
+    IValue iValue = (IValue)null;
+    expression =
+      this.ProcessNew(typeHandlerCPPCode, (NewExpression)null, out iValue, 
+                      (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+}
     }
 }

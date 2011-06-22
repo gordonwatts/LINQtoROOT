@@ -316,6 +316,12 @@
     <Compile Include="ResultOperators\ROMinMaxTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROMinMaxTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ResultOperators\ROPairWiseAllTest.CanHandle.g.cs">
+      <DependentUpon>t_ROPairWiseAll.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ResultOperators\ROPairWiseAllTest.ProcessResultOperator.g.cs">
+      <DependentUpon>t_ROPairWiseAll.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultOperators\ROUniqueCombinationsTest.CanHandle.g.cs">
       <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
     </Compile>
