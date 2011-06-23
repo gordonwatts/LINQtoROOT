@@ -526,6 +526,12 @@ namespace LINQToTTreeLib
                 }
                 writer.Close();
             }
+
+            //
+            // Finally, copy over any included files
+            //
+
+            CopyIncludedFilesToDirectory(_proxyFile, GetQueryDirectory());
         }
 
         /// <summary>
@@ -940,6 +946,24 @@ namespace LINQToTTreeLib
             /// Next, if there are any include files we need to move
             /// 
 
+            CopyIncludedFilesToDirectory(sourceFile, destDirectory);
+
+            ///
+            /// Return what we know!
+            /// 
+
+            destFile.Refresh();
+            return destFile;
+        }
+
+        /// <summary>
+        /// Copy over any files that are included in the source file to the destination
+        /// directory
+        /// </summary>
+        /// <param name="sourceFile"></param>
+        /// <param name="destDirectory"></param>
+        private void CopyIncludedFilesToDirectory(FileInfo sourceFile, DirectoryInfo destDirectory)
+        {
             var includeFiles = FindIncludeFiles(sourceFile);
             var goodIncludeFiles = from f in includeFiles
                                    where !Path.IsPathRooted(f)
@@ -951,13 +975,6 @@ namespace LINQToTTreeLib
             {
                 CopyToDirectory(item, destDirectory);
             }
-
-            ///
-            /// Return what we know!
-            /// 
-
-            destFile.Refresh();
-            return destFile;
         }
 
         /// <summary>
