@@ -32,7 +32,13 @@ namespace LINQToTTreeLib.Variables
 
         public void RenameRawValue(string oldname, string newname)
         {
-            throw new NotImplementedException();
+            if (InitialValue != null)
+                InitialValue.RenameRawValue(oldname, newname);
+            if (RawValue == oldname)
+            {
+                RawValue = newname;
+                VariableName = newname;
+            }
         }
     }
 }

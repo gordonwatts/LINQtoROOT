@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables
@@ -40,10 +41,14 @@ namespace LINQToTTreeLib.Variables
             return "(" + Type.Name + ") " + RawValue;
         }
 
-
+        /// <summary>
+        /// Rename everything in teh raw value if need be...
+        /// </summary>
+        /// <param name="oldname"></param>
+        /// <param name="newname"></param>
         public void RenameRawValue(string oldname, string newname)
         {
-            throw new NotImplementedException();
+            RawValue = Regex.Replace(RawValue, @"\b" + oldname + @"\b", newname);
         }
     }
 }

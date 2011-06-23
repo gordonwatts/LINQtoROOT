@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
@@ -62,7 +63,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
         public void RenameRawValue(string oldname, string newname)
         {
-            throw new NotImplementedException();
+            RawValue = Regex.Replace(RawValue, @"\b" + oldname + @"\b", newname);
         }
     }
 }

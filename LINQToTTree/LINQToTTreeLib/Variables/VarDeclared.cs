@@ -51,7 +51,13 @@ namespace LINQToTTreeLib.Variables
             get { return _value.Type; }
         }
 
-
+        /// <summary>
+        /// Renaming this is bad b/c there are connections to other places in the
+        /// code that have already created this guy - so we should fail hard if we need
+        /// to rename this w/out checking that it is ok.
+        /// </summary>
+        /// <param name="oldname"></param>
+        /// <param name="newname"></param>
         public void RenameRawValue(string oldname, string newname)
         {
             throw new NotImplementedException();
