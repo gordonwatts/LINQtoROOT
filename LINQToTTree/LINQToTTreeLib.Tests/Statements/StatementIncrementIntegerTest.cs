@@ -1,5 +1,6 @@
 // <copyright file="StatementIncrementIntegerTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -20,6 +21,12 @@ namespace LINQToTTreeLib.Statements
             StatementIncrementInteger target = new StatementIncrementInteger(i);
             Assert.AreEqual(i, target.Integer, "initial value not set correctly");
             return null;
+        }
+
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        public void TestEquiv([PexAssumeUnderTest] StatementIncrementInteger statement1, IStatement statement2)
+        {
+            LINQToTTreeLib.Tests.Statements.Utils.TestForEquiv(statement1, statement2);
         }
     }
 }

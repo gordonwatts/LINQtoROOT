@@ -21,8 +21,8 @@ namespace LINQToTTreeLib.Tests.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NotImplementedException))]
-public void TestRenameThrowsNotImplementedException894()
+[PexRaisedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException377()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -34,8 +34,8 @@ public void TestRenameThrowsNotImplementedException894()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NotImplementedException))]
-public void TestRenameThrowsNotImplementedException484()
+[PexRaisedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException150()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;

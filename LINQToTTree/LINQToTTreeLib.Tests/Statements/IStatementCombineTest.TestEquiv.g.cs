@@ -9,10 +9,111 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Statements;
+using LinqToTTreeInterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class IStatementCombineTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void TestEquivThrowsNullReferenceException625()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestEquiv((IStatement)statementIncrementInteger, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[PexRaisedException(typeof(NullReferenceException))]
+public void TestEquivThrowsNullReferenceException373()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestEquiv((IStatement)statementIncrementInteger, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv131()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestEquiv((IStatement)statementIncrementInteger, 
+                   (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv13101()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    VarInteger varInteger1;
+    StatementIncrementInteger statementIncrementInteger1;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger1 =
+      StatementIncrementIntegerFactory.Create(varInteger1);
+    this.TestEquiv((IStatement)statementIncrementInteger, 
+                   (IStatement)statementIncrementInteger1);
+    Assert.IsNotNull((object)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv13102()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestEquiv((IStatement)statementIncrementInteger, 
+                   (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[PexRaisedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException770()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestEquiv((IStatement)statementIncrementInteger, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException87()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestEquiv((IStatement)statementIncrementInteger, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException288()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestEquiv((IStatement)statementIncrementInteger, (IStatement)null);
+}
     }
 }

@@ -345,6 +345,9 @@
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\IStatementCombineTest.cs" />
+    <Compile Include="Statements\IStatementCombineTest.TestEquiv.g.cs">
+      <DependentUpon>IStatementCombineTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\IStatementCombineTest.TestRename.g.cs">
       <DependentUpon>IStatementCombineTest.cs</DependentUpon>
     </Compile>
@@ -372,6 +375,9 @@
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementIncrementIntegerTest.cs" />
+    <Compile Include="Statements\StatementIncrementIntegerTest.TestEquiv.g.cs">
+      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.Add.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
@@ -399,6 +405,7 @@
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
+    <Compile Include="Statements\Utils.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
     <Compile Include="TestUtils.cs" />

@@ -37,14 +37,29 @@ namespace LINQToTTreeLib.Statements
         }
 
 
+        /// <summary>
+        /// Are we identical statements, one after the other?
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool IsSameStatement(IStatement statement)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("Statement to compare to must not be null");
+            var other = statement as StatementIncrementInteger;
+            if (other == null)
+                return false;
+
+            return Integer.RawValue == other.Integer.RawValue;
         }
 
+        /// <summary>
+        /// If the variable name is known, then do the rename here.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            throw new NotImplementedException();
         }
     }
 }
