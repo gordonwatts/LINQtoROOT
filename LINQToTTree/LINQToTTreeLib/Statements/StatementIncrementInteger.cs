@@ -60,6 +60,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
+            Integer.RenameRawValue(originalName, newName);
         }
     }
 }

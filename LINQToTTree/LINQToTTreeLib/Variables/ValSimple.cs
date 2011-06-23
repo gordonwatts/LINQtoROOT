@@ -48,6 +48,8 @@ namespace LINQToTTreeLib.Variables
         /// <param name="newname"></param>
         public void RenameRawValue(string oldname, string newname)
         {
+            if (string.IsNullOrWhiteSpace(oldname) || string.IsNullOrWhiteSpace(newname))
+                throw new ArgumentNullException("when renaming the from and two strings must be valid");
             RawValue = Regex.Replace(RawValue, @"\b" + oldname + @"\b", newname);
         }
     }

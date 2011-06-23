@@ -28,5 +28,11 @@ namespace LINQToTTreeLib.Statements
         {
             LINQToTTreeLib.Tests.Statements.Utils.TestForEquiv(statement1, statement2);
         }
+
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        public IStatement TestRename([PexAssumeUnderTest] StatementIncrementInteger statement, string oldname, string newname)
+        {
+            return LINQToTTreeLib.Tests.Statements.Utils.TestRenameOfStatement(statement, oldname, newname);
+        }
     }
 }

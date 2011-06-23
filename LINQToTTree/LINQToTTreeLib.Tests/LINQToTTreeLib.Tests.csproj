@@ -378,6 +378,9 @@
     <Compile Include="Statements\StatementIncrementIntegerTest.TestEquiv.g.cs">
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementIncrementIntegerTest.TestRename.g.cs">
+      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.Add.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
