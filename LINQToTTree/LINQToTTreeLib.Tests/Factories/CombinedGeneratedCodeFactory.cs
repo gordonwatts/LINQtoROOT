@@ -28,6 +28,12 @@ namespace LINQToTTreeLib
             public string RawValue { get; set; }
 
             public System.Type Type { get; set; }
+
+
+            public void RenameRawValue(string oldname, string newname)
+            {
+                throw new System.NotImplementedException();
+            }
         }
 
         /// <summary>A factory for LINQToTTreeLib.CombinedGeneratedCode instances</summary>

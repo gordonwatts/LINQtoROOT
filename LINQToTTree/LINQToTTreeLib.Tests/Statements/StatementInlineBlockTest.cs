@@ -130,6 +130,12 @@ namespace LINQToTTreeLib.Statements
             public string RawValue { get; set; }
 
             public Type Type { get; set; }
+
+
+            public void RenameRawValue(string oldname, string newname)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentException))]

@@ -58,5 +58,11 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// The original title of the root object.
         /// </summary>
         public string OriginalTitle { get; private set; }
+
+
+        public void RenameRawValue(string oldname, string newname)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

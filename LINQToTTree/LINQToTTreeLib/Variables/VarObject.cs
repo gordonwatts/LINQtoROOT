@@ -28,5 +28,11 @@ namespace LINQToTTreeLib.Variables
 
 
         public bool Declare { get; set; }
+
+
+        public void RenameRawValue(string oldname, string newname)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
