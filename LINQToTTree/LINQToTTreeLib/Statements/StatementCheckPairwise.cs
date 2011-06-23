@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
@@ -29,6 +30,17 @@ namespace LINQToTTreeLib.Statements
             VarSimple index1, VarSimple index2, VarArray passedArray,
             IValue test)
         {
+            if (indiciesToInspect == null)
+                throw new ArgumentNullException("indiciesToInspect");
+            if (index1 == null)
+                throw new ArgumentNullException("index1");
+            if (index2 == null)
+                throw new ArgumentNullException("index2");
+            if (passedArray == null)
+                throw new ArgumentNullException("passedArray");
+            if (test == null)
+                throw new ArgumentNullException("test");
+
             _indciesToInspect = indiciesToInspect;
             _index1 = index1;
             _index2 = index2;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -8,10 +9,15 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementAssign : IStatement
     {
-        public StatementAssign(IVariable accumulator, IValue funcResolved)
+        public StatementAssign(IVariable result, IValue val)
         {
-            ResultVariable = accumulator;
-            Expression = funcResolved;
+            if (result == null)
+                throw new ArgumentNullException("Accumulator must not be zero");
+            if (val == null)
+                throw new ArgumentNullException("funcResolved must not be null");
+
+            ResultVariable = result;
+            Expression = val;
         }
 
         /// <summary>
@@ -42,10 +48,22 @@ namespace LINQToTTreeLib.Statements
             return ResultVariable.RawValue + "=" + Expression.RawValue;
         }
 
-
+        /// <summary>
+        /// Check to see if this assign is the same or not
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool IsSameStatement(IStatement statement)
         {
-            throw new System.NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement must not be null");
+
+            var other = statement as StatementAssign;
+            if (other == null)
+                return false;
+
+            return ResultVariable.RawValue == other.ResultVariable.RawValue
+                && Expression.RawValue == other.Expression.RawValue;
         }
 
         public void RenameVariable(string originalName, string newName)

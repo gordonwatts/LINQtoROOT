@@ -2,7 +2,9 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
 using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -37,6 +39,12 @@ namespace LINQToTTreeLib.Tests.Statements
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        [PexUseType(typeof(StatementAssign))]
+        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementBreak))]
+        [PexUseType(typeof(StatementCheckPairwise))]
+        [PexUseType(typeof(StatementFilter))]
+        [PexUseType(typeof(StatementFlipBool))]
         public void TestEquiv([PexAssumeUnderTest] IStatement statement1, IStatement statement2)
         {
             var result = statement1.IsSameStatement(statement2);

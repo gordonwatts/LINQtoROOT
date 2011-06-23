@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -13,15 +14,25 @@ namespace LINQToTTreeLib.Statements
             yield return "break;";
         }
 
-
+        /// <summary>
+        /// Since we know nothing, this is a trival statement!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool IsSameStatement(IStatement statement)
         {
-            throw new System.NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement must not be null");
+            return statement is StatementBreak;
         }
 
+        /// <summary>
+        /// There is nothing to do here since we know nothing about variables.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            throw new System.NotImplementedException();
         }
     }
 }
