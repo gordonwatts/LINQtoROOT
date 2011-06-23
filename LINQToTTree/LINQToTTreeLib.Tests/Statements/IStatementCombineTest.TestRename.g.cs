@@ -21,8 +21,8 @@ namespace LINQToTTreeLib.Tests.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException377()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException396()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -34,8 +34,34 @@ public void TestRenameThrowsArgumentNullException377()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException150()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException185()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    iStatement =
+      this.TestRename((IStatement)statementIncrementInteger, "", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException330()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    iStatement = this.TestRename
+                     ((IStatement)statementIncrementInteger, "\u0100a", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException348()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;

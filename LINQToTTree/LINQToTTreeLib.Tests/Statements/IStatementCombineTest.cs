@@ -14,7 +14,7 @@ namespace LINQToTTreeLib.Tests.Statements
     [TestClass, PexClass]
     public partial class IStatementCombineTest
     {
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public IStatement TestRename([PexAssumeUnderTest] IStatement statement, string oldname, string newname)
         {
             var origianllines = statement.CodeItUp().ToArray();
