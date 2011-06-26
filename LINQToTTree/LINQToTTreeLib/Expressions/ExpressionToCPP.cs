@@ -158,7 +158,7 @@ namespace LINQToTTreeLib.Expressions
         {
             string op = "";
             bool CastToFinalType = false;
-            string format = "{0}{1}{2}";
+            string format = "({0}){1}({2})";
 
             Type resultType = null;
             switch (expression.NodeType)
