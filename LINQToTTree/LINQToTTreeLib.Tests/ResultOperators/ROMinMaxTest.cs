@@ -101,6 +101,8 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.IsNotNull(ifStatement, "If statement wasn' of proper type!");
 
             var varname = ifStatement.TestExpression.RawValue.Split('>').First();
+            varname = varname.Replace("(", "");
+            varname = varname.Replace(")", "");
 
             // And that var name should also exist in the list of booked variables at this top level.
 
