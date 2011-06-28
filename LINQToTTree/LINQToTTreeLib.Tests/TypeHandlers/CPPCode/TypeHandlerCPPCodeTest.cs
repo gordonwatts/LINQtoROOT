@@ -112,6 +112,31 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.AreEqual("TLorentzVector.h", gc.IncludeFiles.First(), "include file name");
         }
 
+        [TestMethod]
+        public void TestSimpleTimesTwo()
+        {
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var param = Expression.Parameter(typeof(int), "p");
+            var paramplus = Expression.MakeBinary(ExpressionType.Add, param, Expression.Constant(1));
+            var expr = Expression.Call(typeof(DoItClass).GetMethod("DoIt"), paramplus);
+
+            IValue result;
+
+            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            var vname = result.RawValue;
+            var st2 = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
+
+            var expected = new StringBuilder();
+            expected.AppendFormat("{0} = (p+1)*2;", vname);
+            Assert.AreEqual(expected.ToString(), st2.Line, "statement line incorrect");
+        }
+
         /// <summary>Test stub for ProcessMethodCall(MethodCallExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod]
         internal Expression ProcessMethodCall(
