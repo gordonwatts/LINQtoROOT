@@ -61,8 +61,21 @@ namespace LINQToTTreeLib.Utils
 
             // Special case where we already have this thing surrounded by parens.
 
-            if (rv[0] == '(' && rv[rv.Length - 1] == ')')
-                return rv;
+            if (rv[0] == '(')
+            {
+                int depth = 1;
+                int indexer = 1;
+                while (depth != 0 && indexer != rv.Length)
+                {
+                    if (rv[indexer] == '(')
+                        depth++;
+                    if (rv[indexer] == ')')
+                        depth--;
+                    indexer++;
+                }
+                if (indexer == rv.Length)
+                    return rv;
+            }
 
             // Protect it from "later" use.
 

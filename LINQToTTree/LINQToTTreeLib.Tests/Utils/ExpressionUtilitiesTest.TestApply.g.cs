@@ -26,14 +26,6 @@ namespace LINQToTTreeLib.Tests
         }
         [TestMethod]
         [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
-        public void TestApply591()
-        {
-            string s;
-            s = this.TestApply("(");
-            Assert.AreEqual<string>("(()", s);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
         public void TestApply438()
         {
             string s;
@@ -79,6 +71,46 @@ namespace LINQToTTreeLib.Tests
         {
             string s;
             s = this.TestApply((string)null);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
+        public void TestApply270()
+        {
+            string s;
+            s = this.TestApply("(\0");
+            Assert.AreEqual<string>("(\0", s);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
+        public void TestApply662()
+        {
+            string s;
+            s = this.TestApply("((");
+            Assert.AreEqual<string>("((", s);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
+        public void TestApply43802()
+        {
+            string s;
+            s = this.TestApply("()\0");
+            Assert.AreEqual<string>("(()\0)", s);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
+        public void TestApply348()
+        {
+            string s;
+            s = this.TestApply("(\0\u0100");
+            Assert.AreEqual<string>("(\0\u0100", s);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
+        public void TestApply731()
+        {
+            string s;
+            s = this.TestApply("(((");
+            Assert.AreEqual<string>("(((", s);
         }
     }
 }

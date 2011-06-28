@@ -29,6 +29,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("(a/b)", new ValSimple("a/b", typeof(int)).ApplyParensIfNeeded(), "single term");
             Assert.AreEqual("(-a)", new ValSimple("-a", typeof(int)).ApplyParensIfNeeded(), "single term");
             Assert.AreEqual("(a)", new ValSimple("(a)", typeof(int)).ApplyParensIfNeeded(), "single term");
+            Assert.AreEqual("((a)-(b))", new ValSimple("(a)-(b)", typeof(int)).ApplyParensIfNeeded(), "single term");
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
