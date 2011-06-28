@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
@@ -158,7 +159,7 @@ namespace LINQToTTreeLib.Expressions
         {
             string op = "";
             bool CastToFinalType = false;
-            string format = "({0}){1}({2})";
+            string format = "{0}{1}{2}";
 
             Type resultType = null;
             switch (expression.NodeType)
@@ -258,7 +259,7 @@ namespace LINQToTTreeLib.Expressions
             }
 
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat(format, sLHS, op, sRHS);
+            bld.AppendFormat(format, sLHS.ApplyParensIfNeeded(), op, sRHS.ApplyParensIfNeeded());
             _result = new ValSimple(bld.ToString(), resultType);
 
             return expression;

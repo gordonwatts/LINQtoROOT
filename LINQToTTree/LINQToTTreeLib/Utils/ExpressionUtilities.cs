@@ -25,7 +25,10 @@ namespace LINQToTTreeLib.Utils
             return result;
         }
 
-        static Regex varName = new Regex(@"^\b\w+\b$");
+        /// <summary>
+        /// Search for a single variable name, that fills the whole string.
+        /// </summary>
+        static Regex gVarNameFinder = new Regex(@"^\b\w+\b$");
 
         /// <summary>
         /// Given a value, see if it is not a single term. If not, add parens.
@@ -36,13 +39,34 @@ namespace LINQToTTreeLib.Utils
         {
             if (val == null)
                 throw new ArgumentNullException("Value must not be null");
-
-            var rv = val.RawValue;
-            var match = varName.Match(rv);
-            if (match.Success)
-                return val.RawValue;
-            return "(" + val.RawValue + ")";
+            return val.RawValue.ApplyParensIfNeeded();
         }
 
+        /// <summary>
+        /// Look at a string and decide if it contains something that looks like one or more terms.
+        /// </summary>
+        /// <param name="rv"></param>
+        /// <returns></returns>
+        public static string ApplyParensIfNeeded(this string rv)
+        {
+            if (rv == null)
+                throw new ArgumentNullException("Value must not be null");
+
+            // If it is a single variable then we don't need to protect it
+            // when used in an expression.
+
+            var match = gVarNameFinder.Match(rv);
+            if (match.Success)
+                return rv;
+
+            // Special case where we already have this thing surrounded by parens.
+
+            if (rv[0] == '(' && rv[rv.Length - 1] == ')')
+                return rv;
+
+            // Protect it from "later" use.
+
+            return "(" + rv + ")";
+        }
     }
 }
