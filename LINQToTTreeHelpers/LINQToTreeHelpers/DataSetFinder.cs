@@ -241,12 +241,7 @@ namespace LINQToTreeHelpers
             // Get the dataset from the listing
             // 
 
-            var ds = from d in result.DS
-                     where d.Name == dsName
-                     select d;
-            var resultDS = ds.FirstOrDefault();
-            if (resultDS == null)
-                throw new ArgumentException("Dataset '" + dsName + "' was not known in this file for the machine '" + MachineName + "'.");
+            var resultDS = FindDataSetDefinition(dsName, result);
 
             var macroReplacedSearchStrings = resultDS.SearchStrings.Select(s => MacroReplacement(s, result.Macros));
             try
@@ -261,6 +256,17 @@ namespace LINQToTreeHelpers
             {
                 throw new Exception("Error while searching for root files in data set " + dsName, e);
             }
+        }
+
+        private static DataSetDefinition FindDataSetDefinition(string dsName, Machine result)
+        {
+            var ds = from d in result.DS
+                     where d.Name == dsName
+                     select d;
+            var resultDS = ds.FirstOrDefault();
+            if (resultDS == null)
+                throw new ArgumentException("Dataset '" + dsName + "' was not known in this file for the machine '" + MachineName + "'.");
+            return resultDS;
         }
 
         /// <summary>
@@ -490,6 +496,20 @@ namespace LINQToTreeHelpers
                         where tags.All(t => ds.Tags.Contains(t))
                         select ds.Name;
             return allds.ToArray();
+        }
+
+        /// <summary>
+        /// Returns all the tags that are associated with a dataset.
+        /// </summary>
+        /// <param name="dsname"></param>
+        /// <returns></returns>
+        public static string[] DSTags(string dsname)
+        {
+            var machine = FindMachinesDatasets();
+            var ds = FindDataSetDefinition(dsname, machine);
+            if (ds == null)
+                return new string[0];
+            return ds.Tags;
         }
 
         /// <summary>
