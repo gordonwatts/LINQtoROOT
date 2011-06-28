@@ -275,11 +275,11 @@ namespace LINQToTTreeLib.Expressions
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-(" + GetExpression(expression.Operand).CastToType(expression) + ")", expression.Type);
+                    _result = new ValSimple("-" + GetExpression(expression.Operand).CastToType(expression).ApplyParensIfNeeded(), expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!(" + GetExpression(expression.Operand).CastToType(expression) + ")", expression.Type);
+                    _result = new ValSimple("!" + GetExpression(expression.Operand).CastToType(expression).ApplyParensIfNeeded(), expression.Type);
                     break;
 
                 case ExpressionType.Convert:
