@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.Utils
         /// <returns></returns>
         public static string ApplyParensIfNeeded(this string rv)
         {
-            if (rv == null)
+            if (string.IsNullOrWhiteSpace(rv))
                 throw new ArgumentNullException("Value must not be null");
 
             // If it is a single variable then we don't need to protect it

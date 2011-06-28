@@ -1,6 +1,8 @@
-﻿using LINQToTTreeLib.Utils;
+﻿using System;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -12,7 +14,7 @@ namespace LINQToTTreeLib.Tests
     ///to contain all ExpressionUtilitiesTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class ExpressionUtilitiesTest
+    public partial class ExpressionUtilitiesTest
     {
         /// <summary>
         ///A test for ApplyParensIfNeeded
@@ -29,7 +31,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("(a)", new ValSimple("(a)", typeof(int)).ApplyParensIfNeeded(), "single term");
         }
 
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public string TestApply(string value)
         {
             return value.ApplyParensIfNeeded();
