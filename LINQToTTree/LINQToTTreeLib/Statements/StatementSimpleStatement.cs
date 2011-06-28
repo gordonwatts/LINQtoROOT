@@ -53,8 +53,17 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
+            yield return ToString();
+        }
+
+        /// <summary>
+        /// For debugging, return the line
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
             string semi = AddSemicolon ? ";" : "";
-            yield return Line + semi;
+            return Line + semi;
         }
     }
 }
