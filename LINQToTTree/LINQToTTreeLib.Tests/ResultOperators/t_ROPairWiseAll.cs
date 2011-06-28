@@ -4,10 +4,10 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
 using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-using Microsoft.Pex.Framework.Validation;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -117,8 +117,8 @@ namespace LINQToTTreeLib.Tests
         {
             var q = new QueriableDummy<ntupArray>();
             var combos = from evt in q
-                         select (from cmb in evt.run.UniqueCombinations()
-                                 select cmb.Item1 - cmb.Item2).Aggregate(0, (seed, val) => seed + val);
+                         select (from cmb in evt.run.PairWiseAll((r1, r2) => r1 != r2)
+                                 select cmb).Aggregate(0, (seed, val) => seed + val);
             var arg = combos.Aggregate(0, (seed, val) => seed + val);
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "expecing some code to have been generated");
