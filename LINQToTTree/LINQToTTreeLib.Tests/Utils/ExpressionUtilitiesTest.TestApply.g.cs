@@ -18,14 +18,6 @@ namespace LINQToTTreeLib.Tests
     {
 [TestMethod]
 [PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestApplyThrowsArgumentNullException981()
-{
-    string s;
-    s = this.TestApply((string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
 [PexRaisedException(typeof(IndexOutOfRangeException))]
 public void TestApplyThrowsIndexOutOfRangeException207()
 {
@@ -87,6 +79,14 @@ public void TestApply390()
     string s;
     s = this.TestApply("\u0100\u0100\0");
     Assert.AreEqual<string>("(\u0100\u0100\0)", s);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ExpressionUtilitiesTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestApplyThrowsArgumentNullException284()
+{
+    string s;
+    s = this.TestApply((string)null);
 }
     }
 }
