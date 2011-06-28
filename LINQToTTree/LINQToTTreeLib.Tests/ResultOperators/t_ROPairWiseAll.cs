@@ -93,23 +93,6 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "expecing some code to have been generated");
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
-
-#if false
-            var code = DummyQueryExectuor.FinalResult.CodeBody as IBookingStatementBlock;
-            Assert.AreEqual(4, code.Statements.Count(), "# fo statements");
-            var innerloop = code.Statements.Skip(1).First() as IBookingStatementBlock;
-            Assert.IsNotNull(innerloop, "inner loop");
-
-            Assert.AreEqual(1, innerloop.Statements.Count(), "# of statements in the inner loop - the push statement");
-
-            var last = code.Statements.Skip(2).First();
-            Assert.IsInstanceOfType(last, typeof(LINQToTTreeLib.Statements.StatementPairLoop), "last statement incorrect");
-
-            var res = DummyQueryExectuor.FinalResult.ResultValue;
-            Assert.IsNotNull(res, "final result");
-            Assert.AreEqual(typeof(int), res.Type, "final result type");
-#endif
-
         }
 
         [TestMethod]
