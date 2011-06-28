@@ -1142,6 +1142,49 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestPairwiseAllWithExternalRef()
+        {
+            //
+            // Look for a bug that happens when we have an external guy that references
+            // something in the inside loop.
+            //
+
+            const int numberOfIter = 25;
+            const int vecSize = 10;
+            var rootFile = CreateFileOfVectorInt(numberOfIter, vecSize);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// We are looking at an array that has 10 entries in it. So if we create a
+            /// unique combo, then we will have 9 + 8 + 7 + 6 + 5 + 4 + 3 + 2 + 1 items,
+            /// or 45 items.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (from cmb in evt.myvectorofint.PairWiseAll((i1, i2) => CPPHelperFunctions.Calc(i1) != CPPHelperFunctions.Calc(i2)) select cmb).Count() == vecSize
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
         public void TestInitalizerWithROOTVariable()
         {
             const int numberOfIter = 25;
