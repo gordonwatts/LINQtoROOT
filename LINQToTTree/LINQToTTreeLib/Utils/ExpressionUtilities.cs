@@ -1,5 +1,7 @@
 ﻿
+using System;
 using System.ComponentModel.Composition.Hosting;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Utils
 {
@@ -21,6 +23,25 @@ namespace LINQToTTreeLib.Utils
             var result = cc.Add(indexName, indexVar);
             cc.SetLoopVariable(indexVar);
             return result;
+        }
+
+        static Regex varName = new Regex(@"^\b\w+\b$");
+
+        /// <summary>
+        /// Given a value, see if it is not a single term. If not, add parens.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static string ApplyParensIfNeeded(this IValue val)
+        {
+            if (val == null)
+                throw new ArgumentNullException("Value must not be null");
+
+            var rv = val.RawValue;
+            var match = varName.Match(rv);
+            if (match.Success)
+                return val.RawValue;
+            return "(" + val.RawValue + ")";
         }
 
     }

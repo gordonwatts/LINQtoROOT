@@ -454,6 +454,7 @@
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
+    <Compile Include="Utils\t_ExpressionUtilities.cs" />
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
