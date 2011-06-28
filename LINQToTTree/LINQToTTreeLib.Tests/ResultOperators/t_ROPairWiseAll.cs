@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
+using LINQToTTreeLib.Statements;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -110,6 +112,37 @@ namespace LINQToTTreeLib.Tests
             var res = DummyQueryExectuor.FinalResult.ResultValue;
             Assert.IsNotNull(res, "final result");
             Assert.AreEqual(typeof(int), res.Type, "final result type");
+        }
+
+        [CPPHelperClass]
+        public static class CPPHelperFunctions
+        {
+            [CPPCode(Code = new string[] { "Calc = arg*2;" })]
+            public static int Calc(int arg)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void TestScope()
+        {
+            // Make sure that if anything funky needs to be done outside our loop,
+            // it gets declared correctly.
+
+            var q = new QueriableDummy<ntupArray>();
+            var results = from evt in q
+                          select evt.run.PairWiseAll((r1, r2) => CPPHelperFunctions.Calc(r1) != r2).Count();
+            var total = results.Aggregate(0, (seed, val) => seed + val);
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // The *2 should be burried in the loop. However, we've seen it popped up to the top
+            // in a bug. So test for that regression.
+            //
+
+            var seen2 = DummyQueryExectuor.FinalResult.CodeBody.Statements.Where(s => s is StatementSimpleStatement).Cast<StatementSimpleStatement>().Where(s => s.ToString().Contains("]*2")).Any();
+            Assert.IsFalse(seen2, "Saw a ']*2' in a top level code statement!");
         }
     }
 }
