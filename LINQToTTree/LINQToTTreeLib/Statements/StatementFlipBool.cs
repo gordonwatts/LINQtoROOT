@@ -7,7 +7,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Flip a bool variable using the "!" operator.
     /// </summary>
-    class StatementFlipBool : IStatement
+    public class StatementFlipBool : IStatement
     {
         private Variables.VarSimple _var;
 

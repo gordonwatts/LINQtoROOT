@@ -1,11 +1,12 @@
 ﻿
+using System;
 using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Loop over a set of indicies only if they are marked "true" in the accompanying array.
     /// </summary>
-    class StatementLoopOverGood : StatementInlineBlock
+    public class StatementLoopOverGood : StatementInlineBlock
     {
         private IValue _indiciesToCheck;
         private IValue _indexIsGood;
@@ -19,9 +20,35 @@ namespace LINQToTTreeLib.Statements
         /// <param name="index"></param>
         public StatementLoopOverGood(IValue indiciesToCheck, IValue indexIsGood, IValue index)
         {
+            if (indiciesToCheck == null)
+                throw new ArgumentNullException("indiciesToCheck");
+            if (indexIsGood == null)
+                throw new ArgumentNullException("indexIsGood");
+            if (index == null)
+                throw new ArgumentNullException("index");
+
             _indiciesToCheck = indiciesToCheck;
             _indexIsGood = indexIsGood;
             _index = index;
+        }
+
+        /// <summary>
+        /// Test to see if the statement is the same
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool IsSameStatement(IStatement statement)
+        {
+            if (!base.IsSameStatement(statement))
+                return false;
+
+            var other = statement as StatementLoopOverGood;
+            if (other == null)
+                return false;
+
+            return _index.RawValue == other._index.RawValue
+                && _indexIsGood.RawValue == other._indexIsGood.RawValue
+                && _indiciesToCheck.RawValue == other._indiciesToCheck.RawValue;
         }
 
         /// <summary>

@@ -40,11 +40,18 @@ namespace LINQToTTreeLib.Tests.Statements
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         [PexUseType(typeof(StatementAssign))]
-        [PexUseType(typeof(StatementIncrementInteger))]
         [PexUseType(typeof(StatementBreak))]
         [PexUseType(typeof(StatementCheckPairwise))]
         [PexUseType(typeof(StatementFilter))]
         [PexUseType(typeof(StatementFlipBool))]
+        [PexUseType(typeof(StatementIfOnCount))]
+        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementLoopOverGood))]
+        [PexUseType(typeof(StatementMinMaxTest))]
+        [PexUseType(typeof(StatementPairLoop))]
+        [PexUseType(typeof(StatementRecordIndicies))]
+        [PexUseType(typeof(StatementSimpleStatement))]
         public void TestEquiv([PexAssumeUnderTest] IStatement statement1, IStatement statement2)
         {
             var result = statement1.IsSameStatement(statement2);

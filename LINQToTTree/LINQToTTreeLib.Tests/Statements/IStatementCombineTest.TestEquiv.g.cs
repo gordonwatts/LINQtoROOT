@@ -65,34 +65,6 @@ public void TestEquiv782()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv128()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementAssign);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12801()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementAssign);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
 public void TestEquiv740()
 {
     VarInteger varInteger;
@@ -105,108 +77,11 @@ public void TestEquiv740()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv74001()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementIncrementInteger);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NotImplementedException))]
-public void TestEquivThrowsNotImplementedException504()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    this.TestEquiv((IStatement)statementAssign, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
 [ExpectedException(typeof(ArgumentNullException))]
 public void TestEquivThrowsArgumentNullException904()
 {
     StatementBreak s0 = new StatementBreak();
     this.TestEquiv((IStatement)s0, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestEquivThrowsArgumentNullException642()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    this.TestEquiv((IStatement)statementAssign, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv28()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)statementAssign, (IStatement)s0);
-    Assert.IsNotNull((object)statementAssign);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv33()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    this.TestEquiv((IStatement)statementAssign, (IStatement)statementAssign);
-    Assert.IsNotNull((object)statementAssign);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv3301()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    statementAssign1 =
-      StatementAssignFactory.Create((IVariable)varInteger1, (IValue)varInteger1);
-    this.TestEquiv((IStatement)statementAssign, (IStatement)statementAssign1);
-    Assert.IsNotNull((object)statementAssign);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv3302()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    VarInteger varInteger2;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    varInteger2 = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger2);
-    statementAssign1 =
-      StatementAssignFactory.Create((IVariable)varInteger2, (IValue)varInteger1);
-    this.TestEquiv((IStatement)statementAssign, (IStatement)statementAssign1);
-    Assert.IsNotNull((object)statementAssign);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
@@ -235,161 +110,6 @@ public void TestEquiv12803()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12804()
-{
-    StatementFilter statementFilter;
-    statementFilter = new StatementFilter((IValue)null);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementFilter);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void TestEquivThrowsNullReferenceException328()
-{
-    StatementCheckPairwise statementCheckPairwise;
-    statementCheckPairwise =
-      new StatementCheckPairwise((VarArray)null, (VarSimple)null, 
-                                 (VarSimple)null, (VarArray)null, (IValue)null);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementCheckPairwise);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void TestEquivThrowsNullReferenceException251()
-{
-    VarArray varArray;
-    StatementCheckPairwise statementCheckPairwise;
-    varArray = VarArrayFactory.Create();
-    statementCheckPairwise = new StatementCheckPairwise
-                                 (varArray, (VarSimple)null, (VarSimple)null, (VarArray)null, (IValue)null);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementCheckPairwise);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NotImplementedException))]
-public void TestEquivThrowsNotImplementedException977()
-{
-    StatementInlineBlock statementInlineBlock;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    this.TestEquiv((IStatement)statementInlineBlock, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NotImplementedException))]
-public void TestEquivThrowsNotImplementedException972()
-{
-    StatementCheckPairwise statementCheckPairwise;
-    statementCheckPairwise =
-      new StatementCheckPairwise((VarArray)null, (VarSimple)null, 
-                                 (VarSimple)null, (VarArray)null, (IValue)null);
-    this.TestEquiv((IStatement)statementCheckPairwise, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12807()
-{
-    StatementInlineBlock statementInlineBlock;
-    IStatement[] iStatements = new IStatement[2];
-    StatementBreak s0 = new StatementBreak();
-    iStatements[0] = (IStatement)s0;
-    StatementBreak s1 = new StatementBreak();
-    iStatements[1] = (IStatement)s1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    StatementBreak s2 = new StatementBreak();
-    this.TestEquiv((IStatement)s2, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)s2);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12808()
-{
-    StatementInlineBlock statementInlineBlock;
-    IStatement[] iStatements = new IStatement[2];
-    IVariable[] iVariables = new IVariable[2];
-    StatementBreak s0 = new StatementBreak();
-    iStatements[0] = (IStatement)s0;
-    StatementBreak s1 = new StatementBreak();
-    iStatements[1] = (IStatement)s1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    StatementBreak s2 = new StatementBreak();
-    this.TestEquiv((IStatement)s2, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)s2);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12809()
-{
-    StatementFilter statementFilter;
-    StatementInlineBlock statementInlineBlock;
-    statementFilter = new StatementFilter((IValue)null);
-    IStatement[] iStatements = new IStatement[2];
-    IVariable[] iVariables = new IVariable[2];
-    iStatements[0] = (IStatement)statementFilter;
-    StatementBreak s0 = new StatementBreak();
-    iStatements[1] = (IStatement)s0;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    StatementBreak s1 = new StatementBreak();
-    this.TestEquiv((IStatement)s1, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)s1);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void TestEquivThrowsNullReferenceException460()
-{
-    VarArray varArray;
-    StatementCheckPairwise statementCheckPairwise;
-    varArray = VarArrayFactory.Create();
-    statementCheckPairwise = new StatementCheckPairwise
-                                 (varArray, (VarSimple)null, (VarSimple)null, varArray, (IValue)null);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementCheckPairwise);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12810()
-{
-    StatementInlineBlock statementInlineBlock;
-    StatementInlineBlock statementInlineBlock1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
-    iStatements[0] = (IStatement)statementInlineBlock;
-    statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementInlineBlock1);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void TestEquivThrowsNullReferenceException801()
-{
-    StatementCheckPairwise statementCheckPairwise;
-    StatementInlineBlock statementInlineBlock;
-    statementCheckPairwise =
-      new StatementCheckPairwise((VarArray)null, (VarSimple)null, 
-                                 (VarSimple)null, (VarArray)null, (IValue)null);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
-    iStatements[0] = (IStatement)statementCheckPairwise;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementInlineBlock);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(IStatementCombineTest))]
 public void TestEquiv12812()
 {
     VarInteger varInteger;
@@ -403,12 +123,142 @@ public void TestEquiv12812()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12813()
+public void TestEquiv12805()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementIfOnCount);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv12807()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, iVariables);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementIfOnCount);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException960()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    this.TestEquiv((IStatement)statementInlineBlock, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv2801()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)statementInlineBlock, (IStatement)s0);
+    Assert.IsNotNull((object)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv33()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    this.TestEquiv
+        ((IStatement)statementInlineBlock, (IStatement)statementInlineBlock);
+    Assert.IsNotNull((object)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv12824()
+{
+    StatementInlineBlock statementInlineBlock;
+    IStatement[] iStatements = new IStatement[2];
+    StatementBreak s0 = new StatementBreak();
+    iStatements[0] = (IStatement)s0;
+    StatementBreak s1 = new StatementBreak();
+    iStatements[1] = (IStatement)s1;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
+    StatementBreak s2 = new StatementBreak();
+    this.TestEquiv((IStatement)s2, (IStatement)statementInlineBlock);
+    Assert.IsNotNull((object)s2);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv74002()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv97701()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = StatementSimpleStatementFactory.Create("\0", false);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementSimpleStatement);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv12808()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[0];
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementFilter);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv12809()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies =
+      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementRecordIndicies);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv12811()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
     StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     varInteger1 = VarIntegerFactory.Create(false, 0);
     statementAssign =
       StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
@@ -418,79 +268,286 @@ public void TestEquiv12813()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12814()
+public void TestEquiv12813()
 {
-    StatementInlineBlock statementInlineBlock;
-    StatementInlineBlock statementInlineBlock1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[1];
-    iStatements[0] = (IStatement)statementInlineBlock;
-    statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
+    VarInteger varInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IValue)varInteger, (IStatement[])null, (IVariable[])null);
     StatementBreak s0 = new StatementBreak();
-    this.TestEquiv((IStatement)s0, (IStatement)statementInlineBlock1);
+    this.TestEquiv((IStatement)s0, (IStatement)statementLoopOverGood);
     Assert.IsNotNull((object)s0);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12815()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException534()
 {
-    StatementInlineBlock statementInlineBlock;
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
-    StatementBreak s0 = new StatementBreak();
-    iStatements[0] = (IStatement)s0;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    StatementBreak s1 = new StatementBreak();
-    this.TestEquiv((IStatement)s1, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)s1);
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = StatementSimpleStatementFactory.Create("\0", false);
+    this.TestEquiv((IStatement)statementSimpleStatement, (IStatement)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12818()
+public void TestEquiv42201()
 {
-    StatementInlineBlock statementInlineBlock;
-    StatementInlineBlock statementInlineBlock1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[2];
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement =
+      StatementSimpleStatementFactory.Create("\u0089", false);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)statementSimpleStatement, (IStatement)s0);
+    Assert.IsNotNull((object)statementSimpleStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv63801()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement =
+      StatementSimpleStatementFactory.Create("\u0089", false);
+    this.TestEquiv
+        ((IStatement)statementSimpleStatement, (IStatement)statementSimpleStatement);
+    Assert.IsNotNull((object)statementSimpleStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException773()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementRecordIndicies =
+      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
+    this.TestEquiv((IStatement)statementRecordIndicies, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv2803()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementRecordIndicies =
+      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)statementRecordIndicies, (IStatement)s0);
+    Assert.IsNotNull((object)statementRecordIndicies);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv3304()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementRecordIndicies =
+      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
+    this.TestEquiv
+        ((IStatement)statementRecordIndicies, (IStatement)statementRecordIndicies);
+    Assert.IsNotNull((object)statementRecordIndicies);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException221()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    this.TestEquiv((IStatement)statementIfOnCount, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException81()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement =
+      StatementSimpleStatementFactory.Create("\0\ufeff", false);
+    this.TestEquiv((IStatement)statementSimpleStatement, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv2804()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)statementIfOnCount, (IStatement)s0);
+    Assert.IsNotNull((object)statementIfOnCount);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException272()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement =
+      StatementSimpleStatementFactory.Create("\0\ufeff", true);
+    this.TestEquiv((IStatement)statementSimpleStatement, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv22()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement =
+      StatementSimpleStatementFactory.Create("\0\u0100\u2000", true);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)statementSimpleStatement, (IStatement)s0);
+    Assert.IsNotNull((object)statementSimpleStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv979()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement =
+      StatementSimpleStatementFactory.Create("\0\u0100\u2000", true);
+    this.TestEquiv
+        ((IStatement)statementSimpleStatement, (IStatement)statementSimpleStatement);
+    Assert.IsNotNull((object)statementSimpleStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv12814()
+{
+    VarInteger varInteger;
+    VarInteger varInteger1;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
     IVariable[] iVariables = new IVariable[2];
-    iStatements[0] = (IStatement)statementInlineBlock;
+    iVariables[0] = (IVariable)varInteger;
+    iVariables[1] = (IVariable)varInteger1;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger1, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, iVariables);
     StatementBreak s0 = new StatementBreak();
-    iStatements[1] = (IStatement)s0;
-    statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    StatementBreak s1 = new StatementBreak();
-    this.TestEquiv((IStatement)s1, (IStatement)statementInlineBlock1);
-    Assert.IsNotNull((object)s1);
+    this.TestEquiv((IStatement)s0, (IStatement)statementIfOnCount);
+    Assert.IsNotNull((object)s0);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-public void TestEquiv12819()
+public void TestEquiv12816()
 {
-    StatementInlineBlock statementInlineBlock;
-    StatementInlineBlock statementInlineBlock1;
-    IStatement[] iStatements = new IStatement[4];
+    VarInteger varInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IValue)varInteger, (IStatement[])null, iVariables);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementLoopOverGood);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv12817()
+{
+    VarInteger varInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    varInteger =
+      VarIntegerFactory.Create(PexSafeHelpers.ByteToBoolean((byte)16), int.MaxValue);
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IValue)varInteger, (IStatement[])null, iVariables);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)s0, (IStatement)statementLoopOverGood);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException222()
+{
+    VarInteger varInteger;
+    StatementAssign statementAssign;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAssign =
+      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
+    this.TestEquiv((IStatement)statementAssign, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv2805()
+{
+    VarInteger varInteger;
+    StatementAssign statementAssign;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAssign =
+      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
+    StatementBreak s0 = new StatementBreak();
+    this.TestEquiv((IStatement)statementAssign, (IStatement)s0);
+    Assert.IsNotNull((object)statementAssign);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv3305()
+{
+    VarInteger varInteger;
+    StatementAssign statementAssign;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAssign =
+      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
+    this.TestEquiv((IStatement)statementAssign, (IStatement)statementAssign);
+    Assert.IsNotNull((object)statementAssign);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv2806()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[2];
     StatementBreak s0 = new StatementBreak();
     iStatements[0] = (IStatement)s0;
     StatementBreak s1 = new StatementBreak();
     iStatements[1] = (IStatement)s1;
-    iStatements[2] = (IStatement)s1;
-    iStatements[3] = (IStatement)s1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    IStatement[] iStatements1 = new IStatement[2];
-    IVariable[] iVariables = new IVariable[4];
-    iStatements1[0] = (IStatement)statementInlineBlock;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       iStatements, (IVariable[])null);
     StatementBreak s2 = new StatementBreak();
-    iStatements1[1] = (IStatement)s2;
-    statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements1, iVariables);
-    StatementBreak s3 = new StatementBreak();
-    this.TestEquiv((IStatement)s3, (IStatement)statementInlineBlock1);
-    Assert.IsNotNull((object)s3);
+    this.TestEquiv((IStatement)statementIfOnCount, (IStatement)s2);
+    Assert.IsNotNull((object)statementIfOnCount);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestEquiv3306()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[2];
+    StatementBreak s0 = new StatementBreak();
+    iStatements[0] = (IStatement)s0;
+    StatementBreak s1 = new StatementBreak();
+    iStatements[1] = (IStatement)s1;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       iStatements, (IVariable[])null);
+    this.TestEquiv((IStatement)statementIfOnCount, (IStatement)statementIfOnCount);
+    Assert.IsNotNull((object)statementIfOnCount);
 }
     }
 }

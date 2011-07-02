@@ -47,7 +47,7 @@ namespace LINQToTTreeLib.Tests.Statements
             t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
             Assert.AreEqual(13, t.CodeItUp().Count(), "# of lines incorrect");
         }
-        
+
         [TestMethod]
         public void TestForBreakPlacement()
         {
@@ -60,6 +60,34 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.AreEqual(13, statements.Count(), "# of statements");
             var postdir = statements.SkipWhile(l => !l.Contains("dir;")).Skip(2).ToArray();
             Assert.IsTrue(postdir[0].Contains("breakSeen = false"), "seen break line not reset '" + postdir[0] + "'.");
+        }
+
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        public void TestEquiv([PexAssumeUnderTest] StatementPairLoop statement1, IStatement statement2)
+        {
+            var result = statement1.IsSameStatement(statement2);
+
+            var originalLines = statement1.CodeItUp().ToArray();
+            var resultinglines = statement2.CodeItUp().ToArray();
+
+            if (resultinglines.Length != originalLines.Length)
+            {
+                Assert.IsFalse(result, "# of lines is different, so the compare should be too");
+                return;
+            }
+
+            var pairedLines = originalLines.Zip(resultinglines, (o1, o2) => Tuple.Create(o1, o2));
+            foreach (var pair in pairedLines)
+            {
+                if (pair.Item1 != pair.Item2)
+                {
+                    Assert.IsFalse(result, string.Format("Line '{0}' and '{1}' are not same!", pair.Item1, pair.Item2));
+                }
+                else
+                {
+                    Assert.IsTrue(result, string.Format("Line '{0}' and '{1}' are not same!", pair.Item1, pair.Item2));
+                }
+            }
         }
     }
 }

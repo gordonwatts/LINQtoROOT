@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Tests.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException380()
+public void StatementPairLoopCtorThrowsArgumentNullException988()
 {
     StatementPairLoop statementPairLoop;
     statementPairLoop =
@@ -31,22 +31,22 @@ public void StatementPairLoopCtorThrowsArgumentNullException380()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException728()
+public void StatementPairLoopCtorThrowsArgumentNullException832()
 {
     VarArray varArray;
     StatementPairLoop statementPairLoop;
-    varArray = VarArrayFactory.Create();
+    varArray = VarArrayFactory.Create(0);
     statementPairLoop =
       this.StatementPairLoopCtor(varArray, (IVariable)null, (IVariable)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException137()
+public void StatementPairLoopCtorThrowsArgumentNullException694()
 {
     VarArray varArray;
     StatementPairLoop statementPairLoop;
-    varArray = VarArrayFactory.Create();
+    varArray = VarArrayFactory.Create(0);
     statementPairLoop =
       this.StatementPairLoopCtor(varArray, (IVariable)varArray, (IVariable)null);
 }
@@ -56,7 +56,7 @@ public void StatementPairLoopCtor629()
 {
     VarArray varArray;
     StatementPairLoop statementPairLoop;
-    varArray = VarArrayFactory.Create();
+    varArray = VarArrayFactory.Create(0);
     statementPairLoop =
       this.StatementPairLoopCtor(varArray, (IVariable)varArray, (IVariable)varArray);
     Assert.IsNotNull((object)statementPairLoop);

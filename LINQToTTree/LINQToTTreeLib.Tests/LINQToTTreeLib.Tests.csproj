@@ -199,15 +199,23 @@
     <Compile Include="Factories\NTObjectFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
     <Compile Include="Factories\StatementAssignFactory.cs" />
+    <Compile Include="Factories\StatementCheckPairwiseFactory.cs" />
+    <Compile Include="Factories\StatementFilterFactory.cs" />
+    <Compile Include="Factories\StatementFlipBoolFactory.cs" />
     <Compile Include="Factories\StatementIfOnCountFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
+    <Compile Include="Factories\StatementLoopOverGoodFactory.cs" />
+    <Compile Include="Factories\StatementMinMaxTestFactory.cs" />
     <Compile Include="Factories\StatementPairLoopFactory.cs" />
+    <Compile Include="Factories\StatementRecordIndiciesFactory.cs" />
+    <Compile Include="Factories\StatementSimpleStatementFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
     <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
     <Compile Include="Factories\VarArrayFactory.cs" />
     <Compile Include="Factories\VarIntegerFactory.cs" />
+    <Compile Include="Factories\VarSimpleFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
@@ -359,6 +367,9 @@
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementFilterTest.TestEquiv.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementFilterTest.TestTryCombine.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
@@ -369,6 +380,9 @@
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.TestEquiv.g.cs">
+      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.TestTryCombine.g.cs">
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
@@ -397,6 +411,19 @@
     </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.CodeItUp.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.Constructor.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.cs" />
+    <Compile Include="Statements\StatementLoopOverGoodTest.TestEquiv.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementPairLoopTest.cs" />
     <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">

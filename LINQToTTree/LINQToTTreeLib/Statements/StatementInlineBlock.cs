@@ -142,10 +142,26 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
-
-        public bool IsSameStatement(IStatement statement)
+        /// <summary>
+        /// See if the statement is the same. We check for simple 
+        /// consistency here, nothing more.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public virtual bool IsSameStatement(IStatement statement)
         {
-            throw new NotImplementedException();
+            // Must be same statements in the same order
+
+            if (statement == null)
+                throw new ArgumentNullException("statement must not be null");
+            var inline = statement as StatementInlineBlock;
+            if (inline == null)
+                return false;
+
+            if (_statements.Count != inline._statements.Count)
+                return false;
+
+            return _statements.Zip(inline._statements, (s1, s2) => s1.IsSameStatement(s2)).All(test => test);
         }
 
         public void RenameVariable(string originalName, string newName)

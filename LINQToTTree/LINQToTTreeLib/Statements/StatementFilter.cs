@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 
@@ -21,6 +22,8 @@ namespace LINQToTTreeLib.Statements
         /// <param name="testExpression"></param>
         public StatementFilter(IValue testExpression)
         {
+            if (testExpression == null)
+                throw new ArgumentNullException("testExpression");
             TestExpression = testExpression;
         }
 
@@ -58,6 +61,23 @@ namespace LINQToTTreeLib.Statements
         public override bool TryCombineStatement(IStatement statement)
         {
             return false;
+        }
+
+        /// <summary>
+        /// See if we are identical or not.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool IsSameStatement(IStatement statement)
+        {
+            if (!base.IsSameStatement(statement))
+                return false;
+            var other = statement as StatementFilter;
+            if (other == null)
+                return false;
+
+            return TestExpression.RawValue == other.TestExpression.RawValue;
+            return base.IsSameStatement(statement);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// Given an array of indicies, loops over all of them, making each pair, and
     /// checking to find the sub-set of these guys that satisfies everything.
     /// </summary>
-    class StatementCheckPairwise : IStatement
+    public class StatementCheckPairwise : IStatement
     {
         private VarArray _indciesToInspect;
         private VarSimple _index1;
@@ -32,6 +32,7 @@ namespace LINQToTTreeLib.Statements
         {
             if (indiciesToInspect == null)
                 throw new ArgumentNullException("indiciesToInspect");
+
             if (index1 == null)
                 throw new ArgumentNullException("index1");
             if (index2 == null)

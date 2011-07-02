@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Statements
@@ -8,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// check for uniqueness of that integer that is pushed on - this is pretty simple. The vector it is pushing onto should
     /// be declared at an outter level to be of any use. :-)
     /// </summary>
-    class StatementRecordIndicies : IStatement
+    public class StatementRecordIndicies : IStatement
     {
         /// <summary>
         /// The integer to record
@@ -27,6 +28,11 @@ namespace LINQToTTreeLib.Statements
         /// <param name="storageArray">The array where the indicies should be written</param>
         public StatementRecordIndicies(IValue intToRecord, IValue storageArray)
         {
+            if (intToRecord == null)
+                throw new ArgumentNullException("intToRecord");
+            if (storageArray == null)
+                throw new ArgumentNullException("storageArray");
+
             _intToRecord = intToRecord;
             _storageArray = storageArray;
         }
@@ -45,9 +51,21 @@ namespace LINQToTTreeLib.Statements
             yield return string.Format("{0}.push_back({1});", _storageArray.RawValue, _intToRecord.RawValue);
         }
 
-
+        /// <summary>
+        /// Check to see if the statements are similar or not.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool IsSameStatement(IStatement statement)
         {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+            var other = statement as StatementRecordIndicies;
+            if (other == null)
+                return false;
+
+            return _intToRecord.RawValue == other._intToRecord.RawValue
+                && _storageArray.RawValue == other._storageArray.RawValue;
             throw new System.NotImplementedException();
         }
 

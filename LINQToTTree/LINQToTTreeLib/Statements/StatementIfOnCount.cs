@@ -101,5 +101,24 @@ namespace LINQToTTreeLib.Statements
         {
             return false;
         }
+
+        /// <summary>
+        /// Check if this is the same statement (or not).
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool IsSameStatement(IStatement statement)
+        {
+            if (!base.IsSameStatement(statement))
+                return false;
+
+            var other = statement as StatementIfOnCount;
+            if (other == null)
+                return false;
+
+            return Comparison == other.Comparison
+                && ValLeft.RawValue == other.ValLeft.RawValue
+                && ValRight.RawValue == other.ValRight.RawValue;
+        }
     }
 }

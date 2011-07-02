@@ -57,10 +57,21 @@ namespace LINQToTTreeLib.Statements
             yield return Line + semi;
         }
 
-
+        /// <summary>
+        /// Pretty sipmle x-check to see if the statement is the same. Since this
+        /// is just a line...
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool IsSameStatement(IStatement statement)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+            var other = statement as StatementSimpleStatement;
+            if (other == null)
+                return false;
+            return Line == other.Line && AddSemicolon == other.AddSemicolon;
+
         }
 
         public void RenameVariable(string originalName, string newName)

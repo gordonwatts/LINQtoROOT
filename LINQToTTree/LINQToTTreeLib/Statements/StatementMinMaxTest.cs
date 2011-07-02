@@ -6,7 +6,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// A statement that looks for a min/max
     /// </summary>
-    class StatementMinMaxTest : IStatement
+    public class StatementMinMaxTest : IStatement
     {
         private Variables.VarSimple vIsFilled;
         private Variables.VarSimple vMaxMin;
