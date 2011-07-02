@@ -17,7 +17,20 @@ namespace LINQToTTreeLib.Tests.Statements
     public partial class IStatementCombineTest
     {
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public IStatement TestRename([PexAssumeUnderTest] IStatement statement, string oldname, string newname)
+        [PexUseType(typeof(StatementAssign))]
+        [PexUseType(typeof(StatementBreak))]
+        [PexUseType(typeof(StatementCheckPairwise))]
+        [PexUseType(typeof(StatementFilter))]
+        [PexUseType(typeof(StatementFlipBool))]
+        [PexUseType(typeof(StatementIfOnCount))]
+        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementLoopOverGood))]
+        [PexUseType(typeof(StatementMinMaxTest))]
+        [PexUseType(typeof(StatementPairLoop))]
+        [PexUseType(typeof(StatementRecordIndicies))]
+        [PexUseType(typeof(StatementSimpleStatement))]
+        public IStatement TestRename([PexAssumeUnderTest] IStatement statement, [PexAssumeNotNull] string oldname, [PexAssumeNotNull]string newname)
         {
             var origianllines = statement.CodeItUp().ToArray();
             statement.RenameVariable(oldname, newname);

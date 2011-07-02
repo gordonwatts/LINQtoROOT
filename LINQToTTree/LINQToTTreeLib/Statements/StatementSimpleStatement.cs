@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -74,9 +75,14 @@ namespace LINQToTTreeLib.Statements
 
         }
 
+        /// <summary>
+        /// Rename any variables we have in here.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            throw new NotImplementedException();
+            Line.ReplaceVariableNames(originalName, newName);
         }
     }
 }

@@ -9,67 +9,216 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework.Generated;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class IStatementCombineTest
     {
+        [TestMethod]
+        [PexGeneratedBy(typeof(IStatementCombineTest))]
+        public void TestRename693()
+        {
+            IStatement iStatement;
+            StatementBreak s0 = new StatementBreak();
+            iStatement = this.TestRename((IStatement)s0, "", "");
+            Assert.IsNotNull((object)iStatement);
+            Assert.IsNotNull((object)s0);
+            Assert.IsTrue(object.ReferenceEquals((object)s0, (object)iStatement));
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(IStatementCombineTest))]
+        public void TestRename377()
+        {
+            StatementInlineBlock statementInlineBlock;
+            IStatement iStatement;
+            statementInlineBlock =
+              StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+            iStatement = this.TestRename((IStatement)statementInlineBlock, "", "");
+            Assert.IsNotNull((object)iStatement);
+            Assert.IsNotNull((object)statementInlineBlock);
+            Assert.IsTrue
+                (object.ReferenceEquals((object)statementInlineBlock, (object)iStatement));
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(IStatementCombineTest))]
+        public void TestRename37701()
+        {
+            StatementInlineBlock statementInlineBlock;
+            IStatement iStatement;
+            IStatement[] iStatements = new IStatement[1];
+            StatementBreak s0 = new StatementBreak();
+            iStatements[0] = (IStatement)s0;
+            statementInlineBlock =
+              StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
+            iStatement = this.TestRename((IStatement)statementInlineBlock, "", "");
+            Assert.IsNotNull((object)iStatement);
+            Assert.IsNotNull((object)statementInlineBlock);
+            Assert.IsTrue
+                (object.ReferenceEquals((object)statementInlineBlock, (object)iStatement));
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(IStatementCombineTest))]
+        [Ignore]
+        [PexDescription("the test state was: path bounds exceeded")]
+        public void TestRename764()
+        {
+            VarInteger varInteger;
+            StatementLoopOverGood statementLoopOverGood;
+            IStatement iStatement;
+            varInteger = VarIntegerFactory.Create(false, 0);
+            statementLoopOverGood =
+              StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger,
+                                                  (IValue)varInteger, (IStatement[])null, (IVariable[])null);
+            iStatement = this.TestRename((IStatement)statementLoopOverGood, "", "");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(IStatementCombineTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestRenameThrowsArgumentNullException73()
+        {
+            VarInteger varInteger;
+            StatementIncrementInteger statementIncrementInteger;
+            IStatement iStatement;
+            varInteger = VarIntegerFactory.Create(false, 0);
+            statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+            iStatement = this.TestRename((IStatement)statementIncrementInteger, "", "");
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(IStatementCombineTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestRenameThrowsArgumentNullException863()
+        {
+            VarInteger varInteger;
+            StatementIncrementInteger statementIncrementInteger;
+            IStatement iStatement;
+            varInteger = VarIntegerFactory.Create(false, 1);
+            statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+            iStatement = this.TestRename((IStatement)statementIncrementInteger, "", "");
+        }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException396()
+public void TestRename936()
 {
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
     IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement = this.TestRename
-                     ((IStatement)statementIncrementInteger, (string)null, (string)null);
+    StatementBreak s0 = new StatementBreak();
+    iStatement = this.TestRename((IStatement)s0, "\0", "\0");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)s0);
+    Assert.IsTrue(object.ReferenceEquals((object)s0, (object)iStatement));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestRename760()
+{
+    IStatement iStatement;
+    StatementBreak s0 = new StatementBreak();
+    iStatement = this.TestRename((IStatement)s0, "$", "$");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)s0);
+    Assert.IsTrue(object.ReferenceEquals((object)s0, (object)iStatement));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestRename31()
+{
+    IStatement iStatement;
+    StatementBreak s0 = new StatementBreak();
+    iStatement = this.TestRename((IStatement)s0, "$\0", "$\0");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)s0);
+    Assert.IsTrue(object.ReferenceEquals((object)s0, (object)iStatement));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestRename973()
+{
+    IStatement iStatement;
+    StatementBreak s0 = new StatementBreak();
+    iStatement = this.TestRename((IStatement)s0, "$0", "$0");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)s0);
+    Assert.IsTrue(object.ReferenceEquals((object)s0, (object)iStatement));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestRename468()
+{
+    IStatement iStatement;
+    StatementBreak s0 = new StatementBreak();
+    iStatement = this.TestRename((IStatement)s0, "${\0", "${\0");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)s0);
+    Assert.IsTrue(object.ReferenceEquals((object)s0, (object)iStatement));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(IStatementCombineTest))]
+public void TestRename209()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    IStatement iStatement;
+    statementSimpleStatement = StatementSimpleStatementFactory.Create("\0", false);
+    iStatement = this.TestRename((IStatement)statementSimpleStatement, "\0", "\0");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)statementSimpleStatement);
+    Assert.IsTrue(
+                 object.ReferenceEquals((object)statementSimpleStatement, (object)iStatement)
+                 );
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException185()
+public void TestRenameThrowsArgumentNullException7301()
 {
     VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
+    StatementRecordIndicies statementRecordIndicies;
     IStatement iStatement;
     varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement =
-      this.TestRename((IStatement)statementIncrementInteger, "", (string)null);
+    statementRecordIndicies =
+      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
+    iStatement = this.TestRename((IStatement)statementRecordIndicies, "", "");
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException330()
+public void TestRename37704()
 {
     VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
+    StatementIfOnCount statementIfOnCount;
     IStatement iStatement;
     varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement = this.TestRename
-                     ((IStatement)statementIncrementInteger, "\u0100a", (string)null);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    iStatement = this.TestRename((IStatement)statementIfOnCount, "", "");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)statementIfOnCount);
+    Assert.IsTrue
+        (object.ReferenceEquals((object)statementIfOnCount, (object)iStatement));
 }
 [TestMethod]
 [PexGeneratedBy(typeof(IStatementCombineTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException348()
+public void TestRename37705()
 {
     VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
+    StatementIfOnCount statementIfOnCount;
     IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement = this.TestRename
-                     ((IStatement)statementIncrementInteger, (string)null, (string)null);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, iVariables);
+    iStatement = this.TestRename((IStatement)statementIfOnCount, "", "");
+    Assert.IsNotNull((object)iStatement);
+    Assert.IsNotNull((object)statementIfOnCount);
+    Assert.IsTrue
+        (object.ReferenceEquals((object)statementIfOnCount, (object)iStatement));
 }
     }
 }

@@ -36,5 +36,17 @@ namespace LINQToTTreeLib.Utils
             }
             return result;
         }
+
+        /// <summary>
+        /// Find all words that match and replcae them.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        public static string ReplaceVariableNames(this string source, string varname, string replacement)
+        {
+            var search = new Regex(string.Format(@"\b{0}\b", varname));
+            return search.Replace(source, replacement);
+        }
     }
 }

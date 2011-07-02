@@ -164,9 +164,17 @@ namespace LINQToTTreeLib.Statements
             return _statements.Zip(inline._statements, (s1, s2) => s1.IsSameStatement(s2)).All(test => test);
         }
 
+        /// <summary>
+        /// Rename all our guys!
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            throw new NotImplementedException();
+            foreach (var s in _statements)
+            {
+                s.RenameVariable(originalName, newName);
+            }
         }
     }
 }
