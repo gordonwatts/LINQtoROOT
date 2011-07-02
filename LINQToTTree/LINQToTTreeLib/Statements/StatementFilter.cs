@@ -54,12 +54,28 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// We don't have code to carefully do checks - so we just blow off the combination here.
+        /// We filter on one simple thing. If it is the case that the tests are the same,
+        /// (identical), we do the combination, stealing the statemetns from the second one
+        /// for ourselves. No renaming is required as this is a simple test!
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement)
         {
+            if (statement == null)
+                throw new ArgumentException("statement");
+            var other = statement as StatementFilter;
+            if (other == null)
+                return false;
+
+            if (other.TestExpression.RawValue == TestExpression.RawValue)
+            {
+                foreach (var s in other.Statements)
+                    Add(s);
+
+                return true;
+            }
+
             return false;
         }
 

@@ -101,5 +101,21 @@ namespace LINQToTTreeLib.Statements
 
             Assert.IsFalse(statement.TryCombineStatement(s), "unable to do any combines for Filter");
         }
+
+        [TestMethod]
+        public void TestSimpleCombine()
+        {
+            var val1 = new Variables.ValSimple("true", typeof(bool));
+            var s1 = new StatementFilter(val1);
+            s1.Add(new StatementSimpleStatement("var1"));
+
+            var val2 = new Variables.ValSimple("true", typeof(bool));
+            var s2 = new StatementFilter(val2);
+            s2.Add(new StatementSimpleStatement("var2"));
+
+            Assert.IsTrue(s1.TryCombineStatement(s2), "statement shoudl have combined");
+            Assert.AreEqual(2, s1.Statements.Count(), "# of combined statements");
+
+        }
     }
 }
