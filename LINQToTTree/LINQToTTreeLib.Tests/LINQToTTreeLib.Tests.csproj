@@ -370,6 +370,9 @@
     <Compile Include="Statements\StatementFilterTest.TestEquiv.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementFilterTest.TestRename.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementFilterTest.TestTryCombine.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>

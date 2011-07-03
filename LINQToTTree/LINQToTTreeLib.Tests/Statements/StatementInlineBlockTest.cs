@@ -188,11 +188,12 @@ namespace LINQToTTreeLib.Statements
 
             if (s.GetType() == typeof(StatementInlineBlock))
             {
-                /// Should lift everything out!
+                // This is a little tricky as we have to go pretty deep to figure out what
+                // what are "good" and bad statements for counting. 
 
-                var first = s as StatementInlineBlock;
-                Assert.AreEqual(first.Statements.Count(), b.Statements.Count(), "# of statements");
-                Assert.AreEqual(first.DeclaredVariables.Count(), b.DeclaredVariables.Count(), "# of declared variables");
+                var goodInfo = CountInterestingStatements(s as StatementInlineBlock);
+                Assert.AreEqual(goodInfo.Item1, b.Statements.Count(), "# of statements");
+                Assert.AreEqual(goodInfo.Item2, b.DeclaredVariables.Count(), "# of declared variables");
             }
             else
             {
@@ -201,6 +202,41 @@ namespace LINQToTTreeLib.Statements
                 Assert.AreEqual(1, b.Statements.Count(), "# of statements");
                 Assert.AreEqual(0, b.DeclaredVariables.Count(), "# of declared variables");
             }
+        }
+
+        /// <summary>
+        /// Recurisvely count the # of good statements.
+        /// </summary>
+        /// <param name="statementInlineBlock"></param>
+        /// <returns></returns>
+        private Tuple<int, int> CountInterestingStatements(StatementInlineBlock statementInlineBlock)
+        {
+            var varCount = statementInlineBlock.DeclaredVariables.Count();
+
+            if (varCount > 0)
+            {
+                // need to keep the way we declare variables here, so don't go any deeper!
+                return Tuple.Create(varCount, statementInlineBlock.Statements.Count());
+            }
+
+            // Ok, we can lift the statements by one, since this wrapper is basically "empty".
+
+            int statementCount = 0;
+            foreach (var s in statementInlineBlock.Statements)
+            {
+                if (s.GetType() == typeof(StatementInlineBlock))
+                {
+                    var tr = CountInterestingStatements(s as StatementInlineBlock);
+                    statementCount += tr.Item1;
+                    varCount += tr.Item2;
+                }
+                else
+                {
+                    statementCount++;
+                }
+            }
+
+            return Tuple.Create(statementCount, varCount);
         }
     }
 }

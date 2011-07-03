@@ -12,6 +12,7 @@ using System;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -19,12 +20,35 @@ namespace LINQToTTreeLib.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void Constructor682()
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException601()
 {
     StatementFilter statementFilter;
     statementFilter = this.Constructor((IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+public void Constructor366()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementFilter = this.Constructor((IValue)varInteger);
     Assert.IsNotNull((object)statementFilter);
-    Assert.IsNull(statementFilter.TestExpression);
+    Assert.IsNotNull(statementFilter.TestExpression);
+    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+public void Constructor36601()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementFilter = this.Constructor((IValue)varInteger);
+    Assert.IsNotNull((object)statementFilter);
+    Assert.IsNotNull(statementFilter.TestExpression);
     Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
     Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
 }

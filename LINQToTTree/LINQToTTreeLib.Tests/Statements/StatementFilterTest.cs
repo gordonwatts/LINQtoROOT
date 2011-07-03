@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -116,6 +117,56 @@ namespace LINQToTTreeLib.Statements
             Assert.IsTrue(s1.TryCombineStatement(s2), "statement shoudl have combined");
             Assert.AreEqual(2, s1.Statements.Count(), "# of combined statements");
 
+        }
+
+        [TestMethod]
+        public void TestSecondLevelCombine()
+        {
+            var val1 = new Variables.ValSimple("true", typeof(bool));
+            var s1 = new StatementFilter(val1);
+
+            var val11 = new Variables.ValSimple("true", typeof(bool));
+            var s11 = new StatementFilter(val11);
+            s11.Add(new StatementSimpleStatement("var11"));
+
+            s1.Add(s11);
+
+            var val2 = new Variables.ValSimple("true", typeof(bool));
+            var s2 = new StatementFilter(val2);
+
+            var val21 = new Variables.ValSimple("true", typeof(bool));
+            var s21 = new StatementFilter(val21);
+            s21.Add(new StatementSimpleStatement("var21"));
+
+            s2.Add(s21);
+
+            Assert.IsTrue(s1.TryCombineStatement(s2), "statement shoudl have combined");
+            Assert.AreEqual(1, s1.Statements.Count(), "# of combined statements");
+            var deep = s1.Statements.First() as StatementInlineBlock;
+            Assert.IsNotNull(deep, "couldn't find interior statement");
+            Assert.AreEqual(2, deep.Statements.Count(), "Number of statements isn't right here");
+        }
+
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        public IStatement TestRename([PexAssumeUnderTest] StatementFilter statement, [PexAssumeNotNull] string oldname, [PexAssumeNotNull]string newname)
+        {
+            var origianllines = statement.CodeItUp().ToArray();
+            statement.RenameVariable(oldname, newname);
+            var finallines = statement.CodeItUp().ToArray();
+
+            Assert.AreEqual(origianllines.Length, finallines.Length, "# of lines change during variable rename");
+
+            var varReplacer = new Regex(string.Format(@"\b{0}\b", oldname));
+
+            var sharedlines = origianllines.Zip(finallines, (o, n) => Tuple.Create(o, n));
+            foreach (var pair in sharedlines)
+            {
+                var orig = pair.Item1;
+                var origReplafce = varReplacer.Replace(orig, newname);
+                Assert.AreEqual(origReplafce, pair.Item2, "expected the renaming to be pretty simple.");
+            }
+
+            return statement;
         }
     }
 }

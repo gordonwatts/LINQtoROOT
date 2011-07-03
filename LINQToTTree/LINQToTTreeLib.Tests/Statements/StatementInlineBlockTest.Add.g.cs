@@ -30,18 +30,6 @@ public void AddThrowsArgumentNullException380()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void Add577()
-{
-    StatementInlineBlock statementInlineBlock;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    this.Add(statementInlineBlock, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
 [ExpectedException(typeof(ArgumentNullException))]
 public void AddThrowsArgumentNullException170()
 {
@@ -74,24 +62,6 @@ public void AddThrowsArgumentNullException953()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void Add57701()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    IStatement[] iStatements = new IStatement[1];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    this.Add(statementInlineBlock, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
 [ExpectedException(typeof(ArgumentNullException))]
 public void AddThrowsArgumentNullException391()
 {
@@ -99,34 +69,6 @@ public void AddThrowsArgumentNullException391()
     statementInlineBlock =
       StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
     this.Add(statementInlineBlock, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void Add319()
-{
-    StatementInlineBlock statementInlineBlock;
-    VarInteger varInteger;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    varInteger = VarIntegerFactory.Create(false, 0);
-    this.Add(statementInlineBlock, (IVariable)varInteger);
-    Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void Add31901()
-{
-    StatementInlineBlock statementInlineBlock;
-    VarInteger varInteger;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    varInteger = VarIntegerFactory.Create(false, 1);
-    this.Add(statementInlineBlock, (IVariable)varInteger);
-    Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
@@ -146,13 +88,82 @@ public void AddThrowsArgumentNullException413()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void AddThrowsArgumentNullException849()
+public void Add914()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
     StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, -747007);
+    varInteger = VarIntegerFactory.Create(false, -1268776960);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    IVariable[] iVariables = new IVariable[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements, iVariables);
+    this.Add(statementInlineBlock, (IStatement)statementIncrementInteger);
+    Assert.IsNotNull((object)statementInlineBlock);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException51()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementInlineBlock statementInlineBlock;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[3];
+    IVariable[] iVariables = new IVariable[3];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iStatements[1] = (IStatement)statementIncrementInteger;
+    iStatements[2] = (IStatement)statementIncrementInteger;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements, iVariables);
+    this.Add(statementInlineBlock, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void Add31902()
+{
+    StatementInlineBlock statementInlineBlock;
+    VarInteger varInteger;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    this.Add(statementInlineBlock, (IVariable)varInteger);
+    Assert.IsNotNull((object)statementInlineBlock);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void Add31903()
+{
+    StatementInlineBlock statementInlineBlock;
+    VarInteger varInteger;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    varInteger = VarIntegerFactory.Create(false, 1);
+    this.Add(statementInlineBlock, (IVariable)varInteger);
+    Assert.IsNotNull((object)statementInlineBlock);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException75()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementInlineBlock statementInlineBlock;
+    varInteger = VarIntegerFactory.Create(false, 0);
     statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     IStatement[] iStatements = new IStatement[3];
     IVariable[] iVariables = new IVariable[3];
@@ -162,26 +173,6 @@ public void AddThrowsArgumentNullException849()
     statementInlineBlock =
       StatementInlineBlockFactory.Create(iStatements, iVariables);
     this.Add(statementInlineBlock, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void Add57704()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    IStatement[] iStatements = new IStatement[2];
-    IVariable[] iVariables = new IVariable[8];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    iStatements[1] = (IStatement)statementIncrementInteger;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    this.Add(statementInlineBlock, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
 }
     }
 }

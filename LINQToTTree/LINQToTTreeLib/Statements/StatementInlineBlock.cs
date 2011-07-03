@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -9,136 +8,51 @@ namespace LINQToTTreeLib.Statements
     /// Implements a block of statements with declarations at the start. It is its own scope - so
     /// everything declared will disappear when we leave this guy. Pretty dumb, actually.
     /// </summary>
-    public class StatementInlineBlock : IBookingStatementBlock
+    public class StatementInlineBlock : StatementInlineBlockBase
     {
-        /// <summary>
-        /// The list of statements in this block.
-        /// </summary>
-        public IEnumerable<IStatement> Statements
-        {
-            get { return _statements; }
-        }
-
-        /// <summary>
-        /// Keep track of the statements we know about!
-        /// </summary>
-        private List<IStatement> _statements = new List<IStatement>();
-
-        /// <summary>
-        /// Adds a statement to the end of the list of statements that we know about.
-        /// </summary>
-        /// <param name="statement"></param>
-        public void Add(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("Cannot add a null statement");
-
-            _statements.Add(statement);
-        }
-
-        private List<IVariable> _variables = new List<IVariable>();
-
-        /// <summary>
-        /// Add a booking
-        /// </summary>
-        /// <param name="variableToDeclare"></param>
-        public void Add(IVariable variableToDeclare)
-        {
-            if (variableToDeclare == null)
-                throw new ArgumentNullException("Must not declare a null variable");
-
-            var findOld = from v in _variables
-                          where v.VariableName == variableToDeclare.VariableName
-                          select v;
-            if (findOld.FirstOrDefault() != null)
-                throw new ArgumentException("Variable '" + variableToDeclare.VariableName + "' has already been declared in this block!");
-
-            _variables.Add(variableToDeclare);
-        }
-
-        /// <summary>
-        /// Return the variables in the block
-        /// </summary>
-        public IEnumerable<IVariable> DeclaredVariables
-        {
-            get { return _variables; }
-        }
-
         /// <summary>
         /// Return this translated to code, inside curly braced. First variable decl and then the statements.
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<string> CodeItUp()
+        public override IEnumerable<string> CodeItUp()
         {
-            var goodVars = (from v in _variables
-                            where v.Declare
-                            select v).ToArray();
-
-            if (_statements.Count > 0 || goodVars.Length > 0)
-            {
-                yield return "{";
-
-                foreach (var v in goodVars)
-                {
-                    string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.VariableName;
-                    if (v.InitialValue != null)
-                    {
-                        varDecl = varDecl + "=" + v.InitialValue.RawValue;
-                    }
-                    varDecl += ";";
-                    yield return "  " + varDecl;
-                }
-
-                var sublines = from s in _statements
-                               from l in s.CodeItUp()
-                               select l;
-                foreach (var l in sublines)
-                {
-                    yield return "  " + l;
-                }
-                yield return "}";
-            }
+            return RenderInternalCode();
         }
 
         /// <summary>
-        /// Try to combine this statement with another statement. We do simple append unless it is
-        /// another inline block. In that case we make sure to lift things out.
+        /// Try to combine this statement with another statement. The key thing abou tinline blocks
+        /// is they are meaningless seperations of code. So we just keep lifing the empty ones
+        /// up to the proper leve.
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public virtual bool TryCombineStatement(IStatement statement)
+        public override bool TryCombineStatement(IStatement statement)
         {
             if (statement == null)
                 throw new ArgumentNullException("statement should not be null");
 
-            if (statement.GetType() == typeof(StatementInlineBlock))
-            {
-                var block = statement as StatementInlineBlock;
-                var statements = block.Statements;
-                if (statements != null)
-                {
-                    if (statements == this.Statements)
-                        throw new ArgumentException("Can't add our own statements to ourselves");
+            //
+            // If this is not a plain inline block, we can do a simple add
+            //
 
-                    foreach (var s in statements)
-                    {
-                        Add(s);
-                    }
-                }
-
-                var declVars = block.DeclaredVariables;
-                if (declVars != null)
-                {
-                    foreach (var v in block.DeclaredVariables)
-                    {
-                        Add(v);
-                    }
-                }
-            }
-            else
+            if (statement.GetType() != typeof(StatementInlineBlock))
             {
-                Add(statement);
+                Combine(new[] { statement });
+                return true;
             }
+
+            //
+            // Since it is an inline block, we can just try to combine the individual guys
+            // that are deep in it. We do this by lifing statements out as much as we can.
+            //
+
+            var otherInline = statement as StatementInlineBlock;
+            Combine(otherInline.DeclaredVariables);
+            foreach (var s in otherInline.Statements)
+            {
+                TryCombineStatement(s);
+            }
+
             return true;
         }
 
@@ -148,20 +62,15 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public virtual bool IsSameStatement(IStatement statement)
+        public override bool IsSameStatement(IStatement statement)
         {
-            // Must be same statements in the same order
-
             if (statement == null)
-                throw new ArgumentNullException("statement must not be null");
-            var inline = statement as StatementInlineBlock;
-            if (inline == null)
+                throw new ArgumentNullException("statement");
+            var other = statement as StatementInlineBlock;
+            if (other == null)
                 return false;
 
-            if (_statements.Count != inline._statements.Count)
-                return false;
-
-            return _statements.Zip(inline._statements, (s1, s2) => s1.IsSameStatement(s2)).All(test => test);
+            return base.IsSameStatement(other);
         }
 
         /// <summary>
@@ -169,12 +78,9 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="originalName"></param>
         /// <param name="newName"></param>
-        public void RenameVariable(string originalName, string newName)
+        public override void RenameVariable(string originalName, string newName)
         {
-            foreach (var s in _statements)
-            {
-                s.RenameVariable(originalName, newName);
-            }
+            RenameBlockVariables(originalName, newName);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestEquivThrowsArgumentNullException961()
+public void TestEquivThrowsArgumentNullException379()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -129,13 +129,21 @@ public void TestEquiv3302()
 public void TestEquiv3303()
 {
     VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
     StatementFilter statementFilter;
+    StatementInlineBlock statementInlineBlock;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    IStatement[] iStatements = new IStatement[0];
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
     IVariable[] iVariables = new IVariable[0];
+    iStatements[0] = (IStatement)statementIncrementInteger;
     statementFilter =
       StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
-    this.TestEquiv(statementFilter, (IStatement)statementFilter);
+    IStatement[] iStatements1 = new IStatement[1];
+    iStatements1[0] = (IStatement)statementFilter;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements1, (IVariable[])null);
+    this.TestEquiv(statementFilter, (IStatement)statementInlineBlock);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsNotNull(statementFilter.TestExpression);
     Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
@@ -157,10 +165,27 @@ public void TestEquiv3304()
     statementFilter =
       StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
     IStatement[] iStatements1 = new IStatement[1];
-    iStatements1[0] = (IStatement)statementFilter;
+    iStatements1[0] = (IStatement)statementIncrementInteger;
     statementInlineBlock =
       StatementInlineBlockFactory.Create(iStatements1, (IVariable[])null);
     this.TestEquiv(statementFilter, (IStatement)statementInlineBlock);
+    Assert.IsNotNull((object)statementFilter);
+    Assert.IsNotNull(statementFilter.TestExpression);
+    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+public void TestEquiv3305()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[0];
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    this.TestEquiv(statementFilter, (IStatement)statementFilter);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsNotNull(statementFilter.TestExpression);
     Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
@@ -189,38 +214,12 @@ public void TestEquiv2201()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestEquiv3309()
+public void TestEquiv2202()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
     StatementFilter statementFilter;
-    StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[0];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    statementFilter =
-      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
-    IStatement[] iStatements1 = new IStatement[1];
-    iStatements1[0] = (IStatement)statementIncrementInteger;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements1, (IVariable[])null);
-    this.TestEquiv(statementFilter, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestEquiv2205()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    StatementFilter statementFilter;
-    varInteger =
-      VarIntegerFactory.Create(PexSafeHelpers.ByteToBoolean((byte)4), int.MaxValue);
+    varInteger = VarIntegerFactory.Create(true, int.MaxValue);
     statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     IStatement[] iStatements = new IStatement[1];
     IVariable[] iVariables = new IVariable[1];

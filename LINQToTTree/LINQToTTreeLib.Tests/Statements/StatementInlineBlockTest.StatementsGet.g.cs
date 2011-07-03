@@ -20,7 +20,7 @@ namespace LINQToTTreeLib.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void StatementsGet216()
+public void StatementsGet21601()
 {
     StatementInlineBlock statementInlineBlock;
     IEnumerable<IStatement> iEnumerable;
@@ -29,15 +29,16 @@ public void StatementsGet216()
     iEnumerable = this.StatementsGet(statementInlineBlock);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsTrue(
-                 object.ReferenceEquals(statementInlineBlock.Statements, (object)iEnumerable)
-                 );
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsTrue(object.ReferenceEquals
+                      (((StatementInlineBlockBase)statementInlineBlock).Statements, 
+                       (object)iEnumerable));
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void StatementsGet279()
+public void StatementsGet27902()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -52,15 +53,16 @@ public void StatementsGet279()
     iEnumerable = this.StatementsGet(statementInlineBlock);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsTrue(
-                 object.ReferenceEquals(statementInlineBlock.Statements, (object)iEnumerable)
-                 );
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsTrue(object.ReferenceEquals
+                      (((StatementInlineBlockBase)statementInlineBlock).Statements, 
+                       (object)iEnumerable));
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void StatementsGet27901()
+public void StatementsGet27903()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -75,15 +77,16 @@ public void StatementsGet27901()
     iEnumerable = this.StatementsGet(statementInlineBlock);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsTrue(
-                 object.ReferenceEquals(statementInlineBlock.Statements, (object)iEnumerable)
-                 );
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsTrue(object.ReferenceEquals
+                      (((StatementInlineBlockBase)statementInlineBlock).Statements, 
+                       (object)iEnumerable));
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void StatementsGet697()
+public void StatementsGet69701()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -101,11 +104,12 @@ public void StatementsGet697()
     iEnumerable = this.StatementsGet(statementInlineBlock);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsTrue(
-                 object.ReferenceEquals(statementInlineBlock.Statements, (object)iEnumerable)
-                 );
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsTrue(object.ReferenceEquals
+                      (((StatementInlineBlockBase)statementInlineBlock).Statements, 
+                       (object)iEnumerable));
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
 }
     }
 }

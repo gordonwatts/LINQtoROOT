@@ -18,13 +18,14 @@ namespace LINQToTTreeLib.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void Constructor808()
+public void Constructor80801()
 {
     StatementInlineBlock statementInlineBlock;
     statementInlineBlock = this.Constructor();
     Assert.IsNotNull((object)statementInlineBlock);
-    Assert.IsNotNull(statementInlineBlock.Statements);
-    Assert.IsNotNull(statementInlineBlock.DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
 }
     }
 }

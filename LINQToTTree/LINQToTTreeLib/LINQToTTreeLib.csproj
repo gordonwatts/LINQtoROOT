@@ -114,6 +114,7 @@
     <Compile Include="ResultOperators\ROTakeSkipOperators.cs" />
     <Compile Include="ResultOperators\ROUniqueCombinations.cs" />
     <Compile Include="Statements\StatementCheckPairwise.cs" />
+    <Compile Include="Statements\StatementInlineBlockBase.cs" />
     <Compile Include="Statements\StatementLoopOverGood.cs" />
     <Compile Include="Variables\VarArray.cs" />
     <Compile Include="Statements\StatementPairLoop.cs" />

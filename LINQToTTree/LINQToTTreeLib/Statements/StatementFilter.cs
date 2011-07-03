@@ -71,7 +71,19 @@ namespace LINQToTTreeLib.Statements
             if (other.TestExpression.RawValue == TestExpression.RawValue)
             {
                 foreach (var s in other.Statements)
-                    Add(s);
+                {
+                    bool didCombine = false;
+                    foreach (var sinner in Statements.Where(st => st is IBookingStatementBlock).Cast<IBookingStatementBlock>())
+                    {
+                        if (sinner.TryCombineStatement(s))
+                        {
+                            didCombine = true;
+                            break;
+                        }
+                    }
+                    if (!didCombine)
+                        Add(s);
+                }
 
                 return true;
             }
