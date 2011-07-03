@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -90,9 +89,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         [PexMethod]
-        [PexUseType(typeof(StatementInlineBlock))]
-        [PexUseType(typeof(StatementIncrementInteger))]
-        [PexUseType(typeof(StatementIfOnCount))]
         public void TestTryCombine(IStatement s)
         {
             /// We should never be able to combine any filter statements currently!

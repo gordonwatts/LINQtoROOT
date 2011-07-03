@@ -440,6 +440,7 @@
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
+    <Compile Include="Statements\StatementVectorLoopTest.cs" />
     <Compile Include="Statements\Utils.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />

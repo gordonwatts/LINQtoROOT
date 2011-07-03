@@ -12,7 +12,7 @@ namespace LINQToTTreeLib.Expressions
     /// <summary>
     /// Holds the smarts to deal with an array info that is represented as vector in the C++ code.
     /// </summary>
-    internal class ArrayInfoVector : IArrayInfo
+    public class ArrayInfoVector : IArrayInfo
     {
         /// <summary>
         /// Holds onto the array expression that we are going to be working against.
@@ -79,12 +79,12 @@ namespace LINQToTTreeLib.Expressions
         /// <summary>
         /// A local class to implement the looping statements to work over this array.
         /// </summary>
-        private class StatementVectorLoop : StatementInlineBlockBase
+        public class StatementVectorLoop : StatementInlineBlockBase
         {
             /// <summary>
             /// The loop that we will run over
             /// </summary>
-            private string _forLoop;
+            public string ForLoop { get; set; }
 
             /// <summary>
             /// Create a for loop statement.
@@ -95,7 +95,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 var bld = new StringBuilder();
                 bld.AppendFormat("for (int {0}=0; {0} < {1}; {0}++)", loopVariable.Name, arraySizeVar.RawValue);
-                _forLoop = bld.ToString();
+                ForLoop = bld.ToString();
             }
 
             /// <summary>
@@ -106,7 +106,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 if (Statements.Any())
                 {
-                    yield return _forLoop;
+                    yield return ForLoop;
                     foreach (var l in RenderInternalCode())
                     {
                         yield return l;
