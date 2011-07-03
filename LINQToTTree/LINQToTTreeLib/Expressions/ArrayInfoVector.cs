@@ -79,7 +79,7 @@ namespace LINQToTTreeLib.Expressions
         /// <summary>
         /// A local class to implement the looping statements to work over this array.
         /// </summary>
-        private class StatementVectorLoop : StatementInlineBlock
+        private class StatementVectorLoop : StatementInlineBlockBase
         {
             /// <summary>
             /// The loop that we will run over
@@ -107,11 +107,26 @@ namespace LINQToTTreeLib.Expressions
                 if (Statements.Any())
                 {
                     yield return _forLoop;
-                    foreach (var l in base.CodeItUp())
+                    foreach (var l in RenderInternalCode())
                     {
                         yield return l;
                     }
                 }
+            }
+
+            public override bool TryCombineStatement(IStatement statement)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override bool IsSameStatement(IStatement statement)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override void RenameVariable(string origName, string newName)
+            {
+                throw new System.NotImplementedException();
             }
         }
     }

@@ -191,6 +191,7 @@
     <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
     <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
     <Compile Include="Factories\ConstantExpressionFactory.cs" />
     <Compile Include="Factories\CPPTranslatorFactory.cs" />

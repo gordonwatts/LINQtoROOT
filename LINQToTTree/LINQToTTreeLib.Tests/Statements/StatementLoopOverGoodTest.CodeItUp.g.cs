@@ -100,18 +100,16 @@ public void CodeItUp28008()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void CodeItUp28009()
+public void CodeItUp28007()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
-    VarInteger varInteger2;
     StatementLoopOverGood statementLoopOverGood;
     IEnumerable<string> iEnumerable;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger = VarIntegerFactory.Create(false, 0);
     varInteger1 = VarIntegerFactory.Create(false, 0);
-    varInteger2 = VarIntegerFactory.Create(false, 0);
     IVariable[] iVariables = new IVariable[2];
-    iVariables[0] = (IVariable)varInteger2;
+    iVariables[0] = (IVariable)varInteger;
     iVariables[1] = (IVariable)varInteger1;
     statementLoopOverGood =
       StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger1, 
