@@ -34,9 +34,9 @@ public void CodeItUp280()
     iEnumerable = this.CodeItUp(statementLoopOverGood);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
     Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
@@ -54,9 +54,9 @@ public void CodeItUp28001()
     iEnumerable = this.CodeItUp(statementLoopOverGood);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
     Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
@@ -76,31 +76,31 @@ public void CodeItUp28002()
     iEnumerable = this.CodeItUp(statementLoopOverGood);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
     Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void CodeItUp28003()
+public void CodeItUp28008()
 {
     VarInteger varInteger;
     StatementLoopOverGood statementLoopOverGood;
     IEnumerable<string> iEnumerable;
-    varInteger = VarIntegerFactory.Create(false, 835);
+    varInteger = VarIntegerFactory.Create(false, 1);
     statementLoopOverGood =
       StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
                                           (IValue)varInteger, (IStatement[])null, (IVariable[])null);
     iEnumerable = this.CodeItUp(statementLoopOverGood);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
     Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void CodeItUp28004()
+public void CodeItUp28009()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
@@ -108,21 +108,20 @@ public void CodeItUp28004()
     StatementLoopOverGood statementLoopOverGood;
     IEnumerable<string> iEnumerable;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
     varInteger2 = VarIntegerFactory.Create(false, 0);
-    IVariable[] iVariables = new IVariable[3];
+    IVariable[] iVariables = new IVariable[2];
     iVariables[0] = (IVariable)varInteger2;
     iVariables[1] = (IVariable)varInteger1;
-    iVariables[2] = (IVariable)varInteger;
     statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger1, 
                                           (IValue)varInteger, (IStatement[])null, iVariables);
     iEnumerable = this.CodeItUp(statementLoopOverGood);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
     Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
 }
     }
 }

@@ -9,20 +9,89 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework.Generated;
-using Microsoft.ExtendedReflection.DataAccess;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementLoopOverGoodTest
     {
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestTryCombineThrowsArgumentNullException904()
+        {
+            VarInteger varInteger;
+            StatementLoopOverGood statementLoopOverGood;
+            bool b;
+            varInteger = VarIntegerFactory.Create(false, 0);
+            statementLoopOverGood =
+              StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger,
+                                                  (IValue)varInteger, (IStatement[])null, (IVariable[])null);
+            b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestTryCombineThrowsArgumentNullException838()
+        {
+            VarInteger varInteger;
+            StatementLoopOverGood statementLoopOverGood;
+            bool b;
+            varInteger = VarIntegerFactory.Create(false, 0);
+            IVariable[] iVariables = new IVariable[1];
+            iVariables[0] = (IVariable)varInteger;
+            statementLoopOverGood =
+              StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger,
+                                                  (IValue)varInteger, (IStatement[])null, iVariables);
+            b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+        public void TestTryCombine186()
+        {
+            VarInteger varInteger;
+            StatementLoopOverGood statementLoopOverGood;
+            StatementIncrementInteger statementIncrementInteger;
+            bool b;
+            varInteger = VarIntegerFactory.Create(false, 0);
+            statementLoopOverGood =
+              StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger,
+                                                  (IValue)varInteger, (IStatement[])null, (IVariable[])null);
+            statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+            b = this.TestTryCombine
+                    (statementLoopOverGood, (IStatement)statementIncrementInteger);
+            Assert.AreEqual<bool>(false, b);
+            Assert.IsNotNull((object)statementLoopOverGood);
+            Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+            Assert.IsNotNull
+                (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+        }
+        [TestMethod]
+        [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void TestTryCombineThrowsArgumentNullException361()
+        {
+            VarInteger varInteger;
+            StatementIncrementInteger statementIncrementInteger;
+            StatementLoopOverGood statementLoopOverGood;
+            bool b;
+            varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+            statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+            IStatement[] iStatements = new IStatement[1];
+            iStatements[0] = (IStatement)statementIncrementInteger;
+            statementLoopOverGood =
+              StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger,
+                                                  (IValue)varInteger, iStatements, (IVariable[])null);
+            b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
+        }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void TestTryCombine415()
+[ExpectedException(typeof(ArgumentException))]
+public void TestTryCombineThrowsArgumentException424()
 {
     VarInteger varInteger;
     StatementLoopOverGood statementLoopOverGood;
@@ -33,146 +102,11 @@ public void TestTryCombine415()
                                           (IValue)varInteger, (IStatement[])null, (IVariable[])null);
     b =
       this.TestTryCombine(statementLoopOverGood, (IStatement)statementLoopOverGood);
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
-    Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void TestTryCombine41501()
-{
-    VarInteger varInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    StatementInlineBlock statementInlineBlock;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger, (IStatement[])null, (IVariable[])null);
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)statementInlineBlock);
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
-    Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void TestTryCombine41502()
-{
-    VarInteger varInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    StatementInlineBlock statementInlineBlock;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger, (IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[1];
-    iStatements[0] = (IStatement)statementLoopOverGood;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)statementInlineBlock);
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
-    Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void TestTryCombine41503()
-{
-    VarInteger varInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    StatementInlineBlock statementInlineBlock;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger, (IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[2];
-    iStatements[0] = (IStatement)statementLoopOverGood;
-    iStatements[1] = (IStatement)statementLoopOverGood;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)statementInlineBlock);
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
-    Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestTryCombineThrowsArgumentNullException812()
-{
-    VarInteger varInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger, (IStatement[])null, (IVariable[])null);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestTryCombineThrowsArgumentNullException580()
-{
-    VarInteger varInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    IVariable[] iVariables = new IVariable[1];
-    iVariables[0] = (IVariable)varInteger;
-    statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger, (IStatement[])null, iVariables);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestTryCombineThrowsArgumentNullException655()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    IStatement[] iStatements = new IStatement[1];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger, iStatements, (IVariable[])null);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestTryCombineThrowsArgumentNullException107()
-{
-    VarInteger varInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, -1212767096);
-    statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger, (IStatement[])null, (IVariable[])null);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestTryCombineThrowsArgumentNullException543()
+public void TestTryCombineThrowsArgumentNullException86()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
@@ -181,43 +115,31 @@ public void TestTryCombineThrowsArgumentNullException543()
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     varInteger1 = VarIntegerFactory.Create(false, 0);
     IVariable[] iVariables = new IVariable[2];
-    iVariables[0] = (IVariable)varInteger;
-    iVariables[1] = (IVariable)varInteger1;
+    iVariables[0] = (IVariable)varInteger1;
+    iVariables[1] = (IVariable)varInteger;
     statementLoopOverGood =
       StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                          (IValue)varInteger1, (IStatement[])null, iVariables);
+                                          (IValue)varInteger, (IStatement[])null, iVariables);
     b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[PexRaisedException(typeof(TermDestructionException))]
-public void TestTryCombineThrowsTermDestructionException651()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException836()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
-    VarInteger varInteger2;
     StatementLoopOverGood statementLoopOverGood;
-    StatementInlineBlock statementInlineBlock;
     bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    varInteger2 = VarIntegerFactory.Create(false, 64);
-    IVariable[] iVariables = new IVariable[3];
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger1 = VarIntegerFactory.Create(false, 1);
+    IVariable[] iVariables = new IVariable[2];
     iVariables[0] = (IVariable)varInteger1;
     iVariables[1] = (IVariable)varInteger;
-    iVariables[2] = (IVariable)varInteger2;
     statementLoopOverGood =
-      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger2, 
-                                          (IValue)varInteger1, (IStatement[])null, iVariables);
-    IStatement[] iStatements = new IStatement[0];
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    b = this.TestTryCombine(statementLoopOverGood, (IStatement)statementInlineBlock);
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
-    Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IValue)varInteger, (IStatement[])null, iVariables);
+    b = this.TestTryCombine(statementLoopOverGood, (IStatement)null);
 }
     }
 }

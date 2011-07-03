@@ -39,31 +39,27 @@ public void CodeItUp280()
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
 public void CodeItUp28001()
 {
     VarInteger varInteger;
-    VarInteger varInteger1;
     StatementFilter statementFilter;
     IEnumerable<string> iEnumerable;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
+    varInteger = VarIntegerFactory.Create(false, -86015);
     IStatement[] iStatements = new IStatement[0];
-    IVariable[] iVariables = new IVariable[2];
-    iVariables[0] = (IVariable)varInteger1;
-    iVariables[1] = (IVariable)varInteger;
+    IVariable[] iVariables = new IVariable[0];
     statementFilter =
       StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
     iEnumerable = this.CodeItUp(statementFilter);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
@@ -71,22 +67,25 @@ public void CodeItUp28002()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
+    VarInteger varInteger2;
     StatementFilter statementFilter;
     IEnumerable<string> iEnumerable;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 1);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
+    varInteger2 = VarIntegerFactory.Create(false, int.MaxValue);
     IStatement[] iStatements = new IStatement[0];
-    IVariable[] iVariables = new IVariable[2];
+    IVariable[] iVariables = new IVariable[3];
     iVariables[0] = (IVariable)varInteger1;
-    iVariables[1] = (IVariable)varInteger;
+    iVariables[1] = (IVariable)varInteger2;
+    iVariables[2] = (IVariable)varInteger;
     statementFilter =
       StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
     iEnumerable = this.CodeItUp(statementFilter);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
 }
     }
 }

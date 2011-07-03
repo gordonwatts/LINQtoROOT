@@ -9,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// A if statement that will fire depending on the relationship between a variable and a value.
     /// Is a complete scoping declaration.
     /// </summary>
-    public class StatementIfOnCount : StatementInlineBlock
+    public class StatementIfOnCount : StatementInlineBlockBase
     {
         /// <summary>
         /// What operation are we going to be performing here?
@@ -85,7 +85,7 @@ namespace LINQToTTreeLib.Statements
             if (Statements.Any())
             {
                 yield return "if (" + ValLeft.RawValue + " " + ComparisonCodeTranslation[Comparison] + " " + ValRight.RawValue + ")";
-                foreach (var l in base.CodeItUp())
+                foreach (var l in RenderInternalCode())
                 {
                     yield return l;
                 }
@@ -109,16 +109,31 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override bool IsSameStatement(IStatement statement)
         {
-            if (!base.IsSameStatement(statement))
-                return false;
+            if (statement == null)
+                throw new ArgumentNullException("statement");
 
             var other = statement as StatementIfOnCount;
             if (other == null)
                 return false;
 
+            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
+                return false;
+
             return Comparison == other.Comparison
                 && ValLeft.RawValue == other.ValLeft.RawValue
                 && ValRight.RawValue == other.ValRight.RawValue;
+        }
+
+        /// <summary>
+        /// Rename everything
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
+        public override void RenameVariable(string origName, string newName)
+        {
+            ValLeft.RenameRawValue(origName, newName);
+            ValRight.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Tests.Statements
         }
 
         /// <summary>Test stub for .ctor(IValue)</summary>
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public StatementLoopOverGood Constructor(IValue indiciesToCheck, IValue indexIsGood, IValue index)
         {
             StatementLoopOverGood target = new StatementLoopOverGood(indiciesToCheck, indexIsGood, index);
@@ -44,20 +44,12 @@ namespace LINQToTTreeLib.Tests.Statements
             }
 
             var pairedLines = originalLines.Zip(resultinglines, (o1, o2) => Tuple.Create(o1, o2));
-            foreach (var pair in pairedLines)
-            {
-                if (pair.Item1 != pair.Item2)
-                {
-                    Assert.IsFalse(result, string.Format("Line '{0}' and '{1}' are not same!", pair.Item1, pair.Item2));
-                }
-                else
-                {
-                    Assert.IsTrue(result, string.Format("Line '{0}' and '{1}' are not same!", pair.Item1, pair.Item2));
-                }
-            }
+
+            bool expected = pairedLines.All(p => p.Item1 == p.Item2);
+            Assert.AreEqual(expected, result, "final result didn't match the code it up lines");
         }
 
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
         public bool TestTryCombine([PexAssumeUnderTest] StatementLoopOverGood loop, IStatement s)
         {
             /// We should never be able to combine any filter statements currently!

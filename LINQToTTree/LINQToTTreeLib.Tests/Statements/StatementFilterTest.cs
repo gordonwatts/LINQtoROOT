@@ -142,7 +142,7 @@ namespace LINQToTTreeLib.Statements
 
             Assert.IsTrue(s1.TryCombineStatement(s2), "statement shoudl have combined");
             Assert.AreEqual(1, s1.Statements.Count(), "# of combined statements");
-            var deep = s1.Statements.First() as StatementInlineBlock;
+            var deep = s1.Statements.First() as StatementInlineBlockBase;
             Assert.IsNotNull(deep, "couldn't find interior statement");
             Assert.AreEqual(2, deep.Statements.Count(), "Number of statements isn't right here");
         }

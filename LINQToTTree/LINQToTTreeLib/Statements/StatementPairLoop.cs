@@ -5,7 +5,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
-    public class StatementPairLoop : StatementInlineBlock
+    public class StatementPairLoop : StatementInlineBlockBase
     {
         private Variables.VarArray arrayRecord;
         private IVariable index1;
@@ -33,11 +33,14 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override bool IsSameStatement(IStatement statement)
         {
-            if (!base.IsSameStatement(statement))
-                return false;
+            if (statement == null)
+                throw new ArgumentNullException("statement");
 
             var other = statement as StatementPairLoop;
             if (other == null)
+                return false;
+
+            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
                 return false;
 
             return arrayRecord.RawValue == other.arrayRecord.RawValue
@@ -55,7 +58,7 @@ namespace LINQToTTreeLib.Statements
                 yield return string.Format("  for(int {0} = {1}+1; {0} < {2}.size(); {0}++)", index2.RawValue, index1.RawValue, arrayRecord.RawValue);
                 yield return "  {";
                 yield return "    breakSeen = true;";
-                foreach (var l in base.CodeItUp())
+                foreach (var l in RenderInternalCode())
                 {
                     yield return "    " + l;
                 }
@@ -64,6 +67,16 @@ namespace LINQToTTreeLib.Statements
                 yield return "  if (breakSeen) break;";
                 yield return "}";
             }
+        }
+
+        public override bool TryCombineStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RenameVariable(string origName, string newName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

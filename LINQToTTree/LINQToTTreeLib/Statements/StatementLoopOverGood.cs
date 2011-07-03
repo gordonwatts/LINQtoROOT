@@ -6,7 +6,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Loop over a set of indicies only if they are marked "true" in the accompanying array.
     /// </summary>
-    public class StatementLoopOverGood : StatementInlineBlock
+    public class StatementLoopOverGood : StatementInlineBlockBase
     {
         private IValue _indiciesToCheck;
         private IValue _indexIsGood;
@@ -39,11 +39,14 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override bool IsSameStatement(IStatement statement)
         {
-            if (!base.IsSameStatement(statement))
-                return false;
+            if (statement == null)
+                throw new ArgumentNullException("statement");
 
             var other = statement as StatementLoopOverGood;
             if (other == null)
+                return false;
+
+            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
                 return false;
 
             return _index.RawValue == other._index.RawValue
@@ -62,12 +65,53 @@ namespace LINQToTTreeLib.Statements
             yield return string.Format("  if ({0}[index])", _indexIsGood.RawValue);
             yield return "  {";
             yield return string.Format("    int {0} = {1}[index];", _index.RawValue, _indiciesToCheck.RawValue);
-            foreach (var l in base.CodeItUp())
+            foreach (var l in RenderInternalCode())
             {
                 yield return "    " + l;
             }
             yield return "  }";
             yield return "}";
+        }
+
+        /// <summary>
+        /// Try to combine two of these guys
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool TryCombineStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException();
+            if (this == statement)
+                throw new ArgumentException("Can't comebine with self!");
+
+            var otherLoop = statement as StatementLoopOverGood;
+            if (otherLoop == null)
+                return false;
+
+            // Are they the same?
+
+            if (otherLoop._index.RawValue == _index.RawValue
+                && otherLoop._indexIsGood.RawValue == _indexIsGood.RawValue
+                && otherLoop._indiciesToCheck.RawValue == _indiciesToCheck.RawValue)
+            {
+                Combine(otherLoop);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Rename the variables here.
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
+        public override void RenameVariable(string origName, string newName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

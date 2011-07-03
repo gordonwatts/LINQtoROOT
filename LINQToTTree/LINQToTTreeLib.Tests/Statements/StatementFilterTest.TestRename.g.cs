@@ -20,7 +20,8 @@ namespace LINQToTTreeLib.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestRename377()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException975()
 {
     VarInteger varInteger;
     StatementFilter statementFilter;
@@ -31,14 +32,41 @@ public void TestRename377()
     statementFilter =
       StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
     iStatement = this.TestRename(statementFilter, "", "");
-    Assert.IsNotNull((object)iStatement);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsTrue
-        (object.ReferenceEquals((object)statementFilter, (object)iStatement));
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestRename37701()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException675()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[0];
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    iStatement = this.TestRename(statementFilter, "\t", "\t");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException262()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[0];
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    iStatement = this.TestRename(statementFilter, "\u0089", "\t");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException447()
 {
     VarInteger varInteger;
     StatementFilter statementFilter;
@@ -50,112 +78,24 @@ public void TestRename37701()
     statementFilter =
       StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
     iStatement = this.TestRename(statementFilter, "", "");
-    Assert.IsNotNull((object)iStatement);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsTrue
-        (object.ReferenceEquals((object)statementFilter, (object)iStatement));
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestRename37702()
+public void TestRename380()
 {
     VarInteger varInteger;
-    VarInteger varInteger1;
     StatementFilter statementFilter;
     IStatement iStatement;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
     IStatement[] iStatements = new IStatement[0];
-    IVariable[] iVariables = new IVariable[2];
-    iVariables[0] = (IVariable)varInteger1;
-    iVariables[1] = (IVariable)varInteger;
+    IVariable[] iVariables = new IVariable[0];
     statementFilter =
       StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
-    iStatement = this.TestRename(statementFilter, "", "");
+    iStatement = this.TestRename(statementFilter, "\07", "\07");
     Assert.IsNotNull((object)iStatement);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsTrue
         (object.ReferenceEquals((object)statementFilter, (object)iStatement));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestRename37703()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementFilter statementFilter;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, -2);
-    IStatement[] iStatements = new IStatement[0];
-    IVariable[] iVariables = new IVariable[2];
-    iVariables[0] = (IVariable)varInteger1;
-    iVariables[1] = (IVariable)varInteger;
-    statementFilter =
-      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
-    iStatement = this.TestRename(statementFilter, "", "");
-    Assert.IsNotNull((object)iStatement);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsTrue
-        (object.ReferenceEquals((object)statementFilter, (object)iStatement));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException811()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    StatementFilter statementFilter;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    iVariables[0] = (IVariable)varInteger;
-    statementFilter =
-      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
-    iStatement = this.TestRename(statementFilter, "", "");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException454()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    StatementFilter statementFilter;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    iVariables[0] = (IVariable)varInteger;
-    statementFilter =
-      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
-    iStatement = this.TestRename(statementFilter, "\t\t\t\t", "\t\t\t\t__________");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException448()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    StatementFilter statementFilter;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    iVariables[0] = (IVariable)varInteger;
-    statementFilter =
-      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
-    iStatement =
-      this.TestRename(statementFilter, "\u0089\u0089\u0089\u0089", "\t\t\t\t");
 }
     }
 }

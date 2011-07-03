@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Tests.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException988()
+public void StatementPairLoopCtorThrowsArgumentNullException60()
 {
     StatementPairLoop statementPairLoop;
     statementPairLoop =
@@ -31,7 +31,7 @@ public void StatementPairLoopCtorThrowsArgumentNullException988()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException832()
+public void StatementPairLoopCtorThrowsArgumentNullException276()
 {
     VarArray varArray;
     StatementPairLoop statementPairLoop;
@@ -42,7 +42,7 @@ public void StatementPairLoopCtorThrowsArgumentNullException832()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementPairLoopTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException694()
+public void StatementPairLoopCtorThrowsArgumentNullException444()
 {
     VarArray varArray;
     StatementPairLoop statementPairLoop;
@@ -60,8 +60,9 @@ public void StatementPairLoopCtor629()
     statementPairLoop =
       this.StatementPairLoopCtor(varArray, (IVariable)varArray, (IVariable)varArray);
     Assert.IsNotNull((object)statementPairLoop);
-    Assert.IsNotNull(((StatementInlineBlock)statementPairLoop).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementPairLoop).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementPairLoop).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementPairLoop).DeclaredVariables);
 }
     }
 }

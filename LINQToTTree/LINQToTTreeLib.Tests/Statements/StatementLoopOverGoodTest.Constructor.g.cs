@@ -21,8 +21,22 @@ namespace LINQToTTreeLib.Tests.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException20()
+public void Constructor220()
+{
+    VarInteger varInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementLoopOverGood =
+      this.Constructor((IValue)varInteger, (IValue)varInteger, (IValue)varInteger);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException158()
 {
     StatementLoopOverGood statementLoopOverGood;
     statementLoopOverGood =
@@ -30,8 +44,8 @@ public void ConstructorThrowsArgumentNullException20()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException623()
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException74()
 {
     VarInteger varInteger;
     StatementLoopOverGood statementLoopOverGood;
@@ -41,8 +55,8 @@ public void ConstructorThrowsArgumentNullException623()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException233()
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException953()
 {
     VarInteger varInteger;
     StatementLoopOverGood statementLoopOverGood;
@@ -52,22 +66,8 @@ public void ConstructorThrowsArgumentNullException233()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-public void Constructor220()
-{
-    VarInteger varInteger;
-    StatementLoopOverGood statementLoopOverGood;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementLoopOverGood =
-      this.Constructor((IValue)varInteger, (IValue)varInteger, (IValue)varInteger);
-    Assert.IsNotNull((object)statementLoopOverGood);
-    Assert.IsNotNull(((StatementInlineBlock)statementLoopOverGood).Statements);
-    Assert.IsNotNull
-        (((StatementInlineBlock)statementLoopOverGood).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException43()
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException583()
 {
     VarInteger varInteger;
     StatementLoopOverGood statementLoopOverGood;

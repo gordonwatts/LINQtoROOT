@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestEquivThrowsArgumentNullException271()
+public void TestEquivThrowsArgumentNullException824()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -52,13 +52,14 @@ public void TestEquiv33()
     Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
         (StatementIfOnCount.ComparisonOperator.GreaterThan, 
          statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementIfOnCount).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementIfOnCount).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestEquivThrowsArgumentNullException126()
+public void TestEquivThrowsArgumentNullException396()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -70,60 +71,6 @@ public void TestEquivThrowsArgumentNullException126()
                                        StatementIfOnCount.ComparisonOperator.GreaterThan, 
                                        (IStatement[])null, iVariables);
     this.TestEquiv(statementIfOnCount, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void TestEquiv3301()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       (IStatement[])null, (IVariable[])null);
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    this.TestEquiv(statementIfOnCount, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)statementIfOnCount);
-    Assert.IsNotNull(statementIfOnCount.ValLeft);
-    Assert.IsNotNull(statementIfOnCount.ValRight);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementIfOnCount.ValRight, statementIfOnCount.ValLeft));
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
-         statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void TestEquiv3302()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       (IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[1];
-    iStatements[0] = (IStatement)statementIfOnCount;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    this.TestEquiv(statementIfOnCount, (IStatement)statementInlineBlock);
-    Assert.IsNotNull((object)statementIfOnCount);
-    Assert.IsNotNull(statementIfOnCount.ValLeft);
-    Assert.IsNotNull(statementIfOnCount.ValRight);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementIfOnCount.ValRight, statementIfOnCount.ValLeft));
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
-         statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
@@ -147,119 +94,41 @@ public void TestEquiv22()
     Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
         (StatementIfOnCount.ComparisonOperator.GreaterThan, 
          statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementIfOnCount).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementIfOnCount).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestEquivThrowsArgumentNullException416()
+public void TestEquivThrowsArgumentNullException790()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       iStatements, (IVariable[])null);
+    this.TestEquiv(statementIfOnCount, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestEquivThrowsArgumentNullException670()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
-    varInteger = VarIntegerFactory.Create(false, 1);
+    varInteger = VarIntegerFactory.Create(false, -7);
     statementIfOnCount =
       StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
                                        StatementIfOnCount.ComparisonOperator.GreaterThan, 
                                        (IStatement[])null, (IVariable[])null);
     this.TestEquiv(statementIfOnCount, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void TestEquiv3303()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementIfOnCount statementIfOnCount;
-    StatementIfOnCount statementIfOnCount1;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    IVariable[] iVariables = new IVariable[1];
-    iVariables[0] = (IVariable)varInteger;
-    statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       (IStatement[])null, iVariables);
-    statementIfOnCount1 =
-      StatementIfOnCountFactory.Create((IValue)varInteger1, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       (IStatement[])null, (IVariable[])null);
-    this.TestEquiv(statementIfOnCount1, (IStatement)statementIfOnCount);
-    Assert.IsNotNull((object)statementIfOnCount1);
-    Assert.IsNotNull(statementIfOnCount1.ValLeft);
-    Assert.IsNotNull(statementIfOnCount1.ValRight);
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
-         statementIfOnCount1.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount1).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount1).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void TestEquiv3304()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementIfOnCount statementIfOnCount;
-    StatementIfOnCount statementIfOnCount1;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    IVariable[] iVariables = new IVariable[1];
-    iVariables[0] = (IVariable)varInteger;
-    statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       (IStatement[])null, iVariables);
-    statementIfOnCount1 =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.LessThan, 
-                                       (IStatement[])null, (IVariable[])null);
-    this.TestEquiv(statementIfOnCount1, (IStatement)statementIfOnCount);
-    Assert.IsNotNull((object)statementIfOnCount1);
-    Assert.IsNotNull(statementIfOnCount1.ValLeft);
-    Assert.IsNotNull(statementIfOnCount1.ValRight);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementIfOnCount1.ValRight, statementIfOnCount1.ValLeft));
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.LessThan, 
-         statementIfOnCount1.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount1).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount1).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void TestEquiv3305()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementIfOnCount statementIfOnCount;
-    StatementIfOnCount statementIfOnCount1;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    IVariable[] iVariables = new IVariable[1];
-    iVariables[0] = (IVariable)varInteger;
-    statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       (IStatement[])null, iVariables);
-    IStatement[] iStatements = new IStatement[2];
-    iStatements[0] = (IStatement)statementIfOnCount;
-    iStatements[1] = (IStatement)statementIfOnCount;
-    statementIfOnCount1 =
-      StatementIfOnCountFactory.Create((IValue)varInteger1, (IValue)varInteger1, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       iStatements, (IVariable[])null);
-    this.TestEquiv(statementIfOnCount1, (IStatement)statementIfOnCount);
-    Assert.IsNotNull((object)statementIfOnCount1);
-    Assert.IsNotNull(statementIfOnCount1.ValLeft);
-    Assert.IsNotNull(statementIfOnCount1.ValRight);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementIfOnCount1.ValRight, statementIfOnCount1.ValLeft));
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
-         statementIfOnCount1.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount1).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount1).DeclaredVariables);
 }
     }
 }

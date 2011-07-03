@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void TestTryCombineThrowsArgumentException585()
+public void TestTryCombineThrowsArgumentException278()
 {
     this.TestTryCombine((IStatement)null);
 }
@@ -33,20 +33,6 @@ public void TestTryCombine818()
     statementInlineBlock =
       StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
     this.TestTryCombine((IStatement)statementInlineBlock);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestTryCombine81801()
-{
-    StatementInlineBlock statementInlineBlock;
-    StatementInlineBlock statementInlineBlock1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[1];
-    iStatements[0] = (IStatement)statementInlineBlock;
-    statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
-    this.TestTryCombine((IStatement)statementInlineBlock1);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
@@ -70,7 +56,7 @@ public void TestTryCombine62201()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestTryCombine81802()
+public void TestTryCombine81801()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -83,7 +69,7 @@ public void TestTryCombine81802()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestTryCombine81803()
+public void TestTryCombine81802()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -98,33 +84,18 @@ public void TestTryCombine81803()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
-public void TestTryCombine81804()
+public void TestTryCombine81803()
 {
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementIncrementInteger statementIncrementInteger;
-    VarInteger varInteger2;
-    StatementIfOnCount statementIfOnCount;
     StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger1);
-    varInteger2 = VarIntegerFactory.Create(false, 0);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[2];
-    iStatements[0] = (IStatement)statementIncrementInteger;
-    iVariables[0] = (IVariable)varInteger2;
-    iVariables[1] = (IVariable)varInteger1;
-    statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger1, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       iStatements, iVariables);
-    IStatement[] iStatements1 = new IStatement[2];
-    iStatements1[0] = (IStatement)statementIfOnCount;
-    iStatements1[1] = (IStatement)statementIncrementInteger;
+    StatementInlineBlock statementInlineBlock1;
     statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements1, (IVariable[])null);
-    this.TestTryCombine((IStatement)statementInlineBlock);
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[1];
+    IVariable[] iVariables = new IVariable[1];
+    iStatements[0] = (IStatement)statementInlineBlock;
+    statementInlineBlock1 =
+      StatementInlineBlockFactory.Create(iStatements, iVariables);
+    this.TestTryCombine((IStatement)statementInlineBlock1);
 }
     }
 }

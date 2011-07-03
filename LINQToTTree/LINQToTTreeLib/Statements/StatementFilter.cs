@@ -9,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// Deal with a "Where"-like clause. Basically, we have an expression which we evaluate, and we make sure that
     /// it goes!
     /// </summary>
-    public class StatementFilter : StatementInlineBlock
+    public class StatementFilter : StatementInlineBlockBase
     {
         /// <summary>
         /// Get the expresion we are going to test
@@ -46,7 +46,7 @@ namespace LINQToTTreeLib.Statements
                 /// 
 
                 yield return "if (" + TestExpression.RawValue + ")";
-                foreach (var l in base.CodeItUp())
+                foreach (var l in RenderInternalCode())
                 {
                     yield return l;
                 }
@@ -68,27 +68,17 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            if (other.TestExpression.RawValue == TestExpression.RawValue)
+            if (other.TestExpression.RawValue != TestExpression.RawValue)
             {
-                foreach (var s in other.Statements)
-                {
-                    bool didCombine = false;
-                    foreach (var sinner in Statements.Where(st => st is IBookingStatementBlock).Cast<IBookingStatementBlock>())
-                    {
-                        if (sinner.TryCombineStatement(s))
-                        {
-                            didCombine = true;
-                            break;
-                        }
-                    }
-                    if (!didCombine)
-                        Add(s);
-                }
-
-                return true;
+                return false;
             }
 
-            return false;
+            //
+            // Since the if statements are the same, we can combine the interiors!
+            //
+
+            Combine(other);
+            return true;
         }
 
         /// <summary>
@@ -98,14 +88,28 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override bool IsSameStatement(IStatement statement)
         {
-            if (!base.IsSameStatement(statement))
-                return false;
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
             var other = statement as StatementFilter;
             if (other == null)
                 return false;
 
+            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
+                return false;
+
             return TestExpression.RawValue == other.TestExpression.RawValue;
-            return base.IsSameStatement(statement);
+        }
+
+        /// <summary>
+        /// Rename our variables
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
+        public override void RenameVariable(string origName, string newName)
+        {
+            TestExpression.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
     }
 }

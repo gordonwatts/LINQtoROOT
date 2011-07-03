@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException601()
+public void ConstructorThrowsArgumentNullException87()
 {
     StatementFilter statementFilter;
     statementFilter = this.Constructor((IValue)null);
@@ -36,8 +36,8 @@ public void Constructor366()
     statementFilter = this.Constructor((IValue)varInteger);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementFilterTest))]
@@ -49,8 +49,8 @@ public void Constructor36601()
     statementFilter = this.Constructor((IValue)varInteger);
     Assert.IsNotNull((object)statementFilter);
     Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementFilter).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
 }
     }
 }

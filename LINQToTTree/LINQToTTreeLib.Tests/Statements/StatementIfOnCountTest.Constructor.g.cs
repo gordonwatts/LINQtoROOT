@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException981()
+public void ConstructorThrowsArgumentNullException368()
 {
     StatementIfOnCount statementIfOnCount;
     statementIfOnCount = this.Constructor((IValue)null, 
@@ -30,7 +30,7 @@ public void ConstructorThrowsArgumentNullException981()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException393()
+public void ConstructorThrowsArgumentNullException29()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -55,13 +55,14 @@ public void Constructor925()
     Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
         (StatementIfOnCount.ComparisonOperator.GreaterThan, 
          statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementIfOnCount).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementIfOnCount).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementIfOnCount).DeclaredVariables);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException39()
+public void ConstructorThrowsArgumentNullException951()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
