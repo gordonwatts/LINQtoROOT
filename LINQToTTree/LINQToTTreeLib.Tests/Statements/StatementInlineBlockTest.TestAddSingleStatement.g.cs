@@ -71,25 +71,22 @@ public void TestAddSingleStatement81804()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void TestAddSingleStatementThrowsAssertFailedException706()
+public void TestAddSingleStatement81802()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
     StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger = VarIntegerFactory.Create(false, 0);
     statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
     iStatements[0] = (IStatement)statementIncrementInteger;
     statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
+      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
     this.TestAddSingleStatement((IStatement)statementInlineBlock);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void TestAddSingleStatementThrowsAssertFailedException9601()
+public void TestAddSingleStatement81803()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -107,8 +104,7 @@ public void TestAddSingleStatementThrowsAssertFailedException9601()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void TestAddSingleStatementThrowsAssertFailedException259()
+public void TestAddSingleStatement81805()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -128,51 +124,95 @@ public void TestAddSingleStatementThrowsAssertFailedException259()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void TestAddSingleStatementThrowsAssertFailedException808()
+public void TestAddSingleStatement81807()
 {
     VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
+    StatementIncrementInteger statementIncrementInteger;
     StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    IVariable[] iVariables = new IVariable[1];
-    iVariables[0] = (IVariable)varInteger;
-    statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
-                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       (IStatement[])null, iVariables);
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables1 = new IVariable[1];
-    iStatements[0] = (IStatement)statementIfOnCount;
+    IVariable[] iVariables = new IVariable[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
     statementInlineBlock =
-      StatementInlineBlockFactory.Create(iStatements, iVariables1);
+      StatementInlineBlockFactory.Create(iStatements, iVariables);
     this.TestAddSingleStatement((IStatement)statementInlineBlock);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void TestAddSingleStatementThrowsAssertFailedException771()
+public void TestAddSingleStatement81808()
 {
     VarInteger varInteger;
-    VarInteger varInteger1;
+    StatementIncrementInteger statementIncrementInteger;
     StatementIfOnCount statementIfOnCount;
     StatementInlineBlock statementInlineBlock;
-    varInteger = VarIntegerFactory.Create(false, 825);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    IStatement[] iStatements = new IStatement[0];
-    IVariable[] iVariables = new IVariable[2];
-    iVariables[0] = (IVariable)varInteger1;
-    iVariables[1] = (IVariable)varInteger;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
     statementIfOnCount =
       StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
                                        StatementIfOnCount.ComparisonOperator.GreaterThan, 
-                                       iStatements, iVariables);
-    IStatement[] iStatements1 = new IStatement[2];
+                                       iStatements, (IVariable[])null);
+    IStatement[] iStatements1 = new IStatement[1];
+    IVariable[] iVariables = new IVariable[1];
     iStatements1[0] = (IStatement)statementIfOnCount;
-    iStatements1[1] = (IStatement)statementIfOnCount;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements1, iVariables);
+    this.TestAddSingleStatement((IStatement)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement81809()
+{
+    VarInteger varInteger;
+    VarInteger varInteger1;
+    VarInteger varInteger2;
+    StatementIncrementInteger statementIncrementInteger;
+    VarInteger varInteger3;
+    StatementIfOnCount statementIfOnCount;
+    StatementInlineBlock statementInlineBlock;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
+    varInteger2 = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    varInteger3 = VarIntegerFactory.Create(false, 0);
+    IStatement[] iStatements = new IStatement[1];
+    IVariable[] iVariables = new IVariable[2];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iVariables[0] = (IVariable)varInteger3;
+    iVariables[1] = (IVariable)varInteger2;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger1, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       iStatements, iVariables);
+    IStatement[] iStatements1 = new IStatement[1];
+    iStatements1[0] = (IStatement)statementIfOnCount;
     statementInlineBlock =
       StatementInlineBlockFactory.Create(iStatements1, (IVariable[])null);
     this.TestAddSingleStatement((IStatement)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement81810()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementInlineBlock statementInlineBlock;
+    StatementInlineBlock statementInlineBlock1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    IVariable[] iVariables = new IVariable[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements, iVariables);
+    IStatement[] iStatements1 = new IStatement[1];
+    IVariable[] iVariables1 = new IVariable[1];
+    iStatements1[0] = (IStatement)statementInlineBlock;
+    statementInlineBlock1 =
+      StatementInlineBlockFactory.Create(iStatements1, iVariables1);
+    this.TestAddSingleStatement((IStatement)statementInlineBlock1);
 }
     }
 }
