@@ -8,49 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException87()
-{
-    StatementFilter statementFilter;
-    statementFilter = this.Constructor((IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void Constructor366()
-{
-    VarInteger varInteger;
-    StatementFilter statementFilter;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementFilter = this.Constructor((IValue)varInteger);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void Constructor36601()
-{
-    VarInteger varInteger;
-    StatementFilter statementFilter;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementFilter = this.Constructor((IValue)varInteger);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
-}
     }
 }

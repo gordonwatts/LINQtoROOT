@@ -15,19 +15,5 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void Constructor808()
-{
-    GeneratedCode generatedCode;
-    generatedCode = this.Constructor();
-    Assert.IsNotNull((object)generatedCode);
-    Assert.AreEqual<int>(1, generatedCode.Depth);
-    Assert.IsNull(generatedCode.ResultValue);
-    Assert.IsNotNull(generatedCode.CodeBody);
-    Assert.IsNotNull(generatedCode.VariablesToTransfer);
-    Assert.IsNotNull(generatedCode.IncludeFiles);
-    Assert.IsNotNull(generatedCode.ReferencedLeafNames);
-}
     }
 }

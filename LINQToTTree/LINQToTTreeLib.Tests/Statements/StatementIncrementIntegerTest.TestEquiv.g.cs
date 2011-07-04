@@ -8,77 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Variables;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIncrementIntegerTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestEquivThrowsArgumentNullException689()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    this.TestEquiv(statementIncrementInteger, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-public void TestEquiv131()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    this.TestEquiv(statementIncrementInteger, (IStatement)statementIncrementInteger);
-    Assert.IsNotNull((object)statementIncrementInteger);
-    Assert.IsNotNull(statementIncrementInteger.Integer);
-    Assert.AreEqual<string>("anint_2", statementIncrementInteger.Integer.RawValue);
-    Assert.AreEqual<string>
-        ("anint_2", statementIncrementInteger.Integer.VariableName);
-    Assert.IsNotNull(statementIncrementInteger.Integer.InitialValue);
-    Assert.AreEqual<bool>(false, statementIncrementInteger.Integer.Declare);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestEquivThrowsArgumentNullException495()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    this.TestEquiv(statementIncrementInteger, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-public void TestEquiv13101()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    VarInteger varInteger1;
-    StatementIncrementInteger statementIncrementInteger1;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger1 =
-      StatementIncrementIntegerFactory.Create(varInteger1);
-    this.TestEquiv
-        (statementIncrementInteger, (IStatement)statementIncrementInteger1);
-    Assert.IsNotNull((object)statementIncrementInteger);
-    Assert.IsNotNull(statementIncrementInteger.Integer);
-    Assert.AreEqual<string>("anint_15", statementIncrementInteger.Integer.RawValue);
-    Assert.AreEqual<string>
-        ("anint_15", statementIncrementInteger.Integer.VariableName);
-    Assert.IsNotNull(statementIncrementInteger.Integer.InitialValue);
-    Assert.AreEqual<bool>(false, statementIncrementInteger.Integer.Declare);
-}
     }
 }

@@ -66,9 +66,15 @@ namespace LINQToTTreeLib.Statements
                 && Expression.RawValue == other.Expression.RawValue;
         }
 
+        /// <summary>
+        /// Rename the assignment we are making.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            throw new System.NotImplementedException();
+            ResultVariable.RenameRawValue(originalName, newName);
+            Expression.RenameRawValue(originalName, newName);
         }
     }
 }

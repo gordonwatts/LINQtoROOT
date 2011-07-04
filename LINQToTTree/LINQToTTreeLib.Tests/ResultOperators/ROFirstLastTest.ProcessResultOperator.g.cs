@@ -21,42 +21,5 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROFirstLastTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException818()
-{
-    IVariable iVariable;
-    ROFirstLast s0 = new ROFirstLast();
-    iVariable =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
-                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(NotImplementedException))]
-public void ProcessResultOperatorThrowsNotImplementedException511()
-{
-    LastResultOperator lastResultOperator;
-    IVariable iVariable;
-    lastResultOperator = new LastResultOperator(false);
-    ROFirstLast s0 = new ROFirstLast();
-    iVariable = this.ProcessResultOperator
-                    (s0, (ResultOperatorBase)lastResultOperator, (QueryModel)null, 
-                     (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(NotImplementedException))]
-public void ProcessResultOperatorThrowsNotImplementedException650()
-{
-    FirstResultOperator firstResultOperator;
-    IVariable iVariable;
-    firstResultOperator = new FirstResultOperator(false);
-    ROFirstLast s0 = new ROFirstLast();
-    iVariable = this.ProcessResultOperator
-                    (s0, (ResultOperatorBase)firstResultOperator, (QueryModel)null, 
-                     (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
     }
 }

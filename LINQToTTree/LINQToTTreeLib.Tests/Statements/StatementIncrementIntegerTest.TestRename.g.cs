@@ -8,89 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Variables;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIncrementIntegerTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException343()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement =
-      this.TestRename(statementIncrementInteger, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException739()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement = this.TestRename(statementIncrementInteger, "", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException990()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement = this.TestRename(statementIncrementInteger, "\u0100", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException850()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement =
-      this.TestRename(statementIncrementInteger, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException863()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement = this.TestRename(statementIncrementInteger, "\u0100n", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameThrowsArgumentNullException73()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    IStatement iStatement;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    iStatement = this.TestRename(statementIncrementInteger, "\0nnn", (string)null);
-}
     }
 }

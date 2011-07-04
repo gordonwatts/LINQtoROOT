@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 
@@ -12,7 +11,7 @@ namespace LINQToTTreeLib.Expressions
     {
         /// <summary>A factory for LINQToTTreeLib.Expressions.ArrayInfoVector+StatementVectorLoop instances</summary>
         [PexFactoryMethod(typeof(Helpers), "LINQToTTreeLib.Expressions.ArrayInfoVector+StatementVectorLoop")]
-        public static StatementInlineBlockBase CreateStatementVectorLoop(Type baseType)
+        public static LINQToTTreeLib.Expressions.ArrayInfoVector.StatementVectorLoop CreateStatementVectorLoop(Type baseType)
         {
             var arrType = baseType.MakeArrayType();
             var expr = Expression.Parameter(arrType);
@@ -24,7 +23,7 @@ namespace LINQToTTreeLib.Expressions
 
             var st = gc.CodeBody.Statements.Last();
 
-            return st as StatementInlineBlockBase;
+            return st as ArrayInfoVector.StatementVectorLoop;
         }
     }
 }
