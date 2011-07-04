@@ -7,12 +7,65 @@ using LINQToTTreeLib.Expressions;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NVelocity.App;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     [TestClass, PexClass(typeof(ArrayInfoVector.StatementVectorLoop))]
     public partial class StatementVectorLoopTest
     {
+        [TestInitialize]
+        public void TestInit()
+        {
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+
+            var eng = new VelocityEngine();
+            eng.Init();
+
+            QueryResultCacheTest.SetupCacheDir();
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
+        public class LocalNtup
+        {
+#pragma warning disable 0169
+            public int[] myvectorofint;
+#pragma warning restore 0169
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopCombine()
+        {
+            var q = new QueriableDummy<LocalNtup>();
+            var dudeQ1 = from evt in q
+                         from l in evt.myvectorofint
+                         select l;
+            var dude1 = dudeQ1.Count();
+
+            var gc1 = DummyQueryExectuor.FinalResult;
+
+            var dudeQ2 = from evt in q
+                         from l in evt.myvectorofint
+                         select l;
+            var dude2 = dudeQ2.Count();
+
+            var gc2 = DummyQueryExectuor.FinalResult;
+
+            // Combine them!
+
+            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody), "Unable to do combine!");
+
+            gc1.DumpCodeToConsole();
+
+            Assert.Inconclusive("not there yet - need some real checks");
+        }
+
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]ArrayInfoVector.StatementVectorLoop target)
@@ -64,7 +117,7 @@ namespace LINQToTTreeLib.Tests.Statements
             else
             {
                 var other = s as ArrayInfoVector.StatementVectorLoop;
-                Assert.AreEqual(other.ForLoop == target.ForLoop, result, "for loops not conssitent");
+                Assert.AreEqual(other.ArraySizeVar == target.ArraySizeVar, result, "for loops not conssitent");
             }
         }
 

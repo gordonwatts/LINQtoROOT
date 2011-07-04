@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.Composition.Hosting;
+﻿using System;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
@@ -81,21 +81,18 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         public class StatementVectorLoop : StatementInlineBlockBase
         {
-            /// <summary>
-            /// The loop that we will run over
-            /// </summary>
-            public string ForLoop { get; set; }
+            public IValue ArraySizeVar { get; set; }
+            string _loopVariable;
 
             /// <summary>
             /// Create a for loop statement.
             /// </summary>
             /// <param name="loopVariable"></param>
             /// <param name="arraySizeVar"></param>
-            public StatementVectorLoop(ParameterExpression loopVariable, VarSimple arraySizeVar)
+            public StatementVectorLoop(ParameterExpression loopVariable, IValue arraySizeVar)
             {
-                var bld = new StringBuilder();
-                bld.AppendFormat("for (int {0}=0; {0} < {1}; {0}++)", loopVariable.Name, arraySizeVar.RawValue);
-                ForLoop = bld.ToString();
+                ArraySizeVar = arraySizeVar;
+                _loopVariable = loopVariable.Name;
             }
 
             /// <summary>
@@ -106,7 +103,8 @@ namespace LINQToTTreeLib.Expressions
             {
                 if (Statements.Any())
                 {
-                    yield return ForLoop;
+
+                    yield return string.Format("for (int {0}=0; {0} < {1}; {0}++)", _loopVariable, ArraySizeVar.RawValue);
                     foreach (var l in RenderInternalCode())
                     {
                         yield return l;
@@ -114,9 +112,35 @@ namespace LINQToTTreeLib.Expressions
                 }
             }
 
+            /// <summary>
+            /// We need to try to combine statements here.
+            /// </summary>
+            /// <param name="statement"></param>
+            /// <returns></returns>
             public override bool TryCombineStatement(IStatement statement)
             {
-                throw new System.NotImplementedException();
+                if (statement == null)
+                    throw new ArgumentNullException("statement");
+
+                var other = statement as StatementVectorLoop;
+                if (other == null)
+                    return false;
+
+                // If we are looping over the same thing, then we can combine.
+
+                if (other.ArraySizeVar.RawValue != ArraySizeVar.RawValue)
+                    return false;
+
+                // We need to rename the loop variable in the second guy
+
+                other.RenameVariable(other._loopVariable, _loopVariable);
+
+                // Combine everything
+
+                Combine(other.DeclaredVariables);
+                Combine(other.Statements);
+
+                return true;
             }
 
             public override bool IsSameStatement(IStatement statement)
