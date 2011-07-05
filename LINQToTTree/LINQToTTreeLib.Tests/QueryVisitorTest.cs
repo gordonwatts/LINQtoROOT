@@ -297,9 +297,9 @@ namespace LINQToTTreeLib
 
             /// At the top level we assume there will be a loop over the vals.
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not compound");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not compound");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
@@ -332,9 +332,9 @@ namespace LINQToTTreeLib
 
             /// At the top level we assume there will be a loop over the vals.
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not compound");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not compound");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
@@ -364,9 +364,9 @@ namespace LINQToTTreeLib
 
             /// At the top level we assume there will be a loop over the vals.
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Unexpected # of statements");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not right");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Unexpected # of statements");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not right");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(2, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
@@ -429,12 +429,12 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not right");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not right");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
 
-            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
+            Assert.AreEqual(0, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
