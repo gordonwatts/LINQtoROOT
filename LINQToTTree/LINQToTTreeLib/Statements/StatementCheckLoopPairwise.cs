@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
@@ -7,7 +8,7 @@ namespace LINQToTTreeLib.Statements
     /// Given an array of indicies, makes a loop over them. One then
     /// can add a check (or similar) to the interiror.
     /// </summary>
-    class StatementCheckLoopPairwise : StatementInlineBlock
+    class StatementCheckLoopPairwise : StatementInlineBlockBase
     {
         private VarArray _indciesToInspect;
         private VarSimple _index1;
@@ -28,6 +29,15 @@ namespace LINQToTTreeLib.Statements
         public StatementCheckLoopPairwise(VarArray indiciesToInspect,
             VarSimple index1, VarSimple index2, VarArray passedArray)
         {
+            if (indiciesToInspect == null)
+                throw new ArgumentNullException("indiciesToInspect");
+            if (index1 == null)
+                throw new ArgumentNullException("index1");
+            if (index2 == null)
+                throw new ArgumentNullException("index2");
+            if (passedArray == null)
+                throw new ArgumentNullException("passedArray");
+
             _indciesToInspect = indiciesToInspect;
             _index1 = index1;
             _index2 = index2;
@@ -73,7 +83,7 @@ namespace LINQToTTreeLib.Statements
             // Do the other things that have been added to our code!
             //
 
-            foreach (var l in base.CodeItUp())
+            foreach (var l in RenderInternalCode())
             {
                 yield return "        " + l;
             }
@@ -86,6 +96,21 @@ namespace LINQToTTreeLib.Statements
             yield return "  }"; // The if this index is worth looking at
             yield return "}"; // Outter for loop
 
+        }
+
+        public override bool TryCombineStatement(LinqToTTreeInterfacesLib.IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IsSameStatement(LinqToTTreeInterfacesLib.IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void RenameVariable(string origName, string newName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

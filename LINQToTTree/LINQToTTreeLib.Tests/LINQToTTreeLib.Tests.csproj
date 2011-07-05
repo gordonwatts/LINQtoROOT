@@ -200,7 +200,6 @@
     <Compile Include="Factories\NTObjectFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
     <Compile Include="Factories\StatementAssignFactory.cs" />
-    <Compile Include="Factories\StatementCheckPairwiseFactory.cs" />
     <Compile Include="Factories\StatementFilterFactory.cs" />
     <Compile Include="Factories\StatementFlipBoolFactory.cs" />
     <Compile Include="Factories\StatementIfOnCountFactory.cs" />

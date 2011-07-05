@@ -34,5 +34,16 @@ namespace LINQToTTreeLib.Statements
             yield return "  break;";
             yield return "}";
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RenameVariable(string originalName, string newName)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

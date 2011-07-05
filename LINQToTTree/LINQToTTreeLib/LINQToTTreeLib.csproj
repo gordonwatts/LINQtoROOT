@@ -113,6 +113,7 @@
     <Compile Include="ResultOperators\ROPairWiseAll.cs" />
     <Compile Include="ResultOperators\ROTakeSkipOperators.cs" />
     <Compile Include="ResultOperators\ROUniqueCombinations.cs" />
+    <Compile Include="Statements\StatementInlineBlockBase.cs" />
     <Compile Include="Statements\StatementTestLoopPairwise.cs" />
     <Compile Include="Statements\StatementCheckLoopPairwise.cs" />
     <Compile Include="Statements\StatementLoopOverGood.cs" />
