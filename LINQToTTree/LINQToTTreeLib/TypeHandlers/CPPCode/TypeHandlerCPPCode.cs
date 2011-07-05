@@ -91,7 +91,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                                        Name = p.Item2.Name,
                                        Translated = ExpressionToCPP.GetExpression(p.Item1, gc, context, container)
                                    };
-            var paramLookup = paramsTranslated.ToDictionary(v => v.Name, v => v.Translated.RawValue);
+            var paramLookup = paramsTranslated.ToDictionary(v => v.Name, v => v.Translated.ApplyParensIfNeeded());
 
             ///
             /// We also need a return variable. Since this can be multiple lines of code and we don't

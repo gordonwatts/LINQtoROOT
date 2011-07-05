@@ -1,51 +1,36 @@
 ﻿
-using System;
 using System.Collections.Generic;
-using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
-    /// Given an array of indicies, loops over all of them, making each pair, and
-    /// checking to find the sub-set of these guys that satisfies everything.
+    /// Given an array of indicies, makes a loop over them. One then
+    /// can add a check (or similar) to the interiror.
     /// </summary>
-    public class StatementCheckPairwise : IStatement
+    class StatementCheckLoopPairwise : StatementInlineBlock
     {
         private VarArray _indciesToInspect;
         private VarSimple _index1;
         private VarSimple _index2;
-        private IValue _test;
+
         private VarArray _whatIsGood;
 
         /// <summary>
         /// Loop over all the indicies we are given (sort of like an indicrect) in a double loop. For each one
-        /// make sure that they satisfy the function. if we find any failing, mark both as bad.
+        /// make sure that they satisfy the function. if we find any failing, mark both as bad. You must set
+        /// the TEST variable, but do it after this guy is part of the generatedcode - scoping must be tracked
+        /// correctly!!
         /// </summary>
         /// <param name="indiciesToInspect">The list of indicies we should set index1 and index2 to</param>
         /// <param name="index1">The name we should use for index 1</param>
         /// <param name="index2">the name we should use for index 2</param>
         /// <param name="passedArray">The initially empty bool vector that we will mark any index that satisfies everything as true</param>
-        /// <param name="test">The test function (which will reference index1 and 2)</param>
-        public StatementCheckPairwise(VarArray indiciesToInspect,
-            VarSimple index1, VarSimple index2, VarArray passedArray,
-            IValue test)
+        public StatementCheckLoopPairwise(VarArray indiciesToInspect,
+            VarSimple index1, VarSimple index2, VarArray passedArray)
         {
-            if (indiciesToInspect == null)
-                throw new ArgumentNullException("indiciesToInspect");
-
-            if (index1 == null)
-                throw new ArgumentNullException("index1");
-            if (index2 == null)
-                throw new ArgumentNullException("index2");
-            if (passedArray == null)
-                throw new ArgumentNullException("passedArray");
-            if (test == null)
-                throw new ArgumentNullException("test");
-
             _indciesToInspect = indiciesToInspect;
             _index1 = index1;
             _index2 = index2;
-            _test = test;
             _whatIsGood = passedArray;
         }
 
@@ -53,7 +38,7 @@ namespace LINQToTTreeLib.Statements
         /// Return the code to implement this
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> CodeItUp()
+        public override IEnumerable<string> CodeItUp()
         {
             //
             // Make sure that the list of bools is reset initially. Assume it is empty when we
@@ -83,12 +68,15 @@ namespace LINQToTTreeLib.Statements
 
             yield return string.Format("        int {0} = {1}[index1];", _index1.RawValue, _indciesToInspect.RawValue);
             yield return string.Format("        int {0} = {1}[index2];", _index2.RawValue, _indciesToInspect.RawValue);
-            yield return string.Format("        if (!({0}))", _test.RawValue);
-            yield return "        {";
-            yield return string.Format("          {0}[index1] = false;", _whatIsGood.RawValue);
-            yield return string.Format("          {0}[index2] = false;", _whatIsGood.RawValue);
-            yield return "          break;";
-            yield return "        }";
+
+            //
+            // Do the other things that have been added to our code!
+            //
+
+            foreach (var l in base.CodeItUp())
+            {
+                yield return "        " + l;
+            }
 
             //
             // And clean it all up!
@@ -98,17 +86,6 @@ namespace LINQToTTreeLib.Statements
             yield return "  }"; // The if this index is worth looking at
             yield return "}"; // Outter for loop
 
-        }
-
-
-        public bool IsSameStatement(IStatement statement)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RenameVariable(string originalName, string newName)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

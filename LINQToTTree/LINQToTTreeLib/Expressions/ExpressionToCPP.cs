@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
@@ -258,7 +259,7 @@ namespace LINQToTTreeLib.Expressions
             }
 
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat(format, sLHS, op, sRHS);
+            bld.AppendFormat(format, sLHS.ApplyParensIfNeeded(), op, sRHS.ApplyParensIfNeeded());
             _result = new ValSimple(bld.ToString(), resultType);
 
             return expression;
@@ -274,11 +275,11 @@ namespace LINQToTTreeLib.Expressions
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-(" + GetExpression(expression.Operand).CastToType(expression) + ")", expression.Type);
+                    _result = new ValSimple("-" + GetExpression(expression.Operand).CastToType(expression).ApplyParensIfNeeded(), expression.Type);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!(" + GetExpression(expression.Operand).CastToType(expression) + ")", expression.Type);
+                    _result = new ValSimple("!" + GetExpression(expression.Operand).CastToType(expression).ApplyParensIfNeeded(), expression.Type);
                     break;
 
                 case ExpressionType.Convert:

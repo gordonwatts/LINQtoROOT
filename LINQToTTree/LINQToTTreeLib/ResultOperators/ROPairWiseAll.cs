@@ -79,11 +79,14 @@ namespace LINQToTTreeLib.ResultOperators
                 index2Lookup
                 );
 
-            var xcheck = new Statements.StatementCheckPairwise(arrayRecord,
-                index1, index2, passAll,
-                ExpressionToCPP.GetExpression(callLambda, gc, cc, container)
-                );
+            var xcheck = new Statements.StatementCheckLoopPairwise(arrayRecord,
+                index1, index2, passAll);
             gc.Add(xcheck);
+            var test = new Statements.StatementTestLoopPairwise(
+                passAll,
+                ExpressionToCPP.GetExpression(callLambda, gc, cc, container));
+            gc.Add(test);
+            gc.Pop();
 
             //
             // Ok, the result of that will be the array we have here is now filled with the
