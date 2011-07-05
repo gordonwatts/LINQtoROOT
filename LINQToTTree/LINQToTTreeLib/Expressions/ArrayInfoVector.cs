@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -55,18 +54,10 @@ namespace LINQToTTreeLib.Expressions
             var indexExpression = Expression.MakeBinary(ExpressionType.ArrayIndex, _arrayExpression, loopVariable);
 
             ///
-            /// Ok, now we are ready to actually generate some code here! First, cache the size
-            /// 
-
-            var arraySizeVar = new VarSimple(typeof(int)) { Declare = true };
-            env.Add(arraySizeVar);
-            env.Add(new StatementAssign(arraySizeVar, lenTranslation));
-
-            ///
             /// Now the for loop statement!
             /// 
 
-            env.Add(new StatementVectorLoop(loopVariable, arraySizeVar));
+            env.Add(new StatementVectorLoop(loopVariable.Name, lenTranslation));
 
             ///
             /// Return the index expression - the thing that can be used to replace all expressions and
@@ -81,7 +72,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         public class StatementVectorLoop : StatementInlineBlockBase
         {
-            public IValue ArraySizeVar { get; set; }
+            public IValue ArrayLength { get; set; }
             string _loopVariable;
 
             /// <summary>
@@ -89,10 +80,10 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="loopVariable"></param>
             /// <param name="arraySizeVar"></param>
-            public StatementVectorLoop(ParameterExpression loopVariable, IValue arraySizeVar)
+            public StatementVectorLoop(string loopVariable, IValue arraySizeVar)
             {
-                ArraySizeVar = arraySizeVar;
-                _loopVariable = loopVariable.Name;
+                ArrayLength = arraySizeVar;
+                _loopVariable = loopVariable;
             }
 
             /// <summary>
@@ -103,8 +94,9 @@ namespace LINQToTTreeLib.Expressions
             {
                 if (Statements.Any())
                 {
-
-                    yield return string.Format("for (int {0}=0; {0} < {1}; {0}++)", _loopVariable, ArraySizeVar.RawValue);
+                    var arrIndex = typeof(int).CreateUniqueVariableName();
+                    yield return string.Format("int {0} = {1};", arrIndex, ArrayLength.RawValue);
+                    yield return string.Format("for (int {0}=0; {0} < {1}; {0}++)", _loopVariable, arrIndex);
                     foreach (var l in RenderInternalCode())
                     {
                         yield return l;
@@ -128,7 +120,7 @@ namespace LINQToTTreeLib.Expressions
 
                 // If we are looping over the same thing, then we can combine.
 
-                if (other.ArraySizeVar.RawValue != ArraySizeVar.RawValue)
+                if (other.ArrayLength.RawValue != ArrayLength.RawValue)
                     return false;
 
                 // We need to rename the loop variable in the second guy
@@ -148,9 +140,16 @@ namespace LINQToTTreeLib.Expressions
                 throw new System.NotImplementedException();
             }
 
+            /// <summary>
+            /// Rename all the variables in this block
+            /// </summary>
+            /// <param name="origName"></param>
+            /// <param name="newName"></param>
             public override void RenameVariable(string origName, string newName)
             {
-                throw new System.NotImplementedException();
+                ArrayLength.RenameRawValue(origName, newName);
+                _loopVariable.ReplaceVariableNames(origName, newName);
+                RenameBlockVariables(origName, newName);
             }
         }
     }

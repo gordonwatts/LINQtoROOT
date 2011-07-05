@@ -63,7 +63,9 @@ namespace LINQToTTreeLib.Tests.Statements
 
             gc1.DumpCodeToConsole();
 
-            Assert.Inconclusive("not there yet - need some real checks");
+            Assert.AreEqual(1, gc1.CodeBody.Statements.Count(), "# of statements at top level");
+            var booking = gc1.CodeBody.Statements.First() as IBookingStatementBlock;
+            Assert.AreEqual(2, booking.Statements.Count(), "# of statements in inside loop");
         }
 
         /// <summary>Test stub for CodeItUp()</summary>
@@ -117,7 +119,7 @@ namespace LINQToTTreeLib.Tests.Statements
             else
             {
                 var other = s as ArrayInfoVector.StatementVectorLoop;
-                Assert.AreEqual(other.ArraySizeVar == target.ArraySizeVar, result, "for loops not conssitent");
+                Assert.AreEqual(other.ArrayLength == target.ArrayLength, result, "for loops not conssitent");
             }
         }
 
