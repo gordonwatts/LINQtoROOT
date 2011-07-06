@@ -93,5 +93,23 @@ namespace LINQToTTreeLib.Statements
         {
             Line.ReplaceVariableNames(originalName, newName);
         }
+
+        /// <summary>
+        /// See if we can combine. For us that works only if we have
+        /// identical statements!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool TryCombineStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+            var other = statement as StatementSimpleStatement;
+            if (other == null)
+                return false;
+
+            return other.Line == Line
+                && other.AddSemicolon == AddSemicolon;
+        }
     }
 }

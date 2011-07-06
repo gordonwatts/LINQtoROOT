@@ -62,5 +62,11 @@ namespace LINQToTTreeLib.Statements
         {
             Integer.RenameRawValue(originalName, newName);
         }
+
+
+        public bool TryCombineStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

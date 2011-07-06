@@ -34,5 +34,11 @@ namespace LINQToTTreeLib.Statements
         public void RenameVariable(string originalName, string newName)
         {
         }
+
+
+        public bool TryCombineStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

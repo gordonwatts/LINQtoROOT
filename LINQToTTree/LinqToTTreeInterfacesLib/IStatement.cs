@@ -31,5 +31,15 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="originalName"></param>
         /// <param name="newName"></param>
         void RenameVariable(string originalName, string newName);
+
+        /// <summary>
+        /// Try to combine the statement with this one. If possible, it should
+        /// be appended, or combined with statements that are already in here. If
+        /// the return is true, then the statement can be ignored as it has been
+        /// "abosrbed" into this one.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        bool TryCombineStatement(IStatement statement);
     }
 }

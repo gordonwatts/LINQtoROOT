@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -66,6 +67,23 @@ namespace LINQToTTreeLib.Statements
         public void TestTwoSemicolons()
         {
             CodeItUp(new StatementSimpleStatement("int j;"));
+        }
+
+        [TestMethod]
+        public void TestCombineSame()
+        {
+            var st1 = new StatementSimpleStatement("int");
+            var st2 = new StatementSimpleStatement("int");
+            Assert.IsTrue(st1.TryCombineStatement(st2), "same statements should combine");
+
+            var st3 = new StatementSimpleStatement("float");
+            Assert.IsFalse(st1.TryCombineStatement(st3), "diff statements should not combine");
+        }
+
+        [PexMethod]
+        public bool TestTryCombine([PexAssumeUnderTest] StatementSimpleStatement target, IStatement st)
+        {
+            return target.TryCombineStatement(st);
         }
     }
 }

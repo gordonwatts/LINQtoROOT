@@ -38,5 +38,11 @@ namespace LINQToTTreeLib.Statements
         {
             throw new NotImplementedException();
         }
+
+
+        public bool TryCombineStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

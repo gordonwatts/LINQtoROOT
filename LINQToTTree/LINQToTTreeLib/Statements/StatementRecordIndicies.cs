@@ -80,5 +80,11 @@ namespace LINQToTTreeLib.Statements
             _storageArray.RenameRawValue(originalName, newName);
 
         }
+
+
+        public bool TryCombineStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -76,5 +76,11 @@ namespace LINQToTTreeLib.Statements
             ResultVariable.RenameRawValue(originalName, newName);
             Expression.RenameRawValue(originalName, newName);
         }
+
+
+        public bool TryCombineStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
