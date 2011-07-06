@@ -69,9 +69,34 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+        /// <summary>
+        /// We can combine these two statements iff the array record we are looping
+        /// over is the same. Rename the index after that!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var otherPairLoop = statement as StatementPairLoop;
+            if (otherPairLoop == null)
+                return false;
+
+            if (otherPairLoop.arrayRecord.RawValue != arrayRecord.RawValue)
+                return false;
+
+            // Just make sure the index guys are renamed!
+
+            otherPairLoop.RenameBlockVariables(otherPairLoop.index1.RawValue, index1.RawValue);
+            otherPairLoop.RenameBlockVariables(otherPairLoop.index2.RawValue, index2.RawValue);
+
+            // Now, combine them!
+
+            Combine(otherPairLoop);
+
+            return true;
         }
 
         public override void RenameVariable(string origName, string newName)
