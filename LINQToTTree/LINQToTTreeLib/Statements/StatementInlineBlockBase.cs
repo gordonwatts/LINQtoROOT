@@ -131,7 +131,7 @@ namespace LINQToTTreeLib.Statements
             foreach (var s in statements)
             {
                 bool didCombine = false;
-                foreach (var sinner in Statements.Where(st => st is IBookingStatementBlock).Cast<IBookingStatementBlock>())
+                foreach (var sinner in Statements)
                 {
                     if (sinner.TryCombineStatement(s))
                     {
