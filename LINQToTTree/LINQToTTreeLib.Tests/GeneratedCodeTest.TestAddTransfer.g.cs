@@ -23,31 +23,28 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException220()
+public void TestAddTransferThrowsArgumentNullException588()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    string s;
     varInteger = VarIntegerFactory.Create(false, 0);
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                   (string[])null, (NTObject[])null, (string[])null);
-    s = this.TestAddTransfer(generatedCode, (object)null);
+    this.TestAddTransfer(generatedCode, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer221()
+public void TestAddTransfer403()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    string s;
     varInteger = VarIntegerFactory.Create(false, 0);
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                   (string[])null, (NTObject[])null, (string[])null);
     object s0 = new object();
-    s = this.TestAddTransfer(generatedCode, s0);
-    Assert.AreEqual<string>("aObject_966", s);
+    this.TestAddTransfer(generatedCode, s0);
     Assert.IsNotNull((object)generatedCode);
     Assert.AreEqual<int>(1, generatedCode.Depth);
     Assert.IsNotNull(generatedCode.ResultValue);
@@ -59,75 +56,70 @@ public void TestAddTransfer221()
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException725()
+public void TestAddTransferThrowsArgumentNullException367()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    string s;
     varInteger = VarIntegerFactory.Create(false, 1);
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                   (string[])null, (NTObject[])null, (string[])null);
-    s = this.TestAddTransfer(generatedCode, (object)null);
+    this.TestAddTransfer(generatedCode, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException70()
+public void TestAddTransferThrowsArgumentNullException65()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    string s;
     varInteger = VarIntegerFactory.Create(false, 0);
     string[] ss = new string[1];
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                   ss, (NTObject[])null, (string[])null);
-    s = this.TestAddTransfer(generatedCode, (object)null);
+    this.TestAddTransfer(generatedCode, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException717()
+public void TestAddTransferThrowsArgumentNullException181()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
-    string s;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     string[] ss = new string[1];
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                   (string[])null, (NTObject[])null, ss);
-    s = this.TestAddTransfer(generatedCode, (object)null);
+    this.TestAddTransfer(generatedCode, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException747()
+public void TestAddTransferThrowsArgumentNullException255()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
     GeneratedCode generatedCode;
-    string s;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     IStatement[] iStatements = new IStatement[1];
     iStatements[0] = (IStatement)statementIncrementInteger;
     generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
                                                 (string[])null, (NTObject[])null, (string[])null);
-    s = this.TestAddTransfer(generatedCode, (object)null);
+    this.TestAddTransfer(generatedCode, (object)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddTransferThrowsArgumentNullException223()
+public void TestAddTransferThrowsArgumentNullException820()
 {
     using (PexDisposableContext disposables = PexDisposableContext.Create())
     {
       VarInteger varInteger;
       NTObject nTObject;
       GeneratedCode generatedCode;
-      string s;
       varInteger = VarIntegerFactory.Create(false, 0);
       nTObject = NTObjectFactory.Create();
       disposables.Add((IDisposable)nTObject);
@@ -136,21 +128,20 @@ public void TestAddTransferThrowsArgumentNullException223()
       generatedCode =
         GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                     (string[])null, nTObjects, (string[])null);
-      s = this.TestAddTransfer(generatedCode, (object)null);
+      this.TestAddTransfer(generatedCode, (object)null);
       disposables.Dispose();
     }
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer235()
+public void TestAddTransfer116()
 {
     using (PexDisposableContext disposables = PexDisposableContext.Create())
     {
       VarInteger varInteger;
       NTObject nTObject;
       GeneratedCode generatedCode;
-      string s;
-      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      varInteger = VarIntegerFactory.Create(false, 0);
       nTObject = NTObjectFactory.Create();
       disposables.Add((IDisposable)nTObject);
       NTObject[] nTObjects = new NTObject[1];
@@ -158,10 +149,9 @@ public void TestAddTransfer235()
       generatedCode =
         GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                     (string[])null, nTObjects, (string[])null);
-      object boxi = (object)(default(int));
-      s = this.TestAddTransfer(generatedCode, boxi);
+      NTObject[] nTObjects1 = new NTObject[1];
+      this.TestAddTransfer(generatedCode, (object)nTObjects1);
       disposables.Dispose();
-      Assert.AreEqual<string>("aInt32_1000", s);
       Assert.IsNotNull((object)generatedCode);
       Assert.AreEqual<int>(1, generatedCode.Depth);
       Assert.IsNotNull(generatedCode.ResultValue);
@@ -173,15 +163,14 @@ public void TestAddTransfer235()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer934()
+public void TestAddTransfer326()
 {
     using (PexDisposableContext disposables = PexDisposableContext.Create())
     {
       VarInteger varInteger;
       NTObject nTObject;
       GeneratedCode generatedCode;
-      string s;
-      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      varInteger = VarIntegerFactory.Create(false, 0);
       nTObject = NTObjectFactory.Create();
       disposables.Add((IDisposable)nTObject);
       NTObject[] nTObjects = new NTObject[1];
@@ -189,9 +178,8 @@ public void TestAddTransfer934()
       generatedCode =
         GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                     (string[])null, nTObjects, (string[])null);
-      s = this.TestAddTransfer(generatedCode, (object)nTObject);
+      this.TestAddTransfer(generatedCode, (object)nTObject);
       disposables.Dispose();
-      Assert.AreEqual<string>("aNTObject_1002", s);
       Assert.IsNotNull((object)generatedCode);
       Assert.AreEqual<int>(1, generatedCode.Depth);
       Assert.IsNotNull(generatedCode.ResultValue);
@@ -203,15 +191,14 @@ public void TestAddTransfer934()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void TestAddTransfer510()
+public void TestAddTransfer40301()
 {
     using (PexDisposableContext disposables = PexDisposableContext.Create())
     {
       VarInteger varInteger;
       NTObject nTObject;
       GeneratedCode generatedCode;
-      string s;
-      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      varInteger = VarIntegerFactory.Create(false, 0);
       nTObject = NTObjectFactory.Create();
       disposables.Add((IDisposable)nTObject);
       NTObject[] nTObjects = new NTObject[1];
@@ -220,9 +207,8 @@ public void TestAddTransfer510()
         GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
                                     (string[])null, nTObjects, (string[])null);
       object s0 = new object();
-      s = this.TestAddTransfer(generatedCode, s0);
+      this.TestAddTransfer(generatedCode, s0);
       disposables.Dispose();
-      Assert.AreEqual<string>("aObject_1005", s);
       Assert.IsNotNull((object)generatedCode);
       Assert.AreEqual<int>(1, generatedCode.Depth);
       Assert.IsNotNull(generatedCode.ResultValue);
@@ -230,6 +216,32 @@ public void TestAddTransfer510()
       Assert.IsNotNull(generatedCode.VariablesToTransfer);
       Assert.IsNotNull(generatedCode.IncludeFiles);
       Assert.IsNotNull(generatedCode.ReferencedLeafNames);
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddTransferThrowsArgumentNullException736()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      NTObject nTObject1;
+      GeneratedCode generatedCode;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      nTObject1 = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject1);
+      NTObject[] nTObjects = new NTObject[2];
+      nTObjects[0] = nTObject;
+      nTObjects[1] = nTObject1;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    (string[])null, nTObjects, (string[])null);
+      this.TestAddTransfer(generatedCode, (object)null);
+      disposables.Dispose();
     }
 }
     }

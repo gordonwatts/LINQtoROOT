@@ -22,11 +22,31 @@ namespace LINQToTTreeLib
         /// <summary>Test stub for Add(IStatement)</summary>
         [PexMethod]
         [PexUseType(typeof(StatementIncrementInteger))]
-        public void Add([PexAssumeUnderTest]GeneratedCode target, IStatement s)
+        public void Add([PexAssumeUnderTest]GeneratedCode target, IStatementCompound s)
         {
-            Assert.IsNotInstanceOfType(s, typeof(IStatementCompound), "Not testing this!");
+            int old = CountStatements(target.CodeBody);
             target.Add(s);
-            Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
+            Assert.AreEqual(old + 1, CountStatements(target.CodeBody), "Expected a single statement to have been added");
+        }
+
+        /// <summary>
+        /// Recursively add the items in...
+        /// </summary>
+        /// <param name="iBookingStatementBlock"></param>
+        /// <returns></returns>
+        private int CountStatements(IStatementCompound s)
+        {
+            int cnt = 0;
+            foreach (var substatement in s.Statements)
+            {
+                cnt++;
+                if (substatement is IStatementCompound)
+                {
+                    cnt += CountStatements(substatement as IStatementCompound);
+                }
+            }
+
+            return cnt;
         }
 
         public class SimpleStatement : IStatement
@@ -243,7 +263,7 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod]
-        public string TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, object val)
+        public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, object val)
         {
             int count = target.VariablesToTransfer.Count();
             HashSet<string> names = new HashSet<string>(target.VariablesToTransfer.Select(v => v.Key));
@@ -251,7 +271,6 @@ namespace LINQToTTreeLib
             names.Add(name);
             Assert.IsNotNull(target.VariablesToTransfer.Last());
             Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
-            return name;
         }
 
         [TestMethod]

@@ -220,41 +220,5 @@ public void LookAtStatements27308()
       Assert.IsNotNull(generatedCode.ReferencedLeafNames);
     }
 }
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-public void LookAtStatements27309()
-{
-    using (PexDisposableContext disposables = PexDisposableContext.Create())
-    {
-      VarInteger varInteger;
-      NTObject nTObject;
-      NTObject nTObject1;
-      NTObject nTObject2;
-      GeneratedCode generatedCode;
-      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-      nTObject = NTObjectFactory.Create();
-      disposables.Add((IDisposable)nTObject);
-      nTObject1 = NTObjectFactory.Create();
-      disposables.Add((IDisposable)nTObject1);
-      nTObject2 = NTObjectFactory.Create();
-      disposables.Add((IDisposable)nTObject2);
-      NTObject[] nTObjects = new NTObject[3];
-      nTObjects[0] = nTObject;
-      nTObjects[1] = nTObject1;
-      nTObjects[2] = nTObject2;
-      generatedCode =
-        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                    (string[])null, nTObjects, (string[])null);
-      this.LookAtStatements(generatedCode);
-      disposables.Dispose();
-      Assert.IsNotNull((object)generatedCode);
-      Assert.AreEqual<int>(1, generatedCode.Depth);
-      Assert.IsNotNull(generatedCode.ResultValue);
-      Assert.IsNotNull(generatedCode.CodeBody);
-      Assert.IsNotNull(generatedCode.VariablesToTransfer);
-      Assert.IsNotNull(generatedCode.IncludeFiles);
-      Assert.IsNotNull(generatedCode.ReferencedLeafNames);
-    }
-}
     }
 }
