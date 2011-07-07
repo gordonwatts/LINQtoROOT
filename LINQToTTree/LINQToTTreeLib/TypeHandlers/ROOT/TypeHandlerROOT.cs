@@ -47,20 +47,19 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             if (rootObject == null)
                 throw new ArgumentException("the object to be stored must derive from NTNamed! Instead it is of type '" + expr.Value.GetType().Name + "'");
 
-            var varNameForTransport = rootObject.GetType().CreateUniqueVariableName();
+            //
+            // Queue this object for transfer, get a "unique" name back. This will also double check
+            // to see if the object is already up there read yto be queued.
+            //
+
+            var varNameForTransport = codeEnv.QueueForTransfer(rootObject);
+
+            //
+            // Now, we need to generate an IValue for the object that can be used in our expression parsing.
+            //
+
             var CPPType = rootObject.GetType().AsCPPType();
-
             var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType, rootObject.Name, rootObject.Title);
-
-            ///
-            /// Next we need to make sure this root object will be queued for sending accross the wire.
-            /// 
-
-            codeEnv.QueueForTransfer(varNameForTransport, rootObject);
-
-            ///
-            /// Done. Return the guy for later use.
-            /// 
 
             return val;
         }

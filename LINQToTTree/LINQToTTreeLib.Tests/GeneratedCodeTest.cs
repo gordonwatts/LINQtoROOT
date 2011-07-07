@@ -243,14 +243,27 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod]
-        public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, string name, object val)
+        public string TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, object val)
         {
             int count = target.VariablesToTransfer.Count();
             HashSet<string> names = new HashSet<string>(target.VariablesToTransfer.Select(v => v.Key));
-            target.QueueForTransfer(name, val);
+            var name = target.QueueForTransfer(val);
             names.Add(name);
             Assert.IsNotNull(target.VariablesToTransfer.Last());
             Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
+            return name;
+        }
+
+        [TestMethod]
+        public void TestNameCombo()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            var obj = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            var n1 = gc.QueueForTransfer(obj);
+            var n2 = gc.QueueForTransfer(obj);
+
+            Assert.AreEqual(n1, n2, "Names should be identical");
+            Assert.AreEqual(1, gc.VariablesToTransfer.Count(), "# of variables to move over wire");
         }
 
         [TestMethod]

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib
 {
@@ -178,16 +180,31 @@ namespace LINQToTTreeLib
         /// actually doing the work. This is where we
         /// keep track of those. This is as opposed to the "result" which is going to come back
         /// to the source with what we need in it.
+        /// We generate the name on the fly, and also make sure that we don't duplicate anything!
         /// </summary>
         /// <param name="v"></param>
-        public void QueueForTransfer(string name, object val)
+        public string QueueForTransfer(object val)
         {
             if (val == null)
                 throw new ArgumentNullException("val");
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("name");
 
-            _variablesToTransfer[name] = val;
+            var isthere = (from o in _variablesToTransfer
+                           where o.Value == val
+                           select o.Key).FirstOrDefault();
+
+
+            if (isthere != null)
+            {
+                return isthere;
+            }
+            else
+            {
+                string name = val.GetType().CreateUniqueVariableName();
+
+                _variablesToTransfer[name] = val;
+
+                return name;
+            }
         }
 
         /// <summary>

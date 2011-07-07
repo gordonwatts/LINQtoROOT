@@ -36,8 +36,9 @@ namespace LinqToTTreeInterfacesLib
         /// This variable's inital value is "complex" and must be transfered over the wire in some way other than staight into the code
         /// (for example, a ROOT object that needs to be written to a TFile).
         /// </summary>
-        /// <param name="v"></param>
-        void QueueForTransfer(string key, object value);
+        /// <param name="value">Object to be saved</param>
+        /// <returns>The key that you can use to look it up</returns>
+        string QueueForTransfer(object value);
 
         /// <summary>
         /// Returns the outter most coding block
