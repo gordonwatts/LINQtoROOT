@@ -253,6 +253,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
@@ -272,6 +273,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var k1 = q.GetKey(new FileInfo[] { f1, f2 }, "test", null, null, query);
@@ -297,6 +299,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
@@ -324,6 +327,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
@@ -351,6 +355,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
@@ -370,6 +375,7 @@ namespace LINQToTTreeLib
             /// Histogram that is feed as input
 
             var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInput.Directory = null;
             hInput.SetBinContent(2, 5.0);
 
             var inputs = new object[] { hInput };
@@ -377,6 +383,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -385,6 +392,7 @@ namespace LINQToTTreeLib
             /// And make sure the lookup works now!
 
             var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInputLookup.Directory = null;
             hInputLookup.SetBinContent(2, 5.0);
 
             var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
@@ -403,12 +411,14 @@ namespace LINQToTTreeLib
 
             {
                 var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+                hInput.Directory = null;
 
                 var inputs = new object[] { hInput };
 
                 /// Cache a result
 
                 var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+                h.Directory = null;
                 h.SetBinContent(1, 5.0);
 
                 q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
@@ -417,6 +427,7 @@ namespace LINQToTTreeLib
             /// And make sure the lookup works now!
 
             var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInputLookup.Directory = null;
 
             var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "Cache should have been there");
@@ -432,6 +443,7 @@ namespace LINQToTTreeLib
             /// Histogram that is feed as input
 
             var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInput.Directory = null;
             hInput.SetBinContent(2, 5.0);
 
             var inputs = new object[] { hInput };
@@ -439,6 +451,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -447,6 +460,7 @@ namespace LINQToTTreeLib
             /// And make sure the lookup works now!
 
             var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
+            hInputLookup.Directory = null;
             hInputLookup.SetBinContent(2, 5.5);
 
             var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
@@ -464,6 +478,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -488,6 +503,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -514,6 +530,7 @@ namespace LINQToTTreeLib
             /// Cache a result
 
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);

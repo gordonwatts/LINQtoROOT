@@ -136,7 +136,9 @@ namespace LINQToTTreeLib.Tests
             var callFill = Expression.Call(hParameter, fillMethod, callGetter);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            return source.ApplyToObject(new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin), lambda);
+            var seed = new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin);
+            seed.Directory = null;
+            return source.ApplyToObject(seed, lambda);
         }
 
         /// <summary>
