@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.ResultOperators
 [TestMethod]
 [PexGeneratedBy(typeof(ROMinMaxTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException164()
+public void ProcessResultOperatorThrowsArgumentNullException437()
 {
     IVariable iVariable;
     ROMinMax s0 = new ROMinMax();

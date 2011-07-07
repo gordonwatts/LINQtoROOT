@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCacheTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessNewThrowsArgumentNullException280()
+public void ProcessNewThrowsArgumentNullException361()
 {
     TypeHandlerCache typeHandlerCache;
     Expression expression;

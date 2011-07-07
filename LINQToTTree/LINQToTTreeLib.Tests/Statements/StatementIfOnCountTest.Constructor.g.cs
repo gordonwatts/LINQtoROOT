@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException981()
+public void ConstructorThrowsArgumentNullException596()
 {
     StatementIfOnCount statementIfOnCount;
     statementIfOnCount = this.Constructor((IValue)null, 
@@ -30,7 +30,7 @@ public void ConstructorThrowsArgumentNullException981()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException393()
+public void ConstructorThrowsArgumentNullException336()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -61,7 +61,7 @@ public void Constructor925()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException39()
+public void ConstructorThrowsArgumentNullException77()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;

@@ -24,7 +24,7 @@ namespace LINQToTTreeLib.ResultOperators
 [TestMethod]
 [PexGeneratedBy(typeof(ROFirstLastTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException818()
+public void ProcessResultOperatorThrowsArgumentNullException439()
 {
     IVariable iVariable;
     ROFirstLast s0 = new ROFirstLast();
@@ -35,7 +35,7 @@ public void ProcessResultOperatorThrowsArgumentNullException818()
 [TestMethod]
 [PexGeneratedBy(typeof(ROFirstLastTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessResultOperatorThrowsNotImplementedException511()
+public void ProcessResultOperatorThrowsNotImplementedException241()
 {
     LastResultOperator lastResultOperator;
     IVariable iVariable;
@@ -48,7 +48,7 @@ public void ProcessResultOperatorThrowsNotImplementedException511()
 [TestMethod]
 [PexGeneratedBy(typeof(ROFirstLastTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessResultOperatorThrowsNotImplementedException650()
+public void ProcessResultOperatorThrowsNotImplementedException707()
 {
     FirstResultOperator firstResultOperator;
     IVariable iVariable;

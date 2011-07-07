@@ -31,7 +31,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(initialQueryCount + 1, target.QueryCode().Count(), "Should always increase the query count by one");
         }
 
-        [PexMethod, PexAllowedException(typeof(ArgumentException))]
+        [PexMethod, PexAllowedException(typeof(ArgumentException)), PexAllowedException(typeof(ArgumentNullException))]
         internal void CheckAddSameVariableNamesToTransfer([PexAssumeNotNull] ROOTNET.NTObject[] varnames)
         {
             var cc = new CombinedGeneratedCode();

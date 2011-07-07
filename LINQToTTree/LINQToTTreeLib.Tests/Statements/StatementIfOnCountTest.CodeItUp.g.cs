@@ -126,22 +126,19 @@ public void CodeItUp28003()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void CodeItUp28009()
+public void CodeItUp28004()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
-    VarInteger varInteger2;
     StatementIfOnCount statementIfOnCount;
     IEnumerable<string> iEnumerable;
     varInteger = VarIntegerFactory.Create(false, int.MaxValue);
     varInteger1 = VarIntegerFactory.Create(false, 0);
-    varInteger2 = VarIntegerFactory.Create(false, 0);
-    IVariable[] iVariables = new IVariable[3];
-    iVariables[0] = (IVariable)varInteger1;
-    iVariables[1] = (IVariable)varInteger2;
-    iVariables[2] = (IVariable)varInteger;
+    IVariable[] iVariables = new IVariable[2];
+    iVariables[0] = (IVariable)varInteger;
+    iVariables[1] = (IVariable)varInteger1;
     statementIfOnCount =
-      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger, 
+      StatementIfOnCountFactory.Create((IValue)varInteger, (IValue)varInteger1, 
                                        StatementIfOnCount.ComparisonOperator.GreaterThan, 
                                        (IStatement[])null, iVariables);
     iEnumerable = this.CodeItUp(statementIfOnCount);
@@ -149,8 +146,6 @@ public void CodeItUp28009()
     Assert.IsNotNull((object)statementIfOnCount);
     Assert.IsNotNull(statementIfOnCount.ValLeft);
     Assert.IsNotNull(statementIfOnCount.ValRight);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementIfOnCount.ValRight, statementIfOnCount.ValLeft));
     Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
         (StatementIfOnCount.ComparisonOperator.GreaterThan, 
          statementIfOnCount.Comparison);

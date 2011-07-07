@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void TestAddSingleStatementThrowsArgumentNullException532()
+public void TestAddSingleStatementThrowsArgumentNullException449()
 {
     this.TestAddSingleStatement((IStatement)null);
 }
@@ -56,22 +56,7 @@ public void TestAddSingleStatement62201()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void TestAddSingleStatement81804()
-{
-    StatementInlineBlock statementInlineBlock;
-    StatementInlineBlock statementInlineBlock1;
-    statementInlineBlock =
-      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
-    IStatement[] iStatements = new IStatement[1];
-    IVariable[] iVariables = new IVariable[1];
-    iStatements[0] = (IStatement)statementInlineBlock;
-    statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements, iVariables);
-    this.TestAddSingleStatement((IStatement)statementInlineBlock1);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void TestAddSingleStatement81807()
+public void TestAddSingleStatement81801()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -84,7 +69,7 @@ public void TestAddSingleStatement81807()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void TestAddSingleStatement81808()
+public void TestAddSingleStatement81802()
 {
     VarInteger varInteger;
     StatementIfOnCount statementIfOnCount;
@@ -99,16 +84,17 @@ public void TestAddSingleStatement81808()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementInlineBlockTest))]
-public void TestAddSingleStatement81809()
+public void TestAddSingleStatement81803()
 {
     StatementInlineBlock statementInlineBlock;
     StatementInlineBlock statementInlineBlock1;
     statementInlineBlock =
       StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
     IStatement[] iStatements = new IStatement[1];
+    IVariable[] iVariables = new IVariable[1];
     iStatements[0] = (IStatement)statementInlineBlock;
     statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
+      StatementInlineBlockFactory.Create(iStatements, iVariables);
     this.TestAddSingleStatement((IStatement)statementInlineBlock1);
 }
     }

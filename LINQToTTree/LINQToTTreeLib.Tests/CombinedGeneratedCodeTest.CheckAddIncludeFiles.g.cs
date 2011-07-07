@@ -26,7 +26,7 @@ public void CheckAddIncludeFiles271()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void CheckAddIncludeFilesThrowsArgumentException550()
+public void CheckAddIncludeFilesThrowsArgumentException842()
 {
     string[] ss = new string[1];
     this.CheckAddIncludeFiles(ss);
@@ -34,7 +34,7 @@ public void CheckAddIncludeFilesThrowsArgumentException550()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void CheckAddIncludeFilesThrowsArgumentException400()
+public void CheckAddIncludeFilesThrowsArgumentException517()
 {
     string[] ss = new string[1];
     ss[0] = "";
@@ -43,7 +43,7 @@ public void CheckAddIncludeFilesThrowsArgumentException400()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException988()
+public void CheckAddIncludeFilesThrowsArgumentNullException226()
 {
     string[] ss = new string[1];
     ss[0] = "\0";
@@ -52,7 +52,7 @@ public void CheckAddIncludeFilesThrowsArgumentNullException988()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException631()
+public void CheckAddIncludeFilesThrowsArgumentNullException116()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100";
@@ -61,7 +61,7 @@ public void CheckAddIncludeFilesThrowsArgumentNullException631()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException503()
+public void CheckAddIncludeFilesThrowsArgumentNullException480()
 {
     string[] ss = new string[1];
     ss[0] = "\0\0";
@@ -70,7 +70,7 @@ public void CheckAddIncludeFilesThrowsArgumentNullException503()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void CheckAddIncludeFilesThrowsArgumentNullException961()
+public void CheckAddIncludeFilesThrowsArgumentNullException566()
 {
     string[] ss = new string[1];
     ss[0] = "\u0100\u0100";

@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException990()
+public void ConstructorThrowsArgumentNullException135()
 {
     StatementIncrementInteger statementIncrementInteger;
     statementIncrementInteger = this.Constructor((VarInteger)null);

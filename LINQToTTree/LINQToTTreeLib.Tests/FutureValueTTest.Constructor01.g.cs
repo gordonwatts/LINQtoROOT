@@ -19,7 +19,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(FutureValueTTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void Constructor01ThrowsArgumentException720()
+public void Constructor01ThrowsArgumentException737()
 {
     FutureValue<int> futureValue;
     futureValue = this.Constructor01<int>((TTreeQueryExecutor)null);

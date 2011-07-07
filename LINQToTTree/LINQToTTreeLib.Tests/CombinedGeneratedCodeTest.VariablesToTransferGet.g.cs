@@ -84,35 +84,15 @@ public void VariablesToTransferGet21603()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     IEnumerable<KeyValuePair<string, object>> iEnumerable;
-    string[] ss = new string[2];
-    ss[0] = "";
-    ss[1] = "";
-    combinedGeneratedCode =
-      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
-                                          (string[])null, (IBookingStatementBlock[])null, ss);
-    iEnumerable = this.VariablesToTransferGet(combinedGeneratedCode);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)combinedGeneratedCode);
-    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
-    Assert.IsTrue(object.ReferenceEquals
-                      (combinedGeneratedCode.VariablesToTransfer, (object)iEnumerable));
-    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
-    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
-    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-public void VariablesToTransferGet757()
-{
-    CombinedGeneratedCode combinedGeneratedCode;
-    IEnumerable<KeyValuePair<string, object>> iEnumerable;
-    string[] ss = new string[1];
-    string[] ss1 = new string[1];
-    string[] ss2 = new string[1];
-    ss[0] = "\u0100";
-    ss1[0] = "\u0100";
+    string[] ss = new string[5];
+    string[] ss1 = new string[5];
+    ss[0] = "\u0089\u0089";
+    ss[1] = "\u0089\u0089\u0089\u0089";
+    ss[2] = "\u0089\u0089\u0089\u0089";
+    ss[3] = "\u0089\u0089\u0089\u0089";
+    ss[4] = "\u0100";
     combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
-                                (ss, ss1, (string[])null, (IBookingStatementBlock[])null, ss2);
+                                ((string[])null, ss, (string[])null, (IBookingStatementBlock[])null, ss1);
     iEnumerable = this.VariablesToTransferGet(combinedGeneratedCode);
     Assert.IsNotNull((object)iEnumerable);
     Assert.IsNotNull((object)combinedGeneratedCode);
@@ -131,6 +111,76 @@ public void VariablesToTransferGet21604()
     IEnumerable<KeyValuePair<string, object>> iEnumerable;
     string[] ss = new string[1];
     string[] ss1 = new string[1];
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, (string[])null, ss, (IBookingStatementBlock[])null, ss1);
+    iEnumerable = this.VariablesToTransferGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.VariablesToTransfer, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void VariablesToTransferGet671()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<KeyValuePair<string, object>> iEnumerable;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    iEnumerable = this.VariablesToTransferGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.VariablesToTransfer, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void VariablesToTransferGet21605()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<KeyValuePair<string, object>> iEnumerable;
+    string[] ss = new string[4];
+    string[] ss1 = new string[4];
+    ss[0] = "\0\0\0\0\0\0";
+    ss[1] = "\0\0";
+    ss[2] = "";
+    ss[3] = "\0\0\0\0";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, (string[])null, ss, (IBookingStatementBlock[])null, ss1);
+    iEnumerable = this.VariablesToTransferGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.VariablesToTransfer, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void VariablesToTransferGet21606()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<KeyValuePair<string, object>> iEnumerable;
+    string[] ss = new string[5];
+    string[] ss1 = new string[5];
+    ss[0] = "\0\0\0";
+    ss[1] = "\0";
+    ss[2] = "\0\0";
+    ss[3] = "\0\0\0\0\0\0";
+    ss[4] = "";
     combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
                                 ((string[])null, (string[])null, ss, (IBookingStatementBlock[])null, ss1);
     iEnumerable = this.VariablesToTransferGet(combinedGeneratedCode);

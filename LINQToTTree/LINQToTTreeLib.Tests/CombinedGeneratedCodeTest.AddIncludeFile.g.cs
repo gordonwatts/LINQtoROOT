@@ -20,7 +20,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddIncludeFileThrowsArgumentException692()
+public void AddIncludeFileThrowsArgumentException528()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     string[] ss = new string[0];
@@ -32,7 +32,7 @@ public void AddIncludeFileThrowsArgumentException692()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddIncludeFileThrowsArgumentException119()
+public void AddIncludeFileThrowsArgumentException462()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     string[] ss = new string[1];
@@ -44,7 +44,7 @@ public void AddIncludeFileThrowsArgumentException119()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddIncludeFileThrowsArgumentException234()
+public void AddIncludeFileThrowsArgumentException722()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     string[] ss = new string[0];
@@ -72,7 +72,7 @@ public void AddIncludeFile554()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddIncludeFileThrowsArgumentException285()
+public void AddIncludeFileThrowsArgumentException154()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     string[] ss = new string[2];
@@ -86,7 +86,7 @@ public void AddIncludeFileThrowsArgumentException285()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddIncludeFileThrowsArgumentException448()
+public void AddIncludeFileThrowsArgumentException963()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     string[] ss = new string[1];
@@ -98,31 +98,31 @@ public void AddIncludeFileThrowsArgumentException448()
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddIncludeFileThrowsArgumentException377()
+public void AddIncludeFileThrowsArgumentException28()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     string[] ss = new string[1];
     string[] ss1 = new string[1];
     string[] ss2 = new string[1];
-    ss[0] = "\u0089";
-    ss1[0] = "\u0089";
+    ss[0] = "\u0100";
+    ss1[0] = "\u0100";
     combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
                                 (ss, ss1, (string[])null, (IBookingStatementBlock[])null, ss2);
     this.AddIncludeFile(combinedGeneratedCode, (string)null);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
-public void AddIncludeFile227()
+public void AddIncludeFile632()
 {
     CombinedGeneratedCode combinedGeneratedCode;
     string[] ss = new string[1];
     string[] ss1 = new string[1];
-    string[] ss2 = new string[1];
-    ss[0] = "\u0001";
-    ss1[0] = "\u0001";
+    string[] ss2 = new string[2];
+    ss[0] = "\u0100";
+    ss1[0] = "\u0100";
     combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
                                 (ss, ss1, (string[])null, (IBookingStatementBlock[])null, ss2);
-    this.AddIncludeFile(combinedGeneratedCode, "\u0001");
+    this.AddIncludeFile(combinedGeneratedCode, "\u0100");
     Assert.IsNotNull((object)combinedGeneratedCode);
     Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
     Assert.IsNotNull(combinedGeneratedCode.ResultValues);

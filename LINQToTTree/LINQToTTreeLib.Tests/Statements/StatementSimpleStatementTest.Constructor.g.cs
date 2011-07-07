@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException443()
+public void ConstructorThrowsArgumentException995()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor("");
@@ -27,7 +27,7 @@ public void ConstructorThrowsArgumentException443()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException428()
+public void ConstructorThrowsArgumentNullException329()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor((string)null);
@@ -35,7 +35,7 @@ public void ConstructorThrowsArgumentNullException428()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException131()
+public void ConstructorThrowsArgumentException167()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor(";");
@@ -43,7 +43,7 @@ public void ConstructorThrowsArgumentException131()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException996()
+public void ConstructorThrowsArgumentException342()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor(";;");
@@ -61,7 +61,7 @@ public void Constructor215()
 [TestMethod]
 [PexGeneratedBy(typeof(StatementSimpleStatementTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException718()
+public void ConstructorThrowsArgumentException137()
 {
     StatementSimpleStatement statementSimpleStatement;
     statementSimpleStatement = this.Constructor(";\u2000");

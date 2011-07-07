@@ -17,5 +17,285 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException832()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[0];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException625()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException84()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    ss[0] = "";
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException483()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException925()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    ss1[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[1];
+    combinedGeneratedCode1 =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss2);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException757()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[2];
+    ss[0] = "";
+    ss[1] = "";
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException409()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, (string[])null, ss, (IBookingStatementBlock[])null, ss1);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException255()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[1];
+    combinedGeneratedCode1 =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss2);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException262()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[0];
+    combinedGeneratedCode1 =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss2);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException597()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    ss1[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[2];
+    string[] ss3 = new string[2];
+    ss2[1] = "";
+    combinedGeneratedCode1 = CombinedGeneratedCodeFactory.Create
+                                 ((string[])null, (string[])null, ss2, (IBookingStatementBlock[])null, ss3);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException761()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    ss1[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[4];
+    string[] ss3 = new string[1];
+    ss2[0] = "\0\0\0\0";
+    ss2[1] = "\0\0\0\0\0\0";
+    ss2[2] = "\0\0";
+    ss2[3] = "";
+    ss3[0] = "";
+    combinedGeneratedCode1 = CombinedGeneratedCodeFactory.Create
+                                 ((string[])null, (string[])null, ss2, (IBookingStatementBlock[])null, ss3);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException804()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    ss1[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[4];
+    string[] ss3 = new string[2];
+    ss2[1] = "";
+    ss2[2] = "\0\0\0\0";
+    ss2[3] = new string('\0', 16);
+    ss3[0] = new string('\0', 16);
+    ss3[1] = new string('\0', 16);
+    combinedGeneratedCode1 = CombinedGeneratedCodeFactory.Create
+                                 ((string[])null, (string[])null, ss2, (IBookingStatementBlock[])null, ss3);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException282()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    ss1[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[5];
+    string[] ss3 = new string[5];
+    ss2[0] = "\0\0";
+    ss2[1] = "\0";
+    ss2[2] = "\0\0\0";
+    ss2[3] = "\0\0\0\0";
+    ss2[4] = "";
+    combinedGeneratedCode1 = CombinedGeneratedCodeFactory.Create
+                                 ((string[])null, (string[])null, ss2, (IBookingStatementBlock[])null, ss3);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException887()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    CombinedGeneratedCode combinedGeneratedCode1;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    ss[0] = "";
+    ss1[0] = "";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, (string[])null, (string[])null, (IBookingStatementBlock[])null, ss1);
+    string[] ss2 = new string[4];
+    string[] ss3 = new string[5];
+    ss2[0] = "\0\0\0\0";
+    ss2[1] = "\0\0\0\0\0\0";
+    ss2[2] = "\0\0";
+    ss2[3] = "";
+    ss3[0] = "";
+    ss3[1] = "\0\0";
+    ss3[2] = "";
+    ss3[3] = "";
+    ss3[4] = "";
+    combinedGeneratedCode1 = CombinedGeneratedCodeFactory.Create
+                                 ((string[])null, (string[])null, ss2, (IBookingStatementBlock[])null, ss3);
+    this.AddGeneratedCode
+        (combinedGeneratedCode1, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException353()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    string[] ss1 = new string[0];
+    string[] ss2 = new string[0];
+    ss[0] = "\u0089\u0089";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, ss, ss1, (IBookingStatementBlock[])null, ss2);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
     }
 }

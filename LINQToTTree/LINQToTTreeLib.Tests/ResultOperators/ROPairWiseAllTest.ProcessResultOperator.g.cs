@@ -18,6 +18,7 @@ using Remotion.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Statements;
+using ROOTNET;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -26,7 +27,7 @@ namespace LINQToTTreeLib.Tests
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException745()
+public void ProcessResultOperatorThrowsArgumentNullException29()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
@@ -34,7 +35,7 @@ public void ProcessResultOperatorThrowsArgumentNullException745()
     varInteger = VarIntegerFactory.Create(false, 0);
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                  (string[])null, (string[])null, (string[])null);
+                                  (string[])null, (NTObject[])null, (string[])null);
     ROUniqueCombinations s0 = new ROUniqueCombinations();
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (CodeContext)null, generatedCode);
@@ -42,7 +43,7 @@ public void ProcessResultOperatorThrowsArgumentNullException745()
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException112()
+public void ProcessResultOperatorThrowsArgumentNullException389()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
@@ -50,7 +51,7 @@ public void ProcessResultOperatorThrowsArgumentNullException112()
     varInteger = VarIntegerFactory.Create(false, 1);
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                  (string[])null, (string[])null, (string[])null);
+                                  (string[])null, (NTObject[])null, (string[])null);
     ROUniqueCombinations s0 = new ROUniqueCombinations();
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (CodeContext)null, generatedCode);
@@ -58,7 +59,7 @@ public void ProcessResultOperatorThrowsArgumentNullException112()
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException568()
+public void ProcessResultOperatorThrowsArgumentNullException569()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
@@ -67,7 +68,7 @@ public void ProcessResultOperatorThrowsArgumentNullException568()
     string[] ss = new string[1];
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                  ss, (string[])null, (string[])null);
+                                  ss, (NTObject[])null, (string[])null);
     ROUniqueCombinations s0 = new ROUniqueCombinations();
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (CodeContext)null, generatedCode);
@@ -75,7 +76,7 @@ public void ProcessResultOperatorThrowsArgumentNullException568()
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException14()
+public void ProcessResultOperatorThrowsArgumentNullException516()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
@@ -85,7 +86,7 @@ public void ProcessResultOperatorThrowsArgumentNullException14()
     ss[0] = "";
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                  ss, (string[])null, (string[])null);
+                                  ss, (NTObject[])null, (string[])null);
     ROUniqueCombinations s0 = new ROUniqueCombinations();
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (CodeContext)null, generatedCode);
@@ -93,7 +94,7 @@ public void ProcessResultOperatorThrowsArgumentNullException14()
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException625()
+public void ProcessResultOperatorThrowsArgumentNullException309()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
@@ -102,7 +103,7 @@ public void ProcessResultOperatorThrowsArgumentNullException625()
     string[] ss = new string[1];
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                  (string[])null, (string[])null, ss);
+                                  (string[])null, (NTObject[])null, ss);
     ROUniqueCombinations s0 = new ROUniqueCombinations();
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (CodeContext)null, generatedCode);
@@ -110,25 +111,32 @@ public void ProcessResultOperatorThrowsArgumentNullException625()
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException967()
+public void ProcessResultOperatorThrowsArgumentNullException627()
 {
-    VarInteger varInteger;
-    GeneratedCode generatedCode;
-    IVariable iVariable;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    string[] ss = new string[1];
-    ss[0] = "\0";
-    generatedCode =
-      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                  (string[])null, ss, (string[])null);
-    ROUniqueCombinations s0 = new ROUniqueCombinations();
-    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
-                                           (QueryModel)null, (CodeContext)null, generatedCode);
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      GeneratedCode generatedCode;
+      IVariable iVariable;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      NTObject[] nTObjects = new NTObject[1];
+      nTObjects[0] = nTObject;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    (string[])null, nTObjects, (string[])null);
+      ROUniqueCombinations s0 = new ROUniqueCombinations();
+      iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                             (QueryModel)null, (CodeContext)null, generatedCode);
+      disposables.Dispose();
+    }
 }
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException795()
+public void ProcessResultOperatorThrowsArgumentNullException970()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -139,7 +147,7 @@ public void ProcessResultOperatorThrowsArgumentNullException795()
     IStatement[] iStatements = new IStatement[1];
     iStatements[0] = (IStatement)statementIncrementInteger;
     generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
-                                                (string[])null, (string[])null, (string[])null);
+                                                (string[])null, (NTObject[])null, (string[])null);
     ROUniqueCombinations s0 = new ROUniqueCombinations();
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (CodeContext)null, generatedCode);
@@ -147,7 +155,7 @@ public void ProcessResultOperatorThrowsArgumentNullException795()
 [TestMethod]
 [PexGeneratedBy(typeof(ROPairWiseAllTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException896()
+public void ProcessResultOperatorThrowsArgumentNullException468()
 {
     VarInteger varInteger;
     GeneratedCode generatedCode;
@@ -158,10 +166,39 @@ public void ProcessResultOperatorThrowsArgumentNullException896()
     ss[1] = "";
     generatedCode =
       GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
-                                  ss, (string[])null, (string[])null);
+                                  ss, (NTObject[])null, (string[])null);
     ROUniqueCombinations s0 = new ROUniqueCombinations();
     iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
                                            (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException876()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      GeneratedCode generatedCode;
+      IVariable iVariable;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      string[] ss = new string[3];
+      NTObject[] nTObjects = new NTObject[2];
+      ss[0] = "";
+      ss[1] = "";
+      nTObjects[0] = nTObject;
+      nTObjects[1] = nTObject;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    ss, nTObjects, (string[])null);
+      ROUniqueCombinations s0 = new ROUniqueCombinations();
+      iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                             (QueryModel)null, (CodeContext)null, generatedCode);
+      disposables.Dispose();
+    }
 }
     }
 }

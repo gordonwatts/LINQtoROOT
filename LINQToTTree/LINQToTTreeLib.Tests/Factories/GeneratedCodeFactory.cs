@@ -8,7 +8,7 @@ namespace LINQToTTreeLib
     {
         /// <summary>A factory for LINQToTTreeLib.GeneratedCode instances</summary>
         [PexFactoryMethod(typeof(GeneratedCode))]
-        public static GeneratedCode Create(IVariable result, IStatement[] statements, string[] includeFiles, string[] variables, string[] leafnames)
+        public static GeneratedCode Create(IVariable result, IStatement[] statements, string[] includeFiles, ROOTNET.NTObject[] variables, string[] leafnames)
         {
             GeneratedCode generatedCode = new GeneratedCode();
 
@@ -31,7 +31,7 @@ namespace LINQToTTreeLib
             if (variables != null)
                 foreach (var item in variables)
                 {
-                    generatedCode.QueueForTransfer(item, new ROOTNET.NTH1F(item, item + "hi", 10, 0.0, 10.0));
+                    generatedCode.QueueForTransfer(item);
                 }
 
             if (leafnames != null)

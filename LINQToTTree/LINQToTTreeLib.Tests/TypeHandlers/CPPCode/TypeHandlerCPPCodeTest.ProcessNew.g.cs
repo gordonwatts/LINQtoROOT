@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 [TestMethod]
 [PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
 [ExpectedException(typeof(NotImplementedException))]
-public void ProcessNewThrowsNotImplementedException820()
+public void ProcessNewThrowsNotImplementedException677()
 {
     TypeHandlerCPPCode typeHandlerCPPCode;
     Expression expression;

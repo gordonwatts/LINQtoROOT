@@ -20,7 +20,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void AddCompoundStatementTestThrowsArgumentNullException264()
+public void AddCompoundStatementTestThrowsArgumentNullException970()
 {
     this.AddCompoundStatementTest((IStatement)null);
 }
