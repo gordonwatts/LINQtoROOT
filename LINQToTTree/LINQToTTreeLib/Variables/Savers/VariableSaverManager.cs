@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.Variables.Savers
                          where s.CanHandle(iVariable)
                          select s).FirstOrDefault();
             if (saver == null)
-                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.GetType().Name);
+                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.Type.Name);
             return saver;
         }
 

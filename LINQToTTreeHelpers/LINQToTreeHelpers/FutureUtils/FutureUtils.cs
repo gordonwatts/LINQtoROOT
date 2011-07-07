@@ -1,4 +1,5 @@
-﻿using LinqToTTreeInterfacesLib;
+﻿using System.Collections.Generic;
+using LinqToTTreeInterfacesLib;
 
 namespace LINQToTreeHelpers.FutureUtils
 {
@@ -27,6 +28,24 @@ namespace LINQToTreeHelpers.FutureUtils
                 dir.AddFuture(obj, new string[] { tag });
             }
             return obj;
+        }
+
+        /// <summary>
+        /// Helper function to write a bunch of values to a directory. NOTE that it returns an enumerable - so you'll
+        /// need to loop through it!
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="dir"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public static IEnumerable<IFutureValue<T>> SaveToROOTDirectory<T>(this IEnumerable<IFutureValue<T>> source, FutureTDirectory dir, string tag = null)
+            where T : ROOTNET.Interface.NTObject
+        {
+            foreach (var s in source)
+            {
+                yield return s.SaveToROOTDirectory(dir, tag);
+            }
         }
 
         /// <summary>
