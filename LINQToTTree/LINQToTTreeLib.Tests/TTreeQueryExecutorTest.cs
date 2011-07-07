@@ -1251,19 +1251,92 @@ namespace LINQToTTreeLib
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(0, result, "Didn't add correctly");
             Assert.AreEqual("hi", mainHist.Name, "histogram name changed");
-
         }
 
         [TestMethod]
         public void TestSameHistoOverTice()
         {
-            Assert.Inconclusive();
+            var rootFile = CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var mainHist = new ROOTNET.NTH1F("hi", "there", 1000, 0.0, 1000.0);
+            mainHist.Directory = null;
+
+            var dude = from evt in q
+                       where mainHist.GetBinContent(evt.run) * mainHist.GetBinContent(evt.run) > 0.0
+                       select evt;
+            var final = dude.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(0, result, "Didn't add correctly");
+            Assert.AreEqual("hi", mainHist.Name, "histogram name changed");
+
         }
 
         [TestMethod]
         public void TestSameHistInCombinedQueries()
         {
-            Assert.Inconclusive();
+            var rootFile = CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get two querries we can play with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var mainHist = new ROOTNET.NTH1F("hi", "there", 1000, 0.0, 1000.0);
+            mainHist.Directory = null;
+
+            var dude1 = from evt in q
+                        where mainHist.GetBinContent(evt.run) > 0.0
+                        select evt;
+            var final1 = dude1.Count();
+            var query1 = DummyQueryExectuor.LastQueryModel;
+
+            var dude2 = from evt in q
+                        where mainHist.GetBinContent(evt.run) > 0.0
+                        select evt;
+            var final2 = dude2.Count();
+            var query2 = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+
+            var r1f = exe.ExecuteScalarAsFuture<int>(query1);
+            var r2f = exe.ExecuteScalarAsFuture<int>(query2);
+
+            var r1 = r1f.Value;
+            var r2 = r2f.Value;
+
+            Assert.AreEqual(0, r1, "r1 Didn't add correctly");
+            Assert.AreEqual(0, r2, "r2 Didn't add correctly");
+            Assert.AreEqual("hi", mainHist.Name, "histogram name changed");
         }
     }
 }
