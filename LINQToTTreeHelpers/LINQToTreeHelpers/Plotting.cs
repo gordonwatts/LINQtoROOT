@@ -60,7 +60,13 @@ namespace LINQToTreeHelpers
         /// <param name="h"></param>
         private static void ConfigureHisto(ROOTNET.Interface.NTH1 h)
         {
+            // Keep track of statistics
             h.Sumw2();
+
+            // Make sure it doesn't get associated with a file. This is ok after it comes back from
+            // a query.. :-)
+
+            h.Directory = null;
         }
 
         /// <summary>
