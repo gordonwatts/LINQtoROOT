@@ -480,5 +480,16 @@ namespace LINQToTTreeLib
             /// Looking for an infinite loop!
         }
 
+        [TestMethod]
+        public void TestAsQueriable()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     from my in evt.vals.AsQueryable().Where(n => n > 5)
+                     select my;
+            var r = r1.Count();
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+
     }
 }
