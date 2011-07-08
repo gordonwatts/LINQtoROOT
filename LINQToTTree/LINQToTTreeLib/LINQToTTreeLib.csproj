@@ -101,12 +101,15 @@
     <Compile Include="QueryResultCache.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
+    <Compile Include="relinq\AsQueriableExpressionNode.cs" />
+    <Compile Include="relinq\AsQueriableResultOperator.cs" />
     <Compile Include="relinq\PairWiseAllExpressionNode.cs" />
     <Compile Include="relinq\PairWiseAllResultOperator.cs" />
     <Compile Include="relinq\UniqueCombinationsExpressionNode.cs" />
     <Compile Include="relinq\UniqueCombinationsResultOperator.cs" />
     <Compile Include="ResultOperators\ROAggregate.cs" />
     <Compile Include="ResultOperators\ROAnyAll.cs" />
+    <Compile Include="ResultOperators\ROAsQueriable.cs" />
     <Compile Include="ResultOperators\ROCount.cs" />
     <Compile Include="ResultOperators\ROFirstLast.cs" />
     <Compile Include="ResultOperators\ROMinMax.cs" />

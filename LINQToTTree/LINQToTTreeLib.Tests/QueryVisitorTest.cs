@@ -483,12 +483,31 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAsQueriable()
         {
+            // Reset variable counter
+            TypeUtils._variableNameCounter = 0;
+
             var q = new QueriableDummy<dummyntup>();
             var r1 = from evt in q
                      from my in evt.vals.AsQueryable().Where(n => n > 5)
                      select my;
             var r = r1.Count();
-            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+            var asQ = DummyQueryExectuor.FinalResult;
+            asQ.DumpCodeToConsole();
+
+            // Reset variable counter
+            TypeUtils._variableNameCounter = 0;
+
+            var r2 = from evt in q
+                     from my in evt.vals.Where(n => n > 5)
+                     select my;
+            var rI = r2.Count();
+            var asNQ = DummyQueryExectuor.FinalResult;
+
+            foreach (var l in asQ.CodeBody.CodeItUp().Zip(asNQ.CodeBody.CodeItUp(), (l1, l2) => Tuple.Create(l1, l2)))
+            {
+                Assert.AreEqual(l.Item1, l.Item2, "Line mis-match");
+            }
+
         }
 
     }

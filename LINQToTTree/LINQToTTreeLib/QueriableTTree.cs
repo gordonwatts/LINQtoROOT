@@ -107,7 +107,7 @@ namespace LINQToTTreeLib
 
             var ourProviders = new INodeTypeProvider[]
             {
-                MethodInfoBasedNodeTypeRegistry.CreateFromTypes(new Type[] {typeof(UniqueCombinationsExpressionNode), typeof(PairWiseAllExpressionNode)}),
+                MethodInfoBasedNodeTypeRegistry.CreateFromTypes(new Type[] {typeof(UniqueCombinationsExpressionNode), typeof(PairWiseAllExpressionNode), typeof(AsQueriableExpressionNode)}),
             };
 
             var defaultNodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
