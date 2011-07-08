@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq.Parsing;
 
@@ -24,8 +25,15 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public static Expression Translate(Expression expr, List<string> cookies)
         {
+            // Remove Tuple's and similar things.
+            var objlift = new ObjectPropertyExpressionVisitor();
+            var exprObjsRemoved = objlift.VisitExpression(expr);
+
+            // Now, do our custom translations.
             var trans = new TranslatingExpressionVisitor();
-            var result = trans.VisitExpression(expr);
+            var result = trans.VisitExpression(exprObjsRemoved);
+
+            // Keep track of what we did so we can make sure our caching logic works ok.
             cookies.AddRange(trans.RenameList);
             return result;
         }
@@ -147,19 +155,6 @@ namespace LINQToTTreeLib
                 /// 
 
                 throw new NotImplementedException("Member '" + expression.Member.Name + "' is marked for array recoding, but we can't figure out what to do.");
-            }
-
-            //
-            // If this is an item reference to a tuple type, and it is on top of a new for the tuple, then
-            // extract the new value argument.
-            //
-
-            var exprType = expression.Expression.Type;
-            if (exprType.Name.StartsWith("Tuple`") && expression.Expression.NodeType == ExpressionType.New)
-            {
-                int itemIndex = Convert.ToInt32(expression.Member.Name.Substring(4));
-                var newExpr = expression.Expression as NewExpression;
-                return newExpr.Arguments[itemIndex-1];
             }
 
             ///

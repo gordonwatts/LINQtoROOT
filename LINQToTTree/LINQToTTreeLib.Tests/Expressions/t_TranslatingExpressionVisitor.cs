@@ -328,6 +328,20 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestTranslateNewPairArrayIndirection()
+        {
+            Expression<Func<SourceType2, int>> lambaExpr = s => new Tuple<int, SourceType2Container>(5, s.jets[0]).Item2.val;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
+            Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "not array index??");
+            var arAccess = result as BinaryExpression;
+            Assert.AreEqual(0, (arAccess.Right as ConstantExpression).Value, "imporper array acess");
+
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+        }
+
+        [TestMethod]
         public void TestArrayLengthGroupingChange()
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets.Length;
