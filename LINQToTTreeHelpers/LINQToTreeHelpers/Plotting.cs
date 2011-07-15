@@ -201,7 +201,7 @@ namespace LINQToTreeHelpers
             var callWeight = Expression.Invoke(weight, vParameter);
 
             var fillMethod = typeof(ROOTNET.NTH2F).GetMethod("Fill", new[] { typeof(double), typeof(double), typeof(double) });
-            var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, weight);
+            var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, callWeight);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH2F, TSource>>(callFill, hParameter, vParameter);
             var interfaceobj = new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
