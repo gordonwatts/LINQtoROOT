@@ -16,7 +16,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <param name="dir">Directory where this future value should be saved</param>
         /// <param name="obj">Object to save</param>
         /// <param name="tag">List of tags which can be used to retreive the object later</param>
-        public static IFutureValue<T> SaveToROOTDirectory<T>(this IFutureValue<T> obj, FutureTDirectory dir, string tag = null)
+        public static IFutureValue<T> Save<T>(this IFutureValue<T> obj, FutureTDirectory dir, string tag = null)
             where T : ROOTNET.Interface.NTObject
         {
             if (tag == null)
@@ -39,12 +39,12 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <param name="dir"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public static IEnumerable<IFutureValue<T>> SaveToROOTDirectory<T>(this IEnumerable<IFutureValue<T>> source, FutureTDirectory dir, string tag = null)
+        public static IEnumerable<IFutureValue<T>> Save<T>(this IEnumerable<IFutureValue<T>> source, FutureTDirectory dir, string tag = null)
             where T : ROOTNET.Interface.NTObject
         {
             foreach (var s in source)
             {
-                yield return s.SaveToROOTDirectory(dir, tag);
+                yield return s.Save(dir, tag);
             }
         }
 
@@ -67,11 +67,11 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <param name="dir"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public static IFutureValue<T> SaveToROOTDirectory<T>(this T obj, FutureTDirectory dir, string tag = null)
+        public static IFutureValue<T> Save<T>(this T obj, FutureTDirectory dir, string tag = null)
             where T : ROOTNET.Interface.NTObject
         {
             IFutureValue<T> fv = new ImmediateFutureValue<T> { Value = obj };
-            var r = fv.SaveToROOTDirectory(dir, tag);
+            var r = fv.Save(dir, tag);
             return r;
         }
 
