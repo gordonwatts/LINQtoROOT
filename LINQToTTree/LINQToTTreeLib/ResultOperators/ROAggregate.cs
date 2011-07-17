@@ -72,6 +72,7 @@ namespace LINQToTTreeLib.ResultOperators
                 accumulator = new Variables.VarSimple(a.Seed.Type);
             }
             accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
+            accumulator.Declare = true;
 
             ///
             /// Now, parse the lambda expression, doing a substitution with this guy! Note that the only argument is our
