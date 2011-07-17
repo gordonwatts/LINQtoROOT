@@ -115,6 +115,7 @@
     <Compile Include="ResultOperators\ROFirstLast.cs" />
     <Compile Include="ResultOperators\ROMinMax.cs" />
     <Compile Include="ResultOperators\ROPairWiseAll.cs" />
+    <Compile Include="ResultOperators\ROSum.cs" />
     <Compile Include="ResultOperators\ROTakeSkipOperators.cs" />
     <Compile Include="ResultOperators\ROUniqueCombinations.cs" />
     <Compile Include="Statements\StatementTestLoopPairwise.cs" />

@@ -344,6 +344,12 @@
     <Compile Include="ResultOperators\ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="ROSumTest.TestCanHandle.g.cs">
+      <DependentUpon>t_ROSum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ROSumTest.TestProcessResultOperator.g.cs">
+      <DependentUpon>t_ROSum.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
@@ -455,6 +461,7 @@
     </Compile>
     <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
     <Compile Include="Expressions\t_ObjectPropertyExpressionVisitor.cs" />
+    <Compile Include="t_ROSum.cs" />
     <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
       <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>
     </Compile>
