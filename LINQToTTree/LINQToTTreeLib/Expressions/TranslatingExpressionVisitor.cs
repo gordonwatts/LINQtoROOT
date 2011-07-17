@@ -186,6 +186,24 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Check to see if a generic expression is a tranlsated array reference.
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        private bool GenericExpressionIsRootObjectArrayReference(Expression exp)
+        {
+            var arrayLookup = exp as BinaryExpression;
+            if (arrayLookup == null)
+                return false;
+
+            var me = arrayLookup.Left as MemberExpression;
+            if (me == null)
+                return false;
+
+            return IsRootObjectArrayReference(me);
+        }
+
+        /// <summary>
         /// See if this is of the form something.index.value - where index we can track back to a pointer to an actualy item.
         /// </summary>
         /// <param name="expression"></param>
@@ -327,11 +345,9 @@ namespace LINQToTTreeLib
             /// doesn't work, then we just return a null.
             /// 
 
+            if (expression.Expression.NodeType != ExpressionType.ArrayIndex)
+                return null;
             var arrayIndexOperation = expression.Expression as BinaryExpression;
-            if (arrayIndexOperation == null)
-                return null;
-            if (arrayIndexOperation.NodeType != ExpressionType.ArrayIndex)
-                return null;
 
             var memberAccessArray = arrayIndexOperation.Left as MemberExpression;
             if (memberAccessArray == null)
@@ -424,6 +440,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
+            // If this is an array index, then...
             if (expression.NodeType == ExpressionType.ArrayIndex && !expression.Type.IsClass)
             {
                 var rootExpr = expression.Left as MemberExpression;
@@ -432,7 +449,51 @@ namespace LINQToTTreeLib
                     return Expression.ArrayIndex(VisitExpressionImplemented(rootExpr), expression.Right);
                 }
             }
+
+            // If this is a binary expression, and it is == or !=, it could be that we have an object compare
+            // of the translated objects.
+            if (expression.NodeType == ExpressionType.Equal
+                || expression.NodeType == ExpressionType.NotEqual)
+            {
+                var b = expression as BinaryExpression;
+                var blArray = ExtractObjectArrayName(b.Left);
+                var brArray = ExtractObjectArrayName(b.Right);
+                if (blArray == brArray
+                    && blArray != null)
+                {
+                    var lindex = ExtractObjectArrayIndex(b.Left);
+                    var rindex = ExtractObjectArrayIndex(b.Right);
+
+                    return Expression.MakeBinary(expression.NodeType, lindex, rindex);
+                }
+            }
             return base.VisitBinaryExpression(expression);
+        }
+
+        /// <summary>
+        /// This should represent somethign that points into an array list of translated objects. Make sure that is
+        /// true, and if it is, attempt to reconstruct the actual name of the array. Return null if it isn't.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private string ExtractObjectArrayName(Expression expression)
+        {
+            if (!GenericExpressionIsRootObjectArrayReference(expression))
+                return null;
+
+            var index = expression as BinaryExpression;
+            return index.Left.ToString();
+        }
+
+        /// <summary>
+        /// Given we know this is an index lookup, return the expression used for the array index.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private Expression ExtractObjectArrayIndex(Expression expression)
+        {
+            var lookup = expression as BinaryExpression;
+            return lookup.Right;
         }
 
         /// <summary>

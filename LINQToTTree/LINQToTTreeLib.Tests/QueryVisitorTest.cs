@@ -379,6 +379,7 @@ namespace LINQToTTreeLib
         {
             [TTreeVariableGrouping]
             public int var1;
+            [TTreeVariableGrouping]
             public double var2;
         }
 
@@ -437,6 +438,61 @@ namespace LINQToTTreeLib
 
             var ass = outterfloop.Statements.First() as Statements.StatementAssign;
             Assert.IsFalse(ass.Expression.RawValue.Contains("jets"), "jets should be missing from the expression - " + ass.Expression.RawValue);
+        }
+
+        [TestMethod]
+        public void TestTranslatedObjectCompareNE()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           from j1 in evt.jets
+                           from j2 in evt.jets
+                           where j1 != j2
+                           select j1.var1 + j2.var1;
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "jets");
+            MakeSureNoVariable(code.CodeBody, "j1");
+            MakeSureNoVariable(code.CodeBody, "j2");
+            MakeSureNoVariable(code.CodeBody, "evt");
+        }
+
+        [TestMethod]
+        public void TestTranslatedObjectCompareEQ()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           from j1 in evt.jets
+                           from j2 in evt.jets
+                           where j1 == j2
+                           select j1.var1 + j2.var1;
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "jets");
+            MakeSureNoVariable(code.CodeBody, "j1");
+            MakeSureNoVariable(code.CodeBody, "j2");
+            MakeSureNoVariable(code.CodeBody, "evt");
+        }
+
+        /// <summary>
+        /// Check the code contains no reference to a variable by name!
+        /// </summary>
+        /// <param name="iBookingStatementBlock"></param>
+        /// <param name="p"></param>
+        private void MakeSureNoVariable(IBookingStatementBlock statements, string vname)
+        {
+            Regex finder = new Regex(string.Format(@"\b{0}\b", vname));
+            var hasit = from l in statements.CodeItUp()
+                        where finder.Match(l).Success
+                        select l;
+
+            Assert.AreEqual(0, hasit.Count(), string.Format("Some lines have '{0}' referenced", vname));
         }
 
         [TestMethod]
