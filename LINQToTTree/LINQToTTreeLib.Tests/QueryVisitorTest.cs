@@ -441,6 +441,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestLambdaExpressionLookup()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            Expression<Func<subNtupleObjects, bool>> checker = s => s.var1 == 0;
+
+            var result = q.SelectMany(evt => evt.jets).Where(checker).Count();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "evt");
+            MakeSureNoVariable(code.CodeBody, "s");
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestTranslatedObjectCompareNE()
         {
             var q = new QueriableDummy<ntupWithObjects>();
