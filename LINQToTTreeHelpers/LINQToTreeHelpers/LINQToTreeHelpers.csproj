@@ -76,6 +76,7 @@
     <Compile Include="ColorLoop.cs" />
     <Compile Include="ContinuousIterator.cs" />
     <Compile Include="DataSetFinder.cs" />
+    <Compile Include="ExpressionUtils.cs" />
     <Compile Include="FileHelpers.cs" />
     <Compile Include="FutureUtils\FutureDictionary.cs" />
     <Compile Include="FutureUtils\FutureTDirectory.cs" />
