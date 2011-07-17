@@ -1,7 +1,7 @@
 ﻿
 namespace LINQToTreeHelpers
 {
-    internal static class Utils
+    public static class Utils
     {
         /// <summary>
         /// Write out an object. Eventually, with ROOTNET improvements this will work better and perahps
@@ -9,7 +9,7 @@ namespace LINQToTreeHelpers
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="dir"></param>
-        public static void InternalWriteObject(this ROOTNET.Interface.NTObject obj, ROOTNET.Interface.NTDirectory dir)
+        internal static void InternalWriteObject(this ROOTNET.Interface.NTObject obj, ROOTNET.Interface.NTDirectory dir)
         {
             var h = obj as ROOTNET.Interface.NTH1;
             if (h != null)
