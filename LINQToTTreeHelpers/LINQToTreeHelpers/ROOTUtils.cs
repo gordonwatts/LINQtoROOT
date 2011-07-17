@@ -6,6 +6,7 @@ namespace LINQToTreeHelpers
     /// <summary>
     /// Some helper routines for dealing with root.
     /// </summary>
+    [CPPHelperClass]
     public static class ROOTUtils
     {
         /// <summary>
