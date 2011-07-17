@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 
 namespace LINQToTreeHelpers.FutureUtils
 {
@@ -24,6 +20,16 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <param name="outputRootFile"></param>
         public FutureTFile(FileInfo outputRootFile)
             : base(CreateOpenFile(outputRootFile.FullName))
+        {
+        }
+
+        /// <summary>
+        /// Creates a new ROOT file and attaches a future value container to it. This container
+        /// can be used to store future values that get evaluated at a later time.
+        /// </summary>
+        /// <param name="outputRootFile"></param>
+        public FutureTFile(string outputRootFile)
+            : base(CreateOpenFile(outputRootFile))
         {
         }
 
