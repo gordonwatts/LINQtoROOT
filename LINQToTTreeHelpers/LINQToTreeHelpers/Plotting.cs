@@ -128,14 +128,15 @@ namespace LINQToTreeHelpers
         /// <param name="yHighBin"></param>
         /// <param name="xGetter">Func that calculates the X value for the 2D histogram</param>
         /// <param name="yGetter">Func that calculates the X value for the 2D histogram</param>
+        /// <param name="weight">Func that calculates the weight to fill this entry with</param>
         /// <returns></returns>
         public static ROOTNET.NTH2F Plot<TSource>
             (
             this IQueryable<TSource> source,
             string plotID, string plotTitle,
             int xNBins, double xLowBin, double xHighBin,
-            int yNBins, double yLowBin, double yHighBin,
             Expression<Func<TSource, double>> xGetter,
+            int yNBins, double yLowBin, double yHighBin,
             Expression<Func<TSource, double>> yGetter,
             Expression<Func<TSource, double>> weight = null
             )
@@ -182,8 +183,8 @@ namespace LINQToTreeHelpers
             this IQueryable<TSource> source,
             string plotID, string plotTitle,
             int xNBins, double xLowBin, double xHighBin,
-            int yNBins, double yLowBin, double yHighBin,
             Expression<Func<TSource, double>> xGetter,
+            int yNBins, double yLowBin, double yHighBin,
             Expression<Func<TSource, double>> yGetter,
             Expression<Func<TSource, double>> weight = null
             )
