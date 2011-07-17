@@ -211,6 +211,103 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
+        /// Fill a 2D plot
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="plotID"></param>
+        /// <param name="plotTitle"></param>
+        /// <param name="xNBins"></param>
+        /// <param name="xLowBin"></param>
+        /// <param name="xHighBin"></param>
+        /// <param name="yNBins"></param>
+        /// <param name="yLowBin"></param>
+        /// <param name="yHighBin"></param>
+        /// <param name="xGetter">Func that calculates the X value for the 2D histogram</param>
+        /// <param name="yGetter">Func that calculates the X value for the 2D histogram</param>
+        /// <param name="weight">Func that calculates the weight to fill this entry with</param>
+        /// <returns></returns>
+        public static ROOTNET.NTProfile Profile<TSource>
+            (
+            this IQueryable<TSource> source,
+            string plotID, string plotTitle,
+            int xNBins, double xLowBin, double xHighBin,
+            Expression<Func<TSource, double>> xGetter,
+            double yLowBin, double yHighBin,
+            Expression<Func<TSource, double>> yGetter,
+            Expression<Func<TSource, double>> weight = null
+            )
+        {
+            if (weight == null)
+            {
+                Expression<Func<TSource, double>> constWeight = s => 1.0;
+                weight = constWeight;
+            }
+
+            var hParameter = Expression.Parameter(typeof(ROOTNET.NTH2F), "h");
+            var vParameter = Expression.Parameter(typeof(TSource), "v");
+
+            var callXGetter = Expression.Invoke(xGetter, vParameter);
+            var callYGetter = Expression.Invoke(yGetter, vParameter);
+            var callWeight = Expression.Invoke(weight, vParameter);
+            var fillMethod = typeof(ROOTNET.NTProfile).GetMethod("Fill", new[] { typeof(double), typeof(double), typeof(double) });
+            var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, callWeight);
+
+            var lambda = Expression.Lambda<Action<ROOTNET.NTProfile, TSource>>(callFill, hParameter, vParameter);
+            var h = new ROOTNET.NTProfile(plotID, plotTitle, xNBins, xLowBin, xHighBin, yLowBin, yHighBin);
+            ConfigureHisto(h);
+            return source.ApplyToObject(h, lambda);
+        }
+
+        /// <summary>
+        /// Fill a 2D plot in the future
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="plotID"></param>
+        /// <param name="plotTitle"></param>
+        /// <param name="xNBins"></param>
+        /// <param name="xLowBin"></param>
+        /// <param name="xHighBin"></param>
+        /// <param name="yNBins"></param>
+        /// <param name="yLowBin"></param>
+        /// <param name="yHighBin"></param>
+        /// <param name="xGetter">Func that calculates the X value for the 2D histogram</param>
+        /// <param name="yGetter">Func that calculates the X value for the 2D histogram</param>
+        /// <returns></returns>
+        public static IFutureValue<ROOTNET.NTProfile> FutureProfile<TSource>
+            (
+            this IQueryable<TSource> source,
+            string plotID, string plotTitle,
+            int xNBins, double xLowBin, double xHighBin,
+            Expression<Func<TSource, double>> xGetter,
+            double yLowBin, double yHighBin,
+            Expression<Func<TSource, double>> yGetter,
+            Expression<Func<TSource, double>> weight = null
+            )
+        {
+            if (weight == null)
+            {
+                Expression<Func<TSource, double>> constWeight = s => 1.0;
+                weight = constWeight;
+            }
+            var hParameter = Expression.Parameter(typeof(ROOTNET.NTH2F), "h");
+            var vParameter = Expression.Parameter(typeof(TSource), "v");
+
+            var callXGetter = Expression.Invoke(xGetter, vParameter);
+            var callYGetter = Expression.Invoke(yGetter, vParameter);
+            var callWeight = Expression.Invoke(weight, vParameter);
+
+            var fillMethod = typeof(ROOTNET.NTProfile).GetMethod("Fill", new[] { typeof(double), typeof(double), typeof(double) });
+            var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, callWeight);
+
+            var lambda = Expression.Lambda<Action<ROOTNET.NTProfile, TSource>>(callFill, hParameter, vParameter);
+            var interfaceobj = new ROOTNET.NTProfile(plotID, plotTitle, xNBins, xLowBin, xHighBin, yLowBin, yHighBin);
+            ConfigureHisto(interfaceobj);
+            return source.FutureApplyToObject(interfaceobj, lambda);
+        }
+
+        /// <summary>
         /// Generate a TH1F from a stream of T's that can be converted to a double.
         /// </summary>
         /// <typeparam name="T"></typeparam>
