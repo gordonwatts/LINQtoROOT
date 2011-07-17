@@ -1,4 +1,6 @@
 ﻿
+using System;
+using LINQToTTreeLib.CodeAttributes;
 namespace LINQToTreeHelpers
 {
     /// <summary>
@@ -44,6 +46,51 @@ namespace LINQToTreeHelpers
         {
             obj.InternalWriteObject(dir);
         }
+
+        #region CPP ROOT Helpers
+        /// <summary>
+        /// Create a TLorentzVector from pt, eta, phi, and E.
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="eta"></param>
+        /// <param name="phi"></param>
+        /// <param name="E"></param>
+        /// <returns></returns>
+        [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+            Code = new string[]{
+                "TLorentzVector tlzUnique;",
+                "tlzUnique.SetPtEtaPhiE(pt, eta, phi, E);",
+                "CreateTLZ = &tlzUnique;"
+            })]
+        public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi, double E)
+        {
+            throw new NotImplementedException("This should never get called!");
+            var tlz = new ROOTNET.NTLorentzVector();
+            tlz.SetPtEtaPhiE(pt, eta, phi, E);
+            return tlz;
+        }
+
+        /// <summary>
+        /// Create a TLZ, assuming a pion mass.
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <param name="eta"></param>
+        /// <param name="phi"></param>
+        /// <returns></returns>
+        [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+            Code = new string[]{
+                "TLorentzVector tlzUnique;",
+                "tlzUnique.SetPtEtaPhiM(pt, eta, phi, 139.6);",
+                "CreateTLZ = &tlzUnique;"
+            })]
+        public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi)
+        {
+            throw new NotImplementedException("This should never get called!");
+            var tlz = new ROOTNET.NTLorentzVector();
+            tlz.SetPtEtaPhiM(pt, eta, phi, 139.6);
+            return tlz;
+        }
+        #endregion
 
     }
 }
