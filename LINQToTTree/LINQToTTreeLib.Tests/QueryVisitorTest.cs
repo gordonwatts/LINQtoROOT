@@ -510,5 +510,25 @@ namespace LINQToTTreeLib
 
         }
 
+        [TestMethod]
+        public void TestNewAnoymousObject()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var firstR = from evt in q
+                         select (from my in evt.vals.AsQueryable().Where(n => n > 5)
+                                 select new
+                                 {
+                                     EVT = evt,
+                                     MY = my
+                                 });
+            var r1 = from evt in firstR
+                     select (from r in evt where r.MY > 5 select r.MY);
+
+            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+
+            var result = DummyQueryExectuor.FinalResult;
+            result.DumpCodeToConsole();
+        }
+
     }
 }
