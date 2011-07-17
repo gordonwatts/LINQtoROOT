@@ -316,6 +316,11 @@ namespace LINQToTTreeLib
 
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
+
+            // Next, update the cache and look to make sure that the cache returns a hit this time!
+            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
+            r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), checkDates: true);
+            Assert.IsTrue(r.Item1, "altered file should have made this fail");
         }
 
         [TestMethod]
