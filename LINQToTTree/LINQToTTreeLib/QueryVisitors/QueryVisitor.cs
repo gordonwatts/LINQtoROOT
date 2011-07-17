@@ -207,6 +207,19 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// If the user is doing some selection that contains parameters that require replacements, then
+        /// we have to make sure they are done. Otherwise we leave these alone. Note, we *only* want to do
+        /// the parameter replacement however! Whatever that select is, it becomes our new loop variable.
+        /// </summary>
+        /// <param name="selectClause"></param>
+        /// <param name="queryModel"></param>
+        public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
+        {
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(selectClause.Selector, _codeContext);
+            _codeContext.SetLoopVariable(expr);
+        }
+
+        /// <summary>
         /// Get/Set the container that can be usef for MEF'ing things.
         /// </summary>
         public CompositionContainer MEFContainer { get; private set; }

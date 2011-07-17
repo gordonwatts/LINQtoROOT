@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ResultOperators;
@@ -522,12 +523,66 @@ namespace LINQToTTreeLib
                                      MY = my
                                  });
             var r1 = from evt in firstR
-                     select (from r in evt where r.MY > 5 select r.MY);
+                     select (from r in evt where r.MY > 6 select r.MY);
 
             var res = r1.Aggregate(0, (s, r) => s + r.Count());
 
             var result = DummyQueryExectuor.FinalResult;
             result.DumpCodeToConsole();
+
+            Regex tfinder = new Regex(@"\bMY\b");
+            var foundT = from l in result.CodeBody.CodeItUp()
+                         where tfinder.Match(l).Success
+                         select l;
+            Assert.AreEqual(0, foundT.Count(), "No lines should have contained any expression involving MY!");
+        }
+
+        [TestMethod]
+        public void TestSelectObject()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var stup = from evt in q
+                       select (from t in evt.vals.AsQueryable()
+                               select new Tuple<int, int>(t, t));
+
+            var r1 = from evt in stup
+                     select (from r in evt where r.Item1 > 5 select r.Item1);
+
+            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+
+            var result = DummyQueryExectuor.FinalResult;
+            result.DumpCodeToConsole();
+
+            // Make sure nothing silly happened, like "t" got in there somehow.
+
+            Regex tfinder = new Regex(@"\bt\b");
+            var foundT = from l in result.CodeBody.CodeItUp()
+                         where tfinder.Match(l).Success
+                         select l;
+            Assert.AreEqual(0, foundT.Count(), "No lines should have contained any expression involving t!");
+        }
+
+        [TestMethod]
+        public void TestQueryReferenceInSubQuery()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var slist = from evt in q
+                        select (from t in evt.vals select 2 * t);
+
+            var r1 = from evt in slist
+                     select (from r in evt where r > 5 select r);
+
+            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+
+            var result = DummyQueryExectuor.FinalResult;
+            result.DumpCodeToConsole();
+
+            Regex tfinder = new Regex(@"\bt\b");
+            var foundT = from l in result.CodeBody.CodeItUp()
+                         where tfinder.Match(l).Success
+                         select l;
+
+            Assert.AreEqual(0, foundT.Count(), "No lines referencing t should be in there! Ack!");
         }
 
     }
