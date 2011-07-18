@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
@@ -34,20 +35,47 @@ namespace LINQToTTreeLib.Expressions
 
             if (expr is SubQueryExpression)
             {
-                /// The sub-query expression will just run. We need to parse the result and see what happens. We reutnr
-                /// null in the end because it is the "context" that is getting setup.
-
-                var val = ExpressionToCPP.GetExpression(expr, gc, cc, container);
-                if (val != null)
-                    throw new ArgumentException("What looked like an array (type '" + expr.Type.Name + "') seems to have returned a value: '" + val.RawValue + "'");
-                return null;
+                return LoopOverSubQuery(expr, gc, cc, container);
             }
+
+            //
+            // If this is an array over an object that LINQ has created (like an anonymous type), then
+            // we should try to unroll the access to that array.
+            //
+
+            var translated = AttemptTranslationToArray(expr, cc);
+            if (translated != null)
+                return LoopOverSubQuery(translated, gc, cc, container);
 
             ///
             /// We have no idea how to deal with this!
             /// 
 
             throw new ArgumentException("Type '" + expr.Type.Name + "' ('" + expr.ToString() + "') is not an array we know how to deal with");
+        }
+
+        private static IArrayInfo LoopOverSubQuery(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        {
+            /// The sub-query expression will just run. We need to parse the result and see what happens. We reutnr
+            /// null in the end because it is the "context" that is getting setup.
+
+            var val = ExpressionToCPP.GetExpression(expr, gc, cc, container);
+            if (val != null)
+                throw new ArgumentException("What looked like an array (type '" + expr.Type.Name + "') seems to have returned a value: '" + val.RawValue + "'");
+            return null;
+        }
+
+        /// <summary>
+        /// See if this sequence type is actually a normal array or sub query expression hidden by an anonymous array index or similar.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        private static Expression AttemptTranslationToArray(Expression expr, ICodeContext cc)
+        {
+            List<string> cookies = new List<string>();
+            var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
+            var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies);
+            return r as SubQueryExpression;
         }
 
         /// <summary>

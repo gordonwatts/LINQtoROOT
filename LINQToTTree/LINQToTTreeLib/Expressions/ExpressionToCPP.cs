@@ -493,7 +493,8 @@ namespace LINQToTTreeLib.Expressions
             ///    it will get used in some later sequence (like # of jets in each event). So,
             ///    we need to make sure it is declared and kept before it is used. The # that comes
             ///    back needs to be used outside the scope we are sitting in - the one that we were at
-            ///    when we started this.
+            ///    when we started this. Since this is a sub-query expression, the result isn't the final
+            ///    result, so we need to reset it so no one notices it.
             /// 2. <return a sequence> - this is weird - What we are actually doing here is putting the
             ///    sequence into code. So the loop variable has been updated with the new sequence iterator
             ///    value. But there isn't really a result! So the result will be null...
@@ -504,6 +505,7 @@ namespace LINQToTTreeLib.Expressions
                 _codeEnv.CurrentScope = scope;
                 _codeEnv.Add(_codeEnv.ResultValue);
                 _result = _codeEnv.ResultValue;
+                _codeEnv.ResetResult();
             }
 
             return expression;

@@ -454,7 +454,6 @@ namespace LINQToTTreeLib
 
             MakeSureNoVariable(code.CodeBody, "evt");
             MakeSureNoVariable(code.CodeBody, "s");
-            Assert.Inconclusive();
         }
 
         [TestMethod]
@@ -608,6 +607,66 @@ namespace LINQToTTreeLib
                          where tfinder.Match(l).Success
                          select l;
             Assert.AreEqual(0, foundT.Count(), "No lines should have contained any expression involving MY!");
+        }
+
+        [TestMethod]
+        public void TestAnonymouseArrayLoop()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var firstR = from evt in q
+                         select (from my in evt.vals.AsQueryable().Where(n => n > 5)
+                                 select new
+                                 {
+                                     EVT = evt,
+                                     MY = evt.vals.Where(j => j > 0)
+                                 });
+            var r1 = from evt in firstR
+                     select (from r in evt where r.MY.Count() > 6 select r.MY);
+
+            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+
+            var result = DummyQueryExectuor.FinalResult;
+            result.DumpCodeToConsole();
+
+            MakeSureNoVariable(result.CodeBody, "evt");
+            MakeSureNoVariable(result.CodeBody, "q");
+            MakeSureNoVariable(result.CodeBody, "my");
+            MakeSureNoVariable(result.CodeBody, "n");
+            MakeSureNoVariable(result.CodeBody, "EVT");
+            MakeSureNoVariable(result.CodeBody, "MY");
+            MakeSureNoVariable(result.CodeBody, "j");
+            MakeSureNoVariable(result.CodeBody, "r");
+        }
+
+        [TestMethod]
+        public void TestAnonymouseArrayLoopTwoDeep()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var firstR = from evt in q
+                         select (from my in evt.vals.AsQueryable().Where(n => n > 5)
+                                 select new
+                                 {
+                                     EVT = evt,
+                                     MY = evt.vals.Where(j => j > 0)
+                                 });
+            var r1 = from evt in firstR
+                     select (from r in evt where r.MY.Count() > 6 select r);
+
+            var res = r1.Aggregate(0, (s, r) => s + r.SelectMany(z => z.MY).Count());
+
+            var result = DummyQueryExectuor.FinalResult;
+            result.DumpCodeToConsole();
+
+            MakeSureNoVariable(result.CodeBody, "evt");
+            MakeSureNoVariable(result.CodeBody, "q");
+            MakeSureNoVariable(result.CodeBody, "my");
+            MakeSureNoVariable(result.CodeBody, "n");
+            MakeSureNoVariable(result.CodeBody, "EVT");
+            MakeSureNoVariable(result.CodeBody, "MY");
+            MakeSureNoVariable(result.CodeBody, "j");
+            MakeSureNoVariable(result.CodeBody, "r");
+            MakeSureNoVariable(result.CodeBody, "s");
+            MakeSureNoVariable(result.CodeBody, "z");
         }
 
         [TestMethod]
