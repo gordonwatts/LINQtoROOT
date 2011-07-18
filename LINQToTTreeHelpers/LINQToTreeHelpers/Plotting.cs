@@ -244,7 +244,7 @@ namespace LINQToTreeHelpers
                 weight = constWeight;
             }
 
-            var hParameter = Expression.Parameter(typeof(ROOTNET.NTH2F), "h");
+            var hParameter = Expression.Parameter(typeof(ROOTNET.NTProfile), "h");
             var vParameter = Expression.Parameter(typeof(TSource), "v");
 
             var callXGetter = Expression.Invoke(xGetter, vParameter);
@@ -291,7 +291,7 @@ namespace LINQToTreeHelpers
                 Expression<Func<TSource, double>> constWeight = s => 1.0;
                 weight = constWeight;
             }
-            var hParameter = Expression.Parameter(typeof(ROOTNET.NTH2F), "h");
+            var hParameter = Expression.Parameter(typeof(ROOTNET.NTProfile), "h");
             var vParameter = Expression.Parameter(typeof(TSource), "v");
 
             var callXGetter = Expression.Invoke(xGetter, vParameter);
