@@ -163,8 +163,8 @@ namespace LINQToTTreeLib
             /// If a main index variable was declared that has now lost its usefulness, we should get rid of it.
             /// 
 
-            if (_mainIndex != null)
-                _mainIndex.Pop();
+            //if (_mainIndex != null)
+            //    _mainIndex.Pop();
         }
 
         /// <summary>
