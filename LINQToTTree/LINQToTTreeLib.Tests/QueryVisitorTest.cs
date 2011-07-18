@@ -600,6 +600,42 @@ namespace LINQToTTreeLib
             MakeSureNoVariable(code.CodeBody, "Tracks");
         }
 
+        [TestMethod]
+        public void TestGroupingWithAnonymousObjectOneLevelDown()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+
+            var tracksNearJetPerEvent = from evt in q
+                                        select from j in evt.jets
+                                               let jtlz = CPPHelperFunctions.Calc(j.var1)
+                                               where jtlz > 1
+                                               select new
+                                               {
+                                                   Jet = j,
+                                                   Tracks = from t in evt.jets
+                                                            let ttlz = CPPHelperFunctions.Calc(t.var1)
+                                                            where ttlz > jtlz
+                                                            select t
+                                               };
+
+            var tracksNearJet = from evt in tracksNearJetPerEvent
+                                from jfin in evt
+                                select jfin.Jet;
+
+            var result = tracksNearJet.Where(js => js.var1 > 0).Count();
+
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "evt");
+            MakeSureNoVariable(code.CodeBody, "j");
+            MakeSureNoVariable(code.CodeBody, "Stuff");
+
+        }
+
         /// <summary>
         /// Check the code contains no reference to a variable by name!
         /// </summary>

@@ -319,6 +319,7 @@ namespace LINQToTTreeLib
         {
             [RenameVariable("rVal")]
             public int[] val;
+
         }
 
         public class transToNtup : IExpressionHolder
@@ -577,6 +578,27 @@ namespace LINQToTTreeLib
                 get;
                 private set;
             }
+        }
+
+        [TestMethod]
+        public void TestTranslationWithNestedAnonymousObject()
+        {
+            //var model = GetModel(() => (from q in new QueriableDummy<SourceType1>()
+            //                            from j in q.jets
+            //                            select new { Jet = j }.Jet.val1).Count());
+            Expression<Func<SourceType1, bool>> exprL = s => new { Jet = new { Bogus = s.jets[0] }.Bogus }.Jet.val1 > 5;
+            var expr = (exprL as LambdaExpression).Body;
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
+            Assert.AreEqual(typeof(bool), result.Type, "bad type for return");
         }
 
         [TestMethod]

@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Expressions
                 {
                     int itemIndex = Convert.ToInt32(expression.Member.Name.Substring(4));
                     var newExpr = expression.Expression as NewExpression;
-                    return newExpr.Arguments[itemIndex - 1];
+                    return VisitExpression(newExpr.Arguments[itemIndex - 1]);
                 }
                 if (exprType.Name.StartsWith("<>f__AnonymousType"))
                 {
@@ -74,7 +74,7 @@ namespace LINQToTTreeLib.Expressions
             // That index tells us the argument order, and which argument to grab
             //
 
-            return newExpr.Arguments[memIndex];
+            return VisitExpression(newExpr.Arguments[memIndex]);
         }
     }
 }
