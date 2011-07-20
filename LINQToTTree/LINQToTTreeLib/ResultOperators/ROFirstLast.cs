@@ -95,7 +95,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             gc.Pop();
             var firstlastValue = Expression.ArrayIndex(arrayExpr, Expression.Parameter(typeof(int), indexSeen.RawValue));
-            var actualValue = new VarSimple(cc.LoopVariable.Type);
+            var actualValue = new VarSimple(cc.LoopVariable.Type) { Declare = true };
 
             gc.Add(new Statements.StatementAssign(actualValue,
                 ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
