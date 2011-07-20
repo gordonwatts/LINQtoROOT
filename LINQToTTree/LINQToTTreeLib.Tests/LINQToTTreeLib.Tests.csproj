@@ -435,6 +435,21 @@
     <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">
       <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.CodeItUpTest.g.cs">
+      <DependentUpon>t_StatementRecordIndicies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.IsSameStatementTest.g.cs">
+      <DependentUpon>t_StatementRecordIndicies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.RenameVariableTest.g.cs">
+      <DependentUpon>t_StatementRecordIndicies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.StatementRecordIndiciesConstructorTest.g.cs">
+      <DependentUpon>t_StatementRecordIndicies.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.TryCombineStatementTest.g.cs">
+      <DependentUpon>t_StatementRecordIndicies.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
     </Compile>
@@ -503,6 +518,7 @@
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
+    <Compile Include="Statements\t_StatementRecordIndicies.cs" />
     <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
       <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>
     </Compile>
@@ -553,6 +569,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Test References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,8 +20,8 @@ namespace LINQToTTreeLib.Statements
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[PexRaisedException(typeof(NotImplementedException))]
-public void TestTryCombineThrowsNotImplementedException336()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException567()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -32,8 +32,28 @@ public void TestTryCombineThrowsNotImplementedException336()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[PexRaisedException(typeof(NotImplementedException))]
-public void TestTryCombineThrowsNotImplementedException549()
+public void TestTryCombine459()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    b = this.TestTryCombine
+            (statementIncrementInteger, (IStatement)statementIncrementInteger);
+    Assert.AreEqual<bool>(true, b);
+    Assert.IsNotNull((object)statementIncrementInteger);
+    Assert.IsNotNull(statementIncrementInteger.Integer);
+    Assert.AreEqual<string>("anint_2", statementIncrementInteger.Integer.RawValue);
+    Assert.AreEqual<string>
+        ("anint_2", statementIncrementInteger.Integer.VariableName);
+    Assert.IsNotNull(statementIncrementInteger.Integer.InitialValue);
+    Assert.AreEqual<bool>(false, statementIncrementInteger.Integer.Declare);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException329()
 {
     VarInteger varInteger;
     StatementIncrementInteger statementIncrementInteger;
@@ -41,6 +61,31 @@ public void TestTryCombineThrowsNotImplementedException549()
     varInteger = VarIntegerFactory.Create(false, 1);
     statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
     b = this.TestTryCombine(statementIncrementInteger, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
+public void TestTryCombine621()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    VarInteger varInteger1;
+    StatementIncrementInteger statementIncrementInteger1;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger1 =
+      StatementIncrementIntegerFactory.Create(varInteger1);
+    b = this.TestTryCombine
+            (statementIncrementInteger, (IStatement)statementIncrementInteger1);
+    Assert.AreEqual<bool>(false, b);
+    Assert.IsNotNull((object)statementIncrementInteger);
+    Assert.IsNotNull(statementIncrementInteger.Integer);
+    Assert.AreEqual<string>("anint_19", statementIncrementInteger.Integer.RawValue);
+    Assert.AreEqual<string>
+        ("anint_19", statementIncrementInteger.Integer.VariableName);
+    Assert.IsNotNull(statementIncrementInteger.Integer.InitialValue);
+    Assert.AreEqual<bool>(false, statementIncrementInteger.Integer.Declare);
 }
     }
 }

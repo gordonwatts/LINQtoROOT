@@ -81,10 +81,30 @@ namespace LINQToTTreeLib.Statements
 
         }
 
-
+        /// <summary>
+        /// Attempt to combine two record statements. Since we are only a single and non-complex
+        /// statement, we do this if we are the "same". :-)
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool TryCombineStatement(IStatement statement)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentException("statement");
+
+            var asRecord = statement as StatementRecordIndicies;
+            if (asRecord == null)
+                return false;
+
+            if (_intToRecord.RawValue != asRecord._intToRecord.RawValue
+                || _storageArray.RawValue != _storageArray.RawValue)
+                return false;
+
+            //
+            // These two are the same. So elminate one by returning true.
+            //
+
+            return true;
         }
     }
 }
