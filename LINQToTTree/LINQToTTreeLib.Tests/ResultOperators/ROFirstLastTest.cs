@@ -1,7 +1,10 @@
 // <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -61,7 +64,7 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
             // TODO: add assertions to method ROFirstLastTest.ProcessResultOperator(ROFirstLast, ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)
         }
-#if false
+
         public class ntup2
         {
             public int[] run;
@@ -81,7 +84,6 @@ namespace LINQToTTreeLib.ResultOperators
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
 
-            Assert.Inconclusive();
         }
 
         [TranslateToClass(typeof(ResultType1))]
@@ -130,9 +132,31 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
-
-            Assert.Inconclusive();
         }
-#endif
+
+        [TestMethod]
+        public void TestAnonymousObjectFirst()
+        {
+            var q = new QueriableDummy<SourceType1>();
+
+            var objs = from evt in q
+                       select from j in evt.jets
+                              select new
+                              {
+                                  Value = j.val1
+                              };
+
+            var testVeachOne = from evt in objs
+                               select evt.First();
+
+            var testV = from evt in testVeachOne
+                        where evt.Value > 10
+                        select evt;
+
+            var cnt = testV.Count();
+            var res = DummyQueryExectuor.FinalResult;
+            res.DumpCodeToConsole();
+
+        }
     }
 }
