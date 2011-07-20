@@ -63,10 +63,31 @@ namespace LINQToTTreeLib.Statements
             Integer.RenameRawValue(originalName, newName);
         }
 
-
+        /// <summary>
+        /// See if we can combine two integer combines. This works only if we have
+        /// identical statements!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool TryCombineStatement(IStatement statement)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var asint = statement as StatementIncrementInteger;
+            if (asint == null)
+                return false;
+
+            if (asint.Integer.RawValue != Integer.RawValue)
+                return false;
+
+            //
+            // We really don't have to do anything to combine. The
+            // two statements are exactly identical. So, we can just
+            // say "yes" and assume our caller will drop the combining.
+            //
+
+            return true;
         }
     }
 }

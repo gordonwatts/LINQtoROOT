@@ -1,5 +1,6 @@
 // <copyright file="StatementIncrementIntegerTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
@@ -33,6 +34,18 @@ namespace LINQToTTreeLib.Statements
         public IStatement TestRename([PexAssumeUnderTest] StatementIncrementInteger statement, string oldname, string newname)
         {
             return LINQToTTreeLib.Tests.Statements.Utils.TestRenameOfStatement(statement, oldname, newname);
+        }
+
+        [PexMethod]
+        public bool TestTryCombine([PexAssumeUnderTest] StatementIncrementInteger statement, IStatement toCombineWith)
+        {
+            var result = statement.TryCombineStatement(toCombineWith);
+            if (toCombineWith != null)
+            {
+                var identical = statement.CodeItUp().Zip(toCombineWith.CodeItUp(), (f, s) => f == s).All(v => v == true);
+                Assert.AreEqual(identical, result, "Combined but not the same");
+            }
+            return result;
         }
     }
 }
