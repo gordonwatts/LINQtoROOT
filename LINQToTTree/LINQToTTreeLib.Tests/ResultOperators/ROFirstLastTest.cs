@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)</summary>
-        [PexMethod, PexAllowedException(typeof(NotImplementedException))]
+        [PexMethod, PexAllowedException(typeof(NotImplementedException)), PexAllowedException(typeof(NullReferenceException))]
         public IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROFirstLast target,
             ResultOperatorBase resultOperator,

@@ -34,8 +34,8 @@ public void ProcessResultOperatorThrowsArgumentNullException439()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(NotImplementedException))]
-public void ProcessResultOperatorThrowsNotImplementedException241()
+[ExpectedException(typeof(NullReferenceException))]
+public void ProcessResultOperatorThrowsNullReferenceException298()
 {
     LastResultOperator lastResultOperator;
     IVariable iVariable;
@@ -47,8 +47,8 @@ public void ProcessResultOperatorThrowsNotImplementedException241()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(NotImplementedException))]
-public void ProcessResultOperatorThrowsNotImplementedException707()
+[ExpectedException(typeof(NullReferenceException))]
+public void ProcessResultOperatorThrowsNullReferenceException138()
 {
     FirstResultOperator firstResultOperator;
     IVariable iVariable;
