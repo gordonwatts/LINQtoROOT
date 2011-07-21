@@ -360,6 +360,21 @@
     <Compile Include="Statements\IStatementCombineTest.TestRename.g.cs">
       <DependentUpon>IStatementCombineTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementAssignTest.CodeItUpTest.g.cs">
+      <DependentUpon>t_StatementAssign.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.IsSameStatementTest.g.cs">
+      <DependentUpon>t_StatementAssign.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.RenameVariableTest.g.cs">
+      <DependentUpon>t_StatementAssign.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.StatementAssignConstructorTest.g.cs">
+      <DependentUpon>t_StatementAssign.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.TryCombineStatementTest.g.cs">
+      <DependentUpon>t_StatementAssign.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
@@ -519,6 +534,7 @@
     </Compile>
     <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
     <Compile Include="Statements\t_StatementRecordIndicies.cs" />
+    <Compile Include="Statements\t_StatementAssign.cs" />
     <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
       <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>
     </Compile>
@@ -570,9 +586,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Test References\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

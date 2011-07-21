@@ -77,10 +77,31 @@ namespace LINQToTTreeLib.Statements
             Expression.RenameRawValue(originalName, newName);
         }
 
-
+        /// <summary>
+        /// Try to combine two assign statements. Since this will be for totally
+        /// trivial cases, this should be "easy" - only when they are the same.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public bool TryCombineStatement(IStatement statement)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var otherAssign = statement as StatementAssign;
+            if (otherAssign == null)
+                return false;
+
+            if (ResultVariable.RawValue != otherAssign.ResultVariable.RawValue
+                || Expression.RawValue != otherAssign.Expression.RawValue)
+                return false;
+
+            //
+            // Combining is pretty trivial: these are identical. So we do nothing
+            // adn the caller should drop this from their statement list!
+            //
+
+            return true;
         }
     }
 }

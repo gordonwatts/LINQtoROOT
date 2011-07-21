@@ -21,19 +21,6 @@ namespace LINQToTTreeLib.Tests
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[PexRaisedException(typeof(ArgumentException))]
-public void TryCombineStatementTestThrowsArgumentException917()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    b = this.TryCombineStatementTest(statementRecordIndicies, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
 public void TryCombineStatementTest785()
 {
     VarInteger varInteger;
@@ -68,8 +55,21 @@ public void TryCombineStatementTest854()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[PexRaisedException(typeof(ArgumentException))]
-public void TryCombineStatementTestThrowsArgumentException456()
+[ExpectedException(typeof(ArgumentException))]
+public void TryCombineStatementTestThrowsArgumentException18()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies =
+      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
+    b = this.TryCombineStatementTest(statementRecordIndicies, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TryCombineStatementTestThrowsArgumentException338()
 {
     VarInteger varInteger;
     StatementRecordIndicies statementRecordIndicies;
@@ -81,19 +81,19 @@ public void TryCombineStatementTestThrowsArgumentException456()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void TryCombineStatementTest727()
+public void TryCombineStatementTest72701()
 {
     VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
     VarInteger varInteger1;
+    StatementRecordIndicies statementRecordIndicies;
     StatementRecordIndicies statementRecordIndicies1;
     bool b;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
     statementRecordIndicies =
       StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies1 = StatementRecordIndiciesFactory.Create
-                                   ((IValue)varInteger1, (IValue)varInteger1);
+    statementRecordIndicies1 =
+      StatementRecordIndiciesFactory.Create((IValue)varInteger1, (IValue)varInteger);
     b = this.TryCombineStatementTest
             (statementRecordIndicies, (IStatement)statementRecordIndicies1);
     Assert.AreEqual<bool>(false, b);
