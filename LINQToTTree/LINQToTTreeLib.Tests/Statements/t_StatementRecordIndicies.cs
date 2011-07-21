@@ -5,6 +5,7 @@ using LINQToTTreeLib.Statements;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -18,6 +19,12 @@ namespace LINQToTTreeLib.Tests
     [PexClass(typeof(StatementRecordIndicies))]
     public partial class StatementRecordIndiciesTest
     {
+        [TestInitialize]
+        public void initTest()
+        {
+            TypeUtils._variableNameCounter = 0;
+        }
+
         /// <summary>
         ///A test for StatementRecordIndicies Constructor
         ///</summary>
@@ -37,7 +44,6 @@ namespace LINQToTTreeLib.Tests
             var actual = target.CodeItUp().ToArray();
             Assert.AreEqual(1, actual.Length, "only xpected one line");
             Assert.IsTrue(actual[0].Contains("push_back"), "push_back missing");
-
             return actual[0];
         }
 

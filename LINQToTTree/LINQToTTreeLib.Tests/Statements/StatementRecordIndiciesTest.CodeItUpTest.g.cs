@@ -14,6 +14,7 @@ using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -21,31 +22,31 @@ namespace LINQToTTreeLib.Tests
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void CodeItUpTest649()
+public void CodeItUpTest966()
 {
-    VarInteger varInteger;
+    SVarInteger sVarInteger;
     StatementRecordIndicies statementRecordIndicies;
     string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
+    sVarInteger = new SVarInteger();
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)sVarInteger, (IValue)sVarInteger);
     s = this.CodeItUpTest(statementRecordIndicies);
-    Assert.AreEqual<string>("anint_2.push_back(anint_2);", s);
+    Assert.AreEqual<string>("anint_1.push_back(anint_1);", s);
     Assert.IsNotNull((object)statementRecordIndicies);
     Assert.IsNull(statementRecordIndicies.HolderArray);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void CodeItUpTest297()
+public void CodeItUpTest96601()
 {
     VarInteger varInteger;
     StatementRecordIndicies statementRecordIndicies;
     string s;
-    varInteger = VarIntegerFactory.Create(false, -17);
+    varInteger = VarIntegerFactory.Create(false, -2);
     statementRecordIndicies =
       StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
     s = this.CodeItUpTest(statementRecordIndicies);
-    Assert.AreEqual<string>("anint_10.push_back(anint_10);", s);
+    Assert.AreEqual<string>("anint_1.push_back(anint_1);", s);
     Assert.IsNotNull((object)statementRecordIndicies);
     Assert.IsNull(statementRecordIndicies.HolderArray);
 }

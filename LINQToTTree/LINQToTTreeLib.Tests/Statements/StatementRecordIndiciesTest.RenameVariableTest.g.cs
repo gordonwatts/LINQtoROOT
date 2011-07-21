@@ -14,80 +14,11 @@ using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException168()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    StatementRecordIndicies statementRecordIndicies1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    statementRecordIndicies1 =
-      this.RenameVariableTest(statementRecordIndicies, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException297()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    StatementRecordIndicies statementRecordIndicies1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    statementRecordIndicies1 =
-      this.RenameVariableTest(statementRecordIndicies, "", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException287()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    StatementRecordIndicies statementRecordIndicies1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    statementRecordIndicies1 =
-      this.RenameVariableTest(statementRecordIndicies, "a", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException765()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    StatementRecordIndicies statementRecordIndicies1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    statementRecordIndicies1 =
-      this.RenameVariableTest(statementRecordIndicies, "\u0100", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException580()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    StatementRecordIndicies statementRecordIndicies1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    statementRecordIndicies1 =
-      this.RenameVariableTest(statementRecordIndicies, "\0nnn", (string)null);
-}
     }
 }

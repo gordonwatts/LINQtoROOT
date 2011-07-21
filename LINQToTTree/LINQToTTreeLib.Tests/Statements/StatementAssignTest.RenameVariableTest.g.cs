@@ -14,118 +14,11 @@ using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException873()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 =
-      this.RenameVariableTest(statementAssign, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException85()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 = this.RenameVariableTest(statementAssign, "", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException582()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 = this.RenameVariableTest(statementAssign, "an", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException1()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 =
-      this.RenameVariableTest(statementAssign, "\u0100", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException173()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 =
-      this.RenameVariableTest(statementAssign, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException126()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 = this.RenameVariableTest(statementAssign, "", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException336()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 = this.RenameVariableTest(statementAssign, "an", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException342()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    StatementAssign statementAssign1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    statementAssign1 =
-      this.RenameVariableTest(statementAssign, "\u0100", (string)null);
-}
     }
 }

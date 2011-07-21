@@ -14,53 +14,11 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void StatementRecordIndiciesConstructorTest777()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies = this.StatementRecordIndiciesConstructorTest
-                                  ((IValue)varInteger, (IValue)varInteger);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementRecordIndiciesConstructorTestThrowsArgumentNullException63()
-{
-    StatementRecordIndicies statementRecordIndicies;
-    statementRecordIndicies =
-      this.StatementRecordIndiciesConstructorTest((IValue)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementRecordIndiciesConstructorTestThrowsArgumentNullException858()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      this.StatementRecordIndiciesConstructorTest((IValue)varInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementRecordIndiciesConstructorTestThrowsArgumentNullException573()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementRecordIndicies =
-      this.StatementRecordIndiciesConstructorTest((IValue)varInteger, (IValue)null);
-}
     }
 }

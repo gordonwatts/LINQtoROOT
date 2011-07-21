@@ -5,6 +5,7 @@ using LINQToTTreeLib.Statements;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -18,6 +19,12 @@ namespace LINQToTTreeLib.Tests
     [TestClass]
     public partial class StatementAssignTest
     {
+        [TestInitialize]
+        public void initTest()
+        {
+            TypeUtils._variableNameCounter = 0;
+        }
+        
         /// <summary>
         ///A test for StatementAssign Constructor
         ///</summary>
@@ -47,10 +54,7 @@ namespace LINQToTTreeLib.Tests
                 Assert.IsTrue(result[0].Contains("="), "missing equal sign");
                 return result[0];
             }
-            else
-            {
-                return "";
-            }
+            return "";
         }
 
         /// <summary>

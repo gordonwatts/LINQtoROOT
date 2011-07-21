@@ -14,91 +14,12 @@ using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.Variables.Moles;
+using LINQToTTreeLib.Statements.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void IsSameStatementTest785()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    b = this.IsSameStatementTest
-            (statementRecordIndicies, (IStatement)statementRecordIndicies);
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void IsSameStatementTest854()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    StatementIncrementInteger statementIncrementInteger;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
-    b = this.IsSameStatementTest
-            (statementRecordIndicies, (IStatement)statementIncrementInteger);
-    Assert.AreEqual<bool>(false, b);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void IsSameStatementTestThrowsArgumentNullException757()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    b = this.IsSameStatementTest(statementRecordIndicies, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void IsSameStatementTestThrowsArgumentNullException525()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    b = this.IsSameStatementTest(statementRecordIndicies, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void IsSameStatementTest72701()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    VarInteger varInteger1;
-    StatementRecordIndicies statementRecordIndicies1;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies1 =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger1, (IValue)varInteger);
-    b = this.IsSameStatementTest
-            (statementRecordIndicies, (IStatement)statementRecordIndicies1);
-    Assert.AreEqual<bool>(false, b);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-}
     }
 }

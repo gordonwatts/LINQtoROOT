@@ -14,6 +14,7 @@ using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
+using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -21,161 +22,14 @@ namespace LINQToTTreeLib.Tests
     {
 [TestMethod]
 [PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(AssertFailedException))]
-public void CodeItUpTestThrowsAssertFailedException15()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementAssign);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest202()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_14=anint_15;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest707()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_22=anint_23;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(IndexOutOfRangeException))]
-public void CodeItUpTestThrowsIndexOutOfRangeException202()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementAssign);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest465()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_13=anint_14;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest676()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_18=anint_19;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(IndexOutOfRangeException))]
-public void CodeItUpTestThrowsIndexOutOfRangeException495()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementAssign);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest46501()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_13=anint_14;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest67601()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_18=anint_19;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
 public void CodeItUpTest482()
 {
-    VarInteger varInteger;
+    SVarInteger sVarInteger;
     StatementAssign statementAssign;
     string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
+    sVarInteger = new SVarInteger();
     statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
+      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)sVarInteger);
     s = this.CodeItUpTest(statementAssign);
     Assert.AreEqual<string>("", s);
     Assert.IsNotNull((object)statementAssign);
@@ -186,90 +40,54 @@ public void CodeItUpTest482()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest680()
+public void CodeItUpTest861()
 {
-    VarInteger varInteger;
-    VarInteger varInteger1;
+    SVarInteger sVarInteger;
+    SVarInteger sVarInteger1;
     StatementAssign statementAssign;
     string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
+    sVarInteger = new SVarInteger();
+    sVarInteger1 = new SVarInteger();
     statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
+      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)sVarInteger1);
     s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_10=anint_11;", s);
+    Assert.AreEqual<string>("anint_1=anint_2;", s);
     Assert.IsNotNull((object)statementAssign);
     Assert.IsNotNull(statementAssign.ResultVariable);
     Assert.IsNotNull(statementAssign.Expression);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest967()
+public void CodeItUpTest86101()
 {
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_15=anint_16;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest48201()
-{
+    SVarInteger sVarInteger;
     VarInteger varInteger;
     StatementAssign statementAssign;
     string s;
+    sVarInteger = new SVarInteger();
     varInteger = VarIntegerFactory.Create(false, 0);
     statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
+      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)varInteger);
     s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAssign.Expression, statementAssign.ResultVariable));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest68001()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAssign statementAssign;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    varInteger1 = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_10=anint_11;", s);
+    Assert.AreEqual<string>("anint_1=anint_2;", s);
     Assert.IsNotNull((object)statementAssign);
     Assert.IsNotNull(statementAssign.ResultVariable);
     Assert.IsNotNull(statementAssign.Expression);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest96701()
+public void CodeItUpTest86102()
 {
+    SVarInteger sVarInteger;
     VarInteger varInteger;
-    VarInteger varInteger1;
     StatementAssign statementAssign;
     string s;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 1);
+    sVarInteger = new SVarInteger();
+    varInteger = VarIntegerFactory.Create(false, 1);
     statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
+      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)varInteger);
     s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_15=anint_16;", s);
+    Assert.AreEqual<string>("anint_1=anint_2;", s);
     Assert.IsNotNull((object)statementAssign);
     Assert.IsNotNull(statementAssign.ResultVariable);
     Assert.IsNotNull(statementAssign.Expression);

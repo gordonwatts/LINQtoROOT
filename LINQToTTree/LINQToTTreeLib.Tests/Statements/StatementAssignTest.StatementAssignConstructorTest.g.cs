@@ -14,78 +14,11 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException247()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void StatementAssignConstructorTest472()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)varInteger);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAssign.Expression, statementAssign.ResultVariable));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException76()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException699()
-{
-    StatementAssign statementAssign;
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException156()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException712()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)null);
-}
     }
 }

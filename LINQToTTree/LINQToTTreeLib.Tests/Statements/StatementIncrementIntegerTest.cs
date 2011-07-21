@@ -6,6 +6,7 @@ using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -16,6 +17,12 @@ namespace LINQToTTreeLib.Statements
     [TestClass]
     public partial class StatementIncrementIntegerTest
     {
+        [TestInitialize]
+        public void initTest()
+        {
+            TypeUtils._variableNameCounter = 0;
+        }
+
         [PexMethod]
         public StatementIncrementInteger Constructor(VarInteger i)
         {
