@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -161,5 +162,67 @@ namespace LINQToTTreeLib.Tests
             return source.Plot(plotID, plotTitle, nbins, lowBin, highBin, v => Convert.ToDouble(v));
         }
 
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        public static FileInfo CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
+        {
+            string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
+            FileInfo result = new FileInfo(filename);
+            if (result.Exists)
+                return result;
+
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
+            var tree = TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize);
+            f.Write();
+            f.Close();
+            result.Refresh();
+            return result;
+        }
+
+        /// <summary>
+        /// Dirt simply test ntuple. Actually matches one that exists on disk.
+        /// </summary>
+        public class TestNtupeArr
+        {
+#pragma warning disable 0169
+            public int[] myvectorofint;
+#pragma warning restore 0169
+        }
+
+        /// <summary>
+        /// Given the root file and the root-tuple name, generate a proxy file 
+        /// </summary>
+        /// <param name="rootFile"></param>
+        /// <returns></returns>
+        public static FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName)
+        {
+            ///
+            /// First, load up the TTree
+            /// 
+
+            var tfile = new ROOTNET.NTFile(rootFile.FullName, "READ");
+            var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
+            Assert.IsNotNull(tree, "Tree couldn't be found");
+
+            ///
+            /// Create the proxy sub-dir if not there already, and put the dummy macro in there
+            /// 
+
+            using (var w = File.CreateText("junk.C"))
+            {
+                w.Write("int junk() {return 10.0;}");
+                w.Close();
+            }
+
+            ///
+            /// Create the macro proxy now
+            /// 
+
+            tree.MakeProxy("scanner", "junk.C", null, "nohist");
+            return new FileInfo("scanner.h");
+        }
     }
 }

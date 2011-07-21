@@ -322,7 +322,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with
@@ -361,7 +361,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with
@@ -390,7 +390,7 @@ namespace LINQToTTreeLib
             /// Make sure the "new" gets translated to C++ correctly and there are no errors!
 
             var rootFile = CreateFileOfInt(5);
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Ok, now we can actually see if we can make it "go".
@@ -428,7 +428,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Ok, now we can actually see if we can make it "go".
@@ -478,7 +478,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Ok, now we can actually see if we can make it "go".
@@ -526,7 +526,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with
@@ -543,39 +543,6 @@ namespace LINQToTTreeLib
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new FileInfo[] { }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
-        }
-
-        /// <summary>
-        /// Given the root file and the root-tuple name, generate a proxy file 
-        /// </summary>
-        /// <param name="rootFile"></param>
-        /// <returns></returns>
-        private FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName)
-        {
-            ///
-            /// First, load up the TTree
-            /// 
-
-            var tfile = new ROOTNET.NTFile(rootFile.FullName, "READ");
-            var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
-            Assert.IsNotNull(tree, "Tree couldn't be found");
-
-            ///
-            /// Create the proxy sub-dir if not there already, and put the dummy macro in there
-            /// 
-
-            using (var w = File.CreateText("junk.C"))
-            {
-                w.Write("int junk() {return 10.0;}");
-                w.Close();
-            }
-
-            ///
-            /// Create the macro proxy now
-            /// 
-
-            tree.MakeProxy("scanner", "junk.C", null, "nohist");
-            return new FileInfo("scanner.h");
         }
 
         [TestMethod]
@@ -595,7 +562,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             ntuple._gProxyFile = proxyFile.FullName;
 
             ///
@@ -679,25 +646,6 @@ namespace LINQToTTreeLib
 
             return result;
         }
-        /// <summary>
-        /// Create an output int file... unique so we don't have to regenerate...
-        /// </summary>
-        /// <param name="numberOfIter"></param>
-        /// <returns></returns>
-        private FileInfo CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
-        {
-            string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
-            FileInfo result = new FileInfo(filename);
-            if (result.Exists)
-                return result;
-
-            var f = new ROOTNET.NTFile(filename, "RECREATE");
-            var tree = TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize);
-            f.Write();
-            f.Close();
-            result.Refresh();
-            return result;
-        }
 
         /// <summary>
         /// Create an output int file... unique so we don't have to regenerate...
@@ -735,7 +683,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with
@@ -804,7 +752,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             ntuple._gProxyFile = proxyFile.FullName;
             ntuple._gObjectFiles = new string[] { f.FullName };
 
@@ -843,13 +791,13 @@ namespace LINQToTTreeLib
         public void TestMaxCode()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -879,13 +827,13 @@ namespace LINQToTTreeLib
         public void TestMinCode()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -915,13 +863,13 @@ namespace LINQToTTreeLib
         public void TestAllCode()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -951,13 +899,13 @@ namespace LINQToTTreeLib
         public void TestAnyCode()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -988,13 +936,13 @@ namespace LINQToTTreeLib
         public void TestNestedCount()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -1024,13 +972,13 @@ namespace LINQToTTreeLib
         public void TestUniqueCombinations()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// We are looking at an array that has 10 entries in it. So if we create a
@@ -1065,13 +1013,13 @@ namespace LINQToTTreeLib
             //
 
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter, 9);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, 9);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// We are looking at an array that has 10 entries in it. So if we create a
@@ -1108,13 +1056,13 @@ namespace LINQToTTreeLib
 
             const int numberOfIter = 25;
             const int vecSize = 10;
-            var rootFile = CreateFileOfVectorInt(numberOfIter, vecSize);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vecSize);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// We are looking at an array that has 10 entries in it. So if we create a
@@ -1151,13 +1099,13 @@ namespace LINQToTTreeLib
 
             const int numberOfIter = 25;
             const int vecSize = 10;
-            var rootFile = CreateFileOfVectorInt(numberOfIter, vecSize);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vecSize);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// We are looking at an array that has 10 entries in it. So if we create a
@@ -1194,7 +1142,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with

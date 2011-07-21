@@ -485,6 +485,5 @@ namespace LINQToTTreeLib
 
             /// Looking for an infinite loop!
         }
-
     }
 }
