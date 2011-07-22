@@ -115,5 +115,43 @@ namespace LINQToTTreeLib
             return result;
             // TODO: add assertions to method CombinedGeneratedCodeTest.VariablesToTransferGet(CombinedGeneratedCode)
         }
+
+        /// <summary>
+        /// Explicit test to see if the combining works correctly.
+        /// </summary>
+        [TestMethod]
+        public void TestSimpleCombine()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var s1 = new Statements.StatementSimpleStatement("dude1");
+            var s2 = new Statements.StatementSimpleStatement("dude2");
+
+            q1.Add(s1);
+            q2.Add(s2);
+
+            var v1 = new Variables.VarInteger();
+            var v2 = new Variables.VarInteger();
+            q1.SetResult(v1);
+            q2.SetResult(v2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            Assert.AreEqual(1, target.QueryCode().Count(), "didn't combine blocks correctly");
+            var c = target.QueryCode().First();
+            Assert.AreEqual(2, c.Statements.Count(), "bad # of statements in combined query");
+            var st1 = c.Statements.First();
+            var st2 = c.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(st1, typeof(Statements.StatementSimpleStatement), "st1");
+            Assert.IsInstanceOfType(st2, typeof(Statements.StatementSimpleStatement), "st2");
+
+            var sst1 = st1 as Statements.StatementSimpleStatement;
+            var sst2 = st2 as Statements.StatementSimpleStatement;
+            Assert.AreEqual("dude1", sst1.Line, "sst1");
+            Assert.AreEqual("dude2", sst2.Line, "sst2");
+        }
     }
 }

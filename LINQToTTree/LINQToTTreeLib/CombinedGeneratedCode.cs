@@ -96,14 +96,28 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Add in the code blocks. Must not be null.
+        /// Add in the code blocks. Must not be null. We will do our best to combine query
+        /// blocks into one big one! So watch it! :-)
         /// </summary>
         /// <param name="codeBlocks"></param>
         internal void AddQueryBlocks(IStatementCompound[] codeBlocks)
         {
             if (codeBlocks == null || codeBlocks.Any(i => i == null) || codeBlocks.Length == 0)
                 throw new ArgumentException("Queries must have code blocks and they can't be null and there must be at least one");
-            _queryBlocks.AddRange(codeBlocks);
+
+            foreach (var statement in codeBlocks)
+            {
+                bool combined = false;
+                foreach (var qb in _queryBlocks)
+                {
+                    combined = qb.TryCombineStatement(statement);
+                    if (combined)
+                        break;
+                }
+
+                if (!combined)
+                    _queryBlocks.Add(statement);
+            }
         }
 
         /// <summary>
