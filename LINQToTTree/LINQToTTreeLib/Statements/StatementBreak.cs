@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.Statements
         }
 
 
-        public bool TryCombineStatement(IStatement statement)
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             throw new NotImplementedException();
         }

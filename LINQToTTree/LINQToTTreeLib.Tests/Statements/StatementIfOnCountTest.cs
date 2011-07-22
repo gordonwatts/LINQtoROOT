@@ -95,7 +95,7 @@ namespace LINQToTTreeLib.Statements
             var val = new Variables.ValSimple("true", typeof(bool));
             var statement = new StatementIfOnCount(new Variables.ValSimple("one", typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
 
-            Assert.IsFalse(statement.TryCombineStatement(s), "unable to do any combines for Filter");
+            Assert.IsFalse(statement.TryCombineStatement(s, null), "unable to do any combines for Filter");
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]

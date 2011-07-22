@@ -109,7 +109,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="statement"></param>
             /// <returns></returns>
-            public override bool TryCombineStatement(IStatement statement)
+            public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
             {
                 if (statement == null)
                     throw new ArgumentNullException("statement");
@@ -130,7 +130,7 @@ namespace LINQToTTreeLib.Expressions
                 // Combine everything
 
                 Combine(other.DeclaredVariables);
-                Combine(other.Statements);
+                Combine(other.Statements, null);
 
                 return true;
             }

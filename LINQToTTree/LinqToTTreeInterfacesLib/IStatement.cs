@@ -40,6 +40,6 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        bool TryCombineStatement(IStatement statement);
+        bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize);
     }
 }

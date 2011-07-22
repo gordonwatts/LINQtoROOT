@@ -78,7 +78,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public override bool TryCombineStatement(IStatement statement)
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
                 throw new ArgumentNullException();
@@ -95,7 +95,7 @@ namespace LINQToTTreeLib.Statements
                 && otherLoop._indexIsGood.RawValue == _indexIsGood.RawValue
                 && otherLoop._indiciesToCheck.RawValue == _indiciesToCheck.RawValue)
             {
-                Combine(otherLoop);
+                Combine(otherLoop, opt);
                 return true;
             }
             else

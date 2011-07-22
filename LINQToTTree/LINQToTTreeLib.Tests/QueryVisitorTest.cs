@@ -624,5 +624,11 @@ namespace LINQToTTreeLib
             Assert.IsNotNull(statement, "statement isn't a compound");
             Assert.AreEqual(2, statement.Statements.Count(), "# of inner statements");
         }
+
+        [TestMethod]
+        public void TestMinMaxStatement()
+        {
+            Assert.Inconclusive("Not writte");
+        }
     }
 }

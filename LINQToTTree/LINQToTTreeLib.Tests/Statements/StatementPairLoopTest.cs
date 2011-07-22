@@ -130,7 +130,7 @@ namespace LINQToTTreeLib.Tests.Statements
 
             // Combine
 
-            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody), "Combine should work!");
+            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody, null), "Combine should work!");
             gc1.DumpCodeToConsole();
 
             // Check that the combine actually worked well!!

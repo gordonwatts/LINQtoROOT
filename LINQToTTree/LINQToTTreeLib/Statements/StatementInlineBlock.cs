@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public override bool TryCombineStatement(IStatement statement)
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
                 throw new ArgumentNullException("statement should not be null");
@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Statements
 
             if (statement.GetType() != typeof(StatementInlineBlock))
             {
-                Combine(new[] { statement });
+                Combine(new[] { statement }, opt);
                 return true;
             }
 
@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.Statements
             Combine(otherInline.DeclaredVariables);
             foreach (var s in otherInline.Statements)
             {
-                TryCombineStatement(s);
+                TryCombineStatement(s, opt);
             }
 
             return true;

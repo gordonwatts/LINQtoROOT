@@ -75,7 +75,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public override bool TryCombineStatement(IStatement statement)
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
                 throw new ArgumentNullException("statement");
@@ -94,7 +94,7 @@ namespace LINQToTTreeLib.Statements
 
             // Now, combine them!
 
-            Combine(otherPairLoop);
+            Combine(otherPairLoop, opt);
 
             return true;
         }

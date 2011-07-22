@@ -60,7 +60,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public override bool TryCombineStatement(IStatement statement)
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
                 throw new ArgumentException("statement");
@@ -77,7 +77,7 @@ namespace LINQToTTreeLib.Statements
             // Since the if statements are the same, we can combine the interiors!
             //
 
-            Combine(other);
+            Combine(other, opt);
             return true;
         }
 

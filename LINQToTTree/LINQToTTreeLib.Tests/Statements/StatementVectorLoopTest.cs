@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.Tests.Statements
 
             // Combine them!
 
-            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody), "Unable to do combine!");
+            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody, null), "Unable to do combine!");
 
             gc1.DumpCodeToConsole();
 
@@ -110,7 +110,7 @@ namespace LINQToTTreeLib.Tests.Statements
             /// We should never be able to combine any filter statements currently!
 
             var val = new Variables.ValSimple("true", typeof(bool));
-            var result = target.TryCombineStatement(s);
+            var result = target.TryCombineStatement(s, null);
 
             if (s.GetType() != typeof(ArrayInfoVector.StatementVectorLoop))
             {

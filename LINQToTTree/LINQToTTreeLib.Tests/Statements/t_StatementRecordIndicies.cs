@@ -84,7 +84,7 @@ namespace LINQToTTreeLib.Tests
         [PexMethod, PexAllowedException(typeof(ArgumentException))]
         public bool TryCombineStatementTest([PexAssumeUnderTest] StatementRecordIndicies target, IStatement statement)
         {
-            var result = target.TryCombineStatement(statement);
+            var result = target.TryCombineStatement(statement, null);
 
             if (statement == null)
                 Assert.Fail("Null statement should have caused an exception");

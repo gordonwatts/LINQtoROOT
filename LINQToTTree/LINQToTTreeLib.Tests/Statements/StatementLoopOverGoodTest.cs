@@ -54,7 +54,7 @@ namespace LINQToTTreeLib.Tests.Statements
         {
             /// We should never be able to combine any filter statements currently!
 
-            return loop.TryCombineStatement(s);
+            return loop.TryCombineStatement(s, null);
         }
 
     }

@@ -117,7 +117,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public abstract bool TryCombineStatement(IStatement statement);
+        public abstract bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt);
 
         /// <summary>
         /// Given a list of statements, attempt to combine them with the ones we already have
@@ -126,14 +126,14 @@ namespace LINQToTTreeLib.Statements
         /// succeeds (no need for a bool return) because we just add things onto the end.
         /// </summary>
         /// <param name="statements">List of statements that we need to combine</param>
-        protected void Combine(IEnumerable<IStatement> statements)
+        protected void Combine(IEnumerable<IStatement> statements, ICodeOptimizationService opt)
         {
             foreach (var s in statements)
             {
                 bool didCombine = false;
                 foreach (var sinner in Statements)
                 {
-                    if (sinner.TryCombineStatement(s))
+                    if (sinner.TryCombineStatement(s, opt))
                     {
                         didCombine = true;
                         break;
@@ -148,10 +148,10 @@ namespace LINQToTTreeLib.Statements
         /// Absorbe all the info from this combined block into this one.
         /// </summary>
         /// <param name="block"></param>
-        protected void Combine(StatementInlineBlockBase block)
+        protected void Combine(StatementInlineBlockBase block, ICodeOptimizationService opt)
         {
             Combine(block.DeclaredVariables);
-            Combine(block.Statements);
+            Combine(block.Statements, opt);
         }
 
         /// <summary>

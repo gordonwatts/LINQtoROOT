@@ -46,7 +46,7 @@ namespace LINQToTTreeLib.Statements
         [PexMethod]
         public bool TestTryCombine([PexAssumeUnderTest] StatementIncrementInteger statement, IStatement toCombineWith)
         {
-            var result = statement.TryCombineStatement(toCombineWith);
+            var result = statement.TryCombineStatement(toCombineWith, null);
             if (toCombineWith != null)
             {
                 var identical = statement.CodeItUp().Zip(toCombineWith.CodeItUp(), (f, s) => f == s).All(v => v == true);

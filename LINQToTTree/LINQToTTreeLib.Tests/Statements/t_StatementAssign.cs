@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.Tests
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public bool TryCombineStatementTest([PexAssumeUnderTest] StatementAssign target, IStatement statement)
         {
-            var result = target.TryCombineStatement(statement);
+            var result = target.TryCombineStatement(statement, null);
 
             if (statement == null)
                 Assert.Fail("Statement was null");

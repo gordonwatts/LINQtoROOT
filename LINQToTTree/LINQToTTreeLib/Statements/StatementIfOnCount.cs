@@ -97,7 +97,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public override bool TryCombineStatement(IStatement statement)
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             return false;
         }

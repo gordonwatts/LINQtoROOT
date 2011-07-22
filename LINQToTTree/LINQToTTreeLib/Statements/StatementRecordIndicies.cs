@@ -87,7 +87,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public bool TryCombineStatement(IStatement statement)
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
                 throw new ArgumentException("statement");

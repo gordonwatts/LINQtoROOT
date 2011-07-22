@@ -162,8 +162,8 @@ namespace LINQToTTreeLib.Statements
             IStatement b2 = new StatementSimpleStatement("dude");
 
             var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(b1), "should always be able to add extra statements");
-            Assert.IsTrue(b.TryCombineStatement(b2), "should always be able to add another extra statement");
+            Assert.IsTrue(b.TryCombineStatement(b1, null), "should always be able to add extra statements");
+            Assert.IsTrue(b.TryCombineStatement(b2, null), "should always be able to add another extra statement");
 
             Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
         }
@@ -180,7 +180,7 @@ namespace LINQToTTreeLib.Statements
         public void TestAddSingleStatement(IStatement s)
         {
             var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(s), "Failed to add statement");
+            Assert.IsTrue(b.TryCombineStatement(s, null), "Failed to add statement");
 
             ///
             /// Now check...

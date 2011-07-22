@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using LINQToTTreeLib.Variables;
+using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -98,7 +99,7 @@ namespace LINQToTTreeLib.Statements
 
         }
 
-        public override bool TryCombineStatement(LinqToTTreeInterfacesLib.IStatement statement)
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             throw new NotImplementedException();
         }

@@ -96,7 +96,7 @@ namespace LINQToTTreeLib.Statements
             var val = new Variables.ValSimple("true", typeof(bool));
             var statement = new StatementFilter(val);
 
-            Assert.IsFalse(statement.TryCombineStatement(s), "unable to do any combines for Filter");
+            Assert.IsFalse(statement.TryCombineStatement(s, null), "unable to do any combines for Filter");
         }
 
         [TestMethod]
@@ -110,7 +110,7 @@ namespace LINQToTTreeLib.Statements
             var s2 = new StatementFilter(val2);
             s2.Add(new StatementSimpleStatement("var2"));
 
-            Assert.IsTrue(s1.TryCombineStatement(s2), "statement shoudl have combined");
+            Assert.IsTrue(s1.TryCombineStatement(s2, null), "statement shoudl have combined");
             Assert.AreEqual(2, s1.Statements.Count(), "# of combined statements");
 
         }
@@ -136,7 +136,7 @@ namespace LINQToTTreeLib.Statements
 
             s2.Add(s21);
 
-            Assert.IsTrue(s1.TryCombineStatement(s2), "statement shoudl have combined");
+            Assert.IsTrue(s1.TryCombineStatement(s2, null), "statement shoudl have combined");
             Assert.AreEqual(1, s1.Statements.Count(), "# of combined statements");
             var deep = s1.Statements.First() as StatementInlineBlockBase;
             Assert.IsNotNull(deep, "couldn't find interior statement");

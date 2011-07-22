@@ -110,7 +110,7 @@ namespace LINQToTTreeLib
                 bool combined = false;
                 foreach (var qb in _queryBlocks)
                 {
-                    combined = qb.TryCombineStatement(statement);
+                    combined = qb.TryCombineStatement(statement, null);
                     if (combined)
                         break;
                 }
