@@ -82,7 +82,7 @@ namespace LINQToTTreeLib.ResultOperators
             var funcResolved = ExpressionToCPP.GetExpression(a.Func.Body, _codeEnv, context, container);
             p1.Pop();
 
-            _codeEnv.Add(new StatementAssign(accumulator, funcResolved));
+            _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved));
 
             return accumulator;
 

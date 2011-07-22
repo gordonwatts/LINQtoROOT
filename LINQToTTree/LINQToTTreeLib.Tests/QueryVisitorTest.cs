@@ -303,7 +303,7 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "aggregate statement type");
         }
 
         [TestMethod]
@@ -338,8 +338,8 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
-            var ass = outterfloop.Statements.First() as Statements.StatementAssign;
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "aggregate statement type");
+            var ass = outterfloop.Statements.First() as Statements.StatementAggregate;
             Assert.IsFalse(ass.Expression.RawValue.Contains("(int)j"), "Expression seems to reference the linq variable name j: '" + ass.Expression.RawValue + "'");
         }
 
@@ -377,7 +377,7 @@ namespace LINQToTTreeLib
             var ifcountStatement = outterfloop.Statements.Skip(1).First() as Statements.StatementIfOnCount;
 
             Assert.AreEqual(1, ifcountStatement.Statements.Count(), "expected the fill statement");
-            Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAssign), "Assign statement not there");
+            Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAggregate), "Assign statement not there");
         }
 
         public class subNtupleObjects
@@ -438,9 +438,9 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "assignment statement missing");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "assignment statement missing");
 
-            var ass = outterfloop.Statements.First() as Statements.StatementAssign;
+            var ass = outterfloop.Statements.First() as Statements.StatementAggregate;
             Assert.IsFalse(ass.Expression.RawValue.Contains("jets"), "jets should be missing from the expression - " + ass.Expression.RawValue);
         }
 
