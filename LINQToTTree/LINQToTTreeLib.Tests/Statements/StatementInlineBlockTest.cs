@@ -271,7 +271,7 @@ namespace LINQToTTreeLib.Statements
                 var other = statement as CombineTestStatement;
                 if (other == null)
                     return false;
-                return optimize.TryRenameVarialbeOneLevelUp(other.vdecl2.RawValue, vdecl2.RawValue);
+                return optimize.TryRenameVarialbeOneLevelUp(other.vdecl2.RawValue, vdecl2);
             }
         }
 
@@ -329,15 +329,54 @@ namespace LINQToTTreeLib.Statements
         [TestMethod]
         public void TestCombineWithRenameVarsDifferent()
         {
-            // Test when two variables are initalized with different names
-            Assert.Inconclusive();
+            // If the varialbes are initialized differently, then we can't combine them!
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            vdecl1.InitialValue = new ValSimple("0", typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+            vdecl2.InitialValue = new ValSimple("1", typeof(int));
+
+            inline1.Add(vdecl1);
+            inline2.Add(vdecl2);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+            inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(3, inline1.Statements.Count(), "bad # of combined statements");
         }
 
         [TestMethod]
         public void TestCombineWithRenameVarsNotDecl()
         {
-            // Test when one of the variables isn't declared
-            Assert.Inconclusive();
+            // If one of the variables isn't declared, then this is a "result" and it shouldn't
+            // be combined (or similar - whatever, it is outside the block). So we can't
+            // do the combine for now!
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+
+            inline1.Add(vdecl1);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+            inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(3, inline1.Statements.Count(), "bad # of combined statements");
         }
     }
 }

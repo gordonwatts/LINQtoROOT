@@ -111,7 +111,7 @@ namespace LINQToTTreeLib.Statements
                 // guy owns. Since this variable is declared outside here, we have to call up in order
                 // to have it run. Note that in this call it will call down into here to do the rename!
 
-                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable.RawValue);
+                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
             }
 
             //

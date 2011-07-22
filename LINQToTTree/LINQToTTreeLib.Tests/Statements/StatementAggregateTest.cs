@@ -122,10 +122,10 @@ namespace LINQToTTreeLib.Tests
             public string OldName {get; set;}
             public string NewName {get; set;}
 
-            public bool TryRenameVarialbeOneLevelUp(string oldName, string newName)
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newName)
             {
                 OldName = oldName;
-                NewName = newName;
+                NewName = newName.RawValue;
                 return ReturnValue;
             }
         }

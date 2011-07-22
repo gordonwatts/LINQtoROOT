@@ -137,14 +137,20 @@ namespace LINQToTTreeLib.Statements
             /// <param name="oldName"></param>
             /// <param name="newName"></param>
             /// <returns></returns>
-            public bool TryRenameVarialbeOneLevelUp(string oldName, string newName)
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newName)
             {
                 var vr = _holderBlock.DeclaredVariables.Where(v => v.RawValue == oldName).FirstOrDefault();
                 if (vr == null)
                     return false;
 
+                // Check that its initialization is the same!
+                bool initValueSame = (vr.InitialValue == null && newName.InitialValue == null)
+                    || (vr.InitialValue != null && (vr.InitialValue.RawValue == newName.InitialValue.RawValue));
+                if (!initValueSame)
+                    return false;
+
                 // Rename the variable!
-                _holderBlock.RenameVariable(oldName, newName);
+                _holderBlock.RenameVariable(oldName, newName.RawValue);
 
                 return true;
             }
