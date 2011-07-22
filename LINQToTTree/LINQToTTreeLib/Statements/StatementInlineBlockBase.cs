@@ -128,6 +128,8 @@ namespace LINQToTTreeLib.Statements
 
             public BlockRenamer(IBookingStatementBlock holder)
             {
+                if (holder == null)
+                    throw new ArgumentNullException("holder");
                 this._holderBlock = holder;
             }
 

@@ -130,7 +130,7 @@ namespace LINQToTTreeLib.Expressions
                 // Combine everything
 
                 Combine(other.DeclaredVariables);
-                Combine(other.Statements, null);
+                Combine(other.Statements, other);
 
                 return true;
             }
