@@ -544,5 +544,42 @@ namespace LINQToTTreeLib
             Assert.IsNotNull(ifstatement, "if statement");
             Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside if block");
         }
+
+        [TestMethod]
+        public void TestSimpleIfNotCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Where(f => f.run > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(f => f.run > 6).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestVectorLoopCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1 = q.SelectMany(t => t.jets).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.SelectMany(t => t.jets).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(2, statement.Statements.Count(), "# of inner statements");
+        }
     }
 }
