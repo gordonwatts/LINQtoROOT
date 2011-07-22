@@ -238,5 +238,85 @@ namespace LINQToTTreeLib.Statements
 
             return Tuple.Create(statementCount, varCount);
         }
+
+        /// <summary>
+        /// Helper class to force a rename
+        /// </summary>
+        class CombineTestStatement : IStatement
+        {
+            private VarSimple vdecl2;
+
+            public CombineTestStatement(VarSimple vdecl2)
+            {
+                // TODO: Complete member initialization
+                this.vdecl2 = vdecl2;
+            }
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsSameStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                var other = statement as CombineTestStatement;
+                return optimize.TryRenameVarialbeOneLevelUp(other.vdecl2.RawValue, vdecl2.RawValue);
+            }
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameSimple()
+        {
+            // Try to combine two statements that will combine, but require
+            // a rename first.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+
+            inline1.Add(vdecl1);
+            inline2.Add(vdecl2);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(1, inline1.Statements.Count(), "bad # of combined statements");
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameDownstream()
+        {
+            // Make sure the rename happens to statements downstream of what we are looking at!
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameVarsDifferent()
+        {
+            // Test when two variables are initalized with different names
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameVarsNotDecl()
+        {
+            // Test when one of the variables isn't declared
+            Assert.Inconclusive();
+        }
     }
 }

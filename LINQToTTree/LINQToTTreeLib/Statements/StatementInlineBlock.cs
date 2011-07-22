@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Statements
 
             if (statement.GetType() != typeof(StatementInlineBlock))
             {
-                Combine(new[] { statement }, opt);
+                Combine(new[] { statement }, this);
                 return true;
             }
 

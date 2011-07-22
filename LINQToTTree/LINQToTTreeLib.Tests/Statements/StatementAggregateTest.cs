@@ -25,7 +25,7 @@ namespace LINQToTTreeLib.Tests
         {
             TypeUtils._variableNameCounter = 0;
         }
-        
+
         /// <summary>
         ///A test for StatementAggregate Constructor
         ///</summary>
@@ -113,5 +113,64 @@ namespace LINQToTTreeLib.Tests
             }
 
             return result;
-        }    }
+        }
+
+        class Opt : ICodeOptimizationService
+        {
+            public bool ReturnValue = true;
+
+            public string OldName {get; set;}
+            public string NewName {get; set;}
+
+            public bool TryRenameVarialbeOneLevelUp(string oldName, string newName)
+            {
+                OldName = oldName;
+                NewName = newName;
+                return ReturnValue;
+            }
+        }
+
+        [TestMethod]
+        public void TestCombineWithRename()
+        {
+            // a = a + b
+            // c = c + b
+            // These two should combine correctly, somehow.
+
+            var a = new Variables.VarInteger();
+            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.RawValue), typeof(int));
+            var s1 = new StatementAggregate(a, ainc);
+
+            var c = new Variables.VarInteger();
+            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.RawValue), typeof(int));
+            var s2 = new StatementAggregate(c, cinc);
+
+            var opt = new Opt();
+            var result = s1.TryCombineStatement(s2, opt);
+            Assert.IsTrue(result, "Expected combination would work");
+
+            Assert.AreEqual(a.RawValue, opt.NewName, "new name not renamed to");
+            Assert.AreEqual(c.RawValue, opt.OldName, "old name for rename not right");
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameNoChance()
+        {
+            // a = a + b
+            // c = c + b
+            // These two should combine correctly, somehow.
+
+            var a = new Variables.VarInteger();
+            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.RawValue), typeof(int));
+            var s1 = new StatementAggregate(a, ainc);
+
+            var c = new Variables.VarInteger();
+            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.RawValue), typeof(int));
+            var s2 = new StatementAggregate(c, cinc);
+
+            var opt = new Opt() { ReturnValue = false };
+            var result = s1.TryCombineStatement(s2, opt);
+            Assert.IsFalse(result, "Expected combination would work");
+        }
+    }
 }

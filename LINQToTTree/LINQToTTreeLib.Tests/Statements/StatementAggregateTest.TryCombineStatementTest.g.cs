@@ -121,29 +121,5 @@ public void TryCombineStatementTest36303()
     Assert.IsNotNull(statementAggregate.ResultVariable);
     Assert.IsNotNull(statementAggregate.Expression);
 }
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void TryCombineStatementTest727()
-{
-    SVarInteger sVarInteger;
-    StatementAggregate statementAggregate;
-    SVarInteger sVarInteger1;
-    StatementAggregate statementAggregate1;
-    bool b;
-    sVarInteger = new SVarInteger();
-    statementAggregate =
-      new StatementAggregate((IVariable)sVarInteger, (IValue)sVarInteger);
-    sVarInteger1 = new SVarInteger();
-    statementAggregate1 =
-      new StatementAggregate((IVariable)sVarInteger1, (IValue)sVarInteger);
-    b = this.TryCombineStatementTest
-            (statementAggregate, (IStatement)statementAggregate1);
-    Assert.AreEqual<bool>(false, b);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAggregate.Expression, statementAggregate.ResultVariable));
-}
     }
 }

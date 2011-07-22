@@ -72,6 +72,14 @@ namespace LINQToTTreeLib.Statements
             Expression.RenameRawValue(originalName, newName);
         }
 
+        /// <summary>
+        /// Attempt to combine this statement. This is a little tricky. As it could be
+        /// that the value we are accumulating is all that is different. In that case,
+        /// we might be able to do the combination.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="opt"></param>
+        /// <returns></returns>
         public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
@@ -81,13 +89,33 @@ namespace LINQToTTreeLib.Statements
             if (otherAssign == null)
                 return false;
 
-            if (ResultVariable.RawValue != otherAssign.ResultVariable.RawValue
-                || Expression.RawValue != otherAssign.Expression.RawValue)
+            //
+            // Simple case: everything is the same
+            //
+
+            if (ResultVariable.RawValue == otherAssign.ResultVariable.RawValue
+                || Expression.RawValue == otherAssign.Expression.RawValue)
+                return true;
+
+            if (ResultVariable.RawValue == otherAssign.ResultVariable.RawValue)
                 return false;
 
             //
-            // Combining is pretty trivial: these are identical. So we do nothing
-            // adn the caller should drop this from their statement list!
+            // Next, see if we rename the accumulator everything would be identical
+            //
+
+            string tempRaw = Expression.RawValue.Replace(ResultVariable.RawValue, otherAssign.ResultVariable.RawValue);
+            if (tempRaw == otherAssign.Expression.RawValue)
+            {
+                // In order for this to work, we have to attempt to rename the variable that the other
+                // guy owns. Since this variable is declared outside here, we have to call up in order
+                // to have it run. Note that in this call it will call down into here to do the rename!
+
+                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable.RawValue);
+            }
+
+            //
+            // There is nothing else we cna do to figure out if this is the same, I"m afraid!
             //
 
             return true;

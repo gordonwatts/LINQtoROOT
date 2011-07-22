@@ -120,20 +120,51 @@ namespace LINQToTTreeLib.Statements
         public abstract bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt);
 
         /// <summary>
+        /// If someone wants to rename statements downstream, we take care of it.
+        /// </summary>
+        private class BlockRenamer : ICodeOptimizationService
+        {
+            private IBookingStatementBlock _holderBlock;
+
+            public BlockRenamer(IBookingStatementBlock holder)
+            {
+                this._holderBlock = holder;
+            }
+
+            /// <summary>
+            /// Rename succeeds if we can find the declared variable, amone other things.
+            /// </summary>
+            /// <param name="oldName"></param>
+            /// <param name="newName"></param>
+            /// <returns></returns>
+            public bool TryRenameVarialbeOneLevelUp(string oldName, string newName)
+            {
+                var vr = _holderBlock.DeclaredVariables.Where(v => v.RawValue == oldName).FirstOrDefault();
+                if (vr == null)
+                    return false;
+
+                return true;
+            }
+        }
+
+
+        /// <summary>
         /// Given a list of statements, attempt to combine them with the ones we already have
         /// internaly. If we can't, then just append them. This is like our "Add" above, but we
         /// first check to see if any of the statements can be added in. This always
         /// succeeds (no need for a bool return) because we just add things onto the end.
         /// </summary>
         /// <param name="statements">List of statements that we need to combine</param>
-        protected void Combine(IEnumerable<IStatement> statements, ICodeOptimizationService opt)
+        protected void Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent)
         {
+            var myopt = new BlockRenamer(parent);
+
             foreach (var s in statements)
             {
                 bool didCombine = false;
                 foreach (var sinner in Statements)
                 {
-                    if (sinner.TryCombineStatement(s, opt))
+                    if (sinner.TryCombineStatement(s, myopt))
                     {
                         didCombine = true;
                         break;
@@ -151,7 +182,7 @@ namespace LINQToTTreeLib.Statements
         protected void Combine(StatementInlineBlockBase block, ICodeOptimizationService opt)
         {
             Combine(block.DeclaredVariables);
-            Combine(block.Statements, opt);
+            Combine(block.Statements, this);
         }
 
         /// <summary>
