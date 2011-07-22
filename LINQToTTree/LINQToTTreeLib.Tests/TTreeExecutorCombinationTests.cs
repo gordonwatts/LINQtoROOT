@@ -1,11 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using NVelocity.App;
 using LINQToTTreeLib.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NVelocity.App;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -77,8 +74,8 @@ namespace LINQToTTreeLib.Tests
 
             var q = new QueriableDummy<TestUtils.TestNtupeArr>();
             var dudeQ1 = from evt in q
-                        where (evt.myvectorofint.Max() > 5)
-                        select evt;
+                         where (evt.myvectorofint.Max() > 5)
+                         select evt;
             var dude1 = dudeQ1.Count();
             var query1 = DummyQueryExectuor.LastQueryModel;
 

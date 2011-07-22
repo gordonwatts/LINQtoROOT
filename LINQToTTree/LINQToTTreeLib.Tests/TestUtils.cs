@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.Tests
         /// Dump the code to the console - for debugging a test...
         /// </summary>
         /// <param name="code"></param>
-        public static void DumpCodeToConsole(this IGeneratedQueryCode code)
+        public static void DumpCodeToConsole(this GeneratedCode code)
         {
             Console.WriteLine("Declared Variables:");
             foreach (var var in code.CodeBody.DeclaredVariables)
@@ -31,10 +31,8 @@ namespace LINQToTTreeLib.Tests
             }
             Console.WriteLine("Code:");
 
-            foreach (var l in code.CodeBody.CodeItUp())
-            {
-                Console.WriteLine("  " + l);
-            }
+            code.CodeBody.DumpCodeToConsole();
+
             if (code.ResultValue == null)
             {
                 Console.WriteLine("Result Variable: <not set (null)>");
@@ -42,6 +40,46 @@ namespace LINQToTTreeLib.Tests
             else
             {
                 Console.WriteLine("Result Variable: ", code.ResultValue.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Dump out info from a executable code dude.
+        /// </summary>
+        /// <param name="code"></param>
+        public static void DumpCodeToConsole(this IExecutableCode code)
+        {
+            Console.WriteLine("There are {0} Query Blocks:", code.QueryCode().Count());
+            foreach (var qb in code.QueryCode())
+            {
+                Console.WriteLine("Query Block:");
+                qb.DumpCodeToConsole("  ");
+            }
+
+            if (code.ResultValues == null)
+            {
+                Console.WriteLine("Result Variable: <not set (null)>");
+            }
+            else
+            {
+                Console.WriteLine("There are {0} result variables.", code.ResultValues.Count());
+                foreach (var rv in code.ResultValues)
+                {
+                    Console.WriteLine("  Result Variable: {0}", rv.RawValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dump some code to the console for debugging.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="indent"></param>
+        public static void DumpCodeToConsole(this IStatementCompound code, string indent = "")
+        {
+            foreach (var l in code.CodeItUp())
+            {
+                Console.WriteLine("  " + l);
             }
         }
 

@@ -485,5 +485,44 @@ namespace LINQToTTreeLib
 
             /// Looking for an infinite loop!
         }
+
+
+        /// <summary>
+        /// Do the code combination we require!
+        /// </summary>
+        /// <param name="gcs"></param>
+        /// <returns></returns>
+        private IExecutableCode CombineQueries(params IExecutableCode[] gcs)
+        {
+            var combinedInfo = new CombinedGeneratedCode();
+            foreach (var cq in gcs)
+            {
+                combinedInfo.AddGeneratedCode(cq);
+            }
+
+            return combinedInfo;
+        }
+
+        /// <summary>
+        /// Check what happens when a Combine is called on several different simple loops.
+        /// </summary>
+        [TestMethod]
+        public void TestSimpleOutterLoopCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2 = q.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
     }
 }
