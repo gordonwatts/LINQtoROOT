@@ -91,7 +91,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            Line.ReplaceVariableNames(originalName, newName);
+            Line = Line.ReplaceVariableNames(originalName, newName);
         }
 
         /// <summary>

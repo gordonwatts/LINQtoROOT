@@ -263,12 +263,14 @@ namespace LINQToTTreeLib.Statements
 
             public void RenameVariable(string originalName, string newName)
             {
-                throw new NotImplementedException();
+                return;
             }
 
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
                 var other = statement as CombineTestStatement;
+                if (other == null)
+                    return false;
                 return optimize.TryRenameVarialbeOneLevelUp(other.vdecl2.RawValue, vdecl2.RawValue);
             }
         }
@@ -301,8 +303,27 @@ namespace LINQToTTreeLib.Statements
         [TestMethod]
         public void TestCombineWithRenameDownstream()
         {
-            // Make sure the rename happens to statements downstream of what we are looking at!
-            Assert.Inconclusive();
+            // When doing a good rename, make sure downstream statements get the rename too.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+
+            inline1.Add(vdecl1);
+            inline2.Add(vdecl2);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+            inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(2, inline1.Statements.Count(), "bad # of combined statements");
+            Assert.AreEqual(string.Format("dude = {0};", vdecl1.RawValue), inline1.Statements.Skip(1).First().CodeItUp().First(), "Line wasn't renamed");
         }
 
         [TestMethod]

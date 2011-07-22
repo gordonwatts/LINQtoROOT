@@ -143,6 +143,9 @@ namespace LINQToTTreeLib.Statements
                 if (vr == null)
                     return false;
 
+                // Rename the variable!
+                _holderBlock.RenameVariable(oldName, newName);
+
                 return true;
             }
         }
@@ -181,8 +184,8 @@ namespace LINQToTTreeLib.Statements
         /// <param name="block"></param>
         protected void Combine(StatementInlineBlockBase block, ICodeOptimizationService opt)
         {
+            Combine(block.Statements, block);
             Combine(block.DeclaredVariables);
-            Combine(block.Statements, this);
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -16,6 +17,12 @@ namespace LINQToTTreeLib.Statements
     [TestClass]
     public partial class StatementSimpleStatementTest
     {
+        [TestInitialize]
+        public void TestSTart()
+        {
+            TypeUtils._variableNameCounter = 0;
+        }
+
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementSimpleStatement target)
@@ -84,6 +91,16 @@ namespace LINQToTTreeLib.Statements
         public bool TestTryCombine([PexAssumeUnderTest] StatementSimpleStatement target, IStatement st)
         {
             return target.TryCombineStatement(st, null);
+        }
+
+        [PexMethod]
+        public StatementSimpleStatement TestRename([PexAssumeUnderTest] StatementSimpleStatement target, string oldvar, string newvar)
+        {
+            target.RenameVariable(oldvar, newvar);
+
+            if (oldvar != null)
+                Assert.IsFalse(target.Line.Contains(oldvar), "old guy should not be in there!");
+            return target;
         }
     }
 }

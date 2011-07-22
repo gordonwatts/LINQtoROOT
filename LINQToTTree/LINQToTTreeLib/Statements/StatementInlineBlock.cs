@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Statements
 
             if (statement.GetType() != typeof(StatementInlineBlock))
             {
-                Combine(new[] { statement }, this);
+                Combine(new[] { statement }, null);
                 return true;
             }
 
@@ -46,12 +46,7 @@ namespace LINQToTTreeLib.Statements
             // that are deep in it. We do this by lifing statements out as much as we can.
             //
 
-            var otherInline = statement as StatementInlineBlock;
-            Combine(otherInline.DeclaredVariables);
-            foreach (var s in otherInline.Statements)
-            {
-                TryCombineStatement(s, opt);
-            }
+            Combine(statement as StatementInlineBlockBase, opt);
 
             return true;
         }
