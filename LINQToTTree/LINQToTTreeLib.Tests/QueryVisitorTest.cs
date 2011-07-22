@@ -563,6 +563,49 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestAggregateAsResultCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1 = q.SelectMany(r => r.jets).Aggregate(0, (f, s) => s.var1 + f);
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.SelectMany(r => r.jets).Aggregate(0, (f, s) => s.var1 + f);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(2, statement.Statements.Count(), "# of inner statements");
+        }
+
+        [TestMethod]
+        public void TestAggregateInternalCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1 = q.Select(v => v.jets.Aggregate(0, (s, f) => s + f.var1)).Where(j => j > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Select(v => v.jets.Aggregate(0, (s, f) => s + f.var1)).Where(j => j > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
+            var ifstatement = query.QueryCode().Skip(1).First().Statements as IStatementCompound;
+            Assert.IsNotNull(ifstatement, "if statement not right");
+            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of counts inside the if statement");
+        }
+
+        [TestMethod]
         public void TestVectorLoopCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();

@@ -77,9 +77,23 @@ namespace LINQToTTreeLib.Tests
         /// <param name="indent"></param>
         public static void DumpCodeToConsole(this IStatementCompound code, string indent = "")
         {
+            if (code is IBookingStatementBlock)
+            {
+                var bs = code as IBookingStatementBlock;
+                Console.WriteLine("{0}There are {1} declared variables", indent, bs.DeclaredVariables.Count());
+                foreach (var var in bs.DeclaredVariables)
+                {
+                    string initalValue = "default()";
+                    if (var.InitialValue != null && var.InitialValue.RawValue != null)
+                        initalValue = var.InitialValue.RawValue;
+
+                    Console.WriteLine(indent + "  " + var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
+                }
+            }
+            Console.WriteLine("{0}Lines of code:", indent);
             foreach (var l in code.CodeItUp())
             {
-                Console.WriteLine("  " + l);
+                Console.WriteLine("{0}  {1}", indent, l);
             }
         }
 
