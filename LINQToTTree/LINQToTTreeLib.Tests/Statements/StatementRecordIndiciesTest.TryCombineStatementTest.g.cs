@@ -8,14 +8,6 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables.Moles;
-using LINQToTTreeLib.Statements.Moles;
 
 namespace LINQToTTreeLib.Tests
 {

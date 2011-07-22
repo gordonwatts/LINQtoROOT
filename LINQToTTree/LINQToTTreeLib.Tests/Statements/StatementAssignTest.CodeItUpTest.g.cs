@@ -8,89 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest482()
-{
-    SVarInteger sVarInteger;
-    StatementAssign statementAssign;
-    string s;
-    sVarInteger = new SVarInteger();
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)sVarInteger);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAssign.Expression, statementAssign.ResultVariable));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest861()
-{
-    SVarInteger sVarInteger;
-    SVarInteger sVarInteger1;
-    StatementAssign statementAssign;
-    string s;
-    sVarInteger = new SVarInteger();
-    sVarInteger1 = new SVarInteger();
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)sVarInteger1);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_1=anint_2;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest86101()
-{
-    SVarInteger sVarInteger;
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    string s;
-    sVarInteger = new SVarInteger();
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_1=anint_2;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void CodeItUpTest86102()
-{
-    SVarInteger sVarInteger;
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    string s;
-    sVarInteger = new SVarInteger();
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)sVarInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementAssign);
-    Assert.AreEqual<string>("anint_1=anint_2;", s);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-}
     }
 }

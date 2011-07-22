@@ -8,47 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables.Moles;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void CodeItUpTest966()
-{
-    SVarInteger sVarInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    string s;
-    sVarInteger = new SVarInteger();
-    statementRecordIndicies = StatementRecordIndiciesFactory.Create
-                                  ((IValue)sVarInteger, (IValue)sVarInteger);
-    s = this.CodeItUpTest(statementRecordIndicies);
-    Assert.AreEqual<string>("anint_1.push_back(anint_1);", s);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void CodeItUpTest96601()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, -2);
-    statementRecordIndicies =
-      StatementRecordIndiciesFactory.Create((IValue)varInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementRecordIndicies);
-    Assert.AreEqual<string>("anint_1.push_back(anint_1);", s);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-}
     }
 }
