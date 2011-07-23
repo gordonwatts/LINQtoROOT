@@ -44,7 +44,8 @@ namespace LINQToTTreeLib.Variables
 
         public void RenameRawValue(string oldname, string newname)
         {
-            InitialValue.RenameRawValue(oldname, newname);
+            if (InitialValue != null)
+                InitialValue.RenameRawValue(oldname, newname);
             if (RawValue == oldname)
             {
                 RawValue = newname;

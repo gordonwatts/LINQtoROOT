@@ -58,9 +58,17 @@ namespace LINQToTTreeLib.Statements
             throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Rename a variable
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            throw new System.NotImplementedException();
+            TempVariable.RenameRawValue(originalName, newName);
+            exprToMinOrMaximize.RenameRawValue(originalName, newName);
+            vIsFilled.RenameRawValue(originalName, newName);
+            vMaxMin.RenameRawValue(originalName, newName);
         }
 
 
