@@ -154,6 +154,15 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(2, b.DeclaredVariables.Count(), "incorrect number of variables");
         }
 
+        class DummyOptimizer : ICodeOptimizationService
+        {
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
         [TestMethod]
         public void TestSimpleBlockCombine()
         {
@@ -162,8 +171,8 @@ namespace LINQToTTreeLib.Statements
             IStatement b2 = new StatementSimpleStatement("dude");
 
             var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(b1, null), "should always be able to add extra statements");
-            Assert.IsTrue(b.TryCombineStatement(b2, null), "should always be able to add another extra statement");
+            Assert.IsTrue(b.TryCombineStatement(b1, new DummyOptimizer()), "should always be able to add extra statements");
+            Assert.IsTrue(b.TryCombineStatement(b2, new DummyOptimizer()), "should always be able to add another extra statement");
 
             Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
         }

@@ -158,6 +158,22 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+        /// <summary>
+        /// Helper class - when a statement shows up with no context.
+        /// </summary>
+        class FailingCodeOptimizer : ICodeOptimizationService
+        {
+            /// <summary>
+            /// We can't rename one level up - we have no context with which to do that!
+            /// </summary>
+            /// <param name="oldName"></param>
+            /// <param name="newVariable"></param>
+            /// <returns></returns>
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Given a list of statements, attempt to combine them with the ones we already have
@@ -168,8 +184,15 @@ namespace LINQToTTreeLib.Statements
         /// <param name="statements">List of statements that we need to combine</param>
         protected void Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent)
         {
-            var myopt = new BlockRenamer(parent);
-
+            ICodeOptimizationService myopt;
+            if (parent != null)
+            {
+                myopt = new BlockRenamer(parent);
+            }
+            else
+            {
+                myopt = new FailingCodeOptimizer();
+            }
             foreach (var s in statements)
             {
                 bool didCombine = false;
