@@ -8,92 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Variables.Moles;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAggregateTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void RenameVariableTest283()
-{
-    SVarInteger sVarInteger;
-    StatementAggregate statementAggregate;
-    StatementAggregate statementAggregate1;
-    sVarInteger = new SVarInteger();
-    statementAggregate =
-      new StatementAggregate((IVariable)sVarInteger, (IValue)sVarInteger);
-    statementAggregate1 =
-      this.RenameVariableTest(statementAggregate, (string)null, (string)null);
-    Assert.IsNotNull((object)statementAggregate1);
-    Assert.IsNotNull(statementAggregate1.ResultVariable);
-    Assert.IsNotNull(statementAggregate1.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAggregate1.Expression, statementAggregate1.ResultVariable));
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsTrue(object.ReferenceEquals
-                      ((object)statementAggregate, (object)statementAggregate1));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException772()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    StatementAggregate statementAggregate1;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAggregate =
-      new StatementAggregate((IVariable)varInteger, (IValue)varInteger);
-    statementAggregate1 =
-      this.RenameVariableTest(statementAggregate, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException678()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    StatementAggregate statementAggregate1;
-    varInteger = VarIntegerFactory.Create(false, 8);
-    statementAggregate = new StatementAggregate((IVariable)varInteger, (IValue)null);
-    statementAggregate1 =
-      this.RenameVariableTest(statementAggregate, "", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException282()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    StatementAggregate statementAggregate1;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAggregate =
-      new StatementAggregate((IVariable)varInteger, (IValue)varInteger);
-    statementAggregate1 =
-      this.RenameVariableTest(statementAggregate, "an", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void RenameVariableTestThrowsArgumentNullException371()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    StatementAggregate statementAggregate1;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAggregate = new StatementAggregate((IVariable)varInteger, (IValue)null);
-    statementAggregate1 =
-      this.RenameVariableTest(statementAggregate, "\u0100aaa", (string)null);
-}
     }
 }

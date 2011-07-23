@@ -8,74 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables.Moles;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAggregateTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAggregateConstructorTestThrowsArgumentNullException46()
-{
-    StatementAggregate statementAggregate;
-    statementAggregate =
-      this.StatementAggregateConstructorTest((IVariable)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAggregateConstructorTestThrowsArgumentNullException637()
-{
-    SVarInteger sVarInteger;
-    StatementAggregate statementAggregate;
-    sVarInteger = new SVarInteger();
-    statementAggregate =
-      this.StatementAggregateConstructorTest((IVariable)sVarInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void StatementAggregateConstructorTest244()
-{
-    SVarInteger sVarInteger;
-    StatementAggregate statementAggregate;
-    sVarInteger = new SVarInteger();
-    statementAggregate = this.StatementAggregateConstructorTest
-                             ((IVariable)sVarInteger, (IValue)sVarInteger);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAggregate.Expression, statementAggregate.ResultVariable));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAggregateConstructorTestThrowsArgumentNullException502()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAggregate =
-      this.StatementAggregateConstructorTest((IVariable)varInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAggregateConstructorTestThrowsArgumentNullException151()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAggregate =
-      this.StatementAggregateConstructorTest((IVariable)varInteger, (IValue)null);
-}
     }
 }

@@ -8,71 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Variables.Moles;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAggregateTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void CodeItUpTest754()
-{
-    SVarInteger sVarInteger;
-    StatementAggregate statementAggregate;
-    string s;
-    sVarInteger = new SVarInteger();
-    statementAggregate =
-      new StatementAggregate((IVariable)sVarInteger, (IValue)sVarInteger);
-    s = this.CodeItUpTest(statementAggregate);
-    Assert.AreEqual<string>("anint_1=anint_1;", s);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAggregate.Expression, statementAggregate.ResultVariable));
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void CodeItUpTest861()
-{
-    SVarInteger sVarInteger;
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    string s;
-    sVarInteger = new SVarInteger();
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAggregate =
-      new StatementAggregate((IVariable)sVarInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementAggregate);
-    Assert.AreEqual<string>("anint_1=anint_2;", s);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void CodeItUpTest86101()
-{
-    SVarInteger sVarInteger;
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    string s;
-    sVarInteger = new SVarInteger();
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAggregate =
-      new StatementAggregate((IVariable)sVarInteger, (IValue)varInteger);
-    s = this.CodeItUpTest(statementAggregate);
-    Assert.AreEqual<string>("anint_1=anint_2;", s);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-}
     }
 }
