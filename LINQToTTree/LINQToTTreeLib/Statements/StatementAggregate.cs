@@ -94,9 +94,6 @@ namespace LINQToTTreeLib.Statements
                 || Expression.RawValue == otherAssign.Expression.RawValue)
                 return true;
 
-            if (ResultVariable.RawValue != otherAssign.ResultVariable.RawValue)
-                return false;
-
             //
             // Next, see if we rename the accumulator everything would be identical
             //
@@ -115,7 +112,7 @@ namespace LINQToTTreeLib.Statements
             // There is nothing else we cna do to figure out if this is the same, I"m afraid!
             //
 
-            return true;
+            return false;
         }
 
         /// <summary>

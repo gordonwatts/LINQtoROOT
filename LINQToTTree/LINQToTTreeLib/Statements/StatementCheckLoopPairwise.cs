@@ -120,19 +120,15 @@ namespace LINQToTTreeLib.Statements
                 return false;
 
             //
-            // Rename the various guys
+            // Rename the various guys. Note that index1 and index2 are declared by us. So it is only our sub-blocks that have to deal with
+            // that. So we do a "local" renaming.
             //
 
-            var rename = opt.TryRenameVarialbeOneLevelUp(other._index1.RawValue, _index1);
+            var rename = opt.TryRenameVarialbeOneLevelUp(other._whatIsGood.RawValue, _whatIsGood);
             if (!rename)
                 return false;
-
-            rename = opt.TryRenameVarialbeOneLevelUp(other._index2.RawValue, _index2);
-            if (!rename)
-                throw new InvalidOperationException("Unable to do second rename in PairWise variable rename optimization!");
-            rename = opt.TryRenameVarialbeOneLevelUp(other._whatIsGood.RawValue, _whatIsGood);
-            if (!rename)
-                throw new InvalidOperationException("Unable to do second rename in PairWise variable rename optimization!");
+            other.RenameVariable(other._index1.RawValue, _index1.RawValue);
+            other.RenameVariable(other._index2.RawValue, _index2.RawValue);
 
             //
             // Combine the sub-blocks now
