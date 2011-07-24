@@ -690,7 +690,23 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestMinMaxStatement()
         {
-            Assert.Inconclusive("Not writte");
+            var q = new QueriableDummy<ntupWithObjects>();
+            var dudeQ1 = from evt in q
+                         where (evt.jets.Max(j => j.var1) > 5)
+                         select evt;
+            var dude1 = dudeQ1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var dudeQ2 = from evt in q
+                         where (evt.jets.Max(j => j.var1) > 5)
+                         select evt;
+            var dude2 = dudeQ2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
         }
 
 #if false
