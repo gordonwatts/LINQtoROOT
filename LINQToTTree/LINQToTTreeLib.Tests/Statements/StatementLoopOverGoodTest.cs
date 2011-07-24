@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.Tests.Statements
 
         /// <summary>Test stub for .ctor(IValue)</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementLoopOverGood Constructor(IValue indiciesToCheck, IValue indexIsGood, IValue index)
+        public StatementLoopOverGood Constructor(IValue indiciesToCheck, IValue indexIsGood, IVariable index)
         {
             StatementLoopOverGood target = new StatementLoopOverGood(indiciesToCheck, indexIsGood, index);
             return target;

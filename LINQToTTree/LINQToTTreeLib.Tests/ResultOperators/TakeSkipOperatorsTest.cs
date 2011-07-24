@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.ResultOperators
             {
                 count = (resultOperator as TakeResultOperator).Count.ToString();
             }
-            Assert.AreEqual(count, s.ValRight.RawValue, "bad count made it through");
+            Assert.AreEqual(count, s.Limit.RawValue, "bad count made it through");
 
             ///
             /// Finally, the current loop variable should be identical, and there should be no result set.

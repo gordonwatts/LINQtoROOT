@@ -129,8 +129,7 @@ namespace LINQToTTreeLib.Expressions
 
                 // Combine everything
 
-                Combine(other.DeclaredVariables);
-                Combine(other.Statements, other);
+                Combine(other, opt);
 
                 return true;
             }
@@ -148,7 +147,7 @@ namespace LINQToTTreeLib.Expressions
             public override void RenameVariable(string origName, string newName)
             {
                 ArrayLength.RenameRawValue(origName, newName);
-                _loopVariable.ReplaceVariableNames(origName, newName);
+                _loopVariable = _loopVariable.ReplaceVariableNames(origName, newName);
                 RenameBlockVariables(origName, newName);
             }
         }

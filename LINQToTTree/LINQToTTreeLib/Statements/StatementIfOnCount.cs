@@ -22,12 +22,12 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The left hand side of the comparison
         /// </summary>
-        public IValue ValLeft { get; private set; }
+        public IVariable Counter { get; private set; }
 
         /// <summary>
         /// The right hand side of the comparison
         /// </summary>
-        public IValue ValRight { get; private set; }
+        public IValue Limit { get; private set; }
 
         /// <summary>
         /// The comparison operator
@@ -38,25 +38,25 @@ namespace LINQToTTreeLib.Statements
         /// Create with value1 comp value2 - if that is true, then we will execute our
         /// inner statements and declarations.
         /// </summary>
-        /// <param name="valueLeft"></param>
+        /// <param name="counter"></param>
         /// <param name="IValue"></param>
-        public StatementIfOnCount(IValue valueLeft, IValue valueRight, ComparisonOperator comp)
+        public StatementIfOnCount(IVariable counter, IValue limit, ComparisonOperator comp)
         {
             ///
             /// Make sure that nothing is crazy here!
             /// 
 
-            if (valueLeft == null)
+            if (counter == null)
                 throw new ArgumentNullException("Can't have a lefthand value that is null");
-            if (valueRight == null)
+            if (limit == null)
                 throw new ArgumentNullException("Cant have a righthand value that is null!");
 
             ///
             /// Remember!
             /// 
 
-            ValLeft = valueLeft;
-            ValRight = valueRight;
+            Counter = counter;
+            Limit = limit;
             Comparison = comp;
         }
 
@@ -84,7 +84,8 @@ namespace LINQToTTreeLib.Statements
 
             if (Statements.Any())
             {
-                yield return "if (" + ValLeft.RawValue + " " + ComparisonCodeTranslation[Comparison] + " " + ValRight.RawValue + ")";
+                yield return string.Format("{0}++;", Counter.RawValue);
+                yield return "if (" + Counter.RawValue + " " + ComparisonCodeTranslation[Comparison] + " " + Limit.RawValue + ")";
                 foreach (var l in RenderInternalCode())
                 {
                     yield return l;
@@ -99,7 +100,29 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
-            return false;
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementIfOnCount;
+            if (other == null)
+                return false;
+
+            var issame = Comparison == other.Comparison
+                && Limit.RawValue == other.Limit.RawValue;
+
+            if (!issame)
+                return false;
+
+            //
+            // Now we have to rename the right, just in case...
+            //
+
+            if (!opt.TryRenameVarialbeOneLevelUp(other.Counter.RawValue, Counter))
+                return false;
+
+            Combine(other, opt);
+
+            return true;
         }
 
         /// <summary>
@@ -120,8 +143,8 @@ namespace LINQToTTreeLib.Statements
                 return false;
 
             return Comparison == other.Comparison
-                && ValLeft.RawValue == other.ValLeft.RawValue
-                && ValRight.RawValue == other.ValRight.RawValue;
+                && Counter.RawValue == other.Counter.RawValue
+                && Limit.RawValue == other.Limit.RawValue;
         }
 
         /// <summary>
@@ -131,8 +154,8 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
-            ValLeft.RenameRawValue(origName, newName);
-            ValRight.RenameRawValue(origName, newName);
+            Counter.RenameRawValue(origName, newName);
+            Limit.RenameRawValue(origName, newName);
             RenameBlockVariables(origName, newName);
         }
     }

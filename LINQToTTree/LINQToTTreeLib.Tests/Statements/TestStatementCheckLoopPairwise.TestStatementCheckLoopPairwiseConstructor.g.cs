@@ -17,49 +17,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class TestStatementCheckLoopPairwise
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementCheckLoopPairwise))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestStatementCheckLoopPairwiseConstructorThrowsArgumentNullException969()
-{
-    this.TestStatementCheckLoopPairwiseConstructor
-        ((VarArray)null, (VarSimple)null, (VarSimple)null, (VarArray)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementCheckLoopPairwise))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestStatementCheckLoopPairwiseConstructorThrowsArgumentNullException647()
-{
-    this.TestStatementCheckLoopPairwiseConstructor
-        ((VarArray)null, (VarSimple)null, (VarSimple)null, (VarArray)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementCheckLoopPairwise))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestStatementCheckLoopPairwiseConstructorThrowsArgumentNullException791()
-{
-    VarArray varArray;
-    varArray = VarArrayFactory.Create(0);
-    this.TestStatementCheckLoopPairwiseConstructor
-        (varArray, (VarSimple)null, (VarSimple)null, (VarArray)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementCheckLoopPairwise))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestStatementCheckLoopPairwiseConstructorThrowsArgumentNullException616()
-{
-    this.TestStatementCheckLoopPairwiseConstructor
-        ((VarArray)null, (VarSimple)null, (VarSimple)null, (VarArray)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementCheckLoopPairwise))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestStatementCheckLoopPairwiseConstructorThrowsArgumentNullException925()
-{
-    VarArray varArray;
-    varArray = VarArrayFactory.Create(0);
-    this.TestStatementCheckLoopPairwiseConstructor
-        (varArray, (VarSimple)null, (VarSimple)null, (VarArray)null);
-}
     }
 }

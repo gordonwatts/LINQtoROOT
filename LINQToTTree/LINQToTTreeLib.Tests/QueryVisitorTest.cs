@@ -659,6 +659,33 @@ namespace LINQToTTreeLib
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
 
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(5, st.Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TsetTakeSkipCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1p = from evt in q
+                      let v = evt.jets.Skip(1).Count()
+                      where v > 1
+                      select v;
+            var r1 = r1p.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2p = from evt in q
+                      let v = evt.jets.Skip(1).Count()
+                      where v > 1
+                      select v;
+            var r2 = r2p.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
             Assert.Inconclusive();
         }
 

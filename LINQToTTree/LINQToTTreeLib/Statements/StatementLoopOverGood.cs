@@ -10,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     {
         private IValue _indiciesToCheck;
         private IValue _indexIsGood;
-        private IValue _index;
+        private IVariable _index;
 
         /// <summary>
         /// Simple loop over a set of indicies, passing on only those that satisfy the actual index.
@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="indiciesToCheck"></param>
         /// <param name="indexIsGood"></param>
         /// <param name="index"></param>
-        public StatementLoopOverGood(IValue indiciesToCheck, IValue indexIsGood, IValue index)
+        public StatementLoopOverGood(IValue indiciesToCheck, IValue indexIsGood, IVariable index)
         {
             if (indiciesToCheck == null)
                 throw new ArgumentNullException("indiciesToCheck");
@@ -89,12 +89,14 @@ namespace LINQToTTreeLib.Statements
             if (otherLoop == null)
                 return false;
 
-            // Are they the same?
+            // Are they the same? _index is independent and we can alter it.
 
-            if (otherLoop._index.RawValue == _index.RawValue
-                && otherLoop._indexIsGood.RawValue == _indexIsGood.RawValue
+            if (otherLoop._indexIsGood.RawValue == _indexIsGood.RawValue
                 && otherLoop._indiciesToCheck.RawValue == _indiciesToCheck.RawValue)
             {
+                if (!(opt.TryRenameVarialbeOneLevelUp(otherLoop._index.RawValue, _index)))
+                    return false;
+
                 Combine(otherLoop, opt);
                 return true;
             }
