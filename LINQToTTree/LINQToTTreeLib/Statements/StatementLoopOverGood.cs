@@ -111,7 +111,11 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
-            throw new NotImplementedException();
+            _index.RenameRawValue(origName, newName);
+            _indexIsGood.RenameRawValue(origName, newName);
+            _indiciesToCheck.RenameRawValue(origName, newName);
+
+            RenameBlockVariables(origName, newName);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// Given an array of indicies, makes a loop over them. One then
     /// can add a check (or similar) to the interiror.
     /// </summary>
-    class StatementCheckLoopPairwise : StatementInlineBlockBase
+    public class StatementCheckLoopPairwise : StatementInlineBlockBase
     {
         private VarArray _indciesToInspect;
         private VarSimple _index1;
@@ -109,7 +109,31 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementCheckLoopPairwise;
+            if (other == null)
+                return false;
+
+            if (_indciesToInspect.RawValue != other._indciesToInspect.RawValue)
+                return false;
+
+            //
+            // Rename the various guys
+            //
+
+            opt.TryRenameVarialbeOneLevelUp(other._index1.RawValue, _index1);
+            opt.TryRenameVarialbeOneLevelUp(other._index2.RawValue, _index2);
+            opt.TryRenameVarialbeOneLevelUp(other._whatIsGood.RawValue, _whatIsGood);
+
+            //
+            // Combine the sub-blocks now
+            //
+
+            Combine(other as StatementInlineBlockBase, opt);
+
+            return true;
         }
 
         public override bool IsSameStatement(LinqToTTreeInterfacesLib.IStatement statement)
@@ -117,9 +141,19 @@ namespace LINQToTTreeLib.Statements
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Rename the variables inside this guy
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
-            throw new NotImplementedException();
+            _index1.RenameRawValue(origName, newName);
+            _index2.RenameRawValue(origName, newName);
+            _whatIsGood.RenameRawValue(origName, newName);
+            _indciesToInspect.RenameRawValue(origName, newName);
+
+            RenameBlockVariables(origName, newName);
         }
     }
 }

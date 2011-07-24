@@ -19,14 +19,14 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The array to be storing things in
         /// </summary>
-        private IValue _storageArray;
+        private IVariable _storageArray;
 
         /// <summary>
         /// Create a statement that will record this index into this array each time through.
         /// </summary>
         /// <param name="intToRecord">Integer that should be cached on each time through</param>
         /// <param name="storageArray">The array where the indicies should be written</param>
-        public StatementRecordIndicies(IValue intToRecord, IValue storageArray)
+        public StatementRecordIndicies(IValue intToRecord, IVariable storageArray)
         {
             if (intToRecord == null)
                 throw new ArgumentNullException("intToRecord");
@@ -82,8 +82,9 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Attempt to combine two record statements. Since we are only a single and non-complex
-        /// statement, we do this if we are the "same". :-)
+        /// Attempt to combine two record statements. We are a bit different, we have 
+        /// an object we depend on - which is record... and that has to be the same. The
+        /// other one we need to propagate.
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
@@ -96,15 +97,14 @@ namespace LINQToTTreeLib.Statements
             if (asRecord == null)
                 return false;
 
-            if (_intToRecord.RawValue != asRecord._intToRecord.RawValue
-                || _storageArray.RawValue != _storageArray.RawValue)
+            if (_intToRecord.RawValue != asRecord._intToRecord.RawValue)
                 return false;
 
             //
-            // These two are the same. So elminate one by returning true.
+            // Since int to record is the same, we do a rename and move on!
             //
 
-            return true;
+            return opt.TryRenameVarialbeOneLevelUp(asRecord._storageArray.RawValue, _storageArray);
         }
 
         /// <summary>

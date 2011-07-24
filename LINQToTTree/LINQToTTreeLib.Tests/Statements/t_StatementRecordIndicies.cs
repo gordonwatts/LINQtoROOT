@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.Tests
         ///A test for StatementRecordIndicies Constructor
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementRecordIndicies StatementRecordIndiciesConstructorTest(IValue intToRecord, IValue storageArray)
+        public StatementRecordIndicies StatementRecordIndiciesConstructorTest(IValue intToRecord, IVariable storageArray)
         {
             StatementRecordIndicies target = new StatementRecordIndicies(intToRecord, storageArray);
             return target;

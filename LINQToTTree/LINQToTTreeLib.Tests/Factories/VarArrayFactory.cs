@@ -1,4 +1,5 @@
 using System;
+using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib.Variables
@@ -7,29 +8,12 @@ namespace LINQToTTreeLib.Variables
     public static partial class VarArrayFactory
     {
         /// <summary>A factory for LINQToTTreeLib.Variables.VarArray instances</summary>
-        [PexFactoryMethod(typeof(Helpers), "LINQToTTreeLib.Variables.VarArray")]
-        public static VarArray Create(int index)
+        [PexFactoryMethod(typeof(VarArray))]
+        public static VarArray Create(Type type_type, IValue initValue, bool declare)
         {
-            Type type_type = null;
-            switch (index)
-            {
-                case 0:
-                    type_type = typeof(int);
-                    break;
-
-                case 1:
-                    type_type = typeof(bool);
-                    break;
-
-                case 2:
-                    type_type = typeof(float);
-                    break;
-
-                default:
-                    break;
-            }
-
             VarArray varArray = new VarArray(type_type);
+            varArray.InitialValue = initValue;
+            varArray.Declare = declare;
             return varArray;
         }
     }

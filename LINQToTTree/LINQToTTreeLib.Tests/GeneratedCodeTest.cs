@@ -128,19 +128,6 @@ namespace LINQToTTreeLib
             {
                 get { return _vlist; }
             }
-
-
-            public IStatement Parent
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
         }
 
         /// <summary>
