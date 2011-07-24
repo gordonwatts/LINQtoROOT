@@ -44,5 +44,10 @@ namespace LINQToTTreeLib.Statements
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

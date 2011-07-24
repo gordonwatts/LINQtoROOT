@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -38,7 +36,6 @@ namespace LINQToTTreeLib.Statements
             ResultVariable = result;
             Expression = val;
         }
-        #region IStatement Members
 
         public IEnumerable<string> CodeItUp()
         {
@@ -121,6 +118,9 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
-        #endregion
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

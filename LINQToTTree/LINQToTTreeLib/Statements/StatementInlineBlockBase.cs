@@ -276,5 +276,10 @@ namespace LINQToTTreeLib.Statements
                 s.RenameVariable(originalName, newName);
             }
         }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

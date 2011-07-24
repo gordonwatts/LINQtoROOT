@@ -282,6 +282,19 @@ namespace LINQToTTreeLib.Statements
                     return false;
                 return optimize.TryRenameVarialbeOneLevelUp(other.vdecl2.RawValue, vdecl2);
             }
+
+
+            public IStatement Parent
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
 
         [TestMethod]

@@ -106,5 +106,10 @@ namespace LINQToTTreeLib.Statements
 
             return true;
         }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

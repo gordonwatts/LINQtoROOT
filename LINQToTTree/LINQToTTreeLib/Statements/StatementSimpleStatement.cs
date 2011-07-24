@@ -111,5 +111,10 @@ namespace LINQToTTreeLib.Statements
             return other.Line == Line
                 && other.AddSemicolon == AddSemicolon;
         }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

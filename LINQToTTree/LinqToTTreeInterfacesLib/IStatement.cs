@@ -41,5 +41,10 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="statement"></param>
         /// <returns></returns>
         bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize);
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        IStatement Parent { get; set; }
     }
 }

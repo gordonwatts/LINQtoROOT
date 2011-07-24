@@ -52,6 +52,19 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+
+            public IStatement Parent
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
 
         public class CompoundStatement : IStatementCompound
@@ -88,6 +101,19 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+
+            public IStatement Parent
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
 
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock
@@ -101,6 +127,19 @@ namespace LINQToTTreeLib
             public IEnumerable<IVariable> DeclaredVariables
             {
                 get { return _vlist; }
+            }
+
+
+            public IStatement Parent
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 
