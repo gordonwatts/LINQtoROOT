@@ -34,8 +34,11 @@ namespace LINQToTTreeLib.Statements
         {
             if (statement == null)
                 throw new ArgumentNullException("Cannot add a null statement");
+            if (statement.Parent != null)
+                throw new ArgumentException("Statement is already in another statement");
 
             _statements.Add(statement);
+            statement.Parent = this;
         }
 
         /// <summary>
@@ -205,7 +208,10 @@ namespace LINQToTTreeLib.Statements
                     }
                 }
                 if (!didCombine)
+                {
+                    s.Parent = null;
                     Add(s);
+                }
             }
         }
 

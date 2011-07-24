@@ -30,6 +30,7 @@ namespace LINQToTTreeLib.Statements
             target.Add(statement);
             Assert.AreEqual(oldCount + 1, target.Statements.Count(), "Expected a statement to have been added");
             Assert.IsFalse(target.Statements.Any(s => s == null), "Should never add a null statement");
+            Assert.AreEqual(target, statement.Parent, "Parent not set correctly");
         }
 
         [PexMethod]
@@ -200,7 +201,7 @@ namespace LINQToTTreeLib.Statements
                 // This is a little tricky as we have to go pretty deep to figure out what
                 // what are "good" and bad statements for counting. 
 
-                var goodInfo = CountInterestingStatements(s as StatementInlineBlock);
+                var goodInfo = CountDownlevelStatements(s as StatementInlineBlock);
                 Assert.AreEqual(goodInfo.Item1, b.Statements.Count(), "# of statements");
                 Assert.AreEqual(goodInfo.Item2, b.DeclaredVariables.Count(), "# of declared variables");
             }
@@ -249,6 +250,17 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Recurisvely count the # of good statements.
+        /// </summary>
+        /// <param name="statementInlineBlock"></param>
+        /// <returns></returns>
+        private Tuple<int, int> CountDownlevelStatements(StatementInlineBlock statementInlineBlock)
+        {
+            var varCount = statementInlineBlock.DeclaredVariables.Count();
+            return Tuple.Create(statementInlineBlock.Statements.Count(), varCount);
+        }
+
+        /// <summary>
         /// Helper class to force a rename
         /// </summary>
         class CombineTestStatement : IStatement
@@ -284,17 +296,7 @@ namespace LINQToTTreeLib.Statements
             }
 
 
-            public IStatement Parent
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public IStatement Parent { get; set; }
         }
 
         [TestMethod]
