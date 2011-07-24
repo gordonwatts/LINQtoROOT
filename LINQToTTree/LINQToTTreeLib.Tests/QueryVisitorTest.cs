@@ -606,6 +606,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestAggregateInternalResultCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1 = q.Where(evt => evt.jets.Aggregate(0, (s, f) => s + f.var1) > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.Aggregate(0, (s, f) => s + f.var1) > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
         public void TestVectorLoopCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();
