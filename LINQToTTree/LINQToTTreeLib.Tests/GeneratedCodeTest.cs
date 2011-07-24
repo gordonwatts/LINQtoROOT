@@ -264,6 +264,7 @@ namespace LINQToTTreeLib
 
             var v2 = new VarInteger();
             target.Add(v2);
+            s.Parent = null;
             target.Add(s);
             Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
             Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
@@ -291,6 +292,7 @@ namespace LINQToTTreeLib
 
             var v2 = new VarInteger();
             target.Add(v2);
+            s.Parent = null;
             target.Add(s);
             Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
             Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");

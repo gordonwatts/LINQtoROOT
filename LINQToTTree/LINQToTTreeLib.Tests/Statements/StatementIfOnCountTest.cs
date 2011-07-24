@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -17,6 +18,12 @@ namespace LINQToTTreeLib.Statements
     [TestClass]
     public partial class StatementIfOnCountTest
     {
+        [TestInitialize]
+        public void TestSetup()
+        {
+            TypeUtils._variableNameCounter = 0;
+        }
+
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementIfOnCount target)
@@ -57,8 +64,8 @@ namespace LINQToTTreeLib.Statements
             statement.Add(new StatementSimpleStatement("dude"));
 
             var result = statement.CodeItUp().ToArray();
-            Assert.AreEqual(4, result.Length, "no statements, so wasn't expecting any sort of output at all");
-            Assert.AreEqual("if (one == two)", result[0], "if statement is not correct");
+            Assert.AreEqual(5, result.Length, "no statements, so wasn't expecting any sort of output at all");
+            Assert.AreEqual("if (aString_1 == two)", result[1], "if statement is not correct");
         }
 
         [TestMethod]
@@ -79,8 +86,8 @@ namespace LINQToTTreeLib.Statements
                 statement.Add(new StatementSimpleStatement("dude"));
 
                 var result = statement.CodeItUp().ToArray();
-                Assert.AreEqual(4, result.Length, "no statements, so wasn't expecting any sort of output at all");
-                Assert.AreEqual("if (one " + op.Item2 + " two)", result[0], "if statement is not correct");
+                Assert.AreEqual(5, result.Length, "no statements, so wasn't expecting any sort of output at all");
+                Assert.IsTrue(result[1].EndsWith(op.Item2 + " two)"), "if statement is not correct");
             }
         }
 

@@ -368,13 +368,11 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not right");
             var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
-            Assert.AreEqual(2, outterfloop.Statements.Count(), "inner loop statements not set correctly");
+            Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementIncrementInteger), "first loop statemen tis funny");
-            Assert.IsInstanceOfType(outterfloop.Statements.Skip(1).First(), typeof(Statements.StatementIfOnCount), "if on count incorrect");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementIfOnCount), "if on count incorrect");
 
-            var incStatement = outterfloop.Statements.First() as Statements.StatementIncrementInteger;
-            var ifcountStatement = outterfloop.Statements.Skip(1).First() as Statements.StatementIfOnCount;
+            var ifcountStatement = outterfloop.Statements.First() as Statements.StatementIfOnCount;
 
             Assert.AreEqual(1, ifcountStatement.Statements.Count(), "expected the fill statement");
             Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAggregate), "Assign statement not there");
@@ -686,7 +684,7 @@ namespace LINQToTTreeLib
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
 
-            Assert.Inconclusive();
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of guys");
         }
 
         [TestMethod]
