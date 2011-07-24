@@ -89,8 +89,8 @@ namespace LINQToTTreeLib.Statements
 
             // Just make sure the index guys are renamed!
 
-            otherPairLoop.RenameBlockVariables(otherPairLoop.index1.RawValue, index1.RawValue);
-            otherPairLoop.RenameBlockVariables(otherPairLoop.index2.RawValue, index2.RawValue);
+            otherPairLoop.RenameVariable(otherPairLoop.index1.RawValue, index1.RawValue);
+            otherPairLoop.RenameVariable(otherPairLoop.index2.RawValue, index2.RawValue);
 
             // Now, combine them!
 
@@ -99,9 +99,17 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
+        /// <summary>
+        /// Rename the variables we know about here!
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
-            throw new NotImplementedException();
+            index1.RenameRawValue(origName, newName);
+            index2.RenameRawValue(origName, newName);
+            arrayRecord.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
     }
 }

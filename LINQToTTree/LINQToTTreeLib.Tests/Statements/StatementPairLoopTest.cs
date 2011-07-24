@@ -2,6 +2,7 @@
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -19,6 +20,7 @@ namespace LINQToTTreeLib.Tests.Statements
         {
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
+            TypeUtils._variableNameCounter = 0;
         }
 
         [TestCleanup]
@@ -103,39 +105,108 @@ namespace LINQToTTreeLib.Tests.Statements
             }
         }
 
+        [PexMethod]
+        public bool TestTryCombine([PexAssumeUnderTest] StatementPairLoop pairloop, IStatement statement, ICodeOptimizationService codeOpt)
+        {
+            var result = pairloop.TryCombineStatement(statement, codeOpt);
+            return result;
+        }
+
+        [PexMethod]
+        public StatementPairLoop TestRename([PexAssumeUnderTest] StatementPairLoop pairLoop, string oldName, string newName)
+        {
+            pairLoop.RenameVariable(oldName, newName);
+            return pairLoop;
+        }
+
+        [TestMethod]
+        public void TestSimpleRename()
+        {
+            var index1 = new Variables.VarInteger();
+            var index2 = new Variables.VarInteger();
+            var array = new VarArray(typeof(int));
+
+            var st = new StatementPairLoop(array, index1, index2);
+            var vr = new VarSimple(typeof(int));
+            vr.RenameRawValue(vr.RawValue, index1.RawValue);
+            st.Add(new StatementAssign(vr, new ValSimple("ops", typeof(int))));
+
+            st.RenameVariable(index1.RawValue, "dude1");
+            Assert.AreEqual("dude1", index1.RawValue, "index1 after index1 rename");
+            Assert.AreEqual("dude1", (st.Statements.First() as StatementAssign).ResultVariable.RawValue, "sub statement not renamed correctly");
+
+            st.RenameVariable(index2.RawValue, "dude2");
+            Assert.AreEqual("dude1", index1.RawValue, "index1 after index2 rename");
+            Assert.AreEqual("dude2", index2.RawValue, "index1 after index1 rename");
+
+            st.RenameVariable(array.RawValue, "fork");
+            Assert.AreEqual("fork", array.RawValue, "array after array rename");
+            Assert.AreEqual("dude1", index1.RawValue, "index1 after array rename");
+            Assert.AreEqual("dude2", index2.RawValue, "index1 after array rename");
+        }
+
+        [TestMethod]
+        public void TestCombineShouldFail()
+        {
+            var index1 = new Variables.VarInteger();
+            var index2 = new Variables.VarInteger();
+            var arrayRecord = new VarArray(typeof(int));
+            var stp1 = new StatementPairLoop(arrayRecord, index1, index2);
+
+            var index3 = new Variables.VarInteger();
+            var index4 = new Variables.VarInteger();
+            var arrayRecord2 = new VarArray(typeof(int));
+            var stp2 = new StatementPairLoop(arrayRecord2, index3, index4);
+
+            Assert.IsFalse(stp1.TryCombineStatement(stp2, null), "should not have combined");
+        }
+
+        class CombinerHelper : ICodeOptimizationService
+        {
+            public bool ShouldReturn = true;
+            public string OldName { get; private set; }
+            public IVariable NewVarialbe { get; private set; }
+            public int TimesCalled = 0;
+
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+            {
+                OldName = oldName;
+                NewVarialbe = newVariable;
+                TimesCalled++;
+
+                return ShouldReturn;
+            }
+        }
+
+        [TestMethod]
+        public void TestCombineWithSameArray()
+        {
+
+            var index1 = new Variables.VarInteger();
+            var index2 = new Variables.VarInteger();
+            var arrayRecord = new VarArray(typeof(int));
+            var stp1 = new StatementPairLoop(arrayRecord, index1, index2);
+
+            var index3 = new Variables.VarInteger();
+            var index4 = new Variables.VarInteger();
+            var stp2 = new StatementPairLoop(arrayRecord, index3, index4);
+            var statAss = new StatementAssign(index3, new ValSimple("dude", typeof(int)));
+            stp2.Add(statAss);
+
+            var opt = new CombinerHelper();
+            Assert.IsTrue(stp1.TryCombineStatement(stp2, opt), "Combine should have been ok");
+            Assert.AreEqual(1, stp1.Statements.Count(), "Improper number of combined sub-statements");
+            var s1 = stp1.Statements.First();
+            Assert.IsInstanceOfType(s1, typeof(StatementAssign), "Statement is not right type");
+            var sa = s1 as StatementAssign;
+            Assert.AreEqual(index1.RawValue, sa.ResultVariable.RawValue, "rename of variables didn't occur correctly");
+        }
+
         class ntupArray
         {
 #pragma warning disable 0649
             public int[] run;
 #pragma warning restore 0649
         }
-        [TestMethod]
-        public void TestUnqiueCombineStatements()
-        {
-            var q = new QueriableDummy<ntupArray>();
-
-            // Query #1
-
-            var results1 = from evt in q
-                           select evt.run.UniqueCombinations().Count();
-            var total1 = results1.Aggregate(0, (seed, val) => seed + val);
-            var gc1 = DummyQueryExectuor.FinalResult;
-
-            // Query #2
-
-            var results2 = from evt in q
-                           select evt.run.UniqueCombinations().Count();
-            var total2 = results2.Aggregate(0, (seed, val) => seed + val);
-            var gc2 = DummyQueryExectuor.FinalResult;
-
-            // Combine
-
-            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody, null), "Combine should work!");
-            gc1.DumpCodeToConsole();
-
-            // Check that the combine actually worked well!!
-            Assert.Inconclusive();
-        }
-
     }
 }

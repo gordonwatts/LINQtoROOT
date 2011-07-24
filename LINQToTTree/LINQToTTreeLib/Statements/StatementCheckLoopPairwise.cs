@@ -1,8 +1,8 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using LINQToTTreeLib.Variables;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -99,6 +99,14 @@ namespace LINQToTTreeLib.Statements
 
         }
 
+        /// <summary>
+        /// Attempt to combine two of these statements. We can do this iff the source expression that
+        /// we are testing is the same. Then the two indicies need to be renamed (it is assumed that we have total
+        /// control - as you can see from the generated code above).
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="opt"></param>
+        /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             throw new NotImplementedException();

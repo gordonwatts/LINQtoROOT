@@ -643,9 +643,67 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestLoopPairWiseCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1p = from evt in q
+                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
+            var r1 = r1p.Where(c => c > 2).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2p = from evt in q
+                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
+            var r2 = r2p.Where(c => c > 2).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestMinMaxStatement()
         {
             Assert.Inconclusive("Not writte");
         }
+
+#if false
+        [TestMethod]
+        public void TestUnqiueCombineStatements()
+        {
+            var q = new QueriableDummy<ntupArray>();
+
+            // Query #1
+
+            var results1 = from evt in q
+                           select evt.run.UniqueCombinations().Count();
+            var total1 = results1.Aggregate(0, (seed, val) => seed + val);
+            var gc1 = DummyQueryExectuor.FinalResult;
+
+            // Query #2
+
+            var results2 = from evt in q
+                           select evt.run.UniqueCombinations().Count();
+            var total2 = results2.Aggregate(0, (seed, val) => seed + val);
+            var gc2 = DummyQueryExectuor.FinalResult;
+
+            // Combine
+
+            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody, null), "Combine should work!");
+            gc1.DumpCodeToConsole();
+
+            // Check that the combine actually worked well!!
+            Assert.Inconclusive();
+        }
+        class ntupArray
+        {
+#pragma warning disable 0649
+            public int[] run;
+#pragma warning restore 0649
+        }
+
+#endif
+
     }
 }
