@@ -123,9 +123,16 @@ namespace LINQToTTreeLib.Statements
             // Rename the various guys
             //
 
-            opt.TryRenameVarialbeOneLevelUp(other._index1.RawValue, _index1);
-            opt.TryRenameVarialbeOneLevelUp(other._index2.RawValue, _index2);
-            opt.TryRenameVarialbeOneLevelUp(other._whatIsGood.RawValue, _whatIsGood);
+            var rename = opt.TryRenameVarialbeOneLevelUp(other._index1.RawValue, _index1);
+            if (!rename)
+                return false;
+
+            rename = opt.TryRenameVarialbeOneLevelUp(other._index2.RawValue, _index2);
+            if (!rename)
+                throw new InvalidOperationException("Unable to do second rename in PairWise variable rename optimization!");
+            rename = opt.TryRenameVarialbeOneLevelUp(other._whatIsGood.RawValue, _whatIsGood);
+            if (!rename)
+                throw new InvalidOperationException("Unable to do second rename in PairWise variable rename optimization!");
 
             //
             // Combine the sub-blocks now

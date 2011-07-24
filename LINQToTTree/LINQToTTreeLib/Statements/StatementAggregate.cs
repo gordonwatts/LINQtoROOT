@@ -94,7 +94,7 @@ namespace LINQToTTreeLib.Statements
                 || Expression.RawValue == otherAssign.Expression.RawValue)
                 return true;
 
-            if (ResultVariable.RawValue == otherAssign.ResultVariable.RawValue)
+            if (ResultVariable.RawValue != otherAssign.ResultVariable.RawValue)
                 return false;
 
             //

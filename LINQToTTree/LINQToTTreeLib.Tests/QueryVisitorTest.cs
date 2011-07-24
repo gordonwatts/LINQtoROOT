@@ -709,7 +709,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
         }
 
-#if false
         [TestMethod]
         public void TestUnqiueCombineStatements()
         {
@@ -720,22 +719,20 @@ namespace LINQToTTreeLib
             var results1 = from evt in q
                            select evt.run.UniqueCombinations().Count();
             var total1 = results1.Aggregate(0, (seed, val) => seed + val);
-            var gc1 = DummyQueryExectuor.FinalResult;
-
-            // Query #2
+            var query1 = DummyQueryExectuor.FinalResult;
 
             var results2 = from evt in q
                            select evt.run.UniqueCombinations().Count();
             var total2 = results2.Aggregate(0, (seed, val) => seed + val);
-            var gc2 = DummyQueryExectuor.FinalResult;
+            var query2 = DummyQueryExectuor.FinalResult;
 
-            // Combine
-
-            Assert.IsTrue(gc1.CodeBody.TryCombineStatement(gc2.CodeBody, null), "Combine should work!");
-            gc1.DumpCodeToConsole();
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
 
             // Check that the combine actually worked well!!
-            Assert.Inconclusive();
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            // First for loop to crord, 2 to test, and then the two aggregates
+            Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
         }
         class ntupArray
         {
@@ -743,8 +740,6 @@ namespace LINQToTTreeLib
             public int[] run;
 #pragma warning restore 0649
         }
-
-#endif
 
     }
 }
