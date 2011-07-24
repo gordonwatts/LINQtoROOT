@@ -144,20 +144,47 @@ namespace LINQToTTreeLib.Statements
             /// <returns></returns>
             public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newName)
             {
-                var vr = _holderBlock.DeclaredVariables.Where(v => v.RawValue == oldName).FirstOrDefault();
+                //
+                // First, see if we can find the block where the variable is declared.
+                //
+
+                var vr = FindDeclaredVariable(oldName, _holderBlock);
+
                 if (vr == null)
                     return false;
 
                 // Check that its initialization is the same!
-                bool initValueSame = (vr.InitialValue == null && newName.InitialValue == null)
-                    || (vr.InitialValue != null && (vr.InitialValue.RawValue == newName.InitialValue.RawValue));
+                bool initValueSame = (vr.Item1.InitialValue == null && newName.InitialValue == null)
+                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.RawValue == newName.InitialValue.RawValue));
                 if (!initValueSame)
                     return false;
 
                 // Rename the variable!
-                _holderBlock.RenameVariable(oldName, newName.RawValue);
+                vr.Item2.RenameVariable(oldName, newName.RawValue);
 
                 return true;
+            }
+
+            /// <summary>
+            /// Walk the tree back looking for a variable
+            /// </summary>
+            /// <param name="oldName"></param>
+            /// <param name="statement"></param>
+            /// <returns></returns>
+            private Tuple<IVariable, IBookingStatementBlock> FindDeclaredVariable(string oldName, IStatement statement)
+            {
+                if (statement == null)
+                    return null;
+
+                if (statement is IBookingStatementBlock)
+                {
+                    var hr = statement as IBookingStatementBlock;
+                    var vr = hr.DeclaredVariables.Where(v => v.RawValue == oldName).FirstOrDefault();
+                    if (vr != null)
+                        return Tuple.Create(vr, hr);
+                }
+
+                return FindDeclaredVariable(oldName, statement.Parent);
             }
         }
 
@@ -226,14 +253,19 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Add the variables into this block
+        /// Add the variables into this block.
         /// </summary>
         /// <param name="vars"></param>
         protected void Combine(IEnumerable<IVariable> vars)
         {
             foreach (var v in vars)
             {
-                Add(v);
+                // It is possible that the variables might be the same, so don't
+                // add them if that is the case. This happens b/c the various statements are combined and that may cause
+                // some variable renaming.
+
+                if (_variables.Find(intv => intv.RawValue == v.RawValue) == null)
+                    Add(v);
             }
         }
 

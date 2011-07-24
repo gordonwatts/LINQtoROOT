@@ -600,7 +600,7 @@ namespace LINQToTTreeLib
             var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
             Assert.IsNotNull(statement, "statement isn't a compound");
             Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
-            var ifstatement = query.QueryCode().Skip(1).First().Statements as IStatementCompound;
+            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IStatementCompound;
             Assert.IsNotNull(ifstatement, "if statement not right");
             Assert.AreEqual(2, ifstatement.Statements.Count(), "# of counts inside the if statement");
         }
