@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -65,5 +66,55 @@ namespace LINQToTTreeLib.Statements
             string semi = AddSemicolon ? ";" : "";
             return Line + semi;
         }
+
+        /// <summary>
+        /// Pretty sipmle x-check to see if the statement is the same. Since this
+        /// is just a line...
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool IsSameStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+            var other = statement as StatementSimpleStatement;
+            if (other == null)
+                return false;
+            return Line == other.Line && AddSemicolon == other.AddSemicolon;
+
+        }
+
+        /// <summary>
+        /// Rename any variables we have in here.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
+        public void RenameVariable(string originalName, string newName)
+        {
+            Line = Line.ReplaceVariableNames(originalName, newName);
+        }
+
+        /// <summary>
+        /// See if we can combine. For us that works only if we have
+        /// identical statements!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+            var other = statement as StatementSimpleStatement;
+            if (other == null)
+                return false;
+
+            return other.Line == Line
+                && other.AddSemicolon == AddSemicolon;
+        }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

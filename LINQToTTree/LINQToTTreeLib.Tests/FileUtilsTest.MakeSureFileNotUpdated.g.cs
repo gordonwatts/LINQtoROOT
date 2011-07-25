@@ -16,43 +16,5 @@ namespace LINQToTTreeLib.Utils
 {
     public partial class FileUtilsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated244()
-{
-    this.MakeSureFileNotUpdated((string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated134()
-{
-    this.MakeSureFileNotUpdated((string)null, "");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated300()
-{
-    this.MakeSureFileNotUpdated("", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated803()
-{
-    this.MakeSureFileNotUpdated((string)null, "\0");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated580()
-{
-    this.MakeSureFileNotUpdated((string)null, "\0\0");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-[Ignore]
-[PexDescription("the test state was: path bounds exceeded")]
-public void MakeSureFileNotUpdated584()
-{
-    this.MakeSureFileNotUpdated((string)null, new string('\0', 1024));
-}
     }
 }

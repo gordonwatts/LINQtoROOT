@@ -143,9 +143,9 @@ namespace LINQToTTreeLib.Tests
             /// For this there should be one statement - the addition statement for the variable.
 
             Assert.AreEqual(1, res.CodeBody.Statements.Count(), "not right number of statements coming back!");
-            Assert.IsInstanceOfType(res.CodeBody.Statements.First(), typeof(StatementAssign), "Assignment doesn't seem to be there");
+            Assert.IsInstanceOfType(res.CodeBody.Statements.First(), typeof(StatementAggregate), "Assignment doesn't seem to be there");
 
-            var assignment = res.CodeBody.Statements.First() as StatementAssign;
+            var assignment = res.CodeBody.Statements.First() as StatementAggregate;
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}+1", assignment.ResultVariable.RawValue, "bad assignment!");
             Assert.AreEqual(bld.ToString(), assignment.Expression.RawValue, "expression is incorrect");

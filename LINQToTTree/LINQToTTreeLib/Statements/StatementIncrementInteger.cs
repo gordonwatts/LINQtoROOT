@@ -35,5 +35,64 @@ namespace LINQToTTreeLib.Statements
         {
             yield return Integer.RawValue + "++;";
         }
+
+
+        /// <summary>
+        /// Are we identical statements, one after the other?
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool IsSameStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("Statement to compare to must not be null");
+            var other = statement as StatementIncrementInteger;
+            if (other == null)
+                return false;
+
+            return Integer.RawValue == other.Integer.RawValue;
+        }
+
+        /// <summary>
+        /// If the variable name is known, then do the rename here.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
+        public void RenameVariable(string originalName, string newName)
+        {
+            Integer.RenameRawValue(originalName, newName);
+        }
+
+        /// <summary>
+        /// See if we can combine two integer combines. This works only if we have
+        /// identical statements!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var asint = statement as StatementIncrementInteger;
+            if (asint == null)
+                return false;
+
+            if (asint.Integer.RawValue != Integer.RawValue)
+                return false;
+
+            //
+            // We really don't have to do anything to combine. The
+            // two statements are exactly identical. So, we can just
+            // say "yes" and assume our caller will drop the combining.
+            //
+
+            return true;
+        }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

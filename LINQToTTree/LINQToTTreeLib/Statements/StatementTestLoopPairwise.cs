@@ -1,4 +1,5 @@
-﻿using LinqToTTreeInterfacesLib;
+﻿using System;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
@@ -34,5 +35,53 @@ namespace LINQToTTreeLib.Statements
             yield return "  break;";
             yield return "}";
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Rename variables for this guy - pretty simple here!
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
+        public void RenameVariable(string originalName, string newName)
+        {
+            _whatIsGood.RenameRawValue(originalName, newName);
+            _test.RenameRawValue(originalName, newName);
+        }
+
+        /// <summary>
+        /// We can only combine if everything is the same!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="opt"></param>
+        /// <returns></returns>
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementTestLoopPairwise;
+            if (other == null)
+                return false;
+
+            if (_whatIsGood.RawValue != other._whatIsGood.RawValue
+                || _test.RawValue != _test.RawValue)
+                return false;
+
+            //
+            // Combinine - nothing to do here.
+            //
+
+            return true;
+        }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

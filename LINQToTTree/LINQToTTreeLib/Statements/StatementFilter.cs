@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 
@@ -8,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// Deal with a "Where"-like clause. Basically, we have an expression which we evaluate, and we make sure that
     /// it goes!
     /// </summary>
-    public class StatementFilter : StatementInlineBlock
+    public class StatementFilter : StatementInlineBlockBase
     {
         /// <summary>
         /// Get the expresion we are going to test
@@ -21,6 +22,8 @@ namespace LINQToTTreeLib.Statements
         /// <param name="testExpression"></param>
         public StatementFilter(IValue testExpression)
         {
+            if (testExpression == null)
+                throw new ArgumentNullException("testExpression");
             TestExpression = testExpression;
         }
 
@@ -43,7 +46,7 @@ namespace LINQToTTreeLib.Statements
                 /// 
 
                 yield return "if (" + TestExpression.RawValue + ")";
-                foreach (var l in base.CodeItUp())
+                foreach (var l in RenderInternalCode())
                 {
                     yield return l;
                 }
@@ -51,13 +54,62 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// We don't have code to carefully do checks - so we just blow off the combination here.
+        /// We filter on one simple thing. If it is the case that the tests are the same,
+        /// (identical), we do the combination, stealing the statemetns from the second one
+        /// for ourselves. No renaming is required as this is a simple test!
         /// </summary>
         /// <param name="statement"></param>
         /// <returns></returns>
-        public override bool TryCombineStatement(IStatement statement)
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
-            return false;
+            if (statement == null)
+                throw new ArgumentException("statement");
+            var other = statement as StatementFilter;
+            if (other == null)
+                return false;
+
+            if (other.TestExpression.RawValue != TestExpression.RawValue)
+            {
+                return false;
+            }
+
+            //
+            // Since the if statements are the same, we can combine the interiors!
+            //
+
+            Combine(other, opt);
+            return true;
+        }
+
+        /// <summary>
+        /// See if we are identical or not.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool IsSameStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementFilter;
+            if (other == null)
+                return false;
+
+            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
+                return false;
+
+            return TestExpression.RawValue == other.TestExpression.RawValue;
+        }
+
+        /// <summary>
+        /// Rename our variables
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
+        public override void RenameVariable(string origName, string newName)
+        {
+            TestExpression.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Flip a bool variable using the "!" operator.
     /// </summary>
-    class StatementFlipBool : IStatement
+    public class StatementFlipBool : IStatement
     {
         private Variables.VarSimple _var;
 
@@ -27,5 +27,27 @@ namespace LINQToTTreeLib.Statements
         {
             yield return string.Format("{0} = !{0};", _var.RawValue);
         }
+
+
+        public bool IsSameStatement(IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RenameVariable(string originalName, string newName)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

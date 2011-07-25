@@ -154,10 +154,10 @@ namespace LINQToTTreeLib.Tests
 
             Assert.AreEqual("{", statements[0], "open brace");
             Assert.IsTrue(statements[1].Contains("int"), "statement 1 - int: '" + statements[1] + "'");
-            Assert.IsTrue(statements[2].Contains("size();"), "statement 2 - x = 0;: '" + statements[2] + "'");
-            Assert.IsTrue(statements[3].StartsWith("  for (int "), "statement 3 - for (): '" + statements[3] + "'");
-            Assert.AreEqual("  {", statements[4], "for loop brace opening");
-            Assert.AreEqual("    d = d;", statements[5], "the actual statement");
+            Assert.IsTrue(statements[1].Contains("size();"), "statement 2 - x = 0;: '" + statements[2] + "'");
+            Assert.IsTrue(statements[2].StartsWith("  for (int "), "statement 3 - for (): '" + statements[3] + "'");
+            Assert.AreEqual("  {", statements[3], "for loop brace opening");
+            Assert.AreEqual("    d = d;", statements[4], "the actual statement");
         }
 
         [TranslateToClass(typeof(ResultType1))]
@@ -205,6 +205,7 @@ namespace LINQToTTreeLib.Tests
             GeneratedCode gc = new GeneratedCode();
 
             var indexVar = vec.AddLoop(gc, cc, MEFUtilities.MEFContainer);
+            gc.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dude"));
 
             ///
             /// Make sure the indexvar is working correctly
@@ -223,7 +224,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             var statements = gc.CodeBody.CodeItUp().ToArray();
-            Assert.IsTrue(statements[2].Contains(".val1).size()"), "size statement incorrect: '" + statements[2] + "'");
+            Assert.IsTrue(statements[1].Contains(".val1).size()"), "size statement incorrect: '" + statements[1] + "'");
         }
     }
 }

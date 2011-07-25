@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Using;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -17,6 +18,12 @@ namespace LINQToTTreeLib.Statements
     [TestClass]
     public partial class StatementIfOnCountTest
     {
+        [TestInitialize]
+        public void TestSetup()
+        {
+            TypeUtils._variableNameCounter = 0;
+        }
+
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementIfOnCount target)
@@ -29,7 +36,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>Test stub for .ctor(IValue, IValue, ComparisonOperator)</summary>
         [PexMethod]
         public StatementIfOnCount Constructor(
-            IValue valueLeft,
+            IVariable valueLeft,
             IValue valueRight,
             StatementIfOnCount.ComparisonOperator comp
         )
@@ -43,7 +50,7 @@ namespace LINQToTTreeLib.Statements
         public void TestEmptyStatements()
         {
             var val = new Variables.ValSimple("true", typeof(bool));
-            var statement = new StatementIfOnCount(new Variables.ValSimple("one", typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
+            var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
 
             var result = statement.CodeItUp().ToArray();
             Assert.AreEqual(0, result.Length, "no statements, so wasn't expecting any sort of output at all");
@@ -53,12 +60,12 @@ namespace LINQToTTreeLib.Statements
         public void TestWithStatement()
         {
             var val = new Variables.ValSimple("true", typeof(bool));
-            var statement = new StatementIfOnCount(new Variables.ValSimple("one", typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
+            var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
             statement.Add(new StatementSimpleStatement("dude"));
 
             var result = statement.CodeItUp().ToArray();
-            Assert.AreEqual(4, result.Length, "no statements, so wasn't expecting any sort of output at all");
-            Assert.AreEqual("if (one == two)", result[0], "if statement is not correct");
+            Assert.AreEqual(5, result.Length, "no statements, so wasn't expecting any sort of output at all");
+            Assert.AreEqual("if (aString_1 == two)", result[1], "if statement is not correct");
         }
 
         [TestMethod]
@@ -75,12 +82,12 @@ namespace LINQToTTreeLib.Statements
             foreach (var op in matchedValues)
             {
                 var val = new Variables.ValSimple("true", typeof(bool));
-                var statement = new StatementIfOnCount(new Variables.ValSimple("one", typeof(string)), new Variables.ValSimple("two", typeof(string)), op.Item1);
+                var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), op.Item1);
                 statement.Add(new StatementSimpleStatement("dude"));
 
                 var result = statement.CodeItUp().ToArray();
-                Assert.AreEqual(4, result.Length, "no statements, so wasn't expecting any sort of output at all");
-                Assert.AreEqual("if (one " + op.Item2 + " two)", result[0], "if statement is not correct");
+                Assert.AreEqual(5, result.Length, "no statements, so wasn't expecting any sort of output at all");
+                Assert.IsTrue(result[1].EndsWith(op.Item2 + " two)"), "if statement is not correct");
             }
         }
 
@@ -93,10 +100,37 @@ namespace LINQToTTreeLib.Statements
             /// We should never be able to combine any filter statements currently!
 
             var val = new Variables.ValSimple("true", typeof(bool));
-            var statement = new StatementIfOnCount(new Variables.ValSimple("one", typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
+            var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
 
-            Assert.IsFalse(statement.TryCombineStatement(s), "unable to do any combines for Filter");
+            Assert.IsFalse(statement.TryCombineStatement(s, null), "unable to do any combines for Filter");
         }
 
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        public void TestEquiv([PexAssumeUnderTest] StatementIfOnCount statement1, IStatement statement2)
+        {
+            var result = statement1.IsSameStatement(statement2);
+
+            var originalLines = statement1.CodeItUp().ToArray();
+            var resultinglines = statement2.CodeItUp().ToArray();
+
+            if (resultinglines.Length != originalLines.Length)
+            {
+                Assert.IsFalse(result, "# of lines is different, so the compare should be too");
+                return;
+            }
+
+            var pairedLines = originalLines.Zip(resultinglines, (o1, o2) => Tuple.Create(o1, o2));
+            foreach (var pair in pairedLines)
+            {
+                if (pair.Item1 != pair.Item2)
+                {
+                    Assert.IsFalse(result, string.Format("Line '{0}' and '{1}' are not same!", pair.Item1, pair.Item2));
+                }
+                else
+                {
+                    Assert.IsTrue(result, string.Format("Line '{0}' and '{1}' are not same!", pair.Item1, pair.Item2));
+                }
+            }
+        }
     }
 }

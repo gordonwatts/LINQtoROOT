@@ -207,6 +207,12 @@ namespace LINQToTTreeLib
                 {
                     get { return typeof(int); }
                 }
+
+
+                public void RenameRawValue(string oldname, string newname)
+                {
+                    throw new NotImplementedException();
+                }
             }
 
         }
@@ -292,13 +298,13 @@ namespace LINQToTTreeLib
 
             /// At the top level we assume there will be a loop over the vals.
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not compound");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not compound");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "aggregate statement type");
         }
 
         [TestMethod]
@@ -327,14 +333,14 @@ namespace LINQToTTreeLib
 
             /// At the top level we assume there will be a loop over the vals.
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not compound");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not compound");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "aggregate statement type");
-            var ass = outterfloop.Statements.First() as Statements.StatementAssign;
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "aggregate statement type");
+            var ass = outterfloop.Statements.First() as Statements.StatementAggregate;
             Assert.IsFalse(ass.Expression.RawValue.Contains("(int)j"), "Expression seems to reference the linq variable name j: '" + ass.Expression.RawValue + "'");
         }
 
@@ -359,20 +365,18 @@ namespace LINQToTTreeLib
 
             /// At the top level we assume there will be a loop over the vals.
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Unexpected # of statements");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not right");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Unexpected # of statements");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not right");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
-            Assert.AreEqual(2, outterfloop.Statements.Count(), "inner loop statements not set correctly");
+            Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementIncrementInteger), "first loop statemen tis funny");
-            Assert.IsInstanceOfType(outterfloop.Statements.Skip(1).First(), typeof(Statements.StatementIfOnCount), "if on count incorrect");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementIfOnCount), "if on count incorrect");
 
-            var incStatement = outterfloop.Statements.First() as Statements.StatementIncrementInteger;
-            var ifcountStatement = outterfloop.Statements.Skip(1).First() as Statements.StatementIfOnCount;
+            var ifcountStatement = outterfloop.Statements.First() as Statements.StatementIfOnCount;
 
             Assert.AreEqual(1, ifcountStatement.Statements.Count(), "expected the fill statement");
-            Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAssign), "Assign statement not there");
+            Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAggregate), "Assign statement not there");
         }
 
         public class subNtupleObjects
@@ -425,18 +429,18 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "vector loop not right");
-            var outterfloop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not right");
+            var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
 
-            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
+            Assert.AreEqual(0, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
             Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
-            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAssign), "assignment statement missing");
+            Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "assignment statement missing");
 
-            var ass = outterfloop.Statements.First() as Statements.StatementAssign;
+            var ass = outterfloop.Statements.First() as Statements.StatementAggregate;
             Assert.IsFalse(ass.Expression.RawValue.Contains("jets"), "jets should be missing from the expression - " + ass.Expression.RawValue);
         }
 
@@ -570,7 +574,7 @@ namespace LINQToTTreeLib
         {
             var q = new QueriableDummy<ntupWithObjects>();
 
-            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+            Expression<Func<subNtupleObjects, bool>> checker = jr => CPPHelperFunctions.Calc(jr.var1) > 1;
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -586,8 +590,8 @@ namespace LINQToTTreeLib
                                                };
 
             var tracksNearJet = from evt in tracksNearJetPerEvent
-                                from j in evt
-                                select j;
+                                from jl in evt
+                                select jl;
 
             var r = tracksNearJet.Aggregate(0, (s, evt) => s + evt.Tracks.Count());
 
@@ -598,6 +602,10 @@ namespace LINQToTTreeLib
             MakeSureNoVariable(code.CodeBody, "j");
             MakeSureNoVariable(code.CodeBody, "Jet");
             MakeSureNoVariable(code.CodeBody, "Tracks");
+            MakeSureNoVariable(code.CodeBody, "jtlz");
+            MakeSureNoVariable(code.CodeBody, "ttlz");
+            MakeSureNoVariable(code.CodeBody, "jl");
+            MakeSureNoVariable(code.CodeBody, "jr");
         }
 
         [TestMethod]
@@ -693,168 +701,312 @@ namespace LINQToTTreeLib
             /// Looking for an infinite loop!
         }
 
-        [TestMethod]
-        public void TestAsQueriable()
+
+        /// <summary>
+        /// Do the code combination we require!
+        /// </summary>
+        /// <param name="gcs"></param>
+        /// <returns></returns>
+        private IExecutableCode CombineQueries(params IExecutableCode[] gcs)
         {
-            // Reset variable counter
-            TypeUtils._variableNameCounter = 0;
-
-            var q = new QueriableDummy<dummyntup>();
-            var r1 = from evt in q
-                     from my in evt.vals.AsQueryable().Where(n => n > 5)
-                     select my;
-            var r = r1.Count();
-            var asQ = DummyQueryExectuor.FinalResult;
-            asQ.DumpCodeToConsole();
-
-            // Reset variable counter
-            TypeUtils._variableNameCounter = 0;
-
-            var r2 = from evt in q
-                     from my in evt.vals.Where(n => n > 5)
-                     select my;
-            var rI = r2.Count();
-            var asNQ = DummyQueryExectuor.FinalResult;
-
-            foreach (var l in asQ.CodeBody.CodeItUp().Zip(asNQ.CodeBody.CodeItUp(), (l1, l2) => Tuple.Create(l1, l2)))
+            var combinedInfo = new CombinedGeneratedCode();
+            foreach (var cq in gcs)
             {
-                Assert.AreEqual(l.Item1, l.Item2, "Line mis-match");
+                combinedInfo.AddGeneratedCode(cq);
             }
 
+            return combinedInfo;
         }
 
         [TestMethod]
-        public void TestNewAnoymousObject()
+        public void TestAggregateAsResultCombine()
         {
-            var q = new QueriableDummy<dummyntup>();
-            var firstR = from evt in q
-                         select (from my in evt.vals.AsQueryable().Where(n => n > 5)
-                                 select new
-                                 {
-                                     EVT = evt,
-                                     MY = my
-                                 });
-            var r1 = from evt in firstR
-                     select (from r in evt where r.MY > 6 select r.MY);
+            var q = new QueriableDummy<ntupWithObjects>();
 
-            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+            var r1 = q.SelectMany(r => r.jets).Aggregate(0, (f, s) => s.var1 + f);
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.SelectMany(r => r.jets).Aggregate(0, (f, s) => s.var1 + f);
+            var query2 = DummyQueryExectuor.FinalResult;
 
-            var result = DummyQueryExectuor.FinalResult;
-            result.DumpCodeToConsole();
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
 
-            Regex tfinder = new Regex(@"\bMY\b");
-            var foundT = from l in result.CodeBody.CodeItUp()
-                         where tfinder.Match(l).Success
-                         select l;
-            Assert.AreEqual(0, foundT.Count(), "No lines should have contained any expression involving MY!");
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(2, statement.Statements.Count(), "# of inner statements");
         }
 
         [TestMethod]
-        public void TestAnonymouseArrayLoop()
+        public void TestAggregateInternalCombine()
         {
-            var q = new QueriableDummy<dummyntup>();
-            var firstR = from evt in q
-                         select (from my in evt.vals.AsQueryable().Where(n => n > 5)
-                                 select new
-                                 {
-                                     EVT = evt,
-                                     MY = evt.vals.Where(j => j > 0)
-                                 });
-            var r1 = from evt in firstR
-                     select (from r in evt where r.MY.Count() > 6 select r.MY);
+            var q = new QueriableDummy<ntupWithObjects>();
 
-            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+            var r1 = q.Select(v => v.jets.Aggregate(0, (s, f) => s + f.var1)).Where(j => j > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Select(v => v.jets.Aggregate(0, (s, f) => s + f.var1)).Where(j => j > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
 
-            var result = DummyQueryExectuor.FinalResult;
-            result.DumpCodeToConsole();
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
 
-            MakeSureNoVariable(result.CodeBody, "evt");
-            MakeSureNoVariable(result.CodeBody, "q");
-            MakeSureNoVariable(result.CodeBody, "my");
-            MakeSureNoVariable(result.CodeBody, "n");
-            MakeSureNoVariable(result.CodeBody, "EVT");
-            MakeSureNoVariable(result.CodeBody, "MY");
-            MakeSureNoVariable(result.CodeBody, "j");
-            MakeSureNoVariable(result.CodeBody, "r");
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
+            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IStatementCompound;
+            Assert.IsNotNull(ifstatement, "if statement not right");
+            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of counts inside the if statement");
         }
 
         [TestMethod]
-        public void TestAnonymouseArrayLoopTwoDeep()
+        public void TestAggregateInternalResultCombine()
         {
-            var q = new QueriableDummy<dummyntup>();
-            var firstR = from evt in q
-                         select (from my in evt.vals.AsQueryable().Where(n => n > 5)
-                                 select new
-                                 {
-                                     EVT = evt,
-                                     MY = evt.vals.Where(j => j > 0)
-                                 });
-            var r1 = from evt in firstR
-                     select (from r in evt where r.MY.Count() > 6 select r);
+            var q = new QueriableDummy<ntupWithObjects>();
 
-            var res = r1.Aggregate(0, (s, r) => s + r.SelectMany(z => z.MY).Count());
+            var r1 = q.Where(evt => evt.jets.Aggregate(0, (s, f) => s + f.var1) > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.Aggregate(0, (s, f) => s + f.var1) > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
 
-            var result = DummyQueryExectuor.FinalResult;
-            result.DumpCodeToConsole();
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
 
-            MakeSureNoVariable(result.CodeBody, "evt");
-            MakeSureNoVariable(result.CodeBody, "q");
-            MakeSureNoVariable(result.CodeBody, "my");
-            MakeSureNoVariable(result.CodeBody, "n");
-            MakeSureNoVariable(result.CodeBody, "EVT");
-            MakeSureNoVariable(result.CodeBody, "MY");
-            MakeSureNoVariable(result.CodeBody, "j");
-            MakeSureNoVariable(result.CodeBody, "r");
-            MakeSureNoVariable(result.CodeBody, "s");
-            MakeSureNoVariable(result.CodeBody, "z");
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]
-        public void TestSelectObject()
+        public void TestAnyCombine()
         {
-            var q = new QueriableDummy<dummyntup>();
-            var stup = from evt in q
-                       select (from t in evt.vals.AsQueryable()
-                               select new Tuple<int, int>(t, t));
+            var q = new QueriableDummy<ntupWithObjects>();
 
-            var r1 = from evt in stup
-                     select (from r in evt where r.Item1 > 5 select r.Item1);
+            var r1 = q.Where(evt => evt.jets.All(j => j.var1 > 5)).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.All(j => j.var1 > 5)).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
 
-            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
 
-            var result = DummyQueryExectuor.FinalResult;
-            result.DumpCodeToConsole();
-
-            // Make sure nothing silly happened, like "t" got in there somehow.
-
-            Regex tfinder = new Regex(@"\bt\b");
-            var foundT = from l in result.CodeBody.CodeItUp()
-                         where tfinder.Match(l).Success
-                         select l;
-            Assert.AreEqual(0, foundT.Count(), "No lines should have contained any expression involving t!");
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]
-        public void TestQueryReferenceInSubQuery()
+        public void TestFirstCombine()
         {
             var q = new QueriableDummy<dummyntup>();
-            var slist = from evt in q
-                        select (from t in evt.vals select 2 * t);
 
-            var r1 = from evt in slist
-                     select (from r in evt where r > 5 select r);
+            var r1 = q.Where(evt => evt.vals.First() > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.vals.First() > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
 
-            var res = r1.Aggregate(0, (s, r) => s + r.Count());
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
 
-            var result = DummyQueryExectuor.FinalResult;
-            result.DumpCodeToConsole();
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
 
-            Regex tfinder = new Regex(@"\bt\b");
-            var foundT = from l in result.CodeBody.CodeItUp()
-                         where tfinder.Match(l).Success
-                         select l;
+        [TestMethod]
+        public void TestMinMaxStatement()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var dudeQ1 = from evt in q
+                         where (evt.jets.Max(j => j.var1) > 5)
+                         select evt;
+            var dude1 = dudeQ1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
 
-            Assert.AreEqual(0, foundT.Count(), "No lines referencing t should be in there! Ack!");
+            var dudeQ2 = from evt in q
+                         where (evt.jets.Max(j => j.var1) > 5)
+                         select evt;
+            var dude2 = dudeQ2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+        }
+
+        [TestMethod]
+        public void TestPairWiseCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1p = from evt in q
+                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
+            var r1 = r1p.Where(c => c > 2).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2p = from evt in q
+                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
+            var r2 = r2p.Where(c => c > 2).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(5, st.Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestSumCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = q.Where(evt => evt.jets.Sum(j => j.var1) > 10).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.Sum(j => j.var1) > 10).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query Blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TsetTakeSkipCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1p = from evt in q
+                      let v = evt.jets.Skip(1).Count()
+                      where v > 1
+                      select v;
+            var r1 = r1p.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2p = from evt in q
+                      let v = evt.jets.Skip(1).Count()
+                      where v > 1
+                      select v;
+            var r2 = r2p.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of guys");
+        }
+
+        [TestMethod]
+        public void TestUnqiueCombineStatements()
+        {
+            var q = new QueriableDummy<ntupArray>();
+
+            // Query #1
+
+            var results1 = from evt in q
+                           select evt.run.UniqueCombinations().Count();
+            var total1 = results1.Aggregate(0, (seed, val) => seed + val);
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var results2 = from evt in q
+                           select evt.run.UniqueCombinations().Count();
+            var total2 = results2.Aggregate(0, (seed, val) => seed + val);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            // Check that the combine actually worked well!!
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            // First for loop to crord, 2 to test, and then the two aggregates
+            Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+        }
+
+        [TestMethod]
+        public void TestVectorLoopAnyCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1 = q.SelectMany(t => t.jets).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.SelectMany(t => t.jets).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(2, statement.Statements.Count(), "# of inner statements");
+        }
+
+        /// <summary>
+        /// Check what happens when a Combine is called on several different simple loops.
+        /// </summary>
+        [TestMethod]
+        public void TestSimpleOutterLoopCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2 = q.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestSimpleIfCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Where(f => f.run > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(f => f.run > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var ifstatement = query.QueryCode().First().Statements.First() as Statements.StatementFilter;
+            Assert.IsNotNull(ifstatement, "if statement");
+            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside if block");
+        }
+
+        [TestMethod]
+        public void TestSimpleIfNotCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Where(f => f.run > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(f => f.run > 6).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        class ntupArray
+        {
+#pragma warning disable 0649
+            public int[] run;
+#pragma warning restore 0649
         }
 
     }

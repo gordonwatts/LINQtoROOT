@@ -55,6 +55,36 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+
+            public bool IsSameStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public IStatement Parent
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
 
         public class CompoundStatement : IStatementCompound
@@ -76,9 +106,33 @@ namespace LINQToTTreeLib
             }
 
 
-            public bool TryCombineStatement(IStatement statement)
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
             {
                 throw new NotImplementedException();
+            }
+
+
+            public bool IsSameStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public IStatement Parent
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 
@@ -230,6 +284,7 @@ namespace LINQToTTreeLib
 
             var v2 = new VarInteger();
             target.Add(v2);
+            s.Parent = null;
             target.Add(s);
             Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
             Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
@@ -257,6 +312,7 @@ namespace LINQToTTreeLib
 
             var v2 = new VarInteger();
             target.Add(v2);
+            s.Parent = null;
             target.Add(s);
             Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
             Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");

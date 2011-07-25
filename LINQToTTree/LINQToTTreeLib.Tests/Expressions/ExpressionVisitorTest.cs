@@ -386,10 +386,10 @@ namespace LINQToTTreeLib
             /// The top level statement should be a loop over whatever it is we are looping over!
             /// 
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(IBookingStatementBlock), "Incorrect looping statement");
-            Assert.IsFalse(gc.CodeBody.Statements.Skip(1).First().CodeItUp().First().Contains("<generated>"), "Contains a funny variable name: " + gc.CodeBody.Statements.Skip(1).First().CodeItUp().First());
-            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count(), "Expected one declared variable");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "Incorrect looping statement");
+            Assert.IsFalse(gc.CodeBody.Statements.First().CodeItUp().First().Contains("<generated>"), "Contains a funny variable name: " + gc.CodeBody.Statements.First().CodeItUp().First());
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected one declared variable");
 
             ///
             /// Next, make sure if we add a statement it goes where we think it should - after teh stuff that has been added,
@@ -397,7 +397,7 @@ namespace LINQToTTreeLib
             /// 
 
             gc.Add(new Statements.StatementSimpleStatement("dude"));
-            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "Scope has not been reset");
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Scope has not been reset");
 
             Assert.AreEqual(0, cc.NumberOfParams, "Impromper # of parameter replacements left over");
         }
@@ -421,7 +421,7 @@ namespace LINQToTTreeLib
             /// Next, go after the code that comes back and make sure the if statement for the > 20 actually makes sense.
             /// 
 
-            var loop = gc.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            var loop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(loop, "Loop statement not found");
             Assert.AreEqual(1, loop.Statements.Count(), "Expected one sub-statement");
             Assert.IsInstanceOfType(loop.Statements.First(), typeof(Statements.StatementFilter), "bad if statement");

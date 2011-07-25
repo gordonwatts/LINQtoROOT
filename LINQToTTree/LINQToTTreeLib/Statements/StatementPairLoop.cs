@@ -5,7 +5,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
-    public class StatementPairLoop : StatementInlineBlock
+    public class StatementPairLoop : StatementInlineBlockBase
     {
         private Variables.VarArray arrayRecord;
         private IVariable index1;
@@ -26,6 +26,28 @@ namespace LINQToTTreeLib.Statements
             this.index2 = index2;
         }
 
+        /// <summary>
+        /// See if these are teh same statement or not.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool IsSameStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementPairLoop;
+            if (other == null)
+                return false;
+
+            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
+                return false;
+
+            return arrayRecord.RawValue == other.arrayRecord.RawValue
+                && index1.RawValue == other.index1.RawValue
+                && index2.RawValue == other.index2.RawValue;
+        }
+
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
             if (Statements.Any())
@@ -36,7 +58,7 @@ namespace LINQToTTreeLib.Statements
                 yield return string.Format("  for(int {0} = {1}+1; {0} < {2}.size(); {0}++)", index2.RawValue, index1.RawValue, arrayRecord.RawValue);
                 yield return "  {";
                 yield return "    breakSeen = true;";
-                foreach (var l in base.CodeItUp())
+                foreach (var l in RenderInternalCode())
                 {
                     yield return "    " + l;
                 }
@@ -45,6 +67,49 @@ namespace LINQToTTreeLib.Statements
                 yield return "  if (breakSeen) break;";
                 yield return "}";
             }
+        }
+
+        /// <summary>
+        /// We can combine these two statements iff the array record we are looping
+        /// over is the same. Rename the index after that!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var otherPairLoop = statement as StatementPairLoop;
+            if (otherPairLoop == null)
+                return false;
+
+            if (otherPairLoop.arrayRecord.RawValue != arrayRecord.RawValue)
+                return false;
+
+            // Just make sure the index guys are renamed!
+
+            otherPairLoop.RenameVariable(otherPairLoop.index1.RawValue, index1.RawValue);
+            otherPairLoop.RenameVariable(otherPairLoop.index2.RawValue, index2.RawValue);
+
+            // Now, combine them!
+
+            Combine(otherPairLoop, opt);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Rename the variables we know about here!
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
+        public override void RenameVariable(string origName, string newName)
+        {
+            index1.RenameRawValue(origName, newName);
+            index2.RenameRawValue(origName, newName);
+            arrayRecord.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
     }
 }

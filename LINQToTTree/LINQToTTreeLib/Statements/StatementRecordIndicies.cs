@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Statements
@@ -8,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// check for uniqueness of that integer that is pushed on - this is pretty simple. The vector it is pushing onto should
     /// be declared at an outter level to be of any use. :-)
     /// </summary>
-    class StatementRecordIndicies : IStatement
+    public class StatementRecordIndicies : IStatement
     {
         /// <summary>
         /// The integer to record
@@ -18,15 +19,20 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The array to be storing things in
         /// </summary>
-        private IValue _storageArray;
+        private IVariable _storageArray;
 
         /// <summary>
         /// Create a statement that will record this index into this array each time through.
         /// </summary>
         /// <param name="intToRecord">Integer that should be cached on each time through</param>
         /// <param name="storageArray">The array where the indicies should be written</param>
-        public StatementRecordIndicies(IValue intToRecord, IValue storageArray)
+        public StatementRecordIndicies(IValue intToRecord, IVariable storageArray)
         {
+            if (intToRecord == null)
+                throw new ArgumentNullException("intToRecord");
+            if (storageArray == null)
+                throw new ArgumentNullException("storageArray");
+
             _intToRecord = intToRecord;
             _storageArray = storageArray;
         }
@@ -44,5 +50,66 @@ namespace LINQToTTreeLib.Statements
         {
             yield return string.Format("{0}.push_back({1});", _storageArray.RawValue, _intToRecord.RawValue);
         }
+
+        /// <summary>
+        /// Check to see if the statements are similar or not.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool IsSameStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+            var other = statement as StatementRecordIndicies;
+            if (other == null)
+                return false;
+
+            return _intToRecord.RawValue == other._intToRecord.RawValue
+                && _storageArray.RawValue == other._storageArray.RawValue;
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Rename the variables.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
+        public void RenameVariable(string originalName, string newName)
+        {
+            _intToRecord.RenameRawValue(originalName, newName);
+            _storageArray.RenameRawValue(originalName, newName);
+
+        }
+
+        /// <summary>
+        /// Attempt to combine two record statements. We are a bit different, we have 
+        /// an object we depend on - which is record... and that has to be the same. The
+        /// other one we need to propagate.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            if (statement == null)
+                throw new ArgumentException("statement");
+
+            var asRecord = statement as StatementRecordIndicies;
+            if (asRecord == null)
+                return false;
+
+            if (_intToRecord.RawValue != asRecord._intToRecord.RawValue)
+                return false;
+
+            //
+            // Since int to record is the same, we do a rename and move on!
+            //
+
+            return opt.TryRenameVarialbeOneLevelUp(asRecord._storageArray.RawValue, _storageArray);
+        }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

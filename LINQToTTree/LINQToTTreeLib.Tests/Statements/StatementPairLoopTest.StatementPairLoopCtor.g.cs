@@ -8,60 +8,11 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementPairLoopTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementPairLoopTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException608()
-{
-    StatementPairLoop statementPairLoop;
-    statementPairLoop =
-      this.StatementPairLoopCtor((VarArray)null, (IVariable)null, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementPairLoopTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException815()
-{
-    VarArray varArray;
-    StatementPairLoop statementPairLoop;
-    varArray = VarArrayFactory.Create();
-    statementPairLoop =
-      this.StatementPairLoopCtor(varArray, (IVariable)null, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementPairLoopTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException718()
-{
-    VarArray varArray;
-    StatementPairLoop statementPairLoop;
-    varArray = VarArrayFactory.Create();
-    statementPairLoop =
-      this.StatementPairLoopCtor(varArray, (IVariable)varArray, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementPairLoopTest))]
-public void StatementPairLoopCtor629()
-{
-    VarArray varArray;
-    StatementPairLoop statementPairLoop;
-    varArray = VarArrayFactory.Create();
-    statementPairLoop =
-      this.StatementPairLoopCtor(varArray, (IVariable)varArray, (IVariable)varArray);
-    Assert.IsNotNull((object)statementPairLoop);
-    Assert.IsNotNull(((StatementInlineBlock)statementPairLoop).Statements);
-    Assert.IsNotNull(((StatementInlineBlock)statementPairLoop).DeclaredVariables);
-}
+
     }
 }

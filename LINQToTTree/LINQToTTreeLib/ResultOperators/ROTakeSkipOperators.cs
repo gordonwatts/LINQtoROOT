@@ -72,20 +72,19 @@ namespace LINQToTTreeLib.ResultOperators
             var counter = new VarInteger();
             codeEnv.AddOneLevelUp(counter);
 
-            codeEnv.Add(new StatementIncrementInteger(counter));
             var comparison = StatementIfOnCount.ComparisonOperator.LessThanEqual;
-            IValue comparisonValue = null;
+            IValue limit = null;
             if (skip != null)
             {
                 comparison = StatementIfOnCount.ComparisonOperator.GreaterThan;
-                comparisonValue = ExpressionToCPP.GetExpression(skip.Count, codeEnv, codeContext, container);
+                limit = ExpressionToCPP.GetExpression(skip.Count, codeEnv, codeContext, container);
             }
             else
             {
-                comparisonValue = ExpressionToCPP.GetExpression(take.Count, codeEnv, codeContext, container);
+                limit = ExpressionToCPP.GetExpression(take.Count, codeEnv, codeContext, container);
             }
 
-            codeEnv.Add(new StatementIfOnCount(counter, comparisonValue, comparison));
+            codeEnv.Add(new StatementIfOnCount(counter, limit, comparison));
 
             ///
             /// We are particlarly fortunate here. We don't have to update the Loop variable - whatever it is is

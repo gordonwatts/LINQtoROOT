@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -8,10 +9,15 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementAssign : IStatement
     {
-        public StatementAssign(IVariable accumulator, IValue funcResolved)
+        public StatementAssign(IVariable result, IValue val)
         {
-            ResultVariable = accumulator;
-            Expression = funcResolved;
+            if (result == null)
+                throw new ArgumentNullException("Accumulator must not be zero");
+            if (val == null)
+                throw new ArgumentNullException("funcResolved must not be null");
+
+            ResultVariable = result;
+            Expression = val;
         }
 
         /// <summary>
@@ -41,5 +47,60 @@ namespace LINQToTTreeLib.Statements
         {
             return ResultVariable.RawValue + "=" + Expression.RawValue;
         }
+
+        /// <summary>
+        /// Check to see if this assign is the same or not
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool IsSameStatement(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement must not be null");
+
+            var other = statement as StatementAssign;
+            if (other == null)
+                return false;
+
+            return ResultVariable.RawValue == other.ResultVariable.RawValue
+                && Expression.RawValue == other.Expression.RawValue;
+        }
+
+        /// <summary>
+        /// Rename the assignment we are making.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
+        public void RenameVariable(string originalName, string newName)
+        {
+            ResultVariable.RenameRawValue(originalName, newName);
+            Expression.RenameRawValue(originalName, newName);
+        }
+
+        /// <summary>
+        /// Try to combine two assign statements. Since this will be for totally
+        /// trivial cases, this should be "easy" - only when they are the same.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var otherAssign = statement as StatementAssign;
+            if (otherAssign == null)
+                return false;
+
+            if (Expression.RawValue != otherAssign.Expression.RawValue)
+                return false;
+
+            return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
+        }
+
+        /// <summary>
+        /// Points to the statement that holds onto us.
+        /// </summary>
+        public IStatement Parent { get; set; }
     }
 }

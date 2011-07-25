@@ -83,11 +83,10 @@ namespace LINQToTTreeLib.ResultOperators
 
             var statements = codeEnv.CodeBody.Statements.First() as StatementInlineBlock;
 
-            Assert.AreEqual(2, statements.Statements.Count(), "Expected an if block and an increment!");
-            Assert.IsInstanceOfType(statements.Statements.First(), typeof(StatementIncrementInteger), "increment statement not found!");
-            Assert.IsInstanceOfType(statements.Statements.Skip(1).First(), typeof(StatementIfOnCount), "if statement not found!");
+            Assert.AreEqual(1, statements.Statements.Count(), "Expected an if block/increment!");
+            Assert.IsInstanceOfType(statements.Statements.First(), typeof(StatementIfOnCount), "if statement not found!");
 
-            var s = statements.Statements.Skip(1).First() as StatementIfOnCount;
+            var s = statements.Statements.First() as StatementIfOnCount;
 
             string count = "";
             if (resultOperator is SkipResultOperator)
@@ -98,7 +97,7 @@ namespace LINQToTTreeLib.ResultOperators
             {
                 count = (resultOperator as TakeResultOperator).Count.ToString();
             }
-            Assert.AreEqual(count, s.ValRight.RawValue, "bad count made it through");
+            Assert.AreEqual(count, s.Limit.RawValue, "bad count made it through");
 
             ///
             /// Finally, the current loop variable should be identical, and there should be no result set.

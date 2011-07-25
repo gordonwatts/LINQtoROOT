@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -17,7 +18,7 @@ namespace LINQToTTreeLib.Tests
         /// Dump the code to the console - for debugging a test...
         /// </summary>
         /// <param name="code"></param>
-        public static void DumpCodeToConsole(this IGeneratedQueryCode code)
+        public static void DumpCodeToConsole(this GeneratedCode code)
         {
             Console.WriteLine("Declared Variables:");
             foreach (var var in code.CodeBody.DeclaredVariables)
@@ -30,10 +31,8 @@ namespace LINQToTTreeLib.Tests
             }
             Console.WriteLine("Code:");
 
-            foreach (var l in code.CodeBody.CodeItUp())
-            {
-                Console.WriteLine("  " + l);
-            }
+            code.CodeBody.DumpCodeToConsole();
+
             if (code.ResultValue == null)
             {
                 Console.WriteLine("Result Variable: <not set (null)>");
@@ -41,6 +40,60 @@ namespace LINQToTTreeLib.Tests
             else
             {
                 Console.WriteLine("Result Variable: ", code.ResultValue.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Dump out info from a executable code dude.
+        /// </summary>
+        /// <param name="code"></param>
+        public static void DumpCodeToConsole(this IExecutableCode code)
+        {
+            Console.WriteLine("There are {0} Query Blocks:", code.QueryCode().Count());
+            foreach (var qb in code.QueryCode())
+            {
+                Console.WriteLine("Query Block:");
+                qb.DumpCodeToConsole("  ");
+            }
+
+            if (code.ResultValues == null)
+            {
+                Console.WriteLine("Result Variable: <not set (null)>");
+            }
+            else
+            {
+                Console.WriteLine("There are {0} result variables.", code.ResultValues.Count());
+                foreach (var rv in code.ResultValues)
+                {
+                    Console.WriteLine("  Result Variable: {0}", rv.RawValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dump some code to the console for debugging.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="indent"></param>
+        public static void DumpCodeToConsole(this IStatementCompound code, string indent = "")
+        {
+            if (code is IBookingStatementBlock)
+            {
+                var bs = code as IBookingStatementBlock;
+                Console.WriteLine("{0}There are {1} declared variables", indent, bs.DeclaredVariables.Count());
+                foreach (var var in bs.DeclaredVariables)
+                {
+                    string initalValue = "default()";
+                    if (var.InitialValue != null && var.InitialValue.RawValue != null)
+                        initalValue = var.InitialValue.RawValue;
+
+                    Console.WriteLine(indent + "  " + var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
+                }
+            }
+            Console.WriteLine("{0}Lines of code:", indent);
+            foreach (var l in code.CodeItUp())
+            {
+                Console.WriteLine("{0}  {1}", indent, l);
             }
         }
 
@@ -163,5 +216,67 @@ namespace LINQToTTreeLib.Tests
             return source.Plot(plotID, plotTitle, nbins, lowBin, highBin, v => Convert.ToDouble(v));
         }
 
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        public static FileInfo CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
+        {
+            string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
+            FileInfo result = new FileInfo(filename);
+            if (result.Exists)
+                return result;
+
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
+            var tree = TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize);
+            f.Write();
+            f.Close();
+            result.Refresh();
+            return result;
+        }
+
+        /// <summary>
+        /// Dirt simply test ntuple. Actually matches one that exists on disk.
+        /// </summary>
+        public class TestNtupeArr
+        {
+#pragma warning disable 0169
+            public int[] myvectorofint;
+#pragma warning restore 0169
+        }
+
+        /// <summary>
+        /// Given the root file and the root-tuple name, generate a proxy file 
+        /// </summary>
+        /// <param name="rootFile"></param>
+        /// <returns></returns>
+        public static FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName)
+        {
+            ///
+            /// First, load up the TTree
+            /// 
+
+            var tfile = new ROOTNET.NTFile(rootFile.FullName, "READ");
+            var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
+            Assert.IsNotNull(tree, "Tree couldn't be found");
+
+            ///
+            /// Create the proxy sub-dir if not there already, and put the dummy macro in there
+            /// 
+
+            using (var w = File.CreateText("junk.C"))
+            {
+                w.Write("int junk() {return 10.0;}");
+                w.Close();
+            }
+
+            ///
+            /// Create the macro proxy now
+            /// 
+
+            tree.MakeProxy("scanner", "junk.C", null, "nohist");
+            return new FileInfo("scanner.h");
+        }
     }
 }

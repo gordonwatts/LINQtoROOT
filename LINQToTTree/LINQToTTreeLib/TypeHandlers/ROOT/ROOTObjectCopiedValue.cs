@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
@@ -58,5 +59,11 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// The original title of the root object.
         /// </summary>
         public string OriginalTitle { get; private set; }
+
+
+        public void RenameRawValue(string oldname, string newname)
+        {
+            RawValue = Regex.Replace(RawValue, @"\b" + oldname + @"\b", newname);
+        }
     }
 }

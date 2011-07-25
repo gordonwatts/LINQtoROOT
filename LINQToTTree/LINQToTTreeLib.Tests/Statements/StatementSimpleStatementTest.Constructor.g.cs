@@ -16,55 +16,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementSimpleStatementTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException995()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor("");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException329()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor((string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException167()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor(";");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException342()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor(";;");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-public void Constructor215()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor("\0;;");
-    Assert.IsNotNull((object)statementSimpleStatement);
-    Assert.AreEqual<string>("\0", statementSimpleStatement.Line);
-    Assert.AreEqual<bool>(true, statementSimpleStatement.AddSemicolon);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException137()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    statementSimpleStatement = this.Constructor(";\u2000");
-}
     }
 }

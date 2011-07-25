@@ -30,6 +30,7 @@ namespace LINQToTTreeLib.Statements
             target.Add(statement);
             Assert.AreEqual(oldCount + 1, target.Statements.Count(), "Expected a statement to have been added");
             Assert.IsFalse(target.Statements.Any(s => s == null), "Should never add a null statement");
+            Assert.AreEqual(target, statement.Parent, "Parent not set correctly");
         }
 
         [PexMethod]
@@ -130,6 +131,12 @@ namespace LINQToTTreeLib.Statements
             public string RawValue { get; set; }
 
             public Type Type { get; set; }
+
+
+            public void RenameRawValue(string oldname, string newname)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentException))]
@@ -148,6 +155,15 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(2, b.DeclaredVariables.Count(), "incorrect number of variables");
         }
 
+        class DummyOptimizer : ICodeOptimizationService
+        {
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
         [TestMethod]
         public void TestSimpleBlockCombine()
         {
@@ -156,8 +172,8 @@ namespace LINQToTTreeLib.Statements
             IStatement b2 = new StatementSimpleStatement("dude");
 
             var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(b1), "should always be able to add extra statements");
-            Assert.IsTrue(b.TryCombineStatement(b2), "should always be able to add another extra statement");
+            Assert.IsTrue(b.TryCombineStatement(b1, new DummyOptimizer()), "should always be able to add extra statements");
+            Assert.IsTrue(b.TryCombineStatement(b2, new DummyOptimizer()), "should always be able to add another extra statement");
 
             Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
         }
@@ -174,7 +190,7 @@ namespace LINQToTTreeLib.Statements
         public void TestAddSingleStatement(IStatement s)
         {
             var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(s), "Failed to add statement");
+            Assert.IsTrue(b.TryCombineStatement(s, null), "Failed to add statement");
 
             ///
             /// Now check...
@@ -182,11 +198,12 @@ namespace LINQToTTreeLib.Statements
 
             if (s.GetType() == typeof(StatementInlineBlock))
             {
-                /// Should lift everything out!
+                // This is a little tricky as we have to go pretty deep to figure out what
+                // what are "good" and bad statements for counting. 
 
-                var first = s as StatementInlineBlock;
-                Assert.AreEqual(first.Statements.Count(), b.Statements.Count(), "# of statements");
-                Assert.AreEqual(first.DeclaredVariables.Count(), b.DeclaredVariables.Count(), "# of declared variables");
+                var goodInfo = CountDownlevelStatements(s as StatementInlineBlock);
+                Assert.AreEqual(goodInfo.Item1, b.Statements.Count(), "# of statements");
+                Assert.AreEqual(goodInfo.Item2, b.DeclaredVariables.Count(), "# of declared variables");
             }
             else
             {
@@ -195,6 +212,195 @@ namespace LINQToTTreeLib.Statements
                 Assert.AreEqual(1, b.Statements.Count(), "# of statements");
                 Assert.AreEqual(0, b.DeclaredVariables.Count(), "# of declared variables");
             }
+        }
+
+        /// <summary>
+        /// Recurisvely count the # of good statements.
+        /// </summary>
+        /// <param name="statementInlineBlock"></param>
+        /// <returns></returns>
+        private Tuple<int, int> CountInterestingStatements(StatementInlineBlock statementInlineBlock)
+        {
+            var varCount = statementInlineBlock.DeclaredVariables.Count();
+
+            if (varCount > 0)
+            {
+                // need to keep the way we declare variables here, so don't go any deeper!
+                return Tuple.Create(varCount, statementInlineBlock.Statements.Count());
+            }
+
+            // Ok, we can lift the statements by one, since this wrapper is basically "empty".
+
+            int statementCount = 0;
+            foreach (var s in statementInlineBlock.Statements)
+            {
+                if (s.GetType() == typeof(StatementInlineBlock))
+                {
+                    var tr = CountInterestingStatements(s as StatementInlineBlock);
+                    statementCount += tr.Item1;
+                    varCount += tr.Item2;
+                }
+                else
+                {
+                    statementCount++;
+                }
+            }
+
+            return Tuple.Create(statementCount, varCount);
+        }
+
+        /// <summary>
+        /// Recurisvely count the # of good statements.
+        /// </summary>
+        /// <param name="statementInlineBlock"></param>
+        /// <returns></returns>
+        private Tuple<int, int> CountDownlevelStatements(StatementInlineBlock statementInlineBlock)
+        {
+            var varCount = statementInlineBlock.DeclaredVariables.Count();
+            return Tuple.Create(statementInlineBlock.Statements.Count(), varCount);
+        }
+
+        /// <summary>
+        /// Helper class to force a rename
+        /// </summary>
+        class CombineTestStatement : IStatement
+        {
+            private VarSimple vdecl2;
+
+            public CombineTestStatement(VarSimple vdecl2)
+            {
+                // TODO: Complete member initialization
+                this.vdecl2 = vdecl2;
+            }
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsSameStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                return;
+            }
+
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                var other = statement as CombineTestStatement;
+                if (other == null)
+                    return false;
+                return optimize.TryRenameVarialbeOneLevelUp(other.vdecl2.RawValue, vdecl2);
+            }
+
+
+            public IStatement Parent { get; set; }
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameSimple()
+        {
+            // Try to combine two statements that will combine, but require
+            // a rename first.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+
+            inline1.Add(vdecl1);
+            inline2.Add(vdecl2);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(1, inline1.Statements.Count(), "bad # of combined statements");
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameDownstream()
+        {
+            // When doing a good rename, make sure downstream statements get the rename too.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+
+            inline1.Add(vdecl1);
+            inline2.Add(vdecl2);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+            inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(2, inline1.Statements.Count(), "bad # of combined statements");
+            Assert.AreEqual(string.Format("dude = {0};", vdecl1.RawValue), inline1.Statements.Skip(1).First().CodeItUp().First(), "Line wasn't renamed");
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameVarsDifferent()
+        {
+            // If the varialbes are initialized differently, then we can't combine them!
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            vdecl1.InitialValue = new ValSimple("0", typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+            vdecl2.InitialValue = new ValSimple("1", typeof(int));
+
+            inline1.Add(vdecl1);
+            inline2.Add(vdecl2);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+            inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(3, inline1.Statements.Count(), "bad # of combined statements");
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameVarsNotDecl()
+        {
+            // If one of the variables isn't declared, then this is a "result" and it shouldn't
+            // be combined (or similar - whatever, it is outside the block). So we can't
+            // do the combine for now!
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = new Variables.VarSimple(typeof(int));
+            var vdecl2 = new Variables.VarSimple(typeof(int));
+
+            inline1.Add(vdecl1);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+            inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(3, inline1.Statements.Count(), "bad # of combined statements");
         }
     }
 }

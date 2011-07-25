@@ -96,8 +96,8 @@ namespace LINQToTTreeLib.ResultOperators
             // if statement that tests for > 10.
             // 
 
-            Assert.AreEqual(3, res.CodeBody.Statements.Count(), "# of statements at top level");
-            var ifStatement = res.CodeBody.Statements.Skip(2).First() as Statements.StatementFilter;
+            Assert.AreEqual(2, res.CodeBody.Statements.Count(), "# of statements at top level");
+            var ifStatement = res.CodeBody.Statements.Skip(1).First() as Statements.StatementFilter;
             Assert.IsNotNull(ifStatement, "If statement wasn' of proper type!");
 
             var varname = ifStatement.TestExpression.RawValue.Split('>').First();

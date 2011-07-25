@@ -72,6 +72,7 @@
     <Reference Include="libTreeWrapper">
       <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -191,22 +192,36 @@
     <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
+    <Compile Include="Factories\CodeOptimizerTestFactory.cs" />
     <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
     <Compile Include="Factories\ConstantExpressionFactory.cs" />
     <Compile Include="Factories\CPPTranslatorFactory.cs" />
     <Compile Include="Factories\GeneratedCodeFactory.cs" />
+    <Compile Include="Factories\ICodeOptimizerFactory.cs" />
     <Compile Include="Factories\MethodCallExpressionFactory.cs" />
     <Compile Include="Factories\NTObjectFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
+    <Compile Include="Factories\StatementAnyAllDetectorFactory.cs" />
+    <Compile Include="Factories\StatementAssignFactory.cs" />
+    <Compile Include="Factories\StatementCheckLoopPairwiseFactory.cs" />
+    <Compile Include="Factories\StatementFilterFactory.cs" />
+    <Compile Include="Factories\StatementFlipBoolFactory.cs" />
     <Compile Include="Factories\StatementIfOnCountFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
+    <Compile Include="Factories\StatementLoopOverGoodFactory.cs" />
+    <Compile Include="Factories\StatementMinMaxTestFactory.cs" />
     <Compile Include="Factories\StatementPairLoopFactory.cs" />
+    <Compile Include="Factories\StatementRecordIndiciesFactory.cs" />
+    <Compile Include="Factories\StatementRecordValueFactory.cs" />
+    <Compile Include="Factories\StatementSimpleStatementFactory.cs" />
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
     <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
     <Compile Include="Factories\VarArrayFactory.cs" />
     <Compile Include="Factories\VarIntegerFactory.cs" />
+    <Compile Include="Factories\VarSimpleFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
@@ -344,11 +359,43 @@
     <Compile Include="ResultOperators\ROCountTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROCountTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ROSumTest.TestCanHandle.g.cs">
-      <DependentUpon>t_ROSum.cs</DependentUpon>
+    <Compile Include="Statements\StatementAggregateTest.CodeItUpTest.g.cs">
+      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ROSumTest.TestProcessResultOperator.g.cs">
-      <DependentUpon>t_ROSum.cs</DependentUpon>
+    <Compile Include="Statements\StatementAggregateTest.cs" />
+    <Compile Include="Statements\IStatementCombineTest.cs" />
+    <Compile Include="Statements\IStatementCombineTest.TestEquiv.g.cs">
+      <DependentUpon>IStatementCombineTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\IStatementCombineTest.TestRename.g.cs">
+      <DependentUpon>IStatementCombineTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAggregateTest.IsSameStatementTest.g.cs">
+      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAggregateTest.RenameVariableTest.g.cs">
+      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAggregateTest.StatementAggregateConstructorTest.g.cs">
+      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAggregateTest.TryCombineStatementTest.g.cs">
+      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.CodeItUpTest.g.cs">
+      <DependentUpon>StatementAssignTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.IsSameStatementTest.g.cs">
+      <DependentUpon>StatementAssignTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.RenameVariableTest.g.cs">
+      <DependentUpon>StatementAssignTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.StatementAssignConstructorTest.g.cs">
+      <DependentUpon>StatementAssignTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementAssignTest.TryCombineStatementTest.g.cs">
+      <DependentUpon>StatementAssignTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
@@ -357,6 +404,12 @@
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementFilterTest.cs" />
+    <Compile Include="Statements\StatementFilterTest.TestEquiv.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementFilterTest.TestRename.g.cs">
+      <DependentUpon>StatementFilterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementFilterTest.TestTryCombine.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
@@ -367,6 +420,9 @@
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.cs" />
+    <Compile Include="Statements\StatementIfOnCountTest.TestEquiv.g.cs">
+      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.TestTryCombine.g.cs">
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
@@ -374,6 +430,15 @@
       <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementIncrementIntegerTest.cs" />
+    <Compile Include="Statements\StatementIncrementIntegerTest.TestEquiv.g.cs">
+      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementIncrementIntegerTest.TestRename.g.cs">
+      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementIncrementIntegerTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.Add.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
@@ -390,9 +455,37 @@
     <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">
       <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.CodeItUp.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.Constructor.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.cs" />
+    <Compile Include="Statements\StatementLoopOverGoodTest.TestEquiv.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGoodTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementPairLoopTest.cs" />
     <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">
       <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.CodeItUpTest.g.cs">
+      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.IsSameStatementTest.g.cs">
+      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.RenameVariableTest.g.cs">
+      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.StatementRecordIndiciesConstructorTest.g.cs">
+      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementRecordIndiciesTest.TryCombineStatementTest.g.cs">
+      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
@@ -401,9 +494,33 @@
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
+    <Compile Include="Statements\StatementVectorLoopTest.cs" />
+    <Compile Include="Statements\TestStatemenRecordValue.TestCodeItUp.g.cs">
+      <DependentUpon>StatemenRecordValueTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatemenRecordValue.TestRenameVariable.g.cs">
+      <DependentUpon>StatemenRecordValueTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatemenRecordValue.TestTryCombineStatement.g.cs">
+      <DependentUpon>StatemenRecordValueTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementAnyAllDetector.TestCodeItUp.g.cs">
+      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementAnyAllDetector.TestRenameVariable.g.cs">
+      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementAnyAllDetector.TestTryCombineStatement.g.cs">
+      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementCheckLoopPairwise.TestStatementCheckLoopPairwiseConstructor.g.cs">
+      <DependentUpon>StatementCheckLoopPairwiseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\Utils.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
     <Compile Include="TestUtils.cs" />
+    <Compile Include="TTreeExecutorCombinationTests.cs" />
     <Compile Include="TTreeQueryExecutorTest.Constructor.g.cs">
       <DependentUpon>TTreeQueryExecutorTest.cs</DependentUpon>
     </Compile>
@@ -460,8 +577,11 @@
       <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
     <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
-    <Compile Include="Expressions\t_ObjectPropertyExpressionVisitor.cs" />
-    <Compile Include="t_ROSum.cs" />
+    <Compile Include="Statements\StatementRecordIndiciesTest.cs" />
+    <Compile Include="Statements\StatementAssignTest.cs" />
+    <Compile Include="Statements\StatementCheckLoopPairwiseTest.cs" />
+    <Compile Include="Statements\StatementAnyAllDetectorTest.cs" />
+    <Compile Include="Statements\StatemenRecordValueTest.cs" />
     <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
       <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>
     </Compile>
@@ -513,6 +633,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

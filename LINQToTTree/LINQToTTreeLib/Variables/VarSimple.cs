@@ -40,5 +40,17 @@ namespace LINQToTTreeLib.Variables
         {
             return VariableName + " = (" + Type.Name + ") " + RawValue;
         }
+
+
+        public void RenameRawValue(string oldname, string newname)
+        {
+            if (InitialValue != null)
+                InitialValue.RenameRawValue(oldname, newname);
+            if (RawValue == oldname)
+            {
+                RawValue = newname;
+                VariableName = newname;
+            }
+        }
     }
 }

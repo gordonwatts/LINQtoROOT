@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -15,6 +17,12 @@ namespace LINQToTTreeLib.Statements
     [TestClass]
     public partial class StatementSimpleStatementTest
     {
+        [TestInitialize]
+        public void TestSTart()
+        {
+            TypeUtils._variableNameCounter = 0;
+        }
+
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementSimpleStatement target)
@@ -66,6 +74,33 @@ namespace LINQToTTreeLib.Statements
         public void TestTwoSemicolons()
         {
             CodeItUp(new StatementSimpleStatement("int j;"));
+        }
+
+        [TestMethod]
+        public void TestCombineSame()
+        {
+            var st1 = new StatementSimpleStatement("int");
+            var st2 = new StatementSimpleStatement("int");
+            Assert.IsTrue(st1.TryCombineStatement(st2, null), "same statements should combine");
+
+            var st3 = new StatementSimpleStatement("float");
+            Assert.IsFalse(st1.TryCombineStatement(st3, null), "diff statements should not combine");
+        }
+
+        [PexMethod]
+        public bool TestTryCombine([PexAssumeUnderTest] StatementSimpleStatement target, IStatement st)
+        {
+            return target.TryCombineStatement(st, null);
+        }
+
+        [PexMethod]
+        public StatementSimpleStatement TestRename([PexAssumeUnderTest] StatementSimpleStatement target, string oldvar, string newvar)
+        {
+            target.RenameVariable(oldvar, newvar);
+
+            if (oldvar != null)
+                Assert.IsFalse(target.Line.Contains(oldvar), "old guy should not be in there!");
+            return target;
         }
     }
 }

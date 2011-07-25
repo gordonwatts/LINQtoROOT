@@ -16,6 +16,16 @@ namespace LINQToTTreeLib.Variables
             {
                 get { return typeof(int); }
             }
+
+
+            /// <summary>
+            /// We are an actual number, so we don't care.
+            /// </summary>
+            /// <param name="oldname"></param>
+            /// <param name="newname"></param>
+            public void RenameRawValue(string oldname, string newname)
+            {
+            }
         }
 
         public VarInteger()
@@ -38,5 +48,18 @@ namespace LINQToTTreeLib.Variables
 
 
         public bool Declare { get; set; }
+
+        /// <summary>
+        /// Rename the variable if we need to. We have total control, so it is
+        /// easy to deal with.
+        /// </summary>
+        /// <param name="oldname"></param>
+        /// <param name="newname"></param>
+        public void RenameRawValue(string oldname, string newname)
+        {
+            if (RawValue == oldname)
+                RawValue = newname;
+            InitialValue.RenameRawValue(oldname, newname);
+        }
     }
 }

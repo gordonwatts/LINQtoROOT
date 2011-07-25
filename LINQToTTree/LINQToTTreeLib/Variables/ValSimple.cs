@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables
@@ -38,6 +39,18 @@ namespace LINQToTTreeLib.Variables
         public override string ToString()
         {
             return "(" + Type.Name + ") " + RawValue;
+        }
+
+        /// <summary>
+        /// Rename everything in teh raw value if need be...
+        /// </summary>
+        /// <param name="oldname"></param>
+        /// <param name="newname"></param>
+        public void RenameRawValue(string oldname, string newname)
+        {
+            if (string.IsNullOrWhiteSpace(oldname) || string.IsNullOrWhiteSpace(newname))
+                throw new ArgumentNullException("when renaming the from and two strings must be valid");
+            RawValue = Regex.Replace(RawValue, @"\b" + oldname + @"\b", newname);
         }
     }
 }

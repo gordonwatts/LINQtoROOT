@@ -1,5 +1,7 @@
 ﻿
+using System;
 using System.Collections.Generic;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
@@ -7,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// Given an array of indicies, makes a loop over them. One then
     /// can add a check (or similar) to the interiror.
     /// </summary>
-    class StatementCheckLoopPairwise : StatementInlineBlock
+    public class StatementCheckLoopPairwise : StatementInlineBlockBase
     {
         private VarArray _indciesToInspect;
         private VarSimple _index1;
@@ -28,6 +30,15 @@ namespace LINQToTTreeLib.Statements
         public StatementCheckLoopPairwise(VarArray indiciesToInspect,
             VarSimple index1, VarSimple index2, VarArray passedArray)
         {
+            if (indiciesToInspect == null)
+                throw new ArgumentNullException("indiciesToInspect");
+            if (index1 == null)
+                throw new ArgumentNullException("index1");
+            if (index2 == null)
+                throw new ArgumentNullException("index2");
+            if (passedArray == null)
+                throw new ArgumentNullException("passedArray");
+
             _indciesToInspect = indiciesToInspect;
             _index1 = index1;
             _index2 = index2;
@@ -73,7 +84,7 @@ namespace LINQToTTreeLib.Statements
             // Do the other things that have been added to our code!
             //
 
-            foreach (var l in base.CodeItUp())
+            foreach (var l in RenderInternalCode())
             {
                 yield return "        " + l;
             }
@@ -86,6 +97,66 @@ namespace LINQToTTreeLib.Statements
             yield return "  }"; // The if this index is worth looking at
             yield return "}"; // Outter for loop
 
+        }
+
+        /// <summary>
+        /// Attempt to combine two of these statements. We can do this iff the source expression that
+        /// we are testing is the same. Then the two indicies need to be renamed (it is assumed that we have total
+        /// control - as you can see from the generated code above).
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="opt"></param>
+        /// <returns></returns>
+        public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementCheckLoopPairwise;
+            if (other == null)
+                return false;
+
+            if (_indciesToInspect.RawValue != other._indciesToInspect.RawValue)
+                return false;
+
+            //
+            // Rename the various guys. Note that index1 and index2 are declared by us. So it is only our sub-blocks that have to deal with
+            // that. So we do a "local" renaming.
+            //
+
+            var rename = opt.TryRenameVarialbeOneLevelUp(other._whatIsGood.RawValue, _whatIsGood);
+            if (!rename)
+                return false;
+            other.RenameVariable(other._index1.RawValue, _index1.RawValue);
+            other.RenameVariable(other._index2.RawValue, _index2.RawValue);
+
+            //
+            // Combine the sub-blocks now
+            //
+
+            Combine(other as StatementInlineBlockBase, opt);
+
+            return true;
+        }
+
+        public override bool IsSameStatement(LinqToTTreeInterfacesLib.IStatement statement)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Rename the variables inside this guy
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
+        public override void RenameVariable(string origName, string newName)
+        {
+            _index1.RenameRawValue(origName, newName);
+            _index2.RenameRawValue(origName, newName);
+            _whatIsGood.RenameRawValue(origName, newName);
+            _indciesToInspect.RenameRawValue(origName, newName);
+
+            RenameBlockVariables(origName, newName);
         }
     }
 }

@@ -16,5 +16,11 @@ namespace LinqToTTreeInterfacesLib
         /// The type of this guy - typeof(int), etc.
         /// </summary>
         Type Type { get; }
+
+        /// <summary>
+        /// Rename a raw value.
+        /// </summary>
+        /// <param name="newname"></param>
+        void RenameRawValue(string oldname, string newname);
     }
 }

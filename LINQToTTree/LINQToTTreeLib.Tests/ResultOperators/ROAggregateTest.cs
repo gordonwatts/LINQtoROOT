@@ -93,9 +93,9 @@ namespace LINQToTTreeLib.ResultOperators
 
             Assert.AreEqual(0, gc.CodeBody.DeclaredVariables.Count(), "Expected no bookings");
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "expected a statement!");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementAssign), "expected an assignment statement!");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementAggregate), "expected an assignment statement!");
 
-            var ass = gc.CodeBody.Statements.First() as Statements.StatementAssign;
+            var ass = gc.CodeBody.Statements.First() as Statements.StatementAggregate;
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}+1", ass.ResultVariable.RawValue);
             Assert.AreEqual(bld.ToString(), ass.Expression.RawValue, "the raw value of hte expression is not right");
