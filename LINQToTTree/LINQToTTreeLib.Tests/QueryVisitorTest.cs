@@ -831,7 +831,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestLoopPairWiseCombine()
+        public void TestPairWiseCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();
             var r1p = from evt in q
@@ -850,6 +850,22 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             var st = query.QueryCode().First();
             Assert.AreEqual(5, st.Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestSumCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = q.Where(evt => evt.jets.Sum(j => j.var1) > 10).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.Sum(j => j.var1) > 10).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query Blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]
