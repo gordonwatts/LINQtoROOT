@@ -21,8 +21,8 @@ namespace LINQToTTreeLib.Tests
     {
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException900()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameVariableThrowsArgumentNullException155()
 {
     VarInteger varInteger;
     StatementRecordValue statementRecordValue;
@@ -35,8 +35,8 @@ public void TestRenameVariableThrowsArgumentNullException900()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException302()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameVariableThrowsArgumentNullException338()
 {
     VarInteger varInteger;
     StatementRecordValue statementRecordValue;
@@ -49,8 +49,8 @@ public void TestRenameVariableThrowsArgumentNullException302()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException355()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameVariableThrowsArgumentNullException788()
 {
     VarInteger varInteger;
     StatementRecordValue statementRecordValue;
@@ -63,8 +63,8 @@ public void TestRenameVariableThrowsArgumentNullException355()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException178()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameVariableThrowsArgumentNullException576()
 {
     VarInteger varInteger;
     StatementRecordValue statementRecordValue;

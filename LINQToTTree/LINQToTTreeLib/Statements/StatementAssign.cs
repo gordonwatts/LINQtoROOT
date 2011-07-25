@@ -92,16 +92,10 @@ namespace LINQToTTreeLib.Statements
             if (otherAssign == null)
                 return false;
 
-            if (ResultVariable.RawValue != otherAssign.ResultVariable.RawValue
-                || Expression.RawValue != otherAssign.Expression.RawValue)
+            if (Expression.RawValue != otherAssign.Expression.RawValue)
                 return false;
 
-            //
-            // Combining is pretty trivial: these are identical. So we do nothing
-            // adn the caller should drop this from their statement list!
-            //
-
-            return true;
+            return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
         }
 
         /// <summary>

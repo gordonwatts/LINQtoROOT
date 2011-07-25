@@ -22,34 +22,6 @@ namespace LINQToTTreeLib.Tests
     {
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestTryCombineStatementThrowsArgumentNullException32()
-{
-    VarInteger varInteger;
-    StatementRecordValue statementRecordValue;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordValue = StatementRecordValueFactory.Create
-                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
-    b = this.TestTryCombineStatement
-            (statementRecordValue, (IStatement)null, (ICodeOptimizationService)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void TestTryCombineStatementThrowsNullReferenceException232()
-{
-    VarInteger varInteger;
-    StatementRecordValue statementRecordValue;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordValue = StatementRecordValueFactory.Create
-                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
-    b = this.TestTryCombineStatement(statementRecordValue, 
-                                     (IStatement)statementRecordValue, (ICodeOptimizationService)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatemenRecordValue))]
 public void TestTryCombineStatement189()
 {
     VarInteger varInteger;
@@ -87,8 +59,36 @@ public void TestTryCombineStatement717()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[PexRaisedException(typeof(ArgumentNullException))]
-public void TestTryCombineStatementThrowsArgumentNullException688()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineStatementThrowsArgumentNullException279()
+{
+    VarInteger varInteger;
+    StatementRecordValue statementRecordValue;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
+    b = this.TestTryCombineStatement
+            (statementRecordValue, (IStatement)null, (ICodeOptimizationService)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatemenRecordValue))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineStatementThrowsArgumentNullException270()
+{
+    VarInteger varInteger;
+    StatementRecordValue statementRecordValue;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
+    b = this.TestTryCombineStatement(statementRecordValue, 
+                                     (IStatement)statementRecordValue, (ICodeOptimizationService)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatemenRecordValue))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineStatementThrowsArgumentNullException982()
 {
     VarInteger varInteger;
     StatementRecordValue statementRecordValue;
@@ -101,19 +101,19 @@ public void TestTryCombineStatementThrowsArgumentNullException688()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatemenRecordValue))]
-public void TestTryCombineStatement71701()
+public void TestTryCombineStatement71703()
 {
     VarInteger varInteger;
     VarInteger varInteger1;
     StatementRecordValue statementRecordValue;
     StatementRecordValue statementRecordValue1;
     bool b;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, -9);
+    varInteger = VarIntegerFactory.Create(false, 0);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
     statementRecordValue = StatementRecordValueFactory.Create
-                               ((IVariable)varInteger, (IValue)varInteger1, (IVariable)varInteger, false);
+                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger1, false);
     statementRecordValue1 = StatementRecordValueFactory.Create
-                                ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger1, false);
+                                ((IVariable)varInteger, (IValue)varInteger1, (IVariable)varInteger, false);
     b = this.TestTryCombineStatement(statementRecordValue1, 
                                      (IStatement)statementRecordValue, (ICodeOptimizationService)null);
     Assert.AreEqual<bool>(false, b);
