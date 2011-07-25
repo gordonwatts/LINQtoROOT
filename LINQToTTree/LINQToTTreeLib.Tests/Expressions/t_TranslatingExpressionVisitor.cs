@@ -328,6 +328,41 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestTranslateNewPairArrayIndirection()
+        {
+            Expression<Func<SourceType2, int>> lambaExpr = s => new Tuple<int, SourceType2Container>(5, s.jets[0]).Item2.val;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
+            Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "not array index??");
+            var arAccess = result as BinaryExpression;
+            Assert.AreEqual(0, (arAccess.Right as ConstantExpression).Value, "imporper array acess");
+
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+        }
+
+        [TestMethod]
+        public void TestObjectArrayCompare()
+        {
+            Expression<Func<SourceType2, int, int, bool>> lambaExpr = (s, a1, a2) => s.jets[a1] == s.jets[a2];
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+
+            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
+            Assert.AreEqual(ExpressionType.Equal, result.NodeType, "Expected an equal");
+
+            var b = result as BinaryExpression;
+            Assert.IsInstanceOfType(b.Left, typeof(ParameterExpression), "Left expr");
+            Assert.IsInstanceOfType(b.Right, typeof(ParameterExpression), "Right expr");
+
+            var r = b.Right as ParameterExpression;
+            var l = b.Left as ParameterExpression;
+
+            Assert.AreEqual("a1", l.Name, "Left paramter name");
+            Assert.AreEqual("a2", r.Name, "Right paramter name");
+        }
+
+        [TestMethod]
         public void TestArrayLengthGroupingChange()
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets.Length;

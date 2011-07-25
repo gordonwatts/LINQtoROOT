@@ -735,8 +735,8 @@ namespace LINQToTTreeLib
                 var obj = item.Value as ROOTNET.Interface.NTNamed;
                 if (obj == null)
                     throw new InvalidOperationException("Can only deal with named objects");
-                obj.SetName(item.Key);
-                objInputList.Add(obj);
+                var cloned = obj.Clone(item.Key);
+                objInputList.Add(cloned);
             }
             selector.InputList = objInputList;
 

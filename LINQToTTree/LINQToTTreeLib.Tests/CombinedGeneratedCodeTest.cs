@@ -31,22 +31,19 @@ namespace LINQToTTreeLib
             Assert.AreEqual(initialQueryCount + 1, target.QueryCode().Count(), "Should always increase the query count by one");
         }
 
-        [PexMethod, PexAllowedException(typeof(ArgumentException))]
-        internal void CheckAddSameVariableNamesToTransfer([PexAssumeNotNull] string[] varnames)
+        [PexMethod, PexAllowedException(typeof(ArgumentException)), PexAllowedException(typeof(ArgumentNullException))]
+        internal void CheckAddSameVariableNamesToTransfer([PexAssumeNotNull] ROOTNET.NTObject[] varnames)
         {
             var cc = new CombinedGeneratedCode();
-            foreach (var item in varnames)
-            {
-                var gc = new GeneratedCode();
-                gc.QueueForTransfer(item, 44);
-                cc.AddGeneratedCode(gc);
-            }
-
             HashSet<string> unique = new HashSet<string>();
             foreach (var item in varnames)
             {
-                unique.Add(item);
+                var gc = new GeneratedCode();
+                var name = gc.QueueForTransfer(item);
+                unique.Add(name);
+                cc.AddGeneratedCode(gc);
             }
+
             Assert.AreEqual(unique.Count, varnames.Length, "there are non-unique names and there are no errors!");
             Assert.AreEqual(varnames.Length, cc.VariablesToTransfer.Count(), "bad number added");
         }

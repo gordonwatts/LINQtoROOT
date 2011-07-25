@@ -22,11 +22,31 @@ namespace LINQToTTreeLib
         /// <summary>Test stub for Add(IStatement)</summary>
         [PexMethod]
         [PexUseType(typeof(StatementIncrementInteger))]
-        public void Add([PexAssumeUnderTest]GeneratedCode target, IStatement s)
+        public void Add([PexAssumeUnderTest]GeneratedCode target, IStatementCompound s)
         {
-            Assert.IsNotInstanceOfType(s, typeof(IStatementCompound), "Not testing this!");
+            int old = CountStatements(target.CodeBody);
             target.Add(s);
-            Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
+            Assert.AreEqual(old + 1, CountStatements(target.CodeBody), "Expected a single statement to have been added");
+        }
+
+        /// <summary>
+        /// Recursively add the items in...
+        /// </summary>
+        /// <param name="iBookingStatementBlock"></param>
+        /// <returns></returns>
+        private int CountStatements(IStatementCompound s)
+        {
+            int cnt = 0;
+            foreach (var substatement in s.Statements)
+            {
+                cnt++;
+                if (substatement is IStatementCompound)
+                {
+                    cnt += CountStatements(substatement as IStatementCompound);
+                }
+            }
+
+            return cnt;
         }
 
         public class SimpleStatement : IStatement
@@ -299,14 +319,26 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod]
-        public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, string name, object val)
+        public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, object val)
         {
             int count = target.VariablesToTransfer.Count();
             HashSet<string> names = new HashSet<string>(target.VariablesToTransfer.Select(v => v.Key));
-            target.QueueForTransfer(name, val);
+            var name = target.QueueForTransfer(val);
             names.Add(name);
             Assert.IsNotNull(target.VariablesToTransfer.Last());
             Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
+        }
+
+        [TestMethod]
+        public void TestNameCombo()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            var obj = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
+            var n1 = gc.QueueForTransfer(obj);
+            var n2 = gc.QueueForTransfer(obj);
+
+            Assert.AreEqual(n1, n2, "Names should be identical");
+            Assert.AreEqual(1, gc.VariablesToTransfer.Count(), "# of variables to move over wire");
         }
 
         [TestMethod]

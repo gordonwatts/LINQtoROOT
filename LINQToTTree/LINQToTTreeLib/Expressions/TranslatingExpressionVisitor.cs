@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq.Parsing;
 
@@ -24,8 +25,15 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public static Expression Translate(Expression expr, List<string> cookies)
         {
+            // Remove Tuple's and similar things.
+            var objlift = new ObjectPropertyExpressionVisitor();
+            var exprObjsRemoved = objlift.VisitExpression(expr);
+
+            // Now, do our custom translations.
             var trans = new TranslatingExpressionVisitor();
-            var result = trans.VisitExpression(expr);
+            var result = trans.VisitExpression(exprObjsRemoved);
+
+            // Keep track of what we did so we can make sure our caching logic works ok.
             cookies.AddRange(trans.RenameList);
             return result;
         }
@@ -149,19 +157,6 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException("Member '" + expression.Member.Name + "' is marked for array recoding, but we can't figure out what to do.");
             }
 
-            //
-            // If this is an item reference to a tuple type, and it is on top of a new for the tuple, then
-            // extract the new value argument.
-            //
-
-            var exprType = expression.Expression.Type;
-            if (exprType.Name.StartsWith("Tuple`") && expression.Expression.NodeType == ExpressionType.New)
-            {
-                int itemIndex = Convert.ToInt32(expression.Member.Name.Substring(4));
-                var newExpr = expression.Expression as NewExpression;
-                return newExpr.Arguments[itemIndex-1];
-            }
-
             ///
             /// Hopefully the default behavior is the right thing to do here!
             /// 
@@ -188,6 +183,24 @@ namespace LINQToTTreeLib
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Check to see if a generic expression is a tranlsated array reference.
+        /// </summary>
+        /// <param name="exp"></param>
+        /// <returns></returns>
+        private bool GenericExpressionIsRootObjectArrayReference(Expression exp)
+        {
+            var arrayLookup = exp as BinaryExpression;
+            if (arrayLookup == null)
+                return false;
+
+            var me = arrayLookup.Left as MemberExpression;
+            if (me == null)
+                return false;
+
+            return IsRootObjectArrayReference(me);
         }
 
         /// <summary>
@@ -332,11 +345,9 @@ namespace LINQToTTreeLib
             /// doesn't work, then we just return a null.
             /// 
 
+            if (expression.Expression.NodeType != ExpressionType.ArrayIndex)
+                return null;
             var arrayIndexOperation = expression.Expression as BinaryExpression;
-            if (arrayIndexOperation == null)
-                return null;
-            if (arrayIndexOperation.NodeType != ExpressionType.ArrayIndex)
-                return null;
 
             var memberAccessArray = arrayIndexOperation.Left as MemberExpression;
             if (memberAccessArray == null)
@@ -429,6 +440,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
+            // If this is an array index, then...
             if (expression.NodeType == ExpressionType.ArrayIndex && !expression.Type.IsClass)
             {
                 var rootExpr = expression.Left as MemberExpression;
@@ -437,7 +449,51 @@ namespace LINQToTTreeLib
                     return Expression.ArrayIndex(VisitExpressionImplemented(rootExpr), expression.Right);
                 }
             }
+
+            // If this is a binary expression, and it is == or !=, it could be that we have an object compare
+            // of the translated objects.
+            if (expression.NodeType == ExpressionType.Equal
+                || expression.NodeType == ExpressionType.NotEqual)
+            {
+                var b = expression as BinaryExpression;
+                var blArray = ExtractObjectArrayName(b.Left);
+                var brArray = ExtractObjectArrayName(b.Right);
+                if (blArray == brArray
+                    && blArray != null)
+                {
+                    var lindex = ExtractObjectArrayIndex(b.Left);
+                    var rindex = ExtractObjectArrayIndex(b.Right);
+
+                    return Expression.MakeBinary(expression.NodeType, lindex, rindex);
+                }
+            }
             return base.VisitBinaryExpression(expression);
+        }
+
+        /// <summary>
+        /// This should represent somethign that points into an array list of translated objects. Make sure that is
+        /// true, and if it is, attempt to reconstruct the actual name of the array. Return null if it isn't.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private string ExtractObjectArrayName(Expression expression)
+        {
+            if (!GenericExpressionIsRootObjectArrayReference(expression))
+                return null;
+
+            var index = expression as BinaryExpression;
+            return index.Left.ToString();
+        }
+
+        /// <summary>
+        /// Given we know this is an index lookup, return the expression used for the array index.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private Expression ExtractObjectArrayIndex(Expression expression)
+        {
+            var lookup = expression as BinaryExpression;
+            return lookup.Right;
         }
 
         /// <summary>

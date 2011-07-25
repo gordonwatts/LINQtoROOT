@@ -123,6 +123,12 @@ namespace LINQToTreeHelpers.FutureUtils
         public void Write()
         {
             //
+            // Write everything associated with this directory.
+            //
+
+            //Directory.Write();
+
+            //
             // Local values
             // 
 

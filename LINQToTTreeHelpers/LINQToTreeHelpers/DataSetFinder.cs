@@ -335,7 +335,6 @@ namespace LINQToTreeHelpers
             }
             catch (Exception e)
             {
-                Console.WriteLine(string.Format("Failed to parse the dataset file for dataset '{0}'. Parse error: {1}", dsName, e.Message));
             }
             return false;
         }

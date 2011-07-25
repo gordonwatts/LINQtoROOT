@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ResultOperators;
@@ -382,6 +383,7 @@ namespace LINQToTTreeLib
         {
             [TTreeVariableGrouping]
             public int var1;
+            [TTreeVariableGrouping]
             public double var2;
         }
 
@@ -440,6 +442,217 @@ namespace LINQToTTreeLib
 
             var ass = outterfloop.Statements.First() as Statements.StatementAggregate;
             Assert.IsFalse(ass.Expression.RawValue.Contains("jets"), "jets should be missing from the expression - " + ass.Expression.RawValue);
+        }
+
+        [TestMethod]
+        public void TestLambdaExpressionLookup()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            Expression<Func<subNtupleObjects, bool>> checker = s => s.var1 == 0;
+
+            var result = q.SelectMany(evt => evt.jets).Where(checker).Count();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "evt");
+            MakeSureNoVariable(code.CodeBody, "s");
+        }
+
+        [TestMethod]
+        public void TestTranslatedObjectCompareNE()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           from j1 in evt.jets
+                           from j2 in evt.jets
+                           where j1 != j2
+                           select j1.var1 + j2.var1;
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "jets");
+            MakeSureNoVariable(code.CodeBody, "j1");
+            MakeSureNoVariable(code.CodeBody, "j2");
+            MakeSureNoVariable(code.CodeBody, "evt");
+        }
+
+        [TestMethod]
+        public void TestTranslatedObjectCompareEQ()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           from j1 in evt.jets
+                           from j2 in evt.jets
+                           where j1 == j2
+                           select j1.var1 + j2.var1;
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "jets");
+            MakeSureNoVariable(code.CodeBody, "j1");
+            MakeSureNoVariable(code.CodeBody, "j2");
+            MakeSureNoVariable(code.CodeBody, "evt");
+        }
+
+        [CPPHelperClass]
+        public static class CPPHelperFunctions
+        {
+            [CPPCode(Code = new string[] { "Calc = arg*2;" })]
+            public static int Calc(int arg)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void TestSubQueryWithTranslationOutside()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+
+            var tracksNearJetPerEvent = from evt in q
+                                        select from j in evt.jets.AsQueryable().Where(checker)
+                                               let jtlz = CPPHelperFunctions.Calc(j.var1)
+                                               select new
+                                               {
+                                                   Jet = j,
+                                                   Tracks = from t in evt.jets
+                                                            let ttlz = CPPHelperFunctions.Calc(t.var1)
+                                                            where ttlz > jtlz
+                                                            select t
+                                               };
+
+            var tracksNearJet = from evt in tracksNearJetPerEvent
+                                from j in evt
+                                select j;
+
+            var r = tracksNearJet.Aggregate(0, (s, evt) => s + evt.Tracks.Count());
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "evt");
+            MakeSureNoVariable(code.CodeBody, "j");
+            MakeSureNoVariable(code.CodeBody, "Jet");
+            MakeSureNoVariable(code.CodeBody, "Tracks");
+        }
+
+        [TestMethod]
+        public void TestSubQueryWithTranslationOutsideSimpler()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var tracksNearJetPerEvent = from evt in q
+                                        select from j in evt.jets
+                                               select new
+                                               {
+                                                   Tracks = from t in evt.jets
+                                                            where t.var1 > j.var1
+                                                            select t
+                                               };
+
+            var tracksNearJet = tracksNearJetPerEvent.SelectMany(e => e).SelectMany(e1 => e1.Tracks).Count();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "evt");
+            MakeSureNoVariable(code.CodeBody, "j");
+            MakeSureNoVariable(code.CodeBody, "Jet");
+            MakeSureNoVariable(code.CodeBody, "Tracks");
+        }
+
+        [TestMethod]
+        public void TestSubQueryWithTranslationOutsideRenameBug()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+
+            var tracksNearJetPerEvent = from evt in q
+                                        select from j in evt.jets
+                                               let jtlz = CPPHelperFunctions.Calc(j.var1)
+                                               where jtlz > 1
+                                               select new
+                                               {
+                                                   Jet = j,
+                                                   Tracks = from t in evt.jets
+                                                            let ttlz = CPPHelperFunctions.Calc(t.var1)
+                                                            where ttlz > jtlz
+                                                            select t
+                                               };
+
+            var tracksNearJet = from evt in tracksNearJetPerEvent
+                                from j in evt
+                                select j;
+
+            var r = tracksNearJet.Aggregate(0, (s, evt) => s + evt.Tracks.Count());
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "evt");
+            MakeSureNoVariable(code.CodeBody, "j");
+            MakeSureNoVariable(code.CodeBody, "Jet");
+            MakeSureNoVariable(code.CodeBody, "Tracks");
+        }
+
+        [TestMethod]
+        public void TestGroupingWithAnonymousObjectOneLevelDown()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+
+            var tracksNearJetPerEvent = from evt in q
+                                        select from j in evt.jets
+                                               let jtlz = CPPHelperFunctions.Calc(j.var1)
+                                               where jtlz > 1
+                                               select new
+                                               {
+                                                   Jet = j,
+                                                   Tracks = from t in evt.jets
+                                                            let ttlz = CPPHelperFunctions.Calc(t.var1)
+                                                            where ttlz > jtlz
+                                                            select t
+                                               };
+
+            var tracksNearJet = from evt in tracksNearJetPerEvent
+                                from jfin in evt
+                                select jfin.Jet;
+
+            var result = tracksNearJet.Where(js => js.var1 > 0).Count();
+
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            MakeSureNoVariable(code.CodeBody, "evt");
+            MakeSureNoVariable(code.CodeBody, "j");
+            MakeSureNoVariable(code.CodeBody, "Stuff");
+
+        }
+
+        /// <summary>
+        /// Check the code contains no reference to a variable by name!
+        /// </summary>
+        /// <param name="iBookingStatementBlock"></param>
+        /// <param name="p"></param>
+        private void MakeSureNoVariable(IBookingStatementBlock statements, string vname)
+        {
+            Regex finder = new Regex(string.Format(@"\b{0}\b", vname));
+            var hasit = from l in statements.CodeItUp()
+                        where finder.Match(l).Success
+                        select l;
+
+            Assert.AreEqual(0, hasit.Count(), string.Format("Some lines have '{0}' referenced", vname));
         }
 
         [TestMethod]

@@ -163,8 +163,8 @@ namespace LINQToTTreeLib
             /// If a main index variable was declared that has now lost its usefulness, we should get rid of it.
             /// 
 
-            if (_mainIndex != null)
-                _mainIndex.Pop();
+            //if (_mainIndex != null)
+            //    _mainIndex.Pop();
         }
 
         /// <summary>
@@ -204,6 +204,19 @@ namespace LINQToTTreeLib
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
             _codeEnv.Add(new Statements.StatementFilter(ExpressionToCPP.GetExpression(whereClause.Predicate, _codeEnv, _codeContext, MEFContainer)));
+        }
+
+        /// <summary>
+        /// If the user is doing some selection that contains parameters that require replacements, then
+        /// we have to make sure they are done. Otherwise we leave these alone. Note, we *only* want to do
+        /// the parameter replacement however! Whatever that select is, it becomes our new loop variable.
+        /// </summary>
+        /// <param name="selectClause"></param>
+        /// <param name="queryModel"></param>
+        public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
+        {
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(selectClause.Selector, _codeContext);
+            _codeContext.SetLoopVariable(expr);
         }
 
         /// <summary>

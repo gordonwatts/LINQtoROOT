@@ -314,7 +314,7 @@ namespace LINQToTTreeLib
             /// 
 
             var df = GetCacheInfoFileDescriptor(key);
-            if (!df.Exists)
+            if (!df.Exists || !ROOTFileDatesOK(key))
             {
                 if (!df.Directory.Exists)
                     df.Directory.Create();

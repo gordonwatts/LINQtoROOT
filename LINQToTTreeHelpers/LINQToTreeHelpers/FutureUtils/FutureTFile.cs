@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace LINQToTreeHelpers.FutureUtils
@@ -14,6 +11,10 @@ namespace LINQToTreeHelpers.FutureUtils
         private static ROOTNET.Interface.NTFile CreateOpenFile(string name)
         {
             var f = ROOTNET.NTFile.Open(name, "RECREATE");
+            if (!f.IsOpen())
+            {
+                throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
+            }
             return f;
         }
 
@@ -24,6 +25,16 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <param name="outputRootFile"></param>
         public FutureTFile(FileInfo outputRootFile)
             : base(CreateOpenFile(outputRootFile.FullName))
+        {
+        }
+
+        /// <summary>
+        /// Creates a new ROOT file and attaches a future value container to it. This container
+        /// can be used to store future values that get evaluated at a later time.
+        /// </summary>
+        /// <param name="outputRootFile"></param>
+        public FutureTFile(string outputRootFile)
+            : base(CreateOpenFile(outputRootFile))
         {
         }
 

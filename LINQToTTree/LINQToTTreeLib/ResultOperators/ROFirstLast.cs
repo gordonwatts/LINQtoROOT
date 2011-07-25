@@ -1,7 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -34,7 +37,8 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
+            IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
             /// First, do data normalization
@@ -59,18 +63,44 @@ namespace LINQToTTreeLib.ResultOperators
                 bombIfNothing = !asLast.ReturnDefaultWhenEmpty;
             }
 
-            ///
-            /// Now, create the upper level pointer (or whatever), along with a "bool" that marks this thing as being
-            /// valid.
-            /// 
+            //
+            // Next, make sure we are looping over something. This had better be an array we are looking at!
+            //
 
-            ///
-            /// This is major work - we need to return an Expression here, not an IValue. The reason
-            /// is that we might be returning an object like a jet, and we don't want to do the
-            /// translation too early - before the full object is known.
-            /// 
+            if (cc.LoopVariable.NodeType != ExpressionType.ArrayIndex)
+            {
+                throw new InvalidOperationException(string.Format("Can't apply First operator when we aren't looping over some array '{0}'", cc.LoopVariable.ToString()));
+            }
+            var binary = cc.LoopVariable as BinaryExpression;
+            var indexExpr = binary.Right;
+            var arrayExpr = binary.Left;
 
-            throw new NotImplementedException();
+            //
+            // We need to hold onto either the first or the last item here, so we create a statement that holds nnto the
+            // first or the last time. It also has to mark the thing as valid!
+            //
+
+            var valueWasSeen = new VarSimple(typeof(bool)) { Declare = true };
+            var indexSeen = new VarSimple(typeof(int)) { Declare = true };
+
+            gc.AddOneLevelUp(valueWasSeen);
+            gc.AddOneLevelUp(indexSeen);
+
+            var indexValue = ExpressionToCPP.GetExpression(indexExpr, gc, cc, container);
+            gc.Add(new Statements.StatemenRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
+
+            //
+            // Ok - we now pop out, and return the value we have!
+            //
+
+            gc.Pop();
+            var firstlastValue = Expression.ArrayIndex(arrayExpr, Expression.Parameter(typeof(int), indexSeen.RawValue));
+            var actualValue = new VarSimple(cc.LoopVariable.Type) { Declare = true };
+
+            gc.Add(new Statements.StatementAssign(actualValue,
+                ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
+
+            return actualValue;
         }
     }
 }

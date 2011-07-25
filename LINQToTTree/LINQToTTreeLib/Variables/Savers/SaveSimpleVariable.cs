@@ -32,6 +32,7 @@ namespace LINQToTTreeLib.Variables.Savers
         public IEnumerable<string> SaveToFile(IVariable iVariable)
         {
             yield return "TH1I *" + iVariable.RawValue + "_hist = new TH1I(\"" + iVariable.RawValue + "\", \"var transport\", 1, 0.0, 1.0);";
+            yield return iVariable.RawValue + "_hist->SetDirectory(0);";
             yield return iVariable.RawValue + "_hist->SetBinContent(1, " + iVariable.RawValue + ");";
             yield return "Book(" + iVariable.RawValue + "_hist);";
         }
