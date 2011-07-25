@@ -81,12 +81,11 @@ namespace LINQToTTreeLib.ResultOperators
             aresult.InitialValue = new Variables.ValSimple(initialValue, typeof(bool));
 
             ///
-            /// And the statements now
+            /// And the statements now. Instead of building up the code, we instead do a "global" statement.
+            /// This makes it easier to re-combine later when we collapse queires.
             /// 
 
-            var ifstatement = new Statements.StatementFilter(predicate);
-            ifstatement.Add(new Statements.StatementAssign(aresult, new Variables.ValSimple(markedValue, typeof(bool))));
-            ifstatement.Add(new Statements.StatementBreak());
+            var ifstatement = new Statements.StatementAnyAllDetector(predicate, aresult, markedValue);
 
             gc.Add(ifstatement);
 

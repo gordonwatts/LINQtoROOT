@@ -193,13 +193,16 @@
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
+    <Compile Include="Factories\CodeOptimizerTestFactory.cs" />
     <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
     <Compile Include="Factories\ConstantExpressionFactory.cs" />
     <Compile Include="Factories\CPPTranslatorFactory.cs" />
     <Compile Include="Factories\GeneratedCodeFactory.cs" />
+    <Compile Include="Factories\ICodeOptimizerFactory.cs" />
     <Compile Include="Factories\MethodCallExpressionFactory.cs" />
     <Compile Include="Factories\NTObjectFactory.cs" />
     <Compile Include="Factories\SkipResultOperatorFactory.cs" />
+    <Compile Include="Factories\StatementAnyAllDetectorFactory.cs" />
     <Compile Include="Factories\StatementAssignFactory.cs" />
     <Compile Include="Factories\StatementCheckLoopPairwiseFactory.cs" />
     <Compile Include="Factories\StatementFilterFactory.cs" />
@@ -491,6 +494,15 @@
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
     <Compile Include="Statements\StatementVectorLoopTest.cs" />
+    <Compile Include="Statements\TestStatementAnyAllDetector.TestCodeItUp.g.cs">
+      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementAnyAllDetector.TestRenameVariable.g.cs">
+      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementAnyAllDetector.TestTryCombineStatement.g.cs">
+      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\TestStatementCheckLoopPairwise.TestStatementCheckLoopPairwiseConstructor.g.cs">
       <DependentUpon>StatementCheckLoopPairwiseTest.cs</DependentUpon>
     </Compile>
@@ -558,6 +570,7 @@
     <Compile Include="Statements\t_StatementRecordIndicies.cs" />
     <Compile Include="Statements\t_StatementAssign.cs" />
     <Compile Include="Statements\StatementCheckLoopPairwiseTest.cs" />
+    <Compile Include="Statements\StatementAnyAllDetectorTest.cs" />
     <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
       <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>
     </Compile>

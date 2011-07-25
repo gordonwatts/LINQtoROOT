@@ -38,7 +38,14 @@ namespace LINQToTTreeLib.Statements
 
         public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException();
+
+            var other = statement as StatementBreak;
+            if (other == null)
+                return false;
+
+            return true;
         }
 
         /// <summary>

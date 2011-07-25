@@ -501,65 +501,6 @@ namespace LINQToTTreeLib
             return combinedInfo;
         }
 
-        /// <summary>
-        /// Check what happens when a Combine is called on several different simple loops.
-        /// </summary>
-        [TestMethod]
-        public void TestSimpleOutterLoopCombine()
-        {
-            var q = new QueriableDummy<ntup>();
-
-            var r1 = q.Count();
-            var query1 = DummyQueryExectuor.FinalResult;
-
-            var r2 = q.Count();
-            var query2 = DummyQueryExectuor.FinalResult;
-
-            var query = CombineQueries(query1, query2);
-
-            query.DumpCodeToConsole();
-
-            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
-        }
-
-        [TestMethod]
-        public void TestSimpleIfCombine()
-        {
-            var q = new QueriableDummy<ntup>();
-
-            var r1 = q.Where(f => f.run > 5).Count();
-            var query1 = DummyQueryExectuor.FinalResult;
-            var r2 = q.Where(f => f.run > 5).Count();
-            var query2 = DummyQueryExectuor.FinalResult;
-
-            var query = CombineQueries(query1, query2);
-            query.DumpCodeToConsole();
-
-            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
-            var ifstatement = query.QueryCode().First().Statements.First() as Statements.StatementFilter;
-            Assert.IsNotNull(ifstatement, "if statement");
-            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside if block");
-        }
-
-        [TestMethod]
-        public void TestSimpleIfNotCombine()
-        {
-            var q = new QueriableDummy<ntup>();
-
-            var r1 = q.Where(f => f.run > 5).Count();
-            var query1 = DummyQueryExectuor.FinalResult;
-            var r2 = q.Where(f => f.run > 6).Count();
-            var query2 = DummyQueryExectuor.FinalResult;
-
-            var query = CombineQueries(query1, query2);
-            query.DumpCodeToConsole();
-
-            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
-        }
-
         [TestMethod]
         public void TestAggregateAsResultCombine()
         {
@@ -621,7 +562,24 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestVectorLoopCombine()
+        public void TestAnyCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1 = q.Where(evt => evt.jets.All(j => j.var1 > 5)).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.All(j => j.var1 > 5)).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestVectorLoopAnyCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();
 
@@ -638,6 +596,65 @@ namespace LINQToTTreeLib
             var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
             Assert.IsNotNull(statement, "statement isn't a compound");
             Assert.AreEqual(2, statement.Statements.Count(), "# of inner statements");
+        }
+
+        /// <summary>
+        /// Check what happens when a Combine is called on several different simple loops.
+        /// </summary>
+        [TestMethod]
+        public void TestSimpleOutterLoopCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2 = q.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestSimpleIfCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Where(f => f.run > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(f => f.run > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var ifstatement = query.QueryCode().First().Statements.First() as Statements.StatementFilter;
+            Assert.IsNotNull(ifstatement, "if statement");
+            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside if block");
+        }
+
+        [TestMethod]
+        public void TestSimpleIfNotCombine()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Where(f => f.run > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(f => f.run > 6).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]
