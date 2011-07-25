@@ -574,7 +574,7 @@ namespace LINQToTTreeLib
         {
             var q = new QueriableDummy<ntupWithObjects>();
 
-            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+            Expression<Func<subNtupleObjects, bool>> checker = jr => CPPHelperFunctions.Calc(jr.var1) > 1;
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -590,8 +590,8 @@ namespace LINQToTTreeLib
                                                };
 
             var tracksNearJet = from evt in tracksNearJetPerEvent
-                                from j in evt
-                                select j;
+                                from jl in evt
+                                select jl;
 
             var r = tracksNearJet.Aggregate(0, (s, evt) => s + evt.Tracks.Count());
 
@@ -602,6 +602,10 @@ namespace LINQToTTreeLib
             MakeSureNoVariable(code.CodeBody, "j");
             MakeSureNoVariable(code.CodeBody, "Jet");
             MakeSureNoVariable(code.CodeBody, "Tracks");
+            MakeSureNoVariable(code.CodeBody, "jtlz");
+            MakeSureNoVariable(code.CodeBody, "ttlz");
+            MakeSureNoVariable(code.CodeBody, "jl");
+            MakeSureNoVariable(code.CodeBody, "jr");
         }
 
         [TestMethod]
