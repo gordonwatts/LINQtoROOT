@@ -57,6 +57,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new ROAnyAll());
                 MEFUtilities.AddPart(new ROUniqueCombinations());
                 MEFUtilities.AddPart(new ROPairWiseAll());
+                MEFUtilities.AddPart(new ROFirstLast());
 
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());

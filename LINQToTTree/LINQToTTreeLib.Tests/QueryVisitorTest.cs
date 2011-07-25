@@ -579,6 +579,101 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestMinMaxStatement()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var dudeQ1 = from evt in q
+                         where (evt.jets.Max(j => j.var1) > 5)
+                         select evt;
+            var dude1 = dudeQ1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var dudeQ2 = from evt in q
+                         where (evt.jets.Max(j => j.var1) > 5)
+                         select evt;
+            var dude2 = dudeQ2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+        }
+
+        [TestMethod]
+        public void TestLoopPairWiseCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1p = from evt in q
+                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
+            var r1 = r1p.Where(c => c > 2).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2p = from evt in q
+                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
+            var r2 = r2p.Where(c => c > 2).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(5, st.Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TsetTakeSkipCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r1p = from evt in q
+                      let v = evt.jets.Skip(1).Count()
+                      where v > 1
+                      select v;
+            var r1 = r1p.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2p = from evt in q
+                      let v = evt.jets.Skip(1).Count()
+                      where v > 1
+                      select v;
+            var r2 = r2p.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of guys");
+        }
+
+        [TestMethod]
+        public void TestUnqiueCombineStatements()
+        {
+            var q = new QueriableDummy<ntupArray>();
+
+            // Query #1
+
+            var results1 = from evt in q
+                           select evt.run.UniqueCombinations().Count();
+            var total1 = results1.Aggregate(0, (seed, val) => seed + val);
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var results2 = from evt in q
+                           select evt.run.UniqueCombinations().Count();
+            var total2 = results2.Aggregate(0, (seed, val) => seed + val);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            // Check that the combine actually worked well!!
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            // First for loop to crord, 2 to test, and then the two aggregates
+            Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+        }
+
+        [TestMethod]
         public void TestVectorLoopAnyCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();
@@ -657,100 +752,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
-        [TestMethod]
-        public void TestLoopPairWiseCombine()
-        {
-            var q = new QueriableDummy<ntupWithObjects>();
-            var r1p = from evt in q
-                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
-            var r1 = r1p.Where(c => c > 2).Count();
-            var query1 = DummyQueryExectuor.FinalResult;
-
-            var r2p = from evt in q
-                      select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
-            var r2 = r2p.Where(c => c > 2).Count();
-            var query2 = DummyQueryExectuor.FinalResult;
-
-            var query = CombineQueries(query1, query2);
-            query.DumpCodeToConsole();
-
-            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            var st = query.QueryCode().First();
-            Assert.AreEqual(5, st.Statements.Count(), "# of statements");
-        }
-
-        [TestMethod]
-        public void TsetTakeSkipCombine()
-        {
-            var q = new QueriableDummy<ntupWithObjects>();
-
-            var r1p = from evt in q
-                      let v = evt.jets.Skip(1).Count()
-                      where v > 1
-                      select v;
-            var r1 = r1p.Count();
-            var query1 = DummyQueryExectuor.FinalResult;
-
-            var r2p = from evt in q
-                      let v = evt.jets.Skip(1).Count()
-                      where v > 1
-                      select v;
-            var r2 = r2p.Count();
-            var query2 = DummyQueryExectuor.FinalResult;
-
-            var query = CombineQueries(query1, query2);
-            query.DumpCodeToConsole();
-
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of guys");
-        }
-
-        [TestMethod]
-        public void TestMinMaxStatement()
-        {
-            var q = new QueriableDummy<ntupWithObjects>();
-            var dudeQ1 = from evt in q
-                         where (evt.jets.Max(j => j.var1) > 5)
-                         select evt;
-            var dude1 = dudeQ1.Count();
-            var query1 = DummyQueryExectuor.FinalResult;
-
-            var dudeQ2 = from evt in q
-                         where (evt.jets.Max(j => j.var1) > 5)
-                         select evt;
-            var dude2 = dudeQ2.Count();
-            var query2 = DummyQueryExectuor.FinalResult;
-
-            var query = CombineQueries(query1, query2);
-            query.DumpCodeToConsole();
-
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
-        }
-
-        [TestMethod]
-        public void TestUnqiueCombineStatements()
-        {
-            var q = new QueriableDummy<ntupArray>();
-
-            // Query #1
-
-            var results1 = from evt in q
-                           select evt.run.UniqueCombinations().Count();
-            var total1 = results1.Aggregate(0, (seed, val) => seed + val);
-            var query1 = DummyQueryExectuor.FinalResult;
-
-            var results2 = from evt in q
-                           select evt.run.UniqueCombinations().Count();
-            var total2 = results2.Aggregate(0, (seed, val) => seed + val);
-            var query2 = DummyQueryExectuor.FinalResult;
-
-            var query = CombineQueries(query1, query2);
-            query.DumpCodeToConsole();
-
-            // Check that the combine actually worked well!!
-            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            // First for loop to crord, 2 to test, and then the two aggregates
-            Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
-        }
         class ntupArray
         {
 #pragma warning disable 0649
