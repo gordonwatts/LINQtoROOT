@@ -791,13 +791,13 @@ namespace LINQToTTreeLib
         public void TestFirstCode()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -827,13 +827,13 @@ namespace LINQToTTreeLib
         public void TestLastCode()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -1008,13 +1008,13 @@ namespace LINQToTTreeLib
         public void TestSumCode()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -1047,13 +1047,13 @@ namespace LINQToTTreeLib
         public void TestAggregateCodeForSimpleVariableType()
         {
             const int numberOfIter = 25;
-            var rootFile = CreateFileOfVectorInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -1324,7 +1324,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with
@@ -1360,7 +1360,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with
@@ -1397,7 +1397,7 @@ namespace LINQToTTreeLib
             /// Generate a proxy .h file that we can use
             /// 
 
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get two querries we can play with

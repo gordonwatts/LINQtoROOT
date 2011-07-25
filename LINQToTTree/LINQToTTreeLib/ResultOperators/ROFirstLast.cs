@@ -87,7 +87,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddOneLevelUp(indexSeen);
 
             var indexValue = ExpressionToCPP.GetExpression(indexExpr, gc, cc, container);
-            gc.Add(new Statements.StatemenRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
+            gc.Add(new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
 
             //
             // Ok - we now pop out, and return the value we have!
