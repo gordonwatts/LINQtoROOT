@@ -649,7 +649,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="iBookingStatementBlock"></param>
         /// <param name="p"></param>
-        private void MakeSureNoVariable(IBookingStatementBlock statements, string vname)
+        private void MakeSureNoVariable(IStatement statements, string vname)
         {
             Regex finder = new Regex(string.Format(@"\b{0}\b", vname));
             var hasit = from l in statements.CodeItUp()
@@ -1027,5 +1027,18 @@ namespace LINQToTTreeLib
 #pragma warning restore 0649
         }
 
+        [TestMethod]
+        public void TestCountTranslated()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r = q.Where(evt => evt.jets.Count() > 0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+
+            query.DumpCodeToConsole();
+            var code = query.QueryCode().First();
+
+            MakeSureNoVariable(code, "jets");
+        }
     }
 }
