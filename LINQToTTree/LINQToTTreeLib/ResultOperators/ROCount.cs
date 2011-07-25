@@ -7,6 +7,8 @@ using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using System.Linq.Expressions;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -34,31 +36,33 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode codeEnv, ICodeContext codeContext, CompositionContainer container)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
-            if (codeEnv == null)
+            if (gc == null)
                 throw new ArgumentNullException("CodeEnv must not be null!");
 
             var c = resultOperator as CountResultOperator;
             if (c == null)
                 throw new ArgumentNullException("resultOperator can only be a CountResultOperator and must not be null");
 
-            var intResult = ImplementCount(codeEnv);
+            //
+            // The accumulator where we will store the result.
+            //
 
-            return intResult;
-        }
+            var accumulator = new VarInteger();
 
-        /// <summary>
-        /// Actually write the code for the count operator.
-        /// </summary>
-        /// <param name="codeEnv"></param>
-        /// <returns></returns>
-        public static IVariable ImplementCount(IGeneratedQueryCode codeEnv)
-        {
-            var intResult = new VarInteger();
+            //
+            // Use the Aggregate infrasturcutre to do the adding. This
+            // has the advantage that it will correctly combine with
+            // similar statements during query optimization.
+            //
 
-            codeEnv.Add(new StatementIncrementInteger(intResult));
-            return intResult;
+            var p = Expression.Parameter(typeof(int), accumulator.VariableName);
+            var add = Expression.Add(p, Expression.Constant((int)1));
+            var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
+
+            gc.Add(new StatementAggregate(accumulator, addResolved));
+            return accumulator;
         }
     }
 }

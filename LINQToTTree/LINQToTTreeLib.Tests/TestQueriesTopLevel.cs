@@ -55,8 +55,8 @@ namespace LINQToTTreeLib.Tests
 
             Assert.AreEqual(1, res.CodeBody.Statements.Count(), "incorrect # of statements");
             var statement = res.CodeBody.Statements.First();
-            Assert.IsInstanceOfType(statement, typeof(StatementIncrementInteger), "count should be incrementing an integer!");
-            Assert.AreEqual(DummyQueryExectuor.FinalResult.ResultValue, (statement as StatementIncrementInteger).Integer, "The variable should match");
+            Assert.IsInstanceOfType(statement, typeof(StatementAggregate), "count should be incrementing an integer!");
+            Assert.AreEqual(DummyQueryExectuor.FinalResult.ResultValue, (statement as StatementAggregate).ResultVariable, "The variable should match");
         }
 
         [TestMethod]
@@ -105,7 +105,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             Assert.AreEqual(1, ifStatement.Statements.Count(), "expected a single statement inside the if statemenet!");
-            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementIncrementInteger), "incorrect if statement");
+            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAggregate), "incorrect if statement");
         }
 
         [TestMethod]

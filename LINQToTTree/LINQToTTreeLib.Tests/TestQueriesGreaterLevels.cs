@@ -81,7 +81,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, loop.Statements.Count(), "incorrect # of statements");
             var statement = loop.Statements.First();
 
-            Assert.IsInstanceOfType(statement, typeof(StatementIncrementInteger), "count should be incrementing an integer!");
+            Assert.IsInstanceOfType(statement, typeof(StatementAggregate), "count should be incrementing an integer!");
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, loop2.Statements.Count(), "incorrect # of statements");
             var statement = loop2.Statements.First();
 
-            Assert.IsInstanceOfType(statement, typeof(StatementIncrementInteger), "count should be incrementing an integer!");
+            Assert.IsInstanceOfType(statement, typeof(StatementAggregate), "count should be incrementing an integer!");
         }
     }
 }
