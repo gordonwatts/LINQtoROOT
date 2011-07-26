@@ -90,7 +90,7 @@ namespace LINQToTTreeLib
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
             ///
-            /// If this is a bar array that is connected to the main object, then we want
+            /// If this is a bare array that is connected to the main object, then we want
             /// to not translate this. It will be delt with further above us.
             /// 
 
@@ -543,7 +543,7 @@ namespace LINQToTTreeLib
                     /// an access to one of these guys and then run it, and then pull appart the answer. Evil. I know. :-)
                     /// 
 
-                    var nonArrayMember = FindNonArrayMember(memberExpr.Type.GetElementType());
+                    var nonArrayMember = FindSubObjectMember(memberExpr.Type.GetElementType());
                     if (nonArrayMember != null)
                     {
                         var arrayLookup = Expression.ArrayIndex(memberExpr, Expression.Variable(typeof(int), "d"));
@@ -640,12 +640,11 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private MemberInfo FindNonArrayMember(Type type)
+        private MemberInfo FindSubObjectMember(Type type)
         {
             var firstNonArray = from member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public)
                                 let field = member as FieldInfo
                                 where field != null
-                                where !field.FieldType.IsArray
                                 select field;
             return firstNonArray.FirstOrDefault();
         }
