@@ -91,6 +91,28 @@ namespace LINQToTreeHelpers
             tlz.SetPtEtaPhiM(pt, eta, phi, 139.6);
             return tlz;
         }
+
+        /// <summary>
+        /// Calculate DR^2 rather than DR. The object is to get a sqrt out of the center of a very
+        /// hot loop. Otherwise, use the standard DeltaR. Since this is an extension method, you
+        /// can just use tlx.DeltaR2(other) to get the DR2 between tlx and other.
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        [CPPCode(IncludeFiles= new [] {"TLorentzVector.h", "TVector2.h"},
+            Code = new[] {
+                "double detaUnique = v1->Eta() - v2->Eta();",
+                "double dphiUnique = v1->Phi() - v2->Phi();",
+                "DeltaR2 = detaUnique*detaUnique + dphiUnique*dphiUnique;"
+            })]
+        public static double DeltaR2(this ROOTNET.NTLorentzVector v1, ROOTNET.NTLorentzVector v2)
+        {
+            throw new NotImplementedException("this should never get called");
+            double deta = v1.Eta() - v2.Eta();
+            double deltaphi = ROOTNET.NTVector2.Phi_mpi_pi(v1.Phi() - v2.Phi());
+            return deta * deta + deltaphi * deltaphi;
+        }
         #endregion
 
     }
