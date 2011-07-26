@@ -310,11 +310,21 @@ namespace LINQToTTreeLib.Tests
             public int[] val2D;
         }
 
+        public class SourceType2Container1
+        {
+            [TTreeVariableGrouping]
+            [RenameVariable("val2D")]
+            public int[] others;
+        }
+
         [TranslateToClass(typeof(ResultType2))]
         public class SourceType2
         {
             [TTreeVariableGrouping]
             public SourceType2Container[] jets;
+
+            [TTreeVariableGrouping]
+            public SourceType2Container1[] others;
         }
 
         public class ResultType2
@@ -325,6 +335,32 @@ namespace LINQToTTreeLib.Tests
 
             public int[] val;
             public int[][] val2D;
+        }
+
+        [TestMethod]
+        public void TestTranslate2DArrayLengthFor1stDimension()
+        {
+            Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.others.Length;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "top level not right");
+            var al = result as UnaryExpression;
+            Assert.AreEqual(ExpressionType.MemberAccess, al.Operand.NodeType, "the length subject is not the expected member access");
+            var me = al.Operand as MemberExpression;
+            Assert.AreEqual("val2D", me.Member.Name, "Bad member name resolution");
+        }
+
+        [TestMethod]
+        public void TestTranslate2DArrayLengthFor2stDimension()
+        {
+            Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.others[0].others.Length;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "top level not right");
+            var al = result as UnaryExpression;
+            Assert.AreEqual(ExpressionType.MemberAccess, al.Operand.NodeType, "the length subject is not the expected member access");
+            var me = al.Operand as MemberExpression;
+            Assert.AreEqual("val2D", me.Member.Name, "Bad member name resolution");
         }
 
         [TestMethod]
