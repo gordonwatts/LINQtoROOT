@@ -19,15 +19,5 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementPairLoopTest
     {
-
-[TestMethod]
-[PexGeneratedBy(typeof(StatementPairLoopTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementPairLoopCtorThrowsArgumentNullException951()
-{
-    StatementPairLoop statementPairLoop;
-    statementPairLoop =
-      this.StatementPairLoopCtor((VarArray)null, (IVariable)null, (IVariable)null);
-}
     }
 }

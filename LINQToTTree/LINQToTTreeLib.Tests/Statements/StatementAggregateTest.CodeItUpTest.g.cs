@@ -18,45 +18,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAggregateTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void CodeItUpTest754()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAggregate =
-      new StatementAggregate((IVariable)varInteger, (IValue)varInteger);
-    statementAggregate.Parent = (IStatement)null;
-    s = this.CodeItUpTest(statementAggregate);
-    Assert.AreEqual<string>("anint_1=anint_1;", s);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAggregate.Expression, statementAggregate.ResultVariable));
-    Assert.IsNull(statementAggregate.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void CodeItUpTest861()
-{
-    VarInteger varInteger;
-    VarInteger varInteger1;
-    StatementAggregate statementAggregate;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
-    varInteger1 = VarIntegerFactory.Create(false, 1);
-    statementAggregate =
-      new StatementAggregate((IVariable)varInteger, (IValue)varInteger1);
-    statementAggregate.Parent = (IStatement)null;
-    s = this.CodeItUpTest(statementAggregate);
-    Assert.AreEqual<string>("anint_1=anint_2;", s);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-    Assert.IsNull(statementAggregate.Parent);
-}
     }
 }

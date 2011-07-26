@@ -19,52 +19,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException919()
-{
-    StatementAssign statementAssign;
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException211()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-public void StatementAssignConstructorTest472()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)varInteger);
-    Assert.IsNotNull((object)statementAssign);
-    Assert.IsNotNull(statementAssign.ResultVariable);
-    Assert.IsNotNull(statementAssign.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAssign.Expression, statementAssign.ResultVariable));
-    Assert.IsNull(statementAssign.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException535()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAssign =
-      this.StatementAssignConstructorTest((IVariable)varInteger, (IValue)null);
-}
     }
 }

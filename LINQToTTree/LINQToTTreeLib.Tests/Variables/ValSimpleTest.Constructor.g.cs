@@ -16,21 +16,5 @@ namespace LINQToTTreeLib.Variables
 {
     public partial class ValSimpleTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ValSimpleTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException995()
-{
-    ValSimple valSimple;
-    valSimple = this.Constructor((string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ValSimpleTest))]
-public void Constructor899()
-{
-    ValSimple valSimple;
-    valSimple = this.Constructor("");
-    Assert.IsNotNull((object)valSimple);
-}
     }
 }

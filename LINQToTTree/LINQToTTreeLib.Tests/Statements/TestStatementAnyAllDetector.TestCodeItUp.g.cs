@@ -19,45 +19,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class TestStatementAnyAllDetector
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementAnyAllDetector))]
-public void TestCodeItUp522()
-{
-    VarInteger varInteger;
-    StatementAnyAllDetector statementAnyAllDetector;
-    string[] ss;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAnyAllDetector = StatementAnyAllDetectorFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger, "");
-    ss = this.TestCodeItUp(statementAnyAllDetector);
-    Assert.IsNotNull((object)ss);
-    Assert.AreEqual<int>(4, ss.Length);
-    Assert.AreEqual<string>("if (anint_1) {", ss[0]);
-    Assert.AreEqual<string>("  anint_1 = ;", ss[1]);
-    Assert.AreEqual<string>("  break;", ss[2]);
-    Assert.AreEqual<string>("}", ss[3]);
-    Assert.IsNotNull((object)statementAnyAllDetector);
-    Assert.IsNull(statementAnyAllDetector.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementAnyAllDetector))]
-public void TestCodeItUp52201()
-{
-    VarInteger varInteger;
-    StatementAnyAllDetector statementAnyAllDetector;
-    string[] ss;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAnyAllDetector = StatementAnyAllDetectorFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger, "");
-    ss = this.TestCodeItUp(statementAnyAllDetector);
-    Assert.IsNotNull((object)ss);
-    Assert.AreEqual<int>(4, ss.Length);
-    Assert.AreEqual<string>("if (anint_1) {", ss[0]);
-    Assert.AreEqual<string>("  anint_1 = ;", ss[1]);
-    Assert.AreEqual<string>("  break;", ss[2]);
-    Assert.AreEqual<string>("}", ss[3]);
-    Assert.IsNotNull((object)statementAnyAllDetector);
-    Assert.IsNull(statementAnyAllDetector.Parent);
-}
     }
 }

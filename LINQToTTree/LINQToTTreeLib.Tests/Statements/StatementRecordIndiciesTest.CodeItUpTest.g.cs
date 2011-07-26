@@ -18,37 +18,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void CodeItUpTest966()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies = StatementRecordIndiciesFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger);
-    s = this.CodeItUpTest(statementRecordIndicies);
-    Assert.AreEqual<string>("anint_1.push_back(anint_1);", s);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-    Assert.IsNull(statementRecordIndicies.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void CodeItUpTest96601()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    string s;
-    varInteger = VarIntegerFactory.Create(false, -17);
-    statementRecordIndicies = StatementRecordIndiciesFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger);
-    s = this.CodeItUpTest(statementRecordIndicies);
-    Assert.AreEqual<string>("anint_1.push_back(anint_1);", s);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-    Assert.IsNull(statementRecordIndicies.Parent);
-}
     }
 }
