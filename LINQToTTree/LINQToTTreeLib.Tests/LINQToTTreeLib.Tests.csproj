@@ -494,6 +494,12 @@
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
+    <Compile Include="Statements\StatementSimpleStatementTest.TestRename.g.cs">
+      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementSimpleStatementTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementVectorLoopTest.cs" />
     <Compile Include="Statements\TestStatemenRecordValue.TestCodeItUp.g.cs">
       <DependentUpon>StatemenRecordValueTest.cs</DependentUpon>
