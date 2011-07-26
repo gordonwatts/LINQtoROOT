@@ -358,9 +358,11 @@ namespace LINQToTTreeLib.Tests
             var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "top level not right");
             var al = result as UnaryExpression;
-            Assert.AreEqual(ExpressionType.MemberAccess, al.Operand.NodeType, "the length subject is not the expected member access");
-            var me = al.Operand as MemberExpression;
-            Assert.AreEqual("val2D", me.Member.Name, "Bad member name resolution");
+            Assert.AreEqual(ExpressionType.ArrayIndex, al.Operand.NodeType, "the length subject is not the expected");
+            var ar = al.Operand as BinaryExpression;
+            Assert.AreEqual(ExpressionType.MemberAccess, ar.Left.NodeType, "array access from host object");
+            var mem = ar.Left as MemberExpression;
+            Assert.AreEqual("val2D", mem.Member.Name, "not right member name");
         }
 
         [TestMethod]
