@@ -96,17 +96,14 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.IsNotNull(result, "result!");
             var vname = result.RawValue;
 
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements that came back");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementSimpleStatement), "statement type #1");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementSimpleStatement), "statement type #2");
-            var st1 = gc.CodeBody.Statements.First() as Statements.StatementSimpleStatement;
-            var st2 = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements that came back");
+            var st1 = gc.CodeBody.Statements.First() as IStatement;
 
-            Assert.AreEqual("int " + vname, st1.Line, "line #1 is incorrect");
+            Assert.AreEqual("int " + vname + ";", st1.CodeItUp().First(), "line #1 is incorrect");
 
             var expected = new StringBuilder();
             expected.AppendFormat("{0} = p*2;", vname);
-            Assert.AreEqual(expected.ToString(), st2.Line, "statement line incorrect");
+            Assert.AreEqual(expected.ToString(), st1.CodeItUp().Skip(1).First(), "statement line incorrect");
 
             Assert.AreEqual(1, gc.IncludeFiles.Count(), "# of include files");
             Assert.AreEqual("TLorentzVector.h", gc.IncludeFiles.First(), "include file name");
@@ -130,11 +127,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             gc.DumpCodeToConsole();
 
             var vname = result.RawValue;
-            var st2 = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
+            var st2 = gc.CodeBody.Statements.First().CodeItUp().Skip(1).First();
 
             var expected = new StringBuilder();
             expected.AppendFormat("{0} = (p+1)*2;", vname);
-            Assert.AreEqual(expected.ToString(), st2.Line, "statement line incorrect");
+            Assert.AreEqual(expected.ToString(), st2, "statement line incorrect");
         }
 
         /// <summary>Test stub for ProcessMethodCall(MethodCallExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
@@ -190,11 +187,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            var declStatement = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
-            var setStatement = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
+            var declStatement = gc.CodeBody.Statements.First().CodeItUp().Skip(1).First();
+            var setStatement = gc.CodeBody.Statements.First().CodeItUp().Skip(2).First();
 
-            Assert.IsFalse(declStatement.Line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", declStatement.Line));
-            Assert.IsFalse(setStatement.Line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", setStatement.Line));
+            Assert.IsFalse(declStatement.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", declStatement));
+            Assert.IsFalse(setStatement.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", setStatement));
         }
 
         [TestMethod]
@@ -216,7 +213,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            var declStatement = gc.CodeBody.Statements.First() as Statements.StatementSimpleStatement;
+            var declStatement = gc.CodeBody.Statements.First();
 
             Assert.IsTrue(declStatement.CodeItUp().First().StartsWith("TLorentzVector* aNTLorentzVector"), "return variable decl in correct");
         }
@@ -240,11 +237,10 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            foreach (var line in gc.CodeBody.Statements)
+            foreach (var line in gc.CodeBody.Statements.First().CodeItUp())
             {
-                var st = line as Statements.StatementSimpleStatement;
-                Assert.IsNotNull(st, "bad statement type");
-                Assert.IsFalse(st.Line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", st.Line));
+                Assert.IsNotNull(line, "bad statement type");
+                Assert.IsFalse(line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", line));
             }
         }
 
@@ -267,10 +263,8 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            var ifstatement = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
-            Assert.IsFalse(ifstatement.Line.EndsWith(";"), string.Format("Line '{0}' ends with a semicolon", ifstatement.Line));
-            string line = ifstatement.CodeItUp().First();
-            Assert.IsFalse(line.EndsWith(";"), string.Format("Line '{0}' ends with a semicolon", line));
+            var ifstatement = gc.CodeBody.Statements.First().CodeItUp().Skip(1).First();
+            Assert.IsFalse(ifstatement.EndsWith(";"), string.Format("Line '{0}' ends with a semicolon", ifstatement));
         }
 
         [TestMethod]
@@ -382,10 +376,10 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            Assert.AreEqual(4, gc.CodeBody.Statements.Count(), "# of statements total");
-            var setStatement = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements total");
+            var setStatement = gc.CodeBody.Statements.First().CodeItUp().Skip(2).First();
             Assert.IsNotNull(setStatement, "Bad type for 3rd statement");
-            Assert.IsTrue(setStatement.Line.Contains("SetPtEtaPhiE(ptParam, etaParam, phiParam, EParam)"), string.Format("Line '{0}' doesn't have correct set statement.", setStatement.Line));
+            Assert.IsTrue(setStatement.Contains("SetPtEtaPhiE(ptParam, etaParam, phiParam, EParam)"), string.Format("Line '{0}' doesn't have correct set statement.", setStatement));
         }
 
         [TestMethod]
@@ -407,13 +401,13 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            Assert.AreEqual(4, gc.CodeBody.Statements.Count(), "# of statements total");
-            var atBeginning = gc.CodeBody.Statements.Skip(1).First() as Statements.StatementSimpleStatement;
-            var atEnding = gc.CodeBody.Statements.Skip(2).First() as Statements.StatementSimpleStatement;
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements total");
+            var atBeginning = gc.CodeBody.Statements.First().CodeItUp().Skip(1).FirstOrDefault();
+            var atEnding = gc.CodeBody.Statements.First().CodeItUp().Skip(2).FirstOrDefault();
             Assert.IsNotNull(atBeginning, "Bad type for 3rd statement");
             Assert.IsNotNull(atEnding, "Bad type for 3rd statement");
-            Assert.IsTrue(atBeginning.Line.StartsWith("EParam"), string.Format("Line '{0}' doesn't start with param replacement", atBeginning.Line));
-            Assert.IsTrue(atEnding.Line.EndsWith("ptParam"), string.Format("Line '{0}' doesn't ends with param replacement", atBeginning.Line));
+            Assert.IsTrue(atBeginning.StartsWith("EParam"), string.Format("Line '{0}' doesn't start with param replacement", atBeginning));
+            Assert.IsTrue(atEnding.EndsWith("ptParam"), string.Format("Line '{0}' doesn't ends with param replacement", atBeginning));
         }
     }
 }

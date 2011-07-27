@@ -207,7 +207,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 // First, the decl for the result variable.
                 //
 
-                yield return string.Format("{0} {1}", cppType, resultName);
+                yield return string.Format("{0} {1};", cppType, resultName);
 
                 //
                 // Now the various lines of code that the user entered.
