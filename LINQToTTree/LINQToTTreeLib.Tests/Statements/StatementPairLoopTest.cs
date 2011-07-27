@@ -161,23 +161,6 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsFalse(stp1.TryCombineStatement(stp2, null), "should not have combined");
         }
 
-        class CombinerHelper : ICodeOptimizationService
-        {
-            public bool ShouldReturn = true;
-            public string OldName { get; private set; }
-            public IVariable NewVarialbe { get; private set; }
-            public int TimesCalled = 0;
-
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
-            {
-                OldName = oldName;
-                NewVarialbe = newVariable;
-                TimesCalled++;
-
-                return ShouldReturn;
-            }
-        }
-
         [TestMethod]
         public void TestCombineWithSameArray()
         {
@@ -193,7 +176,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var statAss = new StatementAssign(index3, new ValSimple("dude", typeof(int)));
             stp2.Add(statAss);
 
-            var opt = new CombinerHelper();
+            var opt = new Factories.CodeOptimizerTest(true);
             Assert.IsTrue(stp1.TryCombineStatement(stp2, opt), "Combine should have been ok");
             Assert.AreEqual(1, stp1.Statements.Count(), "Improper number of combined sub-statements");
             var s1 = stp1.Statements.First();

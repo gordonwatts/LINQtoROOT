@@ -11,6 +11,9 @@ namespace LINQToTTreeLib.Tests.Factories
     public class CodeOptimizerTest : ICodeOptimizationService
     {
         public bool ResultValue { get; private set; }
+
+        public int TimesCalled = 0;
+
         public CodeOptimizerTest(bool result)
         {
             ResultValue = result;
@@ -22,9 +25,17 @@ namespace LINQToTTreeLib.Tests.Factories
 
         public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
         {
+            TimesCalled++;
             OldName = oldName;
             NewVariable = newVariable;
             return ResultValue;
+        }
+
+
+        public void ForceRenameVariable(string originalName, string newName)
+        {
+            TimesCalled++;
+            OldName = originalName;
         }
     }
 }

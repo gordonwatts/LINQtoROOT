@@ -186,6 +186,16 @@ namespace LINQToTTreeLib.Statements
 
                 return FindDeclaredVariable(oldName, statement.Parent);
             }
+
+            /// <summary>
+            /// Do the rename in this block and deeper.
+            /// </summary>
+            /// <param name="originalName"></param>
+            /// <param name="newName"></param>
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+                _holderBlock.RenameVariable(originalName, newName);
+            }
         }
 
         /// <summary>
@@ -202,6 +212,15 @@ namespace LINQToTTreeLib.Statements
             public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
             {
                 return false;
+            }
+
+            /// <summary>
+            /// We can't rename anything. So just return.
+            /// </summary>
+            /// <param name="originalName"></param>
+            /// <param name="newName"></param>
+            public void ForceRenameVariable(string originalName, string newName)
+            {
             }
         }
 

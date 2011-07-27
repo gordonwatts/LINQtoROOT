@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -18,5 +14,14 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="newVariable">The new variable we want it renamed to</param>
         /// <returns></returns>
         bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable);
+
+        /// <summary>
+        /// Forces a rename of all text. No checking to find a declared variable, etc.
+        /// This should be called if you own the decl in some private code block that
+        /// is not known by the rest of the system.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
+        void ForceRenameVariable(string originalName, string newName);
     }
 }

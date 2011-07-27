@@ -1,17 +1,16 @@
-﻿using LINQToTTreeLib.Statements;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using LinqToTTreeInterfacesLib;
-using System.Collections.Generic;
-using Microsoft.Pex.Framework;
-using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework.Validation;
+﻿using System;
 using System.Linq;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
-    
-    
+
+
     /// <summary>
     ///This is a test class for StatementAggregateTest and is intended
     ///to contain all StatementAggregateTest Unit Tests
@@ -115,21 +114,6 @@ namespace LINQToTTreeLib.Tests
             return result;
         }
 
-        class Opt : ICodeOptimizationService
-        {
-            public bool ReturnValue = true;
-
-            public string OldName {get; set;}
-            public string NewName {get; set;}
-
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newName)
-            {
-                OldName = oldName;
-                NewName = newName.RawValue;
-                return ReturnValue;
-            }
-        }
-
         [TestMethod]
         public void TestCombineWithRename()
         {
@@ -145,11 +129,11 @@ namespace LINQToTTreeLib.Tests
             var cinc = new Variables.ValSimple(string.Format("{0}+b", c.RawValue), typeof(int));
             var s2 = new StatementAggregate(c, cinc);
 
-            var opt = new Opt();
+            var opt = new Tests.Factories.CodeOptimizerTest(true);
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsTrue(result, "Expected combination would work");
 
-            Assert.AreEqual(a.RawValue, opt.NewName, "new name not renamed to");
+            Assert.AreEqual(a.RawValue, opt.NewVariable.RawValue, "new name not renamed to");
             Assert.AreEqual(c.RawValue, opt.OldName, "old name for rename not right");
         }
 
@@ -168,7 +152,7 @@ namespace LINQToTTreeLib.Tests
             var cinc = new Variables.ValSimple(string.Format("{0}+b", c.RawValue), typeof(int));
             var s2 = new StatementAggregate(c, cinc);
 
-            var opt = new Opt() { ReturnValue = false };
+            var opt = new Factories.CodeOptimizerTest(false);
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsFalse(result, "Expected combination would work");
         }

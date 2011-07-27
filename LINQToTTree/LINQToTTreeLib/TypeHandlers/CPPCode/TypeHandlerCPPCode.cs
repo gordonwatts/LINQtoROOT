@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
@@ -101,7 +103,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             var cppType = expr.Type.AsCPPType();
             var resultName = expr.Type.CreateUniqueVariableName();
-            gc.Add(new Statements.StatementSimpleStatement(string.Format("{0} {1}", cppType, resultName)));
+
+            var cppStatement = new CPPCodeStatement(expr.Method, cppType, resultName);
+            gc.Add(cppStatement);
 
             paramLookup.Add(expr.Method.Name, resultName);
 
@@ -153,11 +157,124 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 {
                     tline = paramReplaceRegex[k].Replace(tline, paramLookup[k]);
                 }
-                gc.Add(new Statements.StatementSimpleStatement(tline, false));
+                cppStatement.AddLine(tline);
             }
 
             return expr;
         }
+
+        /// <summary>
+        /// A single statement that deals with this special code. We do this rather than make it up otherwise
+        /// as we have special combination symantics.
+        /// </summary>
+        private class CPPCodeStatement : IStatement
+        {
+            private System.Reflection.MethodInfo methodInfo;
+            private string cppType;
+            private string resultName;
+
+            /// <summary>
+            /// Init a code block statement
+            /// </summary>
+            /// <param name="methodInfo"></param>
+            /// <param name="cppType"></param>
+            /// <param name="resultName"></param>
+            public CPPCodeStatement(MethodInfo methodInfo, string typeOfResult, string resultName)
+            {
+                this.methodInfo = methodInfo;
+                this.cppType = typeOfResult;
+                this.resultName = resultName;
+            }
+
+            List<string> LinesOfCode = new List<string>();
+
+            /// <summary>
+            /// Add a line to the list of statements.
+            /// </summary>
+            /// <param name="tline"></param>
+            internal void AddLine(string tline)
+            {
+                LinesOfCode.Add(tline);
+            }
+
+            /// <summary>
+            /// Return the code that will be rendered to the C++ compiler.
+            /// </summary>
+            /// <returns></returns>
+            public System.Collections.Generic.IEnumerable<string> CodeItUp()
+            {
+                //
+                // First, the decl for the result variable.
+                //
+
+                yield return string.Format("{0} {1}", cppType, resultName);
+
+                //
+                // Now the various lines of code that the user entered.
+                //
+
+                foreach (var l in LinesOfCode)
+                {
+                    yield return l;
+                }
+            }
+
+            public bool IsSameStatement(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Rename all variables.
+            /// </summary>
+            /// <param name="originalName"></param>
+            /// <param name="newName"></param>
+            public void RenameVariable(string originalName, string newName)
+            {
+                resultName.ReplaceVariableNames(originalName, newName);
+                LinesOfCode = LinesOfCode.Select(l => l.ReplaceVariableNames(originalName, newName)).ToList();
+            }
+
+            /// <summary>
+            /// Combination means everything is identical except for the result variable. So the test is actually a little
+            /// tricky.
+            /// </summary>
+            /// <param name="statement"></param>
+            /// <param name="optimize"></param>
+            /// <returns></returns>
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                if (statement == null)
+                    throw new ArgumentNullException("statement");
+
+                var other = statement as CPPCodeStatement;
+                if (other == null)
+                    return false;
+
+                if (other.methodInfo != methodInfo)
+                    return false;
+
+                var fixedUpOtherCode = other.LinesOfCode.Select(l => l.ReplaceVariableNames(other.resultName, resultName));
+                var areSame = LinesOfCode.Zip(fixedUpOtherCode, (us, them) => us == them).All(test => test);
+                if (!areSame)
+                    return false;
+
+                //
+                // Ok, they are the same. The one thing that has to be changed is how the result variable
+                // in the other guy is used below. So we need to make that the "same".
+                //
+
+                optimize.ForceRenameVariable(other.resultName, resultName);
+
+                return true;
+            }
+
+            /// <summary>
+            /// Keep track of who is hosting us
+            /// </summary>
+            public IStatement Parent { get; set; }
+        }
+
 
         /// <summary>
         /// These are static classes as far as we are concerned - so they should never be able to run.

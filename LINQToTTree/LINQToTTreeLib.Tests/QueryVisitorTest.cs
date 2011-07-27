@@ -1020,6 +1020,25 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
+        [TestMethod]
+        public void TestCodeCombine()
+        {
+            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Where(f => CPPHelperFunctions.Calc(f.run) > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(f => CPPHelperFunctions.Calc(f.run) > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
         class ntupArray
         {
 #pragma warning disable 0649

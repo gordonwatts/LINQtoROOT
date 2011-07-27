@@ -161,6 +161,12 @@ namespace LINQToTTreeLib.Statements
             {
                 throw new NotImplementedException();
             }
+
+
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 

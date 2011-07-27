@@ -110,6 +110,12 @@ namespace LINQToTTreeLib.Tests
 
                 return true;
             }
+
+
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
