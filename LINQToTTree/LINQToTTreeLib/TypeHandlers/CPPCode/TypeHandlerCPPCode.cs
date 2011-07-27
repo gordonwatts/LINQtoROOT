@@ -133,7 +133,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             foreach (var varRepl in varUniqueRequests)
             {
                 var uniqueName = varRepl.Substring(0, varRepl.Length - "Unique".Length);
-                paramLookup.Add(varRepl, uniqueName + _uniqueCounter.ToString());
+                var uniqueTranslated = uniqueName + _uniqueCounter.ToString();
+                paramLookup.Add(varRepl, uniqueTranslated);
+                cppStatement.AddUniqueVariable(varRepl, uniqueTranslated);
                 _uniqueCounter++;
             }
 
@@ -254,7 +256,15 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 if (other.methodInfo != methodInfo)
                     return false;
 
-                var fixedUpOtherCode = other.LinesOfCode.Select(l => l.ReplaceVariableNames(other.resultName, resultName));
+                //
+                // To check that the lines of code are the same we have to "text replace" several things:
+                // the result and all the unique variable names.
+                //
+
+                var replacements = uniqueVariableTranslations.Keys.ToDictionary(k => other.uniqueVariableTranslations[k], k => uniqueVariableTranslations[k]);
+                replacements[other.resultName] = resultName;
+
+                var fixedUpOtherCode = other.LinesOfCode.Select(l => replacements.Keys.Aggregate(l, (line, vname) => line.ReplaceVariableNames(vname, replacements[vname])));
                 var areSame = LinesOfCode.Zip(fixedUpOtherCode, (us, them) => us == them).All(test => test);
                 if (!areSame)
                     return false;
@@ -273,6 +283,21 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// Keep track of who is hosting us
             /// </summary>
             public IStatement Parent { get; set; }
+
+            /// <summary>
+            /// Keep track of unique names for this statement
+            /// </summary>
+            Dictionary<string, string> uniqueVariableTranslations = new Dictionary<string, string>();
+
+            /// <summary>
+            /// Remember a unique variable name that has been translated.
+            /// </summary>
+            /// <param name="varRepl"></param>
+            /// <param name="uniqueTranslated"></param>
+            internal void AddUniqueVariable(string varRepl, string uniqueTranslated)
+            {
+                uniqueVariableTranslations.Add(varRepl, uniqueTranslated);
+            }
         }
 
 
