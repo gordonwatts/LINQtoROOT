@@ -39,8 +39,8 @@ namespace LINQToTreeHelpers
             result = result.Replace("-", "");
             result = result.Replace("\\", "");
             result = result.Replace("%", "");
-            result = result.Replace("<", "");
-            result = result.Replace(">", "");
+            result = result.Replace("<", "lt");
+            result = result.Replace(">", "gt");
             return result;
         }
     }
