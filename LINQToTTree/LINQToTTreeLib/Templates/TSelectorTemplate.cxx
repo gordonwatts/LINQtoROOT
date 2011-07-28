@@ -57,7 +57,9 @@ public:
 	/// Called with all plots at hand
 	void Terminate()
 	{
-		string outputRootFilename ("queryplots.root");
+		TNamed *outputInfo = LoadFromInputList<TNamed*>("queryOutputFile");
+
+		string outputRootFilename (outputInfo->GetTitle());
 		TFile *output = new TFile(outputRootFilename.c_str(), "RECREATE");
 
 		TIter next (GetOutputList());

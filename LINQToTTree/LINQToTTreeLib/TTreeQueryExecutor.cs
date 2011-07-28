@@ -242,7 +242,7 @@ namespace LINQToTTreeLib
 
             IExecutableCode Code { get; set; }
 
-            void ExtractResult();
+            void ExtractResult(FileInfo queryCache);
         }
 
         /// <summary>
@@ -263,9 +263,9 @@ namespace LINQToTTreeLib
             }
 
 
-            public void ExtractResult()
+            public void ExtractResult(FileInfo queryResults)
             {
-                var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey);
+                var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey, queryResults);
                 Future.SetValue(final);
             }
         }
@@ -396,12 +396,19 @@ namespace LINQToTTreeLib
             var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
             CompileAndLoad(templateRunner);
 
+            //
+            // Generate the temp filename we can use to write out the results of
+            // this query (the root file).
+            //
+
+            var queryOutputFile = new FileInfo(string.Format(@"{0}\{1}.root", GetQueryDirectory().FullName, Path.GetRandomFileName()));
+
             ///
             /// Fantastic! Now we need to run the object!
             /// 
 
             TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
-            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer);
+            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer, queryOutputFile);
 
             ///
             /// Last job, extract all the variables! And save in the cache, and set the
@@ -411,7 +418,7 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(15, "ExecuteQueuedQueries: Extracting the query results");
             foreach (var cq in _queuedQueries)
             {
-                cq.ExtractResult();
+                cq.ExtractResult(queryOutputFile);
             }
             _queuedQueries.Clear();
 
@@ -669,15 +676,15 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key)
+        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key, FileInfo queryResultFile)
         {
             ///
             /// Open the file, if it isn't there something very serious has gone wrong.
             /// 
 
-            var file = ROOTNET.NTFile.Open("queryplots.root");
-            if (!file.IsOpen())
-                throw new FileNotFoundException("Unable to find the output file from the ROOT run!");
+            var file = ROOTNET.NTFile.Open(queryResultFile.FullName);
+            if (file == null || !file.IsOpen())
+                throw new FileNotFoundException(string.Format("Unable to find the output file from the ROOT run '{0}'!", queryResultFile.FullName));
 
             ///
             /// Load the object and try to extract whatever info we need to from it
@@ -700,7 +707,8 @@ namespace LINQToTTreeLib
         /// We actually run the query!
         /// </summary>
         /// <param name="tSelectorClassName">Name of the TSelector object</param>
-        private void RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad)
+        /// <param name="outputFileInfo">Where the output results should be written for eventual reading</param>
+        private void RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad, FileInfo outputFileInfo)
         {
             ///
             /// Create a new TSelector to run
@@ -730,6 +738,8 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
             var objInputList = new ROOTNET.NTList();
+            selector.InputList = objInputList;
+
             foreach (var item in variablesToLoad)
             {
                 var obj = item.Value as ROOTNET.Interface.NTNamed;
@@ -738,7 +748,13 @@ namespace LINQToTTreeLib
                 var cloned = obj.Clone(item.Key);
                 objInputList.Add(cloned);
             }
-            selector.InputList = objInputList;
+
+            //
+            // Where we are going to write our output (the common place so we know where to
+            // pick it up from!)
+            //
+
+            objInputList.Add(new ROOTNET.NTNamed("queryOutputFile", outputFileInfo.FullName));
 
             ///
             /// Finally, run the whole thing
