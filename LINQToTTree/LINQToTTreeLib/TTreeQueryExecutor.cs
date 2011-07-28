@@ -714,23 +714,44 @@ namespace LINQToTTreeLib
             /// Create a new TSelector to run
             /// 
 
-            TraceHelpers.TraceInfo(18, "RunNtupleQuery: Startup - doing selector lookup");
-            var cls = ROOTNET.NTClass.GetClass(tSelectorClassName);
-            if (cls == null)
-                throw new InvalidOperationException("Unable find class '" + tSelectorClassName + "' in the ROOT TClass registry that was just successfully compiled - can't run ntuple query - major inconsistency");
-
-            var selector = cls.New() as ROOTNET.Interface.NTSelector;
-
             ///
             /// Create the chain and load file files into it.
             /// 
 
-            TraceHelpers.TraceInfo(19, "RunNtupleQuery: Creating the TChain");
-            var tree = new ROOTNET.NTChain(_treeName);
-            foreach (var f in _rootFiles)
-            {
-                tree.Add(f.FullName);
-            }
+            var subjobs = (from f in _rootFiles
+                           let r = RunNtupleQueryOnTree(f, variablesToLoad, tSelectorClassName)
+                           where r != null
+                           select r).ToArray();
+
+            if (subjobs.Length == 0)
+                throw new InvalidOperationException("No files return results for the query!");
+
+            //
+            // Now we have the complete results from the sub-tree's. We have to combine them!
+            //
+
+            if (subjobs.Length > 1)
+                throw new InvalidOperationException("Not supporitn more than one root file yet");
+
+            subjobs[0].CopyTo(outputFileInfo.FullName, true);
+        }
+
+        /// <summary>
+        /// Given an input file and the input variables, run, and return a file that contains
+        /// the output of the query. Meant to run safely in a multi-threaded environment.
+        /// </summary>
+        /// <param name="variablesToLoad"></param>
+        /// <param name="selectorClassName"></param>
+        /// <param name="inputfile"></param>
+        /// <returns></returns>
+        private FileInfo RunNtupleQueryOnTree(FileInfo inputFile, IEnumerable<KeyValuePair<string, object>> variablesToLoad, string selectorClassName)
+        {
+            TraceHelpers.TraceInfo(18, "RunNtupleQuery: Startup - doing selector lookup");
+            var cls = ROOTNET.NTClass.GetClass(selectorClassName);
+            if (cls == null)
+                throw new InvalidOperationException("Unable find class '" + selectorClassName + "' in the ROOT TClass registry that was just successfully compiled - can't run ntuple query - major inconsistency");
+
+            var selector = cls.New() as ROOTNET.Interface.NTSelector;
 
             ///
             /// If there are any objects we need to send to the selector, then send them on now
@@ -751,18 +772,44 @@ namespace LINQToTTreeLib
 
             //
             // Where we are going to write our output (the common place so we know where to
-            // pick it up from!)
+            // pick it up from!). We make up our own output files here.
             //
 
-            objInputList.Add(new ROOTNET.NTNamed("queryOutputFile", outputFileInfo.FullName));
+            string outputFile = string.Format(@"{0}/sub_{1}.root", GetQueryDirectory().FullName, Path.GetRandomFileName());
+
+            objInputList.Add(new ROOTNET.NTNamed("queryOutputFile", outputFile));
+
+            //
+            // Open the input file and get the tree
+            //
+
+            var f = ROOTNET.NTFile.Open(inputFile.FullName);
+            if (f == null || !f.IsOpen())
+                return null;
+            try
+            {
+                var t = f.Get(_treeName) as ROOTNET.NTTree;
+                if (t == null)
+                    return null;
+
+                //
+                // Run the selector on this guy
+                //
+
+                TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
+                t.Process(selector);
+                TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
+            }
+            finally
+            {
+                f.Close();
+            }
 
             ///
-            /// Finally, run the whole thing
+            /// Finally, return the final value.
             /// 
 
-            TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
-            tree.Process(selector);
-            TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
+            return new FileInfo(outputFile);
         }
 
         /// <summary>
