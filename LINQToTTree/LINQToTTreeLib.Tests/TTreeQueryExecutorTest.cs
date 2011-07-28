@@ -314,6 +314,36 @@ namespace LINQToTTreeLib
             RunSimpleCountResult(10);
         }
 
+        [TestMethod]
+        public void TestSimpleResultOperatorTwoInputFiles()
+        {
+            var rootFile = CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile, rootFile }, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(20, result);
+
+        }
+
         private void RunSimpleCountResult(int numberOfIter)
         {
             var rootFile = CreateFileOfInt(numberOfIter);

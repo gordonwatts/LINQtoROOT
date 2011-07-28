@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using NVelocity;
@@ -711,10 +712,6 @@ namespace LINQToTTreeLib
         private void RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad, FileInfo outputFileInfo)
         {
             ///
-            /// Create a new TSelector to run
-            /// 
-
-            ///
             /// Create the chain and load file files into it.
             /// 
 
@@ -727,14 +724,88 @@ namespace LINQToTTreeLib
                 throw new InvalidOperationException("No files return results for the query!");
 
             //
-            // Now we have the complete results from the sub-tree's. We have to combine them!
+            // Avoid the combination if we don't need it!
             //
 
-            if (subjobs.Length > 1)
-                throw new InvalidOperationException("Not supporitn more than one root file yet");
+            if (subjobs.Length == 1)
+            {
+                subjobs[0].CopyTo(outputFileInfo.FullName, true);
+                return;
+            }
 
-            subjobs[0].CopyTo(outputFileInfo.FullName, true);
+            //
+            // Now we have the complete results from the sub-tree's. We have to combine them!
+            // Assume the first file has every object we need and start from there.
+            //
+
+            var allResults = (from f in subjobs
+                              select ROOTNET.NTFile.Open(f.FullName, "READ")).ToArray();
+            try
+            {
+                var firstFile = allResults.First();
+                var objCollection = from k in firstFile.ListOfKeys
+                                    select from f in allResults
+                                           select f.Get(k.Name);
+
+                var output = ROOTNET.NTFile.Open(outputFileInfo.FullName, "RECREATE");
+
+                foreach (var objList in objCollection)
+                {
+                    output.Add(CombineObjectList(objList));
+                }
+
+                output.Write();
+                output.Close();
+            }
+            finally
+            {
+                //
+                // Make sure all the result files are actually closed.
+                //
+
+                foreach (var f in allResults)
+                {
+                    f.Close();
+                }
+            }
         }
+
+        /// <summary>
+        /// Given a list of objects attempt to merge them into a single one and return the combined object. Note
+        /// that we modify the first object in the list by doing the merge!
+        /// </summary>
+        /// <param name="objList"></param>
+        /// <returns></returns>
+        private ROOTNET.Interface.NTObject CombineObjectList(IEnumerable<ROOTNET.Interface.NTObject> objList)
+        {
+            //
+            // Create the list we will be passing along!
+            //
+
+            var list = new ROOTNET.NTList();
+            foreach (var item in objList.Skip(1))
+            {
+                list.Add(item);
+            }
+
+            //
+            // This requires some dynamic shinanigins. We don't have that implemented right now, so we will just assume this is
+            // a histogram and fail otherwise! :-)
+            //
+
+            var ash = objList.First() as ROOTNET.Interface.NTH1;
+            if (ash == null)
+                throw new InvalidOperationException(string.Format("Unable to merge objects of type '{0}'.", ash.GetType().Name));
+
+            ash.Merge(list);
+
+            return ash;
+        }
+
+        /// <summary>
+        /// Lock to prevent us from opening more than one root file at a time while processing.
+        /// </summary>
+        private Mutex _openFileMutex = new Mutex();
 
         /// <summary>
         /// Given an input file and the input variables, run, and return a file that contains
@@ -746,70 +817,112 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private FileInfo RunNtupleQueryOnTree(FileInfo inputFile, IEnumerable<KeyValuePair<string, object>> variablesToLoad, string selectorClassName)
         {
-            TraceHelpers.TraceInfo(18, "RunNtupleQuery: Startup - doing selector lookup");
-            var cls = ROOTNET.NTClass.GetClass(selectorClassName);
-            if (cls == null)
-                throw new InvalidOperationException("Unable find class '" + selectorClassName + "' in the ROOT TClass registry that was just successfully compiled - can't run ntuple query - major inconsistency");
+            //
+            // We will have to weave in and out of some objects lifetimes
+            // and a lock on opening the input files. As a result, we need
+            // to declare some variables at the top.
+            //
 
-            var selector = cls.New() as ROOTNET.Interface.NTSelector;
-
-            ///
-            /// If there are any objects we need to send to the selector, then send them on now
-            /// 
-
-            TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
-            var objInputList = new ROOTNET.NTList();
-            selector.InputList = objInputList;
-
-            foreach (var item in variablesToLoad)
-            {
-                var obj = item.Value as ROOTNET.Interface.NTNamed;
-                if (obj == null)
-                    throw new InvalidOperationException("Can only deal with named objects");
-                var cloned = obj.Clone(item.Key);
-                objInputList.Add(cloned);
-            }
+            ROOTNET.Interface.NTFile inputROOTFile = null;
+            ROOTNET.Interface.NTTree tree = null;
+            ROOTNET.Interface.NTList objInputList = null;
+            ROOTNET.Interface.NTSelector selector = null;
 
             //
-            // Where we are going to write our output (the common place so we know where to
-            // pick it up from!). We make up our own output files here.
+            // Create the output file that we will be writing the results to...
             //
 
             string outputFile = string.Format(@"{0}/sub_{1}.root", GetQueryDirectory().FullName, Path.GetRandomFileName());
 
-            objInputList.Add(new ROOTNET.NTNamed("queryOutputFile", outputFile));
-
             //
-            // Open the input file and get the tree
+            // For opening the files and loading the tree we need to make sure that nothing else
+            // is going on. This is, I think, a CINT issue: meta data for the tree gets loaded and
+            // that can corrupt things. Lets hope! This is from some discussions with Philippe Canal.
             //
 
-            var f = ROOTNET.NTFile.Open(inputFile.FullName);
-            if (f == null || !f.IsOpen())
-                return null;
-            try
+            lock (this)
             {
-                var t = f.Get(_treeName) as ROOTNET.NTTree;
-                if (t == null)
+                //
+                // WARNING: inside this lock make sure we don't have any new variables for objects that
+                // must reamin around after the lock scope terminates (for the query). For example,
+                // it might be possible that the objInputList, though not needed outside this lock block,
+                // its scoping might be such that if the GC were to run exactly at the right spot, it might
+                // be removed and deleted, leaving a dangling C++ reference.
+                //
+
+                TraceHelpers.TraceInfo(18, "RunNtupleQuery: Startup - doing selector lookup");
+                var cls = ROOTNET.NTClass.GetClass(selectorClassName);
+                if (cls == null)
+                    throw new InvalidOperationException("Unable find class '" + selectorClassName + "' in the ROOT TClass registry that was just successfully compiled - can't run ntuple query - major inconsistency");
+
+                selector = cls.New() as ROOTNET.Interface.NTSelector;
+
+                ///
+                /// If there are any objects we need to send to the selector, then send them on now
+                /// 
+
+                TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
+                objInputList = new ROOTNET.NTList();
+                selector.InputList = objInputList;
+
+                foreach (var item in variablesToLoad)
+                {
+                    var obj = item.Value as ROOTNET.Interface.NTNamed;
+                    if (obj == null)
+                        throw new InvalidOperationException("Can only deal with named objects");
+                    var cloned = obj.Clone(item.Key);
+                    objInputList.Add(cloned);
+                }
+
+                //
+                // Where we are going to write our output (the common place so we know where to
+                // pick it up from!). We make up our own output files here.
+                //
+
+                objInputList.Add(new ROOTNET.NTNamed("queryOutputFile", outputFile));
+
+                //
+                // Open the input file and get the tree
+                //
+
+                inputROOTFile = ROOTNET.NTFile.Open(inputFile.FullName);
+
+                if (inputROOTFile == null || !inputROOTFile.IsOpen())
                     return null;
 
+                tree = inputROOTFile.Get(_treeName) as ROOTNET.NTTree;
+            }
+
+            //
+            // Check to see if the file is null...
+            //
+
+            try
+            {
+                if (tree == null)
+                    return null;
                 //
                 // Run the selector on this guy
                 //
 
                 TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
-                t.Process(selector);
+                tree.Process(selector);
                 TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
+
+                ///
+                /// Finally, return the final value.
+                /// 
+
+                return new FileInfo(outputFile);
             }
             finally
             {
-                f.Close();
+                //
+                // Clean up!
+                //
+
+                inputROOTFile.Close();
             }
-
-            ///
-            /// Finally, return the final value.
-            /// 
-
-            return new FileInfo(outputFile);
         }
 
         /// <summary>
