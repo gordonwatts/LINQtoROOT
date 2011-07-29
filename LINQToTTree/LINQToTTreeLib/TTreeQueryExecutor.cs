@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using NVelocity;
@@ -772,6 +773,12 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Keep track of where we are in the ntuple processing
+        /// scheme of things.
+        /// </summary>
+        private ReaderWriterLockSlim _ntupleProcessingLock = new ReaderWriterLockSlim();
+
+        /// <summary>
         /// Given an input file and the input variables, run, and return a file that contains
         /// the output of the query. Meant to run safely in a multi-threaded environment.
         /// </summary>
@@ -804,7 +811,8 @@ namespace LINQToTTreeLib
             // that can corrupt things. Lets hope! This is from some discussions with Philippe Canal.
             //
 
-            lock (this)
+            _ntupleProcessingLock.EnterWriteLock();
+            try
             {
                 //
                 // WARNING: inside this lock make sure we don't have any new variables for objects that
@@ -849,11 +857,16 @@ namespace LINQToTTreeLib
 
                 tree = inputROOTFile.Get(_treeName) as ROOTNET.NTTree;
             }
+            finally
+            {
+                _ntupleProcessingLock.ExitWriteLock();
+            }
 
             //
             // Check to see if the file is null...
             //
 
+            _ntupleProcessingLock.EnterReadLock();
             try
             {
                 if (tree == null)
@@ -884,10 +897,11 @@ namespace LINQToTTreeLib
             }
             finally
             {
-                lock (this)
-                {
-                    inputROOTFile.Close();
-                }
+                _ntupleProcessingLock.ExitReadLock();
+
+                _ntupleProcessingLock.EnterWriteLock();
+                inputROOTFile.Close();
+                _ntupleProcessingLock.ExitWriteLock();
             }
         }
 
