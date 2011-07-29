@@ -315,9 +315,12 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestSimpleResultOperatorTwoInputFiles()
+        public void TestSimpleResultOperatorMultipleInputFiles()
         {
-            var rootFile = CreateFileOfInt(10);
+            int numberIter = 10;
+            int numberFiles = 100;
+
+            var rootFile = CreateFileOfInt(numberIter);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -333,14 +336,21 @@ namespace LINQToTTreeLib
             var dude = q.Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
+            //
+            // The input
+            //
+
+            var files = (from index in Enumerable.Range(0, numberFiles)
+                         select rootFile).ToArray();
+
             ///
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile, rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(20, result);
+            Assert.AreEqual(numberIter * numberFiles, result);
 
         }
 

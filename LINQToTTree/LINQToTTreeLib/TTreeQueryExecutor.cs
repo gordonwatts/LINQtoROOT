@@ -715,7 +715,7 @@ namespace LINQToTTreeLib
             /// Create the chain and load file files into it.
             /// 
 
-            var subjobs = (from f in _rootFiles
+            var subjobs = (from f in _rootFiles.AsParallel()
                            let r = RunNtupleQueryOnTree(f, variablesToLoad, tSelectorClassName)
                            where r != null
                            select r).ToArray();
@@ -751,8 +751,13 @@ namespace LINQToTTreeLib
 
                 foreach (var objList in objCollection)
                 {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
                     output.Add(CombineObjectList(objList));
                 }
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
 
                 output.Write();
                 output.Close();
@@ -783,6 +788,7 @@ namespace LINQToTTreeLib
             //
 
             var list = new ROOTNET.NTList();
+            list.SetOwner(false);
             foreach (var item in objList.Skip(1))
             {
                 list.Add(item);
