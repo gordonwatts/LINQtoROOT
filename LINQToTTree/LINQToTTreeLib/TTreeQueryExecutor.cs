@@ -242,7 +242,7 @@ namespace LINQToTTreeLib
 
             IExecutableCode Code { get; set; }
 
-            void ExtractResult(Dictionary<string, ROOTNET.Interface.NTObject> results);
+            void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject> results);
         }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace LINQToTTreeLib
             }
 
 
-            public void ExtractResult(Dictionary<string, ROOTNET.Interface.NTObject> results)
+            public void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject> results)
             {
                 var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey, results);
                 Future.SetValue(final);
@@ -690,7 +690,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="tSelectorClassName">Name of the TSelector object</param>
         /// <param name="outputFileInfo">Where the output results should be written for eventual reading</param>
-        private Dictionary<string, ROOTNET.Interface.NTObject> RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad)
+        private IDictionary<string, ROOTNET.Interface.NTObject> RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad)
         {
             ///
             /// Create the chain and load file files into it.
@@ -710,50 +710,26 @@ namespace LINQToTTreeLib
 
             if (subjobs.Length == 1)
             {
-                subjobs[0].CopyTo(outputFileInfo.FullName, true);
-                return;
+                return subjobs[0];
             }
 
             //
-            // Now we have the complete results from the sub-tree's. We have to combine them!
+            // Now we have the complete results from the sub-job's. We have to combine them!
             // Assume the first file has every object we need and start from there.
             //
 
-            var allResults = (from f in subjobs
-                              select ROOTNET.NTFile.Open(f.FullName, "READ")).ToArray();
-            try
+            var firstFile = subjobs[0];
+            var objCollection = from sjResults in subjobs
+                                from keyvalue in sjResults
+                                group keyvalue.Value by keyvalue.Key;
+
+            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+            foreach (var objList in objCollection)
             {
-                var firstFile = allResults.First();
-                var objCollection = from k in firstFile.ListOfKeys
-                                    select from f in allResults
-                                           select f.Get(k.Name);
-
-                var output = ROOTNET.NTFile.Open(outputFileInfo.FullName, "RECREATE");
-
-                foreach (var objList in objCollection)
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    output.Add(CombineObjectList(objList));
-                }
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                output.Write();
-                output.Close();
+                results[objList.Key] = CombineObjectList(objList);
             }
-            finally
-            {
-                //
-                // Make sure all the result files are actually closed.
-                //
 
-                foreach (var f in allResults)
-                {
-                    f.Close();
-                }
-            }
+            return results;
         }
 
         /// <summary>
@@ -797,7 +773,7 @@ namespace LINQToTTreeLib
         /// <param name="selectorClassName"></param>
         /// <param name="inputfile"></param>
         /// <returns></returns>
-        private FileInfo RunNtupleQueryOnTree(FileInfo inputFile, IEnumerable<KeyValuePair<string, object>> variablesToLoad, string selectorClassName)
+        private IDictionary<string, ROOTNET.Interface.NTObject> RunNtupleQueryOnTree(FileInfo inputFile, IEnumerable<KeyValuePair<string, object>> variablesToLoad, string selectorClassName)
         {
             //
             // We will have to weave in and out of some objects lifetimes
@@ -884,20 +860,26 @@ namespace LINQToTTreeLib
                 tree.Process(selector);
                 TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
 
-            //
-            // Get the results and put them into a map for safe keeping!
-            // Also, since we want the results to live beyond this guy, make sure that when
-            // the selector is deleted the objects don't go away!
-            //
+                //
+                // Get the results and put them into a map for safe keeping!
+                // Also, since we want the results to live beyond this guy, make sure that when
+                // the selector is deleted the objects don't go away!
+                //
 
-            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
-            foreach (var o in selector.OutputList)
-            {
-                results[o.Name] = o;
+                var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+                foreach (var o in selector.OutputList)
+                {
+                    results[o.Name] = o;
+                }
+                selector.OutputList.SetOwner(false);
+
+                return results;
             }
-            selector.OutputList.SetOwner(false);
-
-            return results;
+            finally
+            {
+                lock (this)
+                {
+                    inputROOTFile.Close();
                 }
             }
         }
