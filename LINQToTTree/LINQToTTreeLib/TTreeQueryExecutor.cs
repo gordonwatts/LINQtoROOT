@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using NVelocity;
@@ -715,7 +714,7 @@ namespace LINQToTTreeLib
             /// Create the chain and load file files into it.
             /// 
 
-            var subjobs = (from f in _rootFiles.AsParallel()
+            var subjobs = (from f in _rootFiles
                            let r = RunNtupleQueryOnTree(f, variablesToLoad, tSelectorClassName)
                            where r != null
                            select r).ToArray();
@@ -807,11 +806,6 @@ namespace LINQToTTreeLib
 
             return ash;
         }
-
-        /// <summary>
-        /// Lock to prevent us from opening more than one root file at a time while processing.
-        /// </summary>
-        private Mutex _openFileMutex = new Mutex();
 
         /// <summary>
         /// Given an input file and the input variables, run, and return a file that contains
@@ -926,8 +920,10 @@ namespace LINQToTTreeLib
                 //
                 // Clean up!
                 //
-
-                inputROOTFile.Close();
+                lock (this)
+                {
+                    inputROOTFile.Close();
+                }
             }
         }
 
