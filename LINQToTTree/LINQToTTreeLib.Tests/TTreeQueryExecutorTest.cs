@@ -317,8 +317,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSimpleResultOperatorMultipleInputFiles()
         {
-            int numberIter = 10;
-            int numberFiles = 100;
+            int numberIter = 1000000;
+            int numberFiles = 1000;
 
             var rootFile = CreateFileOfInt(numberIter);
 

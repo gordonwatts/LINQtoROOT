@@ -692,11 +692,17 @@ namespace LINQToTTreeLib
         /// <param name="outputFileInfo">Where the output results should be written for eventual reading</param>
         private IDictionary<string, ROOTNET.Interface.NTObject> RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad)
         {
+            //
+            // This gets in the way of multi-threading, unfortunately!
+            //
+
+            ROOTNET.NTH1.AddDirectory(false);
+
             ///
             /// Create the chain and load file files into it.
             /// 
 
-            var subjobs = (from f in _rootFiles
+            var subjobs = (from f in _rootFiles.AsParallel()
                            let r = RunNtupleQueryOnTree(f, variablesToLoad, tSelectorClassName)
                            where r != null
                            select r).ToArray();
@@ -852,6 +858,7 @@ namespace LINQToTTreeLib
             {
                 if (tree == null)
                     return null;
+
                 //
                 // Run the selector on this guy
                 //
