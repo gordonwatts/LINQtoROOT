@@ -784,10 +784,8 @@ namespace LINQToTTreeLib
         {
             ///
             /// First, do the files that are part of our infrastructure.
+            /// We currently have no infrastructure files needed.
             /// 
-
-            var f = CopyToCommonDirectory(GetInfrastructureFile("FlowOutputObject.cpp"));
-            CompileAndLoad(f);
 
             ///
             /// Next, build any files that are required to build run this ntuple

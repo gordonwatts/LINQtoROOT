@@ -178,9 +178,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="InfrastructureSourceFiles\FlowOutputObject.cpp" />
-    <Content Include="InfrastructureSourceFiles\FlowOutputObject.h" />
     <Content Include="Templates\TSelectorTemplate.cxx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="InfrastructureSourceFiles\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
