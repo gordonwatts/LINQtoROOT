@@ -242,7 +242,7 @@ namespace LINQToTTreeLib
 
             IExecutableCode Code { get; set; }
 
-            void ExtractResult(FileInfo queryCache);
+            void ExtractResult(Dictionary<string, ROOTNET.Interface.NTObject> results);
         }
 
         /// <summary>
@@ -263,9 +263,9 @@ namespace LINQToTTreeLib
             }
 
 
-            public void ExtractResult(FileInfo queryResults)
+            public void ExtractResult(Dictionary<string, ROOTNET.Interface.NTObject> results)
             {
-                var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey, queryResults);
+                var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey, results);
                 Future.SetValue(final);
             }
         }
@@ -396,19 +396,12 @@ namespace LINQToTTreeLib
             var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
             CompileAndLoad(templateRunner);
 
-            //
-            // Generate the temp filename we can use to write out the results of
-            // this query (the root file).
-            //
-
-            var queryOutputFile = new FileInfo(string.Format(@"{0}\{1}.root", GetQueryDirectory().FullName, Path.GetRandomFileName()));
-
             ///
             /// Fantastic! Now we need to run the object!
             /// 
 
             TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
-            RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer, queryOutputFile);
+            var results = RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer);
 
             ///
             /// Last job, extract all the variables! And save in the cache, and set the
@@ -418,7 +411,7 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(15, "ExecuteQueuedQueries: Extracting the query results");
             foreach (var cq in _queuedQueries)
             {
-                cq.ExtractResult(queryOutputFile);
+                cq.ExtractResult(results);
             }
             _queuedQueries.Clear();
 
@@ -676,31 +669,20 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key, FileInfo queryResultFile)
+        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
         {
-            ///
-            /// Open the file, if it isn't there something very serious has gone wrong.
-            /// 
-
-            var file = ROOTNET.NTFile.Open(queryResultFile.FullName);
-            if (file == null || !file.IsOpen())
-                throw new FileNotFoundException(string.Format("Unable to find the output file from the ROOT run '{0}'!", queryResultFile.FullName));
-
             ///
             /// Load the object and try to extract whatever info we need to from it
             /// 
 
-            try
-            {
-                var o = file.Get(iVariable.RawValue);
-                _cache.CacheItem(key, o);
-                var s = _varSaver.Get(iVariable);
-                return s.LoadResult<T>(iVariable, o);
-            }
-            finally
-            {
-                file.Close();
-            }
+            if (!results.Keys.Contains(iVariable.RawValue))
+                throw new InvalidOperationException(string.Format("The result list from the query did not contains an object named '{0}'.", iVariable.RawValue));
+
+            var o = results[iVariable.RawValue];
+
+            _cache.CacheItem(key, o);
+            var s = _varSaver.Get(iVariable);
+            return s.LoadResult<T>(iVariable, o);
         }
 
         /// <summary>
@@ -708,7 +690,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="tSelectorClassName">Name of the TSelector object</param>
         /// <param name="outputFileInfo">Where the output results should be written for eventual reading</param>
-        private void RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad, FileInfo outputFileInfo)
+        private Dictionary<string, ROOTNET.Interface.NTObject> RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad)
         {
             ///
             /// Create the chain and load file files into it.
@@ -875,13 +857,6 @@ namespace LINQToTTreeLib
                 }
 
                 //
-                // Where we are going to write our output (the common place so we know where to
-                // pick it up from!). We make up our own output files here.
-                //
-
-                objInputList.Add(new ROOTNET.NTNamed("queryOutputFile", outputFile));
-
-                //
                 // Open the input file and get the tree
                 //
 
@@ -909,20 +884,20 @@ namespace LINQToTTreeLib
                 tree.Process(selector);
                 TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
 
-                ///
-                /// Finally, return the final value.
-                /// 
+            //
+            // Get the results and put them into a map for safe keeping!
+            // Also, since we want the results to live beyond this guy, make sure that when
+            // the selector is deleted the objects don't go away!
+            //
 
-                return new FileInfo(outputFile);
-            }
-            finally
+            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+            foreach (var o in selector.OutputList)
             {
-                //
-                // Clean up!
-                //
-                lock (this)
-                {
-                    inputROOTFile.Close();
+                results[o.Name] = o;
+            }
+            selector.OutputList.SetOwner(false);
+
+            return results;
                 }
             }
         }
