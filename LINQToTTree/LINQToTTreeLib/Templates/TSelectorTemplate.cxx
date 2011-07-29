@@ -5,7 +5,6 @@
 /// Uses the Velociy template engine.
 ///
 \#include "$baseClassInclude"
-\#include "FlowOutputObject.h"
 
 #foreach($f in $IncludeFiles)
 \#include "$f"
@@ -57,21 +56,7 @@ public:
 	/// Called with all plots at hand
 	void Terminate()
 	{
-		TNamed *outputInfo = LoadFromInputList<TNamed*>("queryOutputFile");
-
-		string outputRootFilename (outputInfo->GetTitle());
-		TFile *output = new TFile(outputRootFilename.c_str(), "RECREATE");
-
-		TIter next (GetOutputList());
-		TObject *o;
-		while ((o = next.Next())) {
-			if (o->InheritsFrom("FlowOutputObject")) {
-				o->Write();
-			}
-		}
-		output->Write();
-		output->Close();
-		delete output;
+		$baseClassName::Terminate();
 	}
 
 	/// Called to process an entry
@@ -142,7 +127,7 @@ private:
 		///
 
 		if (dynamic_cast<TObject*> (GetOutputList()->FindObject(objName.c_str())) == 0) {
-			GetOutputList()->Add(new FlowOutputObject(o, objName.c_str(), ""));
+			GetOutputList()->Add(o);
 		}
 	}
 
