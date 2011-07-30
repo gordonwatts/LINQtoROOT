@@ -47,6 +47,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{D0CD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildTasks", "MSBuildTasks\MSBuildTasks.csproj", "{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryExecutor", "QueryExecutor\QueryExecutor.csproj", "{78FC66A4-44B7-44CE-B983-02FC71CA3461}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = LINQToTTree.vsmdi
@@ -240,6 +242,18 @@ Global
 		{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}.Release|Win32.ActiveCfg = Release|Any CPU
 		{DAD0BED8-5F2B-4223-9FB5-87F587F28DE0}.Release|x86.ActiveCfg = Release|Any CPU
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Debug|Win32.ActiveCfg = Debug|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Debug|x86.ActiveCfg = Debug|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Debug|x86.Build.0 = Debug|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Release|Any CPU.ActiveCfg = Release|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Release|Mixed Platforms.Build.0 = Release|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Release|Win32.ActiveCfg = Release|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Release|x86.ActiveCfg = Release|x86
+		{78FC66A4-44B7-44CE-B983-02FC71CA3461}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

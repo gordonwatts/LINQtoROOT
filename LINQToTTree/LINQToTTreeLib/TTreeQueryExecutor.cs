@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.ExecutionCommon;
+using LINQToTTreeLib.ExecutionCommon.ParallelExes;
 using LINQToTTreeLib.Utils;
 using NVelocity;
 using NVelocity.App;
@@ -370,7 +371,8 @@ namespace LINQToTTreeLib
             /// together in order to have them run remotely!
             /// 
 
-            IQueryExectuor local = new LocalExecutor() { Environment = _exeReq };
+            //IQueryExectuor local = new LocalExecutor() { Environment = _exeReq };
+            IQueryExectuor local = new ParallelOnLocalMachineExecutor() { Environment = _exeReq };
             var results = local.Execute(templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
 
             ///
