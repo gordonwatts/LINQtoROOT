@@ -64,7 +64,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
-        /// We actually run the query!
+        /// The detailed code that runs the query.
         /// </summary>
         /// <param name="tSelectorClassName">Name of the TSelector object</param>
         /// <param name="outputFileInfo">Where the output results should be written for eventual reading</param>
