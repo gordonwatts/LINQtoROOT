@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.ExecutionCommon;
 using LINQToTTreeLib.Utils;
 using NVelocity;
 using NVelocity.App;
@@ -21,15 +22,7 @@ namespace LINQToTTreeLib
     /// </summary>
     public class TTreeQueryExecutor : IQueryExecutor
     {
-        /// <summary>
-        /// The root files that this exector operates on
-        /// </summary>
-        private FileInfo[] _rootFiles;
-
-        /// <summary>
-        /// The tree name that in the root file that this guy operates on.
-        /// </summary>
-        private string _treeName;
+        private ExecutionEnvironment _exeReq = new ExecutionEnvironment();
 
         /// <summary>
         /// The header file make by the MakeProxy macro.
@@ -37,19 +30,9 @@ namespace LINQToTTreeLib
         private FileInfo _proxyFile;
 
         /// <summary>
-        /// Extra objects we might need to load
-        /// </summary>
-        private FileInfo[] _extraComponentFiles;
-
-        /// <summary>
         /// CINT commands we want to make sure are in our headers
         /// </summary>
         private string[] _cintLines;
-
-        /// <summary>
-        /// Classes and includes to be passed to GenerateDictionary.
-        /// </summary>
-        private string[][] _classToDictify;
 
         /// <summary>
         /// How many times the query cache has been hit
@@ -140,14 +123,14 @@ namespace LINQToTTreeLib
             var extraFiles = baseNtupleObject.GetField("_gObjectFiles").GetValue(null) as string[];
             if (extraFiles == null)
             {
-                _extraComponentFiles = new FileInfo[0];
+                _exeReq.ExtraComponentFiles = new FileInfo[0];
             }
             else
             {
-                _extraComponentFiles = (from spath in extraFiles
-                                        select new FileInfo(spath)).ToArray();
+                _exeReq.ExtraComponentFiles = (from spath in extraFiles
+                                               select new FileInfo(spath)).ToArray();
             }
-            var badfiles = from f in _extraComponentFiles
+            var badfiles = from f in _exeReq.ExtraComponentFiles
                            where !f.Exists
                            select f;
             string bad = "";
@@ -170,7 +153,7 @@ namespace LINQToTTreeLib
 
             if (baseNtupleObject.GetField("_gClassesToDeclare") == null)
             {
-                _classToDictify = new string[0][];
+                _exeReq.ClassesToDictify = new string[0][];
             }
             else
             {
@@ -180,15 +163,15 @@ namespace LINQToTTreeLib
                     throw new InvalidOperationException("The classes and includes are of different length");
 
                 var asPairs = rawClasses.Zip(rawIncludes, (sCls, sInc) => new string[] { sCls, sInc });
-                _classToDictify = asPairs.ToArray();
+                _exeReq.ClassesToDictify = asPairs.ToArray();
             }
 
             ///
             /// Save the values
             /// 
 
-            _rootFiles = rootFiles;
-            _treeName = treeName;
+            _exeReq.RootFiles = rootFiles;
+            _exeReq.TreeName = treeName;
             _cintLines = cintLines;
             TraceHelpers.TraceInfo(3, "Done Initializing TTreeQueryExecutor");
         }
@@ -242,7 +225,7 @@ namespace LINQToTTreeLib
 
             IExecutableCode Code { get; set; }
 
-            void ExtractResult(Dictionary<string, ROOTNET.Interface.NTObject> results);
+            void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject> results);
         }
 
         /// <summary>
@@ -263,7 +246,7 @@ namespace LINQToTTreeLib
             }
 
 
-            public void ExtractResult(Dictionary<string, ROOTNET.Interface.NTObject> results)
+            public void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject> results)
             {
                 var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey, results);
                 Future.SetValue(final);
@@ -321,7 +304,7 @@ namespace LINQToTTreeLib
             IQueryResultCacheKey key = null;
             {
                 object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
-                key = _cache.GetKey(_rootFiles, _treeName, inputs, codeContext.CacheCookies.ToArray(), queryModel);
+                key = _cache.GetKey(_exeReq.RootFiles, _exeReq.TreeName, inputs, codeContext.CacheCookies.ToArray(), queryModel);
             }
             if (!IgnoreQueryCache)
             {
@@ -355,12 +338,6 @@ namespace LINQToTTreeLib
         internal void ExecuteQueuedQueries()
         {
             ///
-            /// Make sure we are setup and ready to go.
-            /// 
-
-            PreExecutionInit();
-
-            ///
             /// Get all the queries together, combined, and ready to run.
             /// 
 
@@ -372,17 +349,10 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// Now, do the general running.
+            /// Keep track of how often we run. Mostly for testing reasons, actually.
             /// 
 
             CountExecutionRuns++;
-
-            ///
-            /// If we got back from that without an error, it is time to assemble the files and templates
-            /// 
-
-            TraceHelpers.TraceInfo(12, "ExecuteQueuedQueries: Loading all extra objects");
-            AssembleAndLoadExtraObjects();
 
             ///
             /// Now that those are loaded, we need to go after the
@@ -394,14 +364,14 @@ namespace LINQToTTreeLib
             SlimProxyFile(combinedInfo.ReferencedLeafNames.ToArray());
             TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
             var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
-            CompileAndLoad(templateRunner);
 
             ///
-            /// Fantastic! Now we need to run the object!
+            /// Fantastic! We've made sure everything now can be built locally. Next job, get the run instructions packet
+            /// together in order to have them run remotely!
             /// 
 
-            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
-            var results = RunNtupleQuery(Path.GetFileNameWithoutExtension(templateRunner.Name), combinedInfo.VariablesToTransfer);
+            IQueryExectuor local = new LocalExecutor() { Environment = _exeReq };
+            var results = local.Execute(templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
 
             ///
             /// Last job, extract all the variables! And save in the cache, and set the
@@ -420,14 +390,19 @@ namespace LINQToTTreeLib
             /// after unloading all the modules
             /// 
 
-            TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
-            UnloadAllModules();
-            if (CleanupQuery)
-            {
-                GetQueryDirectory().Delete(true);
-            }
             _queryDirectory = null;
             TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
+        }
+
+        /// <summary>
+        /// Build the execution request - the info that someone else (or us) will need in order to run this request!
+        /// </summary>
+        /// <returns></returns>
+        private ExecutionEnvironment BuildRemoteExecutionRequest()
+        {
+            var result = new ExecutionEnvironment();
+
+            return result;
         }
 
         /// <summary>
@@ -531,58 +506,13 @@ namespace LINQToTTreeLib
             // Finally, copy over any included files
             //
 
-            CopyIncludedFilesToDirectory(_proxyFile, GetQueryDirectory());
-        }
-
-        /// <summary>
-        /// Unload all modules that we've loaded. This should have root release the lock on everything.
-        /// </summary>
-        private void UnloadAllModules()
-        {
-            ///
-            /// The library names are a simple "_" replacement. However, the full path must be given to the
-            /// unload function. To avoid any issues we just scan the library list that ROOT has right now, find the
-            /// ones we care about, and unload them. In general this is not a good idea, so when there are random
-            /// crashes this might be a good place to come first! :-)
-            /// 
-
-            var gSystem = ROOTNET.NTSystem.gSystem;
-            var libraries = gSystem.Libraries.Split(' ');
-            _loadedModuleNames.Reverse();
-
-            var full_lib_names = from m in _loadedModuleNames
-                                 from l in libraries
-                                 where l.Contains(m)
-                                 select l;
-
-            ///
-            /// Before unloading we need to make sure that we aren't
-            /// holding onto any pointers back to these guys!
-            /// 
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            ///
-            /// Now that we have them, unload them. Since repeated unloading
-            /// cases erorr messages to the concole, clear the list so we don't
-            /// make a mistake later.
-            /// 
-
-            foreach (var m in full_lib_names)
-            {
-                gSystem.Unload(m);
-            }
-
-            _loadedModuleNames.Clear();
+            ExecutionUtilities.CopyIncludedFilesToDirectory(_proxyFile, GetQueryDirectory());
         }
 
         /// <summary>
         /// Keep track of local init for this one executor.
         /// </summary>
         private bool _executorInited = false;
-
-        private static HashSet<string> _gAutoGeneratedClasses = new HashSet<string>();
 
         /// <summary>
         /// Do any init that this object needs done.
@@ -601,46 +531,14 @@ namespace LINQToTTreeLib
             _executorInited = true;
         }
 
-
-        /// <summary>
-        /// True after we've done pre-execution initalization.
-        /// </summary>
-        private bool _preExeInitDone = false;
-
-        /// <summary>
-        /// This init needs to be done before we actually compile anything!
-        /// </summary>
-        private void PreExecutionInit()
-        {
-            if (_preExeInitDone)
-                return;
-            _preExeInitDone = true;
-
-            ///
-            /// Generate any dictionaries that are requested.
-            /// 
-
-            foreach (var clsPair in _classToDictify)
-            {
-                if (!_gAutoGeneratedClasses.Contains(clsPair[0]))
-                {
-                    _gAutoGeneratedClasses.Add(clsPair[0]);
-                    if (string.IsNullOrWhiteSpace(clsPair[1]))
-                    {
-                        ROOTNET.NTInterpreter.Instance().GenerateDictionary(clsPair[0]);
-                    }
-                    else
-                    {
-                        ROOTNET.NTInterpreter.Instance().GenerateDictionary(clsPair[0], clsPair[1]);
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Get/Set query cleanup control. If false, the files won't be deleted.
         /// </summary>
-        public bool CleanupQuery { get; set; }
+        public bool CleanupQuery
+        {
+            get { return _exeReq.CleanupQuery; }
+            set { _exeReq.CleanupQuery = value; }
+        }
 
         /// <summary>
         /// Get/Set query cache control. If set true then the query cache will be ignored and all quieries will be re-run.
@@ -683,126 +581,6 @@ namespace LINQToTTreeLib
             _cache.CacheItem(key, o);
             var s = _varSaver.Get(iVariable);
             return s.LoadResult<T>(iVariable, o);
-        }
-
-        /// <summary>
-        /// We actually run the query!
-        /// </summary>
-        /// <param name="tSelectorClassName">Name of the TSelector object</param>
-        /// <param name="outputFileInfo">Where the output results should be written for eventual reading</param>
-        private Dictionary<string, ROOTNET.Interface.NTObject> RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad)
-        {
-            ///
-            /// Create a new TSelector to run
-            /// 
-
-            TraceHelpers.TraceInfo(18, "RunNtupleQuery: Startup - doing selector lookup");
-            var cls = ROOTNET.NTClass.GetClass(tSelectorClassName);
-            if (cls == null)
-                throw new InvalidOperationException("Unable find class '" + tSelectorClassName + "' in the ROOT TClass registry that was just successfully compiled - can't run ntuple query - major inconsistency");
-
-            var selector = cls.New() as ROOTNET.Interface.NTSelector;
-
-            ///
-            /// Create the chain and load file files into it.
-            /// 
-
-            TraceHelpers.TraceInfo(19, "RunNtupleQuery: Creating the TChain");
-            var tree = new ROOTNET.NTChain(_treeName);
-            foreach (var f in _rootFiles)
-            {
-                tree.Add(f.FullName);
-            }
-
-            ///
-            /// If there are any objects we need to send to the selector, then send them on now
-            /// 
-
-            TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
-            var objInputList = new ROOTNET.NTList();
-            selector.InputList = objInputList;
-
-            foreach (var item in variablesToLoad)
-            {
-                var obj = item.Value as ROOTNET.Interface.NTNamed;
-                if (obj == null)
-                    throw new InvalidOperationException("Can only deal with named objects");
-                var cloned = obj.Clone(item.Key);
-                objInputList.Add(cloned);
-            }
-
-            ///
-            /// Finally, run the whole thing
-            /// 
-
-            TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
-            tree.Process(selector);
-            TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
-
-            //
-            // Get the results and put them into a map for safe keeping!
-            // Also, since we want the results to live beyond this guy, make sure that when
-            // the selector is deleted the objects don't go away!
-            //
-
-            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
-            foreach (var o in selector.OutputList)
-            {
-                results[o.Name] = o;
-            }
-            selector.OutputList.SetOwner(false);
-
-            return results;
-        }
-
-        /// <summary>
-        /// Keep track of all modules that we've loaded
-        /// </summary>
-        private List<string> _loadedModuleNames = new List<string>();
-
-        /// <summary>
-        /// Compile and load a file
-        /// </summary>
-        /// <param name="templateRunner"></param>
-        private void CompileAndLoad(FileInfo templateRunner)
-        {
-            var gSystem = ROOTNET.NTSystem.gSystem;
-
-            var result = gSystem.CompileMacro(templateRunner.FullName, "k");
-
-            /// This should never happen - but we are depending on so many different things to go right here!
-            if (result != 1)
-                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - make sure command 'cl' is defined!!!");
-
-            _loadedModuleNames.Add(templateRunner.Name.Replace(".", "_"));
-        }
-
-        /// <summary>
-        /// If there are some extra files we need to be loading, go after them here.
-        /// </summary>
-        private void AssembleAndLoadExtraObjects()
-        {
-            ///
-            /// First, do the files that are part of our infrastructure.
-            /// We currently have no infrastructure files needed.
-            /// 
-
-            ///
-            /// Next, build any files that are required to build run this ntuple
-            /// 
-
-            foreach (var fd in _extraComponentFiles)
-            {
-                var output = CopyToCommonDirectory(fd);
-                try
-                {
-                    CompileAndLoad(output);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
-                }
-            }
         }
 
         /// <summary>
@@ -921,100 +699,7 @@ namespace LINQToTTreeLib
         /// <param name="sourceFile"></param>
         private FileInfo CopyToQueryDirectory(FileInfo sourceFile)
         {
-            return CopyToDirectory(sourceFile, GetQueryDirectory());
-        }
-
-        /// <summary>
-        /// Copies a source file to a directory. Also copies over any "valid" includes we can find.
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        /// <param name="destDirectory"></param>
-        private FileInfo CopyToDirectory(FileInfo sourceFile, DirectoryInfo destDirectory)
-        {
-            ///
-            /// See if the dest file is already there. If so, don't copy over
-            /// 
-
-            FileInfo destFile = new FileInfo(destDirectory.FullName + "\\" + sourceFile.Name);
-            if (destFile.Exists)
-            {
-                if (destFile.LastWriteTime >= sourceFile.LastWriteTime
-                    && destFile.Length == sourceFile.Length)
-                {
-                    return destFile;
-                }
-            }
-            sourceFile.CopyTo(destFile.FullName, true);
-
-            ///
-            /// Next, if there are any include files we need to move
-            /// 
-
-            CopyIncludedFilesToDirectory(sourceFile, destDirectory);
-
-            ///
-            /// Return what we know!
-            /// 
-
-            destFile.Refresh();
-            return destFile;
-        }
-
-        /// <summary>
-        /// Copy over any files that are included in the source file to the destination
-        /// directory
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        /// <param name="destDirectory"></param>
-        private void CopyIncludedFilesToDirectory(FileInfo sourceFile, DirectoryInfo destDirectory)
-        {
-            var includeFiles = FindIncludeFiles(sourceFile);
-            var goodIncludeFiles = from f in includeFiles
-                                   where !Path.IsPathRooted(f)
-                                   let full = new FileInfo(sourceFile.DirectoryName + "\\" + f)
-                                   where full.Exists
-                                   select full;
-
-            foreach (var item in goodIncludeFiles)
-            {
-                CopyToDirectory(item, destDirectory);
-            }
-        }
-
-        /// <summary>
-        /// Copy this source file (along with any includes in it) to
-        /// our common area.
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        private FileInfo CopyToCommonDirectory(FileInfo sourceFile)
-        {
-            return CopyToDirectory(sourceFile, CommonSourceDirectory());
-        }
-
-        /// <summary>
-        /// Return the include files that we find in this guy.
-        /// </summary>
-        /// <param name="_proxyFile"></param>
-        /// <returns></returns>
-        private IEnumerable<string> FindIncludeFiles(FileInfo _proxyFile)
-        {
-            Regex reg = new Regex("#include \"(?<file>[^\"]+)\"");
-            using (var reader = _proxyFile.OpenText())
-            {
-                while (!reader.EndOfStream)
-                {
-                    var line = reader.ReadLine();
-                    if (line == null)
-                        continue;
-
-                    var m = reg.Match(line);
-                    if (m.Success)
-                    {
-                        var s = m.Groups["file"].Value;
-                        yield return s;
-                    }
-                }
-            }
+            return ExecutionUtilities.CopyToDirectory(sourceFile, GetQueryDirectory());
         }
 
         /// <summary>
@@ -1059,12 +744,6 @@ namespace LINQToTTreeLib
         static CompositionContainer _gContainer = null;
 
         /// <summary>
-        /// The location where we put temp files we need to build against, etc. and then
-        /// ship off and run... No perm stuff here (so no results, etc.).
-        /// </summary>
-        public static DirectoryInfo TempDirectory = null;
-
-        /// <summary>
         /// Run init for this class.
         /// </summary>
         private void Init()
@@ -1084,33 +763,6 @@ namespace LINQToTTreeLib
             _gContainer.Compose(b);
 
             ///
-            /// A directory where we can store all of the temp files we need to create
-            /// 
-
-            TempDirectory = new DirectoryInfo(Path.GetTempPath() + "\\LINQToROOT");
-            if (!TempDirectory.Exists)
-            {
-                TempDirectory.Create();
-                TempDirectory.Refresh();
-            }
-
-            ///
-            /// Next the common source files. Make sure that the include files passed to the old compiler has
-            /// this common file directory in there!
-            /// 
-
-            var cf = CommonSourceDirectory();
-            if (!cf.Exists)
-            {
-                cf.Create();
-            }
-
-            if (!ROOTNET.NTSystem.gSystem.IncludePath.Contains(cf.FullName))
-            {
-                ROOTNET.NTSystem.gSystem.AddIncludePath("-I\"" + cf.FullName + "\"");
-            }
-
-            ///
             /// Make sure TApplication has been started. It will init a bunch of stuff
             /// 
 
@@ -1122,15 +774,6 @@ namespace LINQToTTreeLib
             /// 
 
             ROOTNET.NTEnv.gEnv.SetValue("ACLiC.LinkLibs", 1);
-        }
-
-        /// <summary>
-        /// Generate the common directory. Called only after the temp directory has been created!!
-        /// </summary>
-        /// <returns></returns>
-        private DirectoryInfo CommonSourceDirectory()
-        {
-            return new DirectoryInfo(TempDirectory.FullName + "\\CommonFiles");
         }
 
         /// <summary>
