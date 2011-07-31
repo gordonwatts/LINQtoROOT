@@ -314,6 +314,46 @@ namespace LINQToTTreeLib
             RunSimpleCountResult(10);
         }
 
+        [TestMethod]
+        public void TestSimpleResultOperatorMultipleInputFiles()
+        {
+            int numberIter = 100000;
+            int numberFiles = 100;
+
+            var rootFile = CreateFileOfInt(numberIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            //
+            // The input
+            //
+
+            var files = (from index in Enumerable.Range(0, numberFiles)
+                         select rootFile).ToArray();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberIter * numberFiles, result);
+
+        }
+
         private void RunSimpleCountResult(int numberOfIter)
         {
             var rootFile = CreateFileOfInt(numberOfIter);

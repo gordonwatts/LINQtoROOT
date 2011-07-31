@@ -14,6 +14,19 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
     class ParallelOnLocalMachineExecutor : LocalBuildBase, IQueryExectuor
     {
         /// <summary>
+        /// The number of parallel processings we will have running at any one time.
+        /// </summary>
+        public int NumberOfStreams { get; set; }
+
+        /// <summary>
+        /// Initialize everything
+        /// </summary>
+        public ParallelOnLocalMachineExecutor()
+        {
+            NumberOfStreams = 1;
+        }
+
+        /// <summary>
         /// Execute the query
         /// </summary>
         /// <param name="templateFile"></param>
@@ -44,23 +57,74 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
             var varsFile = FlattenVarList(queryDirectory, varsToTransfer);
 
             //
-            // Write out a file that contains what we need to transfer for the sub-process to run.
+            // Split running into N inputs.
             //
 
-            var outputData = GenerateRunFile(queryDirectory, varsFile, templateFile);
+            int filesPerJob = Environment.RootFiles.Length / NumberOfStreams;
+            if (filesPerJob * NumberOfStreams < Environment.RootFiles.Length)
+                filesPerJob++;
+            var fileLists = (from jobCounter in Enumerable.Range(0, NumberOfStreams)
+                             let files = (from f in Environment.RootFiles.Skip(jobCounter * filesPerJob).Take(filesPerJob)
+                                          select f).ToArray()
+                             where files.Length > 0
+                             select files).ToArray();
 
             //
-            // Now that is done, lets run it!
+            // Generate the job file and run for each one of these guys!
             //
 
-            var go = RunProcess(outputData.Item1);
-            go.WaitForExit();
+            var processTokens = (from list in fileLists
+                                 let outputData = GenerateRunFile(queryDirectory, varsFile, templateFile, list)
+                                 select new
+                                 {
+                                     ProcessToken = RunProcess(outputData.Item1),
+                                     ResultsLocation = outputData.Item2
+                                 }).ToArray();
+
+            foreach (var p in processTokens)
+            {
+                p.ProcessToken.WaitForExit();
+            }
 
             //
-            // Final task is to load up the data for the process!
+            // Now we have to load and combine the data.
             //
 
-            var results = LoadResults(outputData.Item2);
+            return CombineResults(processTokens.Select(p => p.ResultsLocation));
+        }
+
+        /// <summary>
+        /// Load all the results adata, and combine it the best we can.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        private IDictionary<string, ROOTNET.Interface.NTObject> CombineResults(IEnumerable<FileInfo> files)
+        {
+            var allResults = from r in files
+                             select LoadResults(r);
+
+            var groupedResults = from rtable in allResults
+                                 from item in rtable
+                                 group item.Value by item.Key;
+
+
+            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+            foreach (var itemCollection in groupedResults)
+            {
+                var allItems = itemCollection.ToArray();
+                var asHisto = allItems[0] as ROOTNET.Interface.NTH1;
+                if (asHisto == null)
+                    throw new InvalidOperationException(string.Format("Attempting to merge returned objects of type {0}, but we only know how to deal with TH1's", allItems[0].GetType().Name));
+                var collection = new ROOTNET.NTList();
+                collection.SetOwner(false);
+                foreach (var item in allItems.Skip(1))
+                {
+                    collection.Add(item);
+                }
+                asHisto.Merge(collection);
+                results[itemCollection.Key] = asHisto;
+            }
+
             return results;
         }
 
@@ -90,6 +154,7 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
         private Process RunProcess(FileInfo outputData)
         {
             var pInfo = new ProcessStartInfo(@"C:\Users\gwatts\Documents\ATLAS\Code\LINQtoROOT\LINQToTTree\QueryExecutor\bin\Debug\QueryExecutor.exe", outputData.FullName);
+            pInfo.CreateNoWindow = false;
 
             var p = Process.Start(pInfo);
             return p;
@@ -108,7 +173,7 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
         /// <param name="varsFile"></param>
         /// <param name="templateFile"></param>
         /// <returns></returns>
-        private Tuple<FileInfo, FileInfo> GenerateRunFile(DirectoryInfo queryDirectory, FileInfo varsFile, FileInfo templateFile)
+        private Tuple<FileInfo, FileInfo> GenerateRunFile(DirectoryInfo queryDirectory, FileInfo varsFile, FileInfo templateFile, FileInfo[] inputRootFiles)
         {
             var outputObj = new SubProcessRunInfo();
 
@@ -116,7 +181,7 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
             outputObj.ExtraComponentFiles = Environment.ExtraComponentFiles.Select(s => s.FullName).ToArray();
             outputObj.TemplateFile = templateFile.FullName;
             outputObj.TreeName = Environment.TreeName;
-            outputObj.RootFiles = Environment.RootFiles.Select(s => s.FullName).ToArray();
+            outputObj.RootFiles = inputRootFiles.Select(s => s.FullName).ToArray();
             outputObj.VarsToTransferFile = varsFile.FullName;
             outputObj.ResultsFile = new FileInfo(string.Format(@"{0}\SubProcOutput_{1}.root", queryDirectory.FullName, _run_count)).FullName;
 
