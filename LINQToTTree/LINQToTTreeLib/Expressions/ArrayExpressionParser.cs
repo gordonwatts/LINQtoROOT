@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 
 namespace LINQToTTreeLib.Expressions
@@ -79,19 +80,6 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// Given an array expression, turn it into a loop. 
-        /// </summary>
-        /// <param name="indexName"></param>
-        /// <param name="expr"></param>
-        /// <param name="gc"></param>
-        /// <param name="cc"></param>
-        /// <param name="container"></param>
-        public static void ParseArrayExpression(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
-        {
-            ParseArrayExpression(null, expr, gc, cc, container);
-        }
-
-        /// <summary>
         /// Parse an array expression, and turn it into a loop. Use indexName as the loop variable. Bomb if we can't do it. If you hand in null we will make up our own.
         /// </summary>
         /// <param name="indexName"></param>
@@ -99,18 +87,14 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="gc"></param>
         /// <param name="cc"></param>
         /// <param name="container"></param>
-        public static void ParseArrayExpression(string indexName, Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public static void ParseArrayExpression(IQuerySource query, Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             var result = GetIArrayInfo(expr, gc, cc, container);
-            if (result == null && !string.IsNullOrEmpty(indexName))
-                throw new ArgumentException("When parsing array expression it's iterator was preset, however caller asked us to reset it");
 
             if (result == null)
                 return;
 
-            if (indexName == null)
-                indexName = typeof(int).CreateUniqueVariableName();
-            result.CodeLoopOverArrayInfo(indexName, gc, cc, container);
+            result.CodeLoopOverArrayInfo(query, gc, cc, container);
         }
 
         /// <summary>

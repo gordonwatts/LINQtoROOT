@@ -8,6 +8,7 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
+using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing.Structure;
 
@@ -72,15 +73,23 @@ namespace LINQToTTreeLib.Tests
         {
             var gc = new GeneratedCode();
             var cc = new CodeContext();
-            ArrayExpressionParser.ParseArrayExpression(Expression.Variable(typeof(int), "d"), gc, cc, MEFUtilities.MEFContainer);
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
+            ArrayExpressionParser.ParseArrayExpression(s, Expression.Variable(typeof(int), "d"), gc, cc, MEFUtilities.MEFContainer);
         }
+
+        class DummyQueryReference : IQuerySource
+        {
+            public string ItemName { get; set; }
+            public Type ItemType { get; set; }
+        };
 
         [TestMethod]
         public void TestRunForNormalArray()
         {
             var gc = new GeneratedCode();
             var cc = new CodeContext();
-            ArrayExpressionParser.ParseArrayExpression(Expression.Variable(typeof(int[]), "d"), gc, cc, MEFUtilities.MEFContainer);
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
+            ArrayExpressionParser.ParseArrayExpression(s, Expression.Variable(typeof(int[]), "d"), gc, cc, MEFUtilities.MEFContainer);
             Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }
 
@@ -109,7 +118,7 @@ namespace LINQToTTreeLib.Tests
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
 
-            ArrayExpressionParser.ParseArrayExpression(sq, gc, cc, MEFUtilities.MEFContainer);
+            ArrayExpressionParser.ParseArrayExpression(null, sq, gc, cc, MEFUtilities.MEFContainer);
 
             Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }

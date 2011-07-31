@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Remotion.Linq.Clauses;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -53,6 +54,13 @@ namespace LinqToTTreeInterfacesLib
         Expression GetReplacement(string varname);
 
         /// <summary>
+        /// A query reference - can't use a name (as in an argument). Instead, we must use 
+        /// </summary>
+        /// <param name="exprName"></param>
+        /// <returns></returns>
+        Expression GetReplacement(IQuerySource exprName);
+
+        /// <summary>
         /// Remove an expression from the repository - allows restoration via the
         /// scope holder
         /// </summary>
@@ -76,5 +84,7 @@ namespace LinqToTTreeInterfacesLib
         /// calculating the cache.
         /// </summary>
         List<string> CacheCookies { get; }
+
+        IVariableScopeHolder Add(IQuerySource query, Expression expression);
     }
 }

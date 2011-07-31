@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
+using Remotion.Linq.Clauses;
 
 namespace LINQToTTreeLib
 {
@@ -103,6 +104,45 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Scope holder that will pop the stuff off we need popped off.
+        /// </summary>
+        private class CCReplacementQuery : IVariableScopeHolder
+        {
+            private CodeContext codeContext;
+            private IQuerySource query;
+            private Expression expression;
+
+            /// <summary>
+            /// Keep track of what to do to pop this guy off
+            /// </summary>
+            /// <param name="codeContext"></param>
+            /// <param name="query"></param>
+            /// <param name="expression"></param>
+            public CCReplacementQuery(CodeContext codeContext, IQuerySource query, Expression expression)
+            {
+                this.codeContext = codeContext;
+                this.query = query;
+                this.expression = expression;
+            }
+
+            /// <summary>
+            /// Remove the variable.
+            /// </summary>
+            public void Pop()
+            {
+                if (expression == null)
+                {
+                    codeContext.DeleteValue(query);
+                }
+                else
+                {
+                    codeContext.Add(query, expression);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Keep track of a context
         /// </summary>
         private class CCReplacementExpression : IVariableScopeHolder
@@ -178,6 +218,15 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Delete a previously held query.
+        /// </summary>
+        /// <param name="query"></param>
+        internal void DeleteValue(IQuerySource query)
+        {
+            _queryReplacement.Remove(query);
+        }
+
+        /// <summary>
         /// Get the current loop variable. Is null only at the very start!
         /// </summary>
         public Expression LoopVariable { get; private set; }
@@ -210,6 +259,21 @@ namespace LINQToTTreeLib
             return AddInternal(indexName, indexExpression);
         }
 
+        /// <summary>
+        /// Save a query source for later lookup.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public IVariableScopeHolder Add(IQuerySource query, Expression expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException("ecpr can't be null");
+            if (query == null)
+                throw new ArgumentNullException("query");
+
+            return AddInternal(query, expression);
+        }
 
         /// <summary>
         /// Remove the definition of a internal variable, and return a popper to allow us
@@ -261,6 +325,49 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Keep track of the queries we are storing.
+        /// </summary>
+        private Dictionary<IQuerySource, Expression> _queryReplacement = new Dictionary<IQuerySource, Expression>();
+
+        /// <summary>
+        /// Replace or add the variable as requested.
+        /// </summary>
+        /// <param name="varName"></param>
+        /// <param name="replacementExpr"></param>
+        /// <returns></returns>
+        public IVariableScopeHolder AddInternal(IQuerySource query, Expression replacementExpr)
+        {
+            ///
+            /// Somethign to get us back to this state
+            /// 
+
+            IVariableScopeHolder popper = null;
+            if (_queryReplacement.ContainsKey(query))
+            {
+                popper = new CCReplacementQuery(this, query, _queryReplacement[query]);
+            }
+            else
+            {
+                popper = new CCReplacementQuery(this, query, null);
+            }
+
+            ///
+            /// And save the expression for future lookup
+            /// 
+
+            if (replacementExpr != null)
+            {
+                _queryReplacement[query] = replacementExpr;
+            }
+            else
+            {
+                _queryReplacement.Remove(query);
+            }
+
+            return popper;
+        }
+
+        /// <summary>
         /// Return a replacement item. If it doesn't exist, return null.
         /// </summary>
         /// <param name="varname"></param>
@@ -270,6 +377,18 @@ namespace LINQToTTreeLib
             if (!_expressionReplacement.ContainsKey(varname))
                 return null;
             return _expressionReplacement[varname];
+        }
+
+        /// <summary>
+        /// Return the value for a query reference
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public Expression GetReplacement(IQuerySource query)
+        {
+            if (!_queryReplacement.ContainsKey(query))
+                return null;
+            return _queryReplacement[query];
         }
 
         private List<string> _cachedCookies = new List<string>();

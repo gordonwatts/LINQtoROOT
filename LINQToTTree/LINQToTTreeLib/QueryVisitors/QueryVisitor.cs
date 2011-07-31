@@ -143,11 +143,11 @@ namespace LINQToTTreeLib
 
             if (!SubExpressionParse)
             {
-                _mainIndex = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause.ItemName, _codeEnv, _codeContext, MEFContainer);
+                _mainIndex = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause, _codeEnv, _codeContext, MEFContainer);
             }
             else
             {
-                CodeLoopOverExpression(fromClause.FromExpression, fromClause.ItemName);
+                CodeLoopOverExpression(fromClause, fromClause.FromExpression, fromClause.ItemName);
             }
         }
 
@@ -180,7 +180,7 @@ namespace LINQToTTreeLib
             /// generalized when we loop over more than just a "std::vector".
             /// 
 
-            CodeLoopOverExpression(fromClause.FromExpression, fromClause.ItemName);
+            CodeLoopOverExpression(fromClause, fromClause.FromExpression, fromClause.ItemName);
         }
 
         /// <summary>
@@ -189,10 +189,10 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="loopExpr"></param>
         /// <param name="indexName"></param>
-        private void CodeLoopOverExpression(Expression loopExpr, string indexName)
+        private void CodeLoopOverExpression(IQuerySource query, Expression loopExpr, string indexName)
         {
-            Expressions.ArrayExpressionParser.ParseArrayExpression(loopExpr, _codeEnv, _codeContext, MEFContainer);
-            _mainIndex = _codeContext.Add(indexName, _codeContext.LoopVariable);
+            Expressions.ArrayExpressionParser.ParseArrayExpression(query, loopExpr, _codeEnv, _codeContext, MEFContainer);
+            _mainIndex = _codeContext.Add(query, _codeContext.LoopVariable);
         }
 
         /// <summary>

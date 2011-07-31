@@ -180,11 +180,22 @@ namespace LINQToTTreeLib
         };
 
         [TestMethod]
-        public void TestSubQueryReference()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestSubQueryReferenceWhenNotDefined()
         {
             QuerySourceReferenceExpression q = new QuerySourceReferenceExpression(new DummyQueryReference() { ItemName = "evt", ItemType = typeof(int) });
             GeneratedCode gc = new GeneratedCode();
             var r = ExpressionToCPP.GetExpression(q, gc, null, null);
+        }
+
+        [TestMethod]
+        public void TestSubQueryReference()
+        {
+            QuerySourceReferenceExpression q = new QuerySourceReferenceExpression(new DummyQueryReference() { ItemName = "evt", ItemType = typeof(int) });
+            GeneratedCode gc = new GeneratedCode();
+            var cc = new CodeContext();
+            cc.Add(q.ReferencedQuerySource, Expression.Parameter(typeof(int), "evt"));
+            var r = ExpressionToCPP.GetExpression(q, gc, cc, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("evt", r.RawValue, "expansion incorrect");
@@ -347,6 +358,8 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
+            cc.Add(model.MainFromClause, Expression.Parameter(typeof(toTransNtupe), "q"));
+
             var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             Assert.AreEqual(typeof(int), result.Type, "bad type for return");
         }
@@ -375,6 +388,8 @@ namespace LINQToTTreeLib
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            cc.Add(model.MainFromClause, Expression.Parameter(typeof(dummyntup), "q"));
 
             var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
             gc.DumpCodeToConsole();
@@ -414,6 +429,8 @@ namespace LINQToTTreeLib
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+
+            cc.Add(model.MainFromClause, Expression.Parameter(typeof(dummyntup), "q"));
 
             var result = ExpressionToCPP.GetExpression(expr, gc, cc, MEFUtilities.MEFContainer);
 
