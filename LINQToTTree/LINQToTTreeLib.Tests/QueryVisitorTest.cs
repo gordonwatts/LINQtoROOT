@@ -401,6 +401,7 @@ namespace LINQToTTreeLib
                 HeldExpression = expr;
             }
             public int[] var1;
+            public double[] var2;
 
             public Expression HeldExpression { get; private set; }
         }
