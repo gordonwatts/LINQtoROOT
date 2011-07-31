@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
 
@@ -55,7 +56,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            var replaceit = ResolveExpressionReplacement(expression.ReferencedQuerySource.ItemName);
+            var replaceit = ResolveExpressionReplacement(expression.ReferencedQuerySource);
             if (replaceit == null)
                 return expression;
             return replaceit;
@@ -68,6 +69,17 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="exprName"></param>
         /// <returns></returns>
         private Expression ResolveExpressionReplacement(string exprName)
+        {
+            var replaceit = _context.GetReplacement(exprName);
+            return VisitExpression(replaceit);
+        }
+
+        /// <summary>
+        /// Do the replacement for a query reference expression.
+        /// </summary>
+        /// <param name="exprName"></param>
+        /// <returns></returns>
+        private Expression ResolveExpressionReplacement(IQuerySource exprName)
         {
             var replaceit = _context.GetReplacement(exprName);
             return VisitExpression(replaceit);

@@ -308,17 +308,14 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// We are referencing one of the query source variables... We are expecting others to do some work for us here. To first
-        /// order, they need to define variables that we can use directly in the code. This means, for example, that the outter-most
-        /// variable, which is the TTree GetEntry index variable, is defined to point to the TSelector's "this" variable! :-)
+        /// Query references should never happen at this level - they shoudl be taken care of by parameter replacement
+        /// that gets called first!
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            _result = _codeContext.GetReplacement(expression.ReferencedQuerySource.ItemName, expression.ReferencedQuerySource.ItemType);
-
-            return expression;
+            throw new NotImplementedException("QuerySourceReferences should have been dealt with by the parameter replacemnet!");
         }
 
         /// <summary>

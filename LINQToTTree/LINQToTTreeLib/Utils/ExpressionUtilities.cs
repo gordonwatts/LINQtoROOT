@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using Remotion.Linq.Clauses;
 namespace LINQToTTreeLib.Utils
 {
     internal static class ExpressionUtilities
@@ -12,7 +13,7 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="indexName"></param>
         /// <param name="arrayRef"></param>
-        public static IVariableScopeHolder CodeLoopOverArrayInfo(this IArrayInfo arrayRef, string indexName, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public static IVariableScopeHolder CodeLoopOverArrayInfo(this IArrayInfo arrayRef, IQuerySource query, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             var indexVar = arrayRef.AddLoop(gc, cc, container);
 
@@ -20,7 +21,7 @@ namespace LINQToTTreeLib.Utils
             /// Next, make sure the index variable can be used for later references!
             /// 
 
-            var result = cc.Add(indexName, indexVar);
+            var result = cc.Add(query, indexVar);
             cc.SetLoopVariable(indexVar);
             return result;
         }
