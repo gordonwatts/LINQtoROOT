@@ -572,7 +572,7 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
 
-            DirectoryInfo dir = TTreeQueryExecutor.TempDirectory;
+            var dir = new DirectoryInfo(Path.GetTempPath() + "\\LINQToROOT"); ;
             dir.Refresh();
             Assert.IsTrue(dir.Exists, "Temp directory doesn't exist");
             Assert.AreEqual(0, dir.EnumerateFiles().Count(), "Expected no spare files in there!");
