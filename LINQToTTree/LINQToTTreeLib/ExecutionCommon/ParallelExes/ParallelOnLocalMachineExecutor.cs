@@ -154,7 +154,8 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
         private Process RunProcess(FileInfo outputData)
         {
             var pInfo = new ProcessStartInfo(@"C:\Users\gwatts\Documents\ATLAS\Code\LINQtoROOT\LINQToTTree\QueryExecutor\bin\Debug\QueryExecutor.exe", outputData.FullName);
-            pInfo.CreateNoWindow = false;
+            pInfo.CreateNoWindow = true;
+            pInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             var p = Process.Start(pInfo);
             return p;
