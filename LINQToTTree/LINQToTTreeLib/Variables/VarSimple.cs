@@ -38,7 +38,10 @@ namespace LINQToTTreeLib.Variables
         /// <returns></returns>
         public override string ToString()
         {
-            return VariableName + " = (" + Type.Name + ") " + RawValue;
+            var s = string.Format("{0} {1}", Type.Name, VariableName);
+            if (InitialValue != null)
+                s = string.Format("{0} = {1}", s, InitialValue.RawValue);
+            return s;
         }
 
 
