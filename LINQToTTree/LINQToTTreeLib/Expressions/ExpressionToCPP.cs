@@ -315,7 +315,12 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            throw new NotImplementedException("QuerySourceReferences should have been dealt with by the parameter replacemnet!");
+            var expr = _codeContext.GetReplacement(expression.ReferencedQuerySource);
+            if (expr == null)
+                throw new InvalidOperationException("Query source was not known to us - not possible!");
+            _result = GetExpression(expr);
+
+            return expression;
         }
 
         /// <summary>
