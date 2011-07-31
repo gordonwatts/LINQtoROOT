@@ -239,6 +239,13 @@ namespace LINQToTTreeLib.Expressions
                 return base.VisitBinaryExpression(expression);
             }
 
+            //
+            // Comparing expressions anonymous expressions are not supported.
+            //
+
+            if (expression.Right.Type.Name.Contains("Anonymous"))
+                throw new ArgumentException(string.Format("Binary operators on Anonymous types are not supported: '{0}' - '{1}'", expression.Right.Type.Name, expression.Right.ToString()));
+
             ///
             /// Run the expression
             /// 

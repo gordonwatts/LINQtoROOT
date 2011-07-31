@@ -577,6 +577,34 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestAnonObjectCompare()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var tracksNearJetPerEvent = from evt in q
+                                        select from j in evt.jets
+                                               select new
+                                               {
+                                                   Tracks = from t in evt.jets
+                                                            where t.var1 > j.var1
+                                                            select t
+                                               };
+
+            var allcombos = from evt in tracksNearJetPerEvent
+                            select from j1 in evt
+                                   from j2 in evt
+                                   where j1 != j2
+                                   select j1;
+
+            var cnt = allcombos.Where(evt => evt.Count() > 5).Count();
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestSubQueryWithTranslationOutsideRenameBug()
         {
             var q = new QueriableDummy<ntupWithObjects>();
