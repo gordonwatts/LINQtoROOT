@@ -289,32 +289,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Implement so same statement detection can be done
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public abstract bool IsSameStatement(IStatement statement);
-
-        /// <summary>
-        /// Compare our statement lists to that in another block to see
-        /// if they are the same.
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public virtual bool IsSameStatement(StatementInlineBlockBase statements)
-        {
-            // Must be same statements in the same order
-
-            if (statements == null)
-                throw new ArgumentNullException("statement must not be null");
-
-            if (_statements.Count != statements._statements.Count)
-                return false;
-
-            return _statements.Zip(statements._statements, (s1, s2) => s1.IsSameStatement(s2)).All(test => test);
-        }
-
-        /// <summary>
         /// Implement to rename variables in this blocked code.
         /// </summary>
         /// <param name="origName"></param>

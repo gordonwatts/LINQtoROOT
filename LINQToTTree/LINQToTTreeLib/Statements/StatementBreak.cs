@@ -15,18 +15,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Since we know nothing, this is a trival statement!
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement must not be null");
-            return statement is StatementBreak;
-        }
-
-        /// <summary>
         /// There is nothing to do here since we know nothing about variables.
         /// </summary>
         /// <param name="originalName"></param>

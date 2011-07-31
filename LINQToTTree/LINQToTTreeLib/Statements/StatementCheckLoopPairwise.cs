@@ -139,11 +139,6 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
-        public override bool IsSameStatement(LinqToTTreeInterfacesLib.IStatement statement)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Rename the variables inside this guy
         /// </summary>

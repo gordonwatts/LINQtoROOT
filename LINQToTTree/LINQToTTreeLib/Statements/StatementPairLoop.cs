@@ -26,28 +26,6 @@ namespace LINQToTTreeLib.Statements
             this.index2 = index2;
         }
 
-        /// <summary>
-        /// See if these are teh same statement or not.
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public override bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement");
-
-            var other = statement as StatementPairLoop;
-            if (other == null)
-                return false;
-
-            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
-                return false;
-
-            return arrayRecord.RawValue == other.arrayRecord.RawValue
-                && index1.RawValue == other.index1.RawValue
-                && index2.RawValue == other.index2.RawValue;
-        }
-
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
             if (Statements.Any())

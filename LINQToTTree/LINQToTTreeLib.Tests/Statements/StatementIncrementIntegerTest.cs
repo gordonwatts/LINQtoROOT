@@ -2,11 +2,11 @@
 using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -29,12 +29,6 @@ namespace LINQToTTreeLib.Statements
             StatementIncrementInteger target = new StatementIncrementInteger(i);
             Assert.AreEqual(i, target.Integer, "initial value not set correctly");
             return null;
-        }
-
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public void TestEquiv([PexAssumeUnderTest] StatementIncrementInteger statement1, IStatement statement2)
-        {
-            LINQToTTreeLib.Tests.Statements.Utils.TestForEquiv(statement1, statement2);
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]

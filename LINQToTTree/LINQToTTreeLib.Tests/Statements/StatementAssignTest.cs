@@ -2,10 +2,10 @@
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -24,7 +24,7 @@ namespace LINQToTTreeLib.Tests
         {
             TypeUtils._variableNameCounter = 0;
         }
-        
+
         /// <summary>
         ///A test for StatementAssign Constructor
         ///</summary>
@@ -55,30 +55,6 @@ namespace LINQToTTreeLib.Tests
                 return result[0];
             }
             return "";
-        }
-
-        /// <summary>
-        ///A test for IsSameStatement
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public bool IsSameStatementTest([PexAssumeUnderTest] StatementAssign target, IStatement statement)
-        {
-            var result = target.IsSameStatement(statement);
-
-            if (statement == null)
-                Assert.Fail("Statement was null");
-
-            if (statement.CodeItUp().Count() != target.CodeItUp().Count())
-            {
-                Assert.IsFalse(result, "Different number of items");
-            }
-            else
-            {
-                var allsame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
-                Assert.AreEqual(allsame, result, "incorrect result");
-            }
-
-            return result;
         }
 
         /// <summary>

@@ -68,11 +68,6 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
-        public bool IsSameStatement(IStatement statement)
-        {
-            throw new System.NotImplementedException();
-        }
-
         /// <summary>
         /// Rename our variables
         /// </summary>

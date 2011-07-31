@@ -283,11 +283,6 @@ namespace LINQToTTreeLib.Statements
                 throw new NotImplementedException();
             }
 
-            public bool IsSameStatement(IStatement statement)
-            {
-                throw new NotImplementedException();
-            }
-
             public void RenameVariable(string originalName, string newName)
             {
                 return;

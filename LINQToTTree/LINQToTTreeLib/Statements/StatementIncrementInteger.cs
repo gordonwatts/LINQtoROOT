@@ -36,23 +36,6 @@ namespace LINQToTTreeLib.Statements
             yield return Integer.RawValue + "++;";
         }
 
-
-        /// <summary>
-        /// Are we identical statements, one after the other?
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("Statement to compare to must not be null");
-            var other = statement as StatementIncrementInteger;
-            if (other == null)
-                return false;
-
-            return Integer.RawValue == other.Integer.RawValue;
-        }
-
         /// <summary>
         /// If the variable name is known, then do the rename here.
         /// </summary>

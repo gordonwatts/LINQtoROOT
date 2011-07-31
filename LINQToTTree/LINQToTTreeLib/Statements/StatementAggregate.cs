@@ -50,19 +50,6 @@ namespace LINQToTTreeLib.Statements
             return ResultVariable.RawValue + "=" + Expression.RawValue;
         }
 
-        public bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement must not be null");
-
-            var other = statement as StatementAggregate;
-            if (other == null)
-                return false;
-
-            return ResultVariable.RawValue == other.ResultVariable.RawValue
-                && Expression.RawValue == other.Expression.RawValue;
-        }
-
         public void RenameVariable(string originalName, string newName)
         {
             ResultVariable.RenameRawValue(originalName, newName);

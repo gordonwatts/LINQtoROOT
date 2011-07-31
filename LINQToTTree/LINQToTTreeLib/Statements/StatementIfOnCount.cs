@@ -126,28 +126,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Check if this is the same statement (or not).
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public override bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement");
-
-            var other = statement as StatementIfOnCount;
-            if (other == null)
-                return false;
-
-            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
-                return false;
-
-            return Comparison == other.Comparison
-                && Counter.RawValue == other.Counter.RawValue
-                && Limit.RawValue == other.Limit.RawValue;
-        }
-
-        /// <summary>
         /// Rename everything
         /// </summary>
         /// <param name="origName"></param>

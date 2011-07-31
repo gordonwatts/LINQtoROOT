@@ -134,11 +134,6 @@ namespace LINQToTTreeLib.Expressions
                 return true;
             }
 
-            public override bool IsSameStatement(IStatement statement)
-            {
-                throw new System.NotImplementedException();
-            }
-
             /// <summary>
             /// Rename all the variables in this block
             /// </summary>

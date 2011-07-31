@@ -16,15 +16,6 @@ namespace LinqToTTreeInterfacesLib
         IEnumerable<string> CodeItUp();
 
         /// <summary>
-        /// Returns true if executing this statement and the one passed in would be
-        /// redundant. That is - they do the same thing, store their results in the same
-        /// place, etc.
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        bool IsSameStatement(IStatement statement);
-
-        /// <summary>
         /// A variable rename is being done from above. If the variable appears
         /// in our statement we will rename it.
         /// </summary>

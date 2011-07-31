@@ -46,16 +46,6 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
-        ///A test for IsSameStatement
-        ///</summary>
-        [PexMethod]
-        public bool TestIsSameStatement([PexAssumeUnderTest] StatementCheckLoopPairwise target, IStatement statement)
-        {
-            var actual = target.IsSameStatement(statement);
-            return actual;
-        }
-
-        /// <summary>
         ///A test for RenameVariable
         ///</summary>
         [PexMethod]

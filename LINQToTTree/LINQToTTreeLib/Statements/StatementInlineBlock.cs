@@ -52,23 +52,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// See if the statement is the same. We check for simple 
-        /// consistency here, nothing more.
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public override bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement");
-            var other = statement as StatementInlineBlock;
-            if (other == null)
-                return false;
-
-            return base.IsSameStatement(other);
-        }
-
-        /// <summary>
         /// Rename all our guys!
         /// </summary>
         /// <param name="originalName"></param>

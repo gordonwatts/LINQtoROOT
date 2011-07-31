@@ -49,24 +49,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Check to see if this assign is the same or not
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement must not be null");
-
-            var other = statement as StatementAssign;
-            if (other == null)
-                return false;
-
-            return ResultVariable.RawValue == other.ResultVariable.RawValue
-                && Expression.RawValue == other.Expression.RawValue;
-        }
-
-        /// <summary>
         /// Rename the assignment we are making.
         /// </summary>
         /// <param name="originalName"></param>

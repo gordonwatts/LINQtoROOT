@@ -29,26 +29,6 @@ namespace LINQToTTreeLib.Tests.Statements
             return target;
         }
 
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public void TestEquiv([PexAssumeUnderTest] StatementLoopOverGood statement1, IStatement statement2)
-        {
-            var result = statement1.IsSameStatement(statement2);
-
-            var originalLines = statement1.CodeItUp().ToArray();
-            var resultinglines = statement2.CodeItUp().ToArray();
-
-            if (resultinglines.Length != originalLines.Length)
-            {
-                Assert.IsFalse(result, "# of lines is different, so the compare should be too");
-                return;
-            }
-
-            var pairedLines = originalLines.Zip(resultinglines, (o1, o2) => Tuple.Create(o1, o2));
-
-            bool expected = pairedLines.All(p => p.Item1 == p.Item2);
-            Assert.AreEqual(expected, result, "final result didn't match the code it up lines");
-        }
-
         [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
         public bool TestTryCombine([PexAssumeUnderTest] StatementLoopOverGood loop, IStatement s)
         {

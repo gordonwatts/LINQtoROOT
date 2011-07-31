@@ -221,11 +221,6 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 }
             }
 
-            public bool IsSameStatement(IStatement statement)
-            {
-                throw new NotImplementedException();
-            }
-
             /// <summary>
             /// Rename all variables.
             /// </summary>

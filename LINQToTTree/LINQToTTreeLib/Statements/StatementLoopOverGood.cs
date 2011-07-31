@@ -33,28 +33,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Test to see if the statement is the same
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public override bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement");
-
-            var other = statement as StatementLoopOverGood;
-            if (other == null)
-                return false;
-
-            if (!base.IsSameStatement(statement as StatementInlineBlockBase))
-                return false;
-
-            return _index.RawValue == other._index.RawValue
-                && _indexIsGood.RawValue == other._indexIsGood.RawValue
-                && _indiciesToCheck.RawValue == other._indiciesToCheck.RawValue;
-        }
-
-        /// <summary>
         /// Render the loop and if statement...
         /// </summary>
         /// <returns></returns>

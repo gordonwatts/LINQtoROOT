@@ -50,33 +50,6 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
-        ///A test for IsSameStatement
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public bool IsSameStatementTest([PexAssumeUnderTest] StatementAggregate target, IStatement statement)
-        {
-            var result = target.IsSameStatement(statement);
-
-            if (statement == null)
-                Assert.Fail("Statement was null");
-
-            if (statement.GetType() != typeof(StatementAggregate))
-                Assert.IsFalse(result, "statements aren't the rigth type");
-
-            if (statement.CodeItUp().Count() != target.CodeItUp().Count())
-            {
-                Assert.IsFalse(result, "Different number of items");
-            }
-            else
-            {
-                var allsame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
-                Assert.AreEqual(allsame, result, "incorrect result");
-            }
-
-            return result;
-        }
-
-        /// <summary>
         ///A test for RenameVariable
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]

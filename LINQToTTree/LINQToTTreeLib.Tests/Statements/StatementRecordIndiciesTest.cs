@@ -2,10 +2,10 @@
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -45,27 +45,6 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, actual.Length, "only xpected one line");
             Assert.IsTrue(actual[0].Contains("push_back"), "push_back missing");
             return actual[0];
-        }
-
-        /// <summary>
-        ///A test for IsSameStatement
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public bool IsSameStatementTest([PexAssumeUnderTest] StatementRecordIndicies target, IStatement statement)
-        {
-            var actual = target.IsSameStatement(statement);
-
-            if (statement != null)
-            {
-                var pairs = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
-                Assert.AreEqual(pairs, actual);
-            }
-            else
-            {
-                Assert.Fail("Null shoudl have excepted out by now!");
-            }
-
-            return actual;
         }
 
         /// <summary>

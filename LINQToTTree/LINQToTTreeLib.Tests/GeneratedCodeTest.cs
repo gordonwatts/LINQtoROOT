@@ -57,11 +57,6 @@ namespace LINQToTTreeLib
             }
 
 
-            public bool IsSameStatement(IStatement statement)
-            {
-                throw new NotImplementedException();
-            }
-
             public void RenameVariable(string originalName, string newName)
             {
                 throw new NotImplementedException();
@@ -107,12 +102,6 @@ namespace LINQToTTreeLib
 
 
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
-            {
-                throw new NotImplementedException();
-            }
-
-
-            public bool IsSameStatement(IStatement statement)
             {
                 throw new NotImplementedException();
             }

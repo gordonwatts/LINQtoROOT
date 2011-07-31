@@ -52,24 +52,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Check to see if the statements are similar or not.
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public bool IsSameStatement(IStatement statement)
-        {
-            if (statement == null)
-                throw new ArgumentNullException("statement");
-            var other = statement as StatementRecordIndicies;
-            if (other == null)
-                return false;
-
-            return _intToRecord.RawValue == other._intToRecord.RawValue
-                && _storageArray.RawValue == other._storageArray.RawValue;
-            throw new System.NotImplementedException();
-        }
-
-        /// <summary>
         /// Rename the variables.
         /// </summary>
         /// <param name="originalName"></param>

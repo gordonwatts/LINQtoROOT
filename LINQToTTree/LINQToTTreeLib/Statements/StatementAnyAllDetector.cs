@@ -63,16 +63,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Not implemented yet.
-        /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
-        public bool IsSameStatement(IStatement statement)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Rename all the variables we know about.
         /// </summary>
         /// <param name="originalName"></param>
