@@ -73,16 +73,22 @@ namespace LINQToTTreeLib.Tests
         {
             var gc = new GeneratedCode();
             var cc = new CodeContext();
-            IQuerySource s = null;
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
             ArrayExpressionParser.ParseArrayExpression(s, Expression.Variable(typeof(int), "d"), gc, cc, MEFUtilities.MEFContainer);
         }
+
+        class DummyQueryReference : IQuerySource
+        {
+            public string ItemName { get; set; }
+            public Type ItemType { get; set; }
+        };
 
         [TestMethod]
         public void TestRunForNormalArray()
         {
             var gc = new GeneratedCode();
             var cc = new CodeContext();
-            IQuerySource s = null;
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
             ArrayExpressionParser.ParseArrayExpression(s, Expression.Variable(typeof(int[]), "d"), gc, cc, MEFUtilities.MEFContainer);
             Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }

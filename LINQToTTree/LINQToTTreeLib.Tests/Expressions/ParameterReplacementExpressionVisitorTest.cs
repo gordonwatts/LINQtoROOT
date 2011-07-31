@@ -127,6 +127,7 @@ namespace LINQToTTreeLib.Expressions
 
             CodeContext cc = new CodeContext();
             cc.Add("d", Expression.Variable(typeof(int), "f"));
+            cc.Add(qexpr.ReferencedQuerySource, Expression.Parameter(typeof(int), "d"));
 
             var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(qexpr, cc);
 
@@ -144,6 +145,7 @@ namespace LINQToTTreeLib.Expressions
             CodeContext cc = new CodeContext();
             cc.Add("d", Expression.Variable(typeof(int), "f"));
             cc.Add("f", Expression.Variable(typeof(int), "fork"));
+            cc.Add(qexpr.ReferencedQuerySource, Expression.Parameter(typeof(int), "d"));
 
             var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(qexpr, cc);
 
