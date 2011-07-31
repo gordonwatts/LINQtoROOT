@@ -133,7 +133,6 @@
     <Compile Include="Statements\StatementPairLoop.cs" />
     <Compile Include="Statements\StatementRecordIndicies.cs" />
     <Compile Include="Statements\StatementBreak.cs" />
-    <Compile Include="Statements\StatementFlipBool.cs" />
     <Compile Include="Statements\StatementMinMaxTest.cs" />
     <Compile Include="Statements\StatementAssign.cs" />
     <Compile Include="Statements\StatementFilter.cs" />

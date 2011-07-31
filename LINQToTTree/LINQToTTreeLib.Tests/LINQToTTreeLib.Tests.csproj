@@ -206,7 +206,6 @@
     <Compile Include="Factories\StatementAssignFactory.cs" />
     <Compile Include="Factories\StatementCheckLoopPairwiseFactory.cs" />
     <Compile Include="Factories\StatementFilterFactory.cs" />
-    <Compile Include="Factories\StatementFlipBoolFactory.cs" />
     <Compile Include="Factories\StatementIfOnCountFactory.cs" />
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
