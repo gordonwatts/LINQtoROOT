@@ -110,6 +110,14 @@ namespace LINQToTTreeLib.ExecutionCommon
                 objInputList.Add(cloned);
             }
 
+            //
+            // Setup the cache for more efficient reading. We assume we are on a machine with plenty of memory
+            // for this.
+            //
+
+            tree.SetCacheSize(1024 * 1024 * 100); // 100 MB cache
+            tree.AddBranchToCache("*", true);
+
             ///
             /// Finally, run the whole thing
             /// 
