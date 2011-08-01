@@ -121,7 +121,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // for this.
             //
 
-            tree.SetCacheSize(1024 * 1024 * 100); // 100 MB cache
+            tree.CacheSize = 1024 * 1024 * 100; // 100 MB cache
             if (LeafNames == null)
             {
                 tree.AddBranchToCache("*", true);
@@ -133,6 +133,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     tree.AddBranchToCache(leaf, true);
                 }
             }
+            tree.CacheLearnEntries = 1000;
 
             ///
             /// Finally, run the whole thing
