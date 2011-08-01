@@ -257,6 +257,13 @@ namespace LINQToTTreeLib.ExecutionCommon
                 objInputList.Add(cloned);
             }
 
+            //
+            // Turn on caching
+            //
+
+            tree.SetCacheSize(1024 * 1024 * 100); // 100 MB cache
+            tree.AddBranchToCache("*", true);
+
             ///
             /// Finally, run the whole thing
             /// 

@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
         /// </summary>
         public ParallelOnLocalMachineExecutor()
         {
-            NumberOfStreams = 1;
+            NumberOfStreams = 2;
         }
 
         /// <summary>
