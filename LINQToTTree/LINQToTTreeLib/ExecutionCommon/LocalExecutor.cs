@@ -17,6 +17,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         public ExecutionEnvironment Environment { set; get; }
 
         /// <summary>
+        /// Get/Set the list of leaf names that this query references. Used to configure the cache
+        /// more efficiently.
+        /// </summary>
+        public string[] LeafNames { get; set; }
+
+        /// <summary>
         /// Given a request, run it. No need to clean up afterwards as we are already there.
         /// </summary>
         /// <param name="remotePacket">The basic info about this run</param>
@@ -116,7 +122,17 @@ namespace LINQToTTreeLib.ExecutionCommon
             //
 
             tree.SetCacheSize(1024 * 1024 * 100); // 100 MB cache
-            tree.AddBranchToCache("*", true);
+            if (LeafNames == null)
+            {
+                tree.AddBranchToCache("*", true);
+            }
+            else
+            {
+                foreach (var leaf in LeafNames)
+                {
+                    tree.AddBranchToCache(leaf, true);
+                }
+            }
 
             ///
             /// Finally, run the whole thing

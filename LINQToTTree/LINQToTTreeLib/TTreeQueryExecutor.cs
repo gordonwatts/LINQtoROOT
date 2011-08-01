@@ -361,7 +361,8 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
-            SlimProxyFile(combinedInfo.ReferencedLeafNames.ToArray());
+            var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
+            SlimProxyFile(referencedLeafNames);
             TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
             var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
 
@@ -370,7 +371,7 @@ namespace LINQToTTreeLib
             /// together in order to have them run remotely!
             /// 
 
-            IQueryExectuor local = new LocalExecutor() { Environment = _exeReq };
+            IQueryExectuor local = new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
             var results = local.Execute(templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
 
             ///
