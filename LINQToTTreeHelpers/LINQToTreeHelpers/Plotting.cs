@@ -49,7 +49,7 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callGetter, callWeight);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            var h = new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin);
+            var h = new ROOTNET.NTH1F(plotID, plotTitle.ReplaceLatexStrings(), nbins, lowBin, highBin);
             ConfigureHisto(h);
             return source.ApplyToObject(h, lambda);
         }
@@ -108,7 +108,7 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callGetter, callWeight);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            var h = new ROOTNET.NTH1F(plotID, plotTitle, nbins, lowBin, highBin);
+            var h = new ROOTNET.NTH1F(plotID, plotTitle.ReplaceLatexStrings(), nbins, lowBin, highBin);
             ConfigureHisto(h);
             return source.FutureApplyToObject(h, lambda);
         }
@@ -157,7 +157,7 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, callWeight);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH2F, TSource>>(callFill, hParameter, vParameter);
-            var h = new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
+            var h = new ROOTNET.NTH2F(plotID, plotTitle.ReplaceLatexStrings(), xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
             ConfigureHisto(h);
             return source.ApplyToObject(h, lambda);
         }
@@ -205,7 +205,7 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, callWeight);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTH2F, TSource>>(callFill, hParameter, vParameter);
-            var interfaceobj = new ROOTNET.NTH2F(plotID, plotTitle, xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
+            var interfaceobj = new ROOTNET.NTH2F(plotID, plotTitle.ReplaceLatexStrings(), xNBins, xLowBin, xHighBin, yNBins, yLowBin, yHighBin);
             ConfigureHisto(interfaceobj);
             return source.FutureApplyToObject(interfaceobj, lambda);
         }
@@ -254,7 +254,7 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, callWeight);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTProfile, TSource>>(callFill, hParameter, vParameter);
-            var h = new ROOTNET.NTProfile(plotID, plotTitle, xNBins, xLowBin, xHighBin, yLowBin, yHighBin);
+            var h = new ROOTNET.NTProfile(plotID, plotTitle.ReplaceLatexStrings(), xNBins, xLowBin, xHighBin, yLowBin, yHighBin);
             ConfigureHisto(h);
             return source.ApplyToObject(h, lambda);
         }
@@ -302,7 +302,7 @@ namespace LINQToTreeHelpers
             var callFill = Expression.Call(hParameter, fillMethod, callXGetter, callYGetter, callWeight);
 
             var lambda = Expression.Lambda<Action<ROOTNET.NTProfile, TSource>>(callFill, hParameter, vParameter);
-            var interfaceobj = new ROOTNET.NTProfile(plotID, plotTitle, xNBins, xLowBin, xHighBin, yLowBin, yHighBin);
+            var interfaceobj = new ROOTNET.NTProfile(plotID, plotTitle.ReplaceLatexStrings(), xNBins, xLowBin, xHighBin, yLowBin, yHighBin);
             ConfigureHisto(interfaceobj);
             return source.FutureApplyToObject(interfaceobj, lambda);
         }

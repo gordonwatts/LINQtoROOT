@@ -102,7 +102,7 @@ namespace LINQToTreeHelpers
             // Use the nice ROOT utility THStack to make the plot. Once we do this, the plot is now owned by the TCanvas.
             // 
 
-            var stack = new ROOTNET.NTHStack(canvasName + "Stack", canvasTitle);
+            var stack = new ROOTNET.NTHStack(canvasName + "Stack", canvasTitle.ReplaceLatexStrings());
             foreach (var h in hToPlot)
             {
                 stack.Add(h);
@@ -115,7 +115,7 @@ namespace LINQToTreeHelpers
             // calling it as it will use that information during its painting.
             // 
 
-            var result = new ROOTNET.NTCanvas(canvasName, canvasTitle);
+            var result = new ROOTNET.NTCanvas(canvasName, canvasTitle.ReplaceLatexStrings());
             result.FillColor = ROOTNET.NTStyle.gStyle.FrameFillColor; // This is not a sticky setting!
             if (logy)
                 result.Logy = 1;
