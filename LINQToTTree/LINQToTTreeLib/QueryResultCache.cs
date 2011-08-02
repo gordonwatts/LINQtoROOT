@@ -56,7 +56,7 @@ namespace LINQToTTreeLib
         /// <param name="inputObjects"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public IQueryResultCacheKey GetKey(FileInfo[] unsortedRootfiles, string treename, object[] inputObjects, string[] unsortedCrumbs, QueryModel query, bool recheckDates = false)
+        public IQueryResultCacheKey GetKey(Uri[] unsortedRootfiles, string treename, object[] inputObjects, string[] unsortedCrumbs, QueryModel query, bool recheckDates = false)
         {
             ///
             /// Quick check to make sure everything is good
@@ -77,15 +77,15 @@ namespace LINQToTTreeLib
             /// 
 
             var rootfiles = (from r in unsortedRootfiles
-                             orderby r.FullName ascending
+                             orderby r.AbsoluteUri ascending
                              select r).ToArray();
 
             TraceHelpers.TraceInfo(24, "GetKey: Creating big string file name and calculating hash");
-            int fnameLength = rootfiles.Select(f => f.FullName).Sum(w => w.Length) + 100;
+            int fnameLength = rootfiles.Select(f => f.AbsoluteUri).Sum(w => w.Length) + 100;
             StringBuilder fullSourceName = new StringBuilder(fnameLength);
             foreach (var f in rootfiles)
             {
-                fullSourceName.Append(f.FullName);
+                fullSourceName.Append(f.AbsoluteUri);
             }
 
             var flieHash = fullSourceName.ToString().GetHashCode();
@@ -120,7 +120,7 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(25, "GetKey: Saving descrition lines");
             result.DescriptionLines = (from f in rootfiles
-                                       select f.FullName).ToArray();
+                                       select f.AbsoluteUri).ToArray();
             result.ExtraQueryInfoLines = crumbs;
 
             ///
@@ -137,7 +137,7 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(27, "GetKey: Getting the cache directory");
-            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + flieHash + " - " + treename + "-" + Path.GetFileNameWithoutExtension(rootfiles[0].Name));
+            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + flieHash + " - " + treename + "-" + Path.GetFileNameWithoutExtension(rootfiles[0].PathAndQuery));
 
             ///
             /// Scan the files that we are input and find the oldest one there
@@ -165,14 +165,37 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="rootfiles"></param>
         /// <returns></returns>
-        private IEnumerable<DateTime> GetRecentFileDates(FileInfo[] rootfiles, bool recheckDates)
+        private IEnumerable<DateTime> GetRecentFileDates(Uri[] rootfiles, bool recheckDates)
         {
-            foreach (var f in rootfiles)
+            foreach (var f in rootfiles.Select(u => ConvertToFileInfo(u)))
             {
                 if (recheckDates)
                     f.Refresh();
                 yield return f.LastWriteTime;
             }
+        }
+
+        /// <summary>
+        /// Keep track of file info's we've created. We do this because checkign the date on a FileInfo is
+        /// very expensive. So unless explicitly asked, we don't want to do it over and over again in a single
+        /// run (it can take many many seconds for files located on a high latency server).
+        /// </summary>
+        private Dictionary<Uri, FileInfo> _uriToFileInfo = new Dictionary<Uri, FileInfo>();
+
+        /// <summary>
+        /// Convert a Uri into a file info.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        private FileInfo ConvertToFileInfo(Uri u)
+        {
+            if (!_uriToFileInfo.ContainsKey(u))
+            {
+                var f = new FileInfo(u.AbsoluteUri);
+                _uriToFileInfo[u] = f;
+                return f;
+            }
+            return _uriToFileInfo[u];
         }
 
         /// <summary>
