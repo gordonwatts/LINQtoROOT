@@ -120,7 +120,7 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(25, "GetKey: Saving descrition lines");
             result.DescriptionLines = (from f in rootfiles
-                                       select f.AbsolutePath).ToArray();
+                                       select f.OriginalString).ToArray();
             result.ExtraQueryInfoLines = crumbs;
 
             ///
@@ -167,12 +167,8 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private IEnumerable<DateTime> GetRecentFileDates(Uri[] rootfiles, bool recheckDates)
         {
-            foreach (var f in rootfiles.Select(u => ConvertToFileInfo(u)))
-            {
-                if (recheckDates)
-                    f.Refresh();
-                yield return f.LastWriteTime;
-            }
+            return from f in rootfiles
+                   select ConvertToLastUpdateTime(f, recheckDates);
         }
 
         /// <summary>
@@ -180,21 +176,40 @@ namespace LINQToTTreeLib
         /// very expensive. So unless explicitly asked, we don't want to do it over and over again in a single
         /// run (it can take many many seconds for files located on a high latency server).
         /// </summary>
-        private Dictionary<Uri, FileInfo> _uriToFileInfo = new Dictionary<Uri, FileInfo>();
+        private Dictionary<Uri, DateTime> _uriToFileInfo = new Dictionary<Uri, DateTime>();
 
         /// <summary>
-        /// Convert a Uri into a file info.
+        /// Convert a Uri into a date/time. We cache the date and time we find when
+        /// we first look it up unless we are asked to recheck.
+        /// 
+        /// For files we actually checkt he date.
+        /// For proof datasets we assume the ds is "stable" once created.
         /// </summary>
         /// <param name="u"></param>
         /// <returns></returns>
-        private FileInfo ConvertToFileInfo(Uri u)
+        private DateTime ConvertToLastUpdateTime(Uri u, bool attemptDateRecheck)
         {
-            if (!_uriToFileInfo.ContainsKey(u))
+            if (attemptDateRecheck || !_uriToFileInfo.ContainsKey(u))
             {
-                var f = new FileInfo(u.LocalPath);
-                _uriToFileInfo[u] = f;
-                return f;
+                DateTime result;
+                if (u.Scheme == "file")
+                {
+                    result = File.GetLastWriteTime(u.LocalPath);
+                }
+                else if (u.Scheme == "proof")
+                {
+                    result = new DateTime(1990, 12, 1);
+                }
+                else
+                {
+                    throw new ArgumentException(string.Format("Do not know how to figure out the date for the uri '{0}'", u.OriginalString));
+                }
+                _uriToFileInfo[u] = result;
+                return result;
             }
+
+            // Cached! Use it!
+
             return _uriToFileInfo[u];
         }
 

@@ -248,6 +248,16 @@ namespace LINQToTTreeLib
         private void TestHitDriver(int queryIndex)
         {
             var f = MakeRootFile("TestHitDriver");
+            TestForCachingOnUri(queryIndex, f);
+        }
+
+        /// <summary>
+        /// Look to see if we can figure out what the hit is on this Uri.
+        /// </summary>
+        /// <param name="queryIndex"></param>
+        /// <param name="f"></param>
+        private void TestForCachingOnUri(int queryIndex, Uri f)
+        {
             var query = MakeQuery(queryIndex);
 
             /// Cache a result
@@ -261,6 +271,23 @@ namespace LINQToTTreeLib
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
+        }
+
+        [TestMethod]
+        public void TestNoProofHit()
+        {
+            // Make sure that a new proof dataset works just fine.
+            var f = new Uri("proof://tev03.phys.washington.edu/JetBackToBack_v006_PeriodA");
+            var query = MakeQuery(0);
+
+            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", null, null, query, new DummySaver()).Item1, "cache should be empty for this proof guy!");
+        }
+
+        [TestMethod]
+        public void TestHitForProofDataset()
+        {
+            var f = new Uri("proof://tev03.phys.washington.edu/JetBackToBack_v006_PeriodA");
+            TestForCachingOnUri(0, f);
         }
 
         [TestMethod]
