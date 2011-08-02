@@ -133,7 +133,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     tree.AddBranchToCache(leaf, true);
                 }
             }
-            tree.CacheLearnEntries = 1000;
+            tree.StopCacheLearningPhase();
 
             ///
             /// Finally, run the whole thing
