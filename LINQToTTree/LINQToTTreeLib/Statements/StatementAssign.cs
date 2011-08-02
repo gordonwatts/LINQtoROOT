@@ -70,6 +70,9 @@ namespace LINQToTTreeLib.Statements
             if (statement == null)
                 throw new ArgumentNullException("statement");
 
+            if (opt == null)
+                throw new ArgumentNullException("opt");
+
             var otherAssign = statement as StatementAssign;
             if (otherAssign == null)
                 return false;

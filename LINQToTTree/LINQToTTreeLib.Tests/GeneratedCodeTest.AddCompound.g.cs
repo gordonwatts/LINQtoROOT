@@ -15,5 +15,11 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompound01()
+{
+    this.AddCompound();
+}
     }
 }

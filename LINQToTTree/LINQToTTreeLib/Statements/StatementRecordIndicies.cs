@@ -75,6 +75,9 @@ namespace LINQToTTreeLib.Statements
             if (statement == null)
                 throw new ArgumentException("statement");
 
+            if (opt == null)
+                throw new ArgumentNullException("opt");
+
             var asRecord = statement as StatementRecordIndicies;
             if (asRecord == null)
                 return false;

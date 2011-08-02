@@ -18,5 +18,25 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void Pop818()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.Pop((IStatement)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void Pop81801()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.Pop((IStatement)statementIncrementInteger);
+}
     }
 }

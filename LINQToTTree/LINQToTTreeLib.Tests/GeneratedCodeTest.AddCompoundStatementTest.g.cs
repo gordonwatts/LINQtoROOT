@@ -19,5 +19,70 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddCompoundStatementTestThrowsArgumentNullException345()
+{
+    this.AddCompoundStatementTest((IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest818()
+{
+    GeneratedCodeTest.SimpleStatement s0 = new GeneratedCodeTest.SimpleStatement();
+    s0.Parent = (IStatement)null;
+    this.AddCompoundStatementTest((IStatement)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest81801()
+{
+    GeneratedCodeTest.CompoundStatement compoundStatement;
+    compoundStatement = new GeneratedCodeTest.CompoundStatement();
+    compoundStatement.Parent = (IStatement)null;
+    this.AddCompoundStatementTest((IStatement)compoundStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest81802()
+{
+    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
+    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
+    ((GeneratedCodeTest.CompoundStatement)compoundBookingStatement).Parent =
+      (IStatement)null;
+    this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest81803()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.AddCompoundStatementTest((IStatement)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void AddCompoundStatementTest81804()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.AddCompoundStatementTest((IStatement)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddCompoundStatementTestThrowsArgumentException513()
+{
+    GeneratedCodeTest.SimpleStatement s0 = new GeneratedCodeTest.SimpleStatement();
+    GeneratedCodeTest.SimpleStatement s1 = new GeneratedCodeTest.SimpleStatement();
+    s1.Parent = (IStatement)null;
+    s0.Parent = (IStatement)s1;
+    this.AddCompoundStatementTest((IStatement)s0);
+}
     }
 }

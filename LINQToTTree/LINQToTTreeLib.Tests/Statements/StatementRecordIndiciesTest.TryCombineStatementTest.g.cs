@@ -19,5 +19,45 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TryCombineStatementTestThrowsArgumentException30()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)varInteger, (IVariable)varInteger);
+    b = this.TryCombineStatementTest(statementRecordIndicies, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TryCombineStatementTestThrowsArgumentException200()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, -2);
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)varInteger, (IVariable)varInteger);
+    b = this.TryCombineStatementTest(statementRecordIndicies, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TryCombineStatementTestThrowsArgumentNullException323()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    bool b;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)varInteger, (IVariable)varInteger);
+    b = this.TryCombineStatementTest
+            (statementRecordIndicies, (IStatement)statementRecordIndicies);
+}
     }
 }

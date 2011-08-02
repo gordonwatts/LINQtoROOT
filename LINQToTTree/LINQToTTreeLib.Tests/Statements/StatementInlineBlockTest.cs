@@ -207,8 +207,9 @@ namespace LINQToTTreeLib.Statements
                 // This is a little tricky as we have to go pretty deep to figure out what
                 // what are "good" and bad statements for counting. 
 
-                var goodInfo = CountDownlevelStatements(s as StatementInlineBlock);
-                Assert.AreEqual(goodInfo.Item1, b.Statements.Count(), "# of statements");
+                var inlineblock = s as StatementInlineBlock;
+                var goodInfo = CountDownlevelStatements(inlineblock);
+
                 Assert.AreEqual(goodInfo.Item2, b.DeclaredVariables.Count(), "# of declared variables");
             }
             else

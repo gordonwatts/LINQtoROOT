@@ -19,5 +19,15 @@ namespace LINQToTTreeLib
 {
     public partial class QueryResultCacheTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(QueryResultCacheTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CacheItemThrowsArgumentException108()
+{
+    QueryResultCache queryResultCache;
+    queryResultCache = new QueryResultCache();
+    this.CacheItem(queryResultCache, (object[])null, (FileInfo)null, 
+                   (string[])null, (QueryModel)null, (NTObject)null);
+}
     }
 }

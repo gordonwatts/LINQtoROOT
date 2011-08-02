@@ -73,12 +73,15 @@ namespace LINQToTTreeLib.Statements
             if (otherAssign == null)
                 return false;
 
+            if (opt == null)
+                throw new ArgumentNullException("opt");
+
             //
             // Simple case: everything is the same
             //
 
             if (ResultVariable.RawValue == otherAssign.ResultVariable.RawValue
-                || Expression.RawValue == otherAssign.Expression.RawValue)
+                && Expression.RawValue == otherAssign.Expression.RawValue)
                 return true;
 
             //

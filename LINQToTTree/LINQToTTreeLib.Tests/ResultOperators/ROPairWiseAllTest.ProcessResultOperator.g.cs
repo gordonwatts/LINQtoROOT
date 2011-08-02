@@ -24,5 +24,322 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class ROPairWiseAllTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException957()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException521()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException482()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  ss, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException548()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    string[] ss = new string[1];
+    ss[0] = "";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  ss, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException992()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, ss);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException466()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      GeneratedCode generatedCode;
+      IVariable iVariable;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      NTObject[] nTObjects = new NTObject[1];
+      nTObjects[0] = nTObject;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    (string[])null, nTObjects, (string[])null);
+      ROUniqueCombinations s0 = new ROUniqueCombinations();
+      iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                             (QueryModel)null, (CodeContext)null, generatedCode);
+      disposables.Dispose();
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException358()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
+                                                (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException560()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[2];
+    ss[0] = "";
+    ss[1] = "";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  ss, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException961()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      GeneratedCode generatedCode;
+      IVariable iVariable;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      NTObject[] nTObjects = new NTObject[2];
+      nTObjects[0] = nTObject;
+      nTObjects[1] = nTObject;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    (string[])null, nTObjects, (string[])null);
+      ROUniqueCombinations s0 = new ROUniqueCombinations();
+      iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                             (QueryModel)null, (CodeContext)null, generatedCode);
+      disposables.Dispose();
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException545()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementIfOnCount statementIfOnCount;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iStatements[1] = (IStatement)statementIfOnCount;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
+                                                (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException403()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementIfOnCount statementIfOnCount;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, iVariables);
+    IStatement[] iStatements = new IStatement[2];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iStatements[1] = (IStatement)statementIfOnCount;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
+                                                (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException89()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementFilter statementFilter;
+    StatementIfOnCount statementIfOnCount;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    IStatement[] iStatements1 = new IStatement[1];
+    iStatements1[0] = (IStatement)statementFilter;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       iStatements1, (IVariable[])null);
+    IStatement[] iStatements2 = new IStatement[2];
+    iStatements2[0] = (IStatement)statementIncrementInteger;
+    iStatements2[1] = (IStatement)statementIfOnCount;
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, iStatements2, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException810()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementIfOnCount statementIfOnCount;
+    StatementInlineBlock statementInlineBlock;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[3];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iStatements[1] = (IStatement)statementIfOnCount;
+    iStatements[2] = (IStatement)statementInlineBlock;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
+                                                (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROPairWiseAllTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException779()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementIfOnCount statementIfOnCount;
+    GeneratedCodeTest.CompoundStatement compoundStatement;
+    GeneratedCode generatedCode;
+    IVariable iVariable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    compoundStatement = new GeneratedCodeTest.CompoundStatement();
+    compoundStatement.Parent = (IStatement)null;
+    IStatement[] iStatements = new IStatement[3];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    iStatements[1] = (IStatement)statementIfOnCount;
+    iStatements[2] = (IStatement)compoundStatement;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
+                                                (string[])null, (NTObject[])null, (string[])null);
+    ROUniqueCombinations s0 = new ROUniqueCombinations();
+    iVariable = this.ProcessResultOperator(s0, (ResultOperatorBase)null, 
+                                           (QueryModel)null, (CodeContext)null, generatedCode);
+}
     }
 }

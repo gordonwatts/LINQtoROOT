@@ -21,7 +21,7 @@ namespace LINQToTTreeLib
     {
         /// <summary>Test stub for Add(IStatement)</summary>
         [PexMethod]
-        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementIncrementInteger)), PexAllowedException(typeof(ArgumentException))]
         public void Add([PexAssumeUnderTest]GeneratedCode target, IStatementCompound s)
         {
             int old = CountStatements(target.CodeBody);
@@ -69,17 +69,7 @@ namespace LINQToTTreeLib
             }
 
 
-            public IStatement Parent
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public IStatement Parent { get; set; }
         }
 
         public class CompoundStatement : IStatementCompound
@@ -112,17 +102,7 @@ namespace LINQToTTreeLib
             }
 
 
-            public IStatement Parent
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public IStatement Parent { get; set; }
         }
 
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock
@@ -154,7 +134,7 @@ namespace LINQToTTreeLib
         [PexMethod]
         [PexUseType(typeof(CompoundBookingStatement))]
         [PexUseType(typeof(CompoundStatement))]
-        [PexUseType(typeof(SimpleStatement))]
+        [PexUseType(typeof(SimpleStatement)), PexAllowedException(typeof(ArgumentException))]
         public void AddCompoundStatementTest(IStatement s)
         {
             var target = new GeneratedCode();
@@ -213,8 +193,8 @@ namespace LINQToTTreeLib
 
         [PexMethod]
         [PexUseType(typeof(StatementInlineBlock))]
-        [PexUseType(typeof(StatementIncrementInteger))]
-        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s)
+        [PexUseType(typeof(StatementIncrementInteger)), PexAllowedException(typeof(ArgumentException))]
+        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s1, [PexAssumeNotNull] IStatement s2)
         {
             ///
             /// Check that scoping correctly moves back tot he right place and inserts the stements and
@@ -245,11 +225,11 @@ namespace LINQToTTreeLib
 
             var v1 = new VarInteger();
             target.Add(v1);
-            target.Add(s);
+            target.Add(s1);
             target.CurrentScope = currentScope;
             var v2 = new VarInteger();
             target.Add(v2);
-            target.Add(s);
+            target.Add(s2);
         }
 
         [TestMethod]

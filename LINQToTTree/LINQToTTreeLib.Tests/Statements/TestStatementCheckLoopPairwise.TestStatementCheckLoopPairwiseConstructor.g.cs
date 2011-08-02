@@ -17,5 +17,13 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class TestStatementCheckLoopPairwise
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatementCheckLoopPairwise))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestStatementCheckLoopPairwiseConstructorThrowsArgumentNullException791()
+{
+    this.TestStatementCheckLoopPairwiseConstructor
+        ((VarArray)null, (VarSimple)null, (VarSimple)null, (VarArray)null);
+}
     }
 }

@@ -19,5 +19,61 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException184()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    StatementRecordIndicies statementRecordIndicies1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)varInteger, (IVariable)varInteger);
+    statementRecordIndicies1 =
+      this.RenameVariableTest(statementRecordIndicies, (string)null, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException998()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    StatementRecordIndicies statementRecordIndicies1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)varInteger, (IVariable)varInteger);
+    statementRecordIndicies1 =
+      this.RenameVariableTest(statementRecordIndicies, "", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException301()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    StatementRecordIndicies statementRecordIndicies1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)varInteger, (IVariable)varInteger);
+    statementRecordIndicies1 =
+      this.RenameVariableTest(statementRecordIndicies, "an", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException164()
+{
+    VarInteger varInteger;
+    StatementRecordIndicies statementRecordIndicies;
+    StatementRecordIndicies statementRecordIndicies1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordIndicies = StatementRecordIndiciesFactory.Create
+                                  ((IValue)varInteger, (IVariable)varInteger);
+    statementRecordIndicies1 =
+      this.RenameVariableTest(statementRecordIndicies, "\u0100___", (string)null);
+}
     }
 }

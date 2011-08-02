@@ -18,5 +18,62 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAssignTest))]
+public void CodeItUpTest482()
+{
+    VarInteger varInteger;
+    StatementAssign statementAssign;
+    string s;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAssign =
+      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
+    s = this.CodeItUpTest(statementAssign);
+    Assert.AreEqual<string>("", s);
+    Assert.IsNotNull((object)statementAssign);
+    Assert.IsNotNull(statementAssign.ResultVariable);
+    Assert.IsNotNull(statementAssign.Expression);
+    Assert.IsTrue(object.ReferenceEquals
+                      (statementAssign.Expression, statementAssign.ResultVariable));
+    Assert.IsNull(statementAssign.Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAssignTest))]
+public void CodeItUpTest861()
+{
+    VarInteger varInteger;
+    VarInteger varInteger1;
+    StatementAssign statementAssign;
+    string s;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
+    statementAssign =
+      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
+    s = this.CodeItUpTest(statementAssign);
+    Assert.AreEqual<string>("anint_1=anint_2;", s);
+    Assert.IsNotNull((object)statementAssign);
+    Assert.IsNotNull(statementAssign.ResultVariable);
+    Assert.IsNotNull(statementAssign.Expression);
+    Assert.IsNull(statementAssign.Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAssignTest))]
+public void CodeItUpTest86101()
+{
+    VarInteger varInteger;
+    VarInteger varInteger1;
+    StatementAssign statementAssign;
+    string s;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger1 = VarIntegerFactory.Create(false, 1);
+    statementAssign =
+      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger1);
+    s = this.CodeItUpTest(statementAssign);
+    Assert.AreEqual<string>("anint_1=anint_2;", s);
+    Assert.IsNotNull((object)statementAssign);
+    Assert.IsNotNull(statementAssign.ResultVariable);
+    Assert.IsNotNull(statementAssign.Expression);
+    Assert.IsNull(statementAssign.Parent);
+}
     }
 }

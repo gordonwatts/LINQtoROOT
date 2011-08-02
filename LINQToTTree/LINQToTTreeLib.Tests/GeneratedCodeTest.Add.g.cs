@@ -20,5 +20,295 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException481()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    this.Add(generatedCode, (IStatementCompound)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[Ignore]
+[PexDescription("the test state was: path bounds exceeded")]
+public void Add619()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
+    this.Add(generatedCode, (IStatementCompound)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException958()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    this.Add(generatedCode, (IStatementCompound)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException608()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  ss, (NTObject[])null, (string[])null);
+    this.Add(generatedCode, (IStatementCompound)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException11()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[1];
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, ss);
+    this.Add(generatedCode, (IStatementCompound)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException941()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[1];
+    ss[0] = "";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  ss, (NTObject[])null, (string[])null);
+    this.Add(generatedCode, (IStatementCompound)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void Add774()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
+    ((GeneratedCodeTest.CompoundStatement)compoundBookingStatement).Parent =
+      (IStatement)null;
+    this.Add(generatedCode, (IStatementCompound)compoundBookingStatement);
+    Assert.IsNotNull((object)generatedCode);
+    Assert.AreEqual<int>(2, generatedCode.Depth);
+    Assert.IsNotNull(generatedCode.ResultValue);
+    Assert.IsNotNull(generatedCode.CodeBody);
+    Assert.IsNotNull(generatedCode.VariablesToTransfer);
+    Assert.IsNotNull(generatedCode.IncludeFiles);
+    Assert.IsNotNull(generatedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException580()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
+                                                (string[])null, (NTObject[])null, (string[])null);
+    this.Add(generatedCode, (IStatementCompound)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException798()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      GeneratedCode generatedCode;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      NTObject[] nTObjects = new NTObject[1];
+      nTObjects[0] = nTObject;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    (string[])null, nTObjects, (string[])null);
+      this.Add(generatedCode, (IStatementCompound)null);
+      disposables.Dispose();
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException71()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    string[] ss = new string[2];
+    ss[0] = "";
+    ss[1] = "";
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  ss, (NTObject[])null, (string[])null);
+    this.Add(generatedCode, (IStatementCompound)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[Ignore]
+[PexDescription("the test state was: path bounds exceeded")]
+public void Add61901()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    GeneratedCode generatedCode;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    generatedCode = GeneratedCodeFactory.Create((IVariable)varInteger, iStatements, 
+                                                (string[])null, (NTObject[])null, (string[])null);
+    StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
+    this.Add(generatedCode, (IStatementCompound)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+public void Add77401()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      GeneratedCode generatedCode;
+      GeneratedCodeTest.CompoundStatement compoundStatement;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      string[] ss = new string[4];
+      NTObject[] nTObjects = new NTObject[1];
+      string[] ss1 = new string[5];
+      ss[0] = "";
+      ss[1] = "";
+      ss[2] = "";
+      ss[3] = "";
+      nTObjects[0] = nTObject;
+      ss1[1] = "";
+      ss1[2] = "";
+      ss1[3] = "";
+      ss1[4] = "";
+      generatedCode = GeneratedCodeFactory.Create
+                          ((IVariable)varInteger, (IStatement[])null, ss, nTObjects, ss1);
+      compoundStatement = new GeneratedCodeTest.CompoundStatement();
+      compoundStatement.Parent = (IStatement)null;
+      this.Add(generatedCode, (IStatementCompound)compoundStatement);
+      disposables.Dispose();
+      Assert.IsNotNull((object)generatedCode);
+      Assert.AreEqual<int>(1, generatedCode.Depth);
+      Assert.IsNotNull(generatedCode.ResultValue);
+      Assert.IsNotNull(generatedCode.CodeBody);
+      Assert.IsNotNull(generatedCode.VariablesToTransfer);
+      Assert.IsNotNull(generatedCode.IncludeFiles);
+      Assert.IsNotNull(generatedCode.ReferencedLeafNames);
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddThrowsArgumentException539()
+{
+    VarInteger varInteger;
+    GeneratedCode generatedCode;
+    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    generatedCode =
+      GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                  (string[])null, (NTObject[])null, (string[])null);
+    StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
+    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
+    ((GeneratedCodeTest.CompoundStatement)compoundBookingStatement).Parent =
+      (IStatement)statementInlineBlock;
+    this.Add(generatedCode, (IStatementCompound)compoundBookingStatement);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException45()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      GeneratedCode generatedCode;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      NTObject[] nTObjects = new NTObject[2];
+      nTObjects[0] = nTObject;
+      nTObjects[1] = nTObject;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    (string[])null, nTObjects, (string[])null);
+      this.Add(generatedCode, (IStatementCompound)null);
+      disposables.Dispose();
+    }
+}
+[TestMethod]
+[PexGeneratedBy(typeof(GeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException116()
+{
+    using (PexDisposableContext disposables = PexDisposableContext.Create())
+    {
+      VarInteger varInteger;
+      NTObject nTObject;
+      NTObject nTObject1;
+      NTObject nTObject2;
+      GeneratedCode generatedCode;
+      varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+      nTObject = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject);
+      nTObject1 = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject1);
+      nTObject2 = NTObjectFactory.Create();
+      disposables.Add((IDisposable)nTObject2);
+      NTObject[] nTObjects = new NTObject[3];
+      nTObjects[0] = nTObject;
+      nTObjects[1] = nTObject1;
+      nTObjects[2] = nTObject2;
+      generatedCode =
+        GeneratedCodeFactory.Create((IVariable)varInteger, (IStatement[])null, 
+                                    (string[])null, nTObjects, (string[])null);
+      this.Add(generatedCode, (IStatementCompound)null);
+      disposables.Dispose();
+    }
+}
     }
 }

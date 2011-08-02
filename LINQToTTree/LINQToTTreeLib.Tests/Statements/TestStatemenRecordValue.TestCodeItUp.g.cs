@@ -19,5 +19,61 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class TestStatemenRecordValue
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatemenRecordValue))]
+public void TestCodeItUp613()
+{
+    VarInteger varInteger;
+    StatementRecordValue statementRecordValue;
+    string[] ss;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
+    ss = this.TestCodeItUp(statementRecordValue);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(2, ss.Length);
+    Assert.AreEqual<string>("anint_1 = anint_1;", ss[0]);
+    Assert.AreEqual<string>("anint_1 = true;", ss[1]);
+    Assert.IsNotNull((object)statementRecordValue);
+    Assert.IsNull(statementRecordValue.Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatemenRecordValue))]
+public void TestCodeItUp547()
+{
+    VarInteger varInteger;
+    StatementRecordValue statementRecordValue;
+    string[] ss;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementRecordValue =
+      StatementRecordValueFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                         (IVariable)varInteger, PexSafeHelpers.ByteToBoolean((byte)16));
+    ss = this.TestCodeItUp(statementRecordValue);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(3, ss.Length);
+    Assert.AreEqual<string>("anint_1 = anint_1;", ss[0]);
+    Assert.AreEqual<string>("anint_1 = true;", ss[1]);
+    Assert.AreEqual<string>("break;", ss[2]);
+    Assert.IsNotNull((object)statementRecordValue);
+    Assert.IsNull(statementRecordValue.Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatemenRecordValue))]
+public void TestCodeItUp61301()
+{
+    VarInteger varInteger;
+    StatementRecordValue statementRecordValue;
+    string[] ss;
+    varInteger = VarIntegerFactory.Create(false, 114);
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
+    ss = this.TestCodeItUp(statementRecordValue);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(2, ss.Length);
+    Assert.AreEqual<string>("anint_1 = anint_1;", ss[0]);
+    Assert.AreEqual<string>("anint_1 = true;", ss[1]);
+    Assert.IsNotNull((object)statementRecordValue);
+    Assert.IsNull(statementRecordValue.Parent);
+}
     }
 }

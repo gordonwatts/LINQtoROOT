@@ -18,5 +18,66 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException533()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[0];
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    iStatement = this.TestRename(statementFilter, "", "");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException681()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[0];
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    iStatement = this.TestRename(statementFilter, "\t", "\t");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException845()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    iStatement = this.TestRename(statementFilter, "", "");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestRenameThrowsArgumentNullException120()
+{
+    VarInteger varInteger;
+    StatementFilter statementFilter;
+    IStatement iStatement;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    IStatement[] iStatements = new IStatement[0];
+    IVariable[] iVariables = new IVariable[0];
+    statementFilter =
+      StatementFilterFactory.Create((IValue)varInteger, iStatements, iVariables);
+    iStatement = this.TestRename(statementFilter, "\u0089", "\t");
+}
     }
 }

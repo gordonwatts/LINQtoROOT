@@ -19,5 +19,150 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementLoopOverGoodTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+public void CodeItUp280()
+{
+    VarInteger varInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    IEnumerable<string> iEnumerable;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IVariable)varInteger, (IStatement[])null, (IVariable[])null);
+    iEnumerable = this.CodeItUp(statementLoopOverGood);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGood).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+public void CodeItUp28001()
+{
+    VarInteger varInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    IEnumerable<string> iEnumerable;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IVariable)varInteger, (IStatement[])null, iVariables);
+    iEnumerable = this.CodeItUp(statementLoopOverGood);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGood).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+public void CodeItUp28002()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    IEnumerable<string> iEnumerable;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIncrementInteger;
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IVariable)varInteger, iStatements, (IVariable[])null);
+    iEnumerable = this.CodeItUp(statementLoopOverGood);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGood).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+public void CodeItUp28003()
+{
+    VarInteger varInteger;
+    StatementLoopOverGood statementLoopOverGood;
+    IEnumerable<string> iEnumerable;
+    varInteger = VarIntegerFactory.Create(false, 835);
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger, 
+                                          (IVariable)varInteger, (IStatement[])null, (IVariable[])null);
+    iEnumerable = this.CodeItUp(statementLoopOverGood);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGood).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+public void CodeItUp28007()
+{
+    VarInteger varInteger;
+    VarInteger varInteger1;
+    StatementLoopOverGood statementLoopOverGood;
+    IEnumerable<string> iEnumerable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
+    IVariable[] iVariables = new IVariable[2];
+    iVariables[0] = (IVariable)varInteger1;
+    iVariables[1] = (IVariable)varInteger;
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger1, 
+                                          (IVariable)varInteger, (IStatement[])null, iVariables);
+    iEnumerable = this.CodeItUp(statementLoopOverGood);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGood).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+public void CodeItUp28010()
+{
+    VarInteger varInteger;
+    VarInteger varInteger1;
+    VarInteger varInteger2;
+    VarInteger varInteger3;
+    VarInteger varInteger4;
+    VarInteger varInteger5;
+    VarInteger varInteger6;
+    VarInteger varInteger7;
+    StatementLoopOverGood statementLoopOverGood;
+    IEnumerable<string> iEnumerable;
+    varInteger = VarIntegerFactory.Create(false, int.MaxValue);
+    varInteger1 = VarIntegerFactory.Create(false, 0);
+    varInteger2 = VarIntegerFactory.Create(false, 0);
+    varInteger3 = VarIntegerFactory.Create(false, 0);
+    varInteger4 = VarIntegerFactory.Create(false, 0);
+    varInteger5 = VarIntegerFactory.Create(false, 0);
+    varInteger6 = VarIntegerFactory.Create(false, 0);
+    varInteger7 = VarIntegerFactory.Create(false, 0);
+    IVariable[] iVariables = new IVariable[5];
+    iVariables[0] = (IVariable)varInteger4;
+    iVariables[1] = (IVariable)varInteger3;
+    iVariables[2] = (IVariable)varInteger5;
+    iVariables[3] = (IVariable)varInteger6;
+    iVariables[4] = (IVariable)varInteger7;
+    statementLoopOverGood =
+      StatementLoopOverGoodFactory.Create((IValue)varInteger, (IValue)varInteger1, 
+                                          (IVariable)varInteger2, (IStatement[])null, iVariables);
+    iEnumerable = this.CodeItUp(statementLoopOverGood);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGood).Parent);
+}
     }
 }

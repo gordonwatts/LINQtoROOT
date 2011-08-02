@@ -19,5 +19,45 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException74()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[0];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException964()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException861()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    ss[0] = "";
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
     }
 }

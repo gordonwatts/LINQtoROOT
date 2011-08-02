@@ -19,5 +19,65 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAggregateTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAggregateTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException752()
+{
+    VarInteger varInteger;
+    StatementAggregate statementAggregate;
+    StatementAggregate statementAggregate1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAggregate =
+      new StatementAggregate((IVariable)varInteger, (IValue)varInteger);
+    statementAggregate.Parent = (IStatement)null;
+    statementAggregate1 =
+      this.RenameVariableTest(statementAggregate, (string)null, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAggregateTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException79()
+{
+    VarInteger varInteger;
+    StatementAggregate statementAggregate;
+    StatementAggregate statementAggregate1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAggregate =
+      new StatementAggregate((IVariable)varInteger, (IValue)varInteger);
+    statementAggregate.Parent = (IStatement)null;
+    statementAggregate1 =
+      this.RenameVariableTest(statementAggregate, "", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAggregateTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException88()
+{
+    VarInteger varInteger;
+    StatementAggregate statementAggregate;
+    StatementAggregate statementAggregate1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAggregate =
+      new StatementAggregate((IVariable)varInteger, (IValue)varInteger);
+    statementAggregate.Parent = (IStatement)null;
+    statementAggregate1 =
+      this.RenameVariableTest(statementAggregate, "an", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAggregateTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException313()
+{
+    VarInteger varInteger;
+    StatementAggregate statementAggregate;
+    StatementAggregate statementAggregate1;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementAggregate =
+      new StatementAggregate((IVariable)varInteger, (IValue)varInteger);
+    statementAggregate.Parent = (IStatement)null;
+    statementAggregate1 =
+      this.RenameVariableTest(statementAggregate, "\u0100", (string)null);
+}
     }
 }

@@ -18,5 +18,32 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestTryCombineThrowsArgumentException636()
+{
+    this.TestTryCombine((IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+public void TestTryCombine818()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestTryCombine((IStatement)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+public void TestTryCombine81801()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestTryCombine((IStatement)statementIncrementInteger);
+}
     }
 }

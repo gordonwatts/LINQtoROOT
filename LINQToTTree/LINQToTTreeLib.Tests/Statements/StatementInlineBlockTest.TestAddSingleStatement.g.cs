@@ -18,5 +18,87 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementInlineBlockTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestAddSingleStatementThrowsArgumentNullException583()
+{
+    this.TestAddSingleStatement((IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement81803()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestAddSingleStatement((IStatement)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement81804()
+{
+    VarInteger varInteger;
+    StatementIncrementInteger statementIncrementInteger;
+    varInteger = VarIntegerFactory.Create(false, 1);
+    statementIncrementInteger = StatementIncrementIntegerFactory.Create(varInteger);
+    this.TestAddSingleStatement((IStatement)statementIncrementInteger);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement818()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, (IVariable[])null);
+    this.TestAddSingleStatement((IStatement)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement81801()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    this.TestAddSingleStatement((IStatement)statementIfOnCount);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement81802()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    IVariable[] iVariables = new IVariable[1];
+    iVariables[0] = (IVariable)varInteger;
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, iVariables);
+    this.TestAddSingleStatement((IStatement)statementIfOnCount);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void TestAddSingleStatement81812()
+{
+    VarInteger varInteger;
+    StatementIfOnCount statementIfOnCount;
+    StatementInlineBlock statementInlineBlock;
+    varInteger = VarIntegerFactory.Create(false, 0);
+    statementIfOnCount =
+      StatementIfOnCountFactory.Create((IVariable)varInteger, (IValue)varInteger, 
+                                       StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                                       (IStatement[])null, (IVariable[])null);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementIfOnCount;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create(iStatements, (IVariable[])null);
+    this.TestAddSingleStatement((IStatement)statementInlineBlock);
+}
     }
 }
