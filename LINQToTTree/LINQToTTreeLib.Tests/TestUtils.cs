@@ -224,8 +224,8 @@ namespace LINQToTTreeLib.Tests
         public static Uri CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
         {
             string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
-            var u = new Uri("file://" + filename);
             FileInfo result = new FileInfo(filename);
+            var u = new Uri("file://" + result.FullName);
             if (result.Exists)
                 return u;
 
@@ -257,7 +257,7 @@ namespace LINQToTTreeLib.Tests
             /// First, load up the TTree
             /// 
 
-            var tfile = new ROOTNET.NTFile(rootFile.AbsoluteUri, "READ");
+            var tfile = new ROOTNET.NTFile(rootFile.LocalPath, "READ");
             var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
             Assert.IsNotNull(tree, "Tree couldn't be found");
 
@@ -287,8 +287,8 @@ namespace LINQToTTreeLib.Tests
         public static Uri CreateFileOfInt(int numberOfIter)
         {
             string filename = "intonly_" + numberOfIter.ToString() + ".root";
-            Uri u = new Uri("file://" + filename);
             FileInfo result = new FileInfo(filename);
+            Uri u = new Uri("file://" + result.FullName);
             if (result.Exists)
                 return u;
 

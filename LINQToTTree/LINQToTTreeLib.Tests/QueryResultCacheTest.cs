@@ -306,7 +306,7 @@ namespace LINQToTTreeLib
 
             /// Modify the file
 
-            using (var w = File.CreateText(f.AbsoluteUri))
+            using (var w = File.CreateText(f.LocalPath))
             {
                 w.WriteLine("fork it!");
                 w.Close();
@@ -339,7 +339,7 @@ namespace LINQToTTreeLib
 
             /// Modify the file
 
-            using (var w = File.CreateText(f.AbsoluteUri))
+            using (var w = File.CreateText(f.LocalPath))
             {
                 w.WriteLine("fork it!");
                 w.Close();

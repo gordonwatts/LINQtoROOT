@@ -53,7 +53,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             //
 
             TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
-            var localFiles = Environment.RootFiles.Select(u => new FileInfo(u.AbsoluteUri)).ToArray();
+            var localFiles = Environment.RootFiles.Select(u => new FileInfo(u.LocalPath)).ToArray();
             var results = RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
 
             //

@@ -97,7 +97,7 @@ namespace LINQToTTreeLib
                 bld.Append("The following URI(s) do not exist or are not recognized and so can't be processed: ");
                 foreach (var f in badFiles)
                 {
-                    bld.AppendFormat("{0} ", f.AbsoluteUri);
+                    bld.AppendFormat("{0} ", f.LocalPath);
                 }
                 throw new FileNotFoundException(bld.ToString());
             }

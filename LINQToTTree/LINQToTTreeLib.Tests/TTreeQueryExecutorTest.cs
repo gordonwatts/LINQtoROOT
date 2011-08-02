@@ -138,7 +138,7 @@ namespace LINQToTTreeLib
             TTreeQueryExecutor target = new TTreeQueryExecutor(new Uri[] { rootFile }, treeName, typeof(ntuple));
 
             Assert.IsNotNull(rootFile, "rootfile can't be null here");
-            Assert.IsTrue(File.Exists(rootFile.AbsoluteUri), "root file must exist");
+            Assert.IsTrue(File.Exists(rootFile.LocalPath), "root file must exist");
             Assert.IsFalse(string.IsNullOrWhiteSpace(ntuple._gProxyFile), "proxy must be there");
             Assert.IsTrue(File.Exists(ntuple._gProxyFile), "proxy file must exist");
             if (ntuple._gObjectFiles != null)
@@ -540,7 +540,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new Uri[] { }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
         }
 

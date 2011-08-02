@@ -77,15 +77,15 @@ namespace LINQToTTreeLib
             /// 
 
             var rootfiles = (from r in unsortedRootfiles
-                             orderby r.AbsoluteUri ascending
+                             orderby r.AbsolutePath ascending
                              select r).ToArray();
 
             TraceHelpers.TraceInfo(24, "GetKey: Creating big string file name and calculating hash");
-            int fnameLength = rootfiles.Select(f => f.AbsoluteUri).Sum(w => w.Length) + 100;
+            int fnameLength = rootfiles.Select(f => f.AbsolutePath).Sum(w => w.Length) + 100;
             StringBuilder fullSourceName = new StringBuilder(fnameLength);
             foreach (var f in rootfiles)
             {
-                fullSourceName.Append(f.AbsoluteUri);
+                fullSourceName.Append(f.AbsolutePath);
             }
 
             var flieHash = fullSourceName.ToString().GetHashCode();
@@ -120,7 +120,7 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(25, "GetKey: Saving descrition lines");
             result.DescriptionLines = (from f in rootfiles
-                                       select f.AbsoluteUri).ToArray();
+                                       select f.AbsolutePath).ToArray();
             result.ExtraQueryInfoLines = crumbs;
 
             ///
@@ -191,7 +191,7 @@ namespace LINQToTTreeLib
         {
             if (!_uriToFileInfo.ContainsKey(u))
             {
-                var f = new FileInfo(u.AbsoluteUri);
+                var f = new FileInfo(u.LocalPath);
                 _uriToFileInfo[u] = f;
                 return f;
             }
