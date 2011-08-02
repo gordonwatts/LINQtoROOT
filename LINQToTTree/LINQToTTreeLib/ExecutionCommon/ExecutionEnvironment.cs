@@ -1,4 +1,5 @@
 ﻿
+using System;
 namespace LINQToTTreeLib.ExecutionCommon
 {
     /// <summary>
@@ -33,6 +34,6 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// List of the root files that need to be run over.
         /// </summary>
-        public System.IO.FileInfo[] RootFiles { get; set; }
+        public Uri[] RootFiles { get; set; }
     }
 }

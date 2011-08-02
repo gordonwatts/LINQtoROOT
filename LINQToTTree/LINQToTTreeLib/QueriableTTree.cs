@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using LINQToTTreeLib.relinq;
@@ -20,8 +19,8 @@ namespace LINQToTTreeLib
         /// generated with the proper meta data so things like the scanner source file can be found!
         /// Runs on data in a single source file.
         /// </summary>
-        public QueriableTTree(FileInfo rootFile, string treeName)
-            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
+        public QueriableTTree(Uri rootFile, string treeName)
+            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new Uri[] { rootFile }, treeName, typeof(T)))
         {
             TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with 1 file for tree '{0}'", treeName));
         }
@@ -31,7 +30,7 @@ namespace LINQToTTreeLib
         /// generated with the proper meta data so things like the scanner source file can be found!
         /// Runs on data in a multiple source files.
         /// </summary>
-        public QueriableTTree(FileInfo[] rootFiles, string treeName)
+        public QueriableTTree(Uri[] rootFiles, string treeName)
             : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
         {
             TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with {1} file for tree '{0}'", treeName, rootFiles.Length));
