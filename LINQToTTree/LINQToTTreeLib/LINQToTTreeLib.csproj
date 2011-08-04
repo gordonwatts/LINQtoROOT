@@ -57,6 +57,7 @@
       <HintPath>..\..\ROOT.NET Wrappers\Release\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libHistWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="libProofWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libRIOWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libTreeWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="NVelocity">
@@ -91,6 +92,7 @@
     <Compile Include="ExecutionCommon\ExecutionUtilities.cs" />
     <Compile Include="ExecutionCommon\IQueryExectuor.cs" />
     <Compile Include="ExecutionCommon\LocalExecutor.cs" />
+    <Compile Include="ExecutionCommon\ProofExecutor.cs" />
     <Compile Include="Expressions\ArrayExpressionParser.cs" />
     <Compile Include="Expressions\ArrayInfoVector.cs" />
     <Compile Include="Expressions\ExpressionStringConverter.cs" />
