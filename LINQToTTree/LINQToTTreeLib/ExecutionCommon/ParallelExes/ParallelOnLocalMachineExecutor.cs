@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
         /// </summary>
         public ParallelOnLocalMachineExecutor()
         {
-            NumberOfStreams = 2;
+            NumberOfStreams = 3;
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
         /// <param name="outputData"></param>
         private Process RunProcess(FileInfo outputData)
         {
-            var pInfo = new ProcessStartInfo(@"C:\Users\gwatts\Documents\ATLAS\Code\LINQtoROOT\LINQToTTree\QueryExecutor\bin\Debug\QueryExecutor.exe", outputData.FullName);
+            var pInfo = new ProcessStartInfo(@"C:\Users\gwatts\Documents\ATLAS\Projects\linqtoroot\LINQToTTree\QueryExecutor\bin\Debug\QueryExecutor.exe", outputData.FullName);
             pInfo.CreateNoWindow = true;
             pInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
