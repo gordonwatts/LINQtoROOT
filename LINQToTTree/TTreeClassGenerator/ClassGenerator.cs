@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
 using TTreeDataModel;
 
@@ -319,7 +320,15 @@ namespace TTreeClassGenerator
                     }
                     catch (Exception e)
                     {
-                        throw new Exception("Error while processing class '" + cls.Name + "'", e);
+                        var errorMessage = new StringBuilder();
+                        errorMessage.AppendFormat("Error while processing class '{0}", cls.Name);
+                        var ex = e;
+                        while (ex != null)
+                        {
+                            errorMessage.AppendFormat(": {0}", e.Message);
+                            ex = e.InnerException;
+                        }
+                        throw new Exception(errorMessage.ToString(), e);
                     }
                 }
 
