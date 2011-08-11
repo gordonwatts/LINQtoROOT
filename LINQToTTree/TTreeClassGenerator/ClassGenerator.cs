@@ -328,6 +328,12 @@ namespace TTreeClassGenerator
                             errorMessage.AppendFormat(": {0}", e.Message);
                             ex = e.InnerException;
                         }
+
+                        // Kill off the output file!
+                        output.Close();
+                        outputCSFile.Delete();
+
+                        // Propagate the error upwards.
                         throw new Exception(errorMessage.ToString(), e);
                     }
                 }
