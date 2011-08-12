@@ -64,7 +64,9 @@ namespace LINQToTreeHelpers
 
         private static readonly Parser<string> FilePathString =
             (
-            FilePathStringQuoted.Or(FilePathStringUnquoted)
+            from whitespace in Parse.WhiteSpace.Many()
+            from fs in FilePathStringQuoted.Or(FilePathStringUnquoted)
+            select fs
             ).Named("FilePathString");
 
         private static readonly Parser<string[]> FilePathStringAsArrayParser =
@@ -153,6 +155,7 @@ namespace LINQToTreeHelpers
         /// Parse a name value macro definition
         /// </summary>
         private static readonly Parser<NameValue> MacroDefinitionParser =
+            from whitespace in Parse.WhiteSpace.Many()
             from mdef in Parse.String("macro")
             from nv in NamePathFinder
             select nv;
@@ -168,16 +171,17 @@ namespace LINQToTreeHelpers
         }
 
         private static readonly Parser<Machine> MachineParser =
+            from whitespace0 in Parse.WhiteSpace.Many()
             from mh in Parse.String("machine")
             from mName in Identifier
             from openBracket in Parse.Char('{')
-            from whitespace0 in Parse.WhiteSpace.Many()
-            from macros in MacroDefinitionParser.Many()
             from whitespace1 in Parse.WhiteSpace.Many()
-            from dataSets in DataSetDefinitionParser.Many()
+            from macros in MacroDefinitionParser.Many()
             from whitespace2 in Parse.WhiteSpace.Many()
-            from closeBracket in Parse.Char('}')
+            from dataSets in DataSetDefinitionParser.Many()
             from whitespace3 in Parse.WhiteSpace.Many()
+            from closeBracket in Parse.Char('}')
+            from whitespace4 in Parse.WhiteSpace.Many()
             from eol in Parse.Char('\n').Many()
             select new Machine() { Name = mName, DS = dataSets.ToArray(), Macros = macros.ToArray() };
 

@@ -49,5 +49,96 @@ namespace LINQToTreeHelpers.Tests
             Assert.AreEqual(1, ds.Length, "# of datasets for tag ttbar and dude");
 
         }
+
+        [TestMethod]
+        public void TestNewLines()
+        {
+            string dsspec = "machine junk {\n"
+                + "J1 (ttbar, dude) = *.root\n"
+                + "}";
+            DataSetFinder.ParseSpecFromString(dsspec);
+            DataSetFinder.MachineName = "junk";
+
+            var ds = DataSetFinder.DatasetNamesForTag("dude");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag dude");
+            Assert.AreEqual("J1", ds[0], "ds name");
+
+            ds = DataSetFinder.DatasetNamesForTag("ttbar");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag ttbar");
+
+            ds = DataSetFinder.DatasetNamesForTag("ttbar", "dude");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag ttbar and dude");
+        }
+
+        [TestMethod]
+        public void TestWhiteLines()
+        {
+            string dsspec =
+                "  \n"
+                + "machine junk {\n"
+                + "  \n"
+                + "J1 (ttbar, dude) = *.root\n"
+                + "  \n"
+                + "}"
+                + "  \n";
+            DataSetFinder.ParseSpecFromString(dsspec);
+            DataSetFinder.MachineName = "junk";
+
+            var ds = DataSetFinder.DatasetNamesForTag("dude");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag dude");
+            Assert.AreEqual("J1", ds[0], "ds name");
+
+            ds = DataSetFinder.DatasetNamesForTag("ttbar");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag ttbar");
+
+            ds = DataSetFinder.DatasetNamesForTag("ttbar", "dude");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag ttbar and dude");
+        }
+
+        [TestMethod]
+        public void TestNewLineAtEnd()
+        {
+            string dsspec =
+                "  \n"
+                + "machine junk {\n"
+                + "  \n"
+                + "J1 (ttbar, dude) = *.root\n"
+                + "  \n"
+                + "}\n";
+            DataSetFinder.ParseSpecFromString(dsspec);
+            DataSetFinder.MachineName = "junk";
+
+            var ds = DataSetFinder.DatasetNamesForTag("dude");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag dude");
+            Assert.AreEqual("J1", ds[0], "ds name");
+
+            ds = DataSetFinder.DatasetNamesForTag("ttbar");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag ttbar");
+
+            ds = DataSetFinder.DatasetNamesForTag("ttbar", "dude");
+            Assert.AreEqual(1, ds.Length, "# of datasets for tag ttbar and dude");
+
+        }
+
+        [TestMethod]
+        public void TestSampleFail()
+        {
+            string dsspec =
+                "machine HIGGS\n"
+                + "{\n"
+                + "  macro dsloc = \\tango.phys.washington.edu\\tev-scratch3\\users\\btag\\d3pd\n"
+                + "  macro localdata = \"D:\\users\\gwatts\\Shared Data\\JetBackToBack_006\"\n"
+                + "  macro dataloc = \\tevdisk2\\scratch3\\users\\HV\\JetBackToBack_006\n"
+                + " \n"
+                + "  JetStream = $dataloc\\user.Gordon.data11_7TeV*\\*.root*\n"
+                + "  \n"
+                + "  \n"
+                + "  \n"
+                + "  JetStream = $dataloc\\user.Gordon.data11_7TeV.period*\\*.root*\n"
+                + "}\n";
+
+            // Was causing an exceptoin previously!
+            DataSetFinder.ParseSpecFromString(dsspec);
+        }
     }
 }
