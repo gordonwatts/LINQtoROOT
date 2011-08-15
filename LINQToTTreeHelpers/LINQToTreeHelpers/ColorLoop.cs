@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace LINQToTreeHelpers
 {
     /// <summary>
-    /// A loop of color!
+    /// A loop of color! This is an internal class.
     /// </summary>
     class ColorLoop
     {

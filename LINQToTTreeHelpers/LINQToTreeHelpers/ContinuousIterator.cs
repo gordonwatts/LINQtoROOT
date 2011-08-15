@@ -5,7 +5,7 @@ namespace LINQToTreeHelpers
     /// <summary>
     /// A coninuous iterator - that keeps iterating over and over. :-)
     /// </summary>
-    public static class ContinuousIteratorHelper
+    static class ContinuousIteratorHelper
     {
         /// <summary>
         /// A looping iterator. Constantly re-runs the iterator that is passed in. Runs forever.
