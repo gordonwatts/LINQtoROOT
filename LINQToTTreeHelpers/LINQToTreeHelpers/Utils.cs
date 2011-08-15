@@ -76,7 +76,7 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Add a new symbol replacement (or abbreviation) to the list of latex replacements we keep track of.
+        /// Add a new symbol replacement (or abbreviation) to the list of latex replacements we keep track of using a regular expression.
         /// </summary>
         /// <param name="matcher"></param>
         /// <param name="replacement"></param>
@@ -86,10 +86,15 @@ namespace LINQToTreeHelpers
             gLatexReplacements.Add(Tuple.Create(matcher, replacement));
         }
 
-        public static void AddLatexReplacement(string matcher, string replacement)
+        /// <summary>
+        /// Add a new symbol replacement (or abbreviation) to the list of latex replacements we keep track of using a straight word-bounded string replacement.
+        /// </summary>
+        /// <param name="sourceString">The string to replace in ROOT histogram titles, etc. Only when this appears as a standalone as a word will it be replaced.</param>
+        /// <param name="replacement">The string it should be replaced with</param>
+        public static void AddLatexReplacement(string sourceString, string replacement)
         {
             InitLatexReplacementStrings();
-            gLatexReplacements.Add(Tuple.Create(new Regex(string.Format(@"\b{0}\b", matcher)), replacement));
+            gLatexReplacements.Add(Tuple.Create(new Regex(string.Format(@"\b{0}\b", sourceString)), replacement));
         }
 
         /// <summary>

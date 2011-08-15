@@ -128,10 +128,10 @@ namespace LINQToTreeHelpers
 
             stack.Draw("nostack");
 
-            ///
-            /// The stack is now "attached" to the canvas. This means the canvas now owns it. So we
-            /// definately don't want the GC to delete it - so here we need to turn off the delete.
-            /// 
+            //
+            // The stack is now "attached" to the canvas. This means the canvas now owns it. So we
+            // definately don't want the GC to delete it - so here we need to turn off the delete.
+            // 
 
             stack.SetNull();
 

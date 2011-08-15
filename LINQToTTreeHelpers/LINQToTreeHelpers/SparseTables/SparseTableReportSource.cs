@@ -22,11 +22,12 @@ namespace LINQToTreeHelpers.SparseTables
         }
 
         /// <summary>
-        /// Given a row name and a column name, return it.
+        /// Given a row name and a column name, return it. Generally used by the reporting
+        /// interface for turning this into a report.
         /// </summary>
-        /// <param name="dataItem"></param>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
+        /// <param name="rowNameObj">The row object returned by GetItems</param>
+        /// <param name="colName">The name of the column</param>
+        /// <returns>The data item for this field</returns>
         public object GetFieldValue(object rowNameObj, string colName)
         {
             if (rowNameObj == null)

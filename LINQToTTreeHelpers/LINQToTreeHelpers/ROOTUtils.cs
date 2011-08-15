@@ -66,9 +66,11 @@ namespace LINQToTreeHelpers
         public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi, double E)
         {
             throw new NotImplementedException("This should never get called!");
+#if false
             var tlz = new ROOTNET.NTLorentzVector();
             tlz.SetPtEtaPhiE(pt, eta, phi, E);
             return tlz;
+#endif
         }
 
         /// <summary>
@@ -87,9 +89,11 @@ namespace LINQToTreeHelpers
         public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi)
         {
             throw new NotImplementedException("This should never get called!");
+#if false
             var tlz = new ROOTNET.NTLorentzVector();
             tlz.SetPtEtaPhiM(pt, eta, phi, 139.6);
             return tlz;
+#endif
         }
 
         /// <summary>
@@ -100,7 +104,7 @@ namespace LINQToTreeHelpers
         /// <param name="v1"></param>
         /// <param name="v2"></param>
         /// <returns></returns>
-        [CPPCode(IncludeFiles= new [] {"TLorentzVector.h", "TVector2.h"},
+        [CPPCode(IncludeFiles = new[] { "TLorentzVector.h", "TVector2.h" },
             Code = new[] {
                 "double detaUnique = v1->Eta() - v2->Eta();",
                 "double dphiUnique = v1->Phi() - v2->Phi();",
@@ -109,9 +113,11 @@ namespace LINQToTreeHelpers
         public static double DeltaR2(this ROOTNET.NTLorentzVector v1, ROOTNET.NTLorentzVector v2)
         {
             throw new NotImplementedException("this should never get called");
+#if false
             double deta = v1.Eta() - v2.Eta();
             double deltaphi = ROOTNET.NTVector2.Phi_mpi_pi(v1.Phi() - v2.Phi());
             return deta * deta + deltaphi * deltaphi;
+#endif
         }
         #endregion
 
