@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 namespace LINQToTreeHelpers
 {
+    /// <summary>
+    /// Class holding extension methods for ROOT/string manipulation. Strings can be cleaned up for names,
+    /// and replacement can be done for LaTeX strings in ROOT histogram titles, etc.
+    /// </summary>
     public static class Utils
     {
         /// <summary>
