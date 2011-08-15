@@ -22,24 +22,6 @@ namespace LINQToTreeHelpers.SparseTables
         }
 
         /// <summary>
-        /// Given a row name and a column name, return it.
-        /// </summary>
-        /// <param name="dataItem"></param>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
-        public object GetFieldValue(object rowNameObj, string colName)
-        {
-            if (rowNameObj == null)
-                return string.Empty;
-
-            var rowName = rowNameObj as string;
-            if (colName == "TheRowName")
-                return rowName;
-
-            return _table[colName, rowName];
-        }
-
-        /// <summary>
         /// Return a list of all columns this report knows about. These will be come the column headers
         /// </summary>
         /// <returns></returns>
