@@ -9,10 +9,35 @@ using Sprache;
 namespace LINQToTreeHelpers
 {
     /// <summary>
-    /// Parse the dataset file, return CollecitonTree's.
-    /// Using a combinator-parser - very cool!
-    /// http://nblumhardt.com/2010/01/building-an-external-dsl-in-c/
+    /// Use this class to parse a text file that contains per-machine definitions of datasets. Then refer to
+    /// the data-set names by strings or tags and have them expand to a list of files or url's that can be
+    /// processed by the LINQ infrastructure.
+    /// 
+    /// Lookup is performed based on data set name or tag name and the current machine name. This allows different
+    /// locations for datasets depending upon what machine the queries are being run on. If the actual machine name
+    /// is not found, it will default back to the "empty" machine name.
+    ///
+    /// Parse error reporting is not great.
     /// </summary>
+    /// <remarks>
+    /// Makes use of the cominator-parser library: http://nblumhardt.com/2010/01/building-an-external-dsl-in-c/
+    /// </remarks>
+    /// <example>
+    /// By convention, create a dataset-list.txt file in your project that gets copied during your build.
+    /// 
+    /// Example file:
+    /// machine HIGGS
+    /// {
+    ///   macro dataloc = \\tango.phys.washington.edu\tev-scratch3\users\HV\JetBackToBack_006
+    ///
+    ///   JetStream = $dataloc\user.Gordon.data11_7TeV.periodG*\*.root*
+    /// }
+    /// 
+    /// Then, in your code:
+    ///     var files = DataSetFinder.FindROOTFilesForDS(dsname);
+    ///     Console.WriteLine("There are {0} files in dataset '{1}'.", files.Length, dsname);
+    ///     var data = ROOTLINQ.QueryableCollectionTree.Create(files);
+    /// </example>
     public class DataSetFinder
     {
         /// <summary>
@@ -193,7 +218,9 @@ namespace LINQToTreeHelpers
             select new Machine() { Name = "", DS = ds.ToArray() };
 
         /// <summary>
-        /// Get/Set the name of the machine we are running on. Defaults to current machine name.
+        /// Get/Set the name of the machine we are running on. Defaults to current machine name. Use this
+        /// if you want to make one machine look like another or during testing or anything else that needs to
+        /// be machine agnostic.
         /// </summary>
         public static string MachineName { get; set; }
 
@@ -225,7 +252,7 @@ namespace LINQToTreeHelpers
         private static List<string> gFiles = new List<string>() { "dataset-list.txt" };
 
         /// <summary>
-        /// Clear out all the files.
+        /// Reset the list of known files. Useful mostly for testing.
         /// </summary>
         public static void ClearFileList()
         {
@@ -233,10 +260,28 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Look at the dataset files and fine the dsName and return the files. They are sorted in alpha order.
+        /// Fetches the list of files associated with the passed in dataset name. The (default) machine
+        /// name and the dataset files are used to find the proper set of files. Full wildcard resolution
+        /// is also performed, of course.
         /// </summary>
-        /// <param name="dsName"></param>
-        /// <returns></returns>
+        /// <param name="dsName">The dataset for which the list of root files is desired.</param>
+        /// <returns>A complete list of files with full wildcard resolution. The files are returned in alphabetical order.</returns>
+        /// <example>
+        /// By convention, create a dataset-list.txt file in your project that gets copied during your build.
+        /// 
+        /// Example file:
+        /// machine HIGGS
+        /// {
+        ///   macro dataloc = \\tango.phys.washington.edu\tev-scratch3\users\HV\JetBackToBack_006
+        ///
+        ///   JetStream = $dataloc\user.Gordon.data11_7TeV.periodG*\*.root*
+        /// }
+        /// 
+        /// Then, in your code:
+        ///     var files = DataSetFinder.FindROOTFilesForDS(dsname);
+        ///     Console.WriteLine("There are {0} files in dataset '{1}'.", files.Length, dsname);
+        ///     var data = ROOTLINQ.QueryableCollectionTree.Create(files);
+        /// </example>
         public static FileInfo[] FindROOTFilesForDS(string dsName)
         {
             var result = FindMachinesDatasets();
@@ -326,10 +371,10 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Returns true if the data set is known about and will return real FileInfo's.
+        /// Returns true if the data set is known about and will return real root files for processing.
         /// </summary>
-        /// <param name="dsName"></param>
-        /// <returns></returns>
+        /// <param name="dsName">The name of the dataset to lookup</param>
+        /// <returns>True if the dataset is defined for this machine and has at least one file in it.</returns>
         public static bool HasDS(string dsName)
         {
             try
@@ -488,10 +533,30 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Return a list of data set names for each tag.
+        /// Return a list of dataset names that have all the given tags associated
+        /// with them.
         /// </summary>
-        /// <param name="tags"></param>
-        /// <returns></returns>
+        /// <param name="tags">List of tags</param>
+        /// <returns>List of dataset names that each have all the provided tags assoicated with them</returns>
+        /// <example>
+        /// Example dataset file:
+        /// machine HIGGS
+        /// {
+        ///   macro dataloc = \\tango.phys.washington.edu\tev-scratch3\users\HV\JetBackToBack_006
+        ///
+        ///   JetStream (jet, 7TeV) = $dataloc\user.Gordon.data11_7TeV.periodG*\*.root*
+        ///   EMStream (EM, 7TeV) = $dataloc\user.Gordon.data11_7TeV.EM.periodG*\*.root*
+        ///   EMStreamExtra (EM, 7TeV) = $dataloc\user.Gordon.data11_7TeV.EM.periodG*\*.root*
+        /// }
+        /// 
+        /// Then, in your code:
+        ///     var dsNames = DataSetFinder.DatasetNamesForTag(new [] {"jet"});
+        /// will return "JetStream" and
+        ///     var dsNames = DataSetFinder.DatasetNamesForTag(new [] {"7TeV"});
+        /// will return "JetStream" and "EM" stream.
+        ///     var dsNames = DataSetFinder.DatasetNamesForTag(new [] {"EM", "7TeV"});
+        /// will return "EMStream" and "EMStreamExtra"
+        /// </example>
         public static string[] DatasetNamesForTag(params string[] tags)
         {
             var machine = FindMachinesDatasets();
@@ -504,8 +569,8 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Returns all the tags that are associated with a dataset.
         /// </summary>
-        /// <param name="dsname"></param>
-        /// <returns></returns>
+        /// <param name="dsname">Name of the dataset that the tag lookup will be done on</param>
+        /// <returns>List of the tags associated with the dataset. Could be the empty array (but not null).</returns>
         public static string[] DSTags(string dsname)
         {
             var machine = FindMachinesDatasets();
@@ -541,7 +606,7 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Clear out the read in files, re-prime the read in.
+        /// Clear out the read in files, re-prime the read in. Useful in test harnesses.
         /// </summary>
         public static void ResetCache()
         {
@@ -581,7 +646,8 @@ namespace LINQToTreeHelpers
 
         /// <summary>
         /// Parse a string for dataset definitions. NOTE: there is no attempt to remove
-        /// comments - this should be pure text by now!
+        /// comments - this should be pure text by now! This is useful if you need to inject
+        /// the dataset specification from some source other than a file.
         /// </summary>
         /// <param name="text">The text that we will parse</param>
         public static void ParseSpecFromString(string text)
