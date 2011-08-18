@@ -12,6 +12,7 @@ namespace QueryExecutor
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            ROOTNET.NTEnv.gEnv.SetValue("TFile.Recover", "0");
             if (args.Length != 1)
                 throw new ArgumentException("Incorrect number of args");
 
