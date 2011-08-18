@@ -82,14 +82,20 @@ namespace LINQToTTreeLib.ExecutionCommon.ParallelExes
         private IDictionary<string, object> LoadUpVars(FileInfo fileInfo)
         {
             var result = new Dictionary<string, object>();
-            var input = ROOTNET.NTFile.Open(fileInfo.FullName, "READ");
-
-            foreach (var k in input.ListOfKeys)
+            if (fileInfo.Exists)
             {
-                result[k.Name] = input.Get(k.Name).Clone();
-            }
+                var input = ROOTNET.NTFile.Open(fileInfo.FullName, "READ");
+                if (input != null)
+                {
 
-            input.Close();
+                    foreach (var k in input.ListOfKeys)
+                    {
+                        result[k.Name] = input.Get(k.Name).Clone();
+                    }
+
+                    input.Close();
+                }
+            }
 
             return result;
         }
