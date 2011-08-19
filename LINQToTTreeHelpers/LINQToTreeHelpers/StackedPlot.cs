@@ -71,7 +71,7 @@ namespace LINQToTreeHelpers
                 var splitTitles = from h in hToPlot
                                   select h.Title.Split();
 
-                var wordList = from index in Enumerable.Range(0, splitTitles.Select(ar => ar.Count()).Min())
+                var wordList = from index in Enumerable.Range(0, splitTitles.Select(ar => ar.Count()).Max())
                                select (from titleWords in splitTitles select titleWords.Skip(index).FirstOrDefault()).ToArray();
 
                 var isTheSame = (from wl in wordList
