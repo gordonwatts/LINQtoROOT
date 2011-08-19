@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace LINQToTreeHelpers
 {
@@ -11,6 +12,9 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Create a canvas that is a set of stacked plots.
         /// </summary>
+        /// <remarks>
+        /// Only TH1F plots are dealt with properly here. Everything else is ignored and no stacked plot will be emitted.
+        /// </remarks>
         /// <param name="histos"></param>
         /// <param name="canvasName">Name given to the canvas</param>
         /// <param name="canvasTitle">Title that will be put at the top of the canvas</param>
@@ -19,7 +23,7 @@ namespace LINQToTreeHelpers
         /// <param name="normalize">True if the histograms should be set to normal area (1) before being plotted</param>
         /// <param name="legendContainsOnlyUniqueTitleWords">If true, then common words in the  histogram titles are removed before they are used for the legend</param>
         /// <returns></returns>
-        public static ROOTNET.Interface.NTCanvas PlotStacked(this ROOTNET.Interface.NTH1F[] histos, string canvasName, string canvasTitle,
+        public static ROOTNET.Interface.NTCanvas PlotStacked(this ROOTNET.Interface.NTH1[] histos, string canvasName, string canvasTitle,
             bool logy = false,
             bool normalize = false,
             bool legendContainsOnlyUniqueTitleWords = true,
@@ -33,7 +37,20 @@ namespace LINQToTreeHelpers
             // the user intended.
             // 
 
-            var hToPlot = (from h in histos select h.Clone(string.Format("{0}{1}", h.Name, canvasName)) as ROOTNET.Interface.NTH1F).ToArray();
+            var hToPlot = (from h in histos where (h as ROOTNET.Interface.NTH1) != null select h.Clone(string.Format("{0}{1}", h.Name, canvasName)) as ROOTNET.Interface.NTH1).ToArray();
+            if (hToPlot.Length == 0)
+            {
+                var msg = new StringBuilder();
+                msg.Append("Warning: Only able to build a stacked plot for TH1F type plots (");
+                foreach (var p in histos)
+                {
+                    msg.AppendFormat(" {0}", p.Name);
+                }
+                msg.Append(")");
+                Console.WriteLine(msg.ToString());
+                return null;
+            }
+
             foreach (var h in hToPlot)
             {
                 h.SetDirectory(null);
@@ -154,7 +171,7 @@ namespace LINQToTreeHelpers
         /// <param name="h"></param>
         /// <param name="format">string.Format argument, arg {0} will be the old histogram name</param>
         /// <returns></returns>
-        private static ROOTNET.Interface.NTH1F AppendName(ROOTNET.Interface.NTH1F h, string format)
+        private static ROOTNET.Interface.NTH1 AppendName(ROOTNET.Interface.NTH1 h, string format)
         {
             h.Name = string.Format(format, h.Name);
             return h;
@@ -166,7 +183,7 @@ namespace LINQToTreeHelpers
         /// <param name="histo"></param>
         /// <param name="toArea">The area the histogram should be noramlized to</param>
         /// <returns></returns>
-        public static ROOTNET.Interface.NTH1F Normalize(this ROOTNET.Interface.NTH1F histo, double toArea = 1.0)
+        public static ROOTNET.Interface.NTH1 Normalize(this ROOTNET.Interface.NTH1 histo, double toArea = 1.0)
         {
             histo.Scale(toArea / histo.Integral());
             return histo;
