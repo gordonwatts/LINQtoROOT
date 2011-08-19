@@ -15,6 +15,7 @@ namespace LINQToTreeHelpers.FutureUtils
             {
                 throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
             }
+            ROOTNET.NTDirectory.gDirectory.cd("root:");
             return f;
         }
 
@@ -22,6 +23,10 @@ namespace LINQToTreeHelpers.FutureUtils
         /// Creates a new ROOT file and attaches a future value container to it. This container
         /// can be used to store future values that get evaluated at a later time.
         /// </summary>
+        /// <remarks>
+        /// After this call your global directory will point back to Rint: - the base directory for
+        /// all of root.
+        /// </remarks>
         /// <param name="outputRootFile"></param>
         public FutureTFile(FileInfo outputRootFile)
             : base(CreateOpenFile(outputRootFile.FullName))

@@ -20,6 +20,10 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <summary>
         /// Create a new future directory container that will write its objects to the given root directory
         /// </summary>
+        /// <remarks>
+        /// In ROOT, when you create a new directory the gDirectory variable isn't changed; so the global directory
+        /// will be unchanged by this operation.
+        /// </remarks>
         /// <param name="dir"></param>
         public FutureTDirectory(ROOTNET.Interface.NTDirectory dir)
         {
@@ -159,6 +163,10 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <summary>
         /// Create a new directory
         /// </summary>
+        /// <remarks>
+        /// In ROOT, when you create a new directory the gDirectory variable isn't changed; so the global directory
+        /// will be unchanged by this operation.
+        /// </remarks>
         /// <param name="subdirname"></param>
         /// <returns></returns>
         public FutureTDirectory mkdir(string subdirname)
