@@ -397,9 +397,13 @@ namespace LINQToTreeHelpers
         {
             foreach (var ss in searchStrings)
             {
-                var r = FindFilesInSearchString(ss);
-                if (r.Length > 0)
-                    return r;
+                try
+                {
+                    var r = FindFilesInSearchString(ss);
+                    if (r.Length > 0)
+                        return r;
+                }
+                catch { }
             }
 
             StringBuilder bld = new StringBuilder();
