@@ -14,10 +14,16 @@ namespace LINQToTreeHelpers
         /// Write out an object. Eventually, with ROOTNET improvements this will work better and perahps
         /// won't be needed!
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The object to be written. Assumed not null.</param>
         /// <param name="dir"></param>
         internal static void InternalWriteObject(this ROOTNET.Interface.NTObject obj, ROOTNET.Interface.NTDirectory dir)
         {
+            if (obj == null)
+            {
+                Console.WriteLine("WARNING: Unable to write out null object to a TDirectory!");
+                return;
+            }
+
             var h = obj as ROOTNET.Interface.NTH1;
             if (h != null)
             {
