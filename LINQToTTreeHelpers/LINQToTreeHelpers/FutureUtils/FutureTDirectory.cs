@@ -70,6 +70,9 @@ namespace LINQToTreeHelpers.FutureUtils
         public void AddFuture<T>(IFutureValue<T> obj, string[] tags = null)
             where T : ROOTNET.Interface.NTObject
         {
+            if (obj == null)
+                throw new ArgumentNullException("Unable to store null futures in a FutureTDirectory!");
+
             _heldValues.Add(new FVHolder<T>() { Value = obj });
             if (tags != null)
             {
