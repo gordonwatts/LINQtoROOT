@@ -165,6 +165,33 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(10, (result as ConstantExpression).Value, "value incorrect");
         }
 
+        struct customObject
+        {
+            public int Var1;
+            public int Var2;
+        }
+
+        [TestMethod]
+        public void TestCustomObjectTranslation()
+        {
+            Expression<Func<int>> lambaExpr = () => new customObject() { Var1 = 5, Var2 = 10 }.Var2;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+            Assert.AreEqual(10, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        [TestMethod]
+        public void TestCustomObjectBadInitalizer()
+        {
+            // There should be no changes - we will fail later on!
+            Expression<Func<int>> lambaExpr = () => new customObject().Var2;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            Assert.IsInstanceOfType(result, typeof(MemberExpression), "Expression type");
+        }
+
         [TestMethod]
         public void TestNoTranslate2DArrayIndex()
         {

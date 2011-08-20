@@ -43,10 +43,51 @@ namespace LINQToTTreeLib.Expressions
                 {
                     return TranslateAnonymousPropertyReference(expression);
                 }
-
             }
 
+            //
+            // If a user declared object is created and referenced (and the members are inited)
+            // then we can use them as something to do translation in.
+            //
+
+            if (expression.Expression.NodeType == ExpressionType.MemberInit)
+            {
+                var result = TranslateUserObjectMemberInitReference(expression);
+                if (result != null)
+                    return result;
+            }
+
+            //
+            // Fall through and perform default actions (like looking deeper) if we got
+            // no where!
+            //
+
             return base.VisitMemberExpression(expression);
+        }
+
+        /// <summary>
+        /// The user has something like new CustomObject(){Val1 = 5}.Val1 in their code. This
+        /// is just expression carry-through - similar to the tuple and anonymous objects.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns>The translated expression if the lookup succeeded, or null if not</returns>
+        /// <remarks>We support only member assignment!</remarks>
+        private Expression TranslateUserObjectMemberInitReference(MemberExpression expression)
+        {
+            var memberInit = expression.Expression as MemberInitExpression;
+            var propName = expression.Member.Name;
+
+            var matchingInits = (from mi in memberInit.Bindings
+                                 where mi.Member.Name == propName && mi.BindingType == MemberBindingType.Assignment
+                                 select mi).ToArray();
+            if (matchingInits.Length == 0)
+                return null;
+
+            if (matchingInits.Length != 1)
+                throw new InvalidOperationException(string.Format("Type '{0}' seems to have more than one member named '{1}'!", memberInit.Type.Name, propName));
+
+            var binding = matchingInits[0] as MemberAssignment;
+            return VisitExpression(binding.Expression);
         }
 
         /// <summary>
