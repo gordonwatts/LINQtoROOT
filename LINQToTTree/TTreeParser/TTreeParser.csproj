@@ -53,17 +53,45 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libCoreWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libHistWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
-    <Reference Include="libRIOWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="libCoreWrapper, Version=2.2.4255.5523, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libRIOWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libTreePlayerWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
-    <Reference Include="libTreeWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
+    <Reference Include="libGrafWrapper, Version=2.2.4255.6238, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libGrafWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libHistWrapper, Version=2.2.4255.5877, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libMathCoreWrapper, Version=2.2.4255.5574, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libNetWrapper, Version=2.2.4255.5882, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libNetWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libPhysicsWrapper, Version=2.2.4255.5860, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libRIOWrapper, Version=2.2.4255.5712, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libThreadWrapper, Version=2.2.4255.5594, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreePlayerWrapper, Version=2.2.4255.6380, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreePlayerWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreeWrapper, Version=2.2.4255.6246, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -72,7 +100,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4058.40323, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="WrapperPlumbingLibrary, Version=2.2.4255.397, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrayAnalyzer.cs" />
@@ -89,6 +120,9 @@
       <Project>{3F0367B8-C970-4134-8FC6-944400C00F71}</Project>
       <Name>TTreeDataModel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

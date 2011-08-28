@@ -74,17 +74,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(ROOTSYS)\NETWrappers\lib\libCoreWrapper.dll</HintPath>
+    <Reference Include="libCoreWrapper, Version=2.2.4255.5523, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libTreeWrapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(ROOTSYS)\NETWrappers\lib\libTreeWrapper.dll</HintPath>
+    <Reference Include="libHistWrapper, Version=2.2.4255.5877, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libMathCoreWrapper, Version=2.2.4255.5574, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libPhysicsWrapper, Version=2.2.4255.5860, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libRIOWrapper, Version=2.2.4255.5712, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreePlayerWrapper, Version=2.2.4255.6380, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreePlayerWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreeWrapper, Version=2.2.4255.6246, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4058.40323, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(ROOTSYS)\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.2.4255.397, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
