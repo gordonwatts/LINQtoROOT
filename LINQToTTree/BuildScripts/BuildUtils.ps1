@@ -58,7 +58,7 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
 
 	$version = $PackageSpecification["version"]
 	$packageName = $PackageSpecification["Name"] + "-" + $PackageSpecification["ROOTVersion"]
-	$path = "$BuildDir\$packageName-$version.nuspec"
+	$path = "$BuildDir\$packageName.$version.nuspec"
 	
 	#
 	# Now write out the spec file
@@ -120,7 +120,7 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
 		throw "Failed to build nuget package!"
 	}
 	
-	return $path
+	return $path.Replace(".nuspec", ".nupkg")
 }
 
 #
@@ -132,7 +132,8 @@ function get-root-version
 	{
 		$l = $_ -split "-"
 		$vstr = $l[2] -split "\."
-		return $vstr[0..2] -join "."
+		#return $vstr[0..2] -join "."
+		return $vstr -join "."
 	}
 }
 
@@ -197,7 +198,17 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	}
 	
 	$pkg = build-nuget-package -PackageSpecification $packageSpec -BuildDir $buildDir -NuGetExe "$solutionDirectory\LINQToTTree\nuget.exe"
-	Write-Output $pkg
+	
+	#
+	# Copy it over if requested. Return the final location of the file.
+	#
+	
+	if ($nugetDistroDirectory)
+	{
+		return Copy-Item $pkg $nugetDistroDirectory
+	}
+	
+	return $pkg
 }
 
-build-LINQToTTree-nuget-packages "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "0.42"
+build-LINQToTTree-nuget-packages "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "0.42" -nugetDistroDirectory "C:\Users\gwatts\Documents\nuget"
