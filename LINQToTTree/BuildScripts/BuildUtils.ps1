@@ -101,6 +101,10 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     {
         "    <file src=`"$l`" target=`"lib\net40`" />" >> $path
     }
+	foreach ($l in $PackageSpecification["Tools"])
+	{
+        "    <file src=`"$l`" target=`"tools`" />" >> $path
+	}
     
     #
     # Done!
@@ -168,6 +172,15 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$allLibraries = $mainLibraries + $helperLibraries
 
 	#
+	# We need to include the executable that will parse the ntuples
+	#
+	
+	$cmdExeFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\CmdTFileParser\bin\$release"
+	$msbuildTaskFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\MSBuildTasks\bin\$release"
+
+	$toolFiles = ($cmdExeFiles + $msbuildTaskFiles) | Sort-Object -Property Name -Unique | % {$_.FullName}
+
+	#
 	# Next, figure out what the dependent libraries are for nuget. These are things that nuget will
 	# have to also fetch in order for us to "work" correctly.
 	#
@@ -195,6 +208,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 		"ROOTVersion" = $ROOTVersion
 		"Dependencies" = $allPackageDependencies
 		"Libraries" = $allLibraries
+		"Tools" = $toolFiles
 	}
 	
 	$pkg = build-nuget-package -PackageSpecification $packageSpec -BuildDir $buildDir -NuGetExe "$solutionDirectory\LINQToTTree\nuget.exe"
