@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
@@ -111,6 +112,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             /// 
 
             Parse(new DirectoryInfo("."));
+            Parse(new DirectoryInfo(new FileInfo(Assembly.GetCallingAssembly().Location).DirectoryName + "\\ConfigData"));
             Parse(new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Config"));
         }
 
