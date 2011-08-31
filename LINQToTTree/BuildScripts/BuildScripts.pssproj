@@ -23,7 +23,13 @@
     <Compile Include="BuildUtils.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Init.ps1">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Install.ps1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="LINQToTTreeCommands.psm1">
       <SubType>Content</SubType>
     </Content>
     <Content Include="msbuild.psm1">

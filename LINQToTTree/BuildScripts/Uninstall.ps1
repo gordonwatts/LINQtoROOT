@@ -18,10 +18,13 @@ $buildProject = Get-MSBuildProject
 # Next, add the import statements
 #
 
-$import = $buildProject.XML.Imports | ? {([System.IO.FileInfo] $_.Project).Name -eq "LINQTargets.targets" }
-if ($import)
+$imports = $buildProject.XML.Imports | ? {([System.IO.FileInfo] $_.Project).Name -eq "LINQTargets.targets" }
+if ($imports)
 {
-	$buildProject.XML.RemoveChild($import)
+	foreach ($i in $imports)
+	{
+		$buildProject.XML.RemoveChild($i)
+	}
 }
 
 $project.Save() #persists the changes
