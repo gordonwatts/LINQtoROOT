@@ -11,7 +11,7 @@ function add-to-project ($itemType, $project)
 {
 	process
 	{
-		$project.Xml.AddItem($itemType, $_)
+		$bogus = $project.Xml.AddItem($itemType, $_)
 	}
 }
 
