@@ -178,7 +178,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	
 	$cmdExeFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\CmdTFileParser\bin\$release"
 	$msbuildTaskFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\MSBuildTasks\bin\$release"
-	$installToolFiles = "msbuild.psm1", "Install.ps1" | % { [System.IO.FileInfo] "$solutionDirectory\LINQToTTree\BuildScripts\$_" }
+	$installToolFiles = "msbuild.psm1", "Install.ps1", "Uninstall.ps1" | % { [System.IO.FileInfo] "$solutionDirectory\LINQToTTree\BuildScripts\$_" }
 
 	$toolFiles = ($cmdExeFiles + $msbuildTaskFiles + $installToolFiles) | Sort-Object -Property Name -Unique | % {$_.FullName}
 

@@ -29,6 +29,9 @@
     <Content Include="msbuild.psm1">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Uninstall.ps1">
+      <SubType>Content</SubType>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
