@@ -223,11 +223,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist $(USERPROFILE)\AppData\Local\LINQToTTree\Config mkdir $(USERPROFILE)\AppData\Local\LINQToTTree\Config
-copy $(ProjectDir)\ConfigData\default.classmethodmappings $(USERPROFILE)\AppData\Local\LINQToTTree\Config\
-xcopy /Y "$(SolutionDir)\LINQToTTreeLib\InfrastructureSourceFiles" "$(USERPROFILE)\AppData\Local\LINQToTTree\InfrastructureSourceFiles\"
-xcopy /Y "$(SolutionDir)\LINQToTTreeLib\Templates" "$(USERPROFILE)\AppData\Local\LINQToTTree\Templates\"
-$(SolutionDir)\nuget pack LINQToROOT.nuspec</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
