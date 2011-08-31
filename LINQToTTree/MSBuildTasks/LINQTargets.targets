@@ -7,7 +7,7 @@ Targets to build the data model C# files from ntuple TTree spec files
   <PropertyGroup>
     <CoreCompileDependsOn>GenerateTTreeDM;$(CoreCompileDependsOn)</CoreCompileDependsOn>
   </PropertyGroup>
-  <UsingTask TaskName="BuildTTreeDataModel" AssemblyFile="C:\root\NETWrappers\LINQ\build\MSBuildTasks.dll" />
+  <UsingTask TaskName="BuildTTreeDataModel" AssemblyFile="MSBuildTasks.dll" />
   <Target Name="GenerateTTreeDM" Inputs="@(ROOTFileDataModel);@(TTreeGroupSpec)" Outputs="@(ROOTFileDataModel->'$(IntermediateOutputPath)%(FileName).dm.cs')">
     <BuildTTreeDataModel InputFiles="@(ROOTFileDataModel)" OutputFiles="@(ROOTFileDataModel->'$(IntermediateOutputPath)%(FileName).dm.cs')">
       <Output ItemName="Compile" TaskParameter="OutputFiles" />

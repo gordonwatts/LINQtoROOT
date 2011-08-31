@@ -5,7 +5,6 @@
 # the LINQToTTree libraries
 #
 
-
 #
 # Check that all the files exist as dll's in the
 # dest directory. Fail badly if not.
@@ -38,12 +37,14 @@ function get-files-for-library ($dir, $flist)
 }
 
 #
-# Loads in the list of packages from package config directory
+# Loads in the list of packages from package config directory as
+# a PSObject.
 #
 function get-solution-nuget-dependencies ($solDir, $packageFile = "packages.config")
 {
 	$xml = [Xml] (Get-Content "$solDir\$packageFile")
-	return $xml.SelectNodes("/packages/package") | % { @{"Id" = $_.id; "Version" = $_.version} }
+	$prop = $xml.SelectNodes("/packages/package") | % { @{"Id" = $_.id; "Version" = $_.version} }
+	return $prop | % {New-Object PSObject -Property $_}
 }
 
 #
@@ -83,8 +84,8 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
         "    <dependencies>" >> $path
         foreach ($dep in $PackageSpecification["Dependencies"])
         {
-			$pname = $dep["Id"]
-			$pversion = $dep["Version"]
+			$pname = $dep.Id
+			$pversion = $dep.Version
             "      <dependency id=`"$pname`" version=`"$pversion`" />" >> $path
         }
         "    </dependencies>" >> $path
@@ -118,7 +119,7 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     #
     
     $results = & $NuGetExe pack $path -OutputDirectory $BuildDir 2>&1
-	if (-not (($results | ? { $_.Contains("Successfully created") } ).Length -gt 0 ))
+	if (-not (($results | ? {$_.GetType() -eq [System.String]} | ? { $_.Contains("Successfully created") } ).Length -gt 0 ))
 	{
 		Write-Host $results
 		throw "Failed to build nuget package!"
@@ -177,8 +178,9 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	
 	$cmdExeFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\CmdTFileParser\bin\$release"
 	$msbuildTaskFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\MSBuildTasks\bin\$release"
+	$installToolFiles = "msbuild.psm1", "Install.ps1" | % { [System.IO.FileInfo] "$solutionDirectory\LINQToTTree\BuildScripts\$_" }
 
-	$toolFiles = ($cmdExeFiles + $msbuildTaskFiles) | Sort-Object -Property Name -Unique | % {$_.FullName}
+	$toolFiles = ($cmdExeFiles + $msbuildTaskFiles + $installToolFiles) | Sort-Object -Property Name -Unique | % {$_.FullName}
 
 	#
 	# Next, figure out what the dependent libraries are for nuget. These are things that nuget will
@@ -188,7 +190,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$mainPackageDependencies = get-solution-nuget-dependencies $mainLibrarySolutionDir
 	$helperPackageDependencies = get-solution-nuget-dependencies $helperLibrarySolutionDir
 
-	$allPackageDependencies = $mainPackageDependencies + $helperPackageDependencies
+	$allPackageDependencies = $mainPackageDependencies + $helperPackageDependencies | sort -Property "Id","Version" -Unique
 	
 	#
 	# Extract the root version number. We depend on these to build, so it will be stored

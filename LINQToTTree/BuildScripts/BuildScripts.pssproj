@@ -22,6 +22,14 @@
   <ItemGroup>
     <Compile Include="BuildUtils.ps1" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Install.ps1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="msbuild.psm1">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
 </Project>
