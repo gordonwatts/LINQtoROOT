@@ -50,7 +50,7 @@ namespace CmdTFileParser
                     if (!inf.Exists)
                         inf.Create();
                     outputDir = inf;
-                    specialFile = null;
+                    specialFile = "";
                     continue;
                 }
 
