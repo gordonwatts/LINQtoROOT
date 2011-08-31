@@ -209,7 +209,7 @@ namespace TTreeParser
             int index = 0;
             do
             {
-                userInfoFile = new FileInfo(treeName + "Config-" + index.ToString("000") + ".ntup");
+                userInfoFile = new FileInfo(ProxyGenerationLocation.FullName + "\\" + treeName + "Config-" + index.ToString("000") + ".ntup");
                 index = index + 1;
             } while (userInfoFile.Exists);
 
