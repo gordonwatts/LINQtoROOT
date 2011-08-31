@@ -686,7 +686,16 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private string TemplateDirectory(string templateName)
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Templates\\" + templateName;
+            var assDir = new FileInfo(Assembly.GetCallingAssembly().Location);
+            var assGuess = string.Format(@"{0}\Templates\{1}", assDir.DirectoryName, templateName);
+            if (File.Exists(assGuess))
+                return assGuess;
+
+            var guess = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Templates\\" + templateName;
+            if (File.Exists(guess))
+                return guess;
+
+            throw new FileNotFoundException(string.Format("Unable to locatoin LINQToTTree template file '{0}' in any standard location.", templateName));
         }
 
         /// <summary>
