@@ -106,7 +106,13 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
 	{
         "    <file src=`"$l`" target=`"tools`" />" >> $path
 	}
-    
+    foreach ($l in $PackageSpecification["ContentFiles"])
+	{
+		$dest = $l.DestDir
+		$src = $l.SourceFile
+        "    <file src=`"$src`" target=`"content\$dest`" />" >> $path
+	}
+	
     #
     # Done!
     #
@@ -171,6 +177,15 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$mainLibraries = get-files-for-library $mainLibrary $mainLibraryFiles
 	$helperLibraries = get-files-for-library $helperLibrary $helperLibraryFiles
 	$allLibraries = $mainLibraries + $helperLibraries
+	
+	#
+	# There are some config data files that we need to add in.
+	#
+	
+	$methodConfigFile = New-Object PSObject -Property @{DestDir = "ConfigData"; SourceFile = "$mainLibrary\ConfigData\default.classmethodmappings" }
+	$TSelectorTemplate = New-Object PSObject -Property @{DestDir = "Templates"; SourceFile = "$mainLibrary\Templates\TSelectorTemplate.cxx" }
+	
+	$contentList = $methodConfigFile, $TSelectorTemplate
 
 	#
 	# We need to include the executable that will parse the ntuples
@@ -199,7 +214,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	
 	$ROOTNames = $allPackageDependencies | ? {$_.Id.Contains("ROOT")} | % {$_.Id}
 	$ROOTVersion = $ROOTNames[0] | get-root-version
-	
+		
 	#
 	# We have gathered all the basic information we need to build the main nuget package.
 	#
@@ -211,6 +226,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 		"Dependencies" = $allPackageDependencies
 		"Libraries" = $allLibraries
 		"Tools" = $toolFiles
+		ContentFiles = $contentList
 	}
 	
 	$pkg = build-nuget-package -PackageSpecification $packageSpec -BuildDir $buildDir -NuGetExe "$solutionDirectory\LINQToTTree\nuget.exe"

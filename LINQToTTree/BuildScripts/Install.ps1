@@ -23,9 +23,23 @@ $buildProject = Get-MSBuildProject
 $buildTargetFile = Join-Path $toolsPath "LINQTargets.targets"
 $buildProject.Xml.AddImport($buildTargetFile)
 
-#$target = $buildProject.Xml.AddTarget("MyCustomAfterBuild")
-#$target.AfterTargets = "AfterBuild"
-#task = $target.AddTask("Message")
-#$task.SetParameter("Text", "Hello AfterBuild")
+#
+# Now, we have a few tempate files - we need to set them as no build and mark them
+# copy if newer.
+#
+
+$projectItems = $project.ProjectItems
+$cfgFile = $projectItems.Item("ConfigData").ProjectItems.Item("default.classmethodmappings")
+$template = $projectItems.Item("Templates").ProjectItems.Item("TSelectorTemplate.cxx")
+
+$cfgFile.Properties.Item("CopyToOutputDirectory").Value = 2
+$cfgFile.Properties.Item("BuildAction").Value = 0
+
+$template.Properties.Item("CopyToOutputDirectory").Value = 2
+$template.Properties.Item("BuildAction").Value = 0
+
+#
+# now, update everything and make sure it sticks!
+#
 
 $project.Save() #persists the changes
