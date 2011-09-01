@@ -20,7 +20,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BuildUtils.ps1" />
+    <Compile Include="BuildUtils.psm1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Init.ps1">
@@ -33,6 +33,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="msbuild.psm1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="source-control.psm1">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Uninstall.ps1">
