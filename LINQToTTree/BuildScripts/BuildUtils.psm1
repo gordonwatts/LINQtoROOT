@@ -337,7 +337,7 @@ Import-Module "$loc\source-control.psm1"
 # making our nuget libraries, and generate the nuget package!
 #
 function build-LINQToTTree ($BuildPath, $release = "Release", $tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB)
-{
+{	
 	#
 	# Build the libraries
 	#
@@ -347,10 +347,16 @@ function build-LINQToTTree ($BuildPath, $release = "Release", $tag = "HEAD", $nu
 	$buildLog = "LINQToTTree\LINQToTTreeLib", "LINQToTTreeHelpers\LINQToTreeHelpers", "LINQToTTree\CmdTFileParser", "LINQToTTree\MSBuildTasks"   | % { "$BuildPath\$_" } | build-project $release
 
 	#
+	# Get the version number
+	#
+
+	$version = (Get-Item "$BuildPath\LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib.dll").VersionInfo.ProductVersion
+
+	#
 	# Next, make the nuget pacakge
 	#
 	
-	$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath "0.42"  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB
+	$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB
 	
 	return $colog, $lognuget, $buildLog, $nugetCreateLog
 }
