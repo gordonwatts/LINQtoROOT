@@ -243,4 +243,109 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	return $pkg
 }
 
+#
+# Given a nuget repository directory, figure out what versions of root are present there
+#
+function get-ROOT-versions ($URL)
+{
+	# Get the RSS list of everything that is availible
+	$pkgInfo = [Xml] (new-object net.webclient).downloadstring($URL)
+	# List of all the core package names.
+	$corePackages = $pkgInfo.feed.entry | ? {$_.Title.InnerText.Contains("ROOTNET-Core")} | %{ @{ RVersion = $_.Title.InnerText.SubString(13); RDNVersion = $_.GetElementsByTagName("d:Version").Item(0).InnerText} } | % {New-Object PSObject -Property $_ }
+	return $corePackages
+}
+
+#
+# Scans the packages.config for RDN packages and returns their name ("Core", etc.).
+#
+function get-ROOTDOTNET-packages ($ProjectDir)
+{
+	$pkgInfo = [Xml] (Get-Content "$ProjectDir\packages.config")
+	return $pkgInfo.packages.package | ? {$_.id.StartsWith("ROOTNET")} | % {($_.id -split "-")[1]}
+}
+
+#
+# Use the packages.config to drive a package installation
+#
+function install-packages ($URL, $nuget)
+{
+	process
+	{
+		[System.IO.Directory]::SetCurrentDirectory("$_\..")
+		Set-Location "$_\.."
+		Write-Output (& $nuget install -OutputDirectory .\packages -Source $URL "$_\packages.config")
+	}
+}
+
+#
+# Make sure that all packages are correctly installed for all the projects.
+#
+function configure-nuget ($BuildPath, $URL, $nuget)
+{
+	$installLogs = Get-ChildItem -Recurse -Path "$BuildPath\*\packages.config" | % {$_.Directory} | install-packages $URL $nuget
+	return $installLogs
+}
+
+#
+# Make sure that the proper nuget packages are installed for
+# a particular build we are going to do.
+#
+function configure-nuget-all ($BuildPath)
+{
+	# See if we can figure out where nuget.exe is.
+	$nuget = "$BuildPath\LINQToTTree\nuget.exe"
+	if (-not (Test-Path $nuget))
+	{
+		throw "Unable to locate nuget.exe - though it would be here: $nuget"
+	}
+	
+	$nugetRepository = "http://deeptalk.phys.washington.edu/rootNuGet/nuget,https://go.microsoft.com/fwlink/?LinkID=206669"
+	
+	$log1 = configure-nuget "$BuildPath\LINQToTTree" $nugetRepository $nuget
+	$log2 = configure-nuget "$BuildPath\LINQToTTreeHelpers" $nugetRepository $nuget
+	
+	return $log1, $log2
+}
+
+#
+# Do a build
+#
+function build-project ($release)
+{
+	process
+	{
+		$solFile = Get-ChildItem $_\..\*.sln
+		$pname = ([System.IO.FileInfo] $_).Name
+		& devenv /nologo $solFile /project $pname /build "$release"
+	}
+}
+
+$loc = Split-Path -parent $MyInvocation.MyCommand.Definition
+Import-Module "$loc\source-control.psm1"
+
+#
+# Given the main distribution directory, build everything needed for
+# making our nuget libraries, and generate the nuget package!
+#
+function build-LINQToTTree ($BuildPath, $release = "Release", $tag = "HEAD", $nugetPackageDir = "")
+{
+	#
+	# Build the libraries
+	#
+	
+	$colog = set-revision $BuildPath -repositoryPath "https://hg01.codeplex.com/linqtoroot" -revision $tag
+	$lognuget = configure-nuget-all $BuildPath
+	$buildLog = "LINQToTTree\LINQToTTreeLib", "LINQToTTreeHelpers\LINQToTreeHelpers", "LINQToTTree\CmdTFileParser", "LINQToTTree\MSBuildTasks"   | % { "$BuildPath\$_" } | build-project $release
+
+	#
+	# Next, make the nuget pacakge
+	#
+	
+	$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath "0.42"  -nugetDistroDirectory $nugetPackageDir
+	
+	return $colog, $lognuget, $buildLog, $nugetCreateLog
+}
+
 #build-LINQToTTree-nuget-packages "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "0.42" -nugetDistroDirectory "C:\Users\gwatts\Documents\nuget"
+Export-ModuleMember build-LINQToTTree
+#build-LINQToTTree C:\Users\gwatts\Desktop\bogus\linqtoroot
