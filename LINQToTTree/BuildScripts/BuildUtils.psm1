@@ -1,4 +1,4 @@
-﻿#
+#
 # BuildUtils.psm1
 #
 #  This module contains the various functions and other things needed to build
@@ -30,9 +30,13 @@ function check-exists ($dir, $flist)
 #
 # Return a list of all library files we can find
 #
-function get-files-for-library ($dir, $flist)
+function get-files-for-library ($dir, $flist, [Switch]$PDB)
 {
 	$fullnames = $flist | % { "$dir\${_}.dll", "$dir\${_}.xml" }
+	if ($PDB)
+	{
+		$fullnames += $flist | % { "$dir\${_}.pdb" }
+	}
 	return $fullnames | ? { Test-Path $_ }
 }
 
@@ -152,7 +156,7 @@ function get-root-version
 # Build a nuget packages for this library. We assume the build has already been done
 # at this point - so we fail if we can't find what we are looking for!
 #
-function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $release = "Debug", $nugetDistroDirectory = "")
+function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB)
 {
 	if (-not (Test-Path $solutionDirectory))
 	{
@@ -174,8 +178,8 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$helperLibraryFiles = "LINQToTreeHelpers", "Doddle.Reporting"
 	check-exists $helperLibrary $helperLibraryFiles
 	
-	$mainLibraries = get-files-for-library $mainLibrary $mainLibraryFiles
-	$helperLibraries = get-files-for-library $helperLibrary $helperLibraryFiles
+	$mainLibraries = get-files-for-library $mainLibrary $mainLibraryFiles -PDB:$PDB
+	$helperLibraries = get-files-for-library $helperLibrary $helperLibraryFiles -PDB:$PDB
 	$allLibraries = $mainLibraries + $helperLibraries
 	
 	#
@@ -188,14 +192,19 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$contentList = $methodConfigFile, $TSelectorTemplate
 
 	#
-	# We need to include the executable that will parse the ntuples
+	# We need to include the executable that will parse the ntuples. Make sure to filter out PDB files if so requested!
 	#
 	
 	$cmdExeFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\CmdTFileParser\bin\$release"
 	$msbuildTaskFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\MSBuildTasks\bin\$release"
 	$installToolFiles = "msbuild.psm1", "Install.ps1", "Uninstall.ps1", "Init.ps1", "LINQToTTreeCommands.psm1" | % { [System.IO.FileInfo] "$solutionDirectory\LINQToTTree\BuildScripts\$_" }
 
-	$toolFiles = ($cmdExeFiles + $msbuildTaskFiles + $installToolFiles) | Sort-Object -Property Name -Unique | % {$_.FullName}
+	$toolFiles = ($cmdExeFiles + $msbuildTaskFiles + $installToolFiles) | Sort-Object -Property Name -Unique
+	if (-not $PDB)
+	{
+		$toolFiles = $toolFiles | ? { $_.Extension -ne ".pdb" }
+	}
+	$toolFiles = $toolFiles | % {$_.FullName}
 
 	#
 	# Next, figure out what the dependent libraries are for nuget. These are things that nuget will
@@ -327,7 +336,7 @@ Import-Module "$loc\source-control.psm1"
 # Given the main distribution directory, build everything needed for
 # making our nuget libraries, and generate the nuget package!
 #
-function build-LINQToTTree ($BuildPath, $release = "Release", $tag = "HEAD", $nugetPackageDir = "")
+function build-LINQToTTree ($BuildPath, $release = "Release", $tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB)
 {
 	#
 	# Build the libraries
@@ -341,7 +350,7 @@ function build-LINQToTTree ($BuildPath, $release = "Release", $tag = "HEAD", $nu
 	# Next, make the nuget pacakge
 	#
 	
-	$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath "0.42"  -nugetDistroDirectory $nugetPackageDir
+	$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath "0.42"  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB
 	
 	return $colog, $lognuget, $buildLog, $nugetCreateLog
 }
