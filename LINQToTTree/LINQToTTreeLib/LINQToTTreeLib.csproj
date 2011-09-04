@@ -54,16 +54,40 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libHistWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
-    <Reference Include="libRIOWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
-    <Reference Include="libTreeWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="libGrafWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libGrafWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libHistWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libMathCoreWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libNetWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libNetWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libPhysicsWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libRIOWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libThreadWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreePlayerWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreePlayerWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreeWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="NVelocity">
       <HintPath>..\packages\NVelocity.1.0.3\lib\NVelocity.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Linq">
-      <HintPath>..\Relinq_1.13.102\net-3.5\bin\debug\Remotion.Linq.dll</HintPath>
+    <Reference Include="Remotion.Linq, Version=1.13.102.2, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\Libraries\Remotion\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -74,7 +98,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\WrapperPlumbingLibrary.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -174,25 +198,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ConfigData\default.classmethodmappings" />
-    <None Include="LINQToROOT.nuspec">
+    <None Include="ConfigData\default.classmethodmappings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Templates\TSelectorTemplate.cxx" />
+    <Content Include="Templates\TSelectorTemplate.cxx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="InfrastructureSourceFiles\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist $(USERPROFILE)\AppData\Local\LINQToTTree\Config mkdir $(USERPROFILE)\AppData\Local\LINQToTTree\Config
-copy $(ProjectDir)\ConfigData\default.classmethodmappings $(USERPROFILE)\AppData\Local\LINQToTTree\Config\
-xcopy /Y "$(SolutionDir)\LINQToTTreeLib\InfrastructureSourceFiles" "$(USERPROFILE)\AppData\Local\LINQToTTree\InfrastructureSourceFiles\"
-xcopy /Y "$(SolutionDir)\LINQToTTreeLib\Templates" "$(USERPROFILE)\AppData\Local\LINQToTTree\Templates\"
-$(SolutionDir)\nuget pack LINQToROOT.nuspec</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

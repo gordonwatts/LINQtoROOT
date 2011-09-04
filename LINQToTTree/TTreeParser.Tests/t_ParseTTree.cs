@@ -80,6 +80,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "should only be top level class");
@@ -220,6 +221,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateVectorTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -285,6 +287,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateSingleItemTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -370,6 +373,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateVectorVectorTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -385,6 +389,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateListOfLeavesTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -418,6 +423,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             FileInfo fhpp = new FileInfo("ntuple_dude.h");

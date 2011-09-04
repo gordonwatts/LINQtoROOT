@@ -58,19 +58,34 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libGrafWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libGrafWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libHistWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libHistWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libMathCoreWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
-    <Reference Include="libNetWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
-    <Reference Include="libPhysicsWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="libMathCoreWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libNetWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libNetWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libPhysicsWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="libRIOWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libRIOWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libThreadWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreePlayerWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreePlayerWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="LINQToTTreeLib.Moles, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
@@ -89,8 +104,8 @@
     <Reference Include="NVelocity, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\NVelocity.1.0.3\lib\NVelocity.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Linq">
-      <HintPath>..\Relinq_1.13.102\net-3.5\bin\debug\Remotion.Linq.dll</HintPath>
+    <Reference Include="Remotion.Linq, Version=1.13.102.2, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <HintPath>..\Libraries\Remotion\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -102,7 +117,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\WrapperPlumbingLibrary.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

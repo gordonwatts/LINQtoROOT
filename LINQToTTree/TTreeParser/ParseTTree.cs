@@ -16,6 +16,14 @@ namespace TTreeParser
     public class ParseTTree
     {
         /// <summary>
+        /// Init the proxy generator. Default output is the current directory.
+        /// </summary>
+        public ParseTTree()
+        {
+            ProxyGenerationLocation = new DirectoryInfo(".");
+        }
+
+        /// <summary>
         /// Look at everything we have in this tree and see if we can't generate a class correctly.
         /// </summary>
         /// <param name="tree"></param>
@@ -209,7 +217,7 @@ namespace TTreeParser
             int index = 0;
             do
             {
-                userInfoFile = new FileInfo(treeName + "Config-" + index.ToString("000") + ".ntup");
+                userInfoFile = new FileInfo(ProxyGenerationLocation.FullName + "\\" + treeName + "Config-" + index.ToString("000") + ".ntup");
                 index = index + 1;
             } while (userInfoFile.Exists);
 

@@ -25,7 +25,7 @@ namespace CmdTFileParser
             List<FileInfo> libraries = new List<FileInfo>();
             string specialFile = "";
             FileInfo outputFile = null;
-            DirectoryInfo outputDir = new DirectoryInfo(".");
+            DirectoryInfo outputDir = null;
             bool doExistanceCheck = true;
 
             foreach (var arg in args)
@@ -50,7 +50,7 @@ namespace CmdTFileParser
                     if (!inf.Exists)
                         inf.Create();
                     outputDir = inf;
-                    specialFile = null;
+                    specialFile = "";
                     continue;
                 }
 
@@ -84,14 +84,20 @@ namespace CmdTFileParser
                 return;
             }
 
+            // Output directory for all our files is where the root file is located if we don't have anything better!
+            if (outputDir == null)
+            {
+                outputDir = rootFiles[0].Directory;
+            }
+
             if (outputFile == null)
-                outputFile = new FileInfo(Path.ChangeExtension(rootFiles[0].FullName, "ntupom"));
+                outputFile = new FileInfo(string.Format("{0}\\{1}", outputDir.FullName, Path.ChangeExtension(rootFiles[0].Name, "ntupom")));
 
             ///
             /// Make sure to write everything to a log file for the next step!
             /// 
 
-            using (var logFile = File.CreateText(Path.ChangeExtension(rootFiles[0].FullName, ".log")))
+            using (var logFile = File.CreateText(Path.ChangeExtension(outputFile.FullName, ".log")))
             {
                 SimpleLogging.AddStream(logFile);
 
