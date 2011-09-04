@@ -77,8 +77,8 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     "    <version>$version</version>" >> $path
     "    <authors>Gordon Watts</authors>" >> $path
     "    <owners>Gordon Watts</owners>" >> $path
-    "    <licenseUrl>http://rootdotnet.codeplex.com/license</licenseUrl>" >> $path
-    "    <projectUrl>http://rootdotnet.codeplex.com/</projectUrl>" >> $path
+    "    <licenseUrl>http://linqtoroot.codeplex.com/license</licenseUrl>" >> $path
+    "    <projectUrl>http://linqtoroot.codeplex.com/</projectUrl>" >> $path
     #"    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>" >> $path
     "    <requireLicenseAcceptance>false</requireLicenseAcceptance>" >> $path
     "    <description>Use LINQ to query TTree's</description>" >> $path
@@ -308,7 +308,7 @@ function configure-nuget-all ($BuildPath)
 		throw "Unable to locate nuget.exe - though it would be here: $nuget"
 	}
 	
-	$nugetRepository = "http://deeptalk.phys.washington.edu/rootNuGet/nuget,https://go.microsoft.com/fwlink/?LinkID=206669"
+	$nugetRepository = "http://deeptalk.phys.washington.edu/rootNuGet/nuget;https://go.microsoft.com/fwlink/?LinkID=206669"
 	
 	$log1 = configure-nuget "$BuildPath\LINQToTTree" $nugetRepository $nuget
 	$log2 = configure-nuget "$BuildPath\LINQToTTreeHelpers" $nugetRepository $nuget
@@ -336,7 +336,7 @@ Import-Module "$loc\source-control.psm1"
 # Given the main distribution directory, build everything needed for
 # making our nuget libraries, and generate the nuget package!
 #
-function build-LINQToTTree ($BuildPath, $release = "Release", $tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB)
+function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB)
 {	
 	#
 	# Build the libraries
