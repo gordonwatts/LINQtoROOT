@@ -156,7 +156,7 @@ function get-root-version
 # Build a nuget packages for this library. We assume the build has already been done
 # at this point - so we fail if we can't find what we are looking for!
 #
-function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB)
+function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB, $NameSuffix = "")
 {
 	if (-not (Test-Path $solutionDirectory))
 	{
@@ -229,7 +229,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	#
 	
 	$packageSpec = @{
-		"Name" = "LINQToTTree"
+		"Name" = "LINQToTTree" + $NameSuffix
 		"Version" = $Version
 		"ROOTVersion" = $ROOTVersion
 		"Dependencies" = $allPackageDependencies
@@ -361,7 +361,7 @@ Import-Module "$loc\source-control.psm1"
 # Given the main distribution directory, build everything needed for
 # making our nuget libraries, and generate the nuget package!
 #
-function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB)
+function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB, $NameSuffix = "")
 {	
 	#
 	# Build the libraries
@@ -383,7 +383,7 @@ function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nu
 		# Next, make the nuget pacakge
 		#
 		
-		$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB
+		$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB -NameSuffix $NameSuffix
 		
 		update-build "$BuildPath"
 		
