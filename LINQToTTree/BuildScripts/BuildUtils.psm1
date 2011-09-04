@@ -329,6 +329,31 @@ function build-project ($release)
 	}
 }
 
+#
+# See if the last build at dir is the same as the
+# current one. return true if the build and the revision are the same.
+#
+function check-build ($dir)
+{
+	if (Test-Path $dir)
+	{
+		if (Test-Path "$dir\build.txt")
+		{
+			$itm = Get-Content "$dir\build.txt"
+			$newItem = get-revision $dir
+			return ($itm -eq $newItem)
+		}
+	}
+	return $false
+}
+
+#
+# Update teh build number file.
+function update-build ($dir)
+{
+	get-revision $dir > "$dir\build.txt"
+}
+
 $loc = Split-Path -parent $MyInvocation.MyCommand.Definition
 Import-Module "$loc\source-control.psm1"
 
@@ -343,22 +368,31 @@ function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nu
 	#
 	
 	$colog = set-revision $BuildPath -repositoryPath "https://hg01.codeplex.com/linqtoroot" -revision $tag
-	$lognuget = configure-nuget-all $BuildPath
-	$buildLog = "LINQToTTree\LINQToTTreeLib", "LINQToTTreeHelpers\LINQToTreeHelpers", "LINQToTTree\CmdTFileParser", "LINQToTTree\MSBuildTasks"   | % { "$BuildPath\$_" } | build-project $release
+	if (-not (check-build "$BuildPath"))
+	{
+		$lognuget = configure-nuget-all $BuildPath
+		$buildLog = "LINQToTTree\LINQToTTreeLib", "LINQToTTreeHelpers\LINQToTreeHelpers", "LINQToTTree\CmdTFileParser", "LINQToTTree\MSBuildTasks"   | % { "$BuildPath\$_" } | build-project $release
 
-	#
-	# Get the version number
-	#
+		#
+		# Get the version number
+		#
 
-	$version = (Get-Item "$BuildPath\LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib.dll").VersionInfo.ProductVersion
+		$version = (Get-Item "$BuildPath\LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib.dll").VersionInfo.ProductVersion
 
-	#
-	# Next, make the nuget pacakge
-	#
-	
-	$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB
-	
-	return $colog, $lognuget, $buildLog, $nugetCreateLog
+		#
+		# Next, make the nuget pacakge
+		#
+		
+		$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB
+		
+		update-build "$BuildPath"
+		
+		return $colog, $lognuget, $buildLog, $nugetCreateLog
+	}
+	else
+	{
+		return $colog
+	}
 }
 
 #build-LINQToTTree-nuget-packages "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "0.42" -nugetDistroDirectory "C:\Users\gwatts\Documents\nuget"
