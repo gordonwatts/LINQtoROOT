@@ -156,7 +156,7 @@ function get-root-version
 # Build a nuget packages for this library. We assume the build has already been done
 # at this point - so we fail if we can't find what we are looking for!
 #
-function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB, $NameSuffix = "")
+function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $Release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB, $NameSuffix = "")
 {
 	if (-not (Test-Path $solutionDirectory))
 	{
@@ -383,7 +383,7 @@ function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nu
 		# Next, make the nuget pacakge
 		#
 		
-		$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB -NameSuffix $NameSuffix
+		$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB -NameSuffix $NameSuffix -Release $Release
 		
 		update-build "$BuildPath"
 		
