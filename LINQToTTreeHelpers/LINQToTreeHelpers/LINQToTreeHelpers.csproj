@@ -85,11 +85,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="LinqToTTreeInterfacesLib">
-      <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LinqToTTreeInterfacesLib.dll</HintPath>
+    <Reference Include="LinqToTTreeInterfacesLib, Version=0.42.4264.29416, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\LINQToTTree\build\LinqToTTreeInterfacesLib.dll</HintPath>
     </Reference>
-    <Reference Include="LINQToTTreeLib">
-      <HintPath>..\..\LINQToTTree\LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll</HintPath>
+    <Reference Include="LINQToTTreeLib, Version=0.41.4264.29416, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\LINQToTTree\build\LINQToTTreeLib.dll</HintPath>
     </Reference>
     <Reference Include="Sprache">
       <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>

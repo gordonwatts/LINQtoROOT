@@ -383,7 +383,7 @@ function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nu
 		# Next, make the nuget pacakge
 		#
 		
-		$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version  -nugetDistroDirectory $nugetPackageDir -PDB:$PDB -NameSuffix $NameSuffix -Release $Release
+		$nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version -nugetDistroDirectory $nugetPackageDir -PDB:$PDB -NameSuffix $NameSuffix -Release $Release
 		
 		update-build "$BuildPath"
 		
