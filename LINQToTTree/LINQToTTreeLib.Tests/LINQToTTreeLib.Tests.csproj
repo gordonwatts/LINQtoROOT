@@ -206,6 +206,9 @@
     <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Expressions\SubExpressionReplacementTest.TestReplacement.g.cs">
+      <DependentUpon>SubExpressionReplacementTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
     <Compile Include="Factories\CodeOptimizerTestFactory.cs" />
     <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
@@ -357,6 +360,7 @@
     <Compile Include="ResultOperators\ROUniqueCombinationsTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Expressions\SubExpressionReplacementTest.cs" />
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>

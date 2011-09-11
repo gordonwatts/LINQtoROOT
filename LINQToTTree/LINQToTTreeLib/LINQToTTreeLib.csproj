@@ -121,6 +121,7 @@
     <Compile Include="Expressions\ObjectPropertyExpressionVisitor.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitor.cs" />
     <Compile Include="Expressions\ExpressionToCPP.cs" />
+    <Compile Include="Expressions\SubExpressionReplacement.cs" />
     <Compile Include="FutureResultOperators.cs" />
     <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />
