@@ -138,13 +138,15 @@ namespace LINQToTTreeLib.Tests
             /// Make sure the index variable comes back correctly
             /// 
 
-            Assert.IsInstanceOfType(indexVar, typeof(BinaryExpression), "inproper expression variable type");
-            Assert.AreEqual(typeof(int), indexVar.Type, "bad value type");
-            var be = indexVar as BinaryExpression;
+            Assert.IsInstanceOfType(indexVar.Item1, typeof(BinaryExpression), "inproper expression variable type");
+            Assert.AreEqual(typeof(int), indexVar.Item1.Type, "bad value type");
+            var be = indexVar.Item1 as BinaryExpression;
             Assert.AreEqual(ExpressionType.ArrayIndex, be.NodeType, "not array index");
             Assert.AreEqual(typeof(int), be.Right.Type, "Indexer of array type");
             Assert.IsInstanceOfType(be.Left, typeof(ParameterExpression), "now the same paraemter, I think!");
             Assert.AreEqual(simpleArrayExpr, be.Left, "array isn't right");
+
+            Assert.AreEqual(typeof(int), indexVar.Item2.Type, "Bad index variable");
 
             ///
             /// Next, we need to look at the statements that have come back
@@ -211,9 +213,9 @@ namespace LINQToTTreeLib.Tests
             /// Make sure the indexvar is working correctly
             /// 
 
-            Assert.IsInstanceOfType(indexVar, typeof(BinaryExpression), "inproper expression variable type");
-            Assert.AreEqual(typeof(SourceType1SubType), indexVar.Type, "index var type");
-            var be = indexVar as BinaryExpression;
+            Assert.IsInstanceOfType(indexVar.Item1, typeof(BinaryExpression), "inproper expression variable type");
+            Assert.AreEqual(typeof(SourceType1SubType), indexVar.Item1.Type, "index var type");
+            var be = indexVar.Item1 as BinaryExpression;
             Assert.AreEqual(ExpressionType.ArrayIndex, be.NodeType, "not array index");
             Assert.AreEqual(typeof(int), be.Right.Type, "Indexer of array type");
             Assert.IsInstanceOfType(be.Left, typeof(MemberExpression), "now the same paraemter, I think!");

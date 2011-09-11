@@ -130,7 +130,7 @@ namespace LINQToTTreeLib
         {
             var c = new CodeContext();
             var v = Expression.Variable(typeof(int), "d");
-            c.SetLoopVariable(v);
+            c.SetLoopVariable(v, null);
             Assert.AreEqual(v, c.LoopVariable, "set didn't work");
         }
 
@@ -139,7 +139,7 @@ namespace LINQToTTreeLib
         public void TestLoopVarSetNull()
         {
             var c = new CodeContext();
-            c.SetLoopVariable(null);
+            c.SetLoopVariable(null, null);
         }
 
         [TestMethod]

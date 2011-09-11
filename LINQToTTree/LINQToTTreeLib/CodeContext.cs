@@ -232,15 +232,26 @@ namespace LINQToTTreeLib
         public Expression LoopVariable { get; private set; }
 
         /// <summary>
+        /// Returns the current loop index - the integer thing we are walking over.
+        /// </summary>
+        public Expression LoopIndexVariable { get; private set; }
+
+        /// <summary>
         /// Set the loop variable to a new value
         /// </summary>
-        /// <param name="v"></param>
-        public void SetLoopVariable(Expression v)
+        /// <param name="loopExpression">Evaluate to the current value, looping over whatever we are looping over</param>
+        /// <param name="indexVariable">The current index - this is what we are walking through right now. Null if this index variable makes no sense.</param>
+        public void SetLoopVariable(Expression loopExpression, Expression indexVariable)
         {
-            if (v == null)
+            if (loopExpression == null)
                 throw new ArgumentNullException("can not set a null loop variable");
 
-            LoopVariable = v;
+            if (indexVariable != null)
+                if (indexVariable.Type != typeof(int))
+                    throw new ArgumentException("The index variable must be an integer");
+
+            LoopVariable = loopExpression;
+            LoopIndexVariable = indexVariable;
         }
 
         private Dictionary<string, Expression> _expressionReplacement = new Dictionary<string, Expression>();

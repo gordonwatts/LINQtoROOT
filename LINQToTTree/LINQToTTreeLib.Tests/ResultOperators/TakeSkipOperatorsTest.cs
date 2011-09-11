@@ -69,7 +69,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             CodeContext c = new CodeContext();
-            c.SetLoopVariable(Expression.Variable(typeof(int), "d"));
+            c.SetLoopVariable(Expression.Variable(typeof(int), "d"), null);
 
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
 

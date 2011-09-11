@@ -21,8 +21,8 @@ namespace LINQToTTreeLib.Utils
             /// Next, make sure the index variable can be used for later references!
             /// 
 
-            var result = cc.Add(query, indexVar);
-            cc.SetLoopVariable(indexVar);
+            var result = cc.Add(query, indexVar.Item1);
+            cc.SetLoopVariable(indexVar.Item1, indexVar.Item2);
             return result;
         }
 

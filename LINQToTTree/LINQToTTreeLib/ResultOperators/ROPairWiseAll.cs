@@ -102,7 +102,8 @@ namespace LINQToTTreeLib.ResultOperators
             var loopOverGood = new Statements.StatementLoopOverGood(arrayRecord, passAll, goodIndex);
             gc.Add(loopOverGood);
 
-            cc.SetLoopVariable(Expression.ArrayIndex(array, Expression.Parameter(typeof(int), goodIndex.RawValue)));
+            var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
+            cc.SetLoopVariable(Expression.ArrayIndex(array, pindex), pindex);
         }
     }
 }

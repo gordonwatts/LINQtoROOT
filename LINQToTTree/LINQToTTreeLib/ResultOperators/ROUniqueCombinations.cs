@@ -87,7 +87,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             var tupleType = typeof(Tuple<,>).MakeGenericType(cc.LoopVariable.Type, cc.LoopVariable.Type);
             var newTuple = Expression.New(tupleType.GetConstructor(new Type[] { arrayLookup.Type, arrayLookup.Type }), item1, item2);
-            cc.SetLoopVariable(newTuple);
+            cc.SetLoopVariable(newTuple, null);
         }
     }
 }
