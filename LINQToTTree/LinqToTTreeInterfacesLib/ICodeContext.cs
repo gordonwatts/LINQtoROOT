@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using Remotion.Linq.Clauses;
 
@@ -22,13 +21,6 @@ namespace LinqToTTreeInterfacesLib
     public interface ICodeContext
     {
         /// <summary>
-        /// Add a variable mapping. Used most often for dealing with parameters and the like
-        /// </summary>
-        /// <param name="varName"></param>
-        /// <param name="replacementName"></param>
-        IVariableScopeHolder Add(string varName, IValue replacementName);
-
-        /// <summary>
         /// Add a vairable mapping to an expression. Used for dealing with parameters and the like.
         /// Use the return object to pop it off the stack when you are done.
         /// </summary>
@@ -46,14 +38,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="expression"></param>
         /// <returns></returns>
         IVariableScopeHolder Add(IQuerySource query, Expression expression);
-
-        /// <summary>
-        /// Lookup a replacement
-        /// </summary>
-        /// <param name="varname"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        IValue GetReplacement(string varname, Type type);
 
         /// <summary>
         /// Returns the expression that has been stored under this name.

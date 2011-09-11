@@ -13,7 +13,6 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -281,7 +280,7 @@ namespace LINQToTTreeLib
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            cc.Add("p", new ValSimple("count", typeof(int)));
+            cc.Add("p", Expression.Parameter(typeof(int), "count"));
             var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
         }
 
@@ -291,7 +290,7 @@ namespace LINQToTTreeLib
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            cc.Add("p", new ValSimple("count", typeof(ntup)));
+            cc.Add("p", Expression.Parameter(typeof(ntup), "count"));
             var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");

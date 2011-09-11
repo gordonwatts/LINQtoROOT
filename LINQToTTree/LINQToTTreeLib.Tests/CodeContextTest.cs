@@ -1,7 +1,6 @@
 // <copyright file="CodeContextTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,58 +14,6 @@ namespace LINQToTTreeLib
     [TestClass]
     public partial class CodeContextTest
     {
-        /// <summary>Test stub for Add(String, IValue)</summary>
-        [PexMethod]
-        public void Add(
-            [PexAssumeUnderTest]CodeContext target,
-            string varName,
-            IValue replacementName
-        )
-        {
-            target.Add(varName, replacementName);
-            Assert.AreEqual(replacementName, target.GetReplacement(varName, replacementName.Type), "value didn't come out correctly");
-            // TODO: add assertions to method CodeContextTest.Add(CodeContext, String, IValue)
-        }
-
-        /// <summary>
-        /// Test for poping variables off and on.
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="varName"></param>
-        /// <param name="replacement1"></param>
-        /// <param name="replacement2"></param>
-        public void AddWithPop([PexAssumeUnderTest]CodeContext target,
-           [PexAssumeNotNull] string varName,
-            [PexAssumeNotNull]IValue replacement1,
-            [PexAssumeNotNull]IValue replacement2)
-        {
-            target.Add(varName, replacement1);
-            Assert.AreEqual(replacement1, target.GetReplacement(varName, replacement1.Type), "value didn't come out correctly");
-            var r = target.Add(varName, replacement2);
-            Assert.AreEqual(replacement2, target.GetReplacement(varName, replacement2.Type), "value didn't come out correctly for 2nd replacement");
-            r.Pop();
-            Assert.AreEqual(replacement1, target.GetReplacement(varName, replacement1.Type), "pop didn't come out correctly");
-        }
-
-        [TestMethod]
-        public void TestPop()
-        {
-            var replacement1 = new Variables.ValSimple("freakout", typeof(int));
-            var replacement2 = new Variables.ValSimple("stuff", typeof(string));
-            AddWithPop(new CodeContext(), "bogus", replacement1, replacement2);
-        }
-
-        [TestMethod]
-        public void TestPopOfNothing()
-        {
-            var replacement1 = new Variables.ValSimple("freakout", typeof(int));
-            var cc = new CodeContext();
-            var popper = cc.Add("dude", replacement1);
-            Assert.AreEqual(1, cc.NumberOfParams, "Incorrect # after insertion");
-            popper.Pop();
-            Assert.AreEqual(0, cc.NumberOfParams, "After pop, expected everything to be gone");
-        }
-
         /// <summary>Test stub for .ctor()</summary>
         [PexMethod]
         public CodeContext Constructor()
@@ -74,48 +21,6 @@ namespace LINQToTTreeLib
             CodeContext target = new CodeContext();
             return target;
             // TODO: add assertions to method CodeContextTest.Constructor()
-        }
-
-        /// <summary>Test stub for GetReplacement(String, Type)</summary>
-        [PexMethod]
-        public IValue GetReplacement(
-            [PexAssumeUnderTest]CodeContext target,
-            string varname,
-            Type type
-        )
-        {
-            IValue result = target.GetReplacement(varname, type);
-            return result;
-            // TODO: add assertions to method CodeContextTest.GetReplacement(CodeContext, String, Type)
-        }
-
-        [PexMethod]
-        [PexAssertReachEventually("all", StopWhenAllReached = true)]
-        public IValue TestRoundTrip([PexAssumeUnderTest]CodeContext target,
-            string varName,
-            [PexAssumeNotNull] string replName,
-            [PexAssumeNotNull] Type t)
-        {
-            var r1 = target.GetReplacement(varName, t);
-            var replacement = new Variables.ValSimple(replName, t);
-            target.Add(varName, replacement);
-            var r2 = target.GetReplacement(varName, t);
-
-            Assert.AreEqual(r1.RawValue, varName, "Incorrect null replacement looking for the name");
-            Assert.AreEqual(r1.Type, t, "Incorrect created type");
-
-            Assert.AreEqual(r2.RawValue, replName, "Incorrect cached variable");
-            Assert.AreEqual(r2.Type, t, "Incorrect recalled type!");
-
-            PexAssert.ReachEventually("all");
-
-            return r2;
-        }
-
-        [TestMethod]
-        public void OneRoundTripTest()
-        {
-            TestRoundTrip(new CodeContext(), "dude", "fork", typeof(int));
         }
 
         [TestMethod]
@@ -195,32 +100,6 @@ namespace LINQToTTreeLib
             var c = new CodeContext();
             var popper = c.Remove("dude");
             popper.Pop();
-        }
-
-        [TestMethod]
-        public void TestPopAcrossDomainsExpression()
-        {
-            var c = new CodeContext();
-            var myvar = new Variables.ValSimple("hi", typeof(int));
-            c.Add("dude", myvar);
-            var popper = c.Add("dude", Expression.Variable(typeof(int), "dude"));
-
-            Assert.AreEqual("hi", c.GetReplacement("dude", typeof(int)).RawValue, "dude not there");
-            popper.Pop();
-            Assert.AreEqual("hi", c.GetReplacement("dude", typeof(int)).RawValue, "dude not there");
-        }
-
-        [TestMethod]
-        public void TestPopAcrossDomainsValue()
-        {
-            var c = new CodeContext();
-            var myvar = new Variables.ValSimple("hi", typeof(int));
-            c.Add("dude", Expression.Variable(typeof(int), "dude"));
-            var popper = c.Add("dude", myvar);
-
-            Assert.IsNotNull(c.GetReplacement("dude"), "dude not there");
-            popper.Pop();
-            Assert.IsNotNull(c.GetReplacement("dude"), "dude not there");
         }
     }
 }

@@ -245,5 +245,15 @@ namespace LINQToTTreeLib.Variables
                 throw new ArgumentNullException("type must not be null");
             return t.Name.Substring(1).IsROOTClass();
         }
+
+        /// <summary>
+        /// Covert to an expression for use with LINQ.
+        /// </summary>
+        /// <param name="var"></param>
+        /// <returns></returns>
+        public static Expression AsExpression(this IVariable var)
+        {
+            return Expression.Parameter(var.Type, var.VariableName);
+        }
     }
 }

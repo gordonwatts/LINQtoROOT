@@ -79,7 +79,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// accumulator - the other arguments have all been replaced with subqueryexpressions and the like!
             /// 
 
-            var p1 = context.Add(a.Func.Parameters[0].Name, accumulator);
+            var p1 = context.Add(a.Func.Parameters[0].Name, accumulator.AsExpression());
             var funcResolved = ExpressionToCPP.GetExpression(a.Func.Body, _codeEnv, context, container);
             p1.Pop();
 
