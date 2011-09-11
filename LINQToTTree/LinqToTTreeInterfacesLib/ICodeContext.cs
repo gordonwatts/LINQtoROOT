@@ -38,6 +38,16 @@ namespace LinqToTTreeInterfacesLib
         IVariableScopeHolder Add(string indexName, Expression indexExpression);
 
         /// <summary>
+        /// Add a query for later lookup. We use the query as a lookup
+        /// here b/c the user may use the same index variable in a
+        /// query (scoping).
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        IVariableScopeHolder Add(IQuerySource query, Expression expression);
+
+        /// <summary>
         /// Lookup a replacement
         /// </summary>
         /// <param name="varname"></param>
@@ -84,7 +94,5 @@ namespace LinqToTTreeInterfacesLib
         /// calculating the cache.
         /// </summary>
         List<string> CacheCookies { get; }
-
-        IVariableScopeHolder Add(IQuerySource query, Expression expression);
     }
 }
