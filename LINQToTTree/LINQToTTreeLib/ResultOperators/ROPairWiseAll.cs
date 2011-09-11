@@ -42,6 +42,9 @@ namespace LINQToTTreeLib.ResultOperators
             if (ro == null)
                 throw new ArgumentNullException("Result operator is not of PairWiseAll type");
 
+            if (cc.LoopVariable.NodeType != ExpressionType.ArrayIndex)
+                throw new InvalidOperationException("Unable to run PairWiseAll on a non-array expression!");
+
             ///
             /// First, record all the good indicies for this array
             /// 

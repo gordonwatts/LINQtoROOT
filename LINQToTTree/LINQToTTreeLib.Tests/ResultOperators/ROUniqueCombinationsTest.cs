@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
 using Microsoft.Pex.Framework;
@@ -108,6 +110,74 @@ namespace LINQToTTreeLib.Tests.ResultOperators
             var res = DummyQueryExectuor.FinalResult.ResultValue;
             Assert.IsNotNull(res, "final result");
             Assert.AreEqual(typeof(int), res.Type, "final result type");
+        }
+
+        [TranslateToClass(typeof(ResultType1))]
+        class SourceType1
+        {
+#pragma warning disable 0649
+            [TTreeVariableGrouping]
+            public SourceType1SubType[] jets;
+#pragma warning restore 0649
+        }
+
+        class SourceType1SubType
+        {
+#pragma warning disable 0649
+            [TTreeVariableGrouping]
+            public int val1;
+#pragma warning restore 0649
+        }
+
+        class ResultType1 : IExpressionHolder
+        {
+            public ResultType1(Expression holder)
+            { HeldExpression = holder; }
+
+#pragma warning disable 0649
+            public int[] val1;
+#pragma warning restore 0649
+
+            public Expression HeldExpression
+            {
+                get;
+                private set;
+            }
+        }
+
+        [TestMethod]
+        public void TestWithTranslatedTypes()
+        {
+            var q = new QueriableDummy<SourceType1>();
+            var combos = from evt in q
+                         select (from cmb in evt.jets.UniqueCombinations()
+                                 select cmb.Item1.val1 - cmb.Item2.val1).Aggregate(0, (seed, val) => seed + val);
+            var arg = combos.Aggregate(0, (seed, val) => seed + val);
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "expecing some code to have been generated");
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            var res = DummyQueryExectuor.FinalResult.ResultValue;
+            Assert.IsNotNull(res, "final result");
+            Assert.AreEqual(typeof(int), res.Type, "final result type");
+        }
+
+        [TestMethod]
+        public void TestWithTranslatedAndAnonTypes()
+        {
+            var q = new QueriableDummy<SourceType1>();
+            var funnyJets = from evt in q
+                            select from j in evt.jets
+                                   select new
+                                   {
+                                       Value = j.val1
+                                   };
+            var combos = from evt in funnyJets
+                         select (from cmb in evt.UniqueCombinations()
+                                 select cmb.Item1.Value - cmb.Item2.Value).Aggregate(0, (seed, val) => seed + val);
+            var arg = combos.Aggregate(0, (seed, value) => seed + value);
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "expecing some code to have been generated");
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
         }
     }
 }

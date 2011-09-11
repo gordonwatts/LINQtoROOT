@@ -132,6 +132,25 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
+            Assert.IsFalse(res.CodeBody.CodeItUp().Any(l => l.Contains("SourceType1")), "C++ code contains one of our SOurceType1 references - see results dump for complete C++ code");
+        }
+
+        [TestMethod]
+        public void TestTranslatedObjectFirstCarriedOver()
+        {
+            var q = new QueriableDummy<SourceType1>();
+
+            var result = from evt in q
+                         select evt.jets.First();
+            var c = (from evt in result
+                     where evt.val1 > 5
+                     select evt).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+            res.DumpCodeToConsole();
+
+            Assert.IsFalse(res.CodeBody.CodeItUp().Any(l => l.Contains("SourceType1")), "C++ code contains one of our SOurceType1 references - see results dump for complete C++ code");
         }
 
         [TestMethod]
