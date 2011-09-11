@@ -19,52 +19,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAggregateTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAggregateConstructorTestThrowsArgumentNullException652()
-{
-    StatementAggregate statementAggregate;
-    statementAggregate =
-      this.StatementAggregateConstructorTest((IVariable)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAggregateConstructorTestThrowsArgumentNullException839()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAggregate =
-      this.StatementAggregateConstructorTest((IVariable)varInteger, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-public void StatementAggregateConstructorTest472()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAggregate = this.StatementAggregateConstructorTest
-                             ((IVariable)varInteger, (IValue)varInteger);
-    Assert.IsNotNull((object)statementAggregate);
-    Assert.IsNotNull(statementAggregate.ResultVariable);
-    Assert.IsNotNull(statementAggregate.Expression);
-    Assert.IsTrue(object.ReferenceEquals
-                      (statementAggregate.Expression, statementAggregate.ResultVariable));
-    Assert.IsNull(statementAggregate.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAggregateTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAggregateConstructorTestThrowsArgumentNullException470()
-{
-    VarInteger varInteger;
-    StatementAggregate statementAggregate;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementAggregate =
-      this.StatementAggregateConstructorTest((IVariable)varInteger, (IValue)null);
-}
     }
 }

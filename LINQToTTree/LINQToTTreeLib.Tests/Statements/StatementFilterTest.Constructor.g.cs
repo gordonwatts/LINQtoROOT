@@ -18,41 +18,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException529()
-{
-    StatementFilter statementFilter;
-    statementFilter = this.Constructor((IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void Constructor366()
-{
-    VarInteger varInteger;
-    StatementFilter statementFilter;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementFilter = this.Constructor((IValue)varInteger);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
-    Assert.IsNull(((StatementInlineBlockBase)statementFilter).Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-public void Constructor36601()
-{
-    VarInteger varInteger;
-    StatementFilter statementFilter;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementFilter = this.Constructor((IValue)varInteger);
-    Assert.IsNotNull((object)statementFilter);
-    Assert.IsNotNull(statementFilter.TestExpression);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
-    Assert.IsNull(((StatementInlineBlockBase)statementFilter).Parent);
-}
     }
 }

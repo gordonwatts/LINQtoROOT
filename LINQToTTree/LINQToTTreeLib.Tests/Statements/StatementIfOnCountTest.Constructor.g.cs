@@ -18,59 +18,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException662()
-{
-    StatementIfOnCount statementIfOnCount;
-    statementIfOnCount = this.Constructor((IVariable)null, 
-                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException141()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIfOnCount = this.Constructor((IVariable)varInteger, 
-                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void Constructor925()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIfOnCount = this.Constructor((IVariable)varInteger, 
-                                          (IValue)varInteger, StatementIfOnCount.ComparisonOperator.GreaterThan);
-    Assert.IsNotNull((object)statementIfOnCount);
-    Assert.IsNotNull(statementIfOnCount.Counter);
-    Assert.IsNotNull(statementIfOnCount.Limit);
-    Assert.IsTrue(
-                 object.ReferenceEquals(statementIfOnCount.Limit, statementIfOnCount.Counter)
-                 );
-    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
-        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
-         statementIfOnCount.Comparison);
-    Assert.IsNotNull(((StatementInlineBlockBase)statementIfOnCount).Statements);
-    Assert.IsNotNull
-        (((StatementInlineBlockBase)statementIfOnCount).DeclaredVariables);
-    Assert.IsNull(((StatementInlineBlockBase)statementIfOnCount).Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException127()
-{
-    VarInteger varInteger;
-    StatementIfOnCount statementIfOnCount;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementIfOnCount = this.Constructor((IVariable)varInteger, 
-                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
-}
     }
 }

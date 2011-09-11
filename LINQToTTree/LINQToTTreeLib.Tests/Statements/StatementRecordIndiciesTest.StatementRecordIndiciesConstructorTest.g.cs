@@ -19,49 +19,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementRecordIndiciesTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementRecordIndiciesConstructorTestThrowsArgumentNullException209()
-{
-    StatementRecordIndicies statementRecordIndicies;
-    statementRecordIndicies =
-      this.StatementRecordIndiciesConstructorTest((IValue)null, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementRecordIndiciesConstructorTestThrowsArgumentNullException647()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies = this.StatementRecordIndiciesConstructorTest
-                                  ((IValue)varInteger, (IVariable)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-public void StatementRecordIndiciesConstructorTest777()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordIndicies = this.StatementRecordIndiciesConstructorTest
-                                  ((IValue)varInteger, (IVariable)varInteger);
-    Assert.IsNotNull((object)statementRecordIndicies);
-    Assert.IsNull(statementRecordIndicies.HolderArray);
-    Assert.IsNull(statementRecordIndicies.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementRecordIndiciesTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementRecordIndiciesConstructorTestThrowsArgumentNullException902()
-{
-    VarInteger varInteger;
-    StatementRecordIndicies statementRecordIndicies;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementRecordIndicies = this.StatementRecordIndiciesConstructorTest
-                                  ((IValue)varInteger, (IVariable)null);
-}
     }
 }

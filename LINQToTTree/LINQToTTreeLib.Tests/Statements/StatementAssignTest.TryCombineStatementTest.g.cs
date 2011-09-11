@@ -19,44 +19,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TryCombineStatementTestThrowsArgumentNullException475()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    b = this.TryCombineStatementTest(statementAssign, (IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TryCombineStatementTestThrowsArgumentNullException71()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    b = this.TryCombineStatementTest(statementAssign, (IStatement)statementAssign);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TryCombineStatementTestThrowsArgumentNullException125()
-{
-    VarInteger varInteger;
-    StatementAssign statementAssign;
-    bool b;
-    varInteger = VarIntegerFactory.Create(false, -2);
-    statementAssign =
-      StatementAssignFactory.Create((IVariable)varInteger, (IValue)varInteger);
-    b = this.TryCombineStatementTest(statementAssign, (IStatement)null);
-}
     }
 }

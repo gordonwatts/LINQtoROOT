@@ -18,33 +18,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIncrementIntegerTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException600()
-{
-    StatementIncrementInteger statementIncrementInteger;
-    statementIncrementInteger = this.Constructor((VarInteger)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-public void Constructor193()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = this.Constructor(varInteger);
-    Assert.IsNull((object)statementIncrementInteger);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-public void Constructor19301()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementIncrementInteger = this.Constructor(varInteger);
-    Assert.IsNull((object)statementIncrementInteger);
-}
     }
 }
