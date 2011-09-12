@@ -60,14 +60,11 @@ namespace LINQToTTreeLib.ResultOperators
             // Now, in the loop we are currently in, we do the "add".
             //
 
-            var stack = cc.Add(accumulator.VariableName, accumulator.AsExpression());
             var p = Expression.Parameter(sumType, accumulator.VariableName);
             var add = Expression.Add(p, cc.LoopVariable);
 
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
             gc.Add(new StatementAggregate(accumulator, addResolved));
-
-            stack.Pop();
 
             return accumulator;
         }
