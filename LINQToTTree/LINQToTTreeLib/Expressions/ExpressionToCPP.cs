@@ -29,27 +29,6 @@ namespace LINQToTTreeLib.Expressions
                 cc = new CodeContext();
             }
 
-            ///
-            /// First, see if there are any parameter replacements that can be done out-of-band
-            /// 
-
-            expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
-
-            ///
-            /// Next, attempt to translate the expr (if needed)
-            /// 
-
-            string oldExpr = "";
-            while (expr.ToString() != oldExpr)
-            {
-                oldExpr = expr.ToString();
-                expr = TranslatingExpressionVisitor.Translate(expr, cc.CacheCookies);
-            }
-
-            ///
-            /// Finally, translate the expression directly into full blown C++ code.
-            /// 
-
             var visitor = new ExpressionToCPP(ce, cc);
             visitor.MEFContainer = container;
 
@@ -58,7 +37,7 @@ namespace LINQToTTreeLib.Expressions
                 container.SatisfyImportsOnce(visitor);
             }
 
-            visitor.VisitExpression(expr);
+            visitor.VisitExpression(expr.Resolve(cc));
             return visitor.Result;
         }
 
@@ -386,7 +365,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitParameterExpression(ParameterExpression expression)
         {
-            _result = _codeContext.GetReplacement(expression.Name, expression.Type);
+            _result = new ValSimple(expression.Name, expression.Type);
 
             return expression;
         }

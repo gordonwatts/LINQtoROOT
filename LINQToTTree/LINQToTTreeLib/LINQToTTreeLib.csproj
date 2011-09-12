@@ -117,6 +117,7 @@
     <Compile Include="ExecutionCommon\LocalExecutor.cs" />
     <Compile Include="Expressions\ArrayExpressionParser.cs" />
     <Compile Include="Expressions\ArrayInfoVector.cs" />
+    <Compile Include="Expressions\ExpressionResolver.cs" />
     <Compile Include="Expressions\ExpressionStringConverter.cs" />
     <Compile Include="Expressions\ObjectPropertyExpressionVisitor.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitor.cs" />

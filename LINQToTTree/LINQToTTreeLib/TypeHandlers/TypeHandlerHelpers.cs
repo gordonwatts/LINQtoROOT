@@ -73,11 +73,10 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// correctly deal with any substitution in process.
                 /// 
 
-                var returnedValue = ExpressionToCPP.GetExpression(expr.Arguments[0], gc, context, container);
                 var p2 = context.Add(lambdaParameters[1].Name, expr.Arguments[1]);
-                var p1 = context.Add(lambdaParameters[0].Name, returnedValue);
+                var p1 = context.Add(lambdaParameters[0].Name, expr.Arguments[0]);
 
-                var statementBody = ExpressionToCPP.GetExpression(action.Body, gc, context, container);
+                var statementBody = ExpressionToCPP.GetExpression(action.Body.Resolve(context), gc, context, container);
 
                 p1.Pop();
                 p2.Pop();
@@ -88,7 +87,7 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// Finally, what we will return if this is the last thing we are doing!
                 /// 
 
-                result = returnedValue;
+                result = ExpressionToCPP.GetExpression(expr.Arguments[0], gc, context, container); ;
 
                 return expr;
             }
