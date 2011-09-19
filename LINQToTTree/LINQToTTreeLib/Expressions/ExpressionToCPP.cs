@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -379,49 +378,6 @@ namespace LINQToTTreeLib.Expressions
         protected override Expression VisitLambdaExpression(LambdaExpression expression)
         {
             _result = GetExpression(expression.Body);
-
-            return expression;
-        }
-
-        /// <summary>
-        /// We are doing an inline call to a lambda expression.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitInvocationExpression(InvocationExpression expression)
-        {
-            ///
-            /// Declare all the parameters for lookup.
-            /// 
-
-            if (!(expression.Expression is LambdaExpression))
-                throw new NotImplementedException("Do not know how to invoke a non-lambda call like '" + expression.ToString() + "'");
-            var lambda = expression.Expression as LambdaExpression;
-
-            var paramArgs = lambda.Parameters.Zip(expression.Arguments, (p, a) => Tuple.Create(p, a));
-            var paramDefineToPopers = from pair in paramArgs
-                                      select _codeContext.Add(pair.Item1.Name, pair.Item2);
-            var allParamDefineToPopers = paramDefineToPopers.ToArray();
-
-            ///
-            /// Do the work. We parse the body of the lambda expression. The references to the parameters should be automatically
-            /// dealt with.
-            /// 
-
-            _result = GetExpression(lambda.Body);
-
-            ///
-            /// Now, pop everything off!
-            /// 
-
-            foreach (var param in allParamDefineToPopers)
-            {
-                param.Pop();
-            }
-
-            ///
-            /// Done!
-            /// 
 
             return expression;
         }
