@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,8 +21,18 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [TestInitialize]
         public void TestInit()
         {
+            MEFUtilities.MyClassInit();
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             TypeHandlerReplacementCall.ClearTypeList();
         }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         /// <summary>Test stub for CanHandle(Type)</summary>
         //[PexMethod]
         public bool CanHandle([PexAssumeUnderTest]TypeHandlerReplacementCall target, Type t)
@@ -41,7 +52,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             ICodeContext context
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context, null);
+            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
             return result01;
             // TODO: add assertions to method TypeHandlerReplacementCallTest.ProcessMethodCall(TypeHandlerReplacementCall, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
         }
@@ -282,7 +293,6 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var target = new TypeHandlerReplacementCall();
 
             ProcessMethodCall(target, e0, out result, gc, context);
-
         }
     }
 }

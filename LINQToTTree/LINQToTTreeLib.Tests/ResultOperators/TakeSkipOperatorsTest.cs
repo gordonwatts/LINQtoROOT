@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using LINQToTTreeLib.TypeHandlers;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -71,7 +72,7 @@ namespace LINQToTTreeLib.ResultOperators
             CodeContext c = new CodeContext();
             c.SetLoopVariable(Expression.Variable(typeof(int), "d"), null);
 
-            target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
+            target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, MEFUtilities.MEFContainer);
 
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will
@@ -114,6 +115,8 @@ namespace LINQToTTreeLib.ResultOperators
         [TestMethod]
         public void TestBasicTakeSkip()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             GeneratedCode gc = new GeneratedCode();
             var skipper = new SkipResultOperator(Expression.Constant(10));
             ProcessResultOperator(new ROTakeSkipOperators(), skipper, null, gc);

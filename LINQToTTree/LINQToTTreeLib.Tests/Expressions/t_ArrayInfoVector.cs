@@ -64,7 +64,7 @@ namespace LINQToTTreeLib.Tests
 
             public Expression ProcessConstantReferenceExpression(ConstantExpression expr, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
-                throw new NotImplementedException();
+                return expr;
             }
         }
 

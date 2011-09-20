@@ -21,6 +21,21 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
     [TestClass]
     public partial class TypeHandlerCPPCodeTest
     {
+        [TestInitialize]
+        public void TestInit()
+        {
+            MEFUtilities.MyClassInit();
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
+            DummyQueryExectuor.GlobalInitalized = false;
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         internal bool CanHandle([PexAssumeUnderTest]TypeHandlerCPPCode target, Type t)
