@@ -19,12 +19,11 @@ namespace LINQToTTreeLib.TypeHandlers
         internal Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerHelpers target,
             MethodCallExpression expr,
-            out IValue result,
             IGeneratedQueryCode gc,
             ICodeContext context
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context, null);
+            Expression result01 = target.ProcessMethodCall(expr, gc, context, null);
             return result01;
             // TODO: add assertions to method TypeHandlerHelpersTest.ProcessMethodCall(TypeHandlerHelpers, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
         }

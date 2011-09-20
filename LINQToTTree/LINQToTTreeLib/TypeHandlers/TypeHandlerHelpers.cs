@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
             if (expr == null)
                 throw new ArgumentNullException("expr");
@@ -88,7 +88,7 @@ namespace LINQToTTreeLib.TypeHandlers
                 var p2 = context.Add(lambdaParameters[1].Name, expr.Arguments[1]);
                 var p1 = context.Add(lambdaParameters[0].Name, expr.Arguments[0]);
 
-                var statementBody = ExpressionToCPP.GetExpression(action.Body.Resolve(context, container), gc, context, container);
+                var statementBody = ExpressionToCPP.GetExpression(action.Body.Resolve(gc, context, container), gc, context, container);
 
                 p1.Pop();
                 p2.Pop();
@@ -99,9 +99,7 @@ namespace LINQToTTreeLib.TypeHandlers
                 /// Finally, what we will return if this is the last thing we are doing!
                 /// 
 
-                result = ExpressionToCPP.GetExpression(expr.Arguments[0], gc, context, container); ;
-
-                return expr;
+                return expr.Arguments[0];
             }
             else
             {
@@ -153,5 +151,16 @@ namespace LINQToTTreeLib.TypeHandlers
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// By the time we get to coding nothing like this guy should be around!
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

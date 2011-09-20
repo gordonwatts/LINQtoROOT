@@ -50,12 +50,15 @@ namespace LINQToTTreeLib.TypeHandlers
                 return true;
             }
 
-            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+            public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
-                result = new Variables.VarInteger();
                 return expr;
             }
 
+            public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                return new Variables.VarInteger();
+            }
 
             public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
             {
@@ -105,13 +108,9 @@ namespace LINQToTTreeLib.TypeHandlers
             var m = typeof(int).GetMethods().Where(me => me.Name == "ToString").First();
             var expr = Expression.Call(Expression.Constant(10), m);
             GeneratedCode gc = new GeneratedCode();
-            CodeContext c = new CodeContext();
 
-            IValue result;
+            var result = CodeMethodCall(target, expr, gc);
 
-            var outExpr = ProcessMethodCall(target, expr, out result, gc, c);
-
-            Assert.AreEqual(expr, outExpr);
             Assert.IsInstanceOfType(result, typeof(Variables.VarInteger));
         }
 
@@ -119,14 +118,21 @@ namespace LINQToTTreeLib.TypeHandlers
         public Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerCache target,
             MethodCallExpression expr,
-            out IValue result,
             IGeneratedQueryCode gc,
             ICodeContext cc
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, cc, null);
-            return result01;
-            // TODO: add assertions to method TypeHandlerCacheTest.ProcessMethodCall(TypeHandlerCache, MethodCallExpression, IValue&, IGeneratedCode)
+            return target.ProcessMethodCall(expr, gc, cc, null);
+        }
+
+        [PexMethod]
+        public IValue CodeMethodCall(
+            [PexAssumeUnderTest]TypeHandlerCache target,
+            MethodCallExpression expr,
+            IGeneratedQueryCode gc
+        )
+        {
+            return target.CodeMethodCall(expr, gc, null);
         }
 
         /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>

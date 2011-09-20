@@ -27,7 +27,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 cc = new CodeContext();
             }
-            return InternalGetExpression(expr.Resolve(cc, container), ce, cc, container);
+            return InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container);
         }
 
         /// <summary>
@@ -449,19 +449,6 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// Some method is being called. Translate this. This is painful b/c there may be method calls that aren't
-        /// really method calls. For example, our special Helper functions. Or also there are the ROOT functions that
-        /// need to be translated to C++.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
-        {
-            var exprOut = TypeHandlers.ProcessMethodCall(expression, out _result, _codeEnv, _codeContext, MEFContainer);
-            return exprOut;
-        }
-
-        /// <summary>
         /// Someone is doing a new in the middle of this LINQ operation... we need to handle that, I guess,
         /// and translate it to a new in C++.
         /// </summary>
@@ -471,6 +458,17 @@ namespace LINQToTTreeLib.Expressions
         {
             var exprOut = TypeHandlers.ProcessNew(expression, out _result, _codeEnv, MEFContainer);
             return exprOut;
+        }
+
+        /// <summary>
+        /// Some method is being called. Offer plug-ins a chance to transform this method call.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+        {
+            _result = TypeHandlers.CodeMethodCall(expression, _codeEnv, MEFContainer);
+            return expression;
         }
 
         /// <summary>

@@ -54,20 +54,6 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
         }
 
         /// <summary>
-        /// We should never have a method call made on this guy
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <param name="result"></param>
-        /// <param name="gc"></param>
-        /// <param name="context"></param>
-        /// <param name="container"></param>
-        /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// The IExpressionHolder should never be pushed over - so bomb!
         /// </summary>
         /// <param name="expression"></param>
@@ -77,6 +63,17 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
         /// <param name="container"></param>
         /// <returns></returns>
         public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
             throw new NotImplementedException();
         }

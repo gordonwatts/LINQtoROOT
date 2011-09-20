@@ -78,22 +78,21 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         }
 
         /// <summary>
-        /// Someone is accessing a method on our ROOT object. We do the translation to C++
+        /// Someone is accessing a method on our ROOT object. We do the translation to C++ here.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
-            var objRef = ExpressionToCPP.GetExpression(expr.Object, gc, context, container);
+            var objRef = ExpressionToCPP.InternalGetExpression(expr.Object, gc, null, container);
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}.{1}", objRef.AsObjectReference(), expr.Method.Name);
 
             AddMethodArguments(expr.Arguments, gc, container, bld);
 
-            result = new ValSimple(bld.ToString(), expr.Type);
-            return expr;
+            return new ValSimple(bld.ToString(), expr.Type);
         }
 
         /// <summary>
@@ -187,6 +186,19 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                 builtArgs.Append(ExpressionToCPP.InternalGetExpression(a, gc, null, container).CastToType(a));
             }
             builtArgs.Append(")");
+        }
+
+        /// <summary>
+        /// We do no expression transformation - so just let it go.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            return expr;
         }
     }
 }

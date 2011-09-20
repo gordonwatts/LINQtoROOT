@@ -96,14 +96,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         {
             var target = new TypeHandlerCPPCode();
             var gc = new GeneratedCode();
-            var context = new CodeContext();
 
             var param = Expression.Parameter(typeof(int), "p");
             var expr = Expression.Call(typeof(DoItClass).GetMethod("DoIt"), param);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            var result = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -134,9 +131,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var paramplus = Expression.MakeBinary(ExpressionType.Add, param, Expression.Constant(1));
             var expr = Expression.Call(typeof(DoItClass).GetMethod("DoIt"), paramplus);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            var result = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -153,16 +148,26 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         internal Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerCPPCode target,
             MethodCallExpression expr,
-            out IValue result,
             IGeneratedQueryCode gc,
             ICodeContext context,
             CompositionContainer container
         )
         {
             Expression result01
-               = target.ProcessMethodCall(expr, out result, gc, context, container);
+               = target.ProcessMethodCall(expr, gc, context, container);
             return result01;
             // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessMethodCall(TypeHandlerCPPCode, MethodCallExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
+        }
+
+        [PexMethod]
+        internal IValue CodeMethodCall(
+            [PexAssumeUnderTest]TypeHandlerCPPCode target,
+            MethodCallExpression expr,
+            IGeneratedQueryCode gc,
+            CompositionContainer container
+            )
+        {
+            return target.CodeMethodCall(expr, gc, container);
         }
 
         /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
@@ -194,9 +199,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -220,9 +223,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -244,9 +245,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZUniqueTest"), p_pt, p_eta, p_phi, p_E);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -270,9 +269,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("TestIF"), p_pt, p_eta, p_phi, p_E);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -294,9 +291,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZNoResult"), p_pt, p_eta, p_phi, p_E);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
         }
 
         [CPPHelperClass]
@@ -383,9 +378,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -408,9 +401,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var p_E = Expression.Parameter(typeof(double), "EParam");
             var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZBE"), p_pt, p_eta, p_phi, p_E);
 
-            IValue result;
-
-            target.ProcessMethodCall(expr, out result, gc, context, MEFUtilities.MEFContainer);
+            target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 

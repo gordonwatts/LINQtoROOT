@@ -63,7 +63,20 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         private int _uniqueCounter = 0;
 
         /// <summary>
-        /// Where the real work happens!
+        /// Expressions that are actually code are left alone at the early stage.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        {
+            return expr;
+        }
+
+        /// <summary>
+        /// Translate the CPP code reference into the code
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="result"></param>
@@ -71,7 +84,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(System.Linq.Expressions.MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
         {
             if (expr == null)
                 throw new ArgumentNullException("expr");
@@ -105,7 +118,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                                    select new
                                    {
                                        Name = p.Item2.Name,
-                                       Translated = ExpressionToCPP.GetExpression(p.Item1, gc, context, container)
+                                       Translated = ExpressionToCPP.InternalGetExpression(p.Item1, gc, null, container)
                                    };
             var paramLookup = paramsTranslated.ToDictionary(v => v.Name, v => v.Translated.ApplyParensIfNeeded());
 
@@ -123,7 +136,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             paramLookup.Add(expr.Method.Name, resultName);
 
-            result = new ValSimple(resultName, expr.Type);
+            var result = new ValSimple(resultName, expr.Type);
 
             //
             // Make sure a result exists in here!
@@ -176,7 +189,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 cppStatement.AddLine(tline);
             }
 
-            return expr;
+            return result;
         }
 
         /// <summary>

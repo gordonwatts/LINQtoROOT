@@ -160,6 +160,19 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         }
 
         /// <summary>
+        /// We will translate the call to C++, rather than transform it.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            return expr;
+        }
+
+        /// <summary>
         /// Translate the method call
         /// </summary>
         /// <param name="expr"></param>
@@ -167,7 +180,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
             Init();
 
@@ -216,11 +229,11 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                 if (!first)
                     rawValue.Append(",");
                 first = false;
-                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionToCPP.GetExpression(arg.Item1, gc, context, container).RawValue);
+                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionToCPP.InternalGetExpression(arg.Item1, gc, null, container).RawValue);
             }
             rawValue.Append(")");
 
-            result = new ValSimple(rawValue.ToString(), expr.Type);
+            var result = new ValSimple(rawValue.ToString(), expr.Type);
 
             ///
             /// Include files
@@ -235,7 +248,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             /// We aren't re-writing this expression, so just return it.
             /// 
 
-            return expr;
+            return result;
         }
 
         /// <summary>

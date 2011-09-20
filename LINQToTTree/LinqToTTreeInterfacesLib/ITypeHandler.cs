@@ -47,8 +47,8 @@ namespace LinqToTTreeInterfacesLib
             CompositionContainer container);
 
         /// <summary>
-        /// Process a method call against this object. The result - which is the resulting expression - is put into
-        /// the result, and return the expression (usually just a straight return).
+        /// Process a method call against an object. This happens fiarly early in the process, and
+        /// should be used when basic translation needs to happen.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="result"></param>
@@ -56,7 +56,16 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="context"></param>
         /// <param name="container">If expression or others need to be built, this container will be needed for MEF</param>
         /// <returns></returns>
-        Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container);
+        Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container);
+
+        /// <summary>
+        /// A method call needs to be put into C++ - This method should handle that.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container);
 
         /// <summary>
         /// Process an object creation call. The result, which is the resulting expression. Note that when

@@ -98,14 +98,10 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
             var target = new TypeHandlerROOT();
 
-
-
-            IValue resultOfCall;
             var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var returned = target.ProcessMethodCall(theCall, out resultOfCall, gc, cc, MEFUtilities.MEFContainer);
+            var returned = target.CodeMethodCall(theCall, gc, MEFUtilities.MEFContainer);
 
-            Assert.AreEqual("(*myvar).GetEntries()", resultOfCall.RawValue, "call is incorrect");
+            Assert.AreEqual("(*myvar).GetEntries()", returned.RawValue, "call is incorrect");
         }
 
         [TestMethod]

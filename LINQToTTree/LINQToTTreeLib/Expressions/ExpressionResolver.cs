@@ -16,14 +16,14 @@ namespace LINQToTTreeLib.Expressions
     /// </summary>
     static class ExpressionResolver
     {
-        public static Expression Resolve(this Expression source, ICodeContext cc, CompositionContainer container)
+        public static Expression Resolve(this Expression source, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
             {
                 cc = new CodeContext();
             }
 
-            return ResolveToExpression.Translate(source, cc, container);
+            return ResolveToExpression.Translate(source, gc, cc, container);
         }
 
         /// <summary>
@@ -37,9 +37,9 @@ namespace LINQToTTreeLib.Expressions
             /// <param name="expr"></param>
             /// <param name="cc"></param>
             /// <returns></returns>
-            public static Expression Translate(Expression expr, ICodeContext cc, CompositionContainer container)
+            public static Expression Translate(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
             {
-                var tr = new ResolveToExpression() { _codeContext = cc, MEFContainer = container };
+                var tr = new ResolveToExpression() { _codeContext = cc, GeneratedCode = gc, MEFContainer = container };
                 if (container != null)
                 {
                     container.SatisfyImportsOnce(tr);
@@ -94,6 +94,11 @@ namespace LINQToTTreeLib.Expressions
             public ICodeContext _codeContext;
 
             /// <summary>
+            /// The code we are generating.
+            /// </summary>
+            public IGeneratedQueryCode GeneratedCode { get; set; }
+
+            /// <summary>
             /// We are doing an inline call to a lambda expression.
             /// </summary>
             /// <param name="expression"></param>
@@ -119,7 +124,7 @@ namespace LINQToTTreeLib.Expressions
                 /// dealt with.
                 /// 
 
-                var result = lambda.Body.Resolve(_codeContext, MEFContainer);
+                var result = lambda.Body.Resolve(GeneratedCode, _codeContext, MEFContainer);
 
                 ///
                 /// Now, pop everything off!
@@ -156,6 +161,16 @@ namespace LINQToTTreeLib.Expressions
                     default:
                         return base.VisitUnaryExpression(expression);
                 }
+            }
+
+            /// <summary>
+            /// Some method is being called. Offer plug-ins a chance to transform this method call.
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+            {
+                return TypeHandlers.ProcessMethodCall(expression, GeneratedCode, _codeContext, MEFContainer);
             }
 
             /// <summary>
