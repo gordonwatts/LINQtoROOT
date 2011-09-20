@@ -469,7 +469,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitNewExpression(NewExpression expression)
         {
-            var exprOut = TypeHandlers.ProcessNew(expression, out _result, _codeEnv, _codeContext, MEFContainer);
+            var exprOut = TypeHandlers.ProcessNew(expression, out _result, _codeEnv, MEFContainer);
             return exprOut;
         }
 

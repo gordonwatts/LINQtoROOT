@@ -319,7 +319,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessNew(System.Linq.Expressions.NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        public System.Linq.Expressions.Expression ProcessNew(System.Linq.Expressions.NewExpression expression, out IValue result, IGeneratedQueryCode gc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
         {
             throw new NotImplementedException();
         }

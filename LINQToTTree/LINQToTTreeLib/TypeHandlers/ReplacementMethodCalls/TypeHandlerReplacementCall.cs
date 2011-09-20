@@ -413,7 +413,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
         {
             throw new NotImplementedException();
         }

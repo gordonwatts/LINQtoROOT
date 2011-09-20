@@ -62,12 +62,15 @@ namespace LinqToTTreeInterfacesLib
         /// Process an object creation call. The result, which is the resulting expression. Note that when
         /// this area of code goes out of scope the object should automatically be deleted! :-)
         /// </summary>
+        /// <remarks>
+        /// This is called fairly late in the trnaslation process - after all argument substitions has been done.
+        /// </remarks>
         /// <param name="expression"></param>
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container);
+        Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container);
     }
 }

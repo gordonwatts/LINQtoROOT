@@ -172,12 +172,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             NewExpression expression,
             out IValue result,
             IGeneratedQueryCode gc,
-            ICodeContext context,
             CompositionContainer container
         )
         {
             Expression result01
-               = target.ProcessNew(expression, out result, gc, context, container);
+               = target.ProcessNew(expression, out result, gc, container);
             return result01;
             // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessNew(TypeHandlerCPPCode, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }

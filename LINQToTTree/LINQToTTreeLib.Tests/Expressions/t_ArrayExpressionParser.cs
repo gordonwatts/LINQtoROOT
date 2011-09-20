@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.Tests
             }
 
 
-            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

@@ -81,13 +81,13 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        internal Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        internal Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");
 
             var h = FindHandler(expression.Type);
-            return h.ProcessNew(expression, out result, gc, context, container);
+            return h.ProcessNew(expression, out result, gc, container);
             throw new NotImplementedException();
         }
 

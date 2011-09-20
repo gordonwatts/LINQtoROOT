@@ -57,7 +57,7 @@ namespace LINQToTTreeLib.TypeHandlers
             }
 
 
-            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
             {
                 throw new NotImplementedException();
             }
@@ -136,12 +136,11 @@ namespace LINQToTTreeLib.TypeHandlers
             NewExpression expression,
             out IValue _result,
             IGeneratedQueryCode _codeEnv,
-            ICodeContext _codeContext,
             CompositionContainer MEFContainer
         )
         {
             Expression result = target.ProcessNew
-                                    (expression, out _result, _codeEnv, _codeContext, MEFContainer);
+                                    (expression, out _result, _codeEnv, MEFContainer);
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessNew(TypeHandlerCache, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
