@@ -27,6 +27,24 @@ namespace LINQToTTreeLib.Expressions
             {
                 cc = new CodeContext();
             }
+            return InternalGetExpression(expr.Resolve(cc, container), ce, cc, container);
+        }
+
+        /// <summary>
+        /// Internal expression resolver. This routine is temporary - needed as we move
+        /// to the new system...
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="ce"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        static IValue InternalGetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
+        {
+            if (cc == null)
+            {
+                cc = new CodeContext();
+            }
 
             var visitor = new ExpressionToCPP(ce, cc);
             visitor.MEFContainer = container;
@@ -36,7 +54,7 @@ namespace LINQToTTreeLib.Expressions
                 container.SatisfyImportsOnce(visitor);
             }
 
-            visitor.VisitExpression(expr.Resolve(cc, container));
+            visitor.VisitExpression(expr);
             return visitor.Result;
         }
 
@@ -48,7 +66,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private IValue GetExpression(Expression expr)
         {
-            return GetExpression(expr, _codeEnv, _codeContext, MEFContainer);
+            return InternalGetExpression(expr, _codeEnv, _codeContext, MEFContainer);
         }
 
         /// <summary>

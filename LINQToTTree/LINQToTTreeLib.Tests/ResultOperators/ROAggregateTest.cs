@@ -1,14 +1,12 @@
 // <copyright file="ROAggregateTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.TypeHandlers;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -66,12 +64,6 @@ namespace LINQToTTreeLib.ResultOperators
         {
             public int run;
             public IEnumerable<int> vals;
-        }
-
-        public class dummy
-        {
-            [Import]
-            TypeHandlerCache _dude;
         }
 
         [TestMethod]

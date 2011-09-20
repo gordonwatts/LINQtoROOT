@@ -138,6 +138,27 @@ namespace LINQToTTreeLib.Expressions
             }
 
             /// <summary>
+            /// There are certian expressions we really don't want to delve into - in
+            /// particular an array length operator!
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitUnaryExpression(UnaryExpression expression)
+            {
+                switch (expression.NodeType)
+                {
+                    // Skip this b/c the array length can require a
+                    // name translation. And by the time we get here, it
+                    // will have been fully translated.
+                    //case ExpressionType.ArrayLength:
+                    //    return expression;
+
+                    default:
+                        return base.VisitUnaryExpression(expression);
+                }
+            }
+
+            /// <summary>
             /// List of the type handlers that we can use to process things.
             /// </summary>
             [Import]
