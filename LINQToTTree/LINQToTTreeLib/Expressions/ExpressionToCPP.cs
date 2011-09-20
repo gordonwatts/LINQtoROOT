@@ -39,7 +39,7 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="cc"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        static IValue InternalGetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
+        public static IValue InternalGetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
             {
