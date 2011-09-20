@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
 {
@@ -30,15 +31,13 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
         /// <returns></returns>
         public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
         {
-            var holder = expr.Value as IExpressionHolder;
-            if (holder == null)
-                throw new InvalidOperationException("Can't get at the interface to get at the expression.");
-
-            return holder.HeldExpression;
+            return expr;
         }
 
         /// <summary>
         /// Called late to replace a constant expression of this type. By the time we get here these should not exist!
+        /// The expression holder can't hold anything interesting (like parameters) - by the time we are here
+        /// it is too late to do the parsing.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
@@ -46,7 +45,12 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
         /// <returns></returns>
         public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
         {
-            throw new NotImplementedException();
+            var holder = expr.Value as IExpressionHolder;
+            if (holder == null)
+                throw new InvalidOperationException("Can't get at the interface to get at the expression.");
+
+            var e = holder.HeldExpression;
+            return ExpressionToCPP.InternalGetExpression(e, codeEnv, null, container);
         }
 
         /// <summary>
