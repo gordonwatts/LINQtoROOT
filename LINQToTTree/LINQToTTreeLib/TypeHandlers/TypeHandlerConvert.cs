@@ -28,7 +28,20 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// NOt processing any sort of expression of this type!
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="codeEnv"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
         {
             throw new NotImplementedException();
         }

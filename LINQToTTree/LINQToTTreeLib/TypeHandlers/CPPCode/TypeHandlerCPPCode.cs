@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
@@ -38,7 +39,20 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Nothing like this sort of class should appear as a const reference - so bomb if we see it.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="codeEnv"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, System.ComponentModel.Composition.Hosting.CompositionContainer container)
         {
             throw new NotImplementedException();
         }

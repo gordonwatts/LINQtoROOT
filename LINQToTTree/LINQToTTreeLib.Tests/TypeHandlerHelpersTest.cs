@@ -35,7 +35,7 @@ namespace LINQToTTreeLib.TypeHandlers
             IGeneratedQueryCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null);
             return result;
             // TODO: add assertions to method TypeHandlerHelpersTest.ProcessConstantReference(TypeHandlerHelpers, ConstantExpression, IGeneratedCode)
         }

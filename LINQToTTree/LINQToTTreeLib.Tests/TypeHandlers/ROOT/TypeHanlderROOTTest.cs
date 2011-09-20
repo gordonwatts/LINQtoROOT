@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             [PexAssumeNotNull] IGeneratedQueryCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null);
             Assert.IsNotNull(result);
             return result;
         }
@@ -63,8 +63,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var rootObj = Expression.Constant(origRootObj);
 
             var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var result = t.ProcessConstantReference(rootObj, gc, cc, MEFUtilities.MEFContainer);
+            var result = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
 
             Assert.IsNotNull(result);
 
@@ -82,9 +81,8 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var rootObj = Expression.Constant(origRootObj);
 
             var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var result1 = t.ProcessConstantReference(rootObj, gc, cc, MEFUtilities.MEFContainer);
-            var result2 = t.ProcessConstantReference(rootObj, gc, cc, MEFUtilities.MEFContainer);
+            var result1 = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
+            var result2 = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
 
             Assert.AreEqual(1, gc.VariablesToTransfer.Count(), "Variables to transfer");
 

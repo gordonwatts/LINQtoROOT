@@ -25,7 +25,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
         {
             // <pex>
             if (expr == (ConstantExpression)null)
@@ -33,7 +33,25 @@ namespace LINQToTTreeLib.TypeHandlers
             // </pex>
 
             var h = FindHandler(expr.Type);
-            return h.ProcessConstantReference(expr, codeEnv, context, container);
+            return h.ProcessConstantReference(expr, codeEnv, container);
+        }
+
+        /// <summary>
+        /// Do the early call for processing an expression. If we don't know about the item, then
+        /// just return it.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="_codeContext"></param>
+        /// <returns></returns>
+        public Expression ProcessConstantReferenceAsExpression(ConstantExpression expression, CompositionContainer container)
+        {
+            if (expression == (ConstantExpression)null)
+                throw new ArgumentNullException("expression");
+
+            var h = FindHandler(expression.Type, throwIfNotThere: false);
+            if (h == null)
+                return expression;
+            return h.ProcessConstantReferenceExpression(expression, container);
         }
 
         /// <summary>
@@ -78,7 +96,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        private ITypeHandler FindHandler(Type type)
+        private ITypeHandler FindHandler(Type type, bool throwIfNotThere = true)
         {
             if (_handlers == null)
                 throw new InvalidOperationException("TypeHandlerCache has not been initalized via MEF!");
@@ -88,8 +106,12 @@ namespace LINQToTTreeLib.TypeHandlers
                      select t).FirstOrDefault();
 
             if (h == null)
-                throw new InvalidOperationException("I don't know how to deal with the type " + type.Name);
+            {
+                if (!throwIfNotThere)
+                    return null;
 
+                throw new InvalidOperationException("I don't know how to deal with the type " + type.Name);
+            }
             return h;
         }
     }

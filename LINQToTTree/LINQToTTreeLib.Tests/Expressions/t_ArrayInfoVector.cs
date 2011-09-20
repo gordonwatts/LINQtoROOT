@@ -45,11 +45,6 @@ namespace LINQToTTreeLib.Tests
                     || t == typeof(ResultType1);
             }
 
-            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
-            {
-                return new Variables.ValSimple("35", expr.Type);
-            }
-
             public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 throw new NotImplementedException();
@@ -57,6 +52,17 @@ namespace LINQToTTreeLib.Tests
 
 
             public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                return new Variables.ValSimple("35", expr.Type);
+            }
+
+            public Expression ProcessConstantReferenceExpression(ConstantExpression expr, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

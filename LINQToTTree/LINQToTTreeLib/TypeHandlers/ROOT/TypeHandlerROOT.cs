@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
         {
             ///
             /// The value is a reference that will do the loading.
@@ -62,6 +62,19 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType, rootObject.Name, rootObject.Title);
 
             return val;
+        }
+
+        /// <summary>
+        /// When we hit this early in the review process we ignore it - we will get it right at the end.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="codeEnv"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
+        {
+            return expr;
         }
 
         /// <summary>

@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         public void TestProcessConstantReference()
         {
             var p = new TypeHandlerReplacementCall();
-            p.ProcessConstantReference(null, null, null, null);
+            p.ProcessConstantReference(null, null, null);
         }
 
         class SimpleTest

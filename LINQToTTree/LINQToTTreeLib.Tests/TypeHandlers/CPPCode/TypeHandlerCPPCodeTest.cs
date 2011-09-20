@@ -67,12 +67,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         internal IValue ProcessConstantReference(
             [PexAssumeUnderTest]TypeHandlerCPPCode target,
             ConstantExpression expr,
-            GeneratedCode codeEnv,
-            CodeContext context
+            GeneratedCode codeEnv
         )
         {
             IValue result
-               = target.ProcessConstantReference(expr, codeEnv, context, MEFUtilities.MEFContainer);
+               = target.ProcessConstantReference(expr, codeEnv, MEFUtilities.MEFContainer);
             return result;
             // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessConstantReference(TypeHandlerCPPCode, ConstantExpression, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }

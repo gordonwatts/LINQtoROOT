@@ -32,9 +32,21 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
         {
-            /// There is something very broken if this guy is getting called!
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// These guys never get in as a constant - if they do then who knows what is going on! BOOM!
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="codeEnv"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
+        {
             throw new NotImplementedException();
         }
 
@@ -76,7 +88,7 @@ namespace LINQToTTreeLib.TypeHandlers
                 var p2 = context.Add(lambdaParameters[1].Name, expr.Arguments[1]);
                 var p1 = context.Add(lambdaParameters[0].Name, expr.Arguments[0]);
 
-                var statementBody = ExpressionToCPP.GetExpression(action.Body.Resolve(context), gc, context, container);
+                var statementBody = ExpressionToCPP.GetExpression(action.Body.Resolve(context, container), gc, context, container);
 
                 p1.Pop();
                 p2.Pop();
@@ -140,5 +152,6 @@ namespace LINQToTTreeLib.TypeHandlers
         {
             throw new NotImplementedException();
         }
+
     }
 }

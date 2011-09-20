@@ -1,12 +1,14 @@
 // <copyright file="ROAggregateTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.TypeHandlers;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -55,7 +57,7 @@ namespace LINQToTTreeLib.ResultOperators
         {
             CodeContext c = new CodeContext();
             IVariable result
-               = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, c, null);
+               = target.ProcessResultOperator(resultOperator, queryModel, _codeEnv, c, MEFUtilities.MEFContainer);
             return result;
             // TODO: add assertions to method ROAggregateTest.ProcessResultOperator(ROAggregate, ResultOperatorBase, QueryModel, IGeneratedCode)
         }
@@ -66,9 +68,16 @@ namespace LINQToTTreeLib.ResultOperators
             public IEnumerable<int> vals;
         }
 
+        public class dummy
+        {
+            [Import]
+            TypeHandlerCache _dude;
+        }
+
         [TestMethod]
         public void TestSimpleAddition()
         {
+            MEFUtilities.Compose(new TypeHandlers.TypeHandlerCache());
             AggregateFromSeedResultOperator agg = new AggregateFromSeedResultOperator(Expression.Constant(1),
                 Expression.Lambda(Expression.MakeBinary(ExpressionType.Add, Expression.Parameter(typeof(int), "count"), Expression.Constant(1)),
                 Expression.Parameter(typeof(int), "count")),

@@ -20,16 +20,30 @@ namespace LinqToTTreeInterfacesLib
         bool CanHandle(Type t);
 
         /// <summary>
-        /// The user has referenced a constant of some sort in their code. This method should figure out
-        /// how to ship the object accross the wire and how to load it, etc. (well, create the proper value for it,
-        /// and add it to the list of the GeneratedCode!).
+        /// The user (or system) has referenced a constant of some sort in the query code. This should figure out
+        /// how to move the item accross the wire. Return a value! This mehtod is called very late in the translation
+        /// process - when all parameter replacement, translation, etc., has occured.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
         IValue ProcessConstantReference(ConstantExpression expr,
             IGeneratedQueryCode codeEnv,
-            ICodeContext context,
+            CompositionContainer container);
+
+        /// <summary>
+        /// A constant reference has appeared in the code. It can be transformed by this method into
+        /// another expression if desired. This is called fiarly "early" in the process.
+        /// </summary>
+        /// <remarks>
+        /// This method
+        /// should always return the incoming expression if it isn't implemented if any constnat expressions
+        /// will occur (or you'll get a crash!).
+        /// </remarks>
+        /// <param name="expr"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        Expression ProcessConstantReferenceExpression(ConstantExpression expr,
             CompositionContainer container);
 
         /// <summary>

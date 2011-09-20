@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.TypeHandlers;
 using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib.Expressions
@@ -13,43 +16,14 @@ namespace LINQToTTreeLib.Expressions
     /// </summary>
     static class ExpressionResolver
     {
-        public static Expression Resolve(this Expression source, ICodeContext cc)
+        public static Expression Resolve(this Expression source, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
             {
                 cc = new CodeContext();
             }
 
-            ///
-            /// First, see if there are any parameter replacements that can be done out-of-band
-            /// 
-
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(source, cc);
-
-            //
-            // Next, attempt to translate the expr (if needed). This deals with moving from
-            // one pre-done space to another.
-            // 
-
-            string oldExpr = "";
-            while (expr.ToString() != oldExpr)
-            {
-                oldExpr = expr.ToString();
-                expr = TranslatingExpressionVisitor.Translate(expr, cc.CacheCookies);
-            }
-
-            //
-            // Finally, if there any calls or other things that need to be recurively translated,
-            // do that now.
-            //
-
-            expr = ResolveToExpression.Translate(expr, cc);
-
-            //
-            // Done. Return it!
-            //
-
-            return expr;
+            return ResolveToExpression.Translate(source, cc, container);
         }
 
         /// <summary>
@@ -63,12 +37,60 @@ namespace LINQToTTreeLib.Expressions
             /// <param name="expr"></param>
             /// <param name="cc"></param>
             /// <returns></returns>
-            public static Expression Translate(Expression expr, ICodeContext cc)
+            public static Expression Translate(Expression expr, ICodeContext cc, CompositionContainer container)
             {
-                var tr = new ResolveToExpression() { _codeContext = cc };
+                var tr = new ResolveToExpression() { _codeContext = cc, MEFContainer = container };
+                if (container != null)
+                {
+                    container.SatisfyImportsOnce(tr);
+                }
+
                 return tr.VisitExpression(expr);
             }
 
+            /// <summary>
+            /// Visit an expression. For each expression first make sure that it has been
+            /// translated and parameter replaced. We do this recusively...
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            public override Expression VisitExpression(Expression expression)
+            {
+                //
+                // Sometimes we are called with a null - we ignore that! :-)
+                //
+
+                if (expression == null)
+                    return null;
+
+                ///
+                /// First, see if there are any parameter replacements that can be done out-of-band
+                /// 
+
+                var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expression, _codeContext);
+
+                //
+                // Next, attempt to translate the expr (if needed). This deals with moving from
+                // one pre-done space to another.
+                // 
+
+                string oldExpr = "";
+                while (expr.ToString() != oldExpr)
+                {
+                    oldExpr = expr.ToString();
+                    expr = TranslatingExpressionVisitor.Translate(expr, _codeContext.CacheCookies);
+                }
+
+                //
+                // Now do the rest of the parsing.
+                //
+
+                return base.VisitExpression(expr);
+            }
+
+            /// <summary>
+            /// Keep track of the code context.
+            /// </summary>
             public ICodeContext _codeContext;
 
             /// <summary>
@@ -97,7 +119,7 @@ namespace LINQToTTreeLib.Expressions
                 /// dealt with.
                 /// 
 
-                var result = lambda.Body.Resolve(_codeContext);
+                var result = lambda.Body.Resolve(_codeContext, MEFContainer);
 
                 ///
                 /// Now, pop everything off!
@@ -115,6 +137,29 @@ namespace LINQToTTreeLib.Expressions
                 return result;
             }
 
+            /// <summary>
+            /// List of the type handlers that we can use to process things.
+            /// </summary>
+            [Import]
+            private TypeHandlerCache TypeHandlers { get; set; }
+
+
+            /// <summary>
+            /// Get/Set the MEF container used when we create new objects (like a QV).
+            /// </summary>
+            public CompositionContainer MEFContainer { get; set; }
+
+            /// <summary>
+            /// Process a constant expression, if possible. Some forms of constant expressions
+            /// are actually just stubs for dealing with something that needs to be injected into
+            /// the process.
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitConstantExpression(ConstantExpression expression)
+            {
+                return TypeHandlers.ProcessConstantReferenceAsExpression(expression, MEFContainer);
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.TypeHandlers
             IGeneratedQueryCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null);
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessConstantReference(TypeHandlerCache, ConstantExpression, IGeneratedCode)
         }
@@ -50,12 +50,6 @@ namespace LINQToTTreeLib.TypeHandlers
                 return true;
             }
 
-            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
-            {
-                return new Variables.ValSimple("dude", expr.Type);
-            }
-
-
             public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
             {
                 result = new Variables.VarInteger();
@@ -64,6 +58,17 @@ namespace LINQToTTreeLib.TypeHandlers
 
 
             public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
+            {
+                return new Variables.ValSimple("dude", expr.Type);
+            }
+
+            public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

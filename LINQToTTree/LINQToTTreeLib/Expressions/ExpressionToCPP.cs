@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.Expressions
                 container.SatisfyImportsOnce(visitor);
             }
 
-            visitor.VisitExpression(expr.Resolve(cc));
+            visitor.VisitExpression(expr.Resolve(cc, container));
             return visitor.Result;
         }
 
@@ -122,7 +122,7 @@ namespace LINQToTTreeLib.Expressions
             }
             else
             {
-                _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv, _codeContext, MEFContainer);
+                _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv, MEFContainer);
             }
 
             return expression;

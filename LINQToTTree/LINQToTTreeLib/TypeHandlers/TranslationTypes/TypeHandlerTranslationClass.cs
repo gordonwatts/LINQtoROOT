@@ -3,7 +3,6 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
 {
@@ -29,15 +28,25 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
         {
             var holder = expr.Value as IExpressionHolder;
             if (holder == null)
                 throw new InvalidOperationException("Can't get at the interface to get at the expression.");
 
-            var held = holder.HeldExpression;
+            return holder.HeldExpression;
+        }
 
-            return ExpressionToCPP.GetExpression(held, codeEnv, context, container);
+        /// <summary>
+        /// Called late to replace a constant expression of this type. By the time we get here these should not exist!
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="codeEnv"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -49,7 +58,7 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
             throw new NotImplementedException();
         }
