@@ -311,22 +311,6 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// Query references should never happen at this level - they shoudl be taken care of by parameter replacement
-        /// that gets called first!
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
-        {
-            var expr = _codeContext.GetReplacement(expression.ReferencedQuerySource);
-            if (expr == null)
-                throw new InvalidOperationException("Query source was not known to us - not possible!");
-            _result = GetExpression(expr);
-
-            return expression;
-        }
-
-        /// <summary>
         /// The user is making a sub-query. We will run the query and return it using the usual QueryVisitor dude, but unlike
         /// normal we have to run the loop ourselves.
         /// </summary>

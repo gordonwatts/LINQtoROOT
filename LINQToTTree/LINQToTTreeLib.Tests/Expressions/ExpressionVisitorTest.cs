@@ -183,7 +183,7 @@ namespace LINQToTTreeLib
         };
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(NotSupportedException))]
         public void TestSubQueryReferenceWhenNotDefined()
         {
             QuerySourceReferenceExpression q = new QuerySourceReferenceExpression(new DummyQueryReference() { ItemName = "evt", ItemType = typeof(int) });
