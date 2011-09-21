@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
@@ -43,7 +44,7 @@ namespace LINQToTTreeLib.ResultOperators
 
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod]
-        internal IVariable ProcessResultOperator(
+        internal Expression ProcessResultOperator(
             [PexAssumeUnderTest]ROMinMax target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -52,7 +53,7 @@ namespace LINQToTTreeLib.ResultOperators
             CompositionContainer container
         )
         {
-            IVariable result
+            Expression result
                = target.ProcessResultOperator(resultOperator, queryModel, gc, cc, container);
             return result;
             // TODO: add assertions to method ROMinMaxTest.ProcessResultOperator(ROMinMax, ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)

@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="cc"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             if (cc == null)
                 throw new ArgumentNullException("cc");
@@ -93,7 +93,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// Done!
             /// 
 
-            return aresult;
+            return Expression.Variable(aresult.Type, aresult.RawValue);
         }
     }
 }
