@@ -117,7 +117,6 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArgDude", "noArg");
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
             var r = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
