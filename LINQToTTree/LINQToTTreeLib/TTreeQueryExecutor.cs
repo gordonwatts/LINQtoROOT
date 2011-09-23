@@ -309,7 +309,7 @@ namespace LINQToTTreeLib
             if (!IgnoreQueryCache)
             {
                 TraceHelpers.TraceInfo(9, "ExecuteScalarAsFuture: Looking for cache hit");
-                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
+                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValueAsVaraible), result.ResultValueAsVaraible);
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;

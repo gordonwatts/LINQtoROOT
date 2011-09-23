@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
@@ -26,14 +27,19 @@ namespace LINQToTTreeLib
         /// <summary>
         /// The final result of this query.
         /// </summary>
-        public IVariable ResultValue { get; private set; }
+        public Expression ResultValue { get; private set; }
+
+        /// <summary>
+        /// Get the final result as a variable.
+        /// </summary>
+        public IVariable ResultValueAsVaraible { get; private set; }
 
         /// <summary>
         /// We have only a single result value, so the return is pretty easy...
         /// </summary>
         public IEnumerable<IVariable> ResultValues
         {
-            get { yield return ResultValue; }
+            get { yield return ResultValueAsVaraible; }
         }
 
         /// <summary>
@@ -57,7 +63,7 @@ namespace LINQToTTreeLib
         /// </summary>
         private IBookingStatementBlock PreviousDeclarationScopePointer;
 
-        public void SetResult(IVariable r)
+        public void SetResult(Expression r)
         {
             if (r == null)
                 throw new ArgumentNullException("Cannot set the result to be null");
@@ -66,11 +72,23 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Set the result variable.
+        /// </summary>
+        /// <param name="r"></param>
+        public void SetResult(IVariable r)
+        {
+            if (r == null)
+                throw new ArgumentNullException("Cannot set the result to be null for a variable");
+            ResultValueAsVaraible = r;
+        }
+
+        /// <summary>
         /// Reset the result to be null
         /// </summary>
         public void ResetResult()
         {
             ResultValue = null;
+            ResultValueAsVaraible = null;
         }
 
         /// <summary>

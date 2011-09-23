@@ -1,4 +1,5 @@
 ﻿
+using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -55,7 +56,7 @@ namespace LinqToTTreeInterfacesLib
         /// Set the result of the current code contex.
         /// </summary>
         /// <param name="result"></param>
-        void SetResult(IVariable result);
+        void SetResult(Expression result);
 
         /// <summary>
         /// Set no-result (i.e. set it to null).
@@ -65,7 +66,7 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Returns the value that is the result of this calculation.
         /// </summary>
-        IVariable ResultValue { get; }
+        Expression ResultValue { get; }
 
         /// <summary>
         /// Get/Set teh current scope...

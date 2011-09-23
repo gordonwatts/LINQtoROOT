@@ -28,7 +28,7 @@ namespace LINQToTTreeLib.ResultOperators
             return resultOperatorType == typeof(SumResultOperator);
         }
 
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
+        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
             IGeneratedQueryCode gc, ICodeContext cc,
             CompositionContainer container)
         {
@@ -66,7 +66,7 @@ namespace LINQToTTreeLib.ResultOperators
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
             gc.Add(new StatementAggregate(accumulator, addResolved));
 
-            return accumulator;
+            return p;
         }
     }
 }

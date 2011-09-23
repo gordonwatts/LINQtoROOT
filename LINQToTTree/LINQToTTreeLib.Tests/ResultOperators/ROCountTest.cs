@@ -2,7 +2,7 @@
 
 using System;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
+using System.Linq.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
@@ -23,7 +23,7 @@ namespace LINQToTTreeLib
     {
         [PexMethod]
         [PexUseType(typeof(GeneratedCode))]
-        internal IVariable ProcessResultOperator(
+        internal Expression ProcessResultOperator(
             [PexAssumeUnderTest]ROCount target,
             CountResultOperator resultOperator,
             QueryModel queryModel,
@@ -34,7 +34,7 @@ namespace LINQToTTreeLib
             if (codeEnv != null)
                 origCount = codeEnv.CodeBody.Statements.Count();
             CodeContext c = new CodeContext();
-            IVariable result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
+            Expression result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
             Assert.AreEqual(origCount + 1, codeEnv.CodeBody.Statements.Count(), "Expected an added statement!");
             Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.Last(), typeof(StatementAggregate), "Statement to inc the integer must have been done!");
             Assert.IsInstanceOfType(result, typeof(VarInteger), "Expected to be calculating an integer");

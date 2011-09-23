@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using Remotion.Linq;
@@ -39,7 +40,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="_codeContext"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
             /// Some argument checking
@@ -107,7 +108,7 @@ namespace LINQToTTreeLib.ResultOperators
             var ifStatement = new Statements.StatementMinMaxTest(vIsFilled, vMaxMin, exprToMinOrMaximize, doMax);
             gc.Add(ifStatement);
 
-            return vMaxMin;
+            return Expression.Variable(vMaxMin.Type, vMaxMin.RawValue);
         }
 
         /// <summary>

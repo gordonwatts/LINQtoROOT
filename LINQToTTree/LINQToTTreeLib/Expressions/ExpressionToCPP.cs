@@ -8,7 +8,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
 
@@ -308,54 +307,6 @@ namespace LINQToTTreeLib.Expressions
         {
             var arrayBase = GetExpression(expression.Operand);
             _result = new ValSimple(arrayBase.AsObjectReference(expression.Operand) + ".size()", expression.Type);
-        }
-
-        /// <summary>
-        /// The user is making a sub-query. We will run the query and return it using the usual QueryVisitor dude, but unlike
-        /// normal we have to run the loop ourselves.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
-        {
-            if (MEFContainer == null)
-                throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
-
-            QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext, MEFContainer);
-            qv.SubExpressionParse = true;
-            MEFContainer.SatisfyImportsOnce(qv);
-
-            ///
-            /// Run it - since this result is out of this loop, we pop-back-out when done.
-            /// 
-
-            var scope = _codeEnv.CurrentScope;
-            qv.VisitQueryModel(expression.QueryModel);
-
-            ///
-            /// Two possible results from the sub-expression query, and how we proceed depends
-            /// on what happened in the sub query
-            /// 
-            /// 1. <returns a value> - an operator like Count() comes back from the sequence.
-            ///    it will get used in some later sequence (like # of jets in each event). So,
-            ///    we need to make sure it is declared and kept before it is used. The # that comes
-            ///    back needs to be used outside the scope we are sitting in - the one that we were at
-            ///    when we started this. Since this is a sub-query expression, the result isn't the final
-            ///    result, so we need to reset it so no one notices it.
-            /// 2. <return a sequence> - this is weird - What we are actually doing here is putting the
-            ///    sequence into code. So the loop variable has been updated with the new sequence iterator
-            ///    value. But there isn't really a result! So the result will be null...
-            /// 
-
-            if (_codeEnv.ResultValue != null)
-            {
-                _codeEnv.CurrentScope = scope;
-                _codeEnv.Add(_codeEnv.ResultValue);
-                _result = _codeEnv.ResultValue;
-                _codeEnv.ResetResult();
-            }
-
-            return expression;
         }
 
         /// <summary>
