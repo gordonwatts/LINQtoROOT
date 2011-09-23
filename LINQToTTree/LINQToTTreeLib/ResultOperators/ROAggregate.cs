@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -34,7 +34,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext context, CompositionContainer container)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext context, CompositionContainer container)
         {
             ///
             /// Basic code checks
@@ -85,7 +85,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved));
 
-            return Expression.Variable(accumulator.Type, accumulator.RawValue);
+            return accumulator;
 
         }
     }

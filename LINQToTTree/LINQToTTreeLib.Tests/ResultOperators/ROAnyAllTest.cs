@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
@@ -44,7 +43,7 @@ namespace LINQToTTreeLib.ResultOperators
 
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod]
-        internal Expression ProcessResultOperator(
+        internal IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROAnyAll target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -53,7 +52,7 @@ namespace LINQToTTreeLib.ResultOperators
             CompositionContainer container
         )
         {
-            Expression result = target.ProcessResultOperator
+            IVariable result = target.ProcessResultOperator
                                    (resultOperator, queryModel, _codeEnv, _codeContext, container);
             return result;
             // TODO: add assertions to method ROAnyAllTest.ProcessResultOperator(ROAnyAll, ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)

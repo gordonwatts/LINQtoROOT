@@ -167,8 +167,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
             Assert.IsInstanceOfType(varToTrans[0], typeof(KeyValuePair<string, object>), "bad object type to transfer");
             var ro = (KeyValuePair<string, object>)varToTrans[0];
-            Assert.Inconclusive("not yet");
-            //Assert.IsTrue(res.ResultValue.InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + res.ResultValue.InitialValue.RawValue + ")");
+            Assert.IsTrue(res.ResultValue.InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + res.ResultValue.InitialValue.RawValue + ")");
         }
     }
 }

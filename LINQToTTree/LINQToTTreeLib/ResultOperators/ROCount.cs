@@ -1,14 +1,14 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using System.Linq.Expressions;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             if (gc == null)
                 throw new ArgumentNullException("CodeEnv must not be null!");
@@ -62,7 +62,7 @@ namespace LINQToTTreeLib.ResultOperators
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
 
             gc.Add(new StatementAggregate(accumulator, addResolved));
-            return p;
+            return accumulator;
         }
     }
 }

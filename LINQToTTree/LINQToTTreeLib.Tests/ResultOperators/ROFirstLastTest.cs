@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.ResultOperators
 
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod, PexAllowedException(typeof(NotImplementedException)), PexAllowedException(typeof(NullReferenceException))]
-        public Expression ProcessResultOperator(
+        public IVariable ProcessResultOperator(
             [PexAssumeUnderTest]ROFirstLast target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.ResultOperators
             CompositionContainer container
         )
         {
-            Expression result = target.ProcessResultOperator
+            IVariable result = target.ProcessResultOperator
                                    (resultOperator, queryModel, _codeEnv, _codeContext, container);
             return result;
             // TODO: add assertions to method ROFirstLastTest.ProcessResultOperator(ROFirstLast, ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)

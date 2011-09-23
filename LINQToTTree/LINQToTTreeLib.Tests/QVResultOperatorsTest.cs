@@ -8,7 +8,6 @@ using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -47,7 +46,7 @@ namespace LINQToTTreeLib.Utils
             }
 
 
-            public Expression ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
+            public IVariable ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

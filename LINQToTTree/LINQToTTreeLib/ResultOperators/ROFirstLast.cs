@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
+        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
             IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(new Statements.StatementAssign(actualValue,
                 ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
 
-            return Expression.Variable(actualValue.Type, actualValue.RawValue);
+            return actualValue;
         }
     }
 }
