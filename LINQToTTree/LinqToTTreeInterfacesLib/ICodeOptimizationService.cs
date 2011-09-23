@@ -13,7 +13,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="oldName">The old variable which we shoudl find in the enclosing block and rename</param>
         /// <param name="newVariable">The new variable we want it renamed to</param>
         /// <returns></returns>
-        bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable);
+        bool TryRenameVarialbeOneLevelUp(string oldName, DeclarableParameter newVariable);
 
         /// <summary>
         /// Forces a rename of all text. No checking to find a declared variable, etc.

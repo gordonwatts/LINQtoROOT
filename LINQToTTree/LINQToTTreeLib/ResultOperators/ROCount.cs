@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.ResultOperators
             // The accumulator where we will store the result.
             //
 
-            var accumulator = new VarInteger();
+            var accumulator = DeclarableParameter.DeclarableParameterExpression(typeof(int));
 
             //
             // Use the Aggregate infrasturcutre to do the adding. This
@@ -57,8 +57,7 @@ namespace LINQToTTreeLib.ResultOperators
             // similar statements during query optimization.
             //
 
-            var p = Expression.Parameter(typeof(int), accumulator.VariableName);
-            var add = Expression.Add(p, Expression.Constant((int)1));
+            var add = Expression.Add(accumulator, Expression.Constant((int)1));
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
 
             gc.Add(new StatementAggregate(accumulator, addResolved));

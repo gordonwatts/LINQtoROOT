@@ -12,6 +12,8 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
+using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.Tests.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -21,6 +23,19 @@ namespace LINQToTTreeLib
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     public partial class ROCountTest
     {
+        [TestInitialize]
+        public void Setup()
+        {
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         [PexMethod]
         [PexUseType(typeof(GeneratedCode))]
         internal Expression ProcessResultOperator(
@@ -40,12 +55,31 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(result, typeof(VarInteger), "Expected to be calculating an integer");
             return result;
         }
+
         [PexMethod]
         internal bool CanHandle([PexAssumeUnderTest]ROCount target, Type resultOperatorType)
         {
             bool result = target.CanHandle(resultOperatorType);
             Assert.IsTrue(result || resultOperatorType != typeof(CountResultOperator), "Bad response!");
             return result;
+        }
+
+        public class ntup2
+        {
+            public int[] run;
+        }
+
+        [TestMethod]
+        public void TestSimpleCountReturn()
+        {
+            var q = new QueriableDummy<ntup2>();
+            var result = q.Count();
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "final result");
+            var r = DummyQueryExectuor.FinalResult.ResultValue;
+            Assert.AreEqual(typeof(int), r.Type, "result type");
+            Assert.AreEqual(DeclarableParameter.ExpressionType, r.NodeType, "Expression type incorrect");
+            var dv = r as DeclarableParameter;
+            Assert.IsNull(dv.InitialValue, "Initial value");
         }
     }
 }
