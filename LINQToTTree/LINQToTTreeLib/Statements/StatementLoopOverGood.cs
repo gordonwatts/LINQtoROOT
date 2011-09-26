@@ -68,7 +68,9 @@ namespace LINQToTTreeLib.Statements
                 return false;
 
             // Are they the same? _index is independent and we can alter it.
+            throw new NotSupportedException();
 
+#if false
             if (otherLoop._indexIsGood.RawValue == _indexIsGood.RawValue
                 && otherLoop._indiciesToCheck.RawValue == _indiciesToCheck.RawValue)
             {
@@ -82,6 +84,7 @@ namespace LINQToTTreeLib.Statements
             {
                 return false;
             }
+#endif
         }
 
         /// <summary>

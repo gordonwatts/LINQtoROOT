@@ -3,8 +3,10 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -12,8 +14,6 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
-using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Tests.Expressions;
 
 namespace LINQToTTreeLib
 {

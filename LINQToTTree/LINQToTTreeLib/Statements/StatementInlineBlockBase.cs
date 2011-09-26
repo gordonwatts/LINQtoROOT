@@ -142,7 +142,7 @@ namespace LINQToTTreeLib.Statements
             /// <param name="oldName"></param>
             /// <param name="newName"></param>
             /// <returns></returns>
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newName)
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newName)
             {
                 //
                 // First, see if we can find the block where the variable is declared.
@@ -155,12 +155,12 @@ namespace LINQToTTreeLib.Statements
 
                 // Check that its initialization is the same!
                 bool initValueSame = (vr.Item1.InitialValue == null && newName.InitialValue == null)
-                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.RawValue == newName.InitialValue.RawValue));
+                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.RawValue == newName.InitialValue));
                 if (!initValueSame)
                     return false;
 
                 // Rename the variable!
-                vr.Item2.RenameVariable(oldName, newName.RawValue);
+                vr.Item2.RenameVariable(oldName, newName.ParameterName);
 
                 return true;
             }
@@ -209,7 +209,7 @@ namespace LINQToTTreeLib.Statements
             /// <param name="oldName"></param>
             /// <param name="newVariable"></param>
             /// <returns></returns>
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
             {
                 return false;
             }

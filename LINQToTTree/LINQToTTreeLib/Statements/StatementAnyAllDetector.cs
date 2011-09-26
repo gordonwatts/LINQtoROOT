@@ -99,7 +99,11 @@ namespace LINQToTTreeLib.Statements
 
             if (optimize == null)
                 throw new ArgumentNullException("optimize");
+
+            throw new NotImplementedException();
+#if false
             return optimize.TryRenameVarialbeOneLevelUp(other.Result.RawValue, Result);
+#endif
         }
 
         /// <summary>

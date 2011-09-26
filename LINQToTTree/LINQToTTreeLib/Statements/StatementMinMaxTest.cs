@@ -1,5 +1,6 @@
 ﻿using System;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
@@ -9,11 +10,11 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementMinMaxTest : IStatement
     {
-        private IVariable vIsFilled;
-        private IVariable vMaxMin;
+        private IDeclaredParameter vIsFilled;
+        private IDeclaredParameter vMaxMin;
         private IValue exprToMinOrMaximize;
         private string CompareOperator;
-        private IVariable TempVariable;
+        private IDeclaredParameter TempVariable;
 
         /// <summary>
         /// Create code block for a test
@@ -21,7 +22,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="vIsFilled"></param>
         /// <param name="vMaxMin"></param>
         /// <param name="exprToMinOrMaximize"></param>
-        public StatementMinMaxTest(IVariable vIsFilled, IVariable vMaxMin, IValue exprToMinOrMaximize, bool doMax)
+        public StatementMinMaxTest(IDeclaredParameter vIsFilled, IDeclaredParameter vMaxMin, IValue exprToMinOrMaximize, bool doMax)
         {
             // TODO: Complete member initialization
             this.vIsFilled = vIsFilled;
@@ -37,7 +38,7 @@ namespace LINQToTTreeLib.Statements
                 CompareOperator = "<";
             }
 
-            TempVariable = new Variables.VarSimple(vMaxMin.Type);
+            TempVariable = DeclarableParameter.DeclarableParameterExpression(vMaxMin.Type);
         }
 
         /// <summary>
@@ -46,10 +47,10 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("{0} {1} = {2};", TempVariable.Type.AsCPPType(), TempVariable.RawValue, exprToMinOrMaximize.RawValue);
-            yield return string.Format("if (!{0} || ({1} {2} {3})) {{", vIsFilled.RawValue, TempVariable.RawValue, CompareOperator, vMaxMin.RawValue);
-            yield return string.Format("  {0} = true;", vIsFilled.RawValue);
-            yield return string.Format("  {0} = {1};", vMaxMin.RawValue, TempVariable.RawValue);
+            yield return string.Format("{0} {1} = {2};", TempVariable.Type.AsCPPType(), TempVariable.ParameterName, exprToMinOrMaximize.RawValue);
+            yield return string.Format("if (!{0} || ({1} {2} {3})) {{", vIsFilled.ParameterName, TempVariable.ParameterName, CompareOperator, vMaxMin.ParameterName);
+            yield return string.Format("  {0} = true;", vIsFilled.ParameterName);
+            yield return string.Format("  {0} = {1};", vMaxMin.ParameterName, TempVariable.ParameterName);
             yield return "}";
         }
 
@@ -61,8 +62,8 @@ namespace LINQToTTreeLib.Statements
         public void RenameVariable(string originalName, string newName)
         {
             exprToMinOrMaximize.RenameRawValue(originalName, newName);
-            vIsFilled.RenameRawValue(originalName, newName);
-            vMaxMin.RenameRawValue(originalName, newName);
+            vIsFilled.RenameParameter(originalName, newName);
+            vMaxMin.RenameParameter(originalName, newName);
         }
 
         /// <summary>
@@ -88,10 +89,10 @@ namespace LINQToTTreeLib.Statements
             // Everything else is dependent - so we can just rename it.
             //
 
-            var cando = opt.TryRenameVarialbeOneLevelUp(other.vMaxMin.RawValue, vMaxMin);
+            var cando = opt.TryRenameVarialbeOneLevelUp(other.vMaxMin.ParameterName, vMaxMin);
             if (!cando)
                 return false;
-            cando = opt.TryRenameVarialbeOneLevelUp(other.vIsFilled.RawValue, vIsFilled);
+            cando = opt.TryRenameVarialbeOneLevelUp(other.vIsFilled.ParameterName, vIsFilled);
             if (!cando)
                 throw new InvalidOperationException("Unable to rename second variable in a chain for Min/Max operator!");
 

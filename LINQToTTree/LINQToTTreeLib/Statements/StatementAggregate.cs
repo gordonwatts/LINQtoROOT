@@ -40,7 +40,7 @@ namespace LINQToTTreeLib.Statements
 
         public IEnumerable<string> CodeItUp()
         {
-            var result = ResultVariable.VariableName;
+            var result = ResultVariable.ParameterName;
             var setTo = Expression.RawValue;
 
             yield return result + "=" + setTo + ";";
@@ -48,7 +48,7 @@ namespace LINQToTTreeLib.Statements
 
         public override string ToString()
         {
-            return ResultVariable.VariableName + "=" + Expression.RawValue;
+            return ResultVariable.ParameterName + "=" + Expression.RawValue;
         }
 
         public void RenameVariable(string originalName, string newName)
@@ -81,7 +81,7 @@ namespace LINQToTTreeLib.Statements
             // Simple case: everything is the same
             //
 
-            if (ResultVariable.VariableName == otherAssign.ResultVariable.VariableName
+            if (ResultVariable.ParameterName == otherAssign.ResultVariable.ParameterName
                 && Expression.RawValue == otherAssign.Expression.RawValue)
                 return true;
 
@@ -89,14 +89,14 @@ namespace LINQToTTreeLib.Statements
             // Next, see if we rename the accumulator everything would be identical
             //
 
-            string tempRaw = Expression.RawValue.Replace(ResultVariable.VariableName, otherAssign.ResultVariable.VariableName);
+            string tempRaw = Expression.RawValue.Replace(ResultVariable.ParameterName, otherAssign.ResultVariable.ParameterName);
             if (tempRaw == otherAssign.Expression.RawValue)
             {
                 // In order for this to work, we have to attempt to rename the variable that the other
                 // guy owns. Since this variable is declared outside here, we have to call up in order
                 // to have it run. Note that in this call it will call down into here to do the rename!
 
-                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.VariableName, ResultVariable);
+                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.ParameterName, ResultVariable);
             }
 
             //

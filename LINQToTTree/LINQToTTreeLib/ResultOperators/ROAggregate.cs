@@ -3,8 +3,6 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -62,6 +60,8 @@ namespace LINQToTTreeLib.ResultOperators
             /// Finally, if there is a final funciton, we need to call that after the loop is done!
             ///
 
+            throw new NotImplementedException();
+#if false
             IVariable accumulator = null;
             if (a.Seed.Type.IsPointerType())
             {
@@ -86,6 +86,7 @@ namespace LINQToTTreeLib.ResultOperators
             _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved));
 
             return Expression.Variable(accumulator.Type, accumulator.RawValue);
+#endif
 
         }
     }

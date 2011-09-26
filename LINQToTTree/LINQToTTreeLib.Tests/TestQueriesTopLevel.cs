@@ -147,7 +147,7 @@ namespace LINQToTTreeLib.Tests
 
             var assignment = res.CodeBody.Statements.First() as StatementAggregate;
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("{0}+1", assignment.ResultVariable.RawValue, "bad assignment!");
+            bld.AppendFormat("{0}+1", assignment.ResultVariable.ParameterName, "bad assignment!");
             Assert.AreEqual(bld.ToString(), assignment.Expression.RawValue, "expression is incorrect");
         }
 

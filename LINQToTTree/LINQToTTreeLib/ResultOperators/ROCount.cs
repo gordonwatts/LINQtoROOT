@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -61,7 +60,7 @@ namespace LINQToTTreeLib.ResultOperators
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
 
             gc.Add(new StatementAggregate(accumulator, addResolved));
-            return p;
+            return accumulator;
         }
     }
 }

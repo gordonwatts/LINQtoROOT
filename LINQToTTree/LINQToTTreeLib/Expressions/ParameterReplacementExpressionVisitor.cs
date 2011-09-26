@@ -112,5 +112,18 @@ namespace LINQToTTreeLib.Expressions
 
             return result;
         }
+
+        /// <summary>
+        /// Deal with the various types of expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitUnknownNonExtensionExpression(Expression expression)
+        {
+            if (expression.NodeType == DeclarableParameter.ExpressionType)
+                return expression;
+
+            return base.VisitUnknownNonExtensionExpression(expression);
+        }
     }
 }

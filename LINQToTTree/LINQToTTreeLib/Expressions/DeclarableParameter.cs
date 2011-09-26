@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Utilities;
 
 namespace LINQToTTreeLib.Expressions
@@ -15,7 +14,7 @@ namespace LINQToTTreeLib.Expressions
     /// Often used in returns from various operators that have some value that can be used
     /// in the next phase of the query or as a result (i.e. Count, etc.).
     /// </remarks>
-    public class DeclarableParameter : Expression
+    public class DeclarableParameter : ExtensionExpression, IDeclaredParameter
     {
         /// <summary>
         /// The expression type for testing to see if it is a declared variable.
@@ -39,26 +38,26 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="varType"></param>
         /// <param name="varName"></param>
         private DeclarableParameter(Type varType, string varName)
-            : base (ExpressionType, varType)
+            : base(varType, ExpressionType)
         {
             ArgumentUtility.CheckNotNullOrEmpty("varName", varName);
-            VariableName = varName;
+            ParameterName = varName;
         }
 
         /// <summary>
         /// Return the variable name for this declared variable.
         /// </summary>
-        public string VariableName { get; private set; }
+        public string ParameterName { get; private set; }
 
         /// <summary>
         /// Rename the parameter name to the new name as long as it matches the old name.
         /// </summary>
         /// <param name="oldname"></param>
         /// <param name="newname"></param>
-        public void RenameParameter (string oldname, string newname)
+        public void RenameParameter(string oldname, string newname)
         {
-            if (VariableName == oldname)
-                VariableName = newname;
+            if (ParameterName == oldname)
+                ParameterName = newname;
         }
 
         /// <summary>
@@ -67,7 +66,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         public override string ToString()
         {
-            return VariableName;
+            return ParameterName;
         }
 
         /// <summary>
@@ -76,5 +75,15 @@ namespace LINQToTTreeLib.Expressions
         /// Assume everything is explicitly initalized!
         /// </summary>
         public string InitialValue { get; set; }
+
+        /// <summary>
+        /// Visit the children (if we need to). Since we have no childrn, we just return.
+        /// </summary>
+        /// <param name="visitor"></param>
+        /// <returns></returns>
+        protected override Expression VisitChildren(Remotion.Linq.Parsing.ExpressionTreeVisitor visitor)
+        {
+            return this;
+        }
     }
 }

@@ -89,7 +89,10 @@ namespace LINQToTTreeLib.Statements
             // Since int to record is the same, we do a rename and move on!
             //
 
+            throw new NotImplementedException();
+#if false
             return opt.TryRenameVarialbeOneLevelUp(asRecord._storageArray.RawValue, _storageArray);
+#endif
         }
 
         /// <summary>

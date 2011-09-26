@@ -80,7 +80,11 @@ namespace LINQToTTreeLib.Statements
             if (Expression.RawValue != otherAssign.Expression.RawValue)
                 return false;
 
+            throw new NotImplementedException();
+#if false
+
             return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
+#endif
         }
 
         /// <summary>

@@ -91,6 +91,7 @@
     <Compile Include="IBookingStatementBlock.cs" />
     <Compile Include="ICodeContext.cs" />
     <Compile Include="ICodeOptimizationService.cs" />
+    <Compile Include="IDeclaredParameter.cs" />
     <Compile Include="IExecutableCode.cs" />
     <Compile Include="IExpressionHolder.cs" />
     <Compile Include="IFutureValue.cs" />

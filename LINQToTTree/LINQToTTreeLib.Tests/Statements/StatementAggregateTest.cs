@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
@@ -29,7 +30,7 @@ namespace LINQToTTreeLib.Tests
         ///A test for StatementAggregate Constructor
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementAggregate StatementAggregateConstructorTest(IVariable dest, IValue source)
+        public StatementAggregate StatementAggregateConstructorTest(DeclarableParameter dest, IValue source)
         {
             StatementAggregate target = new StatementAggregate(dest, source);
             return target;
@@ -94,20 +95,20 @@ namespace LINQToTTreeLib.Tests
             // c = c + b
             // These two should combine correctly, somehow.
 
-            var a = new Variables.VarInteger();
-            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.RawValue), typeof(int));
+            var a = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
             var s1 = new StatementAggregate(a, ainc);
 
-            var c = new Variables.VarInteger();
-            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.RawValue), typeof(int));
+            var c = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
             var s2 = new StatementAggregate(c, cinc);
 
             var opt = new Tests.Factories.CodeOptimizerTest(true);
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsTrue(result, "Expected combination would work");
 
-            Assert.AreEqual(a.RawValue, opt.NewVariable.RawValue, "new name not renamed to");
-            Assert.AreEqual(c.RawValue, opt.OldName, "old name for rename not right");
+            Assert.AreEqual(a.ParameterName, opt.NewVariable.ParameterName, "new name not renamed to");
+            Assert.AreEqual(c.ParameterName, opt.OldName, "old name for rename not right");
         }
 
         [TestMethod]
@@ -117,12 +118,12 @@ namespace LINQToTTreeLib.Tests
             // c = c + b
             // These two should combine correctly, somehow.
 
-            var a = new Variables.VarInteger();
-            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.RawValue), typeof(int));
+            var a = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
             var s1 = new StatementAggregate(a, ainc);
 
-            var c = new Variables.VarInteger();
-            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.RawValue), typeof(int));
+            var c = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
             var s2 = new StatementAggregate(c, cinc);
 
             var opt = new Factories.CodeOptimizerTest(false);

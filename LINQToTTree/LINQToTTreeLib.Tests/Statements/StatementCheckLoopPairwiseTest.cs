@@ -94,9 +94,9 @@ namespace LINQToTTreeLib.Tests
                 this.s2 = s2;
             }
 
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
             {
-                s2.RenameVariable(oldName, newVariable.RawValue);
+                s2.RenameVariable(oldName, newVariable.ParameterName);
 
                 return true;
             }

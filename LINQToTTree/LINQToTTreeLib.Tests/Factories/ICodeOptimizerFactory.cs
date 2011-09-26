@@ -21,9 +21,9 @@ namespace LINQToTTreeLib.Tests.Factories
 
         public string OldName { get; private set; }
 
-        public IVariable NewVariable { get; private set; }
+        public IDeclaredParameter NewVariable { get; private set; }
 
-        public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+        public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
         {
             TimesCalled++;
             OldName = oldName;

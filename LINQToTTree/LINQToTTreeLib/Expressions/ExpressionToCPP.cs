@@ -371,6 +371,25 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
+        /// Look at one of our extension expressions - see if we can deal with it whatever we are looking at here.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitExtensionExpression(Remotion.Linq.Clauses.Expressions.ExtensionExpression expression)
+        {
+            if (expression.NodeType == DeclarableParameter.ExpressionType)
+            {
+                var decl = expression as DeclarableParameter;
+                _result = new ValSimple(decl.ParameterName, decl.Type);
+                return expression;
+            }
+            else
+            {
+                return base.VisitExtensionExpression(expression);
+            }
+        }
+
+        /// <summary>
         /// We have to process a lambda function. Put it inline (i.e. we make the assumption that no statements
         /// are used here). That would have to be version 10.0 or something like that.
         /// </summary>

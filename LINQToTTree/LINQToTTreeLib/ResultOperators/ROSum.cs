@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -52,21 +51,18 @@ namespace LINQToTTreeLib.ResultOperators
                 throw new InvalidOperationException(string.Format("Do not know how to generate C++ to sum type {0}.", sumType.Name));
             }
 
-            var accumulator = new Variables.VarSimple(sumType);
-            accumulator.InitialValue = new ValSimple("0", sumType);
-            accumulator.Declare = true;
+            var accumulator = DeclarableParameter.DeclarableParameterExpression(sumType);
 
             //
             // Now, in the loop we are currently in, we do the "add".
             //
 
-            var p = Expression.Parameter(sumType, accumulator.VariableName);
-            var add = Expression.Add(p, cc.LoopVariable);
+            var add = Expression.Add(accumulator, cc.LoopVariable);
 
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
             gc.Add(new StatementAggregate(accumulator, addResolved));
 
-            return p;
+            return accumulator;
         }
     }
 }
