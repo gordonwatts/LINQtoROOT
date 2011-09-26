@@ -37,7 +37,7 @@ namespace LINQToTTreeLib
         }
 
         [PexMethod]
-        [PexUseType(typeof(GeneratedCode))]
+        [PexUseType(typeof(GeneratedCode)), PexAllowedException(typeof(InvalidOperationException))]
         internal Expression ProcessResultOperator(
             [PexAssumeUnderTest]ROCount target,
             CountResultOperator resultOperator,

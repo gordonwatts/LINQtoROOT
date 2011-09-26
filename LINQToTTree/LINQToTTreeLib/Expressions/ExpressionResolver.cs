@@ -195,6 +195,8 @@ namespace LINQToTTreeLib.Expressions
             /// <returns></returns>
             protected override Expression VisitConstantExpression(ConstantExpression expression)
             {
+                if (TypeHandlers == null)
+                    throw new InvalidOperationException("Can't visit a constant expression unless the typehandlers have been initalized");
                 return TypeHandlers.ProcessConstantReferenceAsExpression(expression, MEFContainer);
             }
 
