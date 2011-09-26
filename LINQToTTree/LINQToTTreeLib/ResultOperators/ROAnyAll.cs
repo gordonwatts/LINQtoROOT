@@ -77,8 +77,8 @@ namespace LINQToTTreeLib.ResultOperators
             /// The result is a simple bool. This is what we will be handing back.
             /// 
 
-            var aresult = new Variables.VarSimple(typeof(bool)) { Declare = true };
-            aresult.InitialValue = new Variables.ValSimple(initialValue, typeof(bool));
+            var aresult = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            aresult.SetInitialValue(initialValue);
 
             ///
             /// And the statements now. Instead of building up the code, we instead do a "global" statement.

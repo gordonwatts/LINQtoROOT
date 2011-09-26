@@ -125,8 +125,6 @@ namespace LINQToTTreeLib.Statements
             // that. So we do a "local" renaming.
             //
 
-            throw new NotImplementedException();
-#if false
             var rename = opt.TryRenameVarialbeOneLevelUp(other._whatIsGood.RawValue, _whatIsGood);
             if (!rename)
                 return false;
@@ -140,7 +138,6 @@ namespace LINQToTTreeLib.Statements
             Combine(other as StatementInlineBlockBase, opt);
 
             return true;
-#endif
         }
 
         /// <summary>
