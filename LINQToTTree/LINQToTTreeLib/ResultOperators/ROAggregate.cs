@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -60,34 +61,21 @@ namespace LINQToTTreeLib.ResultOperators
             /// Finally, if there is a final funciton, we need to call that after the loop is done!
             ///
 
-            throw new NotImplementedException();
-#if false
-            IVariable accumulator = null;
-            if (a.Seed.Type.IsPointerType())
-            {
-                accumulator = new Variables.VarObject(a.Seed.Type);
-            }
-            else
-            {
-                accumulator = new Variables.VarSimple(a.Seed.Type);
-            }
-            accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
-            accumulator.Declare = true;
+            var accumulator = DeclarableParameter.DeclarableParameterExpression(a.Seed.Type);
+            accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container).RawValue;
 
             ///
             /// Now, parse the lambda expression, doing a substitution with this guy! Note that the only argument is our
             /// accumulator - the other arguments have all been replaced with subqueryexpressions and the like!
             /// 
 
-            var p1 = context.Add(a.Func.Parameters[0].Name, accumulator.AsExpression());
+            var p1 = context.Add(a.Func.Parameters[0].Name, accumulator);
             var funcResolved = ExpressionToCPP.GetExpression(a.Func.Body, _codeEnv, context, container);
             p1.Pop();
 
             _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved));
 
-            return Expression.Variable(accumulator.Type, accumulator.RawValue);
-#endif
-
+            return accumulator;
         }
     }
 }
