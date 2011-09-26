@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -44,6 +46,7 @@ namespace LINQToTTreeLib.ResultOperators
             // TODO: add assertions to method ROAggregateTest.CanHandle(ROAggregate, Type)
         }
 
+        /// Pex seems to hang when it tries to explore this one.
         ///[PexMethod]
         public Expression ProcessResultOperator(
             [PexAssumeUnderTest]ROAggregate target,
@@ -78,16 +81,11 @@ namespace LINQToTTreeLib.ResultOperators
             GeneratedCode gc = new GeneratedCode();
             var result = ProcessResultOperator(processor, agg, null, gc);
 
-            Assert.Inconclusive("not yet");
-#if false
             Assert.AreEqual(typeof(int), result.Type, "Expected the type to be an integer!");
-            Assert.IsTrue(result.RawValue.IndexOf("(") < 0, "Expected no typing in the statement '" + result.RawValue + "'");
-            Assert.IsTrue(result.RawValue.IndexOf("count") < 0, "Expected not to see 'count' in the translated expression '" + result.RawValue + "'");
 
-            Assert.IsInstanceOfType(result, typeof(Variables.VarSimple), "Expected a var simple!");
-            var vs = result as Variables.VarSimple;
-            Assert.AreEqual("1", result.InitialValue.RawValue, "Incorrect seed value");
-            Assert.AreEqual(typeof(int), result.InitialValue.Type, "Incorrect seed value");
+            Assert.IsInstanceOfType(result, typeof(DeclarableParameter), "Expected a var simple!");
+            var vs = result as DeclarableParameter;
+            Assert.AreEqual("1", vs.InitialValue, "Incorrect seed value");
 
             ///
             /// Now make sure the statements came back ok!
@@ -99,9 +97,8 @@ namespace LINQToTTreeLib.ResultOperators
 
             var ass = gc.CodeBody.Statements.First() as Statements.StatementAggregate;
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("{0}+1", ass.ResultVariable.RawValue);
+            bld.AppendFormat("{0}+1", ass.ResultVariable.ParameterName);
             Assert.AreEqual(bld.ToString(), ass.Expression.RawValue, "the raw value of hte expression is not right");
-#endif
         }
 
         [TestMethod]
@@ -143,8 +140,7 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
             Assert.IsInstanceOfType(varToTrans[0], typeof(KeyValuePair<string, object>), "bad object type to transfer");
             var ro = (KeyValuePair<string, object>)varToTrans[0];
-            Assert.Inconclusive("not yet");
-            //Assert.IsTrue(res.ResultValue.InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + res.ResultValue.InitialValue.RawValue + ")");
+            Assert.IsTrue((res.ResultValue as DeclarableParameter).InitialValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + (res.ResultValue as DeclarableParameter).InitialValue + ")");
         }
 
         [TranslateToClass(typeof(targetTransNtup))]
@@ -244,25 +240,5 @@ namespace LINQToTTreeLib.ResultOperators
                 get { throw new NotImplementedException(); }
             }
         }
-
-#if false
-        [TestMethod]
-        public void TestComplexArgumentsToAggregetViaSelect()
-        {
-            /// A bug encountered outside - we are (were, I hope!) doing something incorrect with
-            /// our variable replacement. This re-creates the bug.
-
-            var q = new QueriableDummy<ntupBase>();
-            var result = from d in q
-                         select d.PVs.First();
-
-            var h = result.Select(pv => pv.nTracks).Plot("hi", "there", 10, 0.0, 10.0);
-
-            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
-            var res = DummyQueryExectuor.FinalResult;
-
-            Assert.Inconclusive("not done yet");
-        }
-#endif
     }
 }
