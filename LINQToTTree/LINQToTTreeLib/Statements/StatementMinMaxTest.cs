@@ -38,7 +38,7 @@ namespace LINQToTTreeLib.Statements
                 CompareOperator = "<";
             }
 
-            TempVariable = DeclarableParameter.DeclarableParameterExpression(vMaxMin.Type);
+            TempVariable = DeclarableParameter.CreateDeclarableParameterExpression(vMaxMin.Type);
         }
 
         /// <summary>

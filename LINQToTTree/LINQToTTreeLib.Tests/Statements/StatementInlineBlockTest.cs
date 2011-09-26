@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -38,7 +37,7 @@ namespace LINQToTTreeLib.Statements
         [PexUseType(typeof(StatementIncrementInteger))]
         public void Add(
             [PexAssumeUnderTest]StatementInlineBlock target,
-            IVariable var
+            IDeclaredParameter var
         )
         {
             target.Add(var);
@@ -86,7 +85,7 @@ namespace LINQToTTreeLib.Statements
         public void TestSimpleVariableCoding()
         {
             StatementInlineBlock b = new StatementInlineBlock();
-            b.Add(new VarInteger());
+            b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             var r = b.CodeItUp().ToArray();
             Assert.AreEqual(3, r.Length, "incorrect number of lines");
             Assert.AreEqual("{", r[0], "open bracket");
@@ -98,7 +97,7 @@ namespace LINQToTTreeLib.Statements
         public void TestSimpleVariableCodingNoDecl()
         {
             StatementInlineBlock b = new StatementInlineBlock();
-            b.Add(new VarInteger() { Declare = false });
+            b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             var r = b.CodeItUp().ToArray();
             Assert.AreEqual(0, r.Length, "# of statements");
         }
@@ -107,8 +106,8 @@ namespace LINQToTTreeLib.Statements
         public void TestSimpleVariableCodingNoDeclAndDecl()
         {
             StatementInlineBlock b = new StatementInlineBlock();
-            b.Add(new VarInteger() { Declare = false });
-            b.Add(new VarInteger());
+            b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             var r = b.CodeItUp().ToArray();
             Assert.AreEqual(3, r.Length, "# of statements");
         }
@@ -116,7 +115,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Help with the next test
         /// </summary>
-        class dummyVarName : IVariable
+        class dummyVarName : IDeclaredParameter
         {
             public dummyVarName(string name, Type t)
             {
@@ -135,6 +134,28 @@ namespace LINQToTTreeLib.Statements
 
 
             public void RenameRawValue(string oldname, string newname)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string ParameterName
+            {
+                get { return RawValue; }
+            }
+
+            string IDeclaredParameter.InitialValue
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public void RenameParameter(string oldname, string newname)
             {
                 throw new NotImplementedException();
             }
@@ -311,8 +332,8 @@ namespace LINQToTTreeLib.Statements
             var inline1 = new StatementInlineBlock();
             var inline2 = new StatementInlineBlock();
 
-            var vdecl1 = DeclarableParameter.DeclarableParameterExpression(typeof(int));
-            var vdecl2 = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             throw new NotImplementedException();
 #if false
@@ -338,8 +359,8 @@ namespace LINQToTTreeLib.Statements
             var inline1 = new StatementInlineBlock();
             var inline2 = new StatementInlineBlock();
 
-            var vdecl1 = DeclarableParameter.DeclarableParameterExpression(typeof(int));
-            var vdecl2 = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             Assert.Inconclusive();
 #if false
@@ -367,10 +388,10 @@ namespace LINQToTTreeLib.Statements
             var inline1 = new StatementInlineBlock();
             var inline2 = new StatementInlineBlock();
 
-            var vdecl1 = new Variables.VarSimple(typeof(int));
-            vdecl1.InitialValue = new ValSimple("0", typeof(int));
-            var vdecl2 = new Variables.VarSimple(typeof(int));
-            vdecl2.InitialValue = new ValSimple("1", typeof(int));
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vdecl1.InitialValue = "0";
+            var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vdecl2.InitialValue = "1";
 
             inline1.Add(vdecl1);
             inline2.Add(vdecl2);
@@ -399,8 +420,8 @@ namespace LINQToTTreeLib.Statements
             var inline1 = new StatementInlineBlock();
             var inline2 = new StatementInlineBlock();
 
-            var vdecl1 = new Variables.VarSimple(typeof(int));
-            var vdecl2 = new Variables.VarSimple(typeof(int));
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             inline1.Add(vdecl1);
 

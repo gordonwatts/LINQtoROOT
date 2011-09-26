@@ -25,13 +25,13 @@ namespace LinqToTTreeInterfacesLib
         /// Book a variable at the inner most scope
         /// </summary>
         /// <param name="v"></param>
-        void Add(IVariable v);
+        void Add(IDeclaredParameter v);
 
         /// <summary>
         /// Add in an outter scope. Fails badly if that outter scope doesn't exist yet!
         /// </summary>
         /// <param name="v"></param>
-        void AddOneLevelUp(IVariable v);
+        void AddOneLevelUp(IDeclaredParameter v);
 
         /// <summary>
         /// This variable's inital value is "complex" and must be transfered over the wire in some way other than staight into the code

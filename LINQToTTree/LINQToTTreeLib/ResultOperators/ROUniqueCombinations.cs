@@ -60,7 +60,7 @@ namespace LINQToTTreeLib.ResultOperators
             var arrayLookup = cc.LoopVariable as BinaryExpression;
             var arrayIndex = arrayLookup.Right;
 
-            var arrayRecord = new Variables.VarArray(typeof(int)) { Declare = true };
+            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             gc.AddOneLevelUp(arrayRecord);
 
             var recordIndexStatement = new Statements.StatementRecordIndicies(ExpressionToCPP.GetExpression(arrayIndex, gc, cc, container), arrayRecord);
@@ -72,8 +72,8 @@ namespace LINQToTTreeLib.ResultOperators
             // Now, we go down one loop and run over the pairs with a special loop.
             //
 
-            var index1 = new Variables.VarSimple(typeof(int));
-            var index2 = new Variables.VarSimple(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var indexIterator = new Statements.StatementPairLoop(arrayRecord, index1, index2);
             gc.Add(indexIterator);
 

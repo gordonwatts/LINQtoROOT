@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -11,11 +10,11 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementCheckLoopPairwise : StatementInlineBlockBase
     {
-        private VarArray _indciesToInspect;
-        private VarSimple _index1;
-        private VarSimple _index2;
+        private IDeclaredParameter _indciesToInspect;
+        private IDeclaredParameter _index1;
+        private IDeclaredParameter _index2;
 
-        private VarArray _whatIsGood;
+        private IDeclaredParameter _whatIsGood;
 
         /// <summary>
         /// Loop over all the indicies we are given (sort of like an indicrect) in a double loop. For each one
@@ -27,8 +26,8 @@ namespace LINQToTTreeLib.Statements
         /// <param name="index1">The name we should use for index 1</param>
         /// <param name="index2">the name we should use for index 2</param>
         /// <param name="passedArray">The initially empty bool vector that we will mark any index that satisfies everything as true</param>
-        public StatementCheckLoopPairwise(VarArray indiciesToInspect,
-            VarSimple index1, VarSimple index2, VarArray passedArray)
+        public StatementCheckLoopPairwise(IDeclaredParameter indiciesToInspect,
+            IDeclaredParameter index1, IDeclaredParameter index2, IDeclaredParameter passedArray)
         {
             if (indiciesToInspect == null)
                 throw new ArgumentNullException("indiciesToInspect");
@@ -38,6 +37,8 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentNullException("index2");
             if (passedArray == null)
                 throw new ArgumentNullException("passedArray");
+            if (!passedArray.Type.IsArray)
+                throw new ArgumentException("passedArray isn't an array type");
 
             _indciesToInspect = indiciesToInspect;
             _index1 = index1;
@@ -56,7 +57,7 @@ namespace LINQToTTreeLib.Statements
             // are called.
             //
 
-            yield return string.Format("for (int index = 0; index < {0}.size(); index++) {1}.push_back(true);", _indciesToInspect.RawValue, _whatIsGood.RawValue);
+            yield return string.Format("for (int index = 0; index < {0}.size(); index++) {1}.push_back(true);", _indciesToInspect.ParameterName, _whatIsGood.ParameterName);
 
             //
             // Loop over each one, only do it if it is still marked good. Note that for the inner loop
@@ -66,19 +67,19 @@ namespace LINQToTTreeLib.Statements
             // are assumed to be symmetric, so we don't have to do anything.
             //
 
-            yield return string.Format("for (int index1 = 0; index1 < {0}.size(); index1++)", _indciesToInspect.RawValue);
+            yield return string.Format("for (int index1 = 0; index1 < {0}.size(); index1++)", _indciesToInspect.ParameterName);
             yield return "{";
-            yield return string.Format("  if({0}[index1])", _whatIsGood.RawValue);
+            yield return string.Format("  if({0}[index1])", _whatIsGood.ParameterName);
             yield return "  {";
-            yield return string.Format("    for (int index2 = index1+1; index2 < {0}.size(); index2++)", _indciesToInspect.RawValue);
+            yield return string.Format("    for (int index2 = index1+1; index2 < {0}.size(); index2++)", _indciesToInspect.ParameterName);
             yield return "    {";
 
             //
             // Now the test. If the test fails not really worth it to go on further.
             //
 
-            yield return string.Format("        int {0} = {1}[index1];", _index1.RawValue, _indciesToInspect.RawValue);
-            yield return string.Format("        int {0} = {1}[index2];", _index2.RawValue, _indciesToInspect.RawValue);
+            yield return string.Format("        int {0} = {1}[index1];", _index1.RawValue, _indciesToInspect.ParameterName);
+            yield return string.Format("        int {0} = {1}[index2];", _index2.RawValue, _indciesToInspect.ParameterName);
 
             //
             // Do the other things that have been added to our code!
@@ -116,7 +117,7 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            if (_indciesToInspect.RawValue != other._indciesToInspect.RawValue)
+            if (_indciesToInspect.ParameterName != other._indciesToInspect.ParameterName)
                 return false;
 
             //
@@ -151,8 +152,8 @@ namespace LINQToTTreeLib.Statements
         {
             _index1.RenameRawValue(origName, newName);
             _index2.RenameRawValue(origName, newName);
-            _whatIsGood.RenameRawValue(origName, newName);
-            _indciesToInspect.RenameRawValue(origName, newName);
+            _whatIsGood.RenameParameter(origName, newName);
+            _indciesToInspect.RenameParameter(origName, newName);
 
             RenameBlockVariables(origName, newName);
         }

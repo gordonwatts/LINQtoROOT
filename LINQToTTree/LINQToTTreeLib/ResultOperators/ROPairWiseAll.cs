@@ -6,7 +6,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 
@@ -53,7 +52,7 @@ namespace LINQToTTreeLib.ResultOperators
             var arrayIndex = arrayLookup.Right;
             var array = arrayLookup.Left;
 
-            var arrayRecord = new VarArray(typeof(int)) { Declare = true };
+            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             gc.AddOneLevelUp(arrayRecord);
 
             var recordIndexStatement = new StatementRecordIndicies(ExpressionToCPP.GetExpression(arrayIndex, gc, cc, container), arrayRecord);
@@ -69,13 +68,12 @@ namespace LINQToTTreeLib.ResultOperators
             /// I suppose!
             /// 
 
-            var passAll = new VarArray(typeof(bool)) { Declare = true };
-            gc.Add(passAll);
-            var index1 = new Variables.VarSimple(typeof(int));
-            var index2 = new Variables.VarSimple(typeof(int));
+            var passAll = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var index1Lookup = Expression.ArrayIndex(array, Expression.Parameter(typeof(int), index1.RawValue));
-            var index2Lookup = Expression.ArrayIndex(array, Expression.Parameter(typeof(int), index2.RawValue));
+            var index1Lookup = Expression.ArrayIndex(array, index1);
+            var index2Lookup = Expression.ArrayIndex(array, index2);
 
             var callLambda = Expression.Invoke(ro.Test,
                 index1Lookup,
@@ -97,7 +95,7 @@ namespace LINQToTTreeLib.ResultOperators
             // now just loop over that and apply the index as needed.
             //
 
-            var goodIndex = new VarSimple(typeof(int));
+            var goodIndex = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(goodIndex);
             var loopOverGood = new Statements.StatementLoopOverGood(arrayRecord, passAll, goodIndex);
             gc.Add(loopOverGood);

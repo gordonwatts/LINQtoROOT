@@ -95,11 +95,11 @@ namespace LINQToTTreeLib.Tests
             // c = c + b
             // These two should combine correctly, somehow.
 
-            var a = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
             var s1 = new StatementAggregate(a, ainc);
 
-            var c = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
             var s2 = new StatementAggregate(c, cinc);
 
@@ -118,11 +118,11 @@ namespace LINQToTTreeLib.Tests
             // c = c + b
             // These two should combine correctly, somehow.
 
-            var a = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
             var s1 = new StatementAggregate(a, ainc);
 
-            var c = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
             var s2 = new StatementAggregate(c, cinc);
 

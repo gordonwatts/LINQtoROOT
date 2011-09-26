@@ -88,13 +88,11 @@ namespace LINQToTTreeLib.ResultOperators
             /// externally.
             /// 
 
-            var vIsFilled = DeclarableParameter.DeclarableParameterExpression(typeof(bool));
+            var vIsFilled = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             vIsFilled.InitialValue = "false";
-            var vMaxMin = new Variables.VarSimple(valueExpr.Type) { Declare = true };
-            vMaxMin.InitialValue = new Variables.ValSimple("0", valueExpr.Type);
+            var vMaxMin = DeclarableParameter.CreateDeclarableParameterExpression(valueExpr.Type);
+            vMaxMin.InitialValue = "0";
 
-            throw new NotImplementedException();
-#if false
             gc.AddOneLevelUp(vIsFilled);
 
             ///
@@ -111,7 +109,6 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(ifStatement);
 
             return Expression.Variable(vMaxMin.Type, vMaxMin.RawValue);
-#endif
         }
 
         /// <summary>

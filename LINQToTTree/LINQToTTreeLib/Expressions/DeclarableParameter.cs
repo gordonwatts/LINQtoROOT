@@ -27,9 +27,19 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="varType"></param>
         /// <returns></returns>
-        public static DeclarableParameter DeclarableParameterExpression(Type varType)
+        public static DeclarableParameter CreateDeclarableParameterExpression(Type varType)
         {
             return new DeclarableParameter(varType, varType.CreateUniqueVariableName());
+        }
+
+        /// <summary>
+        /// Create a new variable that is an array.
+        /// </summary>
+        /// <param name="varType"></param>
+        /// <returns></returns>
+        public static DeclarableParameter CreateDeclarableParameterArrayExpression(Type varType)
+        {
+            return new DeclarableParameter(varType.MakeArrayType(1), string.Format("{0}Array", varType.CreateUniqueVariableName()));
         }
 
         /// <summary>
@@ -58,6 +68,8 @@ namespace LINQToTTreeLib.Expressions
         {
             if (ParameterName == oldname)
                 ParameterName = newname;
+
+            InitialValue = InitialValue.ReplaceVariableNames(oldname, newname);
         }
 
         /// <summary>
@@ -84,6 +96,24 @@ namespace LINQToTTreeLib.Expressions
         protected override Expression VisitChildren(Remotion.Linq.Parsing.ExpressionTreeVisitor visitor)
         {
             return this;
+        }
+
+        /// <summary>
+        /// Return the pareamter name as our value raw value.
+        /// </summary>
+        public string RawValue
+        {
+            get { return ParameterName; }
+        }
+
+        /// <summary>
+        /// Rename the raw value.
+        /// </summary>
+        /// <param name="oldname"></param>
+        /// <param name="newname"></param>
+        public void RenameRawValue(string oldname, string newname)
+        {
+            RenameParameter(oldname, newname);
         }
     }
 }

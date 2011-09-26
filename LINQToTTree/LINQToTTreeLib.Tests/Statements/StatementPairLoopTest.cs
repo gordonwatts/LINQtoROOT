@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
@@ -30,7 +31,7 @@ namespace LINQToTTreeLib.Tests.Statements
         }
 
         [PexMethod]
-        internal StatementPairLoop StatementPairLoopCtor(VarArray varArray, IVariable index1, IVariable index2)
+        internal StatementPairLoop StatementPairLoopCtor(IDeclaredParameter varArray, IDeclaredParameter index1, IDeclaredParameter index2)
         {
             var target = new StatementPairLoop(varArray, index1, index2);
             return target;
@@ -45,9 +46,9 @@ namespace LINQToTTreeLib.Tests.Statements
         [TestMethod]
         public void TestForEmittingNoStatements()
         {
-            var array = new VarArray(typeof(int));
-            var index1 = new VarInteger();
-            var index2 = new VarInteger();
+            var array = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var t = new StatementPairLoop(array, index1, index2);
             Assert.AreEqual(0, t.CodeItUp().Count(), "# of lines incorrect");
         }
@@ -55,9 +56,9 @@ namespace LINQToTTreeLib.Tests.Statements
         [TestMethod]
         public void TestForEmittingSimpleStatement()
         {
-            var array = new VarArray(typeof(int));
-            var index1 = new VarInteger();
-            var index2 = new VarInteger();
+            var array = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var t = new StatementPairLoop(array, index1, index2);
             t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
             Assert.AreEqual(13, t.CodeItUp().Count(), "# of lines incorrect");
@@ -66,9 +67,9 @@ namespace LINQToTTreeLib.Tests.Statements
         [TestMethod]
         public void TestForBreakPlacement()
         {
-            var array = new VarArray(typeof(int));
-            var index1 = new VarInteger();
-            var index2 = new VarInteger();
+            var array = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var t = new StatementPairLoop(array, index1, index2);
             t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
             var statements = t.CodeItUp().ToArray();
@@ -94,12 +95,12 @@ namespace LINQToTTreeLib.Tests.Statements
         [TestMethod]
         public void TestSimpleRename()
         {
-            var index1 = new Variables.VarInteger();
-            var index2 = new Variables.VarInteger();
-            var array = new VarArray(typeof(int));
+            var array = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             var st = new StatementPairLoop(array, index1, index2);
-            var vr = new VarSimple(typeof(int));
+            var vr = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             vr.RenameRawValue(vr.RawValue, index1.RawValue);
             st.Add(new StatementAssign(vr, new ValSimple("ops", typeof(int))));
 
@@ -120,14 +121,14 @@ namespace LINQToTTreeLib.Tests.Statements
         [TestMethod]
         public void TestCombineShouldFail()
         {
-            var index1 = new Variables.VarInteger();
-            var index2 = new Variables.VarInteger();
-            var arrayRecord = new VarArray(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             var stp1 = new StatementPairLoop(arrayRecord, index1, index2);
 
-            var index3 = new Variables.VarInteger();
-            var index4 = new Variables.VarInteger();
-            var arrayRecord2 = new VarArray(typeof(int));
+            var index3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var arrayRecord2 = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             var stp2 = new StatementPairLoop(arrayRecord2, index3, index4);
 
             Assert.IsFalse(stp1.TryCombineStatement(stp2, null), "should not have combined");
@@ -137,13 +138,13 @@ namespace LINQToTTreeLib.Tests.Statements
         public void TestCombineWithSameArray()
         {
 
-            var index1 = new Variables.VarInteger();
-            var index2 = new Variables.VarInteger();
-            var arrayRecord = new VarArray(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             var stp1 = new StatementPairLoop(arrayRecord, index1, index2);
 
-            var index3 = new Variables.VarInteger();
-            var index4 = new Variables.VarInteger();
+            var index3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var stp2 = new StatementPairLoop(arrayRecord, index3, index4);
             var statAss = new StatementAssign(index3, new ValSimple("dude", typeof(int)));
             stp2.Add(statAss);

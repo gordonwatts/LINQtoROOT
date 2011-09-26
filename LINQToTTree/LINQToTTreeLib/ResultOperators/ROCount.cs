@@ -48,7 +48,7 @@ namespace LINQToTTreeLib.ResultOperators
             // The accumulator where we will store the result.
             //
 
-            var accumulator = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var accumulator = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             //
             // Use the Aggregate infrasturcutre to do the adding. This

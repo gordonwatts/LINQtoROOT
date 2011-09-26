@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -107,13 +107,13 @@ namespace LINQToTTreeLib
 
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock
         {
-            private List<IVariable> _vlist = new List<IVariable>();
-            public void Add(IVariable variableToDeclare)
+            private List<IDeclaredParameter> _vlist = new List<IDeclaredParameter>();
+            public void Add(IDeclaredParameter variableToDeclare)
             {
                 _vlist.Add(variableToDeclare);
             }
 
-            public IEnumerable<IVariable> DeclaredVariables
+            public IEnumerable<IDeclaredParameter> DeclaredVariables
             {
                 get { return _vlist; }
             }
@@ -138,7 +138,7 @@ namespace LINQToTTreeLib
         public void AddCompoundStatementTest(IStatement s)
         {
             var target = new GeneratedCode();
-            var v = new VarInteger();
+            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var boringStatement = new StatementIncrementInteger(v);
 
             target.Add(s);
@@ -169,7 +169,7 @@ namespace LINQToTTreeLib
             /// Adding a second statement should not alter the top level statement.
             /// 
 
-            target.Add(new StatementIncrementInteger(new VarInteger()));
+            target.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
         }
 
@@ -223,11 +223,11 @@ namespace LINQToTTreeLib
             /// Now insert the statement twice and the variables too.
             /// 
 
-            var v1 = new VarInteger();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v1);
             target.Add(s1);
             target.CurrentScope = currentScope;
-            var v2 = new VarInteger();
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v2);
             target.Add(s2);
         }
@@ -245,13 +245,13 @@ namespace LINQToTTreeLib
 
             var curVars = deepestDeclarLevel.DeclaredVariables.Count();
             var curStatements = deepestStatementLevel.Statements.Count();
-            var v1 = new VarInteger();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v1);
             target.Add(s);
 
             target.CurrentScope = currentS;
 
-            var v2 = new VarInteger();
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v2);
             s.Parent = null;
             target.Add(s);
@@ -273,13 +273,13 @@ namespace LINQToTTreeLib
 
             var curVars = deepestDeclarLevel.DeclaredVariables.Count();
             var curStatements = deepestStatementLevel.Statements.Count();
-            var v1 = new VarInteger();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v1);
             target.Add(s);
 
             target.CurrentScope = currentS;
 
-            var v2 = new VarInteger();
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v2);
             s.Parent = null;
             target.Add(s);
@@ -315,7 +315,7 @@ namespace LINQToTTreeLib
         public void TestAddOneLevelUpTopLevel()
         {
             GeneratedCode gc = new GeneratedCode();
-            gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
+            gc.AddOneLevelUp(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
         }
 
         [TestMethod]
@@ -323,7 +323,7 @@ namespace LINQToTTreeLib
         {
             GeneratedCode gc = new GeneratedCode();
             gc.Add(new Statements.StatementInlineBlock());
-            gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
+            gc.AddOneLevelUp(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level decl");
         }
 

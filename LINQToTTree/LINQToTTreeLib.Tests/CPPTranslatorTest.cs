@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
@@ -81,7 +82,8 @@ namespace LINQToTTreeLib
             code.SetResult(vInt);
 
             var innerBlock = new StatementInlineBlock();
-            VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+            var vInt2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vInt2.InitialValue = "5";
             innerBlock.Add(vInt2);
             code.Add(innerBlock);
 
@@ -126,7 +128,8 @@ namespace LINQToTTreeLib
                 for (int i = 0; i < 300; i++)
                 {
                     var innerBlock = new StatementInlineBlock();
-                    VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+                    var vInt2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                    vInt2.InitialValue = "5";
                     innerBlock.Add(vInt2);
                     yield return innerBlock;
                 }
@@ -166,7 +169,8 @@ namespace LINQToTTreeLib
             code.SetResult(vInt);
 
             var innerBlock = new StatementInlineBlock();
-            VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+            var vInt2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vInt2.InitialValue = "5";
             innerBlock.Add(vInt2);
             code.Add(innerBlock);
 

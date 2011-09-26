@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.ResultOperators
                 throw new InvalidOperationException(string.Format("Do not know how to generate C++ to sum type {0}.", sumType.Name));
             }
 
-            var accumulator = DeclarableParameter.DeclarableParameterExpression(sumType);
+            var accumulator = DeclarableParameter.CreateDeclarableParameterExpression(sumType);
 
             //
             // Now, in the loop we are currently in, we do the "add".

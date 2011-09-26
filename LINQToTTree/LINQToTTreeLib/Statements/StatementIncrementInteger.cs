@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -14,10 +13,12 @@ namespace LINQToTTreeLib.Statements
         /// Create a statement that will increment this integer.
         /// </summary>
         /// <param name="i"></param>
-        public StatementIncrementInteger(VarInteger i)
+        public StatementIncrementInteger(IDeclaredParameter i)
         {
             if (i == null)
                 throw new ArgumentNullException("The statement can't increment a null integer");
+            if (i.Type != typeof(int))
+                throw new ArgumentException("parameter i must be an integer");
 
             Integer = i;
         }
@@ -25,7 +26,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The integer we will increment.
         /// </summary>
-        public VarInteger Integer { get; private set; }
+        public IDeclaredParameter Integer { get; private set; }
 
         /// <summary>
         /// Return code to increment an integer

@@ -61,7 +61,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// Finally, if there is a final funciton, we need to call that after the loop is done!
             ///
 
-            var accumulator = DeclarableParameter.DeclarableParameterExpression(a.Seed.Type);
+            var accumulator = DeclarableParameter.CreateDeclarableParameterExpression(a.Seed.Type);
             accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container).RawValue;
 
             ///

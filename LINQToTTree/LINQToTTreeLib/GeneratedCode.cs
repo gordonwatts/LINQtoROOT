@@ -161,7 +161,7 @@ namespace LINQToTTreeLib
         /// declarations.
         /// </summary>
         /// <param name="v"></param>
-        public void Add(IVariable v)
+        public void Add(IDeclaredParameter v)
         {
             if (v == null)
                 throw new ArgumentNullException("Cannot add a null variable!");
@@ -172,7 +172,7 @@ namespace LINQToTTreeLib
         /// Add a variable one level up from the current scope. Fail if we can't!
         /// </summary>
         /// <param name="valSimple"></param>
-        public void AddOneLevelUp(IVariable valSimple)
+        public void AddOneLevelUp(IDeclaredParameter valSimple)
         {
             if (valSimple == null)
                 throw new ArgumentNullException("cannot add null variable!");

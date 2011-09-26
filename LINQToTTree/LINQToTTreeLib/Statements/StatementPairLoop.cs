@@ -2,16 +2,15 @@
 using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
     public class StatementPairLoop : StatementInlineBlockBase
     {
-        private Variables.VarArray arrayRecord;
-        private IVariable index1;
-        private IVariable index2;
+        private IDeclaredParameter arrayRecord;
+        private IDeclaredParameter index1;
+        private IDeclaredParameter index2;
 
-        public StatementPairLoop(VarArray arrayRecord, IVariable index1, IVariable index2)
+        public StatementPairLoop(IDeclaredParameter arrayRecord, IDeclaredParameter index1, IDeclaredParameter index2)
         {
             if (arrayRecord == null)
                 throw new ArgumentNullException("arrayRecord");

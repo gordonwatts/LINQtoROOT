@@ -24,10 +24,10 @@ namespace LINQToTTreeLib.Tests
             foreach (var var in code.CodeBody.DeclaredVariables)
             {
                 string initalValue = "default()";
-                if (var.InitialValue != null && var.InitialValue.RawValue != null)
-                    initalValue = var.InitialValue.RawValue;
+                if (var.InitialValue != null && var.InitialValue != null)
+                    initalValue = var.InitialValue;
 
-                Console.WriteLine(var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
+                Console.WriteLine(var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
             }
             Console.WriteLine("Code:");
 
@@ -84,10 +84,10 @@ namespace LINQToTTreeLib.Tests
                 foreach (var var in bs.DeclaredVariables)
                 {
                     string initalValue = "default()";
-                    if (var.InitialValue != null && var.InitialValue.RawValue != null)
-                        initalValue = var.InitialValue.RawValue;
+                    if (var.InitialValue != null && var.InitialValue != null)
+                        initalValue = var.InitialValue;
 
-                    Console.WriteLine(indent + "  " + var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
+                    Console.WriteLine(indent + "  " + var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
                 }
             }
             Console.WriteLine("{0}Lines of code:", indent);

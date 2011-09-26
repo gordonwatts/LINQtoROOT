@@ -44,22 +44,22 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Track the list of variables we keep for others.
         /// </summary>
-        private List<IVariable> _variables = new List<IVariable>();
+        private List<IDeclaredParameter> _variables = new List<IDeclaredParameter>();
 
         /// <summary>
         /// Add a variable to the list.
         /// </summary>
         /// <param name="variableToDeclare"></param>
-        public void Add(IVariable variableToDeclare)
+        public void Add(IDeclaredParameter variableToDeclare)
         {
             if (variableToDeclare == null)
                 throw new ArgumentNullException("Must not declare a null variable");
 
             var findOld = from v in _variables
-                          where v.VariableName == variableToDeclare.VariableName
+                          where v.ParameterName == variableToDeclare.ParameterName
                           select v;
             if (findOld.FirstOrDefault() != null)
-                throw new ArgumentException("Variable '" + variableToDeclare.VariableName + "' has already been declared in this block!");
+                throw new ArgumentException("Variable '" + variableToDeclare.ParameterName + "' has already been declared in this block!");
 
             _variables.Add(variableToDeclare);
         }
@@ -67,7 +67,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return the variables in the block
         /// </summary>
-        public IEnumerable<IVariable> DeclaredVariables
+        public IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get { return _variables; }
         }
@@ -86,7 +86,6 @@ namespace LINQToTTreeLib.Statements
         public IEnumerable<string> RenderInternalCode()
         {
             var goodVars = (from v in _variables
-                            where v.Declare
                             select v).ToArray();
 
             if (_statements.Count > 0 || goodVars.Length > 0)
@@ -95,10 +94,10 @@ namespace LINQToTTreeLib.Statements
 
                 foreach (var v in goodVars)
                 {
-                    string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.VariableName;
+                    string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.ParameterName;
                     if (v.InitialValue != null)
                     {
-                        varDecl = varDecl + "=" + v.InitialValue.RawValue;
+                        varDecl = varDecl + "=" + v.InitialValue;
                     }
                     varDecl += ";";
                     yield return "  " + varDecl;
@@ -155,7 +154,7 @@ namespace LINQToTTreeLib.Statements
 
                 // Check that its initialization is the same!
                 bool initValueSame = (vr.Item1.InitialValue == null && newName.InitialValue == null)
-                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.RawValue == newName.InitialValue));
+                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue == newName.InitialValue));
                 if (!initValueSame)
                     return false;
 
@@ -171,7 +170,7 @@ namespace LINQToTTreeLib.Statements
             /// <param name="oldName"></param>
             /// <param name="statement"></param>
             /// <returns></returns>
-            private Tuple<IVariable, IBookingStatementBlock> FindDeclaredVariable(string oldName, IStatement statement)
+            private Tuple<IDeclaredParameter, IBookingStatementBlock> FindDeclaredVariable(string oldName, IStatement statement)
             {
                 if (statement == null)
                     return null;
@@ -179,7 +178,7 @@ namespace LINQToTTreeLib.Statements
                 if (statement is IBookingStatementBlock)
                 {
                     var hr = statement as IBookingStatementBlock;
-                    var vr = hr.DeclaredVariables.Where(v => v.RawValue == oldName).FirstOrDefault();
+                    var vr = hr.DeclaredVariables.Where(v => v.ParameterName == oldName).FirstOrDefault();
                     if (vr != null)
                         return Tuple.Create(vr, hr);
                 }
@@ -275,7 +274,7 @@ namespace LINQToTTreeLib.Statements
         /// Add the variables into this block.
         /// </summary>
         /// <param name="vars"></param>
-        protected void Combine(IEnumerable<IVariable> vars)
+        protected void Combine(IEnumerable<IDeclaredParameter> vars)
         {
             foreach (var v in vars)
             {
@@ -283,7 +282,7 @@ namespace LINQToTTreeLib.Statements
                 // add them if that is the case. This happens b/c the various statements are combined and that may cause
                 // some variable renaming.
 
-                if (_variables.Find(intv => intv.RawValue == v.RawValue) == null)
+                if (_variables.Find(intv => intv.ParameterName == v.ParameterName) == null)
                     Add(v);
             }
         }

@@ -17,14 +17,5 @@ namespace LINQToTTreeLib.Tests.ResultOperators
 {
     public partial class SubExpressionReplacementTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(SubExpressionReplacementTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestReplacementThrowsArgumentNullException614()
-{
-    Expression expression;
-    expression =
-      this.TestReplacement((Expression)null, (Expression)null, (Expression)null);
-}
     }
 }

@@ -9,7 +9,7 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementAssign : IStatement
     {
-        public StatementAssign(IVariable result, IValue val)
+        public StatementAssign(IDeclaredParameter result, IValue val)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The guy that will be set.
         /// </summary>
-        public IVariable ResultVariable { get; private set; }
+        public IDeclaredParameter ResultVariable { get; private set; }
 
         /// <summary>
         /// Get the expression that we will be making things equiv to!

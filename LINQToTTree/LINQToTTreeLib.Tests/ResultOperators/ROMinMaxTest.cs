@@ -107,7 +107,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             // And that var name should also exist in the list of booked variables at this top level.
 
-            var asBooked = res.CodeBody.DeclaredVariables.Where(v => v.VariableName == varname).FirstOrDefault();
+            var asBooked = res.CodeBody.DeclaredVariables.Where(v => v.ParameterName == varname).FirstOrDefault();
             Assert.IsNotNull(asBooked, string.Format("Unable to find variable '{0}' in the top level list of booked variables.", varname));
         }
     }

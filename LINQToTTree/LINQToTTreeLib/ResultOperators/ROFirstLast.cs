@@ -4,7 +4,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -78,8 +77,8 @@ namespace LINQToTTreeLib.ResultOperators
             // first or the last time. It also has to mark the thing as valid!
             //
 
-            var valueWasSeen = new VarSimple(typeof(bool)) { Declare = true };
-            var indexSeen = new VarSimple(typeof(int)) { Declare = true };
+            var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             gc.AddOneLevelUp(valueWasSeen);
             gc.AddOneLevelUp(indexSeen);
@@ -93,7 +92,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             gc.Pop();
             var firstlastValue = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, Expression.Parameter(typeof(int), indexSeen.RawValue));
-            var actualValue = new VarSimple(cc.LoopVariable.Type) { Declare = true };
+            var actualValue = DeclarableParameter.CreateDeclarableParameterExpression(cc.LoopVariable.Type);
 
             gc.Add(new Statements.StatementAssign(actualValue,
                 ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));

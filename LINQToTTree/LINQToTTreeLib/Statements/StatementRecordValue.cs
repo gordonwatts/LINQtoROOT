@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The holder for the index variable.
         /// </summary>
-        private IVariable _indexSeen;
+        private IDeclaredParameter _indexSeen;
 
         /// <summary>
         /// The value we should record above
@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Set this to true when we have seen a first value.
         /// </summary>
-        private IVariable _valueWasSeen;
+        private IDeclaredParameter _valueWasSeen;
 
         /// <summary>
         /// If true, then break from our current loop once something has been seen.
@@ -37,8 +37,8 @@ namespace LINQToTTreeLib.Statements
         /// <param name="indexValue"></param>
         /// <param name="valueWasSeen"></param>
         /// <param name="breakOnFirstSet"></param>
-        public StatementRecordValue(IVariable indexSaveLocation, IValue indexExpression,
-            IVariable markWhenSeen, bool breakOnFirstSet)
+        public StatementRecordValue(IDeclaredParameter indexSaveLocation, IValue indexExpression,
+            IDeclaredParameter markWhenSeen, bool breakOnFirstSet)
         {
             if (indexSaveLocation == null)
                 throw new ArgumentNullException("_indexSeen");
