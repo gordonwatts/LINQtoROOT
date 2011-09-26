@@ -143,7 +143,7 @@ namespace LINQToTTreeLib.Statements
                 get { return RawValue; }
             }
 
-            string IDeclaredParameter.InitialValue
+            IValue IDeclaredParameter.InitialValue
             {
                 get
                 {
@@ -389,9 +389,9 @@ namespace LINQToTTreeLib.Statements
             var inline2 = new StatementInlineBlock();
 
             var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            vdecl1.InitialValue = "0";
+            vdecl1.SetInitialValue("0");
             var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            vdecl2.InitialValue = "1";
+            vdecl2.SetInitialValue("1");
 
             inline1.Add(vdecl1);
             inline2.Add(vdecl2);

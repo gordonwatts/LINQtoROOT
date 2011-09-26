@@ -185,7 +185,7 @@ namespace LINQToTTreeLib
 
         /// <summary>Test stub for SetResult(IVariable)</summary>
         [PexMethod]
-        internal void SetResult([PexAssumeUnderTest]GeneratedCode target, IVariable r)
+        internal void SetResult([PexAssumeUnderTest]GeneratedCode target, DeclarableParameter r)
         {
             target.SetResult(r);
             Assert.AreEqual(r, target.ResultValue, "The result value wasn't changed");

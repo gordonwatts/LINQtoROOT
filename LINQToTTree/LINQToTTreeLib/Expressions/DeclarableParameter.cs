@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Utilities;
 
@@ -69,7 +70,8 @@ namespace LINQToTTreeLib.Expressions
             if (ParameterName == oldname)
                 ParameterName = newname;
 
-            InitialValue = InitialValue.ReplaceVariableNames(oldname, newname);
+            if (InitialValue != null)
+                InitialValue.RenameRawValue(oldname, newname);
         }
 
         /// <summary>
@@ -86,7 +88,16 @@ namespace LINQToTTreeLib.Expressions
         /// null it shoudl be set to the default value (like "0" for int).
         /// Assume everything is explicitly initalized!
         /// </summary>
-        public string InitialValue { get; set; }
+        public IValue InitialValue { get; set; }
+
+        /// <summary>
+        /// Set the initial value with this type.
+        /// </summary>
+        /// <param name="v"></param>
+        public void SetInitialValue(string v)
+        {
+            InitialValue = new ValSimple(v, Type);
+        }
 
         /// <summary>
         /// Visit the children (if we need to). Since we have no childrn, we just return.

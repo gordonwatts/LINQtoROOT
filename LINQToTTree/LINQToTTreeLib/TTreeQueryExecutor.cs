@@ -568,7 +568,7 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
+        private T ExtractResult<T>(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
         {
             ///
             /// Load the object and try to extract whatever info we need to from it

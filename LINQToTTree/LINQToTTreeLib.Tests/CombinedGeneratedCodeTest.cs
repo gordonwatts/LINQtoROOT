@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using Microsoft.ExtendedReflection.DataAccess;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -97,9 +98,9 @@ namespace LINQToTTreeLib
 
         /// <summary>Test stub for get_ResultValues()</summary>
         [PexMethod]
-        internal IEnumerable<IVariable> ResultValuesGet([PexAssumeUnderTest]CombinedGeneratedCode target)
+        internal IEnumerable<IDeclaredParameter> ResultValuesGet([PexAssumeUnderTest]CombinedGeneratedCode target)
         {
-            IEnumerable<IVariable> result = target.ResultValues;
+            IEnumerable<IDeclaredParameter> result = target.ResultValues;
             return result;
             // TODO: add assertions to method CombinedGeneratedCodeTest.ResultValuesGet(CombinedGeneratedCode)
         }
@@ -128,8 +129,8 @@ namespace LINQToTTreeLib
             q1.Add(s1);
             q2.Add(s2);
 
-            var v1 = new Variables.VarInteger();
-            var v2 = new Variables.VarInteger();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             q1.SetResult(v1);
             q2.SetResult(v2);
 

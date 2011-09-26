@@ -81,17 +81,17 @@ namespace LINQToTTreeLib
         /// </summary>
         class DummySaver : IVariableSaver
         {
-            public bool CanHandle(IVariable iVariable)
+            public bool CanHandle(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
             }
 
-            public System.Collections.Generic.IEnumerable<string> SaveToFile(IVariable iVariable)
+            public System.Collections.Generic.IEnumerable<string> SaveToFile(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
             }
 
-            public System.Collections.Generic.IEnumerable<string> IncludeFiles(IVariable iVariable)
+            public System.Collections.Generic.IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
             }
@@ -103,7 +103,7 @@ namespace LINQToTTreeLib
             /// <param name="iVariable"></param>
             /// <param name="obj"></param>
             /// <returns></returns>
-            public T LoadResult<T>(IVariable iVariable, NTObject obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject obj)
             {
                 var h = obj as ROOTNET.Interface.NTH1F;
                 if (h == null)
@@ -120,22 +120,22 @@ namespace LINQToTTreeLib
         /// </summary>
         class DummyHistoSaver : IVariableSaver
         {
-            public bool CanHandle(IVariable iVariable)
+            public bool CanHandle(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
             }
 
-            public System.Collections.Generic.IEnumerable<string> SaveToFile(IVariable iVariable)
+            public System.Collections.Generic.IEnumerable<string> SaveToFile(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
             }
 
-            public System.Collections.Generic.IEnumerable<string> IncludeFiles(IVariable iVariable)
+            public System.Collections.Generic.IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
             }
 
-            public T LoadResult<T>(IVariable iVariable, NTObject obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject obj)
             {
                 var h = obj.Clone();
                 return (T)h;

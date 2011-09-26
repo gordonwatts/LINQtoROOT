@@ -16,7 +16,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        public bool CanHandle(IVariable iVariable)
+        public bool CanHandle(IDeclaredParameter iVariable)
         {
             if (iVariable.GetType() == typeof(VarInteger))
                 return true;
@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        public IEnumerable<string> SaveToFile(IVariable iVariable)
+        public IEnumerable<string> SaveToFile(IDeclaredParameter iVariable)
         {
             yield return "TH1I *" + iVariable.RawValue + "_hist = new TH1I(\"" + iVariable.RawValue + "\", \"var transport\", 1, 0.0, 1.0);";
             yield return iVariable.RawValue + "_hist->SetDirectory(0);";
@@ -42,7 +42,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        public IEnumerable<string> IncludeFiles(IVariable iVariable)
+        public IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
         {
             yield return "TH1I.h";
         }
@@ -54,7 +54,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj)
         {
             var intHist = obj as ROOTNET.NTH1I;
             if (intHist == null)

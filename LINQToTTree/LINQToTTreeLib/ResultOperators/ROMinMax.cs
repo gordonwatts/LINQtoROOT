@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -89,9 +90,9 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var vIsFilled = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            vIsFilled.InitialValue = "false";
+            vIsFilled.InitialValue = new ValSimple("false", typeof(bool));
             var vMaxMin = DeclarableParameter.CreateDeclarableParameterExpression(valueExpr.Type);
-            vMaxMin.InitialValue = "0";
+            vMaxMin.InitialValue = new ValSimple("0", typeof(int));
 
             gc.AddOneLevelUp(vIsFilled);
 

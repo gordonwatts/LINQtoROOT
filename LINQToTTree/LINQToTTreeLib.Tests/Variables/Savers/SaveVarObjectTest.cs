@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,7 +18,7 @@ namespace LINQToTTreeLib.Variables.Savers
     {
         /// <summary>Test stub for CanHandle(IVariable)</summary>
         ///[PexMethod]
-        internal bool CanHandle([PexAssumeUnderTest]SaveVarObject target, IVariable iVariable)
+        internal bool CanHandle([PexAssumeUnderTest]SaveVarObject target, IDeclaredParameter iVariable)
         {
             bool result = target.CanHandle(iVariable);
             return result;
@@ -27,27 +28,27 @@ namespace LINQToTTreeLib.Variables.Savers
         [TestMethod]
         public void TestForNonROOTObject()
         {
-            var v = new VarObject(typeof(int[]));
+            var v = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             Assert.IsFalse(CanHandle(new SaveVarObject(), v), "int array should be false");
         }
 
         [TestMethod]
         public void TestForROOTTObject()
         {
-            var v = new VarObject(typeof(ROOTNET.Interface.NTObject));
+            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ROOTNET.Interface.NTObject));
             Assert.IsFalse(CanHandle(new SaveVarObject(), v), "TObject array should be false");
         }
 
         [TestMethod]
         public void TestForROOTTH1F()
         {
-            var v = new VarObject(typeof(ROOTNET.Interface.NTH1F));
+            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ROOTNET.Interface.NTH1F));
             Assert.IsTrue(CanHandle(new SaveVarObject(), v), "TH1F");
         }
 
         /// <summary>Test stub for IncludeFiles(IVariable)</summary>
         [PexMethod]
-        internal IEnumerable<string> IncludeFiles([PexAssumeUnderTest]SaveVarObject target, IVariable iVariable)
+        internal IEnumerable<string> IncludeFiles([PexAssumeUnderTest]SaveVarObject target, IDeclaredParameter iVariable)
         {
             IEnumerable<string> result = target.IncludeFiles(iVariable);
             return result;
@@ -72,7 +73,7 @@ namespace LINQToTTreeLib.Variables.Savers
 
         /// <summary>Test stub for SaveToFile(IVariable)</summary>
         [PexMethod]
-        internal IEnumerable<string> SaveToFile([PexAssumeUnderTest]SaveVarObject target, IVariable iVariable)
+        internal IEnumerable<string> SaveToFile([PexAssumeUnderTest]SaveVarObject target, IDeclaredParameter iVariable)
         {
             IEnumerable<string> result = target.SaveToFile(iVariable);
             return result;

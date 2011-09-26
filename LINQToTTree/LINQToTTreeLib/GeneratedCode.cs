@@ -32,12 +32,12 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Get the final result as a variable.
         /// </summary>
-        public IVariable ResultValueAsVaraible { get; private set; }
+        public IDeclaredParameter ResultValueAsVaraible { get; private set; }
 
         /// <summary>
         /// We have only a single result value, so the return is pretty easy...
         /// </summary>
-        public IEnumerable<IVariable> ResultValues
+        public IEnumerable<IDeclaredParameter> ResultValues
         {
             get { yield return ResultValueAsVaraible; }
         }
@@ -69,17 +69,9 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("Cannot set the result to be null");
 
             ResultValue = r;
-        }
 
-        /// <summary>
-        /// Set the result variable.
-        /// </summary>
-        /// <param name="r"></param>
-        public void SetResult(IVariable r)
-        {
-            if (r == null)
-                throw new ArgumentNullException("Cannot set the result to be null for a variable");
-            ResultValueAsVaraible = r;
+            if (r is IDeclaredParameter)
+                ResultValueAsVaraible = r as IDeclaredParameter;
         }
 
         /// <summary>

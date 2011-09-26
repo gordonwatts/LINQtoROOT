@@ -117,15 +117,12 @@ namespace LINQToTTreeLib.Statements
             // Now we have to rename the right, just in case...
             //
 
-            throw new NotImplementedException();
-#if false
             if (!opt.TryRenameVarialbeOneLevelUp(other.Counter.RawValue, Counter))
                 return false;
 
             Combine(other, opt);
 
             return true;
-#endif
         }
 
         /// <summary>

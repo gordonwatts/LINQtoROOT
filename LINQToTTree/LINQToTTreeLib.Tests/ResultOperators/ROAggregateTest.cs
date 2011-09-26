@@ -140,7 +140,7 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
             Assert.IsInstanceOfType(varToTrans[0], typeof(KeyValuePair<string, object>), "bad object type to transfer");
             var ro = (KeyValuePair<string, object>)varToTrans[0];
-            Assert.IsTrue((res.ResultValue as DeclarableParameter).InitialValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + (res.ResultValue as DeclarableParameter).InitialValue + ")");
+            Assert.IsTrue((res.ResultValue as DeclarableParameter).InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + (res.ResultValue as DeclarableParameter).InitialValue + ")");
         }
 
         [TranslateToClass(typeof(targetTransNtup))]

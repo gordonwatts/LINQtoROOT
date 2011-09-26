@@ -25,7 +25,7 @@ namespace LINQToTTreeLib.Tests
             {
                 string initalValue = "default()";
                 if (var.InitialValue != null && var.InitialValue != null)
-                    initalValue = var.InitialValue;
+                    initalValue = var.InitialValue.RawValue;
 
                 Console.WriteLine(var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
             }
@@ -85,7 +85,7 @@ namespace LINQToTTreeLib.Tests
                 {
                     string initalValue = "default()";
                     if (var.InitialValue != null && var.InitialValue != null)
-                        initalValue = var.InitialValue;
+                        initalValue = var.InitialValue.RawValue;
 
                     Console.WriteLine(indent + "  " + var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
                 }
