@@ -79,7 +79,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(typeof(int), r.Type, "result type");
             Assert.AreEqual(DeclarableParameter.ExpressionType, r.NodeType, "Expression type incorrect");
             var dv = r as DeclarableParameter;
-            Assert.IsNull(dv.InitialValue, "Initial value");
+            Assert.IsTrue(dv.InitialValue == null || dv.InitialValue.RawValue == "0", "Initial value incorrect");
         }
     }
 }

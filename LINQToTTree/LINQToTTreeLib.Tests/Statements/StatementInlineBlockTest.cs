@@ -335,8 +335,6 @@ namespace LINQToTTreeLib.Statements
             var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            throw new NotImplementedException();
-#if false
             inline1.Add(vdecl1);
             inline2.Add(vdecl2);
 
@@ -348,7 +346,6 @@ namespace LINQToTTreeLib.Statements
             var result = inline1.TryCombineStatement(inline2, null);
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(1, inline1.Statements.Count(), "bad # of combined statements");
-#endif
         }
 
         [TestMethod]
