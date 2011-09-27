@@ -69,6 +69,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var passAll = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
+            gc.Add(passAll);
             var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
