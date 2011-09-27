@@ -154,7 +154,7 @@ namespace LINQToTTreeLib.Statements
 
                 // Check that its initialization is the same!
                 bool initValueSame = (vr.Item1.InitialValue == null && newName.InitialValue == null)
-                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue == newName.InitialValue));
+                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.Type == newName.InitialValue.Type && vr.Item1.InitialValue.RawValue == newName.InitialValue.RawValue));
                 if (!initValueSame)
                     return false;
 

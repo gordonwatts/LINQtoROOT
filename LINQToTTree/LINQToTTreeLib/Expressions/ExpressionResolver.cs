@@ -241,11 +241,14 @@ namespace LINQToTTreeLib.Expressions
                 ///    value. But there isn't really a result! So the result will be null...
                 /// 
 
-                if (GeneratedCode.ResultValue != null)
+                var r = GeneratedCode.ResultValue;
+                if (r != null)
                 {
                     GeneratedCode.CurrentScope = scope;
-                    //GeneratedCode.Add(GeneratedCode.ResultValue);
-                    var r = GeneratedCode.ResultValue;
+                    if (r is IDeclaredParameter)
+                    {
+                        GeneratedCode.Add(r as IDeclaredParameter);
+                    }
                     GeneratedCode.ResetResult();
                     return r;
                 }
