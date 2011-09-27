@@ -250,7 +250,14 @@ namespace LINQToTTreeLib.Expressions
                     return r;
                 }
 
-                return expression;
+                //
+                // The fact that we returned null means we are dealing with a
+                // sequence. There really is no translated version of this expression
+                // in that case - so we will return null. If someone above is depending
+                // on doing something with it they are going to run into some
+                // trouble!
+
+                return null;
             }
         }
     }
