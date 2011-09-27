@@ -74,7 +74,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             //
             // We need to hold onto either the first or the last item here, so we create a statement that holds nnto the
-            // first or the last time. It also has to mark the thing as valid!
+            // first or the last time. It also has to mark the thing as valid! It will break when it is done.
             //
 
             var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
@@ -92,12 +92,15 @@ namespace LINQToTTreeLib.ResultOperators
 
             gc.Pop();
             var firstlastValue = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, Expression.Parameter(typeof(int), indexSeen.RawValue));
+            return firstlastValue;
+#if false
             var actualValue = DeclarableParameter.CreateDeclarableParameterExpression(cc.LoopVariable.Type);
 
             gc.Add(new Statements.StatementAssign(actualValue,
                 ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
 
             return actualValue;
+#endif
         }
     }
 }

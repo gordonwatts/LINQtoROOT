@@ -126,6 +126,9 @@ namespace LINQToTTreeLib.Statements
                 || v.Type == typeof(float))
                 return "0";
 
+            if (v.Type == typeof(bool))
+                return "false";
+
             throw new NotSupportedException(string.Format("Don't know how to do default value for C++ variable of type {0}.", v.Type.ToString()));
         }
 
