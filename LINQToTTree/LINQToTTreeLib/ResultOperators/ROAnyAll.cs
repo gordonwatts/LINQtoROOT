@@ -93,7 +93,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// Done!
             /// 
 
-            return Expression.Variable(aresult.Type, aresult.RawValue);
+            return aresult;
         }
     }
 }
