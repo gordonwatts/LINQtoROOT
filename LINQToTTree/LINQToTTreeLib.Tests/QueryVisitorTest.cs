@@ -577,7 +577,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void TestAnonObjectCompare()
         {
             var q = new QueriableDummy<ntupWithObjects>();
