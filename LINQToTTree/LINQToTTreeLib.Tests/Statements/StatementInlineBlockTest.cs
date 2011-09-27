@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -86,16 +87,18 @@ namespace LINQToTTreeLib.Statements
         {
             StatementInlineBlock b = new StatementInlineBlock();
             b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            b.Add(new Statements.StatementSimpleStatement("bork"));
             var r = b.CodeItUp().ToArray();
-            Assert.AreEqual(3, r.Length, "incorrect number of lines");
+            Assert.AreEqual(4, r.Length, "incorrect number of lines");
             Assert.AreEqual("{", r[0], "open bracket");
-            Assert.AreEqual("}", r[2], "close bracket");
+            Assert.AreEqual("}", r[3], "close bracket");
             Assert.IsTrue(r[1].EndsWith("=0;"));
         }
 
         [TestMethod]
         public void TestSimpleVariableCodingNoDecl()
         {
+            // No statements - so there should be no declares.
             StatementInlineBlock b = new StatementInlineBlock();
             b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             var r = b.CodeItUp().ToArray();
@@ -107,9 +110,9 @@ namespace LINQToTTreeLib.Statements
         {
             StatementInlineBlock b = new StatementInlineBlock();
             b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
-            b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            b.Add(new Statements.StatementSimpleStatement("bork"));
             var r = b.CodeItUp().ToArray();
-            Assert.AreEqual(3, r.Length, "# of statements");
+            Assert.AreEqual(4, r.Length, "# of statements");
         }
 
         /// <summary>
@@ -390,9 +393,9 @@ namespace LINQToTTreeLib.Statements
             inline1.Add(vdecl1);
             inline2.Add(vdecl2);
 
-            var s1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new CombineTestStatement(vdecl1);
             inline1.Add(s1);
-            var s2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new CombineTestStatement(vdecl2);
             inline2.Add(s2);
             inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
 
@@ -416,7 +419,6 @@ namespace LINQToTTreeLib.Statements
 
             inline1.Add(vdecl1);
 
-#if false
             var s1 = new CombineTestStatement(vdecl1);
             inline1.Add(s1);
             var s2 = new CombineTestStatement(vdecl2);
@@ -426,7 +428,6 @@ namespace LINQToTTreeLib.Statements
             var result = inline1.TryCombineStatement(inline2, null);
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(3, inline1.Statements.Count(), "bad # of combined statements");
-#endif
         }
     }
 }

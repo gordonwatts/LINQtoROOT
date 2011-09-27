@@ -85,17 +85,14 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> RenderInternalCode()
         {
-            if (_statements.Count > 0 || _variables.Count > 0)
+            if (_statements.Count > 0)
             {
                 yield return "{";
 
                 foreach (var v in _variables)
                 {
                     string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.ParameterName;
-                    if (v.InitialValue != null)
-                    {
-                        varDecl = varDecl + "=" + v.InitialValue.RawValue;
-                    }
+                    varDecl = varDecl + "=" + GenerateDefaultValue(v);
                     varDecl += ";";
                     yield return "  " + varDecl;
                 }
@@ -109,6 +106,27 @@ namespace LINQToTTreeLib.Statements
                 }
                 yield return "}";
             }
+        }
+
+        /// <summary>
+        /// Generate a default value for a variable.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        private string GenerateDefaultValue(IDeclaredParameter v)
+        {
+            if (v == null)
+                throw new ArgumentNullException("v");
+
+            if (v.InitialValue != null)
+                return v.InitialValue.RawValue;
+
+            if (v.Type == typeof(int)
+                || v.Type == typeof(double)
+                || v.Type == typeof(float))
+                return "0";
+
+            throw new NotSupportedException(string.Format("Don't know how to do default value for C++ variable of type {0}.", v.Type.ToString()));
         }
 
         /// <summary>
