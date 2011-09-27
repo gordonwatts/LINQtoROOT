@@ -359,8 +359,6 @@ namespace LINQToTTreeLib.Statements
             var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            Assert.Inconclusive();
-#if false
             inline1.Add(vdecl1);
             inline2.Add(vdecl2);
 
@@ -374,7 +372,6 @@ namespace LINQToTTreeLib.Statements
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(2, inline1.Statements.Count(), "bad # of combined statements");
             Assert.AreEqual(string.Format("dude = {0};", vdecl1.ParameterName), inline1.Statements.Skip(1).First().CodeItUp().First(), "Line wasn't renamed");
-#endif
         }
 
         [TestMethod]
@@ -393,18 +390,15 @@ namespace LINQToTTreeLib.Statements
             inline1.Add(vdecl1);
             inline2.Add(vdecl2);
 
-            Assert.Inconclusive();
-#if false
-            var s1 = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var s1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             inline1.Add(s1);
-            var s2 = DeclarableParameter.DeclarableParameterExpression(typeof(int));
+            var s2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             inline2.Add(s2);
             inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
 
             var result = inline1.TryCombineStatement(inline2, null);
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(3, inline1.Statements.Count(), "bad # of combined statements");
-#endif
         }
 
         [TestMethod]
