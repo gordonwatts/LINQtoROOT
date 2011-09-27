@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public bool CanHandle(IDeclaredParameter iVariable)
         {
-            if (iVariable.GetType() == typeof(VarInteger))
+            if (iVariable.Type == typeof(int))
                 return true;
 
             return false;
