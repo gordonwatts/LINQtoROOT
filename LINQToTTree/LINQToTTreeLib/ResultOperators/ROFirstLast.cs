@@ -97,7 +97,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(new Statements.StatementAssign(actualValue,
                 ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
 
-            return Expression.Variable(actualValue.Type, actualValue.RawValue);
+            return actualValue;
         }
     }
 }

@@ -109,7 +109,7 @@ namespace LINQToTTreeLib.ResultOperators
             var ifStatement = new Statements.StatementMinMaxTest(vIsFilled, vMaxMin, exprToMinOrMaximize, doMax);
             gc.Add(ifStatement);
 
-            return Expression.Variable(vMaxMin.Type, vMaxMin.RawValue);
+            return vMaxMin;
         }
 
         /// <summary>
