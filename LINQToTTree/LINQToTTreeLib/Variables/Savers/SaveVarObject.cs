@@ -22,11 +22,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public bool CanHandle(IDeclaredParameter iVariable)
         {
-            if ((iVariable as VarObject) != null)
-            {
-                return iVariable.Type.GetInterface("NTNamed") != null;
-            }
-            return false;
+            return iVariable.Type.GetInterface("NTNamed") != null;
         }
 
         /// <summary>

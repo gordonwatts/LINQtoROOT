@@ -49,6 +49,7 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             var accumulator = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            accumulator.SetInitialValue("0");
 
             //
             // Use the Aggregate infrasturcutre to do the adding. This

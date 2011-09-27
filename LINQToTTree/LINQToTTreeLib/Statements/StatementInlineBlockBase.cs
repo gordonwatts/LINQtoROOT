@@ -85,19 +85,16 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> RenderInternalCode()
         {
-            var goodVars = (from v in _variables
-                            select v).ToArray();
-
-            if (_statements.Count > 0 || goodVars.Length > 0)
+            if (_statements.Count > 0 || _variables.Count > 0)
             {
                 yield return "{";
 
-                foreach (var v in goodVars)
+                foreach (var v in _variables)
                 {
                     string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.ParameterName;
                     if (v.InitialValue != null)
                     {
-                        varDecl = varDecl + "=" + v.InitialValue;
+                        varDecl = varDecl + "=" + v.InitialValue.RawValue;
                     }
                     varDecl += ";";
                     yield return "  " + varDecl;

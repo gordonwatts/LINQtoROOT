@@ -85,7 +85,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             Assert.IsInstanceOfType(result, typeof(DeclarableParameter), "Expected a var simple!");
             var vs = result as DeclarableParameter;
-            Assert.AreEqual("1", vs.InitialValue, "Incorrect seed value");
+            Assert.AreEqual("1", vs.InitialValue.RawValue, "Incorrect seed value");
 
             ///
             /// Now make sure the statements came back ok!
