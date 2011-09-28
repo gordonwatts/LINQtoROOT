@@ -75,10 +75,14 @@ namespace LINQToTTreeLib.ResultOperators
             //
             // We need to hold onto either the first or the last item here, so we create a statement that holds nnto the
             // first or the last time. It also has to mark the thing as valid! It will break when it is done.
+            // While the bool can be used later on to get at the exception we might be throwing, the actual
+            // result may be used much further on down. To protect against that, we set the array index to be -1,
+            // and then hope there is a crash later on! :-)
             //
 
             var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            indexSeen.SetInitialValue("-1");
 
             gc.AddOutsideLoop(valueWasSeen);
             gc.AddOutsideLoop(indexSeen);
