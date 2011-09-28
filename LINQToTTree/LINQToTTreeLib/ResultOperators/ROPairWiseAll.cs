@@ -52,26 +52,6 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(recordIndexStatement);
 
             gc.Pop();
-#if false
-            if (cc.LoopVariable.NodeType != ExpressionType.ArrayIndex)
-                throw new InvalidOperationException("Unable to run PairWiseAll on a non-array expression!");
-
-            ///
-            /// First, record all the good indicies for this array
-            /// 
-
-            var arrayLookup = cc.LoopVariable as BinaryExpression;
-            var arrayIndex = arrayLookup.Right;
-            var array = arrayLookup.Left;
-
-            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
-            gc.AddOneLevelUp(arrayRecord);
-
-            var recordIndexStatement = new StatementRecordIndicies(ExpressionToCPP.GetExpression(arrayIndex, gc, cc, container), arrayRecord);
-            gc.Add(recordIndexStatement);
-
-            gc.Pop();
-#endif
 
             ///
             /// Next, we create a loop that will mark all the guys as "good" that
