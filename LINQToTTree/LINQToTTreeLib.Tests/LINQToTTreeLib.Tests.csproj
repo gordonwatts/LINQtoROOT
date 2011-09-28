@@ -198,6 +198,9 @@
     </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
     <Compile Include="Expressions\ExpressionStringConverterTest.cs" />
+    <Compile Include="Expressions\ExpressionStringConverterTest.Format.g.cs">
+      <DependentUpon>ExpressionStringConverterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
     <Compile Include="Expressions\ExpressionVisitorMethodCallTests.cs" />
     <Compile Include="Expressions\ExpressionVisitorTest.cs" />
@@ -556,6 +559,9 @@
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.CanHandle.g.cs">
       <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.CodeMethodCall.g.cs">
+      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.cs" />
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
@@ -583,6 +589,9 @@
     </Compile>
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessNew.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.CodeMethodCall.g.cs">
+      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessConstantReference.g.cs">
