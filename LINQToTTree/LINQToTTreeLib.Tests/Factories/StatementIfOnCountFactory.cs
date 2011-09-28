@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.Statements
     {
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementIfOnCount instances</summary>
         [PexFactoryMethod(typeof(StatementIfOnCount))]
-        public static StatementIfOnCount Create(IVariable valueLeft_iValue, IValue valueRight_iValue1, StatementIfOnCount.ComparisonOperator comp_i, IStatement[] statements, IVariable[] vars)
+        public static StatementIfOnCount Create(IDeclaredParameter valueLeft_iValue, IValue valueRight_iValue1, StatementIfOnCount.ComparisonOperator comp_i, IStatement[] statements, IDeclaredParameter[] vars)
         {
             StatementIfOnCount statementIfOnCount
                = new StatementIfOnCount(valueLeft_iValue, valueRight_iValue1, comp_i);

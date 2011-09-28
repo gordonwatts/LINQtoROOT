@@ -167,8 +167,10 @@ namespace LINQToTTreeLib.Tests
 
         struct customObject
         {
+#pragma warning disable 0649
             public int Var1;
             public int Var2;
+#pragma warning restore 0649
         }
 
         [TestMethod]

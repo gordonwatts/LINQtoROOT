@@ -91,6 +91,7 @@
     <Compile Include="IBookingStatementBlock.cs" />
     <Compile Include="ICodeContext.cs" />
     <Compile Include="ICodeOptimizationService.cs" />
+    <Compile Include="IDeclaredParameter.cs" />
     <Compile Include="IExecutableCode.cs" />
     <Compile Include="IExpressionHolder.cs" />
     <Compile Include="IFutureValue.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="IStatementCompound.cs" />
     <Compile Include="ITypeHandler.cs" />
     <Compile Include="IValue.cs" />
-    <Compile Include="IVariable.cs" />
     <Compile Include="IVariableSaver.cs" />
     <Compile Include="IVariableSaverManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

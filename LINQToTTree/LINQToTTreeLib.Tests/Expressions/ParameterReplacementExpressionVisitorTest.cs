@@ -71,6 +71,17 @@ namespace LINQToTTreeLib.Expressions
         }
 
         [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestBadTypeReplacement()
+        {
+            var cc = new CodeContext();
+            cc.Add("d", Expression.Variable(typeof(int), "f"));
+            cc.Add("f", Expression.Constant(20.0));
+
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc);
+        }
+
+        [TestMethod]
         public void TestArrayReplacement()
         {
             var myvar = Expression.Variable(typeof(int[]), "d");
@@ -237,11 +248,11 @@ namespace LINQToTTreeLib.Expressions
             Expression<Func<testLambdaSimple, float>> lambdaExpr = t => t.pt / ((float)100.0);
 
             CodeContext cc = new CodeContext();
-            cc.Add("t", new Variables.ValSimple("fook", typeof(testLambdaSimple)));
+            cc.Add("t", Expression.Parameter(typeof(testLambdaSimple), "fook"));
             var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc);
 
             Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
-            Assert.AreEqual("fook", cc.GetReplacement("t", typeof(testLambdaSimple)).RawValue, "code context was altered");
+            Assert.AreEqual("fook", (cc.GetReplacement("t") as ParameterExpression).Name, "code context was altered");
         }
     }
 }

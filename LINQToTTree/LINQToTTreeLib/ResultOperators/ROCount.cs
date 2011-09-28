@@ -1,14 +1,13 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
-using System.Linq.Expressions;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -36,7 +35,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             if (gc == null)
                 throw new ArgumentNullException("CodeEnv must not be null!");
@@ -49,7 +48,8 @@ namespace LINQToTTreeLib.ResultOperators
             // The accumulator where we will store the result.
             //
 
-            var accumulator = new VarInteger();
+            var accumulator = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            accumulator.SetInitialValue("0");
 
             //
             // Use the Aggregate infrasturcutre to do the adding. This
@@ -57,8 +57,7 @@ namespace LINQToTTreeLib.ResultOperators
             // similar statements during query optimization.
             //
 
-            var p = Expression.Parameter(typeof(int), accumulator.VariableName);
-            var add = Expression.Add(p, Expression.Constant((int)1));
+            var add = Expression.Add(accumulator, Expression.Constant((int)1));
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
 
             gc.Add(new StatementAggregate(accumulator, addResolved));

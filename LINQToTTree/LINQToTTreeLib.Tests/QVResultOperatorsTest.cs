@@ -3,6 +3,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
@@ -46,7 +47,7 @@ namespace LINQToTTreeLib.Utils
             }
 
 
-            public IVariable ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
+            public Expression ProcessResultOperator(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext codeContext, CompositionContainer container)
             {
                 throw new NotImplementedException();
             }

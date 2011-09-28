@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The left hand side of the comparison
         /// </summary>
-        public IVariable Counter { get; private set; }
+        public IDeclaredParameter Counter { get; private set; }
 
         /// <summary>
         /// The right hand side of the comparison
@@ -40,7 +40,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="counter"></param>
         /// <param name="IValue"></param>
-        public StatementIfOnCount(IVariable counter, IValue limit, ComparisonOperator comp)
+        public StatementIfOnCount(IDeclaredParameter counter, IValue limit, ComparisonOperator comp)
         {
             ///
             /// Make sure that nothing is crazy here!

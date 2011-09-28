@@ -112,14 +112,14 @@ namespace LINQToTTreeLib
         /// </summary>
         public class VarInfo
         {
-            private IVariable _iVariable;
+            private IDeclaredParameter _iVariable;
 
-            public VarInfo(IVariable iVariable)
+            public VarInfo(IDeclaredParameter iVariable)
             {
                 // TODO: Complete member initialization
                 this._iVariable = iVariable;
             }
-            public string VariableName { get { return _iVariable.VariableName; } }
+            public string VariableName { get { return _iVariable.ParameterName; } }
             public string VariableType { get { return Variables.VarUtils.AsCPPType(_iVariable.Type); } } // C++ type
             public string InitialValue { get { return _iVariable.InitialValue.RawValue; } }
         }
@@ -130,7 +130,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="vars"></param>
         /// <returns></returns>
-        private IEnumerable<VarInfo> TranslateVariable(IEnumerable<LinqToTTreeInterfacesLib.IVariable> vars, IExecutableCode gc)
+        private IEnumerable<VarInfo> TranslateVariable(IEnumerable<IDeclaredParameter> vars, IExecutableCode gc)
         {
             return from v in vars
                    select new VarInfo(v);
@@ -150,7 +150,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private IEnumerable<string> TranslateFinalizingVariables(IEnumerable<IVariable> iVariable, IExecutableCode gc)
+        private IEnumerable<string> TranslateFinalizingVariables(IEnumerable<IDeclaredParameter> iVariable, IExecutableCode gc)
         {
             return from v in iVariable
                    let saver = _saver.Get(v)

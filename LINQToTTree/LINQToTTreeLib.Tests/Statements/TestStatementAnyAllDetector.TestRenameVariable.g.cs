@@ -8,72 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class TestStatementAnyAllDetector
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementAnyAllDetector))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException34()
-{
-    VarInteger varInteger;
-    StatementAnyAllDetector statementAnyAllDetector;
-    StatementAnyAllDetector statementAnyAllDetector1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAnyAllDetector = StatementAnyAllDetectorFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger, "");
-    statementAnyAllDetector1 =
-      this.TestRenameVariable(statementAnyAllDetector, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementAnyAllDetector))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException756()
-{
-    VarInteger varInteger;
-    StatementAnyAllDetector statementAnyAllDetector;
-    StatementAnyAllDetector statementAnyAllDetector1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAnyAllDetector = StatementAnyAllDetectorFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger, "");
-    statementAnyAllDetector1 =
-      this.TestRenameVariable(statementAnyAllDetector, "", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementAnyAllDetector))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException840()
-{
-    VarInteger varInteger;
-    StatementAnyAllDetector statementAnyAllDetector;
-    StatementAnyAllDetector statementAnyAllDetector1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAnyAllDetector = StatementAnyAllDetectorFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger, "an");
-    statementAnyAllDetector1 =
-      this.TestRenameVariable(statementAnyAllDetector, "an", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatementAnyAllDetector))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException402()
-{
-    VarInteger varInteger;
-    StatementAnyAllDetector statementAnyAllDetector;
-    StatementAnyAllDetector statementAnyAllDetector1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementAnyAllDetector = StatementAnyAllDetectorFactory.Create
-                                  ((IValue)varInteger, (IVariable)varInteger, "\u0100i");
-    statementAnyAllDetector1 =
-      this.TestRenameVariable(statementAnyAllDetector, "\u0100i", (string)null);
-}
     }
 }

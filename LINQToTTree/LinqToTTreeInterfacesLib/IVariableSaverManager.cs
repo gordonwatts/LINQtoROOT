@@ -11,6 +11,6 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="var"></param>
         /// <returns></returns>
-        IVariableSaver Get(IVariable var);
+        IVariableSaver Get(IDeclaredParameter var);
     }
 }

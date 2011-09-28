@@ -78,5 +78,68 @@ public void IncludeFilesGet21602()
                       (combinedGeneratedCode.IncludeFiles, (object)iEnumerable));
     Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
 }
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void IncludeFilesGet21603()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<string> iEnumerable;
+    string[] ss = new string[2];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    iEnumerable = this.IncludeFilesGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.IncludeFiles, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void IncludeFilesGet21604()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<string> iEnumerable;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                ((string[])null, (string[])null, ss, (IBookingStatementBlock[])null, ss1);
+    iEnumerable = this.IncludeFilesGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.IncludeFiles, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void IncludeFilesGet556()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    IEnumerable<string> iEnumerable;
+    string[] ss = new string[1];
+    string[] ss1 = new string[1];
+    string[] ss2 = new string[1];
+    ss[0] = "\u0089";
+    ss1[0] = "\u0089";
+    combinedGeneratedCode = CombinedGeneratedCodeFactory.Create
+                                (ss, ss1, (string[])null, (IBookingStatementBlock[])null, ss2);
+    iEnumerable = this.IncludeFilesGet(combinedGeneratedCode);
+    Assert.IsNotNull((object)iEnumerable);
+    Assert.IsNotNull((object)combinedGeneratedCode);
+    Assert.IsNotNull(combinedGeneratedCode.VariablesToTransfer);
+    Assert.IsNotNull(combinedGeneratedCode.ResultValues);
+    Assert.IsNotNull(combinedGeneratedCode.IncludeFiles);
+    Assert.IsTrue(object.ReferenceEquals
+                      (combinedGeneratedCode.IncludeFiles, (object)iEnumerable));
+    Assert.IsNotNull(combinedGeneratedCode.ReferencedLeafNames);
+}
     }
 }

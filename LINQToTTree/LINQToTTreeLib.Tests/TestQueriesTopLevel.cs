@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -45,7 +45,7 @@ namespace LINQToTTreeLib.Tests
 
             /// Return type is correct
             Assert.IsNotNull(DummyQueryExectuor.FinalResult.ResultValue, "Expected a result from the count!");
-            Assert.IsInstanceOfType(DummyQueryExectuor.FinalResult.ResultValue, typeof(VarInteger), "integer return type expected");
+            Assert.AreEqual(DummyQueryExectuor.FinalResult.ResultValue.Type, typeof(int), "integer return type expected");
 
             var res = DummyQueryExectuor.FinalResult;
 
@@ -147,7 +147,7 @@ namespace LINQToTTreeLib.Tests
 
             var assignment = res.CodeBody.Statements.First() as StatementAggregate;
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("{0}+1", assignment.ResultVariable.RawValue, "bad assignment!");
+            bld.AppendFormat("{0}+1", assignment.ResultVariable.ParameterName, "bad assignment!");
             Assert.AreEqual(bld.ToString(), assignment.Expression.RawValue, "expression is incorrect");
         }
 
@@ -167,7 +167,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
             Assert.IsInstanceOfType(varToTrans[0], typeof(KeyValuePair<string, object>), "bad object type to transfer");
             var ro = (KeyValuePair<string, object>)varToTrans[0];
-            Assert.IsTrue(res.ResultValue.InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + res.ResultValue.InitialValue.RawValue + ")");
+            Assert.IsTrue((res.ResultValue as IDeclaredParameter).InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + (res.ResultValue as IDeclaredParameter).InitialValue.RawValue + ")");
         }
     }
 }

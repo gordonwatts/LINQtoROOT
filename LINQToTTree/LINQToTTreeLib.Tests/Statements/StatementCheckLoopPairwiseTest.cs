@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,7 +30,7 @@ namespace LINQToTTreeLib.Tests
         ///A test for StatementCheckLoopPairwise Constructor
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public void TestStatementCheckLoopPairwiseConstructor(VarArray indiciesToInspect, VarSimple index1, VarSimple index2, VarArray passedArray)
+        public void TestStatementCheckLoopPairwiseConstructor(IDeclaredParameter indiciesToInspect, IDeclaredParameter index1, IDeclaredParameter index2, IDeclaredParameter passedArray)
         {
             StatementCheckLoopPairwise target = new StatementCheckLoopPairwise(indiciesToInspect, index1, index2, passedArray);
         }
@@ -69,16 +69,16 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void TestTryCombinedFail()
         {
-            var indiciesToInspect = new VarArray(typeof(int));
-            var index1 = new VarSimple(typeof(int));
-            var index2 = new VarSimple(typeof(int));
-            var passedArray = new VarArray(typeof(bool));
+            var indiciesToInspect = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var passedArray = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
             var s1 = new StatementCheckLoopPairwise(indiciesToInspect, index1, index2, passedArray);
 
-            var indiciesToInspect1 = new VarArray(typeof(int));
-            var index3 = new VarSimple(typeof(int));
-            var index4 = new VarSimple(typeof(int));
-            var passedArray1 = new VarArray(typeof(bool));
+            var indiciesToInspect1 = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var passedArray1 = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
             var s2 = new StatementCheckLoopPairwise(indiciesToInspect1, index3, index4, passedArray1);
 
             Assert.IsFalse(s1.TryCombineStatement(s2, null), "COmbine should fail");
@@ -94,9 +94,9 @@ namespace LINQToTTreeLib.Tests
                 this.s2 = s2;
             }
 
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IVariable newVariable)
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
             {
-                s2.RenameVariable(oldName, newVariable.RawValue);
+                s2.RenameVariable(oldName, newVariable.ParameterName);
 
                 return true;
             }
@@ -111,15 +111,15 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void TestTryCombineGood()
         {
-            var indiciesToInspect = new VarArray(typeof(int));
-            var index1 = new VarSimple(typeof(int));
-            var index2 = new VarSimple(typeof(int));
-            var passedArray = new VarArray(typeof(bool));
+            var indiciesToInspect = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var passedArray = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
             var s1 = new StatementCheckLoopPairwise(indiciesToInspect, index1, index2, passedArray);
 
-            var index3 = new VarSimple(typeof(int));
-            var index4 = new VarSimple(typeof(int));
-            var passedArray1 = new VarArray(typeof(bool));
+            var index3 = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index4 = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var passedArray1 = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
             var s2 = new StatementCheckLoopPairwise(indiciesToInspect, index3, index4, passedArray1);
             s2.Add(new StatementSimpleStatement(string.Format("{0} = dude", index3.RawValue)));
 
@@ -132,10 +132,10 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void TestRename()
         {
-            var indiciesToInspect = new VarArray(typeof(int));
-            var index1 = new VarSimple(typeof(int));
-            var index2 = new VarSimple(typeof(int));
-            var passedArray = new VarArray(typeof(bool));
+            var indiciesToInspect = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var passedArray = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
             var s1 = new StatementCheckLoopPairwise(indiciesToInspect, index1, index2, passedArray);
             s1.Add(new StatementSimpleStatement(string.Format("{0} = fork", index2.RawValue)));
 

@@ -309,7 +309,7 @@ namespace LINQToTTreeLib
             if (!IgnoreQueryCache)
             {
                 TraceHelpers.TraceInfo(9, "ExecuteScalarAsFuture: Looking for cache hit");
-                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
+                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValueAsVaraible), result.ResultValueAsVaraible);
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;
@@ -568,7 +568,7 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
+        private T ExtractResult<T>(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
         {
             ///
             /// Load the object and try to extract whatever info we need to from it

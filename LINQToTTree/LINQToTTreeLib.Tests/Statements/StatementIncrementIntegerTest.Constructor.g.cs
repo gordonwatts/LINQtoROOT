@@ -1,4 +1,4 @@
-using LINQToTTreeLib.Variables;
+using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using System;
@@ -21,30 +21,10 @@ namespace LINQToTTreeLib.Statements
 [TestMethod]
 [PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException600()
+public void ConstructorThrowsArgumentNullException959()
 {
     StatementIncrementInteger statementIncrementInteger;
-    statementIncrementInteger = this.Constructor((VarInteger)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-public void Constructor193()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementIncrementInteger = this.Constructor(varInteger);
-    Assert.IsNull((object)statementIncrementInteger);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
-public void Constructor19301()
-{
-    VarInteger varInteger;
-    StatementIncrementInteger statementIncrementInteger;
-    varInteger = VarIntegerFactory.Create(false, 1);
-    statementIncrementInteger = this.Constructor(varInteger);
-    Assert.IsNull((object)statementIncrementInteger);
+    statementIncrementInteger = this.Constructor((IDeclaredParameter)null);
 }
     }
 }

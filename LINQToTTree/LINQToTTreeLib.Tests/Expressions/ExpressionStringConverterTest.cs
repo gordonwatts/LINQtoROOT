@@ -15,7 +15,7 @@ namespace LINQToTTreeLib.Expressions
     public partial class ExpressionStringConverterTest
     {
         /// <summary>Test stub for Format(Expression)</summary>
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public string Format(Expression expression)
         {
             string result = ExpressionStringConverter.Format(expression);

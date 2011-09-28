@@ -1,8 +1,6 @@
 // <copyright file="ConstantExpressionFactory.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 
-using System;
 using Microsoft.Pex.Framework;
-using System.Linq.Expressions;
 
 namespace System.Linq.Expressions
 {

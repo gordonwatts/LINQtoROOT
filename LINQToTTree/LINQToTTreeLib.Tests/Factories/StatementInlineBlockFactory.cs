@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.Statements
     {
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementInlineBlock instances</summary>
         [PexFactoryMethod(typeof(StatementInlineBlock))]
-        public static StatementInlineBlock Create(IStatement[] statements, IVariable[] vars)
+        public static StatementInlineBlock Create(IStatement[] statements, IDeclaredParameter[] vars)
         {
             StatementInlineBlock statementInlineBlock = new StatementInlineBlock();
 
@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Statements
                 }
 
             if (vars != null)
-                foreach (var v in statements)
+                foreach (var v in vars)
                     statementInlineBlock.Add(v);
 
             return statementInlineBlock;

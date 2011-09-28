@@ -434,7 +434,8 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Deal with a special case for an index redirection where we are looking for
         /// an integer or some simply type. There is only one very special case where this
-        /// shows up. Unlikely to be used by physics, actually. :-)
+        /// shows up. Unlikely to be used by physics, actually. :-) The second case we
+        /// handle is dealing with != for two object compares.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>

@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.Tests
         ///A test for StatementAssign Constructor
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementAssign StatementAssignConstructorTest(IVariable dest, IValue source)
+        public StatementAssign StatementAssignConstructorTest(IDeclaredParameter dest, IValue source)
         {
             StatementAssign target = new StatementAssign(dest, source);
             return target;

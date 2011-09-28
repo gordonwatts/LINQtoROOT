@@ -9,20 +9,21 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 
-namespace LINQToTTreeLib.Variables
+namespace LINQToTTreeLib.Expressions
 {
-    public partial class VarSimpleTest
+    public partial class ExpressionStringConverterTest
     {
 [TestMethod]
-[PexGeneratedBy(typeof(VarSimpleTest))]
+[PexGeneratedBy(typeof(ExpressionStringConverterTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException186()
+public void FormatThrowsArgumentNullException148()
 {
-    VarSimple varSimple;
-    varSimple = this.Constructor((Type)null);
+    string s;
+    s = this.Format((Expression)null);
 }
     }
 }

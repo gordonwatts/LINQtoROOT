@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,8 +21,18 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [TestInitialize]
         public void TestInit()
         {
+            MEFUtilities.MyClassInit();
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             TypeHandlerReplacementCall.ClearTypeList();
         }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         /// <summary>Test stub for CanHandle(Type)</summary>
         //[PexMethod]
         public bool CanHandle([PexAssumeUnderTest]TypeHandlerReplacementCall target, Type t)
@@ -36,14 +47,24 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         public Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerReplacementCall target,
             MethodCallExpression expr,
-            out IValue result,
             IGeneratedQueryCode gc,
             ICodeContext context
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, context, null);
+            Expression result01 = target.ProcessMethodCall(expr, gc, context, MEFUtilities.MEFContainer);
             return result01;
             // TODO: add assertions to method TypeHandlerReplacementCallTest.ProcessMethodCall(TypeHandlerReplacementCall, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
+        }
+
+        [PexMethod]
+        public IValue CodeMethodCall(
+            [PexAssumeUnderTest]TypeHandlerReplacementCall target,
+            MethodCallExpression expr,
+            IGeneratedQueryCode gc
+        )
+        {
+            var result01 = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
+            return result01;
         }
 
         [TestMethod]
@@ -51,7 +72,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         public void TestProcessConstantReference()
         {
             var p = new TypeHandlerReplacementCall();
-            p.ProcessConstantReference(null, null, null, null);
+            p.ProcessConstantReference(null, null, null);
         }
 
         class SimpleTest
@@ -81,10 +102,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArg", "noArg");
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+            var result = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
 
             Assert.AreEqual(typeof(double), result.Type, "the type that came back ins't right");
             Assert.AreEqual("noArg()", result.RawValue, "raw translation incorrect");
@@ -97,10 +117,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArgDude", "noArg");
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+            var r = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
         }
 
         [TestMethod]
@@ -110,10 +129,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg");
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((int)1) });
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+            var r = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
         }
 
         [TestMethod]
@@ -123,10 +141,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArg", "noArg", new Tuple<string, string>[] { new Tuple<string, string>(typeof(int).FullName, "int") });
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+            var r = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
         }
 
         [TestMethod]
@@ -135,12 +152,11 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>(typeof(int).FullName, "int") });
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((int)10) });
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+            var r = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
 
-            Assert.AreEqual("oneArg((int)10)", result.RawValue, "incorrected coded method argument");
+            Assert.AreEqual("oneArg((int)10)", r.RawValue, "incorrected coded method argument");
         }
 
         [TestMethod]
@@ -150,10 +166,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "oneArg", "oneArg", new Tuple<string, string>[] { new Tuple<string, string>(typeof(float).FullName, "float") });
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("oneArg"), new Expression[] { Expression.Constant((int)10) });
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+            var r = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
         }
 
         public class ParseTest
@@ -183,15 +198,14 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            IValue result = null;
 
-            ProcessMethodCall(target, e1, out result, gc, context);
+            var result = CodeMethodCall(target, e1, gc);
             Assert.AreEqual("sin((double)10.3)", result.RawValue, "sin incorrect");
 
-            ProcessMethodCall(target, e2, out result, gc, context);
+            result = CodeMethodCall(target, e2, gc);
             Assert.AreEqual("f1((int)10,(int)20)", result.RawValue, "f1 incorrect");
 
-            ProcessMethodCall(target, e3, out result, gc, context);
+            result = CodeMethodCall(target, e3, gc);
             Assert.AreEqual("f2((double)10.3,(double)20.3)", result.RawValue, "f2 incorrect");
         }
 
@@ -211,9 +225,8 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            IValue result = null;
 
-            ProcessMethodCall(target, e1, out result, gc, context);
+            var result = CodeMethodCall(target, e1, gc);
             Assert.AreEqual("freak((double)10.3)", result.RawValue, "sin incorrect");
         }
 
@@ -223,10 +236,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             TypeHandlerReplacementCall.AddMethod("SimpleTest", "noArg", "noArg", null, new string[] { "cmath" });
 
             var e = Expression.Call(null, typeof(SimpleTest).GetMethod("noArg"));
-            IValue result = null;
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            var r = ProcessMethodCall(new TypeHandlerReplacementCall(), e, out result, gc, context);
+            var result = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
 
             Assert.AreEqual(1, gc.IncludeFiles.Count(), "# include files");
             Assert.AreEqual("cmath", gc.IncludeFiles.First(), "include filename");
@@ -247,19 +259,18 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            IValue result = null;
 
             var e0 = Expression.Call(null, typeof(ParseTest).GetMethod("tan"), new Expression[] { Expression.Constant((double)10.3) });
-            ProcessMethodCall(target, e0, out result, gc, context);
+            var result = CodeMethodCall(target, e0, gc);
             Assert.AreEqual(0, gc.IncludeFiles.Count(), "# include files after none should have been added");
 
             var e1 = Expression.Call(null, typeof(ParseTest).GetMethod("cos"), new Expression[] { Expression.Constant((double)10.3) });
-            ProcessMethodCall(target, e1, out result, gc, context);
+            result = CodeMethodCall(target, e1, gc);
             Assert.AreEqual(1, gc.IncludeFiles.Count(), "# include files");
             Assert.AreEqual("cmath2", gc.IncludeFiles.First(), "include filename");
 
             var e2 = Expression.Call(null, typeof(ParseTest).GetMethod("sin"), new Expression[] { Expression.Constant((double)10.3) });
-            ProcessMethodCall(target, e2, out result, gc, context);
+            result = CodeMethodCall(target, e2, gc);
             Assert.AreEqual(3, gc.IncludeFiles.Count(), "# include files");
             Assert.IsTrue(gc.IncludeFiles.Contains("cmath1"), "cmath1 missing");
             Assert.IsTrue(gc.IncludeFiles.Contains("cmath2"), "cmath1 missing");
@@ -278,11 +289,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
             var gc = new GeneratedCode();
             var context = new CodeContext();
-            IValue result = null;
             var target = new TypeHandlerReplacementCall();
 
-            ProcessMethodCall(target, e0, out result, gc, context);
-
+            CodeMethodCall(target, e0, gc);
         }
     }
 }

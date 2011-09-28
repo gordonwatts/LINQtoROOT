@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -53,7 +52,7 @@ namespace LINQToTTreeLib.Tests
 
             /// Return type is correct
             Assert.IsNotNull(DummyQueryExectuor.FinalResult.ResultValue, "Expected a result from the count!");
-            Assert.IsInstanceOfType(DummyQueryExectuor.FinalResult.ResultValue, typeof(VarInteger), "integer return type expected");
+            Assert.AreEqual(DummyQueryExectuor.FinalResult.ResultValue.Type, typeof(int), "integer return type expected");
 
             var res = DummyQueryExectuor.FinalResult;
 
@@ -98,7 +97,7 @@ namespace LINQToTTreeLib.Tests
 
             /// Return type is correct
             Assert.IsNotNull(DummyQueryExectuor.FinalResult.ResultValue, "Expected a result from the count!");
-            Assert.IsInstanceOfType(DummyQueryExectuor.FinalResult.ResultValue, typeof(VarInteger), "integer return type expected");
+            Assert.AreEqual(DummyQueryExectuor.FinalResult.ResultValue.Type, typeof(int), "integer return type expected");
 
             var res = DummyQueryExectuor.FinalResult;
 

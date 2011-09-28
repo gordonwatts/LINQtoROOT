@@ -1,5 +1,4 @@
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib.Statements
@@ -10,10 +9,10 @@ namespace LINQToTTreeLib.Statements
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementCheckLoopPairwise instances</summary>
         [PexFactoryMethod(typeof(StatementCheckLoopPairwise))]
         public static StatementCheckLoopPairwise Create(
-            VarArray indiciesToInspect_varArray,
-            VarSimple index1_varSimple,
-            VarSimple index2_varSimple1,
-            VarArray passedArray_varArray1,
+            IDeclaredParameter indiciesToInspect_varArray,
+            IDeclaredParameter index1_varSimple,
+            IDeclaredParameter index2_varSimple1,
+            IDeclaredParameter passedArray_varArray1,
             IStatement value_iStatement
         )
         {

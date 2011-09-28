@@ -13,7 +13,7 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        bool CanHandle(IVariable iVariable);
+        bool CanHandle(IDeclaredParameter iVariable);
 
         /// <summary>
         /// Return a sequence of C++ code that will end with the var being cached. This should
@@ -21,14 +21,14 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        IEnumerable<string> SaveToFile(IVariable iVariable);
+        IEnumerable<string> SaveToFile(IDeclaredParameter iVariable);
 
         /// <summary>
         /// Return the include files that this saver needs loaded into the query script
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        IEnumerable<string> IncludeFiles(IVariable iVariable);
+        IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable);
 
         /// <summary>
         /// Given an object, translate the result to the item we are going to be saving.
@@ -37,6 +37,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="iVariable"></param>
         /// <param name="dir"></param>
         /// <returns></returns>
-        T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj);
+        T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj);
     }
 }

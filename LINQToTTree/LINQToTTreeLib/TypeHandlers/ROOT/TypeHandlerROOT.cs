@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
         {
             ///
             /// The value is a reference that will do the loading.
@@ -65,22 +65,34 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         }
 
         /// <summary>
-        /// Someone is accessing a method on our ROOT object. We do the translation to C++
+        /// When we hit this early in the review process we ignore it - we will get it right at the end.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="codeEnv"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
+        {
+            return expr;
+        }
+
+        /// <summary>
+        /// Someone is accessing a method on our ROOT object. We do the translation to C++ here.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
-            var objRef = ExpressionToCPP.GetExpression(expr.Object, gc, context, container);
+            var objRef = ExpressionToCPP.InternalGetExpression(expr.Object, gc, null, container);
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}.{1}", objRef.AsObjectReference(), expr.Method.Name);
 
-            AddMethodArguments(expr.Arguments, gc, context, container, bld);
+            AddMethodArguments(expr.Arguments, gc, container, bld);
 
-            result = new ValSimple(bld.ToString(), expr.Type);
-            return expr;
+            return new ValSimple(bld.ToString(), expr.Type);
         }
 
         /// <summary>
@@ -92,7 +104,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
         {
             ///
             /// Do checks
@@ -100,8 +112,6 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
             if (gc == null)
                 throw new ArgumentException("gc");
-            if (context == null)
-                throw new ArgumentException("context");
             if (expression == null)
                 throw new ArgumentNullException("expression");
 
@@ -132,7 +142,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var ctorName = expression.Type.CreateUniqueVariableName();
             ctor.AppendFormat("{0} {1}", tname, ctorName);
 
-            AddMethodArguments(expression.Arguments, gc, context, container, ctor);
+            AddMethodArguments(expression.Arguments, gc, container, ctor);
 
             gc.Add(new Statements.StatementSimpleStatement(ctor.ToString()));
 
@@ -162,7 +172,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <param name="builtArgs"></param>
-        private void AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container, StringBuilder builtArgs)
+        private void AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, CompositionContainer container, StringBuilder builtArgs)
         {
             builtArgs.Append("(");
             bool first = true;
@@ -173,9 +183,22 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                     builtArgs.Append(",");
                 }
                 first = false;
-                builtArgs.Append(ExpressionToCPP.GetExpression(a, gc, context, container).CastToType(a));
+                builtArgs.Append(ExpressionToCPP.InternalGetExpression(a, gc, null, container).CastToType(a));
             }
             builtArgs.Append(")");
+        }
+
+        /// <summary>
+        /// We do no expression transformation - so just let it go.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            return expr;
         }
     }
 }

@@ -9,9 +9,9 @@ namespace LINQToTTreeLib.Statements
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementRecordValue instances</summary>
         [PexFactoryMethod(typeof(StatementRecordValue))]
         public static StatementRecordValue Create(
-            IVariable indexSaveLocation_varSimple,
+            IDeclaredParameter indexSaveLocation_varSimple,
             IValue indexExpression_iValue,
-            IVariable markWhenSeen_varSimple1,
+            IDeclaredParameter markWhenSeen_varSimple1,
             bool breakOnFirstSet_b
         )
         {

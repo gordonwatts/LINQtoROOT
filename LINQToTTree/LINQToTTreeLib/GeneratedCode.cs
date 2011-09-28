@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
@@ -26,14 +27,19 @@ namespace LINQToTTreeLib
         /// <summary>
         /// The final result of this query.
         /// </summary>
-        public IVariable ResultValue { get; private set; }
+        public Expression ResultValue { get; private set; }
+
+        /// <summary>
+        /// Get the final result as a variable.
+        /// </summary>
+        public IDeclaredParameter ResultValueAsVaraible { get; private set; }
 
         /// <summary>
         /// We have only a single result value, so the return is pretty easy...
         /// </summary>
-        public IEnumerable<IVariable> ResultValues
+        public IEnumerable<IDeclaredParameter> ResultValues
         {
-            get { yield return ResultValue; }
+            get { yield return ResultValueAsVaraible; }
         }
 
         /// <summary>
@@ -57,12 +63,15 @@ namespace LINQToTTreeLib
         /// </summary>
         private IBookingStatementBlock PreviousDeclarationScopePointer;
 
-        public void SetResult(IVariable r)
+        public void SetResult(Expression r)
         {
             if (r == null)
                 throw new ArgumentNullException("Cannot set the result to be null");
 
             ResultValue = r;
+
+            if (r is IDeclaredParameter)
+                ResultValueAsVaraible = r as IDeclaredParameter;
         }
 
         /// <summary>
@@ -71,6 +80,7 @@ namespace LINQToTTreeLib
         public void ResetResult()
         {
             ResultValue = null;
+            ResultValueAsVaraible = null;
         }
 
         /// <summary>
@@ -143,7 +153,7 @@ namespace LINQToTTreeLib
         /// declarations.
         /// </summary>
         /// <param name="v"></param>
-        public void Add(IVariable v)
+        public void Add(IDeclaredParameter v)
         {
             if (v == null)
                 throw new ArgumentNullException("Cannot add a null variable!");
@@ -154,7 +164,7 @@ namespace LINQToTTreeLib
         /// Add a variable one level up from the current scope. Fail if we can't!
         /// </summary>
         /// <param name="valSimple"></param>
-        public void AddOneLevelUp(IVariable valSimple)
+        public void AddOneLevelUp(IDeclaredParameter valSimple)
         {
             if (valSimple == null)
                 throw new ArgumentNullException("cannot add null variable!");

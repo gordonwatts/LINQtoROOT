@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -16,11 +13,11 @@ namespace LinqToTTreeInterfacesLib
         /// at the start of the block.
         /// </summary>
         /// <param name="variableToDeclare"></param>
-        void Add(IVariable variableToDeclare);
+        void Add(IDeclaredParameter variableToDeclare);
 
         /// <summary>
         /// Returns the list of variables that are declared in this compound block
         /// </summary>
-        IEnumerable<IVariable> DeclaredVariables { get; }
+        IEnumerable<IDeclaredParameter> DeclaredVariables { get; }
     }
 }

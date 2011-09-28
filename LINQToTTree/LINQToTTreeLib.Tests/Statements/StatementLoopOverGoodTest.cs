@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using Microsoft.Pex.Framework;
@@ -23,7 +22,7 @@ namespace LINQToTTreeLib.Tests.Statements
 
         /// <summary>Test stub for .ctor(IValue)</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementLoopOverGood Constructor(IValue indiciesToCheck, IValue indexIsGood, IVariable index)
+        public StatementLoopOverGood Constructor(IValue indiciesToCheck, IValue indexIsGood, IDeclaredParameter index)
         {
             StatementLoopOverGood target = new StatementLoopOverGood(indiciesToCheck, indexIsGood, index);
             return target;

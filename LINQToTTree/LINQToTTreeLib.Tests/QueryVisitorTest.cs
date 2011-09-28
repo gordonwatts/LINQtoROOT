@@ -164,56 +164,6 @@ namespace LINQToTTreeLib
                 Assert.AreEqual(typeof(int), _codeContext.LoopVariable.Type, "Loopvariable type");
             }
 
-            /// <summary>
-            /// Dummy return for a variable and sequencer accessor.
-            /// </summary>
-            class dummyvar : IVariable
-            {
-                public string VariableName
-                {
-                    get { return "anint_1234"; }
-                }
-
-                public IValue InitialValue
-                {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-
-                public bool Declare
-                {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-
-                public string RawValue
-                {
-                    get { return "dude[i]"; }
-                }
-
-                public Type Type
-                {
-                    get { return typeof(int); }
-                }
-
-
-                public void RenameRawValue(string oldname, string newname)
-                {
-                    throw new NotImplementedException();
-                }
-            }
 
         }
 
@@ -577,7 +527,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void TestAnonObjectCompare()
         {
             var q = new QueriableDummy<ntupWithObjects>();
@@ -885,7 +835,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
-
         [TestMethod]
         public void TestFirstCombine()
         {
@@ -900,7 +849,7 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]

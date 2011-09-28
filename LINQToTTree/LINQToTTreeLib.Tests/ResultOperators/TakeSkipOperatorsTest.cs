@@ -2,10 +2,10 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.TypeHandlers;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -45,7 +45,7 @@ namespace LINQToTTreeLib.ResultOperators
         [PexMethod]
         [PexUseType(typeof(TakeResultOperator))]
         [PexUseType(typeof(SkipResultOperator)), PexAllowedException(typeof(ArgumentException))]
-        internal IVariable ProcessResultOperator(
+        internal void ProcessResultOperator(
             [PexAssumeUnderTest]ROTakeSkipOperators target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -69,9 +69,9 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             CodeContext c = new CodeContext();
-            c.SetLoopVariable(Expression.Variable(typeof(int), "d"));
+            c.SetLoopVariable(Expression.Variable(typeof(int), "d"), null);
 
-            target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
+            target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, MEFUtilities.MEFContainer);
 
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will
@@ -79,7 +79,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             Assert.AreEqual(1, codeEnv.CodeBody.DeclaredVariables.Count(), "Expected only 1 variable to be declared");
-            Assert.IsInstanceOfType(codeEnv.CodeBody.DeclaredVariables.First(), typeof(VarInteger), "Expected it to be a counter");
+            Assert.IsInstanceOfType(codeEnv.CodeBody.DeclaredVariables.First(), typeof(DeclarableParameter), "Expected it to be a counter");
 
             var statements = codeEnv.CodeBody.Statements.First() as StatementInlineBlock;
 
@@ -108,12 +108,21 @@ namespace LINQToTTreeLib.ResultOperators
             var lv = c.LoopVariable as ParameterExpression;
             Assert.AreEqual("d", lv.Name, "loop variable name");
 
-            return null;
+            //
+            // Dump everything and return. To force it out, add a dummy statement
+            // (because if statements, etc., are smart enough to not print anything if they
+            // are empty).
+            //
+
+            codeEnv.Add(new StatementSimpleStatement("fork = left"));
+            codeEnv.DumpCodeToConsole();
         }
 
         [TestMethod]
         public void TestBasicTakeSkip()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             GeneratedCode gc = new GeneratedCode();
             var skipper = new SkipResultOperator(Expression.Constant(10));
             ProcessResultOperator(new ROTakeSkipOperators(), skipper, null, gc);
@@ -148,8 +157,6 @@ namespace LINQToTTreeLib.ResultOperators
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
-
-            var e = result.Skip(1).Count();
         }
     }
 }

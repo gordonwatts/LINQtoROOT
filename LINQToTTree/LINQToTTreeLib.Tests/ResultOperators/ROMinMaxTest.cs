@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
@@ -43,7 +44,7 @@ namespace LINQToTTreeLib.ResultOperators
 
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod]
-        internal IVariable ProcessResultOperator(
+        internal Expression ProcessResultOperator(
             [PexAssumeUnderTest]ROMinMax target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -52,7 +53,7 @@ namespace LINQToTTreeLib.ResultOperators
             CompositionContainer container
         )
         {
-            IVariable result
+            Expression result
                = target.ProcessResultOperator(resultOperator, queryModel, gc, cc, container);
             return result;
             // TODO: add assertions to method ROMinMaxTest.ProcessResultOperator(ROMinMax, ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)
@@ -106,7 +107,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             // And that var name should also exist in the list of booked variables at this top level.
 
-            var asBooked = res.CodeBody.DeclaredVariables.Where(v => v.VariableName == varname).FirstOrDefault();
+            var asBooked = res.CodeBody.DeclaredVariables.Where(v => v.ParameterName == varname).FirstOrDefault();
             Assert.IsNotNull(asBooked, string.Format("Unable to find variable '{0}' in the top level list of booked variables.", varname));
         }
     }

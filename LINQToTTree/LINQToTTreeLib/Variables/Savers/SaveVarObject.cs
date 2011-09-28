@@ -20,13 +20,9 @@ namespace LINQToTTreeLib.Variables.Savers
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        public bool CanHandle(IVariable iVariable)
+        public bool CanHandle(IDeclaredParameter iVariable)
         {
-            if ((iVariable as VarObject) != null)
-            {
-                return iVariable.Type.GetInterface("NTNamed") != null;
-            }
-            return false;
+            return iVariable.Type.GetInterface("NTNamed") != null;
         }
 
         /// <summary>
@@ -35,7 +31,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        public IEnumerable<string> SaveToFile(IVariable iVariable)
+        public IEnumerable<string> SaveToFile(IDeclaredParameter iVariable)
         {
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat("{0}->SetName(\"{0}\");", iVariable.RawValue);
@@ -48,7 +44,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        public IEnumerable<string> IncludeFiles(IVariable iVariable)
+        public IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
         {
             return Enumerable.Empty<string>();
         }
@@ -60,7 +56,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj)
         {
             if (obj == null)
                 throw new ArgumentNullException("Obj cannot be null");

@@ -8,72 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class TestStatemenRecordValue
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException446()
-{
-    VarInteger varInteger;
-    StatementRecordValue statementRecordValue;
-    StatementRecordValue statementRecordValue1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordValue = StatementRecordValueFactory.Create
-                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
-    statementRecordValue1 =
-      this.TestRenameVariable(statementRecordValue, (string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException407()
-{
-    VarInteger varInteger;
-    StatementRecordValue statementRecordValue;
-    StatementRecordValue statementRecordValue1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordValue = StatementRecordValueFactory.Create
-                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
-    statementRecordValue1 =
-      this.TestRenameVariable(statementRecordValue, "", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException61()
-{
-    VarInteger varInteger;
-    StatementRecordValue statementRecordValue;
-    StatementRecordValue statementRecordValue1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordValue = StatementRecordValueFactory.Create
-                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
-    statementRecordValue1 =
-      this.TestRenameVariable(statementRecordValue, "anin", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TestStatemenRecordValue))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestRenameVariableThrowsArgumentNullException563()
-{
-    VarInteger varInteger;
-    StatementRecordValue statementRecordValue;
-    StatementRecordValue statementRecordValue1;
-    varInteger = VarIntegerFactory.Create(false, 0);
-    statementRecordValue = StatementRecordValueFactory.Create
-                               ((IVariable)varInteger, (IValue)varInteger, (IVariable)varInteger, false);
-    statementRecordValue1 =
-      this.TestRenameVariable(statementRecordValue, "\u0100\0\0\0", (string)null);
-}
     }
 }

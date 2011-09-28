@@ -1,6 +1,5 @@
 // <copyright file="ValSimpleTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -117,10 +117,14 @@
     <Compile Include="ExecutionCommon\LocalExecutor.cs" />
     <Compile Include="Expressions\ArrayExpressionParser.cs" />
     <Compile Include="Expressions\ArrayInfoVector.cs" />
+    <Compile Include="Expressions\DeclarableParameter.cs" />
+    <Compile Include="Expressions\ExpressionResolver.cs" />
     <Compile Include="Expressions\ExpressionStringConverter.cs" />
     <Compile Include="Expressions\ObjectPropertyExpressionVisitor.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitor.cs" />
     <Compile Include="Expressions\ExpressionToCPP.cs" />
+    <Compile Include="Expressions\SubExpressionReplacement.cs" />
+    <Compile Include="Expressions\SubQueryExpressionResolver.cs" />
     <Compile Include="FutureResultOperators.cs" />
     <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />
@@ -153,7 +157,6 @@
     <Compile Include="Statements\StatementTestLoopPairwise.cs" />
     <Compile Include="Statements\StatementCheckLoopPairwise.cs" />
     <Compile Include="Statements\StatementLoopOverGood.cs" />
-    <Compile Include="Variables\VarArray.cs" />
     <Compile Include="Statements\StatementPairLoop.cs" />
     <Compile Include="Statements\StatementRecordIndicies.cs" />
     <Compile Include="Statements\StatementBreak.cs" />
@@ -184,12 +187,8 @@
     <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
     <Compile Include="Variables\Savers\VariableSaverManager.cs" />
     <Compile Include="Variables\Savers\SaveVarObject.cs" />
-    <Compile Include="Variables\VarDeclared.cs" />
-    <Compile Include="Variables\VarObject.cs" />
-    <Compile Include="Variables\VarSimple.cs" />
     <Compile Include="Variables\VarUtils.cs" />
     <Compile Include="Variables\ValSimple.cs" />
-    <Compile Include="Variables\VarInteger.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinqToTTreeInterfacesLib\LinqToTTreeInterfacesLib.csproj">

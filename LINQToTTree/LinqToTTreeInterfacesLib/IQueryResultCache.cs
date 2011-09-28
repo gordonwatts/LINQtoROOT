@@ -37,7 +37,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="queryModel"></param>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        Tuple<bool, T> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IVariable theVar);
+        Tuple<bool, T> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IDeclaredParameter theVar);
 
         /// <summary>
         /// Save an item for later lookup and retreival.

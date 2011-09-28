@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -39,7 +41,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="_codeContext"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
             /// Some argument checking
@@ -87,10 +89,10 @@ namespace LINQToTTreeLib.ResultOperators
             /// externally.
             /// 
 
-            var vIsFilled = new Variables.VarSimple(typeof(bool)) { Declare = true };
-            vIsFilled.InitialValue = new Variables.ValSimple("false", typeof(bool));
-            var vMaxMin = new Variables.VarSimple(valueExpr.Type) { Declare = true };
-            vMaxMin.InitialValue = new Variables.ValSimple("0", valueExpr.Type);
+            var vIsFilled = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            vIsFilled.InitialValue = new ValSimple("false", typeof(bool));
+            var vMaxMin = DeclarableParameter.CreateDeclarableParameterExpression(valueExpr.Type);
+            vMaxMin.InitialValue = new ValSimple("0", typeof(int));
 
             gc.AddOneLevelUp(vIsFilled);
 

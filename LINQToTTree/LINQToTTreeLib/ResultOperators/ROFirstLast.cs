@@ -4,7 +4,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -37,7 +36,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
+        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
             IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
@@ -67,21 +66,19 @@ namespace LINQToTTreeLib.ResultOperators
             // Next, make sure we are looping over something. This had better be an array we are looking at!
             //
 
-            if (cc.LoopVariable.NodeType != ExpressionType.ArrayIndex)
+            if (cc.LoopIndexVariable == null)
             {
-                throw new InvalidOperationException(string.Format("Can't apply First operator when we aren't looping over some array '{0}'", cc.LoopVariable.ToString()));
+                throw new InvalidOperationException(string.Format("Can't apply First operator when we aren't looping over some well formed array '{0}'", cc.LoopVariable.ToString()));
             }
-            var binary = cc.LoopVariable as BinaryExpression;
-            var indexExpr = binary.Right;
-            var arrayExpr = binary.Left;
+            var indexExpr = cc.LoopIndexVariable;
 
             //
             // We need to hold onto either the first or the last item here, so we create a statement that holds nnto the
-            // first or the last time. It also has to mark the thing as valid!
+            // first or the last time. It also has to mark the thing as valid! It will break when it is done.
             //
 
-            var valueWasSeen = new VarSimple(typeof(bool)) { Declare = true };
-            var indexSeen = new VarSimple(typeof(int)) { Declare = true };
+            var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             gc.AddOneLevelUp(valueWasSeen);
             gc.AddOneLevelUp(indexSeen);
@@ -94,13 +91,16 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             gc.Pop();
-            var firstlastValue = Expression.ArrayIndex(arrayExpr, Expression.Parameter(typeof(int), indexSeen.RawValue));
-            var actualValue = new VarSimple(cc.LoopVariable.Type) { Declare = true };
+            var firstlastValue = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, Expression.Parameter(typeof(int), indexSeen.RawValue));
+            return firstlastValue;
+#if false
+            var actualValue = DeclarableParameter.CreateDeclarableParameterExpression(cc.LoopVariable.Type);
 
             gc.Add(new Statements.StatementAssign(actualValue,
                 ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
 
             return actualValue;
+#endif
         }
     }
 }

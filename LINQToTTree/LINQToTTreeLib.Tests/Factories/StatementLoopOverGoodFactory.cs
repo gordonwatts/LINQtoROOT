@@ -10,9 +10,9 @@ namespace LINQToTTreeLib.Statements
         [PexFactoryMethod(typeof(Helpers), "LINQToTTreeLib.Statements.StatementLoopOverGood")]
         public static StatementLoopOverGood Create(IValue indiciesToCheck_iValue,
             IValue indexIsGood_iValue1,
-            IVariable index_iValue2,
+            IDeclaredParameter index_iValue2,
             IStatement[] statements,
-            IVariable[] vars)
+            IDeclaredParameter[] vars)
         {
             StatementLoopOverGood statementLoopOverGood = new StatementLoopOverGood
                                                               (indiciesToCheck_iValue, indexIsGood_iValue1, index_iValue2);

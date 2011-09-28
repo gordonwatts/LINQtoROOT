@@ -8,13 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
-namespace LINQToTTreeLib.Variables
+namespace LINQToTTreeLib.Tests.ResultOperators
 {
-    public partial class VarObjectTest
+    public partial class SubExpressionReplacementTest
     {
     }
 }

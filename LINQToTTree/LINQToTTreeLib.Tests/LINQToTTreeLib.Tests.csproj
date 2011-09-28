@@ -198,6 +198,9 @@
     </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
     <Compile Include="Expressions\ExpressionStringConverterTest.cs" />
+    <Compile Include="Expressions\ExpressionStringConverterTest.Format.g.cs">
+      <DependentUpon>ExpressionStringConverterTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
     <Compile Include="Expressions\ExpressionVisitorMethodCallTests.cs" />
     <Compile Include="Expressions\ExpressionVisitorTest.cs" />
@@ -206,6 +209,9 @@
     </Compile>
     <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
       <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Expressions\SubExpressionReplacementTest.TestReplacement.g.cs">
+      <DependentUpon>SubExpressionReplacementTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
     <Compile Include="Factories\CodeOptimizerTestFactory.cs" />
@@ -233,9 +239,6 @@
     <Compile Include="Factories\TakeResultOperatorFactory.cs" />
     <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
     <Compile Include="Factories\UnaryExpressionFactory.cs" />
-    <Compile Include="Factories\VarArrayFactory.cs" />
-    <Compile Include="Factories\VarIntegerFactory.cs" />
-    <Compile Include="Factories\VarSimpleFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
       <DependentUpon>FileUtilsTest.cs</DependentUpon>
@@ -358,6 +361,7 @@
     <Compile Include="ResultOperators\ROUniqueCombinationsTest.ProcessResultOperator.g.cs">
       <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Expressions\SubExpressionReplacementTest.cs" />
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
       <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
     </Compile>
@@ -555,6 +559,9 @@
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.CanHandle.g.cs">
       <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.CodeMethodCall.g.cs">
+      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.cs" />
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessConstantReference.g.cs">
       <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
@@ -582,6 +589,9 @@
     </Compile>
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessNew.g.cs">
       <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypeHandlers\TypeHandlerCacheTest.CodeMethodCall.g.cs">
+      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
     </Compile>
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.cs" />
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessConstantReference.g.cs">
@@ -628,14 +638,6 @@
     <Compile Include="Variables\ValSimpleTest.TestCTorWithType.g.cs">
       <DependentUpon>ValSimpleTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VarObjectTest.Constructor.g.cs">
-      <DependentUpon>VarObjectTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\VarObjectTest.cs" />
-    <Compile Include="Variables\VarSimpleTest.Constructor.g.cs">
-      <DependentUpon>VarSimpleTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\VarSimpleTest.cs" />
     <Compile Include="Variables\VarUtilsTest.AsCastString.g.cs">
       <DependentUpon>VarUtilsTest.cs</DependentUpon>
     </Compile>
