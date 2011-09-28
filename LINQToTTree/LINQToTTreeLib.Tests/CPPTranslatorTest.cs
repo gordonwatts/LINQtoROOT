@@ -175,12 +175,13 @@ namespace LINQToTTreeLib
             var vInt2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             vInt2.SetInitialValue("5");
             innerBlock.Add(vInt2);
+            innerBlock.Add(new StatementSimpleStatement("fork = dork"));
             code.Add(innerBlock);
 
             var r = TranslateGeneratedCode(target, code);
 
             var st = (r["QueryFunctionBlocks"] as IEnumerable<IEnumerable<string>>).First().ToArray();
-            Assert.AreEqual(5, st.Length, "incorrect number of statements");
+            Assert.AreEqual(6, st.Length, "incorrect number of statements");
             Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initalization");
         }
 
