@@ -91,10 +91,17 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
 
             //
-            // Ok - we now pop out, and return the value we have!
+            // Ok - we now pop out, and throw an exception if we are supposed to always have a number, and then continue on.
             //
 
             gc.Pop();
+
+            if (bombIfNothing)
+            {
+                var test = ExpressionToCPP.GetExpression(Expression.Not(valueWasSeen), gc, cc, container);
+                gc.Add(new Statements.StatementThrowIfTrue(test, "First predicate executed on a null sequence"));
+            }
+
             var firstlastValue = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, Expression.Parameter(typeof(int), indexSeen.RawValue));
             return firstlastValue;
 #if false
