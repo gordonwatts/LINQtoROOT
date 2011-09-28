@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
@@ -65,7 +64,7 @@ namespace LINQToTTreeLib.Tests
         ///A test for ProcessResultOperator
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        internal IVariable ProcessResultOperator(
+        internal void ProcessResultOperator(
             [PexAssumeUnderTest]ROUniqueCombinations target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -74,7 +73,6 @@ namespace LINQToTTreeLib.Tests
         )
         {
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, cc, null);
-            return null;
         }
 
         class ntupArray

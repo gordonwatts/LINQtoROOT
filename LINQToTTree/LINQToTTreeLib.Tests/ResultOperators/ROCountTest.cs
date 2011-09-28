@@ -7,7 +7,6 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -52,7 +51,7 @@ namespace LINQToTTreeLib
             Expression result = target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, null);
             Assert.AreEqual(origCount + 1, codeEnv.CodeBody.Statements.Count(), "Expected an added statement!");
             Assert.IsInstanceOfType(codeEnv.CodeBody.Statements.Last(), typeof(StatementAggregate), "Statement to inc the integer must have been done!");
-            Assert.IsInstanceOfType(result, typeof(VarInteger), "Expected to be calculating an integer");
+            Assert.AreEqual(result.Type, typeof(int), "Expected to be calculating an integer");
             return result;
         }
 

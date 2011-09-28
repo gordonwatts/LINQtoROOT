@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
@@ -46,7 +45,7 @@ namespace LINQToTTreeLib.ResultOperators
         [PexMethod]
         [PexUseType(typeof(TakeResultOperator))]
         [PexUseType(typeof(SkipResultOperator)), PexAllowedException(typeof(ArgumentException))]
-        internal IVariable ProcessResultOperator(
+        internal void ProcessResultOperator(
             [PexAssumeUnderTest]ROTakeSkipOperators target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -117,8 +116,6 @@ namespace LINQToTTreeLib.ResultOperators
 
             codeEnv.Add(new StatementSimpleStatement("fork = left"));
             codeEnv.DumpCodeToConsole();
-
-            return null;
         }
 
         [TestMethod]

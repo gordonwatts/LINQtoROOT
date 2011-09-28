@@ -103,7 +103,6 @@
     <Compile Include="IStatementCompound.cs" />
     <Compile Include="ITypeHandler.cs" />
     <Compile Include="IValue.cs" />
-    <Compile Include="IVariable.cs" />
     <Compile Include="IVariableSaver.cs" />
     <Compile Include="IVariableSaverManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

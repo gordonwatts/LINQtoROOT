@@ -164,56 +164,6 @@ namespace LINQToTTreeLib
                 Assert.AreEqual(typeof(int), _codeContext.LoopVariable.Type, "Loopvariable type");
             }
 
-            /// <summary>
-            /// Dummy return for a variable and sequencer accessor.
-            /// </summary>
-            class dummyvar : IVariable
-            {
-                public string VariableName
-                {
-                    get { return "anint_1234"; }
-                }
-
-                public IValue InitialValue
-                {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-
-                public bool Declare
-                {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-
-                public string RawValue
-                {
-                    get { return "dude[i]"; }
-                }
-
-                public Type Type
-                {
-                    get { return typeof(int); }
-                }
-
-
-                public void RenameRawValue(string oldname, string newname)
-                {
-                    throw new NotImplementedException();
-                }
-            }
 
         }
 

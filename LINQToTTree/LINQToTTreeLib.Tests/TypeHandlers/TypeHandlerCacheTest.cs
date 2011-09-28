@@ -57,7 +57,7 @@ namespace LINQToTTreeLib.TypeHandlers
 
             public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
-                return new Variables.VarInteger();
+                return new Variables.ValSimple("1", typeof(int));
             }
 
             public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
@@ -111,7 +111,7 @@ namespace LINQToTTreeLib.TypeHandlers
 
             var result = CodeMethodCall(target, expr, gc);
 
-            Assert.IsInstanceOfType(result, typeof(Variables.VarInteger));
+            Assert.AreEqual(result.Type, typeof(int), "result type");
         }
 
         [PexMethod]

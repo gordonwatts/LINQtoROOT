@@ -48,7 +48,7 @@ namespace LINQToTTreeLib.Tests.ResultOperators
         }
 
         [PexMethod]
-        internal IVariable ProcessResultOperator(
+        internal void ProcessResultOperator(
             [PexAssumeUnderTest]ROUniqueCombinations target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -57,7 +57,6 @@ namespace LINQToTTreeLib.Tests.ResultOperators
         )
         {
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, cc, null);
-            return null;
         }
 
         class ntupArray
