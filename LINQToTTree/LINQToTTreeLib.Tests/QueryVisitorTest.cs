@@ -885,7 +885,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
-
         [TestMethod]
         public void TestFirstCombine()
         {
@@ -900,7 +899,7 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]
