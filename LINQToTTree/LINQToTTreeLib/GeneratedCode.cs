@@ -183,10 +183,17 @@ namespace LINQToTTreeLib
         public void AddOutsideLoop(IDeclaredParameter v)
         {
             //
+            // First, look at the top level scope to see if we are sitting
+            // at a loop or similar.
+            //
+
+            bool foundLoop = CurrentScopePointer is IStatementLoop;
+
+
+            //
             // Run through the scope and make sure we get it right...
             //
 
-            bool foundLoop = false;
             foreach (var s in _scopeState)
             {
                 var sinfo = s as CurrentScopeInfo;

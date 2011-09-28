@@ -391,6 +391,28 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestAddOutsideLoopWithJustASingleLoop()
+        {
+            var target = new GeneratedCode();
+            var blk = new Statements.StatementInlineBlock();
+            target.Add(blk);
+            target.Add(new SimpleLoop());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
+        }
+        
+        [TestMethod]
+        public void TestAddOutsideLoopWithOnStatement()
+        {
+            var target = new GeneratedCode();
+            var blk = new Statements.StatementInlineBlock();
+            target.Add(blk);
+            target.Add(new SimpleLoop());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
+        }
+
+        [TestMethod]
         public void TestAddOutsideLoopWithJustIn2Loops()
         {
             var target = new GeneratedCode();
