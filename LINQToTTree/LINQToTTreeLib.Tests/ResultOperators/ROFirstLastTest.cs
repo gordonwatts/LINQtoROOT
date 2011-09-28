@@ -148,7 +148,8 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
-            Assert.Inconclusive();
+            var cnt = res.CodeBody.CodeItUp().Where(l => l.Contains("-1")).Count();
+            Assert.AreEqual(2, cnt, "Improer # of -1's in the code");
         }
 
         [TestMethod]

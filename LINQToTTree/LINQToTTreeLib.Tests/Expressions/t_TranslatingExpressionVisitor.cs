@@ -446,7 +446,8 @@ namespace LINQToTTreeLib.Tests
             var r = b.Right as ParameterExpression;
             var l = b.Left as ConstantExpression;
 
-            Assert.Inconclusive("Do we want to allow the user to write this - what does it mean??");
+            //Assert.Inconclusive("Do we want to allow the user to write this - what does it mean??");
+            // The way this get coded up is pretty harmless. So I guess we let it go...
         }
 
         [TestMethod]
