@@ -101,6 +101,7 @@
     <Compile Include="IQVScalarResultOperator.cs" />
     <Compile Include="IStatement.cs" />
     <Compile Include="IStatementCompound.cs" />
+    <Compile Include="IStatementLoop.cs" />
     <Compile Include="ITypeHandler.cs" />
     <Compile Include="IValue.cs" />
     <Compile Include="IVariableSaver.cs" />

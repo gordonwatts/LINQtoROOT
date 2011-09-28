@@ -29,6 +29,18 @@ namespace LINQToTTreeLib
             Assert.AreEqual(old + 1, CountStatements(target.CodeBody), "Expected a single statement to have been added");
         }
 
+        [PexMethod]
+        public void AddOutsideLoop([PexAssumeUnderTest] GeneratedCode target, IDeclaredParameter var)
+        {
+            target.AddOutsideLoop(var);
+        }
+
+        [PexMethod]
+        public void AddOneLevelUp([PexAssumeUnderTest] GeneratedCode target, IDeclaredParameter var)
+        {
+            target.AddOneLevelUp(var);
+        }
+
         /// <summary>
         /// Recursively add the items in...
         /// </summary>
@@ -325,6 +337,69 @@ namespace LINQToTTreeLib
             gc.Add(new Statements.StatementInlineBlock());
             gc.AddOneLevelUp(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level decl");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestAddOutsideLoopWithNothing()
+        {
+            var target = new GeneratedCode();
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestAddOutsideLoopWithJustInlineBLock()
+        {
+            var target = new GeneratedCode();
+            target.Add(new Statements.StatementInlineBlock());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+        }
+
+        /// <summary>
+        /// Dummy loop to help with tests below.
+        /// </summary>
+        class SimpleLoop : Statements.StatementInlineBlockBase, IStatementLoop
+        {
+
+            public override IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void RenameVariable(string origName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void TestAddOutsideLoopWithJustInLoop()
+        {
+            var target = new GeneratedCode();
+            var blk = new Statements.StatementInlineBlock();
+            target.Add(blk);
+            target.Add(new SimpleLoop());
+            target.Add(new Statements.StatementInlineBlock());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
+        }
+
+        [TestMethod]
+        public void TestAddOutsideLoopWithJustIn2Loops()
+        {
+            var target = new GeneratedCode();
+            target.Add(new Statements.StatementInlineBlock());
+            var loop = new SimpleLoop();
+            target.Add(loop);
+            target.Add(new SimpleLoop());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, loop.DeclaredVariables.Count(), "# of loop declared variables");
         }
 
         [TestMethod]

@@ -176,6 +176,36 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Book a variable up above the current scope pointer - just outside something that
+        /// is a loop construct.
+        /// </summary>
+        /// <param name="v"></param>
+        public void AddOutsideLoop(IDeclaredParameter v)
+        {
+            //
+            // Run through the scope and make sure we get it right...
+            //
+
+            bool foundLoop = false;
+            foreach (var s in _scopeState)
+            {
+                var sinfo = s as CurrentScopeInfo;
+                if (foundLoop)
+                {
+                    sinfo.BookingScope.Add(v);
+                    return;
+                }
+
+                if (sinfo.Scope is IStatementLoop)
+                {
+                    foundLoop = true;
+                }
+            }
+
+            throw new InvalidOperationException("Unable to add a variable before a loop construct as there is not loop construct found!");
+        }
+
+        /// <summary>
         /// Get the list of variables that need to be transfered over the wire.
         /// </summary>
         public IEnumerable<KeyValuePair<string, object>> VariablesToTransfer { get { return _variablesToTransfer; } }

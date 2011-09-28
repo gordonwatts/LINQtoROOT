@@ -34,6 +34,13 @@ namespace LinqToTTreeInterfacesLib
         void AddOneLevelUp(IDeclaredParameter v);
 
         /// <summary>
+        /// Add outside the current loop. Walks back up the scoping until it finds a loop construct that
+        /// is active. If there is none, that causes a crash! :-)
+        /// </summary>
+        /// <param name="indexSeen"></param>
+        void AddOutsideLoop(IDeclaredParameter indexSeen);
+
+        /// <summary>
         /// This variable's inital value is "complex" and must be transfered over the wire in some way other than staight into the code
         /// (for example, a ROOT object that needs to be written to a TFile).
         /// </summary>
