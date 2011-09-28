@@ -957,7 +957,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(NotSupportedException))]
         public void TestFirstButNothing()
         {
             const int numberOfIter = 25;

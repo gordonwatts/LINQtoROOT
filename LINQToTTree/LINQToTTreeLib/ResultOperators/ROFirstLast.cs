@@ -80,8 +80,8 @@ namespace LINQToTTreeLib.ResultOperators
             var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            gc.AddOneLevelUp(valueWasSeen);
-            gc.AddOneLevelUp(indexSeen);
+            gc.AddOutsideLoop(valueWasSeen);
+            gc.AddOutsideLoop(indexSeen);
 
             var indexValue = ExpressionToCPP.GetExpression(indexExpr, gc, cc, container);
             gc.Add(new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));

@@ -4,7 +4,7 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Statements
 {
-    public class StatementPairLoop : StatementInlineBlockBase
+    public class StatementPairLoop : StatementInlineBlockBase, IStatementLoop
     {
         private IDeclaredParameter arrayRecord;
         private IDeclaredParameter index1;

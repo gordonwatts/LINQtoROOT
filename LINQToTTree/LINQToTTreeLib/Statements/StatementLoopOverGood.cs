@@ -6,7 +6,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Loop over a set of indicies only if they are marked "true" in the accompanying array.
     /// </summary>
-    public class StatementLoopOverGood : StatementInlineBlockBase
+    public class StatementLoopOverGood : StatementInlineBlockBase, IStatementLoop
     {
         private IValue _indiciesToCheck;
         private IValue _indexIsGood;

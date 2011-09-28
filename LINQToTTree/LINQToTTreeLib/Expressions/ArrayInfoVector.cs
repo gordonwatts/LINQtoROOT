@@ -70,7 +70,7 @@ namespace LINQToTTreeLib.Expressions
         /// <summary>
         /// A local class to implement the looping statements to work over this array.
         /// </summary>
-        public class StatementVectorLoop : StatementInlineBlockBase
+        public class StatementVectorLoop : StatementInlineBlockBase, IStatementLoop
         {
             public IValue ArrayLength { get; set; }
             string _loopVariable;

@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.Statements
     /// Given an array of indicies, makes a loop over them. One then
     /// can add a check (or similar) to the interiror.
     /// </summary>
-    public class StatementCheckLoopPairwise : StatementInlineBlockBase
+    public class StatementCheckLoopPairwise : StatementInlineBlockBase, IStatementLoop
     {
         private IDeclaredParameter _indciesToInspect;
         private IDeclaredParameter _index1;
