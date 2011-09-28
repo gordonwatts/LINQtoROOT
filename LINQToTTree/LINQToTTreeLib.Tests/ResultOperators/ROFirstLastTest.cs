@@ -136,6 +136,22 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [TestMethod]
+        public void TestTranslatedObjectFirstOrDefault()
+        {
+            var q = new QueriableDummy<SourceType1>();
+
+            var result = from evt in q
+                         where evt.jets.First() != null
+                         select evt;
+            var c = result.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+            res.DumpCodeToConsole();
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestTranslatedObjectFirstCarriedOver()
         {
             var q = new QueriableDummy<SourceType1>();

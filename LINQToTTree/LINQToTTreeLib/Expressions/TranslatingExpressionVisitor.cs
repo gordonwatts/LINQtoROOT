@@ -467,8 +467,31 @@ namespace LINQToTTreeLib
 
                     return Expression.MakeBinary(expression.NodeType, lindex, rindex);
                 }
+                else if (blArray != null && IsNullConstant(b.Right))
+                {
+                    var index = ExtractObjectArrayIndex(b.Left);
+                    return Expression.Equal(index, Expression.Constant(-1));
+                }
+                else if (brArray != null && IsNullConstant(b.Left))
+                {
+                    var index = ExtractObjectArrayIndex(b.Right);
+                    return Expression.Equal(Expression.Constant(-1), index);
+                }
             }
             return base.VisitBinaryExpression(expression);
+        }
+
+        /// <summary>
+        /// See if this is a constant reference to the "null" keyword.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private bool IsNullConstant(Expression expression)
+        {
+            var cexpr = expression as ConstantExpression;
+            if (cexpr == null)
+                return false;
+            return cexpr.Value == null;
         }
 
         /// <summary>

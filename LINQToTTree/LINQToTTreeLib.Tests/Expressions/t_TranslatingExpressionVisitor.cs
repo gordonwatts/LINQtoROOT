@@ -430,6 +430,26 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestObjectArrayCompareToNull()
+        {
+            Expression<Func<SourceType2, int, int, bool>> lambaExpr = (s, a1, a2) => s.jets[a1] == null;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+
+            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
+            Assert.AreEqual(ExpressionType.Equal, result.NodeType, "Expected an equal");
+
+            var b = result as BinaryExpression;
+            Assert.IsInstanceOfType(b.Left, typeof(ParameterExpression), "Left expr");
+            Assert.IsInstanceOfType(b.Right, typeof(ConstantExpression), "Right expr");
+
+            var r = b.Right as ParameterExpression;
+            var l = b.Left as ConstantExpression;
+
+            Assert.Inconclusive("Do we want to allow the user to write this - what does it mean??");
+        }
+
+        [TestMethod]
         public void TestArrayLengthGroupingChange()
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets.Length;
