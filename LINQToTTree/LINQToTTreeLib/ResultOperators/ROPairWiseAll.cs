@@ -41,6 +41,18 @@ namespace LINQToTTreeLib.ResultOperators
             if (ro == null)
                 throw new ArgumentNullException("Result operator is not of PairWiseAll type");
 
+            //
+            // First, record all the good indicies for this array
+            // 
+
+            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            gc.AddOneLevelUp(arrayRecord);
+
+            var recordIndexStatement = new StatementRecordIndicies(ExpressionToCPP.GetExpression(cc.LoopIndexVariable, gc, cc, container), arrayRecord);
+            gc.Add(recordIndexStatement);
+
+            gc.Pop();
+#if false
             if (cc.LoopVariable.NodeType != ExpressionType.ArrayIndex)
                 throw new InvalidOperationException("Unable to run PairWiseAll on a non-array expression!");
 
@@ -59,6 +71,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(recordIndexStatement);
 
             gc.Pop();
+#endif
 
             ///
             /// Next, we create a loop that will mark all the guys as "good" that
@@ -73,8 +86,8 @@ namespace LINQToTTreeLib.ResultOperators
             var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var index1Lookup = Expression.ArrayIndex(array, index1);
-            var index2Lookup = Expression.ArrayIndex(array, index2);
+            var index1Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index1); //Expression.ArrayIndex(array, index1);
+            var index2Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index2);//Expression.ArrayIndex(array, index2);
 
             var callLambda = Expression.Invoke(ro.Test,
                 index1Lookup,
@@ -102,7 +115,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(loopOverGood);
 
             var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
-            cc.SetLoopVariable(Expression.ArrayIndex(array, pindex), pindex);
+            cc.SetLoopVariable(cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, pindex), pindex);
         }
     }
 }
