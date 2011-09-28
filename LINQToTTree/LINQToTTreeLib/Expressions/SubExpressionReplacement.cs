@@ -1,6 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using Remotion.Linq.Parsing;
-using System;
 
 namespace LINQToTTreeLib.Expressions
 {

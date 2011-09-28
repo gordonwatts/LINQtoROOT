@@ -8,12 +8,6 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using System.IO;
-using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Linq;
 
 namespace LINQToTTreeLib
 {

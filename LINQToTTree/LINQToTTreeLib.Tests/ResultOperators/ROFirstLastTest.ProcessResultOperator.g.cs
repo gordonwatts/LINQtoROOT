@@ -8,14 +8,6 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using System.ComponentModel.Composition.Hosting;
-using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Linq;
-using Remotion.Linq.Clauses;
-using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
 {

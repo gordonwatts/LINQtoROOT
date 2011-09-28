@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
