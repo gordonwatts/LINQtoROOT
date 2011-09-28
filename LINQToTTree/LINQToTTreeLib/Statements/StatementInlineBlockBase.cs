@@ -92,7 +92,9 @@ namespace LINQToTTreeLib.Statements
                 foreach (var v in _variables)
                 {
                     string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.ParameterName;
-                    varDecl = varDecl + "=" + GenerateDefaultValue(v);
+                    var defaultValue = GenerateDefaultValue(v);
+                    if (!string.IsNullOrWhiteSpace(defaultValue))
+                        varDecl = varDecl + "=" + defaultValue;
                     varDecl += ";";
                     yield return "  " + varDecl;
                 }
@@ -128,6 +130,9 @@ namespace LINQToTTreeLib.Statements
 
             if (v.Type == typeof(bool))
                 return "false";
+
+            if (v.Type.IsArray)
+                return "";
 
             throw new NotSupportedException(string.Format("Don't know how to do default value for C++ variable of type {0}.", v.Type.ToString()));
         }
