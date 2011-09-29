@@ -361,7 +361,7 @@ Import-Module "$loc\source-control.psm1"
 # Given the main distribution directory, build everything needed for
 # making our nuget libraries, and generate the nuget package!
 #
-function build-LINQToTTree ($BuildPath, $Release = "Release", $Tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB, $NameSuffix = "")
+function build-LINQToTTree ($BuildPath, $Release = "x86", $Tag = "HEAD", $nugetPackageDir = "", [Switch]$PDB, $NameSuffix = "")
 {	
 	#
 	# Build the libraries
