@@ -68,9 +68,17 @@ namespace LINQToTTreeLib.ResultOperators
                 bombIfNothing = !asLast.ReturnDefaultWhenEmpty;
             }
 
+            //
+            // Figure out if we need to cache the result:
+            //  - simple variable which has a default value which can be used later on.
+            //      like a double, etc.
+            //  - We actually allow for a default variable.
+            //
+
             bool cacheResult = cc.LoopVariable.Type == typeof(int)
                 || cc.LoopVariable.Type == typeof(double)
                 || cc.LoopVariable.Type == typeof(float);
+            cacheResult = cacheResult && !bombIfNothing;
 
             //
             // Next, make sure we are looping over something. This had better be an array we are looking at!
@@ -122,7 +130,6 @@ namespace LINQToTTreeLib.ResultOperators
 
                 var actualValue = DeclarableParameter.CreateDeclarableParameterExpression(cc.LoopVariable.Type);
                 actualValue.SetInitialValue("0");
-                gc.Add(actualValue);
 
                 //
                 // If everything went well, then we can do the assignment. Otherwise, we leave

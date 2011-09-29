@@ -853,6 +853,40 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestLastDefaultCombine()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var r1 = q.Where(evt => evt.vals.LastOrDefault() > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.vals.LastOrDefault() > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestFirstDefaultCombine()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var r1 = q.Where(evt => evt.vals.FirstOrDefault() > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.vals.FirstOrDefault() > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
         public void TestMinMaxStatement()
         {
             var q = new QueriableDummy<ntupWithObjects>();
