@@ -356,35 +356,13 @@ namespace LINQToTTreeLib
             target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
         }
 
-        /// <summary>
-        /// Dummy loop to help with tests below.
-        /// </summary>
-        class SimpleLoop : Statements.StatementInlineBlockBase, IStatementLoop
-        {
-
-            public override IEnumerable<string> CodeItUp()
-            {
-                throw new NotImplementedException();
-            }
-
-            public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
-            {
-                throw new NotImplementedException();
-            }
-
-            public override void RenameVariable(string origName, string newName)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         [TestMethod]
         public void TestAddOutsideLoopWithJustInLoop()
         {
             var target = new GeneratedCode();
             var blk = new Statements.StatementInlineBlock();
             target.Add(blk);
-            target.Add(new SimpleLoop());
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
             target.Add(new Statements.StatementInlineBlock());
             target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
@@ -396,18 +374,18 @@ namespace LINQToTTreeLib
             var target = new GeneratedCode();
             var blk = new Statements.StatementInlineBlock();
             target.Add(blk);
-            target.Add(new SimpleLoop());
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
             target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
         }
-        
+
         [TestMethod]
         public void TestAddOutsideLoopWithOnStatement()
         {
             var target = new GeneratedCode();
             var blk = new Statements.StatementInlineBlock();
             target.Add(blk);
-            target.Add(new SimpleLoop());
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
             target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
         }
@@ -417,9 +395,9 @@ namespace LINQToTTreeLib
         {
             var target = new GeneratedCode();
             target.Add(new Statements.StatementInlineBlock());
-            var loop = new SimpleLoop();
+            var loop = new LINQToTTreeLib.Tests.TestUtils.SimpleLoop();
             target.Add(loop);
-            target.Add(new SimpleLoop());
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
             target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, loop.DeclaredVariables.Count(), "# of loop declared variables");
         }

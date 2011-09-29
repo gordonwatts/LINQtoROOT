@@ -69,7 +69,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            codeEnv.AddOneLevelUp(counter);
+            codeEnv.AddOutsideLoop(counter);
 
             var comparison = StatementIfOnCount.ComparisonOperator.LessThanEqual;
             IValue limit = null;

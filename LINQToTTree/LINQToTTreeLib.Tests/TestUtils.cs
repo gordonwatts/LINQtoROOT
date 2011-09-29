@@ -15,6 +15,33 @@ namespace LINQToTTreeLib.Tests
     public static class TestUtils
     {
         /// <summary>
+        /// Dummy loop to help with tests below.
+        /// </summary>
+        public class SimpleLoop : LINQToTTreeLib.Statements.StatementInlineBlockBase, IStatementLoop
+        {
+
+            public override IEnumerable<string> CodeItUp()
+            {
+                yield return "Dummyloop {";
+                foreach (var l in RenderInternalCode())
+                {
+                    yield return "  " + l;
+                }
+                yield return "}";
+            }
+
+            public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void RenameVariable(string origName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
         /// Dump the code to the console - for debugging a test...
         /// </summary>
         /// <param name="code"></param>

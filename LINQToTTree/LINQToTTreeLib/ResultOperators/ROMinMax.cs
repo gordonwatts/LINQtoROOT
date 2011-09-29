@@ -94,7 +94,7 @@ namespace LINQToTTreeLib.ResultOperators
             var vMaxMin = DeclarableParameter.CreateDeclarableParameterExpression(valueExpr.Type);
             vMaxMin.InitialValue = new ValSimple("0", typeof(int));
 
-            gc.AddOneLevelUp(vIsFilled);
+            gc.AddOutsideLoop(vIsFilled);
 
             ///
             /// The expression we want to mimize or maximize
