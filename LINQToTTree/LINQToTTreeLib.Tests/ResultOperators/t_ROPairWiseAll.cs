@@ -158,5 +158,23 @@ namespace LINQToTTreeLib.Tests
             var tot = results.Aggregate(0, (seed, val) => seed + val);
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
         }
+
+#if false
+        [TestMethod]
+        public void TestAnonDirectCompareObjects()
+        {
+            var q = new QueriableDummy<ntupArray>();
+            var anon = from evt in q
+                       select (from r in evt.run
+                               select new
+                               {
+                                   Value = r
+                               });
+            var results = from evt in anon
+                          select evt.PairWiseAll((r1, r2) => r1 != r2).Count();
+            var tot = results.Aggregate(0, (seed, val) => seed + val);
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+#endif
     }
 }
