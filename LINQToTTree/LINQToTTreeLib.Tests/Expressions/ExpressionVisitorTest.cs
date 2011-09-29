@@ -114,7 +114,8 @@ namespace LINQToTTreeLib
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Subtract, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10-20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Multiply, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10*20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10/20"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.MakeBinary(ExpressionType.Add, Expression.Constant(10), Expression.Constant(20)), RHS=Expression.Constant(30), ExpectedType=typeof(int), ExpectedValue="(10+20)/30"}
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.MakeBinary(ExpressionType.Add, Expression.Constant(10), Expression.Constant(20)), RHS=Expression.Constant(30), ExpectedType=typeof(int), ExpectedValue="(10+20)/30"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Modulo, LHS=Expression.Constant(10), RHS=Expression.Constant(2), ExpectedType=typeof(int), ExpectedValue="10%2"}
         };
 
         public void TestBinaryExpressionCase(BinaryExpressionTestCase c)

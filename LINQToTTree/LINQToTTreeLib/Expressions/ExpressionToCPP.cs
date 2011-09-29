@@ -222,7 +222,10 @@ namespace LINQToTTreeLib.Expressions
                 case ExpressionType.And:
                     break;
                 case ExpressionType.Modulo:
+                    op = "%";
+                    resultType = expression.Type;
                     break;
+
                 case ExpressionType.Power:
                     break;
                 default:
