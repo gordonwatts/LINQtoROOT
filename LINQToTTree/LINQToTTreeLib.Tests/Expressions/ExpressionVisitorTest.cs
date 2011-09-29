@@ -666,7 +666,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
-            Assert.AreEqual("(*d)[1]", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*d).at(1)", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
@@ -677,7 +677,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myaccess1, Expression.Constant(2));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
-            Assert.AreEqual("((*d)[1])[2]", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("((*d).at(1)).at(2)", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
@@ -688,7 +688,7 @@ namespace LINQToTTreeLib
             var myArrayLength = Expression.ArrayLength(myaccess1);
 
             var result = RunArrayLengthOnExpression(myArrayLength, typeof(int));
-            Assert.AreEqual("(*d)[1].size()", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*d).at(1).size()", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
@@ -708,7 +708,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myarray, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(ROOTNET.NTH1F));
-            Assert.AreEqual("(*harr)[1]", result.RawValue, "C++ th1f not translated correctly");
+            Assert.AreEqual("(*harr).at(1)", result.RawValue, "C++ th1f not translated correctly");
         }
 
         class ObjectArrayTest
@@ -727,7 +727,7 @@ namespace LINQToTTreeLib
 
             var result = RunArrayLengthOnExpression(arrayIndex, typeof(int));
 
-            Assert.AreEqual("(*(*obj).arr)[1]", result.RawValue, "array text");
+            Assert.AreEqual("(*(*obj).arr).at(1)", result.RawValue, "array text");
         }
 
         [TestMethod]

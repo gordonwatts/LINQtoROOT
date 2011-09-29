@@ -215,8 +215,8 @@ namespace LINQToTTreeLib.Expressions
 
                 case ExpressionType.ArrayIndex:
                     resultType = expression.Type;
-                    op = "[]";
-                    format = "{0}[{2}]";
+                    op = "at";
+                    format = "{0}.at({2})";
                     break;
 
                 case ExpressionType.And:
