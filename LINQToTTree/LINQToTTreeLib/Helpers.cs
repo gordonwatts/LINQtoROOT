@@ -98,6 +98,11 @@ namespace LINQToTTreeLib
 #endif
         }
 
+        public static IQueryable<T> PairWiseAll<T>(this IQueryable<T> source, Expression<Func<T, T, bool>> mustBeGoodForAll)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// given an object, apply each iteration to that object using a func, and return the object when done. Can
         /// be used much like Aggregate (o.Fill(arg)).

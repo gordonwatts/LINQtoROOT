@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
+using System.Linq;
 
 namespace LINQToTTreeLib.relinq
 {
@@ -14,7 +15,7 @@ namespace LINQToTTreeLib.relinq
         public static MethodInfo[] SupportedMethods = new[]
             {
                 GetSupportedMethod (() => Helpers.PairWiseAll<object>((IEnumerable<object>) null, null)),
-                //GetSupportedMethod (() => Helpers.PairWiseAll<object>((IQueryable<object>) null, null))
+                GetSupportedMethod (() => Helpers.PairWiseAll<object>((IQueryable<object>) null, null))
             };
 
         private readonly LambdaExpression _test;
