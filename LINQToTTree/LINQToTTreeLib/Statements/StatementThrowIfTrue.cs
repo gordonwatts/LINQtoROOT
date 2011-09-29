@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -30,8 +31,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            if (_testValue == originalName)
-                _testValue = newName;
+            _testValue = _testValue.ReplaceVariableNames(originalName, newName);
         }
 
         /// <summary>
@@ -47,7 +47,9 @@ namespace LINQToTTreeLib.Statements
                 return false;
             }
             var s = statement as StatementThrowIfTrue;
-            return (s._testValue == _testValue);
+            var can = s._testValue == _testValue;
+
+            return can;
         }
 
         /// <summary>
