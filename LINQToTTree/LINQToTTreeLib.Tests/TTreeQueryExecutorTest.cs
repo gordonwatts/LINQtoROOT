@@ -953,8 +953,7 @@ namespace LINQToTTreeLib
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(result, 0);
-            Assert.Inconclusive("this passes, but shouldn't right now... no idea how to fix.");
+            Assert.AreEqual(25, result, "Incorrect number of iterations found");
         }
 
         [TestMethod]
