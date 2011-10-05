@@ -1214,6 +1214,45 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestAverageCode()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        let r = evt.myvectorofint.Average()
+                        where r == ((double)(9 + 8 + 7 + 6 + 5 + 4 + 3 + 2 + 1) / 10)
+                        select r;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+
+        }
+
+        [TestMethod]
         public void TestAggregateCodeForSimpleVariableType()
         {
             const int numberOfIter = 25;

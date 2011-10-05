@@ -451,6 +451,19 @@ namespace LINQToTTreeLib
             MakeSureNoVariable(code.CodeBody, "evt");
         }
 
+        [TestMethod]
+        public void TestSimpleAverage()
+        {
+            // Make sure we can process it!
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           select evt.jets.Average(j => j.var1);
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+        }
+
         [CPPHelperClass]
         public static class CPPHelperFunctions
         {
@@ -944,6 +957,23 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query Blocks");
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestAverageCombine()
+        {
+            // Make sure we can process it!
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = q.Where(evt => evt.jets.Average(j => j.var1) > 10).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.Average(j => j.var1) > 10).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]
