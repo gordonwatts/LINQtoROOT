@@ -116,11 +116,17 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitConstantExpression(ConstantExpression expression)
         {
-            if (expression.Type == typeof(int)
-                || expression.Type == typeof(float)
-                || expression.Type == typeof(double))
+            if (expression.Type == typeof(int))
             {
                 _result = new ValSimple(expression.Value.ToString(), expression.Type);
+            }
+            else if (expression.Type == typeof(float)
+              || expression.Type == typeof(double))
+            {
+                var s = expression.Value.ToString();
+                if (!s.Contains("."))
+                    s += ".0";
+                _result = new ValSimple(s, expression.Type);
             }
             else if (expression.Type == typeof(bool))
             {

@@ -31,6 +31,8 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         static Regex gVarNameFinder = new Regex(@"^\b\w+\b$");
 
+        static Regex gNumberFinder = new Regex(@"^[-+]?[0-9]*\.?[0-9]+$");
+
         /// <summary>
         /// Given a value, see if it is not a single term. If not, add parens.
         /// </summary>
@@ -58,6 +60,11 @@ namespace LINQToTTreeLib.Utils
 
             var match = gVarNameFinder.Match(rv);
             if (match.Success)
+                return rv;
+
+            // If it is just a number or similar, then match that
+
+            if (gNumberFinder.Match(rv).Success)
                 return rv;
 
             // Special case where we already have this thing surrounded by parens.

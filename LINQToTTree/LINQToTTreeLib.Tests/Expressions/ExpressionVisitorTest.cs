@@ -70,8 +70,8 @@ namespace LINQToTTreeLib
         public static List<ConstantTestTemplate> ConstantExpressionTestCases = new List<ConstantTestTemplate>()
         {
             new ConstantTestTemplate(){ ExpectedType=typeof(int), ExpectedValue="10", expr = Expression.Constant(10)},
-            new ConstantTestTemplate(){ ExpectedType=typeof(float), ExpectedValue="10", expr = Expression.Constant((float)10)},
-            new ConstantTestTemplate(){ ExpectedType=typeof(double), ExpectedValue="10", expr = Expression.Constant((double)10)},
+            new ConstantTestTemplate(){ ExpectedType=typeof(float), ExpectedValue="10.0", expr = Expression.Constant((float)10)},
+            new ConstantTestTemplate(){ ExpectedType=typeof(double), ExpectedValue="10.0", expr = Expression.Constant((double)10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="true", expr = Expression.Constant(true)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="false", expr = Expression.Constant(false)},
             new ConstantTestTemplate(){ ExpectedType=typeof(ROOTNET.NTH1F), ExpectedValue="LoadFromInputList\\<TH1F\\*\\>\\(\"aNTH1F_.+\"\\)", expr = Expression.Constant(new ROOTNET.NTH1F("hi", "there", 10, 0.0, 20.0))},
@@ -114,6 +114,7 @@ namespace LINQToTTreeLib
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Subtract, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10-20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Multiply, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10*20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10/20"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10.0, typeof(double)), RHS=Expression.Constant(20.0, typeof(double)), ExpectedType=typeof(double), ExpectedValue="10.0/20.0"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.MakeBinary(ExpressionType.Add, Expression.Constant(10), Expression.Constant(20)), RHS=Expression.Constant(30), ExpectedType=typeof(int), ExpectedValue="(10+20)/30"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Modulo, LHS=Expression.Constant(10), RHS=Expression.Constant(2), ExpectedType=typeof(int), ExpectedValue="10%2"}
         };
@@ -153,7 +154,8 @@ namespace LINQToTTreeLib
             new UnaryTestCase() { UnaryType= ExpressionType.Negate, UnaryTarget=Expression.Constant(10), ExpectedType=typeof(int), ExpectedValue = "-10"},
             new UnaryTestCase() { UnaryType= ExpressionType.Negate, UnaryTarget=Expression.MakeBinary(ExpressionType.Add, Expression.Constant(5), Expression.Constant(10)), ExpectedType=typeof(int), ExpectedValue = "-(5+10)"},
             new UnaryTestCase() { UnaryType= ExpressionType.Not, UnaryTarget=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="!true"},
-            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Constant(10), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="10"}
+            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Constant(10), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="((double)10)"},
+            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Parameter(typeof(int), "dude"), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="((double)dude)"}
         };
 
         public void TestUnaryTestCase(UnaryTestCase u)
