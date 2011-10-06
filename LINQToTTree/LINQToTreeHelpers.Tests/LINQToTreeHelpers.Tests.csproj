@@ -33,27 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libCoreWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libGpadWrapper">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libGpadWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libGrafWrapper">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libGrafWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libHistWrapper">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libHistWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libRIOWrapper">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\libRIOWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="LinqToTTreeInterfacesLib">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\LINQ\lib\LinqToTTreeInterfacesLib.dll</HintPath>
-    </Reference>
-    <Reference Include="LINQToTTreeLib">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\LINQ\lib\LINQToTTreeLib.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Sprache">
@@ -67,9 +46,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\..\..\..\..\..\..\..\root\NETWrappers\lib\WrapperPlumbingLibrary.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">

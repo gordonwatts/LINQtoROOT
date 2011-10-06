@@ -34,64 +34,39 @@
     <DocumentationFile>bin\Release\LINQToTreeHelpers.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Doddle.Reporting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=183ffec7490b24a9, processorArchitecture=MSIL">
+    <Reference Include="Doddle.Reporting">
       <HintPath>..\Libraries\Doddle.Reporting.dll</HintPath>
     </Reference>
-    <Reference Include="libCoreWrapper, Version=2.2.4255.4082, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libCoreWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libGpadWrapper, Version=2.2.4255.4185, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libGpadWrapper">
       <HintPath>..\packages\ROOTNET-Graphing-v5.30.01.win32.vc10.2.2\lib\net40\libGpadWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libGraf3dWrapper, Version=2.2.4255.4213, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libGraf3dWrapper">
       <HintPath>..\packages\ROOTNET-Graphing-v5.30.01.win32.vc10.2.2\lib\net40\libGraf3dWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libGrafWrapper, Version=2.2.4255.4170, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libGrafWrapper">
       <HintPath>..\packages\ROOTNET-Graphing-v5.30.01.win32.vc10.2.2\lib\net40\libGrafWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libHistWrapper, Version=2.2.4255.4144, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libHistWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libMathCoreWrapper, Version=2.2.4255.4092, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libMathCoreWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libNetWrapper, Version=2.2.4255.4132, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libNetWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libPhysicsWrapper, Version=2.2.4255.4095, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libPhysicsWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libRIOWrapper, Version=2.2.4255.4114, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libRIOWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libThreadWrapper, Version=2.2.4255.4098, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="libThreadWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libTreePlayerWrapper, Version=2.2.4255.4192, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreePlayerWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libTreeWrapper, Version=2.2.4255.4181, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="LinqToTTreeInterfacesLib, Version=0.42.4264.29416, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\LINQToTTree\build\LinqToTTreeInterfacesLib.dll</HintPath>
-    </Reference>
-    <Reference Include="LINQToTTreeLib, Version=0.41.4264.29416, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\LINQToTTree\build\LINQToTTreeLib.dll</HintPath>
     </Reference>
     <Reference Include="Sprache">
       <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
@@ -103,8 +78,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.2.4255.3988, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="WrapperPlumbingLibrary">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -132,6 +106,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LINQToTTreeLib\LINQToTTreeLib.csproj">
+      <Project>{A1A955AD-BC56-4413-92BC-581C35A78522}</Project>
+      <Name>LINQToTTreeLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

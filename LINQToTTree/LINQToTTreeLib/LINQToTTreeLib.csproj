@@ -215,10 +215,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist $(SolutionDir)\build mkdir $(SolutionDir)\build
-copy $(TargetDir)LINQToTTreeLib.dll $(SolutionDir)\build
-copy $(TargetDir)LinqToTTreeInterfacesLib.dll $(SolutionDir)\build
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
