@@ -64,10 +64,6 @@
     <Reference Include="libThreadWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="LinqToTTreeInterfacesLib, Version=0.42.4264.29416, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\LINQToTTree\build\LinqToTTreeInterfacesLib.dll</HintPath>
-    </Reference>
     <Reference Include="Sprache">
       <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
     </Reference>
@@ -108,6 +104,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinqToTTreeInterfacesLib\LinqToTTreeInterfacesLib.csproj">
+      <Project>{802DBA06-8779-4024-A899-4D0293F75695}</Project>
+      <Name>LinqToTTreeInterfacesLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LINQToTTreeLib\LINQToTTreeLib.csproj">
       <Project>{A1A955AD-BC56-4413-92BC-581C35A78522}</Project>
       <Name>LINQToTTreeLib</Name>
