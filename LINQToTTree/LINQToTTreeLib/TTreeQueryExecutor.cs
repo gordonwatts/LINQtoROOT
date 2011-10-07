@@ -695,7 +695,7 @@ namespace LINQToTTreeLib
             if (File.Exists(guess))
                 return guess;
 
-            throw new FileNotFoundException(string.Format("Unable to locatoin LINQToTTree template file '{0}' in any standard location.", templateName));
+            throw new FileNotFoundException(string.Format("Unable to locatoin LINQToTTree template file '{0}' in any standard location (tried '{1}' and '{2}'.", templateName, assGuess, guess));
         }
 
         /// <summary>
