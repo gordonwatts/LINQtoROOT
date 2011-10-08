@@ -7,6 +7,8 @@
 
 $mod = Resolve-Path .\LINQToTTree\BuildScripts\BuildUtils.psm1
 Write-Host $mod
+$policy = Get-ExecutionPolicy
+Write-Host "Current exe policy: $policy"
 Import-Module $mod
 
 #
