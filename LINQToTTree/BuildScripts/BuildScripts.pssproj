@@ -23,6 +23,9 @@
     <Compile Include="BuildUtils.psm1" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="cibuilder.ps1">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Init.ps1">
       <SubType>Content</SubType>
     </Content>
