@@ -768,7 +768,7 @@ namespace LINQToTTreeLib
             /// 
 
             commonArea.Refresh();
-            Assert.IsTrue(commonArea.Exists, "The common build area doesn't exist currently");
+            Assert.IsTrue(commonArea.Exists, string.Format("The common build area doesn't exist currently ({0}).", commonArea.FullName));
             var filesFromOurObj = (from fd in commonArea.EnumerateFiles()
                                    where fd.Name.Contains(fnamebase)
                                    select fd).ToArray();
