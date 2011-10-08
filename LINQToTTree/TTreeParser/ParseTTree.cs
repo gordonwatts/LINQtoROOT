@@ -30,6 +30,9 @@ namespace TTreeParser
         /// <returns></returns>
         public IEnumerable<ROOTClassShell> GenerateClasses(ROOTNET.Interface.NTTree tree)
         {
+            if (tree == null)
+                throw new ArgumentNullException("tree must not be null");
+
             ///
             /// The outlying class is going to be called by the name of the tree.
             /// 
