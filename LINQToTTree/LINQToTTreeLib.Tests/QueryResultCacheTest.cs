@@ -306,11 +306,13 @@ namespace LINQToTTreeLib
 
             /// Modify the file
 
+            System.Threading.Thread.Sleep(500);
             using (var w = f.CreateText())
             {
                 w.WriteLine("fork it!");
                 w.Close();
             }
+            f.Refresh();
 
             /// And make sure the lookup fails now!
 
