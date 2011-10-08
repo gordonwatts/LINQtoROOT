@@ -205,6 +205,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             {
                 ROOTNET.NTSystem.gSystem.AddIncludePath("-I\"" + cf.FullName + "\"");
             }
+
+            //
+            // Make sure the environment is setup correctly!
+            //
+
+            SetupENV();
         }
 
         #region Support Routines
@@ -369,6 +375,122 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             _loadedModuleNames.Clear();
+        }
+
+        /// <summary>
+        /// Make sure the environment is setup to run the C++ compiler. If it isn't adjust it.
+        /// </summary>
+        /// <remarks>
+        /// We should be called only once per execution, though I guess we are protected!
+        /// </remarks>
+        private void SetupENV()
+        {
+            //
+            // If "cl" is already visible, then we don't have to do anything.
+            //
+
+            if (FindFileInEnv("PATH", "cl.exe"))
+                return;
+
+            //
+            // Ok - it isn't in there. Now we need to actually load it in.
+            //
+
+            // Get the install directory
+
+            var vcInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VC7", "10.0");
+            if (vcInstallDir == null)
+                throw new NotSupportedException("Visual Studio C++ v10.0 must be installed or already setup otherwise we cannot run!");
+
+            var vsInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VS7", "10.0");
+            if (vsInstallDir == null)
+                throw new NotSupportedException("Visual Studio IDE v10.0 must be installed already otherwise setup cannot run!");
+
+            var winSDKDir = GetVCRegistryEntry(@"Microsoft\Microsoft SDKs\Windows\v7.0A", "InstallationFolder");
+            if (winSDKDir == null)
+                throw new NotSupportedException("Unable to locate the windows SDK directory to link against! Cannot run!");
+
+            AddToPathEnv("PATH", string.Format(@"{0}\bin", vcInstallDir));
+            AddToPathEnv("PATH", string.Format(@"{0}\Common7\IDE", vsInstallDir));
+            AddToPathEnv("INCLUDE", string.Format(@"{0}\include", winSDKDir));
+            AddToPathEnv("INCLUDE", string.Format(@"{0}\include", vcInstallDir));
+            AddToPathEnv("LIB", string.Format(@"{0}\lib", winSDKDir));
+            AddToPathEnv("LIB", string.Format(@"{0}\lib", vcInstallDir));
+            AddToPathEnv("LIBPATH", string.Format(@"{0}\lib", vcInstallDir));
+
+            if (!FindFileInEnv("PATH", "cl.exe"))
+                throw new InvalidOperationException("Despite defining PATH variabels to the compiler, we can't find cl.exe!");
+        }
+
+        /// <summary>
+        /// Add to a semi-colon seperated environment variable
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="p_2"></param>
+        private void AddToPathEnv(string envName, string newPath)
+        {
+            if (!Directory.Exists(newPath))
+                throw new InvalidOperationException(string.Format("Path does not exist - will not add '{0}'", newPath));
+
+            var oldEnv = System.Environment.GetEnvironmentVariable(envName);
+            var newEnv = newPath.Replace(@"\\", @"\");
+            if (oldEnv != null)
+                newEnv = String.Format("{0};{1}", newEnv, oldEnv);
+
+            System.Environment.SetEnvironmentVariable(envName, newEnv);
+        }
+
+        /// <summary>
+        /// Search the registry entry for a particular key to load.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="p_2"></param>
+        /// <returns></returns>
+        private string GetVCRegistryEntry(string baseRegPath, string keyName)
+        {
+            // A little tricky because we have 64 bit and 32 bit stuff!
+
+            var r = GetVCRegistryEntryAbs(string.Format(@"SOFTWARE\{0}", baseRegPath), keyName);
+            if (r == null)
+                return GetVCRegistryEntryAbs(string.Format(@"SOFTWARE\Wow6432Node\{0}", baseRegPath), keyName);
+            return r;
+        }
+
+        /// <summary>
+        /// Load in the proper registry item here
+        /// </summary>
+        /// <param name="regPath"></param>
+        /// <param name="keyName"></param>
+        /// <returns></returns>
+        private string GetVCRegistryEntryAbs(string regPath, string keyName)
+        {
+            using (var reg = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath, false))
+            {
+                if (reg == null)
+                    return null;
+                var regv = reg.GetValue(keyName);
+                return regv as string;
+            }
+        }
+
+        private object GetVCRegistryEntryAbs(string p)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Search the environment for a file.
+        /// </summary>
+        /// <param name="envVariable">Name of the environment variable, with paths, seperated by semi-colons.</param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private bool FindFileInEnv(string envVariable, string filename)
+        {
+            var foundFiles = from dir in System.Environment.GetEnvironmentVariable(envVariable).Split(';')
+                             let fstr = string.Format(@"{0}\{1}", dir, filename)
+                             where File.Exists(fstr)
+                             select fstr;
+            return foundFiles.Any();
         }
 
         #endregion
