@@ -730,7 +730,7 @@ namespace LINQToTTreeLib
             /// where the common area is for this step.
             /// 
 
-            var commonArea = new DirectoryInfo(System.Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Temp\LINQToROOT\CommonFiles");
+            var commonArea = new DirectoryInfo(Path.GetTempPath() + @"\LINQToROOT\CommonFiles");
             if (commonArea.Exists)
             {
                 var filesToKill = (from fd in commonArea.EnumerateFiles()
