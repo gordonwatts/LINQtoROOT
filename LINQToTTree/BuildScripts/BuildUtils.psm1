@@ -173,7 +173,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$mainLibraryFiles = "LinqToTTreeInterfacesLib", "LINQToTTreeLib", "Remotion.Linq"
 	check-exists $mainLibrary $mainLibraryFiles
 
-	$helperLibrarySolutionDir = "$solutionDirectory\LINQToTTreeHelpers\LINQToTreeHelpers"
+	$helperLibrarySolutionDir = "$solutionDirectory\LINQToTTree\LINQToTreeHelpers"
 	$helperLibrary = "$helperLibrarySolutionDir\bin\$release"
 	$helperLibraryFiles = "LINQToTreeHelpers", "Doddle.Reporting"
 	check-exists $helperLibrary $helperLibraryFiles
@@ -397,4 +397,5 @@ function build-LINQToTTree ($BuildPath, $Release = "x86", $Tag = "HEAD", $nugetP
 
 #build-LINQToTTree-nuget-packages "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "0.42" -nugetDistroDirectory "C:\Users\gwatts\Documents\nuget"
 Export-ModuleMember build-LINQToTTree
+Export-ModuleMember build-LINQToTTree-nuget-packages
 #build-LINQToTTree C:\Users\gwatts\Desktop\bogus\linqtoroot
