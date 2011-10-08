@@ -160,11 +160,13 @@ namespace LINQToTTreeLib.Tests
 
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
+        [DeploymentItem("ComplexNtupleTestInput.root")]
         public void GenerateClassesTestNoClassInfo()
         {
             /// There are some classes in here that ROOT dosen't know about - so we
             /// need to detect that and "bomb".
-            var f = new ROOTNET.NTFile("../../../TTreeParser.Tests/ComplexNtupleTestInput.root", "READ");
+            var f = new ROOTNET.NTFile("ComplexNtupleTestInput.root", "READ");
+            Assert.IsTrue(f.IsOpen(), "Test file not found");
             var t = f.Get("btag") as ROOTNET.Interface.NTTree;
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
