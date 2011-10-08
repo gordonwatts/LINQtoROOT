@@ -112,6 +112,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             /// 
 
             Parse(new DirectoryInfo("."));
+            Parse(new DirectoryInfo(new FileInfo(Assembly.GetCallingAssembly().Location).DirectoryName));
             Parse(new DirectoryInfo(new FileInfo(Assembly.GetCallingAssembly().Location).DirectoryName + "\\ConfigData"));
             Parse(new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Config"));
         }

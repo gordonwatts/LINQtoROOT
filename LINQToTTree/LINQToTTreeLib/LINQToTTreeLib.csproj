@@ -198,9 +198,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ConfigData\default.classmethodmappings">
+    <Content Include="ConfigData\default.classmethodmappings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
