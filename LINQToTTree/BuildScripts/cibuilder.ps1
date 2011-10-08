@@ -30,4 +30,5 @@ $version = $FileVersion
 # Next, do the nuget build!
 
 #-nugetDistroDirectory $nugetPackageDir 
-build-LINQToTTree-nuget-packages "." "." $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release
+$currentPath = Resolve-Path "."
+build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release

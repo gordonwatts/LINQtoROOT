@@ -235,7 +235,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 		"Dependencies" = $allPackageDependencies
 		"Libraries" = $allLibraries
 		"Tools" = $toolFiles
-		ContentFiles = $contentList
+		"ContentFiles" = $contentList
 	}
 	
 	$pkg = build-nuget-package -PackageSpecification $packageSpec -BuildDir $buildDir -NuGetExe "$solutionDirectory\LINQToTTree\nuget.exe"
