@@ -691,11 +691,15 @@ namespace LINQToTTreeLib
             if (File.Exists(assGuess))
                 return assGuess;
 
+            var assGuess1 = string.Format(@"{0}\{1}", assDir.DirectoryName, templateName);
+            if (File.Exists(assGuess1))
+                return assGuess1;
+
             var guess = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Templates\\" + templateName;
             if (File.Exists(guess))
                 return guess;
 
-            throw new FileNotFoundException(string.Format("Unable to locatoin LINQToTTree template file '{0}' in any standard location (tried '{1}' and '{2}'.", templateName, assGuess, guess));
+            throw new FileNotFoundException(string.Format("Unable to locatoin LINQToTTree template file '{0}' in any standard location (tried '{1}' and '{2}' and '{2}'.", templateName, assGuess, assGuess1, guess));
         }
 
         /// <summary>
