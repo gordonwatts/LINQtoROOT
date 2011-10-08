@@ -35,10 +35,6 @@ namespace LINQToTTreeLib
             }
             var projectDir = currentDir.Parent;
 
-            ntuple_with_proxy._gProxyFile = projectDir.FullName + @"\DemosAndTests\GenerateNtupleXMLSpec\ntuple_btag.h";
-            Assert.IsTrue(File.Exists(ntuple_with_proxy._gProxyFile), "Proxy file we are using for testing isn't around!");
-
-
             ntuple._gCINTLines = null;
             ntuple._gObjectFiles = null;
             ntuple._gProxyFile = null;
