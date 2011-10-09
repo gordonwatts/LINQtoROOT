@@ -28,3 +28,5 @@ if ($imports)
 }
 
 $project.Save() #persists the changes
+$buildProject.Save()
+$project.Save() #persists the changes
