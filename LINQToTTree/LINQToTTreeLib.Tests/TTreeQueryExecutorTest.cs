@@ -574,7 +574,7 @@ namespace LINQToTTreeLib
             dir.Refresh();
             Assert.IsTrue(dir.Exists, "Temp directory doesn't exist");
             Assert.AreEqual(0, dir.EnumerateFiles().Count(), "Expected no spare files in there!");
-            Assert.AreEqual(1, dir.EnumerateDirectories().Count(), "Incorrect # of subdirectories");
+            Assert.AreEqual(2, dir.EnumerateDirectories().Count(), "Incorrect # of subdirectories");
             Assert.AreEqual("CommonFiles", dir.GetDirectories()[0].Name, "incorrect name of single existing directory");
         }
 
