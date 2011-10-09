@@ -3,7 +3,7 @@
 # when run from the continuous integration server. The result
 # of this guy will be become a build artifact.
 #
-
+param([int] $BuildNumber = 0)
 
 $mod = Resolve-Path .\LINQToTTree\BuildScripts\BuildUtils.psm1
 $policy = Get-ExecutionPolicy
@@ -24,8 +24,9 @@ $NameSuffix = "-ci"
 # First, we need to put together the version number that we will use to register
 # this nuget package
 
-$FileVersion = (Get-Item "LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib.dll").VersionInfo.ProductVersion
-$version = $FileVersion
+$FileVersion = (Get-Item "LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib.dll").VersionInfo.ProductVersion -split "\."
+$FileVersion[3] = $BuildNumber
+$version = $FileVersion -join "."
 
 # Next, do the nuget build!
 
