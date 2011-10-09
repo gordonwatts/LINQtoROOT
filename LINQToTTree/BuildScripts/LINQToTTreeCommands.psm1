@@ -48,6 +48,8 @@ function Write-TTree-MetaData ($Path = $(throw "-Path must be supplied"))
 	$allFiles = Get-ChildItem -Path $destDir.FullName
 	$allFiles | ? {$_.Extension -eq ".ntup"} | add-to-project "TTreeGroupSpec" $ms
 	$allFiles | ? {$_.Extension -eq ".ntupom"} | add-to-project "ROOTFileDataModel" $ms
+	
+	$p.Save()
 }
 
 #
