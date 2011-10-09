@@ -198,6 +198,11 @@ namespace LINQToTTreeLib.ExecutionCommon
                 TempDirectory.Refresh();
             }
 
+            if (!DictDirectory.Exists)
+            {
+                DictDirectory.Create();
+            }
+
             ///
             /// Next the common source files. Make sure that the include files passed to the old compiler has
             /// this common file directory in there!
