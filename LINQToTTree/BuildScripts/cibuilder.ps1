@@ -3,7 +3,7 @@
 # when run from the continuous integration server. The result
 # of this guy will be become a build artifact.
 #
-param([int] $BuildNumber = 0)
+param([int] $BuildNumber = 0, [string] $NameSuffix = "-ci")
 
 $mod = Resolve-Path .\LINQToTTree\BuildScripts\BuildUtils.psm1
 $policy = Get-ExecutionPolicy
@@ -14,7 +14,6 @@ Import-Module $mod
 #
 
 $release = "x86\Release"
-$NameSuffix = "-ci"
 
 #
 # The CI builder has already done all the hard work for us, so we need to just go
