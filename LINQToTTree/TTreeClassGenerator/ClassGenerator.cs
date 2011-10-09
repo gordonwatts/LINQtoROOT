@@ -37,6 +37,7 @@ namespace TTreeClassGenerator
             /// 
 
             var classSpec = LoadFromXMLFile(inputXMLFile);
+            FillInDefaults(classSpec);
 
             ///
             /// Next, see if we can find the user specification file. We get a search path and use that to find this file.
@@ -162,6 +163,12 @@ namespace TTreeClassGenerator
                 if (!File.Exists(c))
                     throw new ArgumentException("Can't fine class support file '" + c + "'.");
             }
+
+            //
+            // Fill in some defaults
+            //
+
+            userInfo = FillInDefaults(classSpec, userInfo);
 
             ///
             /// Ok, open the output file
@@ -419,7 +426,7 @@ namespace TTreeClassGenerator
                     output.WriteLine("    /// </summary>");
                 }
                 output.WriteLine("    [TTreeVariableGrouping]");
-                output.WriteLine("    public {0}{1}[] {1};", className, grp.Name);
+                output.WriteLine("    public {0}[] {1};", grp.ClassName, grp.Name);
             }
 
             ///
@@ -437,7 +444,7 @@ namespace TTreeClassGenerator
 
             foreach (var grp in tTreeUserInfo.Groups.Where(g => g.Name != "ungrouped"))
             {
-                output.WriteLine("  public class {0}{1}", className, grp.Name);
+                output.WriteLine("  public class {0}", grp.ClassName);
                 output.WriteLine("  {");
 
                 output.WriteLine("#pragma warning disable 0649");
@@ -626,6 +633,61 @@ namespace TTreeClassGenerator
                 reader.Close();
                 return result;
             }
+        }
+
+        /// <summary>
+        /// After reading in, it is nice to fill in some defaults if the user didn't first. That makes it a lot easier to
+        /// write code for the output of this - so it isn't filled with lots of special cases.
+        /// </summary>
+        /// <param name="classSpec"></param>
+        private void FillInDefaults(NtupleTreeInfo classSpec)
+        {
+        }
+
+        /// <summary>
+        /// Similar to the filling in above - we fill in any defaults to make the code cleaner
+        /// than might have been done above.
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <param name="userInfo"></param>
+        /// <returns></returns>
+        private TTreeUserInfo FillInDefaults(ROOTClassShell cls, TTreeUserInfo userInfo)
+        {
+            //
+            // Group class names are often left up to use to determine. Fill in the defaults here.
+            //
+
+            foreach (var g in userInfo.Groups)
+            {
+                if (string.IsNullOrWhiteSpace(g.ClassName))
+                {
+                    g.ClassName = string.Format("{0}{1}", cls.Name, g.Name);
+                }
+            }
+
+            return userInfo;
+        }
+
+        /// <summary>
+        /// Fill in some defaults for later user!
+        /// </summary>
+        /// <param name="classSpec"></param>
+        /// <param name="userInfo"></param>
+        /// <returns></returns>
+        private IDictionary<string, TTreeUserInfo> FillInDefaults(NtupleTreeInfo classSpec, IDictionary<string, TTreeUserInfo> userInfo)
+        {
+            if (userInfo == null)
+                return null;
+
+            Dictionary<string, TTreeUserInfo> result = new Dictionary<string, TTreeUserInfo>();
+            foreach (var c in classSpec.Classes)
+            {
+                if (userInfo.ContainsKey(c.Name))
+                {
+                    result[c.Name] = FillInDefaults(c, userInfo[c.Name]);
+                }
+            }
+            return result;
         }
     }
 }
