@@ -27,8 +27,10 @@ $FileVersion = (Get-Item "LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib
 $FileVersion[3] = $BuildNumber
 $version = $FileVersion -join "."
 
-# Next, do the nuget build!
+# Next, do the nuget build, one for each ROOT package.
 
 #-nugetDistroDirectory $nugetPackageDir 
 $currentPath = Resolve-Path "."
-build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release
+get-ROOT-Version-Names | %{build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release -ROOTPackage $_}
+
+

@@ -153,10 +153,35 @@ function get-root-version
 }
 
 #
+# Replace the root package (like v5.30.00.win32.vc10) in a ROOT package name
+# with the one passed in.
+#
+function replace-ROOT-Package ($NewROOTPackage)
+{
+    process
+    {
+        if (-not $_.Id.StartsWith("ROOT"))
+        {
+            return $_
+        }
+        
+        # Assume the name follows the following format:
+        #  ROOTNET-Tree-v5.28.00f.win32.vc10.debug
+        #  So - the "-vNumber" is where the package version number
+        #  starts.
+
+        
+        $v = $_.Id -replace "-v[0-9].+$", "-$NewROOTPackage"
+        $_.Id = $v
+        return $_
+    }
+}
+
+#
 # Build a nuget packages for this library. We assume the build has already been done
 # at this point - so we fail if we can't find what we are looking for!
 #
-function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $Release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB, $NameSuffix = "")
+function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $Release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB, $NameSuffix = "", $ROOTPackage = "")
 {
 	if (-not (Test-Path $solutionDirectory))
 	{
@@ -215,6 +240,15 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$helperPackageDependencies = get-solution-nuget-dependencies $helperLibrarySolutionDir
 
 	$allPackageDependencies = $mainPackageDependencies + $helperPackageDependencies | sort -Property "Id","Version" -Unique
+
+    #
+    # Replace ROOT package versions so we can run with multiple root version numbers.
+    #
+    
+    if ($ROOTPackage -ne "")
+    {
+        $allPackageDependencies = $allPackageDependencies | replace-ROOT-Package $ROOTPackage
+    }
 	
 	#
 	# Extract the root version number. We depend on these to build, so it will be stored
@@ -262,6 +296,14 @@ function get-ROOT-versions ($URL)
 	# List of all the core package names.
 	$corePackages = $pkgInfo.feed.entry | ? {$_.Title.InnerText.Contains("ROOTNET-Core")} | %{ @{ RVersion = $_.Title.InnerText.SubString(13); RDNVersion = $_.GetElementsByTagName("d:Version").Item(0).InnerText} } | % {New-Object PSObject -Property $_ }
 	return $corePackages
+}
+
+#
+# Return the list of ROOT versions from our official nuget feed. Use the most recent version of ROOT
+#
+function get-ROOT-Version-Names
+{
+    return $pkgs = get-ROOT-versions "http://deeptalk.phys.washington.edu/rootNuGet/nuget/Packages" | %{$_.RVersion}
 }
 
 #
@@ -398,4 +440,5 @@ function build-LINQToTTree ($BuildPath, $Release = "x86", $Tag = "HEAD", $nugetP
 #build-LINQToTTree-nuget-packages "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "C:\Users\gwatts\Documents\ATLAS\Projects\LINQToROOT" "0.42" -nugetDistroDirectory "C:\Users\gwatts\Documents\nuget"
 Export-ModuleMember build-LINQToTTree
 Export-ModuleMember build-LINQToTTree-nuget-packages
+Export-ModuleMember get-ROOT-Version-Names
 #build-LINQToTTree C:\Users\gwatts\Desktop\bogus\linqtoroot
