@@ -10,7 +10,7 @@ using Remotion.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
-    class DummyQueryExectuor : IQueryExecutor
+    public class DummyQueryExectuor : IQueryExecutor
     {
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
