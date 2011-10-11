@@ -107,7 +107,7 @@ namespace LINQToTreeHelpers
         [CPPCode(IncludeFiles = new[] { "TLorentzVector.h", "TVector2.h" },
             Code = new[] {
                 "double detaUnique = v1->Eta() - v2->Eta();",
-                "double dphiUnique = v1->Phi() - v2->Phi();",
+                "double dphiUnique = TVector2::Phi_mpi_pi(v1->Phi() - v2->Phi());",
                 "DeltaR2 = detaUnique*detaUnique + dphiUnique*dphiUnique;"
             })]
         public static double DeltaR2(this ROOTNET.NTLorentzVector v1, ROOTNET.NTLorentzVector v2)
