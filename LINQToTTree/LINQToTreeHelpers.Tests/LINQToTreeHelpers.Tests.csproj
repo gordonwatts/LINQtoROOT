@@ -98,12 +98,17 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="t_DataSetFinder.cs" />
+    <Compile Include="t_PlottingUtils.cs" />
     <Compile Include="t_ROOTUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LINQToTreeHelpers\LINQToTreeHelpers.csproj">
       <Project>{2BD34AA2-1BAF-4A2B-9C2D-313CB0210DDA}</Project>
       <Name>LINQToTreeHelpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinqToTTreeInterfacesLib\LinqToTTreeInterfacesLib.csproj">
+      <Project>{802DBA06-8779-4024-A899-4D0293F75695}</Project>
+      <Name>LinqToTTreeInterfacesLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\LINQToTTreeLib.Tests\LINQToTTreeLib.Tests.csproj">
       <Project>{B4D4BD10-53CD-42BE-9174-876F117D245C}</Project>
