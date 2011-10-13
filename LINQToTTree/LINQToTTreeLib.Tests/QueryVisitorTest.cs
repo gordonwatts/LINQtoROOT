@@ -381,6 +381,29 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestTranslatedAggregateWhereSingle()
+        {
+            var model = GetModel(() => (new QueriableDummy<ntupWithObjects>()).Where(evt => evt.jets.Aggregate(0, (acc, va) => acc + va.var1) > 5).Count());
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROFirstLast());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            var myth = new TypeHandlerCache();
+            MEFUtilities.AddPart(myth);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+        }
+        
+        [TestMethod]
         public void TestTranslatedNestedLoop()
         {
             var model = GetModel(() => (
