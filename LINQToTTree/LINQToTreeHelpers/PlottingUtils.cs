@@ -48,7 +48,16 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">Fully formatted and replaced string to represent the plot title</param>
             /// <param name="goodEvents">The LINQToTTree sequence of events to plot (prefiltered)</param>
             /// <returns>A future value representing the plot</returns>
-            IFutureValue<ROOTNET.Interface.NTH1> MakePlot(string nameString, string titleString, IQueryable<T> goodEvents);
+            IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents);
+
+            /// <summary>
+            /// Return an immediate plot. Really, not very useful for most people.
+            /// </summary>
+            /// <param name="nameString"></param>
+            /// <param name="titleString"></param>
+            /// <param name="goodEvents"></param>
+            /// <returns></returns>
+            ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents);
 
             /// <summary>
             /// Convert this plot to another plot that consumes a different sequence. In addtion, allow
@@ -124,11 +133,23 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">Fully formatted title to use for the plot</param>
             /// <param name="goodEvents">The sequence of good (prefiltered) events to use for this plot</param>
             /// <returns></returns>
-            public IFutureValue<ROOTNET.Interface.NTH1> MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents)
             {
                 return goodEvents.FuturePlot(nameString, titleString, nbins, xmin, xmax, getter).ExtractValue(p => p as ROOTNET.Interface.NTH1);
             }
 
+            /// <summary>
+            /// Return a plot. Use the Plot method below rather than this directly.
+            /// </summary>
+            /// <param name="nameString">Fully formatted name to use for the plot</param>
+            /// <param name="titleString">Fully formatted title to use for the plot</param>
+            /// <param name="goodEvents">The sequence of good (prefiltered) events to use for this plot</param>
+            /// <returns></returns>
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            {
+                return goodEvents.Plot(nameString, titleString, nbins, xmin, xmax, getter);
+            }
+            
             /// <summary>
             /// Create a new 1D plot specification that instead of running over a sequence of type T
             /// will run over a sequence of type U.
@@ -225,10 +246,23 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">The formatted title of the plot</param>
             /// <param name="goodEvents">The sequence of items we should be plotting</param>
             /// <returns></returns>
-            public IFutureValue<ROOTNET.Interface.NTH1> MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents)
             {
                 return goodEvents.FuturePlot(nameString, titleString, nxbins, xmin, xmax, xgetter,
                     nybins, ymin, ymax, ygetter).ExtractValue(p => p as ROOTNET.Interface.NTH1);
+            }
+
+            /// <summary>
+            /// Return a 2D plot.
+            /// </summary>
+            /// <param name="nameString">The formatted name of the plot</param>
+            /// <param name="titleString">The formatted title of the plot</param>
+            /// <param name="goodEvents">The sequence of items we should be plotting</param>
+            /// <returns></returns>
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            {
+                return goodEvents.Plot(nameString, titleString, nxbins, xmin, xmax, xgetter,
+                    nybins, ymin, ymax, ygetter);
             }
 
             /// <summary>
@@ -323,7 +357,52 @@ namespace LINQToTreeHelpers
         /// <param name="plotSpecification">The plot specification to guide the creation of the plot</param>
         /// <param name="nameAndTitleFormatArgs">Arguments to be passed to format the name and title of the plot</param>
         /// <returns></returns>
-        public static IFutureValue<ROOTNET.Interface.NTH1> Plot<T>(this IQueryable<T> source, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
+        public static IFutureValue<ROOTNET.Interface.NTH1> FuturePlot<T>(this IQueryable<T> source, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
+        {
+            return FuturePlot(source, plotSpecification.NameFormat, plotSpecification.TitleFormat, plotSpecification, nameAndTitleFormatArgs);
+        }
+
+        /// <summary>
+        /// Use a plot specification to generate a plot from the given sequence. Use this version if you wish
+        /// to have a custom name or title that will override the values of name and title normally associated
+        /// with this plot specification.
+        /// </summary>
+        /// <typeparam name="T">The type of sequence that the plotter specification runs over</typeparam>
+        /// <param name="source">The sequence to plot over</param>
+        /// <param name="plotSpecification">The plot specification to guide the creation of the plot</param>
+        /// <param name="nameAndTitleFormatArgs">Arguments to be passed to format the name and title of the plot</param>
+        /// <param name="name">The plot name string to be used. Can contain string.Format specifiers</param>
+        /// <param name="title">The plot title string to be used. Can contain string.Format specifiers</param>
+        /// <returns></returns>
+        public static IFutureValue<ROOTNET.Interface.NTH1> FuturePlot<T>(this IQueryable<T> source, string name, string title, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("Name is null");
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException("Title is null");
+
+            var titleString = string.Format(title, nameAndTitleFormatArgs);
+            var nameString = string.Format(name, nameAndTitleFormatArgs).FixupForROOTName();
+
+            var goodEvents = source;
+            if (plotSpecification.Filter != null)
+                goodEvents = source.Where(plotSpecification.Filter);
+
+            return plotSpecification.MakeFuturePlot(nameString, titleString, goodEvents);
+        }
+
+        /// <summary>
+        /// Use a plot specification to generate a plot from the given sequence.
+        /// </summary>
+        /// <remarks>
+        /// This is an extension method so you can use it easily on the sequence.
+        /// </remarks>
+        /// <typeparam name="T">The type of sequence that the plotter specification runs over</typeparam>
+        /// <param name="source">The sequence to plot over</param>
+        /// <param name="plotSpecification">The plot specification to guide the creation of the plot</param>
+        /// <param name="nameAndTitleFormatArgs">Arguments to be passed to format the name and title of the plot</param>
+        /// <returns></returns>
+        public static ROOTNET.Interface.NTH1 Plot<T>(this IQueryable<T> source, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
         {
             return Plot(source, plotSpecification.NameFormat, plotSpecification.TitleFormat, plotSpecification, nameAndTitleFormatArgs);
         }
@@ -340,7 +419,7 @@ namespace LINQToTreeHelpers
         /// <param name="name">The plot name string to be used. Can contain string.Format specifiers</param>
         /// <param name="title">The plot title string to be used. Can contain string.Format specifiers</param>
         /// <returns></returns>
-        public static IFutureValue<ROOTNET.Interface.NTH1> Plot<T>(this IQueryable<T> source, string name, string title, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
+        public static ROOTNET.Interface.NTH1 Plot<T>(this IQueryable<T> source, string name, string title, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("Name is null");
