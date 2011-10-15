@@ -323,6 +323,8 @@ namespace LINQToTreeHelpers
         /// <typeparam name="U">The type you wish the new plotter to run on</typeparam>
         /// <param name="source">The plot spec to be extended to run on a sequence</param>
         /// <param name="argumentPrefix">Added to the argument, null by default (means nothing added).</param>
+        /// <param name="converter">Convert from an object of type U to a sequences of objects of type T</param>
+        /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
         /// <returns>Plot spec able to run on a sequence</returns>
         public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
         {
@@ -360,9 +362,10 @@ namespace LINQToTreeHelpers
         /// get it "right".
         /// </remarks>        /// <typeparam name="U">The new plotter sequence type</typeparam>
         /// <typeparam name="T">The old plotter sequence type</typeparam>
-        /// <param name="source"></param>
-        /// <param name="converter"></param>
-        /// <param name="argumentPrefix"></param>
+        /// <param name="source">The original plotter specification</param>
+        /// <param name="converter">Convert from objects of type U to objects of type T</param>
+        /// <param name="argumentPrefix">Prefex to add to the name and title arguments</param>
+        /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
         /// <returns></returns>
         public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
         {
