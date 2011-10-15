@@ -99,5 +99,24 @@ namespace LINQToTreeHelpers.Tests
 
             Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
         }
+
+        [TestMethod]
+        public void TestFromTemplateWithStraightSequenceDefinition()
+        {
+            // Create the plot
+
+            var p = PlottingUtils.MakePlotterSpec<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>(10, 0.0, 10.0, evt => evt.jets.Select(j => (double)j.myvectorofint), "dude", "fork");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(p, "fork");
+
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
+        }
     }
 }

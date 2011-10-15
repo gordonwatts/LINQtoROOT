@@ -324,7 +324,7 @@ namespace LINQToTreeHelpers
         /// <param name="source">The plot spec to be extended to run on a sequence</param>
         /// <param name="argumentPrefix">Added to the argument, null by default (means nothing added).</param>
         /// <returns>Plot spec able to run on a sequence</returns>
-        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix)
+        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
         {
             string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
             string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
@@ -334,14 +334,14 @@ namespace LINQToTreeHelpers
             {
                 NameFormat = newNameFormat,
                 TitleFormat = newTitleFormat,
-                Plotter = source
+                Plotter = source,
             };
 
             // It would be nice to avoid this line if U and IEnumerable<T> were the same, however
             // the compiler doesn't know ahead of time, so we can't (unless we code up
             // a second method to do that). It should translate to a null operation in C++, however!
 
-            var convertedResult = result.FromData(converter, argumentPrefix);
+            var convertedResult = result.FromData(converter, argumentPrefix, filter);
 
             return convertedResult;
         }
@@ -364,7 +364,7 @@ namespace LINQToTreeHelpers
         /// <param name="converter"></param>
         /// <param name="argumentPrefix"></param>
         /// <returns></returns>
-        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix)
+        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
         {
             string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
             string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
@@ -374,7 +374,8 @@ namespace LINQToTreeHelpers
                 NameFormat = newNameFormat,
                 TitleFormat = newTitleFormat,
                 Plotter = source,
-                Converter = converter
+                Converter = converter,
+                Filter = filter
             };
 
             return result;
@@ -400,6 +401,29 @@ namespace LINQToTreeHelpers
             string nFormat = null, string tFormat = null, Expression<Func<T, bool>> filter = null)
         {
             return new PlotSpec1D<T>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = xGetter, NameFormat = nFormat, TitleFormat = tFormat, Filter = filter };
+        }
+
+        /// <summary>
+        /// Creates a plotter specification for a 1D (TH1F) plotter.
+        /// </summary>
+        /// <remarks>
+        /// The # of bins, xmin, and xmax are passed directly to root. If you want to have auto limits,
+        /// for example, then you can just specify xmax > xmin.
+        /// </remarks>
+        /// <typeparam name="T">The type of the sequence that this plotter will be plotting over</typeparam>
+        /// <param name="nXBins">Number of bins along the X axis</param>
+        /// <param name="XMin">The minimum value of the x axis.</param>
+        /// <param name="XMax">The maximum value of the x axis</param>
+        /// <param name="xGetter">Return the sequence of values to plot from the sequence</param>
+        /// <param name="nFormat">The format specification for the plot name string</param>
+        /// <param name="tFormat">The format specification for the plot title string</param>
+        /// <param name="filter">A filter that will remove sequence items you don't want plotted</param>
+        /// <returns></returns>
+        public static IPlotSpec<T> MakePlotterSpec<T>(int nXBins, double XMin, double XMax, Expression<Func<T, IEnumerable<double>>> xGetter,
+            string nFormat = null, string tFormat = null, Expression<Func<T, bool>> filter = null)
+        {
+            var basePlotter = new PlotSpec1D<double>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = x => x, NameFormat = nFormat, TitleFormat = tFormat };
+            return basePlotter.FromData(xGetter, "", filter);
         }
 
         /// <summary>
