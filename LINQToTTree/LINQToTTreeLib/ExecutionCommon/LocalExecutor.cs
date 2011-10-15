@@ -342,7 +342,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             /// This should never happen - but we are depending on so many different things to go right here!
             if (result != 1)
-                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - make sure command 'cl' is defined!!!");
+                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - This is a very bad internal error - inspect the file to see if you can see what went wrong and repot!!!");
 
             _loadedModuleNames.Add(templateRunner.Name.Replace(".", "_"));
         }
