@@ -86,7 +86,7 @@ namespace LINQToTreeHelpers.Tests
         {
             // Create the plot.
             var pRaw = PlottingUtils.MakePlotterSpec<TTreeQueryExecutorTest.TestNtupeArrJets>(10, 0.0, 10.0, v => v.myvectorofint, "dude", "fork");
-            var pEvent = pRaw.FromData((LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents evt) => evt.jets, "more jets");
+            var pEvent = pRaw.FromType((LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents evt) => evt.jets, "more jets");
 
             ///
             /// Get a simple query we can "play" with

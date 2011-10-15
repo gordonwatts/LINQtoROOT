@@ -324,7 +324,7 @@ namespace LINQToTreeHelpers
         /// <param name="source">The plot spec to be extended to run on a sequence</param>
         /// <param name="argumentPrefix">Added to the argument, null by default (means nothing added).</param>
         /// <returns>Plot spec able to run on a sequence</returns>
-        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
+        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
         {
             string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
             string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
@@ -341,7 +341,7 @@ namespace LINQToTreeHelpers
             // the compiler doesn't know ahead of time, so we can't (unless we code up
             // a second method to do that). It should translate to a null operation in C++, however!
 
-            var convertedResult = result.FromData(converter, argumentPrefix, filter);
+            var convertedResult = result.FromType(converter, argumentPrefix, filter);
 
             return convertedResult;
         }
@@ -364,7 +364,7 @@ namespace LINQToTreeHelpers
         /// <param name="converter"></param>
         /// <param name="argumentPrefix"></param>
         /// <returns></returns>
-        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
+        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
         {
             string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
             string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
@@ -423,7 +423,7 @@ namespace LINQToTreeHelpers
             string nFormat = null, string tFormat = null, Expression<Func<T, bool>> filter = null)
         {
             var basePlotter = new PlotSpec1D<double>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = x => x, NameFormat = nFormat, TitleFormat = tFormat };
-            return basePlotter.FromData(xGetter, "", filter);
+            return basePlotter.FromType(xGetter, "", filter);
         }
 
         /// <summary>
