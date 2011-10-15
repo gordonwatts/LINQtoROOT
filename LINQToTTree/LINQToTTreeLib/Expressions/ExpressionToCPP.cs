@@ -22,6 +22,9 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         public static IValue GetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
+            if (expr == null)
+                return null;
+
             if (cc == null)
             {
                 cc = new CodeContext();
@@ -40,6 +43,9 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         public static IValue InternalGetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
+            if (expr == null)
+                return null;
+
             if (cc == null)
             {
                 cc = new CodeContext();
