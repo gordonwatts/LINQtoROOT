@@ -152,6 +152,21 @@ namespace LINQToTTreeLib.Expressions
             }
 
             /// <summary>
+            /// When looking at the member expression it is possible that we'll do a sub-query expression (or similar), and that
+            /// will yield the first part of an array. It will only make sense for us to look at it when it comes back and is
+            /// re-combined. So...
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitMemberExpression(MemberExpression expression)
+            {
+                var expr = base.VisitMemberExpression(expression);
+                if (expr != expression)
+                    return expr.Resolve(GeneratedCode, _codeContext, MEFContainer);
+                return expr;
+            }
+
+            /// <summary>
             /// There are certian expressions we really don't want to delve into - in
             /// particular an array length operator!
             /// </summary>
