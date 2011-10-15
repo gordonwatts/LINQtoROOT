@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using LINQToTreeHelpers.FutureUtils;
@@ -58,26 +59,87 @@ namespace LINQToTreeHelpers
             /// <param name="goodEvents"></param>
             /// <returns></returns>
             ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents);
+        }
+
+        /// <summary>
+        /// Deal with making a plot (of some sort) over a sequence of items
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public class PlotSpecSequence<T> : IPlotSpec<IEnumerable<T>>
+        {
+            /// <summary>
+            /// The name format string for this plot.
+            /// </summary>
+            public string NameFormat { get; set; }
 
             /// <summary>
-            /// Convert this plot to another plot that consumes a different sequence. In addtion, allow
-            /// an argument to be appended to the first argument passed in.
+            /// The title format string for this plot
             /// </summary>
-            /// <remarks>
-            /// This is useful if you have a plot of pT, and you want to convert it to make a plot of pT's of a
-            /// jet object. Use the converter argument to convert from jet objects to double's.
-            /// 
-            /// The extra argument text can be used in the following way. If your "NameFOrmat" is "{0}pT" and you pass
-            /// in "jet" for the argument, then the new plot should have a NameFormat of "{0}jetpT".
-            /// 
-            /// There is some boiler plate when implementing this method. See library source code and start from there to
-            /// get it "right".
-            /// </remarks>
-            /// <typeparam name="U">The type of the sequence that the new plot should be run over</typeparam>
-            /// <param name="converter">An expression that converts from the type U to type T</param>
-            /// <param name="extraArgText">This will be pre-pended to the first argument in each argument in the name and title</param>
+            public string TitleFormat { get; set; }
+
+            /// <summary>
+            /// The filter that is run for this plot.
+            /// </summary>
+            public Expression<Func<IEnumerable<T>, bool>> Filter { get; set; }
+
+            /// <summary>
+            /// Make a future plot from the sequence.
+            /// </summary>
+            public IPlotSpec<T> Plotter { get; set; }
+
+            /// <summary>
+            /// Make a future plot from the sequence of filtered events. We use the full blow plotter guy below
+            /// in order to make sure that we are properly dealing with filters in the plot we are making here!
+            /// </summary>
+            /// <param name="nameString"></param>
+            /// <param name="titleString"></param>
+            /// <param name="goodEvents"></param>
             /// <returns></returns>
-            IPlotSpec<U> FromData<U>(Expression<Func<U, T>> converter, string extraArgText);
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<IEnumerable<T>> goodEvents)
+            {
+                return goodEvents.SelectMany(seq => seq).FuturePlot(nameString, titleString, Plotter);
+            }
+
+            /// <summary>
+            /// Make a plot from the sequence. We will use the full blown plotter guy below in order
+            /// to make sure that we are properly dealing with filters in the plot we are making here!
+            /// </summary>
+            /// <param name="nameString"></param>
+            /// <param name="titleString"></param>
+            /// <param name="goodEvents"></param>
+            /// <returns></returns>
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<IEnumerable<T>> goodEvents)
+            {
+                return goodEvents.SelectMany(seq => seq).Plot(nameString, titleString, Plotter);
+            }
+        }
+
+        /// <summary>
+        /// Plot spec class that will convert from type U to type T for plotting!
+        /// </summary>
+        /// <typeparam name="T">The old plotter sequence type</typeparam>
+        /// <typeparam name="U">The new plotter sequence type</typeparam>
+        private class PlotSpecConverter<T, U> : IPlotSpec<U>
+        {
+            public string NameFormat { get; set; }
+
+            public string TitleFormat { get; set; }
+
+            public Expression<Func<U, bool>> Filter { get; set; }
+
+            public IPlotSpec<T> Plotter { get; set; }
+
+            public Expression<Func<U, T>> Converter { get; set; }
+
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<U> goodEvents)
+            {
+                return goodEvents.Select(Converter).FuturePlot(nameString, titleString, Plotter);
+            }
+
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<U> goodEvents)
+            {
+                return goodEvents.Select(Converter).Plot(nameString, titleString, Plotter);
+            }
         }
 
         /// <summary>
@@ -129,6 +191,9 @@ namespace LINQToTreeHelpers
             /// <summary>
             /// Return a future value for the plot. Use the Plot method below rather than this directly.
             /// </summary>
+            /// <remarks>
+            /// Assume that our events have already been filtered (see below).
+            /// </remarks>
             /// <param name="nameString">Fully formatted name to use for the plot</param>
             /// <param name="titleString">Fully formatted title to use for the plot</param>
             /// <param name="goodEvents">The sequence of good (prefiltered) events to use for this plot</param>
@@ -141,6 +206,9 @@ namespace LINQToTreeHelpers
             /// <summary>
             /// Return a plot. Use the Plot method below rather than this directly.
             /// </summary>
+            /// <remarks>
+            /// Assume that our events have already been filtered (see below).
+            /// </remarks>
             /// <param name="nameString">Fully formatted name to use for the plot</param>
             /// <param name="titleString">Fully formatted title to use for the plot</param>
             /// <param name="goodEvents">The sequence of good (prefiltered) events to use for this plot</param>
@@ -148,33 +216,6 @@ namespace LINQToTreeHelpers
             public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
             {
                 return goodEvents.Plot(nameString, titleString, nbins, xmin, xmax, getter);
-            }
-            
-            /// <summary>
-            /// Create a new 1D plot specification that instead of running over a sequence of type T
-            /// will run over a sequence of type U.
-            /// </summary>
-            /// <typeparam name="U"></typeparam>
-            /// <param name="selector"></param>
-            /// <param name="extraArgText"></param>
-            /// <returns></returns>
-            public IPlotSpec<U> FromData<U>(Expression<Func<U, T>> selector, string extraArgText)
-            {
-                var result = new PlotSpec1D<U>()
-                {
-                    nbins = nbins,
-                    xmax = xmax,
-                    xmin = xmin,
-                    Filter = null,
-                    NameFormat = string.Format(NameFormat, extraArgText + "{0}"),
-                    TitleFormat = string.Format(TitleFormat, extraArgText + " {0}")
-                };
-
-                result.getter = selector.C(getter);
-                if (Filter != null)
-                    result.Filter = selector.C(Filter);
-
-                return result;
             }
         }
 
@@ -264,37 +305,79 @@ namespace LINQToTreeHelpers
                 return goodEvents.Plot(nameString, titleString, nxbins, xmin, xmax, xgetter,
                     nybins, ymin, ymax, ygetter);
             }
+        }
 
-            /// <summary>
-            /// Create a new plot specification that runs over a sequence of type U rather than type T.
-            /// </summary>
-            /// <typeparam name="U">New sequence to run over</typeparam>
-            /// <param name="converter">Converts from the new sequence, U, to the old one, T</param>
-            /// <param name="argumentPrefix">Text to add to name and title</param>
-            /// <returns></returns>
-            public IPlotSpec<U> FromData<U>(Expression<Func<U, T>> converter, string argumentPrefix)
+        /// <summary>
+        /// Create a plot spec that runs on a sequence of a sequence objects like T from a plotter than runs on a sequecen of T
+        /// </summary>
+        /// <remarks>
+        /// This is useful if you have a plot of pT, and you want to convert it to make a plot of pT's of a
+        /// jet object. Use the converter argument to convert from jet objects to double's.
+        /// 
+        /// The extra argument text can be used in the following way. If your "NameFOrmat" is "{0}pT" and you pass
+        /// in "jet" for the argument, then the new plot should have a NameFormat of "{0}jetpT".
+        /// 
+        /// There is some boiler plate when implementing this method. See library source code and start from there to
+        /// get it "right".
+        /// </remarks>        /// <typeparam name="T">The type of the plotter you wish to extend to run on a sequence</typeparam>
+        /// <typeparam name="U">The type you wish the new plotter to run on</typeparam>
+        /// <param name="source">The plot spec to be extended to run on a sequence</param>
+        /// <param name="argumentPrefix">Added to the argument, null by default (means nothing added).</param>
+        /// <returns>Plot spec able to run on a sequence</returns>
+        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix)
+        {
+            string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
+            string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+
+            // First, create the plotter that can deal with the sequence it self.
+            var result = new PlotSpecSequence<T>()
             {
-                var result = new PlotSpec2D<U>()
-                {
-                    nxbins = nxbins,
-                    xmax = xmax,
-                    xmin = xmin,
-                    nybins = nybins,
-                    ymax = ymax,
-                    ymin = ymin,
-                    Filter = null,
-                    NameFormat = string.Format(NameFormat, argumentPrefix + "{0}"),
-                    TitleFormat = string.Format(TitleFormat, argumentPrefix + " {0}")
-                };
+                NameFormat = newNameFormat,
+                TitleFormat = newTitleFormat,
+                Plotter = source
+            };
 
-                result.xgetter = converter.C(xgetter);
-                result.ygetter = converter.C(ygetter);
+            // It would be nice to avoid this line if U and IEnumerable<T> were the same, however
+            // the compiler doesn't know ahead of time, so we can't (unless we code up
+            // a second method to do that). It should translate to a null operation in C++, however!
 
-                if (Filter != null)
-                    result.Filter = converter.C(Filter);
+            var convertedResult = result.FromData(converter, argumentPrefix);
 
-                return result;
-            }
+            return convertedResult;
+        }
+
+        /// <summary>
+        /// Create a plotter that will convert from one type to another type.
+        /// </summary>
+        /// <remarks>
+        /// This is useful if you have a plot of pT, and you want to convert it to make a plot of pT's of a
+        /// jet object. Use the converter argument to convert from jet objects to double's.
+        /// 
+        /// The extra argument text can be used in the following way. If your "NameFOrmat" is "{0}pT" and you pass
+        /// in "jet" for the argument, then the new plot should have a NameFormat of "{0}jetpT".
+        /// 
+        /// There is some boiler plate when implementing this method. See library source code and start from there to
+        /// get it "right".
+        /// </remarks>        /// <typeparam name="U">The new plotter sequence type</typeparam>
+        /// <typeparam name="T">The old plotter sequence type</typeparam>
+        /// <param name="source"></param>
+        /// <param name="converter"></param>
+        /// <param name="argumentPrefix"></param>
+        /// <returns></returns>
+        public static IPlotSpec<U> FromData<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix)
+        {
+            string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
+            string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+
+            var result = new PlotSpecConverter<T, U>
+            {
+                NameFormat = newNameFormat,
+                TitleFormat = newTitleFormat,
+                Plotter = source,
+                Converter = converter
+            };
+
+            return result;
         }
 
         /// <summary>
