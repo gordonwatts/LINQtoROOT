@@ -38,14 +38,15 @@ namespace LINQToTTreeLib.Statements
             /// if statement!
             /// 
 
-            if (Statements.Any())
+            if (Statements.Any() && TestExpression.RawValue != "false")
             {
 
                 ///
                 /// Now, emit the if statement and work from there
                 /// 
 
-                yield return "if (" + TestExpression.RawValue + ")";
+                if (TestExpression.RawValue != "true")
+                    yield return "if (" + TestExpression.RawValue + ")";
                 foreach (var l in RenderInternalCode())
                 {
                     yield return l;

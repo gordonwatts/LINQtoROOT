@@ -48,16 +48,41 @@ namespace LINQToTTreeLib.Statements
         [TestMethod]
         public void TestExprWithStatement()
         {
-            var val = new Variables.ValSimple("true", typeof(bool));
+            var val = new Variables.ValSimple("1 == 1", typeof(bool));
             var statement = new StatementFilter(val);
             statement.Add(new StatementSimpleStatement("dude"));
 
             var result = statement.CodeItUp().ToArray();
             Assert.AreEqual(4, result.Length, "no statements, so wasn't expecting any sort of output at all");
-            Assert.AreEqual("if (true)", result[0], "if statement isn't correct");
+            Assert.AreEqual("if (1 == 1)", result[0], "if statement isn't correct");
             Assert.AreEqual("{", result[1], "open braket");
             Assert.AreEqual("  dude;", result[2], "statement isn't in the proper spot");
             Assert.AreEqual("}", result[3], "end of block not right");
+        }
+
+        [TestMethod]
+        public void TestTrueExpr()
+        {
+            var val = new Variables.ValSimple("true", typeof(bool));
+            var statement = new StatementFilter(val);
+            statement.Add(new StatementSimpleStatement("dude"));
+
+            var result = statement.CodeItUp().ToArray();
+            Assert.AreEqual(3, result.Length, "true test means only the involved statements should be in here!");
+            Assert.AreEqual("{", result[0], "open braket");
+            Assert.AreEqual("  dude;", result[1], "statement isn't in the proper spot");
+            Assert.AreEqual("}", result[2], "end of block not right");
+        }
+
+        [TestMethod]
+        public void TestFalseExpr()
+        {
+            var val = new Variables.ValSimple("false", typeof(bool));
+            var statement = new StatementFilter(val);
+            statement.Add(new StatementSimpleStatement("dude"));
+
+            var result = statement.CodeItUp().ToArray();
+            Assert.AreEqual(0, result.Length, "Expect no statements for a false if statement");
         }
 
         [PexMethod]
