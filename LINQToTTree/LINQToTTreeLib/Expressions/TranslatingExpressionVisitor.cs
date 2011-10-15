@@ -23,7 +23,7 @@ namespace LINQToTTreeLib
         /// <param name="expr"></param>
         /// <param name="cookies">List of cookies - a trail of variable renames we've done</param>
         /// <returns></returns>
-        public static Expression Translate(Expression expr, List<string> cookies)
+        public static Expression Translate(Expression expr, List<string> cookies, Func<Expression, Expression> resolver)
         {
             // Remove Tuple's and similar things.
             var objlift = new ObjectPropertyExpressionVisitor();
@@ -31,6 +31,7 @@ namespace LINQToTTreeLib
 
             // Now, do our custom translations.
             var trans = new TranslatingExpressionVisitor();
+            trans.Resolver = resolver;
             var result = trans.VisitExpression(exprObjsRemoved);
 
             // Keep track of what we did so we can make sure our caching logic works ok.
@@ -457,28 +458,42 @@ namespace LINQToTTreeLib
                 || expression.NodeType == ExpressionType.NotEqual)
             {
                 var b = expression as BinaryExpression;
-                var blArray = ExtractObjectArrayName(b.Left);
-                var brArray = ExtractObjectArrayName(b.Right);
+                var cmpLeft = Resolver(b.Left);
+                var cmpRight = Resolver(b.Right);
+                var blArray = ExtractObjectArrayName(cmpLeft);
+                var brArray = ExtractObjectArrayName(cmpRight);
                 if (blArray == brArray
                     && blArray != null)
                 {
-                    var lindex = ExtractObjectArrayIndex(b.Left);
-                    var rindex = ExtractObjectArrayIndex(b.Right);
+                    var lindex = CheckNotConst(ExtractObjectArrayIndex(cmpLeft));
+                    var rindex = CheckNotConst(ExtractObjectArrayIndex(cmpRight));
 
                     return Expression.MakeBinary(expression.NodeType, lindex, rindex);
                 }
                 else if (blArray != null && IsNullConstant(b.Right))
                 {
-                    var index = ExtractObjectArrayIndex(b.Left);
+                    var index = CheckNotConst(ExtractObjectArrayIndex(cmpLeft));
                     return Expression.Equal(index, Expression.Constant(-1));
                 }
-                else if (brArray != null && IsNullConstant(b.Left))
+                else if (brArray != null && IsNullConstant(cmpLeft))
                 {
-                    var index = ExtractObjectArrayIndex(b.Right);
+                    var index = CheckNotConst(ExtractObjectArrayIndex(cmpRight));
                     return Expression.Equal(Expression.Constant(-1), index);
                 }
             }
             return base.VisitBinaryExpression(expression);
+        }
+
+        /// <summary>
+        /// If the expression passed in is a const expression, then throw.
+        /// </summary>
+        /// <param name="lindex"></param>
+        /// <returns></returns>
+        private Expression CheckNotConst(Expression expr)
+        {
+            if (expr is ConstantExpression)
+                throw new NotSupportedException(string.Format("A constant expression array reference is not allowed ('{0}').", expr.ToString()));
+            return expr;
         }
 
         /// <summary>
@@ -752,5 +767,11 @@ namespace LINQToTTreeLib
         /// we can make sure nothing has shifted out from under us!
         /// </summary>
         public List<string> RenameList { get; private set; }
+
+        /// <summary>
+        /// Get/Set the resolver function that is used to further
+        /// resolve things.
+        /// </summary>
+        public Func<Expression, Expression> Resolver { get; set; }
     }
 }

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
-using Remotion.Linq.Parsing;
 using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -87,7 +87,7 @@ namespace LINQToTTreeLib.Expressions
                 while (expr.ToString() != oldExpr)
                 {
                     oldExpr = expr.ToString();
-                    expr = TranslatingExpressionVisitor.Translate(expr, _codeContext.CacheCookies);
+                    expr = TranslatingExpressionVisitor.Translate(expr, _codeContext.CacheCookies, e => e.Resolve(GeneratedCode, _codeContext, MEFContainer));
                 }
 
                 //
