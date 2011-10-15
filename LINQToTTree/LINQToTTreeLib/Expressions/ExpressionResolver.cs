@@ -64,19 +64,11 @@ namespace LINQToTTreeLib.Expressions
                 if (expression == null)
                     return null;
 
-                //
-                // Find sub-query expressions and kill them off.
-                //
-
-                var expr = expression.ResolveSubQueries(GeneratedCode, CodeContext, MEFContainer);
-                if (expr == null)
-                    return null;
-
                 ///
                 /// See if there are any parameter replacements that can be done out-of-band
                 /// 
 
-                expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, CodeContext);
+                var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expression, CodeContext);
 
                 //
                 // Next, attempt to translate the expr (if needed). This deals with moving from
