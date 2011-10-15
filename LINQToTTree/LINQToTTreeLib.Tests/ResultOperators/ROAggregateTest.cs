@@ -91,6 +91,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// Now make sure the statements came back ok!
             /// 
 
+            gc.DumpCodeToConsole();
             Assert.AreEqual(0, gc.CodeBody.DeclaredVariables.Count(), "Expected no bookings");
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "expected a statement!");
             Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(Statements.StatementAggregate), "expected an assignment statement!");
