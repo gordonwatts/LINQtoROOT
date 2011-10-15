@@ -1,3 +1,4 @@
+param($installPath, $toolsPath, $package, $project)
 #
 # The package is being uninstalled from
 # the project. We will remove the add imports, etc.
@@ -11,8 +12,7 @@ Write-Host "This is a test"
 # Get the project
 #
 
-$project = Get-Project
-$buildProject = Get-MSBuildProject
+$buildProject = Get-MSBuildProject $project.Name
 
 #
 # Next, add the import statements

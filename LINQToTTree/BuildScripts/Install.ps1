@@ -1,4 +1,4 @@
-param($installPath, $toolsPath, $package, $project) 
+param($installPath, $toolsPath, $package, $project)
 #
 # install.ps1 - called each time a package is put into
 # a project. We modify the projects .csproj build items to include
@@ -38,8 +38,7 @@ function Get-RelativePath ([string] $Folder, [String] $filePath, [Switch] $Resol
 # Get the project
 #
 
-$project = Get-Project
-$buildProject = Get-MSBuildProject
+$buildProject = Get-MSBuildProject $project.Name
 
 #
 # Next, add the import statements
