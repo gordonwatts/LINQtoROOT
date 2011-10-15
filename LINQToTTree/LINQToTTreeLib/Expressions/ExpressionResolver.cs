@@ -40,7 +40,7 @@ namespace LINQToTTreeLib.Expressions
             /// <returns></returns>
             public static Expression Translate(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
             {
-                var tr = new ResolveToExpression() { _codeContext = cc, GeneratedCode = gc, MEFContainer = container };
+                var tr = new ResolveToExpression() { CodeContext = cc, GeneratedCode = gc, MEFContainer = container };
                 if (container != null)
                 {
                     container.SatisfyImportsOnce(tr);
@@ -68,7 +68,7 @@ namespace LINQToTTreeLib.Expressions
                 // Find sub-query expressions and kill them off.
                 //
 
-                var expr = expression.ResolveSubQueries(GeneratedCode, _codeContext, MEFContainer);
+                var expr = expression.ResolveSubQueries(GeneratedCode, CodeContext, MEFContainer);
                 if (expr == null)
                     return null;
 
@@ -76,7 +76,7 @@ namespace LINQToTTreeLib.Expressions
                 /// See if there are any parameter replacements that can be done out-of-band
                 /// 
 
-                expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, _codeContext);
+                expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, CodeContext);
 
                 //
                 // Next, attempt to translate the expr (if needed). This deals with moving from
@@ -87,7 +87,7 @@ namespace LINQToTTreeLib.Expressions
                 while (expr.ToString() != oldExpr)
                 {
                     oldExpr = expr.ToString();
-                    expr = TranslatingExpressionVisitor.Translate(expr, _codeContext.CacheCookies, e => e.Resolve(GeneratedCode, _codeContext, MEFContainer));
+                    expr = TranslatingExpressionVisitor.Translate(expr, CodeContext.CacheCookies, e => e.Resolve(GeneratedCode, CodeContext, MEFContainer));
                 }
 
                 //
@@ -100,7 +100,7 @@ namespace LINQToTTreeLib.Expressions
             /// <summary>
             /// Keep track of the code context.
             /// </summary>
-            public ICodeContext _codeContext;
+            public ICodeContext CodeContext;
 
             /// <summary>
             /// The code we are generating.
@@ -125,7 +125,7 @@ namespace LINQToTTreeLib.Expressions
 
                 var paramArgs = lambda.Parameters.Zip(expression.Arguments, (p, a) => Tuple.Create(p, a));
                 var paramDefineToPopers = from pair in paramArgs
-                                          select _codeContext.Add(pair.Item1.Name, pair.Item2);
+                                          select CodeContext.Add(pair.Item1.Name, pair.Item2);
                 var allParamDefineToPopers = paramDefineToPopers.ToArray();
 
                 ///
@@ -133,7 +133,7 @@ namespace LINQToTTreeLib.Expressions
                 /// dealt with.
                 /// 
 
-                var result = lambda.Body.Resolve(GeneratedCode, _codeContext, MEFContainer);
+                var result = lambda.Body.Resolve(GeneratedCode, CodeContext, MEFContainer);
 
                 ///
                 /// Now, pop everything off!
@@ -162,7 +162,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 var expr = base.VisitMemberExpression(expression);
                 if (expr != expression)
-                    return expr.Resolve(GeneratedCode, _codeContext, MEFContainer);
+                    return expr.Resolve(GeneratedCode, CodeContext, MEFContainer);
                 return expr;
             }
 
@@ -198,7 +198,7 @@ namespace LINQToTTreeLib.Expressions
                 // Give the various type handlers a chance to alter the expression call if they want.
                 //
 
-                var expr = TypeHandlers.ProcessMethodCall(expression, GeneratedCode, _codeContext, MEFContainer);
+                var expr = TypeHandlers.ProcessMethodCall(expression, GeneratedCode, CodeContext, MEFContainer);
 
                 //
                 // If it is still an expression call, then we need to allow the arguments to transform.
@@ -209,7 +209,7 @@ namespace LINQToTTreeLib.Expressions
                     var mc = expr as MethodCallExpression;
 
                     var transformedArgs = from a in mc.Arguments
-                                          select a.Resolve(GeneratedCode, _codeContext, MEFContainer);
+                                          select a.Resolve(GeneratedCode, CodeContext, MEFContainer);
 
                     expr = Expression.Call(mc.Object, mc.Method, transformedArgs);
                 }
@@ -232,7 +232,7 @@ namespace LINQToTTreeLib.Expressions
                 if (MEFContainer == null)
                     throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
 
-                QueryVisitor qv = new QueryVisitor(GeneratedCode, _codeContext, MEFContainer);
+                QueryVisitor qv = new QueryVisitor(GeneratedCode, CodeContext, MEFContainer);
                 qv.SubExpressionParse = true;
                 MEFContainer.SatisfyImportsOnce(qv);
 
