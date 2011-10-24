@@ -798,7 +798,12 @@ namespace LINQToTTreeLib
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            Assert.Inconclusive();
+            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+                          where l.Contains("Phi_0_2pi")
+                          select l;
+            var arr = theline.ToArray();
+            Assert.AreEqual(1, arr.Length, "too many lines with function reference!");
+            Assert.IsTrue(arr[0].Contains("std::abs"), "second function call not found");
         }
 
         /// <summary>

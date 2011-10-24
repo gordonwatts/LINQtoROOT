@@ -116,7 +116,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var gc = new GeneratedCode();
             var returned = target.CodeMethodCall(theCall, gc, MEFUtilities.MEFContainer);
 
-            Assert.AreEqual("TVector2::Phi_0_2pi(*dude)", returned.RawValue, "static call is incorrect");
+            Assert.AreEqual("TVector2::Phi_0_2pi(dude)", returned.RawValue, "static call is incorrect");
         }
 
         [TestMethod]
