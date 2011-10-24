@@ -784,6 +784,22 @@ namespace LINQToTTreeLib
             /// Looking for an infinite loop!
         }
 
+        [TestMethod]
+        public void TestDoubleFunctionCall()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = from evt in q
+                     select from j in evt.jets
+                            select Math.Abs(ROOTNET.NTVector2.Phi_0_2pi(j.var1) - 3.0);
+            var r2 = from evt in r1
+                     where evt.Where(i => i > 2.0).Count() > 0
+                     select evt;
+            var c = r2.Count();
+
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
 
         /// <summary>
         /// Do the code combination we require!
