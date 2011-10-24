@@ -84,11 +84,33 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="result"></param>
         /// <param name="gc"></param>
         /// <returns></returns>
+        /// <remarks>Static methods and instance methods are both handled correctly.</remarks>
         public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
             var objRef = ExpressionToCPP.InternalGetExpression(expr.Object, gc, null, container);
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat("{0}.{1}", objRef.AsObjectReference(), expr.Method.Name);
+
+            if (expr.Method.IsStatic && objRef != null)
+                throw new ArgumentException(string.Format("Call to ROOT instance method '{0}' where the instance is null", expr.Method.Name));
+            if (!expr.Method.IsStatic && objRef == null)
+                throw new ArgumentException(string.Format("Call to ROOT static method '{0}' where the instance is not null", expr.Method.Name));
+
+            //
+            // Code up the local invokation or the static invokation to the method
+            //
+
+            if (objRef != null)
+            {
+                bld.AppendFormat("{0}.{1}", objRef.AsObjectReference(), expr.Method.Name);
+            }
+            else
+            {
+                bld.AppendFormat("{0}::{1}", expr.Method.DeclaringType.Name.Substring(1), expr.Method.Name);
+            }
+
+            //
+            // Put in the arguments
+            //
 
             AddMethodArguments(expr.Arguments, gc, container, bld);
 
