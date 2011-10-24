@@ -8,6 +8,7 @@ using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Reflection;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -102,6 +103,20 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var returned = target.CodeMethodCall(theCall, gc, MEFUtilities.MEFContainer);
 
             Assert.AreEqual("(*myvar).GetEntries()", returned.RawValue, "call is incorrect");
+        }
+
+        [TestMethod]
+        public void TestStaticMethodCall()
+        {
+            var expr = Expression.Variable(typeof(double), "dude");
+            var phiMethod = typeof(ROOTNET.NTVector2).GetMethod("Phi_0_2pi");
+            var theCall = Expression.Call(phiMethod, expr);
+
+            var target = new TypeHandlerROOT();
+            var gc = new GeneratedCode();
+            var returned = target.CodeMethodCall(theCall, gc, MEFUtilities.MEFContainer);
+
+            Assert.AreEqual("TVector2::Phi_0_2pi(*dude)", returned.RawValue, "static call is incorrect");
         }
 
         [TestMethod]
