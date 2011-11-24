@@ -77,7 +77,7 @@ namespace TTreeParser
             /// Write out the user info
             /// 
 
-            masterClass.UserInfoPath = WriteUserInfo(groupInfo, tree.Name).FullName;
+            masterClass.UserInfoPath = WriteUserInfo(groupInfo, tree.SanitizedName()).FullName;
 
             ///
             /// Return the master class
@@ -261,7 +261,7 @@ namespace TTreeParser
             var createItDir = new DirectoryInfo(Environment.CurrentDirectory);
             if (ProxyGenerationLocation != null)
                 createItDir = ProxyGenerationLocation;
-            FileInfo macroFile = new FileInfo(createItDir + @"\junk_macro_parsettree_" + tree.Name + ".C");
+            FileInfo macroFile = new FileInfo(createItDir + @"\junk_macro_parsettree_" + tree.SanitizedName() + ".C");
             FileInfo result = null;
             try
             {
@@ -278,7 +278,7 @@ namespace TTreeParser
                     writer.Close();
                 }
 
-                result = new FileInfo("ntuple_" + tree.Name + ".h");
+                result = new FileInfo("ntuple_" + tree.SanitizedName() + ".h");
                 tree.MakeProxy(Path.GetFileNameWithoutExtension(result.Name), macroFile.Name, null, "nohist");
             }
             finally

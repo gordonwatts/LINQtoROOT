@@ -172,6 +172,21 @@ namespace LINQToTTreeLib.Tests
             var result = p.GenerateClasses(t).ToArray();
         }
 
+        [TestMethod]
+        [DeploymentItem("atest.root")]
+        public void TestTreesWithPounds()
+        {
+            var f = new ROOTNET.NTFile("atest.root", "READ");
+            var t = f.Get("##Shapes") as ROOTNET.Interface.NTTree;
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "# of classes");
+            var obj = result[0];
+            Assert.IsFalse(obj.NtupleProxyPath.Contains("#"), "proxy path: " + obj.NtupleProxyPath);
+            Assert.IsFalse(obj.UserInfoPath.Contains("#"), "user path: " + obj.UserInfoPath);
+        }
+
 #if false
         /// This test relyies on having the ntuple stuff translated, something we are doing in the
         /// demos now, not here in the actual test cases - where we do everything ad-hoc.

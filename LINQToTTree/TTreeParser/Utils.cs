@@ -193,5 +193,17 @@ namespace TTreeParser
             f.QuickLoad = true;
             return f.Ndim != 0;
         }
+
+        /// <summary>
+        /// Returns a tree name sanitized for use as C++ object name.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static string SanitizedName(this ROOTNET.Interface.NTTree t)
+        {
+            var n = t.Name;
+            n = n.Replace("#", "_");
+            return n;
+        }
     }
 }

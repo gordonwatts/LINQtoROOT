@@ -204,5 +204,29 @@ namespace TTreeParser.Tests
             Assert.AreEqual("hi", results["Section2"][0], "#1 line of section 2");
 
         }
+
+        [TestMethod]
+        public void TestSanitizedName()
+        {
+            var t = new ROOTNET.NTTree("dork", "Fork");
+            Assert.AreEqual("dork", t.SanitizedName(), "plain tree");
+
+            t = new ROOTNET.NTTree("##Shapes", "dude");
+            Assert.IsTrue(CleanName(t.SanitizedName()), "hashes: " + t.Name);
+        }
+
+        /// <summary>
+        /// return false if the name isn't clean!
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private bool CleanName(string p)
+        {
+            if (p.Contains("."))
+                return false;
+            if (p.Contains("#"))
+                return false;
+            return true;
+        }
     }
 }
