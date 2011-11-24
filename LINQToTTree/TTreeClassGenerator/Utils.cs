@@ -15,5 +15,15 @@ namespace TTreeClassGenerator
             return lName.Replace(":", "_");
         }
 
+        /// <summary>
+        /// Fix up the string used for classes
+        /// </summary>
+        /// <param name="cname"></param>
+        /// <returns></returns>
+        public static string FixupClassName(this string cname)
+        {
+            return cname;
+        }
+
     }
 }
