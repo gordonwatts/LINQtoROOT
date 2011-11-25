@@ -22,7 +22,8 @@ namespace TTreeClassGenerator
         /// <returns></returns>
         public static string FixupClassName(this string cname)
         {
-            return cname;
+            var n = cname.Replace("#", "_");
+            return n;
         }
 
     }

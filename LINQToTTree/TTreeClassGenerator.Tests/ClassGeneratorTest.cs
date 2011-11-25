@@ -336,6 +336,33 @@ namespace TTreeClassGenerator
         }
 
         [TestMethod]
+        public void TestCharactersInClassName()
+        {
+            ItemSimpleType simple = new ItemSimpleType("fork", "int");
+            FileInfo proxyFile = new FileInfo("TestColonsInVarName.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            ROOTClassShell mainClass = new ROOTClassShell("##Shapes") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", Variables = new VariableInfo[] { new VariableInfo() { NETName = "fork", TTreeName = "fork" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestCharactersInClassName.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleGroupAndRename", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            Assert.AreEqual(2, CountInFile(outputFile, "##Shapes"), "Missing reference ot the shapes object");
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
         public void TestSimpleGroupAndRename()
         {
             /// Create simple user info - but don't do anything with it!
@@ -638,6 +665,19 @@ namespace TTreeClassGenerator
             return (from l in LinesInFile(outputCSFile)
                     where l.Contains(p)
                     select l).Any();
+        }
+
+        /// <summary>
+        /// Count number of times some string appears in the text file.
+        /// </summary>
+        /// <param name="outputCSFile"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private int CountInFile(FileInfo outputCSFile, string p)
+        {
+            return (from l in LinesInFile(outputCSFile)
+                    where l.Contains(p)
+                    select l).Count();
         }
 
         private IEnumerable<string> LinesInFile(FileInfo f)

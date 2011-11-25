@@ -316,12 +316,12 @@ namespace TTreeClassGenerator
                         output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
                         output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo rootFile, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
                         output.WriteLine("    {");
-                        output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name);
+                        output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name.FixupClassName());
                         output.WriteLine("    }");
                         output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
-                        output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo[] rootFiles, string treeName = \"{1}\")", cls.Name, cls.Name.FixupClassName());
+                        output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo[] rootFiles, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
                         output.WriteLine("    {");
-                        output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name);
+                        output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name.FixupClassName());
                         output.WriteLine("    }");
                         output.WriteLine("  }");
                     }
