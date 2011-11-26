@@ -35,6 +35,31 @@ namespace TTreeParser
         }
 
         /// <summary>
+        /// Ignore an exception that comes from a move-next chain of processing. :-)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> IgnoreExceptions<T>(this IEnumerable<T> source)
+        {
+            var e = source.GetEnumerator();
+            bool goit = false;
+            while (!goit)
+            {
+                try
+                {
+                    bool good = e.MoveNext();
+                    if (!good)
+                        yield break;
+                    goit = true;
+                }
+                catch
+                { }
+            }
+            yield return e.Current;
+        }
+
+        /// <summary>
         /// Figure out what a C++ type would look like in C#. Only simple types are done.
         /// </summary>
         /// <param name="cppTypeName"></param>
