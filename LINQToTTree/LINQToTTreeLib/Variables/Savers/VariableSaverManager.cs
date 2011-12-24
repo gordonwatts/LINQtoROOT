@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        public IVariableSaver Get(IVariable iVariable)
+        public IVariableSaver Get(IDeclaredParameter iVariable)
         {
             if (iVariable == null)
                 throw new ArgumentNullException("iVariable can't be null");

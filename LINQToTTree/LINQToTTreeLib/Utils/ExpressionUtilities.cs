@@ -21,8 +21,8 @@ namespace LINQToTTreeLib.Utils
             /// Next, make sure the index variable can be used for later references!
             /// 
 
-            var result = cc.Add(query, indexVar);
-            cc.SetLoopVariable(indexVar);
+            var result = cc.Add(query, indexVar.Item1);
+            cc.SetLoopVariable(indexVar.Item1, indexVar.Item2);
             return result;
         }
 
@@ -30,6 +30,8 @@ namespace LINQToTTreeLib.Utils
         /// Search for a single variable name, that fills the whole string.
         /// </summary>
         static Regex gVarNameFinder = new Regex(@"^\b\w+\b$");
+
+        static Regex gNumberFinder = new Regex(@"^[-+]?[0-9]*\.?[0-9]+$");
 
         /// <summary>
         /// Given a value, see if it is not a single term. If not, add parens.
@@ -58,6 +60,11 @@ namespace LINQToTTreeLib.Utils
 
             var match = gVarNameFinder.Match(rv);
             if (match.Success)
+                return rv;
+
+            // If it is just a number or similar, then match that
+
+            if (gNumberFinder.Match(rv).Success)
                 return rv;
 
             // Special case where we already have this thing surrounded by parens.

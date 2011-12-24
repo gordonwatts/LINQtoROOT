@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +23,7 @@ namespace LINQToTTreeLib.Statements
         }
 
         [PexMethod]
-        public StatementIncrementInteger Constructor(VarInteger i)
+        public StatementIncrementInteger Constructor(IDeclaredParameter i)
         {
             StatementIncrementInteger target = new StatementIncrementInteger(i);
             Assert.AreEqual(i, target.Integer, "initial value not set correctly");

@@ -15,6 +15,33 @@ namespace LINQToTTreeLib.Tests
     public static class TestUtils
     {
         /// <summary>
+        /// Dummy loop to help with tests below.
+        /// </summary>
+        public class SimpleLoop : LINQToTTreeLib.Statements.StatementInlineBlockBase, IStatementLoop
+        {
+
+            public override IEnumerable<string> CodeItUp()
+            {
+                yield return "Dummyloop {";
+                foreach (var l in RenderInternalCode())
+                {
+                    yield return "  " + l;
+                }
+                yield return "}";
+            }
+
+            public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void RenameVariable(string origName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
         /// Dump the code to the console - for debugging a test...
         /// </summary>
         /// <param name="code"></param>
@@ -24,10 +51,10 @@ namespace LINQToTTreeLib.Tests
             foreach (var var in code.CodeBody.DeclaredVariables)
             {
                 string initalValue = "default()";
-                if (var.InitialValue != null && var.InitialValue.RawValue != null)
+                if (var.InitialValue != null && var.InitialValue != null)
                     initalValue = var.InitialValue.RawValue;
 
-                Console.WriteLine(var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
+                Console.WriteLine(var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
             }
             Console.WriteLine("Code:");
 
@@ -84,10 +111,10 @@ namespace LINQToTTreeLib.Tests
                 foreach (var var in bs.DeclaredVariables)
                 {
                     string initalValue = "default()";
-                    if (var.InitialValue != null && var.InitialValue.RawValue != null)
+                    if (var.InitialValue != null && var.InitialValue != null)
                         initalValue = var.InitialValue.RawValue;
 
-                    Console.WriteLine(indent + "  " + var.Type.Name + " " + var.VariableName + " = " + initalValue + ";");
+                    Console.WriteLine(indent + "  " + var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
                 }
             }
             Console.WriteLine("{0}Lines of code:", indent);
@@ -236,6 +263,26 @@ namespace LINQToTTreeLib.Tests
             return u;
         }
 
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        public static FileInfo CreateFileOfInt(int numberOfIter)
+        {
+            string filename = "intonly_" + numberOfIter.ToString() + ".root";
+            FileInfo result = new FileInfo(filename);
+            if (result.Exists)
+                return result;
+
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
+            var tree = TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter);
+            f.Write();
+            f.Close();
+            result.Refresh();
+            return result;
+        }
+        
         /// <summary>
         /// Dirt simply test ntuple. Actually matches one that exists on disk.
         /// </summary>

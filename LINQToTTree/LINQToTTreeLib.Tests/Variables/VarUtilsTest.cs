@@ -145,7 +145,7 @@ namespace LINQToTTreeLib.Variables
 
             string result = VarUtils.CastToType(sourceType, Expression.Variable(destType, "d"));
             if (destType == sourceType.Type
-                || sourceType.Type == typeof(int) && (destType == typeof(double) || destType == typeof(float)))
+                || sourceType.Type == typeof(float) && destType == typeof(double))
             {
                 Assert.IsFalse(result.Contains("(("), "More that '((' in the list of items ('" + result + "')");
             }

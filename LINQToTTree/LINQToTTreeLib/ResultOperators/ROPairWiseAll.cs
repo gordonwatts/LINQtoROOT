@@ -6,7 +6,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 
@@ -42,18 +41,14 @@ namespace LINQToTTreeLib.ResultOperators
             if (ro == null)
                 throw new ArgumentNullException("Result operator is not of PairWiseAll type");
 
-            ///
-            /// First, record all the good indicies for this array
-            /// 
+            //
+            // First, record all the good indicies for this array
+            // 
 
-            var arrayLookup = cc.LoopVariable as BinaryExpression;
-            var arrayIndex = arrayLookup.Right;
-            var array = arrayLookup.Left;
+            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            gc.AddOutsideLoop(arrayRecord);
 
-            var arrayRecord = new VarArray(typeof(int)) { Declare = true };
-            gc.AddOneLevelUp(arrayRecord);
-
-            var recordIndexStatement = new StatementRecordIndicies(ExpressionToCPP.GetExpression(arrayIndex, gc, cc, container), arrayRecord);
+            var recordIndexStatement = new StatementRecordIndicies(ExpressionToCPP.GetExpression(cc.LoopIndexVariable, gc, cc, container), arrayRecord);
             gc.Add(recordIndexStatement);
 
             gc.Pop();
@@ -66,13 +61,13 @@ namespace LINQToTTreeLib.ResultOperators
             /// I suppose!
             /// 
 
-            var passAll = new VarArray(typeof(bool)) { Declare = true };
+            var passAll = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(bool));
             gc.Add(passAll);
-            var index1 = new Variables.VarSimple(typeof(int));
-            var index2 = new Variables.VarSimple(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var index1Lookup = Expression.ArrayIndex(array, Expression.Parameter(typeof(int), index1.RawValue));
-            var index2Lookup = Expression.ArrayIndex(array, Expression.Parameter(typeof(int), index2.RawValue));
+            var index1Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index1); //Expression.ArrayIndex(array, index1);
+            var index2Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index2);//Expression.ArrayIndex(array, index2);
 
             var callLambda = Expression.Invoke(ro.Test,
                 index1Lookup,
@@ -94,12 +89,13 @@ namespace LINQToTTreeLib.ResultOperators
             // now just loop over that and apply the index as needed.
             //
 
-            var goodIndex = new VarSimple(typeof(int));
+            var goodIndex = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(goodIndex);
             var loopOverGood = new Statements.StatementLoopOverGood(arrayRecord, passAll, goodIndex);
             gc.Add(loopOverGood);
 
-            cc.SetLoopVariable(Expression.ArrayIndex(array, Expression.Parameter(typeof(int), goodIndex.RawValue)));
+            var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
+            cc.SetLoopVariable(cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, pindex), pindex);
         }
     }
 }

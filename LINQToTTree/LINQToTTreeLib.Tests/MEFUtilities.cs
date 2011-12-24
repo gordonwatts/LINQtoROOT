@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.Tests
     /// <summary>
     /// Help out with setup/tear down of MEF in this environment
     /// </summary>
-    class MEFUtilities
+    public class MEFUtilities
     {
         /// <summary>
         /// Holds the crap for MEF.

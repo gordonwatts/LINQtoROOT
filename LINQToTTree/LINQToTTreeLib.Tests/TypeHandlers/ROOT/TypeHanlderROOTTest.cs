@@ -8,6 +8,7 @@ using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Reflection;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -49,7 +50,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             [PexAssumeNotNull] IGeneratedQueryCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null);
             Assert.IsNotNull(result);
             return result;
         }
@@ -63,8 +64,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var rootObj = Expression.Constant(origRootObj);
 
             var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var result = t.ProcessConstantReference(rootObj, gc, cc, MEFUtilities.MEFContainer);
+            var result = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
 
             Assert.IsNotNull(result);
 
@@ -82,9 +82,8 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var rootObj = Expression.Constant(origRootObj);
 
             var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var result1 = t.ProcessConstantReference(rootObj, gc, cc, MEFUtilities.MEFContainer);
-            var result2 = t.ProcessConstantReference(rootObj, gc, cc, MEFUtilities.MEFContainer);
+            var result1 = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
+            var result2 = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
 
             Assert.AreEqual(1, gc.VariablesToTransfer.Count(), "Variables to transfer");
 
@@ -100,14 +99,24 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
             var target = new TypeHandlerROOT();
 
-
-
-            IValue resultOfCall;
             var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var returned = target.ProcessMethodCall(theCall, out resultOfCall, gc, cc, MEFUtilities.MEFContainer);
+            var returned = target.CodeMethodCall(theCall, gc, MEFUtilities.MEFContainer);
 
-            Assert.AreEqual("(*myvar).GetEntries()", resultOfCall.RawValue, "call is incorrect");
+            Assert.AreEqual("(*myvar).GetEntries()", returned.RawValue, "call is incorrect");
+        }
+
+        [TestMethod]
+        public void TestStaticMethodCall()
+        {
+            var expr = Expression.Variable(typeof(double), "dude");
+            var phiMethod = typeof(ROOTNET.NTVector2).GetMethod("Phi_0_2pi");
+            var theCall = Expression.Call(phiMethod, expr);
+
+            var target = new TypeHandlerROOT();
+            var gc = new GeneratedCode();
+            var returned = target.CodeMethodCall(theCall, gc, MEFUtilities.MEFContainer);
+
+            Assert.AreEqual("TVector2::Phi_0_2pi(dude)", returned.RawValue, "static call is incorrect");
         }
 
         [TestMethod]
@@ -119,8 +128,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var target = new TypeHandlerROOT();
             IValue resultOfCall;
             var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            var expr = target.ProcessNew(createTLZ, out resultOfCall, gc, cc, MEFUtilities.MEFContainer);
+            var expr = target.ProcessNew(createTLZ, out resultOfCall, gc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
 
@@ -143,12 +151,11 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             [PexAssumeUnderTest]TypeHandlerROOT target,
             NewExpression expression,
             out IValue result,
-            GeneratedCode gc,
-            CodeContext context
+            GeneratedCode gc
         )
         {
             Expression result01
-               = target.ProcessNew(expression, out result, gc, context, MEFUtilities.MEFContainer);
+               = target.ProcessNew(expression, out result, gc, MEFUtilities.MEFContainer);
 
             return result01;
         }

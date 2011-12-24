@@ -55,21 +55,34 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libHistWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libHistWrapper.dll</HintPath>
+    <Reference Include="libGrafWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libGrafWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libHistWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libMathCoreWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libNetWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libNetWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libPhysicsWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libPhysicsWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libRIOWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libRIOWrapper.dll</HintPath>
+    <Reference Include="libRIOWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libThreadWrapper">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreePlayerWrapper">
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreePlayerWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper">
-      <HintPath>..\..\ROOT.NET Wrappers\Release\libTreeWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -81,7 +94,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.1.4058.40323, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="WrapperPlumbingLibrary">
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
@@ -108,6 +123,15 @@
       <Project>{69E634CA-6F0D-4363-9522-F19896E27E02}</Project>
       <Name>TTreeParser</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="atest.root">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ComplexNtupleTestInput.root">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

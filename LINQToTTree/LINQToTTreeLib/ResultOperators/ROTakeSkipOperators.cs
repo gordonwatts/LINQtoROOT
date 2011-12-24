@@ -4,7 +4,6 @@ using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -69,8 +68,8 @@ namespace LINQToTTreeLib.ResultOperators
             /// taking. It must be declared in the current block, before our current code! :-)
             /// 
 
-            var counter = new VarInteger();
-            codeEnv.AddOneLevelUp(counter);
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            codeEnv.AddOutsideLoop(counter);
 
             var comparison = StatementIfOnCount.ComparisonOperator.LessThanEqual;
             IValue limit = null;

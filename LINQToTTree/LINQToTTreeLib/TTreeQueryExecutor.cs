@@ -327,7 +327,7 @@ namespace LINQToTTreeLib
             if (!IgnoreQueryCache)
             {
                 TraceHelpers.TraceInfo(9, "ExecuteScalarAsFuture: Looking for cache hit");
-                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValue), result.ResultValue);
+                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValueAsVaraible), result.ResultValueAsVaraible);
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;
@@ -586,7 +586,7 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IVariable iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
+        private T ExtractResult<T>(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
         {
             ///
             /// Load the object and try to extract whatever info we need to from it
@@ -704,7 +704,20 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private string TemplateDirectory(string templateName)
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Templates\\" + templateName;
+            var assDir = new FileInfo(Assembly.GetCallingAssembly().Location);
+            var assGuess = string.Format(@"{0}\Templates\{1}", assDir.DirectoryName, templateName);
+            if (File.Exists(assGuess))
+                return assGuess;
+
+            var assGuess1 = string.Format(@"{0}\{1}", assDir.DirectoryName, templateName);
+            if (File.Exists(assGuess1))
+                return assGuess1;
+
+            var guess = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\Templates\\" + templateName;
+            if (File.Exists(guess))
+                return guess;
+
+            throw new FileNotFoundException(string.Format("Unable to locatoin LINQToTTree template file '{0}' in any standard location (tried '{1}' and '{2}' and '{2}'.", templateName, assGuess, assGuess1, guess));
         }
 
         /// <summary>

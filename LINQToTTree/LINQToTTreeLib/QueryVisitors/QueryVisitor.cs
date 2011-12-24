@@ -122,9 +122,9 @@ namespace LINQToTTreeLib
             /// <param name="env"></param>
             /// <param name="context"></param>
             /// <returns></returns>
-            public Expression AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+            public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
             {
-                return Expression.Variable(thisType, "this");
+                return Tuple.Create<Expression, Expression>(Expression.Variable(thisType, "this"), null);
             }
         }
 
@@ -216,7 +216,7 @@ namespace LINQToTTreeLib
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
             var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(selectClause.Selector, _codeContext);
-            _codeContext.SetLoopVariable(expr);
+            _codeContext.SetLoopVariable(expr, _codeContext.LoopIndexVariable);
         }
 
         /// <summary>

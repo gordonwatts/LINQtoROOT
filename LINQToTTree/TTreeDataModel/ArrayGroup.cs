@@ -10,6 +10,7 @@ namespace TTreeDataModel
         /// <summary>
         /// The name of the group
         /// </summary>
+        [XmlAttribute]
         public string Name { get; set; }
 
         /// <summary>
@@ -22,5 +23,11 @@ namespace TTreeDataModel
         /// </summary>
         [XmlAttribute]
         public string Comment { get; set; }
+
+        /// <summary>
+        /// A custom class name, rather than the automatically generated one.
+        /// </summary>
+        [XmlAttribute]
+        public string ClassName { get; set; }
     }
 }

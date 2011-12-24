@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -93,13 +94,23 @@ namespace LINQToTTreeLib.Statements
             return target.TryCombineStatement(st, null);
         }
 
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException)), PexAllowedException(typeof(AssertFailedException))]
         public StatementSimpleStatement TestRename([PexAssumeUnderTest] StatementSimpleStatement target, string oldvar, string newvar)
         {
+            //
+            // Make sure that Pex is using a legal variable name
+            //
+
+            var goodVar = new Regex(string.Format(@"w+"));
+            if (!goodVar.Match(oldvar).Success)
+                throw new ArgumentException("The old var is not a proper variable name");
+            if (!goodVar.Match(newvar).Success)
+                throw new ArgumentException("THe new var is not a proper variable name");
+
             target.RenameVariable(oldvar, newvar);
 
-            if (oldvar != null)
-                Assert.IsFalse(target.Line.Contains(oldvar), "old guy should not be in there!");
+            if (oldvar != null && oldvar != newvar)
+                Assert.IsFalse(Regex.Match(target.Line, string.Format(@"\b{0}\b", oldvar)).Success, "old guy should not be in there!");
             return target;
         }
     }

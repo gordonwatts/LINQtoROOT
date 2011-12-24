@@ -221,7 +221,7 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         /// <param name="varSaver"></param>
         /// <returns></returns>
-        public Tuple<bool, T> Lookup<T>(IQueryResultCacheKey akey, IVariableSaver varSaver, IVariable theVar)
+        public Tuple<bool, T> Lookup<T>(IQueryResultCacheKey akey, IVariableSaver varSaver, IDeclaredParameter theVar)
         {
             if (akey == null || (akey as KeyInfo) == null)
                 throw new ArgumentNullException("the key cannot be null");

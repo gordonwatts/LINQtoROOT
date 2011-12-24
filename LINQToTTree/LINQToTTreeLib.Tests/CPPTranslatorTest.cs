@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -58,7 +58,8 @@ namespace LINQToTTreeLib
         public void TestTranslateWithInitialValue()
         {
             CPPTranslator target = new CPPTranslator();
-            VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
+            var vInt = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vInt.SetInitialValue("2");
             GeneratedCode code = new GeneratedCode();
             code.SetResult(vInt);
 
@@ -76,12 +77,14 @@ namespace LINQToTTreeLib
         public void TestForFunctionNumber()
         {
             CPPTranslator target = new CPPTranslator();
-            VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
+            var vInt = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vInt.SetInitialValue("2");
             GeneratedCode code = new GeneratedCode();
             code.SetResult(vInt);
 
             var innerBlock = new StatementInlineBlock();
-            VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+            var vInt2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vInt2.SetInitialValue("5");
             innerBlock.Add(vInt2);
             code.Add(innerBlock);
 
@@ -101,15 +104,16 @@ namespace LINQToTTreeLib
         {
             public tooManyStatemnets()
             {
-                VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
-                ResultValues = new IVariable[] { vInt };
+                var vInt = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                vInt.SetInitialValue("2");
+                ResultValues = new IDeclaredParameter[] { vInt };
             }
             public IEnumerable<KeyValuePair<string, object>> VariablesToTransfer
             {
                 get { return Enumerable.Empty<KeyValuePair<string, object>>(); }
             }
 
-            public IEnumerable<IVariable> ResultValues { get; set; }
+            public IEnumerable<IDeclaredParameter> ResultValues { get; set; }
 
             public void AddIncludeFile(string includeName)
             {
@@ -126,7 +130,8 @@ namespace LINQToTTreeLib
                 for (int i = 0; i < 300; i++)
                 {
                     var innerBlock = new StatementInlineBlock();
-                    VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+                    var vInt2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                    vInt2.SetInitialValue("5");
                     innerBlock.Add(vInt2);
                     yield return innerBlock;
                 }
@@ -161,19 +166,22 @@ namespace LINQToTTreeLib
         public void TestObjectInitalizerInInnerBlock()
         {
             CPPTranslator target = new CPPTranslator();
-            VarInteger vInt = new VarInteger() { InitialValue = new ValSimple("2", typeof(int)) };
+            var vInt = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vInt.SetInitialValue("2");
             GeneratedCode code = new GeneratedCode();
             code.SetResult(vInt);
 
             var innerBlock = new StatementInlineBlock();
-            VarInteger vInt2 = new VarInteger() { InitialValue = new ValSimple("5", typeof(int)) };
+            var vInt2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            vInt2.SetInitialValue("5");
             innerBlock.Add(vInt2);
+            innerBlock.Add(new StatementSimpleStatement("fork = dork"));
             code.Add(innerBlock);
 
             var r = TranslateGeneratedCode(target, code);
 
             var st = (r["QueryFunctionBlocks"] as IEnumerable<IEnumerable<string>>).First().ToArray();
-            Assert.AreEqual(5, st.Length, "incorrect number of statements");
+            Assert.AreEqual(6, st.Length, "incorrect number of statements");
             Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initalization");
         }
 
@@ -181,7 +189,7 @@ namespace LINQToTTreeLib
         public void TestObjectPointer()
         {
             CPPTranslator target = new CPPTranslator();
-            VarObject obj = new VarObject(typeof(ROOTNET.NTH1F));
+            var obj = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ROOTNET.NTH1F));
             GeneratedCode code = new GeneratedCode();
             code.SetResult(obj);
 
@@ -203,7 +211,7 @@ namespace LINQToTTreeLib
         public void TestTranslateForIncludeFiles()
         {
             CPPTranslator target = new CPPTranslator();
-            VarObject obj = new VarObject(typeof(ROOTNET.NTH1F));
+            var obj = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ROOTNET.NTH1F));
             GeneratedCode code = new GeneratedCode();
             code.SetResult(obj);
 

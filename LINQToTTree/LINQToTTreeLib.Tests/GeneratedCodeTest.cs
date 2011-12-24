@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -21,12 +21,24 @@ namespace LINQToTTreeLib
     {
         /// <summary>Test stub for Add(IStatement)</summary>
         [PexMethod]
-        [PexUseType(typeof(StatementIncrementInteger))]
+        [PexUseType(typeof(StatementIncrementInteger)), PexAllowedException(typeof(ArgumentException))]
         public void Add([PexAssumeUnderTest]GeneratedCode target, IStatementCompound s)
         {
             int old = CountStatements(target.CodeBody);
             target.Add(s);
             Assert.AreEqual(old + 1, CountStatements(target.CodeBody), "Expected a single statement to have been added");
+        }
+
+        [PexMethod]
+        public void AddOutsideLoop([PexAssumeUnderTest] GeneratedCode target, IDeclaredParameter var)
+        {
+            target.AddOutsideLoop(var);
+        }
+
+        [PexMethod]
+        public void AddOneLevelUp([PexAssumeUnderTest] GeneratedCode target, IDeclaredParameter var)
+        {
+            target.AddOneLevelUp(var);
         }
 
         /// <summary>
@@ -69,17 +81,7 @@ namespace LINQToTTreeLib
             }
 
 
-            public IStatement Parent
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public IStatement Parent { get; set; }
         }
 
         public class CompoundStatement : IStatementCompound
@@ -112,28 +114,18 @@ namespace LINQToTTreeLib
             }
 
 
-            public IStatement Parent
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public IStatement Parent { get; set; }
         }
 
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock
         {
-            private List<IVariable> _vlist = new List<IVariable>();
-            public void Add(IVariable variableToDeclare)
+            private List<IDeclaredParameter> _vlist = new List<IDeclaredParameter>();
+            public void Add(IDeclaredParameter variableToDeclare)
             {
                 _vlist.Add(variableToDeclare);
             }
 
-            public IEnumerable<IVariable> DeclaredVariables
+            public IEnumerable<IDeclaredParameter> DeclaredVariables
             {
                 get { return _vlist; }
             }
@@ -154,11 +146,11 @@ namespace LINQToTTreeLib
         [PexMethod]
         [PexUseType(typeof(CompoundBookingStatement))]
         [PexUseType(typeof(CompoundStatement))]
-        [PexUseType(typeof(SimpleStatement))]
+        [PexUseType(typeof(SimpleStatement)), PexAllowedException(typeof(ArgumentException))]
         public void AddCompoundStatementTest(IStatement s)
         {
             var target = new GeneratedCode();
-            var v = new VarInteger();
+            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var boringStatement = new StatementIncrementInteger(v);
 
             target.Add(s);
@@ -189,7 +181,7 @@ namespace LINQToTTreeLib
             /// Adding a second statement should not alter the top level statement.
             /// 
 
-            target.Add(new StatementIncrementInteger(new VarInteger()));
+            target.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
         }
 
@@ -205,7 +197,7 @@ namespace LINQToTTreeLib
 
         /// <summary>Test stub for SetResult(IVariable)</summary>
         [PexMethod]
-        internal void SetResult([PexAssumeUnderTest]GeneratedCode target, IVariable r)
+        internal void SetResult([PexAssumeUnderTest]GeneratedCode target, DeclarableParameter r)
         {
             target.SetResult(r);
             Assert.AreEqual(r, target.ResultValue, "The result value wasn't changed");
@@ -213,8 +205,8 @@ namespace LINQToTTreeLib
 
         [PexMethod]
         [PexUseType(typeof(StatementInlineBlock))]
-        [PexUseType(typeof(StatementIncrementInteger))]
-        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s)
+        [PexUseType(typeof(StatementIncrementInteger)), PexAllowedException(typeof(ArgumentException))]
+        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s1, [PexAssumeNotNull] IStatement s2)
         {
             ///
             /// Check that scoping correctly moves back tot he right place and inserts the stements and
@@ -243,13 +235,13 @@ namespace LINQToTTreeLib
             /// Now insert the statement twice and the variables too.
             /// 
 
-            var v1 = new VarInteger();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v1);
-            target.Add(s);
+            target.Add(s1);
             target.CurrentScope = currentScope;
-            var v2 = new VarInteger();
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v2);
-            target.Add(s);
+            target.Add(s2);
         }
 
         [TestMethod]
@@ -265,13 +257,13 @@ namespace LINQToTTreeLib
 
             var curVars = deepestDeclarLevel.DeclaredVariables.Count();
             var curStatements = deepestStatementLevel.Statements.Count();
-            var v1 = new VarInteger();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v1);
             target.Add(s);
 
             target.CurrentScope = currentS;
 
-            var v2 = new VarInteger();
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v2);
             s.Parent = null;
             target.Add(s);
@@ -293,13 +285,13 @@ namespace LINQToTTreeLib
 
             var curVars = deepestDeclarLevel.DeclaredVariables.Count();
             var curStatements = deepestStatementLevel.Statements.Count();
-            var v1 = new VarInteger();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v1);
             target.Add(s);
 
             target.CurrentScope = currentS;
 
-            var v2 = new VarInteger();
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             target.Add(v2);
             s.Parent = null;
             target.Add(s);
@@ -335,7 +327,7 @@ namespace LINQToTTreeLib
         public void TestAddOneLevelUpTopLevel()
         {
             GeneratedCode gc = new GeneratedCode();
-            gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
+            gc.AddOneLevelUp(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
         }
 
         [TestMethod]
@@ -343,8 +335,71 @@ namespace LINQToTTreeLib
         {
             GeneratedCode gc = new GeneratedCode();
             gc.Add(new Statements.StatementInlineBlock());
-            gc.AddOneLevelUp(new Variables.VarSimple(typeof(int)));
+            gc.AddOneLevelUp(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
             Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level decl");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestAddOutsideLoopWithNothing()
+        {
+            var target = new GeneratedCode();
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestAddOutsideLoopWithJustInlineBLock()
+        {
+            var target = new GeneratedCode();
+            target.Add(new Statements.StatementInlineBlock());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+        }
+
+        [TestMethod]
+        public void TestAddOutsideLoopWithJustInLoop()
+        {
+            var target = new GeneratedCode();
+            var blk = new Statements.StatementInlineBlock();
+            target.Add(blk);
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
+            target.Add(new Statements.StatementInlineBlock());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
+        }
+
+        [TestMethod]
+        public void TestAddOutsideLoopWithJustASingleLoop()
+        {
+            var target = new GeneratedCode();
+            var blk = new Statements.StatementInlineBlock();
+            target.Add(blk);
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
+        }
+
+        [TestMethod]
+        public void TestAddOutsideLoopWithOnStatement()
+        {
+            var target = new GeneratedCode();
+            var blk = new Statements.StatementInlineBlock();
+            target.Add(blk);
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, blk.DeclaredVariables.Count(), "# of loop declared variables");
+        }
+
+        [TestMethod]
+        public void TestAddOutsideLoopWithJustIn2Loops()
+        {
+            var target = new GeneratedCode();
+            target.Add(new Statements.StatementInlineBlock());
+            var loop = new LINQToTTreeLib.Tests.TestUtils.SimpleLoop();
+            target.Add(loop);
+            target.Add(new LINQToTTreeLib.Tests.TestUtils.SimpleLoop());
+            target.AddOutsideLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, loop.DeclaredVariables.Count(), "# of loop declared variables");
         }
 
         [TestMethod]

@@ -28,9 +28,35 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        public IValue ProcessConstantReference(System.Linq.Expressions.ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// NOt processing any sort of expression of this type!
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="codeEnv"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// No need to transform a conversion - so we just plow on.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            return expr;
         }
 
         /// <summary>
@@ -42,10 +68,10 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
             if (expr.Method.Name == "ToDouble")
-                return ProcessToDouble(expr, out result, gc, context, container);
+                return ProcessToDouble(expr, gc, container);
 
             ///
             /// We don't know how to deal with this particular convert!
@@ -66,14 +92,14 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        private Expression ProcessToDouble(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        private IValue ProcessToDouble(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
             var srcExpr = expr.Arguments[0];
             if (srcExpr.NodeType != ExpressionType.Convert)
                 throw new NotImplementedException("Expecting a Convert expression inside the call to Convert.ToDouble");
             var cvtExpr = srcExpr as UnaryExpression;
 
-            result = ExpressionToCPP.GetExpression(cvtExpr.Operand, gc, context, container);
+            var result = ExpressionToCPP.InternalGetExpression(cvtExpr.Operand, gc, null, container);
 
             if (
                 result.Type != typeof(int)
@@ -84,7 +110,8 @@ namespace LINQToTTreeLib.TypeHandlers
                 throw new NotImplementedException("Do not know how to convert '" + srcExpr.Type.Name + "' to a double!");
             }
 
-            return expr;
+            return result;
+
         }
 
         /// <summary>
@@ -96,7 +123,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
         {
             throw new NotImplementedException();
         }

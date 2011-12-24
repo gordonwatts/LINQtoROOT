@@ -7,10 +7,11 @@ using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
+using LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls;
 
 namespace LINQToTTreeLib.Tests
 {
-    class DummyQueryExectuor : IQueryExecutor
+    public class DummyQueryExectuor : IQueryExecutor
     {
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
@@ -63,6 +64,7 @@ namespace LINQToTTreeLib.Tests
 
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
+                MEFUtilities.AddPart(new TypeHandlerReplacementCall());
                 MEFUtilities.AddPart(new TypeHandlerCache());
                 MEFUtilities.AddPart(new TypeHandlerCPPCode());
                 MEFUtilities.AddPart(new TypeHandlerTranslationClass());

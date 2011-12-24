@@ -1,4 +1,5 @@
 ﻿
+using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -24,13 +25,20 @@ namespace LinqToTTreeInterfacesLib
         /// Book a variable at the inner most scope
         /// </summary>
         /// <param name="v"></param>
-        void Add(IVariable v);
+        void Add(IDeclaredParameter v);
 
         /// <summary>
         /// Add in an outter scope. Fails badly if that outter scope doesn't exist yet!
         /// </summary>
         /// <param name="v"></param>
-        void AddOneLevelUp(IVariable v);
+        void AddOneLevelUp(IDeclaredParameter v);
+
+        /// <summary>
+        /// Add outside the current loop. Walks back up the scoping until it finds a loop construct that
+        /// is active. If there is none, that causes a crash! :-)
+        /// </summary>
+        /// <param name="indexSeen"></param>
+        void AddOutsideLoop(IDeclaredParameter indexSeen);
 
         /// <summary>
         /// This variable's inital value is "complex" and must be transfered over the wire in some way other than staight into the code
@@ -55,7 +63,7 @@ namespace LinqToTTreeInterfacesLib
         /// Set the result of the current code contex.
         /// </summary>
         /// <param name="result"></param>
-        void SetResult(IVariable result);
+        void SetResult(Expression result);
 
         /// <summary>
         /// Set no-result (i.e. set it to null).
@@ -65,7 +73,7 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Returns the value that is the result of this calculation.
         /// </summary>
-        IVariable ResultValue { get; }
+        Expression ResultValue { get; }
 
         /// <summary>
         /// Get/Set teh current scope...

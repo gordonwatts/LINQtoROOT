@@ -1,4 +1,4 @@
-using LINQToTTreeLib.Variables;
+using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 using System;
@@ -18,5 +18,13 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIncrementIntegerTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException959()
+{
+    StatementIncrementInteger statementIncrementInteger;
+    statementIncrementInteger = this.Constructor((IDeclaredParameter)null);
+}
     }
 }

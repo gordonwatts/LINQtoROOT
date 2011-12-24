@@ -80,6 +80,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "should only be top level class");
@@ -158,15 +159,47 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotImplementedException))]
+        [DeploymentItem("ComplexNtupleTestInput.root")]
         public void GenerateClassesTestNoClassInfo()
         {
             /// There are some classes in here that ROOT dosen't know about - so we
             /// need to detect that and "bomb".
-            var f = new ROOTNET.NTFile("../../../TTreeParser.Tests/ComplexNtupleTestInput.root", "READ");
+            var f = new ROOTNET.NTFile("ComplexNtupleTestInput.root", "READ");
+            Assert.IsTrue(f.IsOpen(), "Test file not found");
             var t = f.Get("btag") as ROOTNET.Interface.NTTree;
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
+            Assert.AreEqual(2, result[0].Items.Count, "The int's should be there");
+        }
+
+        [TestMethod]
+        [DeploymentItem("atest.root")]
+        public void TestTreesWithPounds()
+        {
+            var f = new ROOTNET.NTFile("atest.root", "READ");
+            var t = f.Get("##Shapes") as ROOTNET.Interface.NTTree;
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "# of classes");
+            var obj = result[0];
+            Assert.IsFalse(obj.NtupleProxyPath.Contains("#"), "proxy path: " + obj.NtupleProxyPath);
+            Assert.IsFalse(obj.UserInfoPath.Contains("#"), "user path: " + obj.UserInfoPath);
+        }
+
+        [TestMethod]
+        [DeploymentItem("atest.root")]
+        public void TestTreeWithUnknownClasses()
+        {
+            var f = new ROOTNET.NTFile("atest.root", "READ");
+            var t = f.Get("CollectionTree") as ROOTNET.Interface.NTTree;
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "# of classes");
+            var obj = result[0];
+
+            Assert.AreEqual(0, obj.Items.Where(c => c.ItemType.Contains("ROOTNET.Interface")).Count(), "Expecting no rootnet.interface type items");
         }
 
 #if false
@@ -220,6 +253,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateVectorTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -285,6 +319,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateSingleItemTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -370,6 +405,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateVectorVectorTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -385,6 +421,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateListOfLeavesTree();
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             Assert.AreEqual(1, result.Length, "expected only the top level class to come back");
@@ -418,6 +455,7 @@ namespace LINQToTTreeLib.Tests
         {
             var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
             var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
             var result = p.GenerateClasses(t).ToArray();
 
             FileInfo fhpp = new FileInfo("ntuple_dude.h");
@@ -449,6 +487,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(fhpp.FullName, result[0].NtupleProxyPath, "ntuple proxy path incorrect");
         }
 
+#if notinnewworld
         /// <summary>
         /// WARNING - you must start devenv in a vs 2010 command line window so that "cl" is availible.
         /// </summary>
@@ -477,6 +516,7 @@ namespace LINQToTTreeLib.Tests
             var compile = ROOTNET.NTSystem.gSystem.CompileMacro("TestProxyBuild.C");
             Assert.AreEqual(1, compile, "compile error for built macro - make sure that cl is a good command by starting devenv with vs command line!!");
         }
+#endif
 
         [TestMethod]
         public void TestProxyGenerationContents()

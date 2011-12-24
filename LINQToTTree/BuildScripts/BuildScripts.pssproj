@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6a34246b-e4c1-4848-8e67-486767452251}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MyApplication</RootNamespace>
+    <AssemblyName>MyApplication</AssemblyName>
+    <Name>BuildScripts</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="BuildUtils.psm1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cibuilder.ps1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Init.ps1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Install.ps1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="LINQToTTreeCommands.psm1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="msbuild.psm1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="source-control.psm1">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Uninstall.ps1">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="Build" />
+</Project>

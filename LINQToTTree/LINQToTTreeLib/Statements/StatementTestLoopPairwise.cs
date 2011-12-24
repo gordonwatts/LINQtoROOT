@@ -1,6 +1,5 @@
 ﻿using System;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -12,7 +11,7 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     class StatementTestLoopPairwise : IStatement
     {
-        private Variables.VarArray _whatIsGood;
+        private IDeclaredParameter _whatIsGood;
         private IValue _test;
 
         /// <summary>
@@ -20,7 +19,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="passAll"></param>
         /// <param name="iValue"></param>
-        public StatementTestLoopPairwise(VarArray passAll, IValue iValue)
+        public StatementTestLoopPairwise(IDeclaredParameter passAll, IValue iValue)
         {
             this._whatIsGood = passAll;
             this._test = iValue;
@@ -30,8 +29,8 @@ namespace LINQToTTreeLib.Statements
         {
             yield return string.Format("if (!({0}))", _test.RawValue);
             yield return "{";
-            yield return string.Format("  {0}[index1] = false;", _whatIsGood.RawValue);
-            yield return string.Format("  {0}[index2] = false;", _whatIsGood.RawValue);
+            yield return string.Format("  {0}[index1] = false;", _whatIsGood.ParameterName);
+            yield return string.Format("  {0}[index2] = false;", _whatIsGood.ParameterName);
             yield return "  break;";
             yield return "}";
         }
@@ -43,7 +42,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            _whatIsGood.RenameRawValue(originalName, newName);
+            _whatIsGood.RenameParameter(originalName, newName);
             _test.RenameRawValue(originalName, newName);
         }
 
@@ -62,7 +61,7 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            if (_whatIsGood.RawValue != other._whatIsGood.RawValue
+            if (_whatIsGood.ParameterName != other._whatIsGood.ParameterName
                 || _test.RawValue != _test.RawValue)
                 return false;
 

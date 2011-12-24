@@ -1,5 +1,4 @@
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Variables;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
@@ -19,5 +18,14 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementPairLoopTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementPairLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void StatementPairLoopCtorThrowsArgumentNullException606()
+{
+    StatementPairLoop statementPairLoop;
+    statementPairLoop = this.StatementPairLoopCtor((IDeclaredParameter)null, 
+                                                   (IDeclaredParameter)null, (IDeclaredParameter)null);
+}
     }
 }

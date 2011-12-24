@@ -13,7 +13,6 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -71,8 +70,8 @@ namespace LINQToTTreeLib
         public static List<ConstantTestTemplate> ConstantExpressionTestCases = new List<ConstantTestTemplate>()
         {
             new ConstantTestTemplate(){ ExpectedType=typeof(int), ExpectedValue="10", expr = Expression.Constant(10)},
-            new ConstantTestTemplate(){ ExpectedType=typeof(float), ExpectedValue="10", expr = Expression.Constant((float)10)},
-            new ConstantTestTemplate(){ ExpectedType=typeof(double), ExpectedValue="10", expr = Expression.Constant((double)10)},
+            new ConstantTestTemplate(){ ExpectedType=typeof(float), ExpectedValue="10.0", expr = Expression.Constant((float)10)},
+            new ConstantTestTemplate(){ ExpectedType=typeof(double), ExpectedValue="10.0", expr = Expression.Constant((double)10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="true", expr = Expression.Constant(true)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="false", expr = Expression.Constant(false)},
             new ConstantTestTemplate(){ ExpectedType=typeof(ROOTNET.NTH1F), ExpectedValue="LoadFromInputList\\<TH1F\\*\\>\\(\"aNTH1F_.+\"\\)", expr = Expression.Constant(new ROOTNET.NTH1F("hi", "there", 10, 0.0, 20.0))},
@@ -115,14 +114,16 @@ namespace LINQToTTreeLib
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Subtract, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10-20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Multiply, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10*20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10/20"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.MakeBinary(ExpressionType.Add, Expression.Constant(10), Expression.Constant(20)), RHS=Expression.Constant(30), ExpectedType=typeof(int), ExpectedValue="(10+20)/30"}
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.Constant(10.0, typeof(double)), RHS=Expression.Constant(20.0, typeof(double)), ExpectedType=typeof(double), ExpectedValue="10.0/20.0"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Divide, LHS=Expression.MakeBinary(ExpressionType.Add, Expression.Constant(10), Expression.Constant(20)), RHS=Expression.Constant(30), ExpectedType=typeof(int), ExpectedValue="(10+20)/30"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.Modulo, LHS=Expression.Constant(10), RHS=Expression.Constant(2), ExpectedType=typeof(int), ExpectedValue="10%2"}
         };
 
         public void TestBinaryExpressionCase(BinaryExpressionTestCase c)
         {
             var e = Expression.MakeBinary(c.BinaryType, c.LHS, c.RHS);
             GeneratedCode g = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, g, null, null);
+            var r = ExpressionToCPP.GetExpression(e, g, null, MEFUtilities.MEFContainer);
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(c.ExpectedType, r.Type, "Expected type is incorrect");
             Assert.AreEqual(c.ExpectedValue, r.RawValue, "value is incorrect");
@@ -131,6 +132,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestBinaryExpression()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             foreach (var c in BinaryTestCases)
             {
                 TestBinaryExpressionCase(c);
@@ -151,14 +154,15 @@ namespace LINQToTTreeLib
             new UnaryTestCase() { UnaryType= ExpressionType.Negate, UnaryTarget=Expression.Constant(10), ExpectedType=typeof(int), ExpectedValue = "-10"},
             new UnaryTestCase() { UnaryType= ExpressionType.Negate, UnaryTarget=Expression.MakeBinary(ExpressionType.Add, Expression.Constant(5), Expression.Constant(10)), ExpectedType=typeof(int), ExpectedValue = "-(5+10)"},
             new UnaryTestCase() { UnaryType= ExpressionType.Not, UnaryTarget=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="!true"},
-            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Constant(10), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="10"}
+            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Constant(10), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="((double)10)"},
+            new UnaryTestCase() { UnaryType= ExpressionType.Convert, UnaryTarget=Expression.Parameter(typeof(int), "dude"), ConvertType=typeof(double), ExpectedType=typeof(double), ExpectedValue="((double)dude)"}
         };
 
         public void TestUnaryTestCase(UnaryTestCase u)
         {
             var e = Expression.MakeUnary(u.UnaryType, u.UnaryTarget, u.ConvertType);
             GeneratedCode g = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, g, null, null);
+            var r = ExpressionToCPP.GetExpression(e, g, null, MEFUtilities.MEFContainer);
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(u.ExpectedType, r.Type, "type not correct");
             Assert.AreEqual(u.ExpectedValue, r.RawValue, "resulting value not correct");
@@ -167,6 +171,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestUnary()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             foreach (var u in UnaryTests)
             {
                 TestUnaryTestCase(u);
@@ -180,7 +186,7 @@ namespace LINQToTTreeLib
         };
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(NotSupportedException))]
         public void TestSubQueryReferenceWhenNotDefined()
         {
             QuerySourceReferenceExpression q = new QuerySourceReferenceExpression(new DummyQueryReference() { ItemName = "evt", ItemType = typeof(int) });
@@ -281,7 +287,7 @@ namespace LINQToTTreeLib
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            cc.Add("p", new ValSimple("count", typeof(int)));
+            cc.Add("p", Expression.Parameter(typeof(int), "count"));
             var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
         }
 
@@ -291,7 +297,7 @@ namespace LINQToTTreeLib
             var e = Expression.Parameter(typeof(ntup), "p");
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
-            cc.Add("p", new ValSimple("count", typeof(ntup)));
+            cc.Add("p", Expression.Parameter(typeof(ntup), "count"));
             var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");
@@ -301,12 +307,14 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestLambaBasic()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             var laFunc = Expression.Lambda(Expression.MakeBinary(ExpressionType.Add,
                 Expression.Constant(1),
                 Expression.Constant(2)));
 
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionToCPP.GetExpression(laFunc, gc, null, null);
+            var result = ExpressionToCPP.GetExpression(laFunc, gc, null, MEFUtilities.MEFContainer);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("1+2", result.RawValue, "raw value was not right");
@@ -315,11 +323,13 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestLambaWithParams()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             var laFunc = Expression.Lambda(Expression.MakeBinary(ExpressionType.Add,
                 Expression.Parameter(typeof(int), "p"),
                 Expression.Constant(2)));
             GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionToCPP.GetExpression(laFunc, gc, null, null);
+            var result = ExpressionToCPP.GetExpression(laFunc, gc, null, MEFUtilities.MEFContainer);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("p+2", result.RawValue, "raw value was not right");
@@ -659,7 +669,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
-            Assert.AreEqual("(*d)[1]", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*d).at(1)", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
@@ -670,7 +680,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myaccess1, Expression.Constant(2));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
-            Assert.AreEqual("((*d)[1])[2]", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("((*d).at(1)).at(2)", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
@@ -681,7 +691,7 @@ namespace LINQToTTreeLib
             var myArrayLength = Expression.ArrayLength(myaccess1);
 
             var result = RunArrayLengthOnExpression(myArrayLength, typeof(int));
-            Assert.AreEqual("(*d)[1].size()", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*d).at(1).size()", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
@@ -701,7 +711,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myarray, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(ROOTNET.NTH1F));
-            Assert.AreEqual("(*harr)[1]", result.RawValue, "C++ th1f not translated correctly");
+            Assert.AreEqual("(*harr).at(1)", result.RawValue, "C++ th1f not translated correctly");
         }
 
         class ObjectArrayTest
@@ -720,7 +730,7 @@ namespace LINQToTTreeLib
 
             var result = RunArrayLengthOnExpression(arrayIndex, typeof(int));
 
-            Assert.AreEqual("(*(*obj).arr)[1]", result.RawValue, "array text");
+            Assert.AreEqual("(*(*obj).arr).at(1)", result.RawValue, "array text");
         }
 
         [TestMethod]

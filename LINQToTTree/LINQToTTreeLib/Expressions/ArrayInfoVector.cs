@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="indexName"></param>
         /// <param name="popVariableContext"></param>
         /// <returns></returns>
-        public System.Linq.Expressions.Expression AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+        public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
         {
             ///
             /// First, we will need to know the length of this array
@@ -64,13 +64,13 @@ namespace LINQToTTreeLib.Expressions
             /// reference the item we are looping over.
             /// 
 
-            return indexExpression;
+            return Tuple.Create<Expression, Expression>(indexExpression, loopVariable);
         }
 
         /// <summary>
         /// A local class to implement the looping statements to work over this array.
         /// </summary>
-        public class StatementVectorLoop : StatementInlineBlockBase
+        public class StatementVectorLoop : StatementInlineBlockBase, IStatementLoop
         {
             public IValue ArrayLength { get; set; }
             string _loopVariable;

@@ -6,11 +6,11 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Loop over a set of indicies only if they are marked "true" in the accompanying array.
     /// </summary>
-    public class StatementLoopOverGood : StatementInlineBlockBase
+    public class StatementLoopOverGood : StatementInlineBlockBase, IStatementLoop
     {
         private IValue _indiciesToCheck;
         private IValue _indexIsGood;
-        private IVariable _index;
+        private IDeclaredParameter _index;
 
         /// <summary>
         /// Simple loop over a set of indicies, passing on only those that satisfy the actual index.
@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="indiciesToCheck"></param>
         /// <param name="indexIsGood"></param>
         /// <param name="index"></param>
-        public StatementLoopOverGood(IValue indiciesToCheck, IValue indexIsGood, IVariable index)
+        public StatementLoopOverGood(IValue indiciesToCheck, IValue indexIsGood, IDeclaredParameter index)
         {
             if (indiciesToCheck == null)
                 throw new ArgumentNullException("indiciesToCheck");
@@ -68,7 +68,6 @@ namespace LINQToTTreeLib.Statements
                 return false;
 
             // Are they the same? _index is independent and we can alter it.
-
             if (otherLoop._indexIsGood.RawValue == _indexIsGood.RawValue
                 && otherLoop._indiciesToCheck.RawValue == _indiciesToCheck.RawValue)
             {

@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="makefile" />
+    <None Include="buildnuget.bat" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E259F50A-B306-4FA7-B566-DD27E58B698D}</ProjectGuid>
@@ -44,9 +44,11 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>nmake all</NMakeBuildCommandLine>
-    <NMakeOutput>BuildLibraryDistribution.exe</NMakeOutput>
-    <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>buildnuget.bat</NMakeBuildCommandLine>
+    <NMakeOutput>
+    </NMakeOutput>
+    <NMakeCleanCommandLine>
+    </NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>

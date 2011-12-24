@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -36,7 +37,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>Test stub for .ctor(IValue, IValue, ComparisonOperator)</summary>
         [PexMethod]
         public StatementIfOnCount Constructor(
-            IVariable valueLeft,
+            IDeclaredParameter valueLeft,
             IValue valueRight,
             StatementIfOnCount.ComparisonOperator comp
         )
@@ -49,8 +50,8 @@ namespace LINQToTTreeLib.Statements
         [TestMethod]
         public void TestEmptyStatements()
         {
-            var val = new Variables.ValSimple("true", typeof(bool));
-            var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
+            var val = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var statement = new StatementIfOnCount(DeclarableParameter.CreateDeclarableParameterExpression(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
 
             var result = statement.CodeItUp().ToArray();
             Assert.AreEqual(0, result.Length, "no statements, so wasn't expecting any sort of output at all");
@@ -60,7 +61,7 @@ namespace LINQToTTreeLib.Statements
         public void TestWithStatement()
         {
             var val = new Variables.ValSimple("true", typeof(bool));
-            var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
+            var statement = new StatementIfOnCount(DeclarableParameter.CreateDeclarableParameterExpression(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
             statement.Add(new StatementSimpleStatement("dude"));
 
             var result = statement.CodeItUp().ToArray();
@@ -82,7 +83,7 @@ namespace LINQToTTreeLib.Statements
             foreach (var op in matchedValues)
             {
                 var val = new Variables.ValSimple("true", typeof(bool));
-                var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), op.Item1);
+                var statement = new StatementIfOnCount(DeclarableParameter.CreateDeclarableParameterExpression(typeof(string)), new Variables.ValSimple("two", typeof(string)), op.Item1);
                 statement.Add(new StatementSimpleStatement("dude"));
 
                 var result = statement.CodeItUp().ToArray();
@@ -100,7 +101,7 @@ namespace LINQToTTreeLib.Statements
             /// We should never be able to combine any filter statements currently!
 
             var val = new Variables.ValSimple("true", typeof(bool));
-            var statement = new StatementIfOnCount(new Variables.VarSimple(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
+            var statement = new StatementIfOnCount(DeclarableParameter.CreateDeclarableParameterExpression(typeof(string)), new Variables.ValSimple("two", typeof(string)), StatementIfOnCount.ComparisonOperator.EqualTo);
 
             Assert.IsFalse(statement.TryCombineStatement(s, null), "unable to do any combines for Filter");
         }

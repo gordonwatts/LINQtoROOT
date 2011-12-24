@@ -1,5 +1,4 @@
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib.Statements
@@ -10,11 +9,11 @@ namespace LINQToTTreeLib.Statements
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementPairLoop instances</summary>
         [PexFactoryMethod(typeof(Helpers), "LINQToTTreeLib.Statements.StatementPairLoop")]
         public static StatementPairLoop Create(
-            VarArray arrayRecord_varArray,
-            VarSimple index1_varSimple,
-            VarSimple index2_varSimple1,
+            IDeclaredParameter arrayRecord_varArray,
+            IDeclaredParameter index1_varSimple,
+            IDeclaredParameter index2_varSimple1,
             IStatement[] statements,
-            IVariable[] vars
+            IDeclaredParameter[] vars
         )
         {
             StatementPairLoop statementPairLoop = new StatementPairLoop

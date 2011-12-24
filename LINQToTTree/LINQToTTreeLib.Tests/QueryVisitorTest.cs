@@ -164,56 +164,6 @@ namespace LINQToTTreeLib
                 Assert.AreEqual(typeof(int), _codeContext.LoopVariable.Type, "Loopvariable type");
             }
 
-            /// <summary>
-            /// Dummy return for a variable and sequencer accessor.
-            /// </summary>
-            class dummyvar : IVariable
-            {
-                public string VariableName
-                {
-                    get { return "anint_1234"; }
-                }
-
-                public IValue InitialValue
-                {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-
-                public bool Declare
-                {
-                    get
-                    {
-                        throw new NotImplementedException();
-                    }
-                    set
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-
-                public string RawValue
-                {
-                    get { return "dude[i]"; }
-                }
-
-                public Type Type
-                {
-                    get { return typeof(int); }
-                }
-
-
-                public void RenameRawValue(string oldname, string newname)
-                {
-                    throw new NotImplementedException();
-                }
-            }
 
         }
 
@@ -407,6 +357,53 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestTranslatedAggregate()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<ntupWithObjects>()
+                select q).Aggregate(0, (acc, va) => acc + va.jets.Sum(j => j.var1)));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROSum());
+            MEFUtilities.AddPart(new ROAggregate());
+            var myth = new TypeHandlerCache();
+            MEFUtilities.AddPart(myth);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+        }
+
+        [TestMethod]
+        public void TestTranslatedAggregateWhereSingle()
+        {
+            var model = GetModel(() => (new QueriableDummy<ntupWithObjects>()).Where(evt => evt.jets.Aggregate(0, (acc, va) => acc + va.var1) > 5).Count());
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROFirstLast());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            var myth = new TypeHandlerCache();
+            MEFUtilities.AddPart(myth);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+        }
+        
+        [TestMethod]
         public void TestTranslatedNestedLoop()
         {
             var model = GetModel(() => (
@@ -501,6 +498,19 @@ namespace LINQToTTreeLib
             MakeSureNoVariable(code.CodeBody, "evt");
         }
 
+        [TestMethod]
+        public void TestSimpleAverage()
+        {
+            // Make sure we can process it!
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           select evt.jets.Average(j => j.var1);
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+        }
+
         [CPPHelperClass]
         public static class CPPHelperFunctions
         {
@@ -577,7 +587,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void TestAnonObjectCompare()
         {
             var q = new QueriableDummy<ntupWithObjects>();
@@ -774,6 +784,27 @@ namespace LINQToTTreeLib
             /// Looking for an infinite loop!
         }
 
+        [TestMethod]
+        public void TestDoubleFunctionCall()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = from evt in q
+                     select from j in evt.jets
+                            select Math.Abs(ROOTNET.NTVector2.Phi_0_2pi(j.var1) - 3.0);
+            var r2 = from evt in r1
+                     where evt.Where(i => i > 2.0).Count() > 0
+                     select evt;
+            var c = r2.Count();
+
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+                          where l.Contains("Phi_0_2pi")
+                          select l;
+            var arr = theline.ToArray();
+            Assert.AreEqual(1, arr.Length, "too many lines with function reference!");
+            Assert.IsTrue(arr[0].Contains("std::abs"), "second function call not found");
+        }
 
         /// <summary>
         /// Do the code combination we require!
@@ -885,7 +916,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
-
         [TestMethod]
         public void TestFirstCombine()
         {
@@ -894,6 +924,40 @@ namespace LINQToTTreeLib
             var r1 = q.Where(evt => evt.vals.First() > 5).Count();
             var query1 = DummyQueryExectuor.FinalResult;
             var r2 = q.Where(evt => evt.vals.First() > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestLastDefaultCombine()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var r1 = q.Where(evt => evt.vals.LastOrDefault() > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.vals.LastOrDefault() > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestFirstDefaultCombine()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var r1 = q.Where(evt => evt.vals.FirstOrDefault() > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.vals.FirstOrDefault() > 5).Count();
             var query2 = DummyQueryExectuor.FinalResult;
 
             var query = CombineQueries(query1, query2);
@@ -961,6 +1025,23 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query Blocks");
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        public void TestAverageCombine()
+        {
+            // Make sure we can process it!
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = q.Where(evt => evt.jets.Average(j => j.var1) > 10).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = q.Where(evt => evt.jets.Average(j => j.var1) > 10).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]

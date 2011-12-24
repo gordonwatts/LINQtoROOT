@@ -336,6 +336,32 @@ namespace TTreeClassGenerator
         }
 
         [TestMethod]
+        public void TestCharactersInClassName()
+        {
+            ItemSimpleType simple = new ItemSimpleType("fork", "int");
+            FileInfo proxyFile = new FileInfo("TestColonsInVarName.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            ROOTClassShell mainClass = new ROOTClassShell("##Shapes") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", Variables = new VariableInfo[] { new VariableInfo() { NETName = "fork", TTreeName = "fork" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestCharactersInClassName.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleGroupAndRename", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            Assert.AreEqual(2, CountInFile(outputFile, "##Shapes"), "Missing reference ot the shapes object");
+        }
+
+        [TestMethod]
         public void TestSimpleGroupAndRename()
         {
             /// Create simple user info - but don't do anything with it!
@@ -365,6 +391,41 @@ namespace TTreeClassGenerator
             Assert.IsTrue(FindInFile(outputFile, "int myvar"), "myvar missing");
             Assert.IsTrue(FindInFile(outputFile, "int[] var1"), "val1 missing");
             Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
+            Assert.IsTrue(FindInFile(outputFile, "TestSimpleGroupAndRenamejets"), "Missing the group definition");
+        }
+
+        [TestMethod]
+        public void TestSimpleGroupWithCustomClassName()
+        {
+            /// Create simple user info - but don't do anything with it!
+            ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
+            FileInfo proxyFile = new FileInfo("TestSimpleGroupAndRename.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] { new ArrayGroup() { Name = "jets", ClassName = "Jet", Variables = new VariableInfo[] { new VariableInfo() { NETName = "myvar", TTreeName = "var1" } } } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestSimpleGroupAndRename.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleGroupAndRename", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsTrue(FindInFile(outputFile, "RenameVariable(\"var1\")"), "Rename missing!");
+            Assert.IsTrue(FindInFile(outputFile, "TTreeVariableGrouping"), "Missing TTreeVariableGrouping");
+            Assert.IsTrue(FindInFile(outputFile, "jets"), "missing a reference to jets");
+            Assert.IsTrue(FindInFile(outputFile, "int myvar"), "myvar missing");
+            Assert.IsTrue(FindInFile(outputFile, "int[] var1"), "val1 missing");
+            Assert.IsFalse(FindInFile(outputFile, "ungrouped"), "group found");
+            Assert.IsFalse(FindInFile(outputFile, "TestSimpleGroupAndRenamejets"), "Found the non-class name default class name");
+            Assert.IsTrue(FindInFile(outputFile, "Jet"), "Did not find the Jet custom class name");
         }
 
         [TestMethod]
@@ -603,6 +664,19 @@ namespace TTreeClassGenerator
             return (from l in LinesInFile(outputCSFile)
                     where l.Contains(p)
                     select l).Any();
+        }
+
+        /// <summary>
+        /// Count number of times some string appears in the text file.
+        /// </summary>
+        /// <param name="outputCSFile"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private int CountInFile(FileInfo outputCSFile, string p)
+        {
+            return (from l in LinesInFile(outputCSFile)
+                    where l.Contains(p)
+                    select l).Count();
         }
 
         private IEnumerable<string> LinesInFile(FileInfo f)

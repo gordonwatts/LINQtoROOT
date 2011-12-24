@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.Tests
         ///A test for StatementRecordIndicies Constructor
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementRecordIndicies StatementRecordIndiciesConstructorTest(IValue intToRecord, IVariable storageArray)
+        public StatementRecordIndicies StatementRecordIndiciesConstructorTest(IValue intToRecord, IDeclaredParameter storageArray)
         {
             StatementRecordIndicies target = new StatementRecordIndicies(intToRecord, storageArray);
             return target;
@@ -60,7 +60,7 @@ namespace LINQToTTreeLib.Tests
         /// <summary>
         ///A test for TryCombineStatement
         ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentException))]
+        [PexMethod, PexAllowedException(typeof(ArgumentException)), PexAllowedException(typeof(ArgumentNullException))]
         public bool TryCombineStatementTest([PexAssumeUnderTest] StatementRecordIndicies target, IStatement statement)
         {
             var result = target.TryCombineStatement(statement, null);

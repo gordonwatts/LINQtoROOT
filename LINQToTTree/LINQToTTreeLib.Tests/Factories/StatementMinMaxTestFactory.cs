@@ -1,5 +1,5 @@
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Expressions;
 using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib.Statements
@@ -10,8 +10,8 @@ namespace LINQToTTreeLib.Statements
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementMinMaxTest instances</summary>
         [PexFactoryMethod(typeof(Helpers), "LINQToTTreeLib.Statements.StatementMinMaxTest")]
         public static StatementMinMaxTest Create(
-            VarSimple vIsFilled_varSimple,
-            VarSimple vMaxMin_varSimple1,
+            DeclarableParameter vIsFilled_varSimple,
+            DeclarableParameter vMaxMin_varSimple1,
             IValue exprToMinOrMaximize_iValue,
             bool doMax_b
         )

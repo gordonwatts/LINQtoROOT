@@ -75,7 +75,7 @@ namespace LINQToTTreeLib.Expressions
         {
             List<string> cookies = new List<string>();
             var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
-            var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies);
+            var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e=>e);
             return r as SubQueryExpression;
         }
 

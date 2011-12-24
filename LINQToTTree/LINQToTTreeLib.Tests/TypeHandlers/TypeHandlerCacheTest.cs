@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.TypeHandlers
             IGeneratedQueryCode codeEnv
         )
         {
-            IValue result = target.ProcessConstantReference(expr, codeEnv, null, null);
+            IValue result = target.ProcessConstantReference(expr, codeEnv, null);
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessConstantReference(TypeHandlerCache, ConstantExpression, IGeneratedCode)
         }
@@ -50,20 +50,28 @@ namespace LINQToTTreeLib.TypeHandlers
                 return true;
             }
 
-            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, ICodeContext context, CompositionContainer container)
+            public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                return expr;
+            }
+
+            public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                return new Variables.ValSimple("1", typeof(int));
+            }
+
+            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
             {
                 return new Variables.ValSimple("dude", expr.Type);
             }
 
-
-            public Expression ProcessMethodCall(MethodCallExpression expr, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
-            {
-                result = new Variables.VarInteger();
-                return expr;
-            }
-
-
-            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+            public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
             {
                 throw new NotImplementedException();
             }
@@ -100,28 +108,31 @@ namespace LINQToTTreeLib.TypeHandlers
             var m = typeof(int).GetMethods().Where(me => me.Name == "ToString").First();
             var expr = Expression.Call(Expression.Constant(10), m);
             GeneratedCode gc = new GeneratedCode();
-            CodeContext c = new CodeContext();
 
-            IValue result;
+            var result = CodeMethodCall(target, expr, gc);
 
-            var outExpr = ProcessMethodCall(target, expr, out result, gc, c);
-
-            Assert.AreEqual(expr, outExpr);
-            Assert.IsInstanceOfType(result, typeof(Variables.VarInteger));
+            Assert.AreEqual(result.Type, typeof(int), "result type");
         }
 
         [PexMethod]
         public Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerCache target,
             MethodCallExpression expr,
-            out IValue result,
             IGeneratedQueryCode gc,
             ICodeContext cc
         )
         {
-            Expression result01 = target.ProcessMethodCall(expr, out result, gc, cc, null);
-            return result01;
-            // TODO: add assertions to method TypeHandlerCacheTest.ProcessMethodCall(TypeHandlerCache, MethodCallExpression, IValue&, IGeneratedCode)
+            return target.ProcessMethodCall(expr, gc, cc, null);
+        }
+
+        [PexMethod]
+        public IValue CodeMethodCall(
+            [PexAssumeUnderTest]TypeHandlerCache target,
+            MethodCallExpression expr,
+            IGeneratedQueryCode gc
+        )
+        {
+            return target.CodeMethodCall(expr, gc, null);
         }
 
         /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
@@ -131,12 +142,11 @@ namespace LINQToTTreeLib.TypeHandlers
             NewExpression expression,
             out IValue _result,
             IGeneratedQueryCode _codeEnv,
-            ICodeContext _codeContext,
             CompositionContainer MEFContainer
         )
         {
             Expression result = target.ProcessNew
-                                    (expression, out _result, _codeEnv, _codeContext, MEFContainer);
+                                    (expression, out _result, _codeEnv, MEFContainer);
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessNew(TypeHandlerCache, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }

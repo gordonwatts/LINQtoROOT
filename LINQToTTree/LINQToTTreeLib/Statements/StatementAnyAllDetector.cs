@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Statements
         /// The variable that should hold our result when we see it. We expect it to be declared above,
         /// but also this is not a dependent variable!
         /// </summary>
-        private IVariable Result;
+        private IDeclaredParameter Result;
 
         /// <summary>
         /// Value to set Result to when the predicate fires. True/False.
@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="predicate"></param>
         /// <param name="aresult"></param>
         /// <param name="markedValue"></param>
-        public StatementAnyAllDetector(IValue predicate, IVariable aresult, string markedValue)
+        public StatementAnyAllDetector(IValue predicate, IDeclaredParameter aresult, string markedValue)
         {
             if (predicate == null)
                 throw new ArgumentNullException("predicate");
@@ -99,6 +99,7 @@ namespace LINQToTTreeLib.Statements
 
             if (optimize == null)
                 throw new ArgumentNullException("optimize");
+
             return optimize.TryRenameVarialbeOneLevelUp(other.Result.RawValue, Result);
         }
 

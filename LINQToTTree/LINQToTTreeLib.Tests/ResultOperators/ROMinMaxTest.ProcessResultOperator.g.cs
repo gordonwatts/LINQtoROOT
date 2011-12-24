@@ -1,6 +1,7 @@
-using LinqToTTreeInterfacesLib;
+using System.Linq.Expressions;
 using Remotion.Linq.Clauses;
 using Remotion.Linq;
+using LinqToTTreeInterfacesLib;
 using System.ComponentModel.Composition.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
@@ -20,5 +21,16 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROMinMaxTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROMinMaxTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException979()
+{
+    Expression expression;
+    ROMinMax s0 = new ROMinMax();
+    expression =
+      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
+                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
+}
     }
 }

@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
 
@@ -24,31 +22,34 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         public static IValue GetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
+            if (expr == null)
+                return null;
+
             if (cc == null)
             {
                 cc = new CodeContext();
             }
+            return InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container);
+        }
 
-            ///
-            /// First, see if there are any parameter replacements that can be done out-of-band
-            /// 
+        /// <summary>
+        /// Internal expression resolver. This routine is temporary - needed as we move
+        /// to the new system...
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="ce"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public static IValue InternalGetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
+        {
+            if (expr == null)
+                return null;
 
-            expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
-
-            ///
-            /// Next, attempt to translate the expr (if needed)
-            /// 
-
-            string oldExpr = "";
-            while (expr.ToString() != oldExpr)
+            if (cc == null)
             {
-                oldExpr = expr.ToString();
-                expr = TranslatingExpressionVisitor.Translate(expr, cc.CacheCookies);
+                cc = new CodeContext();
             }
-
-            ///
-            /// Finally, translate the expression directly into full blown C++ code.
-            /// 
 
             var visitor = new ExpressionToCPP(ce, cc);
             visitor.MEFContainer = container;
@@ -70,7 +71,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private IValue GetExpression(Expression expr)
         {
-            return GetExpression(expr, _codeEnv, _codeContext, MEFContainer);
+            return InternalGetExpression(expr, _codeEnv, _codeContext, MEFContainer);
         }
 
         /// <summary>
@@ -121,11 +122,17 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitConstantExpression(ConstantExpression expression)
         {
-            if (expression.Type == typeof(int)
-                || expression.Type == typeof(float)
-                || expression.Type == typeof(double))
+            if (expression.Type == typeof(int))
             {
                 _result = new ValSimple(expression.Value.ToString(), expression.Type);
+            }
+            else if (expression.Type == typeof(float)
+              || expression.Type == typeof(double))
+            {
+                var s = expression.Value.ToString();
+                if (!s.Contains("."))
+                    s += ".0";
+                _result = new ValSimple(s, expression.Type);
             }
             else if (expression.Type == typeof(bool))
             {
@@ -144,7 +151,7 @@ namespace LINQToTTreeLib.Expressions
             }
             else
             {
-                _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv, _codeContext, MEFContainer);
+                _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv, MEFContainer);
             }
 
             return expression;
@@ -220,14 +227,17 @@ namespace LINQToTTreeLib.Expressions
 
                 case ExpressionType.ArrayIndex:
                     resultType = expression.Type;
-                    op = "[]";
-                    format = "{0}[{2}]";
+                    op = "at";
+                    format = "{0}.at({2})";
                     break;
 
                 case ExpressionType.And:
                     break;
                 case ExpressionType.Modulo:
+                    op = "%";
+                    resultType = expression.Type;
                     break;
+
                 case ExpressionType.Power:
                     break;
                 default:
@@ -315,22 +325,6 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// Query references should never happen at this level - they shoudl be taken care of by parameter replacement
-        /// that gets called first!
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
-        {
-            var expr = _codeContext.GetReplacement(expression.ReferencedQuerySource);
-            if (expr == null)
-                throw new InvalidOperationException("Query source was not known to us - not possible!");
-            _result = GetExpression(expr);
-
-            return expression;
-        }
-
-        /// <summary>
         /// We are going to reference a member item - this is a simple "." coding. If this is a reference
         /// to some sort of array, then we need to deal with getting back the proper array type.
         /// </summary>
@@ -386,9 +380,28 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitParameterExpression(ParameterExpression expression)
         {
-            _result = _codeContext.GetReplacement(expression.Name, expression.Type);
+            _result = new ValSimple(expression.Name, expression.Type);
 
             return expression;
+        }
+
+        /// <summary>
+        /// Look at one of our extension expressions - see if we can deal with it whatever we are looking at here.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitExtensionExpression(Remotion.Linq.Clauses.Expressions.ExtensionExpression expression)
+        {
+            if (expression.NodeType == DeclarableParameter.ExpressionType)
+            {
+                var decl = expression as DeclarableParameter;
+                _result = new ValSimple(decl.ParameterName, decl.Type);
+                return expression;
+            }
+            else
+            {
+                return base.VisitExtensionExpression(expression);
+            }
         }
 
         /// <summary>
@@ -405,62 +418,6 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// We are doing an inline call to a lambda expression.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitInvocationExpression(InvocationExpression expression)
-        {
-            ///
-            /// Declare all the parameters for lookup.
-            /// 
-
-            if (!(expression.Expression is LambdaExpression))
-                throw new NotImplementedException("Do not know how to invoke a non-lambda call like '" + expression.ToString() + "'");
-            var lambda = expression.Expression as LambdaExpression;
-
-            var paramArgs = lambda.Parameters.Zip(expression.Arguments, (p, a) => Tuple.Create(p, a));
-            var paramDefineToPopers = from pair in paramArgs
-                                      select _codeContext.Add(pair.Item1.Name, pair.Item2);
-            var allParamDefineToPopers = paramDefineToPopers.ToArray();
-
-            ///
-            /// Do the work. We parse the body of the lambda expression. The references to the parameters should be automatically
-            /// dealt with.
-            /// 
-
-            _result = GetExpression(lambda.Body);
-
-            ///
-            /// Now, pop everything off!
-            /// 
-
-            foreach (var param in allParamDefineToPopers)
-            {
-                param.Pop();
-            }
-
-            ///
-            /// Done!
-            /// 
-
-            return expression;
-        }
-
-        /// <summary>
-        /// Some method is being called. Translate this. This is painful b/c there may be method calls that aren't
-        /// really method calls. For example, our special Helper functions. Or also there are the ROOT functions that
-        /// need to be translated to C++.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
-        {
-            var exprOut = TypeHandlers.ProcessMethodCall(expression, out _result, _codeEnv, _codeContext, MEFContainer);
-            return exprOut;
-        }
-
-        /// <summary>
         /// Someone is doing a new in the middle of this LINQ operation... we need to handle that, I guess,
         /// and translate it to a new in C++.
         /// </summary>
@@ -468,55 +425,18 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitNewExpression(NewExpression expression)
         {
-            var exprOut = TypeHandlers.ProcessNew(expression, out _result, _codeEnv, _codeContext, MEFContainer);
+            var exprOut = TypeHandlers.ProcessNew(expression, out _result, _codeEnv, MEFContainer);
             return exprOut;
         }
 
         /// <summary>
-        /// The user is making a sub-query. We will run the query and return it using the usual QueryVisitor dude, but unlike
-        /// normal we have to run the loop ourselves.
+        /// Some method is being called. Offer plug-ins a chance to transform this method call.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
-            if (MEFContainer == null)
-                throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
-
-            QueryVisitor qv = new QueryVisitor(_codeEnv, _codeContext, MEFContainer);
-            qv.SubExpressionParse = true;
-            MEFContainer.SatisfyImportsOnce(qv);
-
-            ///
-            /// Run it - since this result is out of this loop, we pop-back-out when done.
-            /// 
-
-            var scope = _codeEnv.CurrentScope;
-            qv.VisitQueryModel(expression.QueryModel);
-
-            ///
-            /// Two possible results from the sub-expression query, and how we proceed depends
-            /// on what happened in the sub query
-            /// 
-            /// 1. <returns a value> - an operator like Count() comes back from the sequence.
-            ///    it will get used in some later sequence (like # of jets in each event). So,
-            ///    we need to make sure it is declared and kept before it is used. The # that comes
-            ///    back needs to be used outside the scope we are sitting in - the one that we were at
-            ///    when we started this. Since this is a sub-query expression, the result isn't the final
-            ///    result, so we need to reset it so no one notices it.
-            /// 2. <return a sequence> - this is weird - What we are actually doing here is putting the
-            ///    sequence into code. So the loop variable has been updated with the new sequence iterator
-            ///    value. But there isn't really a result! So the result will be null...
-            /// 
-
-            if (_codeEnv.ResultValue != null)
-            {
-                _codeEnv.CurrentScope = scope;
-                _codeEnv.Add(_codeEnv.ResultValue);
-                _result = _codeEnv.ResultValue;
-                _codeEnv.ResetResult();
-            }
-
+            _result = TypeHandlers.CodeMethodCall(expression, _codeEnv, MEFContainer);
             return expression;
         }
 

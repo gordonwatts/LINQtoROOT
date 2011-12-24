@@ -4,7 +4,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -12,7 +11,14 @@ using Remotion.Linq.Clauses.ResultOperators;
 namespace LINQToTTreeLib.ResultOperators
 {
     /// <summary>
-    /// The user wants either the first or the last item in this list. Also, if we have to have a value, then throw if we don't!
+    /// The user wants either the first or the last item in this list.
+    /// There are two versions of this predicate we have to deal with. First is just the First/Last
+    /// operator. If we find nothign in the sequence, then we throw an exception. That is the easy bit.
+    /// 
+    /// However, if, instead, it is FirstOrDefault or LastOrDefault then we have to be a little more careful.
+    /// If it is an object, then by default we index into an array location at -1. This is how we indicate
+    /// "null" - and that is what happens when the user attempts to look for something using a null deref.
+    /// If it is an int, double, or float, then we will have to put in a cache value instead. Ugh.
     /// </summary>
     [Export(typeof(IQVScalarResultOperator))]
     public class ROFirstLast : IQVScalarResultOperator
@@ -26,7 +32,6 @@ namespace LINQToTTreeLib.ResultOperators
         {
             return resultOperatorType == typeof(FirstResultOperator)
                 || resultOperatorType == typeof(LastResultOperator);
-
         }
 
         /// <summary>
@@ -37,7 +42,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <param name="queryModel"></param>
         /// <param name="_codeEnv"></param>
         /// <returns></returns>
-        public IVariable ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
+        public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel,
             IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
@@ -64,43 +69,86 @@ namespace LINQToTTreeLib.ResultOperators
             }
 
             //
+            // Figure out if we need to cache the result:
+            //  - simple variable which has a default value which can be used later on.
+            //      like a double, etc.
+            //  - We actually allow for a default variable.
+            //
+
+            bool cacheResult = cc.LoopVariable.Type == typeof(int)
+                || cc.LoopVariable.Type == typeof(double)
+                || cc.LoopVariable.Type == typeof(float);
+            cacheResult = cacheResult && !bombIfNothing;
+
+            //
             // Next, make sure we are looping over something. This had better be an array we are looking at!
             //
 
-            if (cc.LoopVariable.NodeType != ExpressionType.ArrayIndex)
+            if (cc.LoopIndexVariable == null)
             {
-                throw new InvalidOperationException(string.Format("Can't apply First operator when we aren't looping over some array '{0}'", cc.LoopVariable.ToString()));
+                throw new InvalidOperationException(string.Format("Can't apply First operator when we aren't looping over some well formed array '{0}'", cc.LoopVariable.ToString()));
             }
-            var binary = cc.LoopVariable as BinaryExpression;
-            var indexExpr = binary.Right;
-            var arrayExpr = binary.Left;
+            var indexExpr = cc.LoopIndexVariable;
 
             //
             // We need to hold onto either the first or the last item here, so we create a statement that holds nnto the
-            // first or the last time. It also has to mark the thing as valid!
+            // first or the last time. It also has to mark the thing as valid! It will break when it is done.
+            // While the bool can be used later on to get at the exception we might be throwing, the actual
+            // result may be used much further on down. To protect against that, we set the array index to be -1,
+            // and then hope there is a crash later on! :-)
             //
 
-            var valueWasSeen = new VarSimple(typeof(bool)) { Declare = true };
-            var indexSeen = new VarSimple(typeof(int)) { Declare = true };
+            var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            indexSeen.SetInitialValue("-1");
 
-            gc.AddOneLevelUp(valueWasSeen);
-            gc.AddOneLevelUp(indexSeen);
+            gc.AddOutsideLoop(valueWasSeen);
+            gc.AddOutsideLoop(indexSeen);
 
             var indexValue = ExpressionToCPP.GetExpression(indexExpr, gc, cc, container);
             gc.Add(new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
 
             //
-            // Ok - we now pop out, and return the value we have!
+            // Ok - we now pop out, and throw an exception if we are supposed to always have a number, and then continue on.
             //
 
             gc.Pop();
-            var firstlastValue = Expression.ArrayIndex(arrayExpr, Expression.Parameter(typeof(int), indexSeen.RawValue));
-            var actualValue = new VarSimple(cc.LoopVariable.Type) { Declare = true };
 
-            gc.Add(new Statements.StatementAssign(actualValue,
-                ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
+            if (bombIfNothing)
+            {
+                var test = ExpressionToCPP.GetExpression(Expression.Not(valueWasSeen), gc, cc, container);
+                gc.Add(new Statements.StatementThrowIfTrue(test, "First predicate executed on a null sequence"));
+            }
 
-            return actualValue;
+            var firstlastValue = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, Expression.Parameter(typeof(int), indexSeen.RawValue));
+
+            if (cacheResult)
+            {
+                //
+                // Set the default value
+                //
+
+                var actualValue = DeclarableParameter.CreateDeclarableParameterExpression(cc.LoopVariable.Type);
+                actualValue.SetInitialValue("0");
+
+                //
+                // If everything went well, then we can do the assignment. Otherwise, we leave
+                // it as above (having the default value).
+                //
+
+                gc.Add(new Statements.StatementFilter(valueWasSeen));
+                gc.Add(new Statements.StatementAssign(actualValue,
+                    ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
+                gc.Pop();
+
+                return actualValue;
+
+            }
+            else
+            {
+                // No need to cache the result - so no need to add extra code.
+                return firstlastValue;
+            }
         }
     }
 }

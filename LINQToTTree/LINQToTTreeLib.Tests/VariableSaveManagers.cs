@@ -11,7 +11,7 @@ namespace LINQToTTreeLib.Tests
     [Export(typeof(IVariableSaverManager))]
     class VSBasic : IVariableSaverManager
     {
-        public IVariableSaver Get(IVariable var)
+        public IVariableSaver Get(IDeclaredParameter var)
         {
             if (var == null)
                 throw new NotImplementedException("This should never happen");
@@ -20,22 +20,22 @@ namespace LINQToTTreeLib.Tests
 
         public class SimpleVar : IVariableSaver
         {
-            public bool CanHandle(IVariable iVariable)
+            public bool CanHandle(IDeclaredParameter iVariable)
             {
                 return true;
             }
 
-            public System.Collections.Generic.IEnumerable<string> SaveToFile(IVariable iVariable)
+            public System.Collections.Generic.IEnumerable<string> SaveToFile(IDeclaredParameter iVariable)
             {
                 yield return "save";
             }
 
-            public System.Collections.Generic.IEnumerable<string> IncludeFiles(IVariable iVariable)
+            public System.Collections.Generic.IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
             {
                 return Enumerable.Empty<string>();
             }
 
-            public T LoadResult<T>(IVariable iVariable, ROOTNET.Interface.NTObject obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj)
             {
                 throw new NotImplementedException();
             }

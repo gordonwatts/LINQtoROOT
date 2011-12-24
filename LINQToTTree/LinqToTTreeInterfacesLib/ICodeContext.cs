@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using Remotion.Linq.Clauses;
 
@@ -22,13 +21,6 @@ namespace LinqToTTreeInterfacesLib
     public interface ICodeContext
     {
         /// <summary>
-        /// Add a variable mapping. Used most often for dealing with parameters and the like
-        /// </summary>
-        /// <param name="varName"></param>
-        /// <param name="replacementName"></param>
-        IVariableScopeHolder Add(string varName, IValue replacementName);
-
-        /// <summary>
         /// Add a vairable mapping to an expression. Used for dealing with parameters and the like.
         /// Use the return object to pop it off the stack when you are done.
         /// </summary>
@@ -38,12 +30,14 @@ namespace LinqToTTreeInterfacesLib
         IVariableScopeHolder Add(string indexName, Expression indexExpression);
 
         /// <summary>
-        /// Lookup a replacement
+        /// Add a query for later lookup. We use the query as a lookup
+        /// here b/c the user may use the same index variable in a
+        /// query (scoping).
         /// </summary>
-        /// <param name="varname"></param>
-        /// <param name="type"></param>
+        /// <param name="query"></param>
+        /// <param name="expression"></param>
         /// <returns></returns>
-        IValue GetReplacement(string varname, Type type);
+        IVariableScopeHolder Add(IQuerySource query, Expression expression);
 
         /// <summary>
         /// Returns the expression that has been stored under this name.
@@ -69,22 +63,27 @@ namespace LinqToTTreeInterfacesLib
         IVariableScopeHolder Remove(string indexName);
 
         /// <summary>
-        /// Get the current index loop variable.
+        /// Get the current index loop variable - evalusates to
+        /// whatever it is our current expression.
         /// </summary>
         Expression LoopVariable { get; }
 
         /// <summary>
+        /// Returns the index variable that we are using to run the current loop variable.
+        /// </summary>
+        Expression LoopIndexVariable { get; }
+
+        /// <summary>
         /// Set the current loop variable to be something new
         /// </summary>
-        /// <param name="v"></param>
-        void SetLoopVariable(Expression v);
+        /// <param name="loopVariable">The current value of the expression we are using in the loop</param>
+        /// <param name="indexVariable">The integer expression that is running the above loop variable</param>
+        void SetLoopVariable(Expression loopVariable, Expression indexVariable);
 
         /// <summary>
         /// Keep track of cookies that should be taken into account when
         /// calculating the cache.
         /// </summary>
         List<string> CacheCookies { get; }
-
-        IVariableScopeHolder Add(IQuerySource query, Expression expression);
     }
 }

@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.Statements
     {
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementAssign instances</summary>
         [PexFactoryMethod(typeof(StatementAssign))]
-        public static StatementAssign Create(IVariable result_iVariable, IValue val_iValue)
+        public static StatementAssign Create(IDeclaredParameter result_iVariable, IValue val_iValue)
         {
             StatementAssign statementAssign
                = new StatementAssign(result_iVariable, val_iValue);

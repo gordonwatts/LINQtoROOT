@@ -48,22 +48,16 @@ namespace LINQToTTreeLib.ResultOperators
             if (cc.LoopVariable == null)
                 throw new ArgumentNullException("No defined loop variable!");
 
-            if (cc.LoopVariable.NodeType != ExpressionType.ArrayIndex)
-                throw new ArgumentException("Unable to generate unique combinations of a non-array indexed sequence");
-
             //
             // Get the indexer that is being used to access things. We will just push that onto a temp vector of int's. That will be
             // a list of the items that we want to come back and look at. That said, once done we need to pop-up one level in our
             // depth.
             //
 
-            var arrayLookup = cc.LoopVariable as BinaryExpression;
-            var arrayIndex = arrayLookup.Right;
+            var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
+            gc.AddOutsideLoop(arrayRecord);
 
-            var arrayRecord = new Variables.VarArray(typeof(int)) { Declare = true };
-            gc.AddOneLevelUp(arrayRecord);
-
-            var recordIndexStatement = new Statements.StatementRecordIndicies(ExpressionToCPP.GetExpression(arrayIndex, gc, cc, container), arrayRecord);
+            var recordIndexStatement = new Statements.StatementRecordIndicies(ExpressionToCPP.GetExpression(cc.LoopIndexVariable, gc, cc, container), arrayRecord);
             gc.Add(recordIndexStatement);
 
             gc.Pop();
@@ -72,8 +66,8 @@ namespace LINQToTTreeLib.ResultOperators
             // Now, we go down one loop and run over the pairs with a special loop.
             //
 
-            var index1 = new Variables.VarSimple(typeof(int));
-            var index2 = new Variables.VarSimple(typeof(int));
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var indexIterator = new Statements.StatementPairLoop(arrayRecord, index1, index2);
             gc.Add(indexIterator);
 
@@ -82,12 +76,12 @@ namespace LINQToTTreeLib.ResultOperators
             // but with the other index properties. Other bits will have to do the translation for us. :-)
             //
 
-            var item1 = Expression.ArrayIndex(arrayLookup.Left, Expression.Parameter(typeof(int), index1.RawValue));
-            var item2 = Expression.ArrayIndex(arrayLookup.Left, Expression.Parameter(typeof(int), index2.RawValue));
+            var item1 = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index1);
+            var item2 = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index2);
 
             var tupleType = typeof(Tuple<,>).MakeGenericType(cc.LoopVariable.Type, cc.LoopVariable.Type);
-            var newTuple = Expression.New(tupleType.GetConstructor(new Type[] { arrayLookup.Type, arrayLookup.Type }), item1, item2);
-            cc.SetLoopVariable(newTuple);
+            var newTuple = Expression.New(tupleType.GetConstructor(new Type[] { cc.LoopVariable.Type, cc.LoopVariable.Type }), item1, item2);
+            cc.SetLoopVariable(newTuple, null);
         }
     }
 }

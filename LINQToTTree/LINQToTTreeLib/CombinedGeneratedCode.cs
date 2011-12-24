@@ -124,16 +124,16 @@ namespace LINQToTTreeLib
         /// Add a result. Very bad if it isn't unique.
         /// </summary>
         /// <param name="var"></param>
-        public void AddResult(IVariable var)
+        public void AddResult(IDeclaredParameter var)
         {
             if (var == null)
                 throw new ArgumentNullException("Can't add a null result");
 
             var sameV = from v in _results
-                        where v.VariableName == var.VariableName
+                        where v.ParameterName == var.ParameterName
                         select v;
             if (sameV.Any())
-                throw new ArgumentException(string.Format("Attempt to add duplicate result named '{0}' to a combined code.", var.VariableName));
+                throw new ArgumentException(string.Format("Attempt to add duplicate result named '{0}' to a combined code.", var.ParameterName));
 
             _results.Add(var);
         }
@@ -165,12 +165,12 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Keep track of all results we are going to want back
         /// </summary>
-        List<IVariable> _results = new List<IVariable>();
+        List<IDeclaredParameter> _results = new List<IDeclaredParameter>();
 
         /// <summary>
         /// Returns all the result values that we care about.
         /// </summary>
-        public IEnumerable<IVariable> ResultValues
+        public IEnumerable<IDeclaredParameter> ResultValues
         {
             get { return _results; }
         }

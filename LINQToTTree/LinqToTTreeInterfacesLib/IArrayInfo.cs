@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition.Hosting;
+﻿using System;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
 {
@@ -15,7 +16,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="context">Context so we can add parameters and other things</param>
         /// <param name="indexName">The name of the index that is being used by the expression we are calling.</param>
         /// <param name="popVariableContext">So things can be popped off the parameter list when not required (scoping)</param>
-        /// <returns>An expression that references this item of the loop</returns>
-        Expression AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container);
+        /// <returns>An expression that references this item of the loop (item1) and the loop variable that is indexing (item2)</returns>
+        Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container);
     }
 }

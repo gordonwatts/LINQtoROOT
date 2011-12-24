@@ -147,7 +147,7 @@ namespace LINQToTTreeLib.Variables
 
             if (destType == typeof(double))
             {
-                if (sourceType == typeof(float) || sourceType == typeof(int))
+                if (sourceType == typeof(float))
                     return false;
             }
 

@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using LINQToTTreeLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 // <copyright file="PexAssemblyInfo.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using Microsoft.Pex.Framework.Coverage;
 using Microsoft.Pex.Framework.Creatable;
@@ -43,7 +42,6 @@ using Remotion.Linq.Clauses.ResultOperators;
 [assembly: PexUseType(typeof(GC), "System.RuntimeType")]
 [assembly: PexUseType(typeof(CountResultOperator))]
 [assembly: PexUseType(typeof(CastResultOperator))]
-[assembly: PexUseType(typeof(VarInteger))]
 [assembly: PexUseType(typeof(StatementIncrementInteger))]
 [assembly: PexInstrumentAssembly("Remotion.Data.Linq")]
 [assembly: PexUseType(typeof(GeneratedCode))]

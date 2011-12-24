@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using Remotion.Linq.Clauses;
@@ -45,6 +46,9 @@ namespace LINQToTTreeLib.Expressions
             var replaceit = ResolveExpressionReplacement(paramExpr.Name);
             if (replaceit == null)
                 return base.VisitParameterExpression(paramExpr);
+
+            if (replaceit.Type != paramExpr.Type)
+                throw new InvalidOperationException(string.Format("Parameter {0} can't be replaced because it would change the type!", paramExpr.Name));
 
             return replaceit;
         }
@@ -107,6 +111,19 @@ namespace LINQToTTreeLib.Expressions
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Deal with the various types of expression.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitUnknownNonExtensionExpression(Expression expression)
+        {
+            if (expression.NodeType == DeclarableParameter.ExpressionType)
+                return expression;
+
+            return base.VisitUnknownNonExtensionExpression(expression);
         }
     }
 }

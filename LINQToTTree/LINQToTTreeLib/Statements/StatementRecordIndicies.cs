@@ -19,14 +19,14 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// The array to be storing things in
         /// </summary>
-        private IVariable _storageArray;
+        private IDeclaredParameter _storageArray;
 
         /// <summary>
         /// Create a statement that will record this index into this array each time through.
         /// </summary>
         /// <param name="intToRecord">Integer that should be cached on each time through</param>
         /// <param name="storageArray">The array where the indicies should be written</param>
-        public StatementRecordIndicies(IValue intToRecord, IVariable storageArray)
+        public StatementRecordIndicies(IValue intToRecord, IDeclaredParameter storageArray)
         {
             if (intToRecord == null)
                 throw new ArgumentNullException("intToRecord");
@@ -48,7 +48,7 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("{0}.push_back({1});", _storageArray.RawValue, _intToRecord.RawValue);
+            yield return string.Format("{0}.push_back({1});", _storageArray.ParameterName, _intToRecord.RawValue);
         }
 
         /// <summary>
@@ -59,8 +59,7 @@ namespace LINQToTTreeLib.Statements
         public void RenameVariable(string originalName, string newName)
         {
             _intToRecord.RenameRawValue(originalName, newName);
-            _storageArray.RenameRawValue(originalName, newName);
-
+            _storageArray.RenameParameter(originalName, newName);
         }
 
         /// <summary>
@@ -74,6 +73,9 @@ namespace LINQToTTreeLib.Statements
         {
             if (statement == null)
                 throw new ArgumentException("statement");
+
+            if (opt == null)
+                throw new ArgumentNullException("opt");
 
             var asRecord = statement as StatementRecordIndicies;
             if (asRecord == null)

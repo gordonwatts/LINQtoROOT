@@ -100,7 +100,7 @@ namespace LINQToTTreeLib.Tests
             var expr = Expression.MakeMemberAccess(value, typeof(NoTranslateClass).GetMember("val").First());
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(expr, caches);
+            var result = TranslatingExpressionVisitor.Translate(expr, caches, e => e);
 
             /// Make sure nothing changed!
 
@@ -123,7 +123,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val.Length;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
             var ue = result as UnaryExpression;
             Assert.IsNotNull(ue, "not unaryexpression");
@@ -138,7 +138,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val[1];
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
             Assert.AreEqual(lambdaExpr.Body.ToString(), result.ToString(), "expression doesn't match");
         }
@@ -148,7 +148,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<int>> lambaExpr = () => new Tuple<int, int>(5, 10).Item1;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
             Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
             Assert.AreEqual(typeof(int), result.Type, "result type not right");
             Assert.AreEqual(5, (result as ConstantExpression).Value, "value incorrect");
@@ -159,10 +159,39 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<int>> lambaExpr = () => new Tuple<int, int>(5, 10).Item2;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
             Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
             Assert.AreEqual(typeof(int), result.Type, "result type not right");
             Assert.AreEqual(10, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        struct customObject
+        {
+#pragma warning disable 0649
+            public int Var1;
+            public int Var2;
+#pragma warning restore 0649
+        }
+
+        [TestMethod]
+        public void TestCustomObjectTranslation()
+        {
+            Expression<Func<int>> lambaExpr = () => new customObject() { Var1 = 5, Var2 = 10 }.Var2;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
+            Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+            Assert.AreEqual(10, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        [TestMethod]
+        public void TestCustomObjectBadInitalizer()
+        {
+            // There should be no changes - we will fail later on!
+            Expression<Func<int>> lambaExpr = () => new customObject().Var2;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
+            Assert.IsInstanceOfType(result, typeof(MemberExpression), "Expression type");
         }
 
         [TestMethod]
@@ -170,7 +199,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<NoTranslateArrayClass, int>> lambdaExpr = arr => arr.val2D[1][1];
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
             Assert.AreEqual(lambdaExpr.Body.ToString(), result.ToString(), "expression doesn't match");
             Console.WriteLine(lambdaExpr.Body.ToString());
@@ -209,7 +238,7 @@ namespace LINQToTTreeLib.Tests
             var expr = Expression.MakeMemberAccess(value, typeof(SourceType1).GetMember("val").First());
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(expr, caches);
+            var result = TranslatingExpressionVisitor.Translate(expr, caches, e => e);
 
             /// Make sure nothing changed!
 
@@ -226,7 +255,7 @@ namespace LINQToTTreeLib.Tests
             var expr = Expression.MakeMemberAccess(value, typeof(SourceType1).GetMember("val").First());
 
             List<string> cookies = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(expr, cookies);
+            var result = TranslatingExpressionVisitor.Translate(expr, cookies, e => e);
 
             /// Make sure cookies came back ok!
 
@@ -259,7 +288,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType6, int>> lambdaExpr = arr => arr.val.Length;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
             var ue = result as UnaryExpression;
             Assert.IsNotNull(ue, "not unaryexpression");
@@ -274,7 +303,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType6, int>> lambdaExpr = arr => arr.same.Length;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
             var ue = result as UnaryExpression;
             Assert.IsNotNull(ue, "not unaryexpression");
@@ -291,7 +320,7 @@ namespace LINQToTTreeLib.Tests
             var expr = Expression.MakeMemberAccess(value, typeof(SourceType1).GetMember("same").First());
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(expr, caches);
+            var result = TranslatingExpressionVisitor.Translate(expr, caches, e => e);
 
             /// Make sure nothing changed!
 
@@ -342,7 +371,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.others.Length;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "top level not right");
             var al = result as UnaryExpression;
             Assert.AreEqual(ExpressionType.MemberAccess, al.Operand.NodeType, "the length subject is not the expected member access");
@@ -355,7 +384,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.others[0].others.Length;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "top level not right");
             var al = result as UnaryExpression;
             Assert.AreEqual(ExpressionType.ArrayIndex, al.Operand.NodeType, "the length subject is not the expected");
@@ -370,7 +399,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType2, int>> lambaExpr = s => new Tuple<int, SourceType2Container>(5, s.jets[0]).Item2.val;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
             Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
             Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "not array index??");
             var arAccess = result as BinaryExpression;
@@ -384,7 +413,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType2, int, int, bool>> lambaExpr = (s, a1, a2) => s.jets[a1] == s.jets[a2];
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
 
             Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
             Assert.AreEqual(ExpressionType.Equal, result.NodeType, "Expected an equal");
@@ -401,11 +430,41 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestObjectArrayCompareToNull()
+        {
+            Expression<Func<SourceType2, int, int, bool>> lambaExpr = (s, a1, a2) => s.jets[a1] == null;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
+
+            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
+            Assert.AreEqual(ExpressionType.Equal, result.NodeType, "Expected an equal");
+
+            var b = result as BinaryExpression;
+            Assert.IsInstanceOfType(b.Left, typeof(ParameterExpression), "Left expr");
+            Assert.IsInstanceOfType(b.Right, typeof(ConstantExpression), "Right expr");
+
+            var r = b.Right as ParameterExpression;
+            var l = b.Left as ConstantExpression;
+
+            //Assert.Inconclusive("Do we want to allow the user to write this - what does it mean??");
+            // The way this get coded up is pretty harmless. So I guess we let it go...
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void TestObjectArrayToConstNullCompare()
+        {
+            Expression<Func<SourceType2, bool>> lambaExpr = (s) => s.jets[0] == null;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
+        }
+
+        [TestMethod]
         public void TestArrayLengthGroupingChange()
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets.Length;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
             var ue = result as UnaryExpression;
             Assert.IsNotNull(ue, "not unaryexpression");
@@ -420,7 +479,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets[0].val2D.Length;
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
             var ue = result as UnaryExpression;
             Assert.AreEqual(ExpressionType.ArrayIndex, ue.Operand.NodeType, "expression array index for the insize missing");
@@ -436,7 +495,7 @@ namespace LINQToTTreeLib.Tests
         {
             Expression<Func<SourceType2, int>> lambdaExpr = arr => arr.jets[0].val2D[1];
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
             var firstbe = result as BinaryExpression;
             Assert.AreEqual(ExpressionType.ArrayIndex, firstbe.Left.NodeType, "expression array index for the insize missing");
@@ -454,7 +513,7 @@ namespace LINQToTTreeLib.Tests
             var notReadyYet = lambdaExpr.Body;
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(notReadyYet, caches);
+            var result = TranslatingExpressionVisitor.Translate(notReadyYet, caches, e => e);
             Assert.AreEqual(notReadyYet.ToString(), result.ToString(), "translation shouldn't have happened");
         }
 
@@ -465,7 +524,7 @@ namespace LINQToTTreeLib.Tests
             var notReadyYet = lambdaExpr.Body;
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(notReadyYet, caches);
+            var result = TranslatingExpressionVisitor.Translate(notReadyYet, caches, e => e);
             Assert.AreEqual(notReadyYet.ToString(), result.ToString(), "translation shouldn't have happened");
         }
 
@@ -476,7 +535,7 @@ namespace LINQToTTreeLib.Tests
             var notReadyYet = lambdaExpr.Body;
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(notReadyYet, caches);
+            var result = TranslatingExpressionVisitor.Translate(notReadyYet, caches, e => e);
             Assert.AreEqual(notReadyYet.ToString(), result.ToString(), "translation shouldn't have happened");
         }
 
@@ -496,7 +555,7 @@ namespace LINQToTTreeLib.Tests
             var exprArrValue = Expression.MakeMemberAccess(exprArr, typeof(SourceType2Container).GetMember("val").First());
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(exprArrValue, caches);
+            var result = TranslatingExpressionVisitor.Translate(exprArrValue, caches, e => e);
 
             /// Make sure we are now doing an array access on the second object....            /// 
 
@@ -586,7 +645,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(originalExpression, caches);
+            var result = TranslatingExpressionVisitor.Translate(originalExpression, caches, e => e);
 
             ///
             /// Ok, now that translation is done, we expect to see
@@ -610,7 +669,7 @@ namespace LINQToTTreeLib.Tests
             Expression<Func<SourceType3, int>> lambdaExpr = arr => arr.jets[0].specialIndicies.Length;
             /// => arr.specialIndicies[0].Length
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
 
             Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
             var ue = result as UnaryExpression;
@@ -629,7 +688,7 @@ namespace LINQToTTreeLib.Tests
             /// => arr.muons[obj.specialIndicies[0][1]].val => obj.val[obj.specialIndicies[0][1]]
             /// 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
 
             Assert.AreEqual(ExpressionType.ArrayIndex, result.NodeType, "expression node");
             var topLevelBe = result as BinaryExpression;
@@ -741,7 +800,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(originalExpression, caches);
+            var result = TranslatingExpressionVisitor.Translate(originalExpression, caches, e => e);
 
             ///
             /// Ok, now that translation is done, we expect to see
@@ -778,7 +837,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches, e => e);
 
             Assert.AreEqual(loader.Body.ToString(), result.ToString(), "expression should have been untouched!");
         }
@@ -797,7 +856,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches);
+            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches, e => e);
 
             Assert.AreEqual(loader.Body.ToString(), result.ToString(), "expression should have been untouched!");
         }
@@ -872,7 +931,7 @@ namespace LINQToTTreeLib.Tests
             /// 
 
             List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(originalExpression, caches);
+            var result = TranslatingExpressionVisitor.Translate(originalExpression, caches, e => e);
 
             ///
             /// Ok, now that translation is done, we expect to see
@@ -942,7 +1001,7 @@ namespace LINQToTTreeLib.Tests
             string initialDesc = ntracks.ToString();
 
             List<string> caches = new List<string>();
-            var exprTans = TranslatingExpressionVisitor.Translate(ntracks, caches);
+            var exprTans = TranslatingExpressionVisitor.Translate(ntracks, caches, e => e);
             Assert.AreEqual(initialDesc, exprTans.ToString(), "shouldn't have touched it");
         }
     }

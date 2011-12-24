@@ -1,4 +1,5 @@
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib
@@ -8,7 +9,7 @@ namespace LINQToTTreeLib
     {
         /// <summary>A factory for LINQToTTreeLib.GeneratedCode instances</summary>
         [PexFactoryMethod(typeof(GeneratedCode))]
-        public static GeneratedCode Create(IVariable result, IStatement[] statements, string[] includeFiles, ROOTNET.NTObject[] variables, string[] leafnames)
+        public static GeneratedCode Create(DeclarableParameter result, IStatement[] statements, string[] includeFiles, ROOTNET.NTObject[] variables, string[] leafnames)
         {
             GeneratedCode generatedCode = new GeneratedCode();
 

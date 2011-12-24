@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses;
 
 namespace LINQToTTreeLib
@@ -13,95 +12,9 @@ namespace LINQToTTreeLib
     public class CodeContext : ICodeContext
     {
         /// <summary>
-        /// Keep track of all parameters we need to know about.
-        /// </summary>
-        Dictionary<string, IValue> _parameterReplacement = new Dictionary<string, IValue>();
-
-        /// <summary>
         /// Get the # of parameter replacements we know about.
         /// </summary>
-        public int NumberOfParams { get { return _parameterReplacement.Count; } }
-
-        /// <summary>
-        /// Add a parameter replacement to the list.
-        /// </summary>
-        /// <param name="varName"></param>
-        /// <param name="replacementName"></param>
-        public IVariableScopeHolder Add(string varName, IValue replacementName)
-        {
-            if (varName == null || replacementName == null)
-                throw new ArgumentNullException("Can't setup an Add that is null!");
-
-            if (varName.Length == 0)
-                throw new ArgumentException("var and replacement must be real strings");
-
-            ///
-            /// See if there was somethign there already that we are going to replace
-            /// 
-
-            IVariableScopeHolder popper = null;
-            if (_parameterReplacement.ContainsKey(varName))
-            {
-                popper = new CCReplacement(this, varName, _parameterReplacement[varName]);
-            }
-            else
-            {
-                popper = new CCReplacementNull(this, varName);
-            }
-
-            ///
-            /// Ok, now do the replacement
-            /// 
-
-            _parameterReplacement[varName] = replacementName;
-
-            return popper;
-        }
-
-        /// <summary>
-        /// We have no context to keep track of.
-        /// </summary>
-        private class CCReplacementNull : IVariableScopeHolder
-        {
-            private string _vName;
-            private CodeContext _codeContext;
-
-            public CCReplacementNull(CodeContext codeContext, string varName)
-            {
-                // TODO: Complete member initialization
-                _codeContext = codeContext;
-                _vName = varName;
-            }
-            public void Pop()
-            {
-                _codeContext.DeleteValue(_vName);
-            }
-        }
-
-        /// <summary>
-        /// Keep track of a context
-        /// </summary>
-        private class CCReplacement : IVariableScopeHolder
-        {
-            private CodeContext _context;
-            private string _varName;
-            private IValue _oldVal;
-
-            public CCReplacement(CodeContext codeContext, string varName, IValue iValue)
-            {
-                _context = codeContext;
-                _varName = varName;
-                _oldVal = iValue;
-            }
-
-            /// <summary>
-            /// Go back to what we had!
-            /// </summary>
-            public void Pop()
-            {
-                _context.Add(_varName, _oldVal);
-            }
-        }
+        public int NumberOfParams { get { return _expressionReplacement.Count; } }
 
         /// <summary>
         /// Scope holder that will pop the stuff off we need popped off.
@@ -171,50 +84,21 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Get a replacement substitution - given the name and expected type.
-        /// </summary>
-        /// <param name="varname"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public IValue GetReplacement(string varname, Type type)
-        {
-            if (varname == null)
-                throw new ArgumentNullException("Can't lookup a null var name!");
-
-            if (type == null)
-                throw new ArgumentNullException("Can't lookup a var name with a null type!");
-
-            if (varname.Length == 0)
-                throw new ArgumentException("Variables must be non-zero length!");
-
-            if (!_parameterReplacement.ContainsKey(varname))
-                return new ValSimple(varname, type);
-            var result = _parameterReplacement[varname];
-
-            if (result.Type != type)
-                throw new InvalidOperationException("Can't convert parameter from type '" + result.Type.Name + "' to '" + type.Name + "'.");
-
-            return result;
-        }
-
-        /// <summary>
         /// Delete a variable name if it is in there.
         /// </summary>
         /// <param name="vName"></param>
         internal void Delete(string vName)
         {
             DeleteExpression(vName);
-            DeleteValue(vName);
         }
 
+        /// <summary>
+        /// Delete an expression mapping.
+        /// </summary>
+        /// <param name="vName"></param>
         internal void DeleteExpression(string vName)
         {
             _expressionReplacement.Remove(vName);
-        }
-
-        internal void DeleteValue(string vName)
-        {
-            _parameterReplacement.Remove(vName);
         }
 
         /// <summary>
@@ -232,15 +116,26 @@ namespace LINQToTTreeLib
         public Expression LoopVariable { get; private set; }
 
         /// <summary>
+        /// Returns the current loop index - the integer thing we are walking over.
+        /// </summary>
+        public Expression LoopIndexVariable { get; private set; }
+
+        /// <summary>
         /// Set the loop variable to a new value
         /// </summary>
-        /// <param name="v"></param>
-        public void SetLoopVariable(Expression v)
+        /// <param name="loopExpression">Evaluate to the current value, looping over whatever we are looping over</param>
+        /// <param name="indexVariable">The current index - this is what we are walking through right now. Null if this index variable makes no sense.</param>
+        public void SetLoopVariable(Expression loopExpression, Expression indexVariable)
         {
-            if (v == null)
+            if (loopExpression == null)
                 throw new ArgumentNullException("can not set a null loop variable");
 
-            LoopVariable = v;
+            if (indexVariable != null)
+                if (indexVariable.Type != typeof(int))
+                    throw new ArgumentException("The index variable must be an integer");
+
+            LoopVariable = loopExpression;
+            LoopIndexVariable = indexVariable;
         }
 
         private Dictionary<string, Expression> _expressionReplacement = new Dictionary<string, Expression>();

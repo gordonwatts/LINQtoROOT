@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
@@ -65,7 +64,7 @@ namespace LINQToTTreeLib.Tests
         ///A test for ProcessResultOperator
         ///</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        internal IVariable ProcessResultOperator(
+        internal void ProcessResultOperator(
             [PexAssumeUnderTest]ROUniqueCombinations target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
@@ -74,7 +73,6 @@ namespace LINQToTTreeLib.Tests
         )
         {
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, cc, null);
-            return null;
         }
 
         class ntupArray
@@ -144,5 +142,39 @@ namespace LINQToTTreeLib.Tests
             var seen2 = DummyQueryExectuor.FinalResult.CodeBody.Statements.Where(s => s is StatementSimpleStatement).Cast<StatementSimpleStatement>().Where(s => s.ToString().Contains("]*2")).Any();
             Assert.IsFalse(seen2, "Saw a ']*2' in a top level code statement!");
         }
+
+        [TestMethod]
+        public void TestAnonObjects()
+        {
+            var q = new QueriableDummy<ntupArray>();
+            var anon = from evt in q
+                       select (from r in evt.run
+                               select new
+                               {
+                                   Value = r
+                               });
+            var results = from evt in anon
+                          select evt.PairWiseAll((r1, r2) => r1.Value != r2.Value).Count();
+            var tot = results.Aggregate(0, (seed, val) => seed + val);
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+
+#if false
+        [TestMethod]
+        public void TestAnonDirectCompareObjects()
+        {
+            var q = new QueriableDummy<ntupArray>();
+            var anon = from evt in q
+                       select (from r in evt.run
+                               select new
+                               {
+                                   Value = r
+                               });
+            var results = from evt in anon
+                          select evt.PairWiseAll((r1, r2) => r1 != r2).Count();
+            var tot = results.Aggregate(0, (seed, val) => seed + val);
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+#endif
     }
 }

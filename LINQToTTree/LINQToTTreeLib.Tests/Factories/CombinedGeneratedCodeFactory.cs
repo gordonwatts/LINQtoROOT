@@ -8,7 +8,7 @@ namespace LINQToTTreeLib
     /// <summary>A factory for LINQToTTreeLib.CombinedGeneratedCode instances</summary>
     public static partial class CombinedGeneratedCodeFactory
     {
-        class namedVar : IVariable
+        class namedVar : IDeclaredParameter
         {
             public namedVar(string name)
             {
@@ -31,6 +31,16 @@ namespace LINQToTTreeLib
 
 
             public void RenameRawValue(string oldname, string newname)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public string ParameterName
+            {
+                get { return RawValue; }
+            }
+
+            public void RenameParameter(string oldname, string newname)
             {
                 throw new System.NotImplementedException();
             }
