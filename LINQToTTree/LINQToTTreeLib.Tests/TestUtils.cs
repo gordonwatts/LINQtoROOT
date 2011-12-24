@@ -268,6 +268,26 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
+        public static FileInfo CreateFileOfIndexedInt(int numberOfIter)
+        {
+            string filename = "FileOfIndexedInt" + numberOfIter.ToString() + ".root";
+            FileInfo result = new FileInfo(filename);
+            if (result.Exists)
+                return result;
+
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
+            TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector(numberOfIter);
+            f.Write();
+            f.Close();
+            result.Refresh();
+            return result;
+        }
+
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
         public static FileInfo CreateFileOfInt(int numberOfIter)
         {
             string filename = "intonly_" + numberOfIter.ToString() + ".root";
@@ -282,7 +302,7 @@ namespace LINQToTTreeLib.Tests
             result.Refresh();
             return result;
         }
-        
+
         /// <summary>
         /// Dirt simply test ntuple. Actually matches one that exists on disk.
         /// </summary>

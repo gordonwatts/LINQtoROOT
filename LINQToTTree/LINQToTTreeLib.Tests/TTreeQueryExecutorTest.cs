@@ -755,6 +755,54 @@ namespace LINQToTTreeLib
             Assert.IsTrue(filesFromOurObj.Length > 0, "no files from our common object");
         }
 
+        // For ntuples generated with CreateFileOfIndexedInt
+        public class TestSingleIndexArray : IExpressionHolder
+        {
+            public TestSingleIndexArray(Expression holder)
+            {
+                HeldExpression = holder;
+            }
+            public System.Linq.Expressions.Expression HeldExpression { get; set; }
+
+#pragma warning disable 0169
+            public int[] arr;
+            public int n;
+#pragma warning restore 0169
+
+        }
+
+        [TestMethod]
+        public void TestIndexArray()
+        {
+            // Make sure we can process an index array (an array that is specified as arr[n]).
+
+            // Create the ntuple file and the proxy that we will be using.
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfIndexedInt(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Do a simple query to make sure the # of items in each array is "10", and that
+            // there are 25 such events.
+
+            var q = new QueriableDummy<TestSingleIndexArray>();
+            var dudeQ = from evt in q
+                        where (evt.arr.Count() == 10)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
         /// <summary>
         /// Dirt simply test ntuple. Actually matches one that exists on disk.
         /// </summary>
