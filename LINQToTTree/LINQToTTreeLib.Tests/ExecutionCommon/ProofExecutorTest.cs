@@ -15,6 +15,15 @@ namespace LINQToTTreeLib.Tests
     [PexClass(typeof(ProofExecutor))]
     public class TestProofExecutor
     {
+        /// <summary>
+        /// Machine we can use for testing.
+        /// </summary>
+        const string proofTestNode = "tev11.phys.washington.edu";
+
+        static Uri CreateProofRef (string dsName)
+        {
+            return new Uri(string.Format("proff://{0}/{1}", proofTestNode, dsName));
+        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -22,7 +31,7 @@ namespace LINQToTTreeLib.Tests
         {
             var targetr = new ProofExecutor();
             var env = CreateSimpleEnvironment();
-            env.RootFiles = new[] { new Uri("proof://tev03.phys.washington.edu/bogusdatasetname") };
+            env.RootFiles = new[] { CreateProofRef("bogusdatasetname") };
 
             targetr.Environment = env;
             targetr.Execute(null, null, null);
@@ -31,7 +40,7 @@ namespace LINQToTTreeLib.Tests
         private ExecutionEnvironment CreateSimpleEnvironment()
         {
             var result = new ExecutionEnvironment();
-            result.RootFiles = new[] { new Uri("proof://tev03.phys.washington.edu/LINQTest") };
+            result.RootFiles = new[] { CreateProofRef("LINQTest") };
 
             return result;
         }
