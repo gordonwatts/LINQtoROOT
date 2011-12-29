@@ -73,6 +73,18 @@
     <Reference Include="libPhysicsWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libProofDrawWrapper">
+      <HintPath>..\packages\ROOTNET-PROOF-v5.30.01.win32.vc10.2.2\lib\net40\libProofDrawWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libProofPlayerWrapper">
+      <HintPath>..\packages\ROOTNET-PROOF-v5.30.01.win32.vc10.2.2\lib\net40\libProofPlayerWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libProofWrapper">
+      <HintPath>..\packages\ROOTNET-PROOF-v5.30.01.win32.vc10.2.2\lib\net40\libProofWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libProofxWrapper">
+      <HintPath>..\packages\ROOTNET-PROOF-v5.30.01.win32.vc10.2.2\lib\net40\libProofxWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="libRIOWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
     </Reference>
@@ -85,7 +97,6 @@
     <Reference Include="libTreeWrapper">
       <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.2\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libProofWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="NVelocity">
       <HintPath>..\packages\NVelocity.1.0.3\lib\NVelocity.dll</HintPath>
     </Reference>

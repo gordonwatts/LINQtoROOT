@@ -87,7 +87,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Count();
@@ -111,7 +111,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Where(v => v.run > 0).Count();
@@ -135,7 +135,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude1 = q.Count();

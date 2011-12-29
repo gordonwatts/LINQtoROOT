@@ -22,42 +22,5 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROFirstLastTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException630()
-{
-    Expression expression;
-    ROFirstLast s0 = new ROFirstLast();
-    expression =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
-                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(NullReferenceException))]
-public void ProcessResultOperatorThrowsNullReferenceException173()
-{
-    LastResultOperator lastResultOperator;
-    Expression expression;
-    lastResultOperator = new LastResultOperator(false);
-    ROFirstLast s0 = new ROFirstLast();
-    expression = this.ProcessResultOperator
-                     (s0, (ResultOperatorBase)lastResultOperator, (QueryModel)null, 
-                      (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROFirstLastTest))]
-[ExpectedException(typeof(NullReferenceException))]
-public void ProcessResultOperatorThrowsNullReferenceException783()
-{
-    FirstResultOperator firstResultOperator;
-    Expression expression;
-    firstResultOperator = new FirstResultOperator(false);
-    ROFirstLast s0 = new ROFirstLast();
-    expression = this.ProcessResultOperator
-                     (s0, (ResultOperatorBase)firstResultOperator, (QueryModel)null, 
-                      (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
     }
 }

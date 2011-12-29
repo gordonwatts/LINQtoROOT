@@ -198,7 +198,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
 
             ///
             /// Get a simple query we can "play" with
@@ -226,7 +226,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
 
             ///
             /// Get a simple query we can "play" with
@@ -254,7 +254,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
 
             ///
             /// Get a simple query we can "play" with
@@ -282,7 +282,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
 
             ///
             /// Get a simple query we can "play" with
@@ -313,7 +313,7 @@ namespace LINQToTTreeLib
 
         private void RunSimpleCountResult(int numberOfIter)
         {
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -352,7 +352,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestInclusiveCPPInfo()
         {
-            var rootFile = TestUtils.CreateFileOfInt(10);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(10);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -386,7 +386,7 @@ namespace LINQToTTreeLib
         {
             /// Make sure the "new" gets translated to C++ correctly and there are no errors!
 
-            var rootFile = TestUtils.CreateFileOfInt(5);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(5);
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
@@ -419,7 +419,7 @@ namespace LINQToTTreeLib
         {
             /// Do two identical queries. Make sure only one causes an actual run!
 
-            var rootFile = TestUtils.CreateFileOfInt(5);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(5);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -469,7 +469,7 @@ namespace LINQToTTreeLib
         {
             /// Do two identical queries. Make sure only one causes an actual run!
 
-            var rootFile = TestUtils.CreateFileOfInt(5);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(5);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -517,7 +517,7 @@ namespace LINQToTTreeLib
         [ExpectedException(typeof(ArgumentException))]
         public void TestForZeroInputFiles()
         {
-            var rootFile = TestUtils.CreateFileOfInt(5);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(5);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -545,7 +545,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestTempDirectoryLocationAndEmptying()
         {
-            var rootFile = TestUtils.CreateFileOfInt(1);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(1);
 
             ///
             /// Get a simple query we can "play" with
@@ -654,7 +654,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestDualQueryOnSameQueriable()
         {
-            var rootFile = TestUtils.CreateFileOfInt(5);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(5);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -699,7 +699,7 @@ namespace LINQToTTreeLib
             /// Run a simple query - but fool it against another ntuple
             /// 
 
-            var rootFile = TestUtils.CreateFileOfInt(1);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(1);
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Count();
             var query = DummyQueryExectuor.LastQueryModel;
@@ -852,7 +852,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, 0);
         }
@@ -889,7 +889,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -926,7 +926,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(25, result, "Incorrect number of iterations found");
         }
@@ -964,7 +964,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
         }
 
@@ -1221,7 +1221,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
 
@@ -1470,7 +1470,7 @@ namespace LINQToTTreeLib
         public void TestInitalizerWithROOTVariable()
         {
             const int numberOfIter = 25;
-            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -1502,7 +1502,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestTransferSingleObject()
         {
-            var rootFile = TestUtils.CreateFileOfInt(10);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(10);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -1538,7 +1538,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSameHistoOverTice()
         {
-            var rootFile = TestUtils.CreateFileOfInt(10);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(10);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -1575,7 +1575,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSameHistInCombinedQueries()
         {
-            var rootFile = TestUtils.CreateFileOfInt(10);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(10);
 
             ///
             /// Generate a proxy .h file that we can use

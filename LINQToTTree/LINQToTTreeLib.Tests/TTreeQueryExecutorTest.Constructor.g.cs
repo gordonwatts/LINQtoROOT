@@ -18,59 +18,5 @@ namespace LINQToTTreeLib
 {
     public partial class TTreeQueryExecutorTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException710()
-{
-    TTreeQueryExecutor tTreeQueryExecutor;
-    tTreeQueryExecutor =
-      this.Constructor((FileInfo)null, (string)null, (string[])null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void ConstructorThrowsArgumentException623()
-{
-    TTreeQueryExecutor tTreeQueryExecutor;
-    tTreeQueryExecutor =
-      this.Constructor((FileInfo)null, (string)null, (string[])null, "");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException73()
-{
-    TTreeQueryExecutor tTreeQueryExecutor;
-    tTreeQueryExecutor =
-      this.Constructor((FileInfo)null, (string)null, (string[])null, "\0");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException809()
-{
-    TTreeQueryExecutor tTreeQueryExecutor;
-    tTreeQueryExecutor =
-      this.Constructor((FileInfo)null, (string)null, (string[])null, "\u0100");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException380()
-{
-    TTreeQueryExecutor tTreeQueryExecutor;
-    tTreeQueryExecutor =
-      this.Constructor((FileInfo)null, (string)null, (string[])null, "\0\0");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TTreeQueryExecutorTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException483()
-{
-    TTreeQueryExecutor tTreeQueryExecutor;
-    tTreeQueryExecutor =
-      this.Constructor((FileInfo)null, (string)null, (string[])null, "\u0100\u0100");
-}
     }
 }

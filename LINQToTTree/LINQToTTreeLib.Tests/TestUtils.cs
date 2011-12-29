@@ -282,7 +282,7 @@ namespace LINQToTTreeLib.Tests
             result.Refresh();
             return result;
         }
-        
+
         /// <summary>
         /// Dirt simply test ntuple. Actually matches one that exists on disk.
         /// </summary>
@@ -331,18 +331,10 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
-        public static Uri CreateFileOfInt(int numberOfIter)
+        public static Uri CreateFileOfIntAsURI(int numberOfIter)
         {
-            string filename = "intonly_" + numberOfIter.ToString() + ".root";
-            FileInfo result = new FileInfo(filename);
-            Uri u = new Uri("file://" + result.FullName);
-            if (result.Exists)
-                return u;
-
-            var f = new ROOTNET.NTFile(filename, "RECREATE");
-            var tree = TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter);
-            f.Write();
-            f.Close();
+            var f = CreateFileOfInt(numberOfIter);
+            Uri u = new Uri("file://" + f.FullName);
             return u;
         }
 

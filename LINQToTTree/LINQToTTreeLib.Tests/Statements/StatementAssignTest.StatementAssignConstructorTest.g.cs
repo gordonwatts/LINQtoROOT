@@ -18,14 +18,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementAssignTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void StatementAssignConstructorTestThrowsArgumentNullException200()
-{
-    StatementAssign statementAssign;
-    statementAssign =
-      this.StatementAssignConstructorTest((IDeclaredParameter)null, (IValue)null);
-}
     }
 }

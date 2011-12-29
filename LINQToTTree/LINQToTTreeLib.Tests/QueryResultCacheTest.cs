@@ -320,7 +320,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestForFileOutOfDate()
         {
-            var f = MakeRootFile("TestForFileOutOfDate");
+            var u = MakeRootFile("TestForFileOutOfDate");
+            var f = new FileInfo(u.OriginalString);
             var query = MakeQuery(0);
 
             /// Cache a result
@@ -329,7 +330,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), h);
 
             /// Modify the file
 
@@ -343,12 +344,12 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), checkDates: true);
+            var r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
 
             // Next, update the cache and look to make sure that the cache returns a hit this time!
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
-            r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), checkDates: true);
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), h);
+            r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsTrue(r.Item1, "altered file should have made this fail");
         }
 

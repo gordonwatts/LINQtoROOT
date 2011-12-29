@@ -18,18 +18,5 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
     public partial class TypeHandlerCPPCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
-public void ProcessMethodCall170()
-{
-    TypeHandlerCPPCode typeHandlerCPPCode;
-    Expression expression;
-    typeHandlerCPPCode = new TypeHandlerCPPCode();
-    expression =
-      this.ProcessMethodCall(typeHandlerCPPCode, (MethodCallExpression)null, 
-                             (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-    Assert.IsNull((object)expression);
-    Assert.IsNotNull((object)typeHandlerCPPCode);
-}
     }
 }
