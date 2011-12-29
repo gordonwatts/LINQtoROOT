@@ -321,7 +321,7 @@ namespace LINQToTTreeLib
         public void TestForFileOutOfDate()
         {
             var u = MakeRootFile("TestForFileOutOfDate");
-            var f = new FileInfo(u.OriginalString);
+            var f = new FileInfo(u.LocalPath);
             var query = MakeQuery(0);
 
             /// Cache a result
