@@ -40,40 +40,46 @@ namespace SetupPROOFServer
             //
 
             var connection = new ROOTNET.NTProof(proofURI);
-
-            //
-            // Check to see if the dataset exists or not
-            //
-
-            if (connection.ExistsDataSet(testDatasetName))
+            try
             {
-                Console.WriteLine("The test dataset exists");
-                return;
+                //
+                // Check to see if the dataset exists or not
+                //
+
+                if (connection.ExistsDataSet(testDatasetName))
+                {
+                    Console.WriteLine("The test dataset exists");
+                    return;
+                }
+
+                Console.WriteLine("Creating dataset {0}.", testDatasetName);
+
+                //
+                // Create & define the dataset.
+                //
+
+                var files = new ROOTNET.NTFileCollection(testDatasetName, string.Format("File list for {0}", testDatasetName));
+                foreach (var f in testDataSetFileList)
+                {
+                    var finfo = new ROOTNET.NTFileInfo(f);
+                    files.Add(finfo);
+                    finfo.SetNativePointerOwner(false); // because the collection takes over ownership! :(
+                }
+
+                Console.WriteLine("Dataset {0} will contain {1} files.", testDatasetName, testDataSetFileList.Length);
+
+                if (!connection.RegisterDataSet(testDatasetName, files))
+                {
+                    Console.WriteLine("Registration of the dataset unsuccessful");
+                    return;
+                }
+
+                Console.WriteLine("Dataset {0} registered", testDatasetName);
             }
-
-            Console.WriteLine("Creating dataset {0}.", testDatasetName);
-
-            //
-            // Create & define the dataset.
-            //
-
-            var files = new ROOTNET.NTFileCollection(testDatasetName, string.Format("File list for {0}", testDatasetName));
-            foreach (var f in testDataSetFileList)
+            finally
             {
-                var finfo = new ROOTNET.NTFileInfo(f);
-                files.Add(finfo);
+                connection.Close();
             }
-            Console.WriteLine("Dataset {0} will contain {1} files.", testDatasetName, testDataSetFileList.Length);
-
-            if (!connection.RegisterDataSet(testDatasetName, files))
-            {
-                Console.WriteLine("Registration of the dataset unsuccessful");
-                return;
-            }
-
-            Console.WriteLine("Dataset registered");
-
-            connection.Close();
         }
     }
 }
