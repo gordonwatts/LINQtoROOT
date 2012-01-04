@@ -2,6 +2,8 @@
 using LINQToTTreeLib.ExecutionCommon;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -45,6 +47,19 @@ namespace LINQToTTreeLib.Tests
             return result;
         }
 
+        /// <summary>
+        /// Creates the query for a simple execution file.
+        /// </summary>
+        /// <returns></returns>
+        private ExecutionEnvironment CreateSimpleQueryEnvironment()
+        {
+            var result = CreateSimpleEnvironment();
+
+            result.TreeName = "CollectionTree";
+
+            return result;
+        }
+
         [TestMethod]
         public void TestForSimpleRun()
         {
@@ -54,6 +69,27 @@ namespace LINQToTTreeLib.Tests
 
             targetr.Environment = env;
             targetr.Execute(null, null, null);
+        }
+
+        [TestMethod]
+        [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
+        public void TestSimpleQuery()
+        {
+            FileInfo runner = new FileInfo("queryTestSimpleQuery.cxx");
+            Assert.IsTrue(runner.Exists, "Main C++ file missing");
+            var targetr = new ProofExecutor();
+            var env = CreateSimpleQueryEnvironment();
+
+            targetr.Environment = env;
+            var r = targetr.Execute(runner, null, null);
+
+            Assert.IsNotNull(r, "nothing came back!");
+            Assert.AreEqual(1, r.Count, "# of returned values from query");
+            Assert.AreEqual("aInt32_1", r.Keys.First(), "Key name incorrect");
+            var o = r["aInt32_1"];
+            Assert.IsInstanceOfType(o, typeof(ROOTNET.NTH1I), "return histo type");
+            var h = o as ROOTNET.NTH1I;
+            Assert.AreEqual(2000, (int) h.GetBinContent(1), "Answer from query");
         }
 
         [PexMethod]

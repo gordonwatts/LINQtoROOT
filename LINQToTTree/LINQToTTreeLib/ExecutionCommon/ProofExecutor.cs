@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -16,11 +17,67 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="queryDirectory"></param>
         /// <param name="varsToTransfer"></param>
         /// <returns></returns>
-        public IDictionary<string, ROOTNET.Interface.NTObject> Execute(System.IO.FileInfo templateFile, System.IO.DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public IDictionary<string, ROOTNET.Interface.NTObject> Execute(FileInfo templateFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
+            //
+            // x-check parameters
+            //
+
+            if (templateFile == null)
+                return null;
+            if (!templateFile.Exists)
+                throw new FileNotFoundException("Unable to find C++ code to use for PROOF query", templateFile.FullName);
+
+            //
+            // Make sure everythign is inialized
+            //
+
             OrganizeUris();
 
+            //
+            // Now run the PROOF query
+            //
+
+            var pc = GetProofConnection();
+            var r = pc.Process(PROOFDSNames(), string.Format("{0}+", templateFile.Name));
+            if (r == -1)
+                throw new InvalidOperationException("Faild to run PROOF query");
+
+            //
+            // Clean up
+            //
+
+            if (Environment.CleanupQuery)
+            {
+                if (queryDirectory != null)
+                    if (queryDirectory.Exists)
+                        queryDirectory.Delete();
+            }
+
+            //
+            // Return back all the objects that came back from the script
+            //
+
             return null;
+        }
+
+        /// <summary>
+        /// Generate the dataset names for PROOF to address in the proper format.
+        /// </summary>
+        /// <returns></returns>
+        private string PROOFDSNames()
+        {
+            //
+            // Some x-checks to make sure we are not doing anything crazy
+            //
+
+            if (_datasets.Length != 1)
+                throw new InvalidOperationException("Currently can't deal a PROOF query that isn't just one dataset");
+
+            if (Environment.TreeName == null)
+                throw new ArgumentNullException("Tree name can't be null");
+
+            return string.Format("{0}#{1}", _datasets[0], Environment.TreeName);
         }
 
 
