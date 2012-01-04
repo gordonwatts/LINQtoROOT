@@ -56,11 +56,12 @@ namespace LINQToTTreeLib.ExecutionCommon
                 throw new ArgumentException("Dataset formats are not correct: only a proof machine name and a dataset name are allowed");
 
             //
-            // We can deal with multiple data-sets, but only a single host.
+            // We can deal with multiple data-sets, but only a single host. Strip the leading "/" off the dataset name when we
+            // look at this as a URI segment (the substring below).
             //
 
             var hosts = (from u in Environment.RootFiles
-                         group u.PathAndQuery by u.Segments[1]).ToArray();
+                         group u.PathAndQuery.Substring(1) by u.Host).ToArray();
             if (hosts.Length != 1)
                 throw new ArgumentException("There were more than one host for the list of PROOF datasets. This is not supported");
 
@@ -105,7 +106,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (_proofConnection == null)
             {
-                _proofConnection = new ROOTNET.NTProof(_proofHost);
+                _proofConnection = new ROOTNET.NTProof(string.Format("proof://{0}", _proofHost));
             }
             return _proofConnection;
         }

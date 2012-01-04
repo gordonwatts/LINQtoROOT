@@ -20,9 +20,9 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         const string proofTestNode = "tev11.phys.washington.edu";
 
-        static Uri CreateProofRef (string dsName)
+        static Uri CreateProofRef(string dsName)
         {
-            return new Uri(string.Format("proff://{0}/{1}", proofTestNode, dsName));
+            return new Uri(string.Format("proof://{0}/{1}", proofTestNode, dsName));
         }
 
         [TestMethod]
@@ -54,7 +54,6 @@ namespace LINQToTTreeLib.Tests
 
             targetr.Environment = env;
             targetr.Execute(null, null, null);
-
         }
 
         [PexMethod]
