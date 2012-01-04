@@ -11,8 +11,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Run request, and return the results
         /// </summary>
-        /// <param name="remotePacket"></param>
-        /// <returns></returns>
+        /// <param name="queryDirectory"></param>
+        /// <param name="templateFile">Path to the main runner file</param>
+        /// <param name="varsToTransfer">A list of variables that are used as input to the routine.</param>
+        /// <returns>A list of objects and names pulled from the output root file</returns>
         IDictionary<string, ROOTNET.Interface.NTObject> Execute(
             FileInfo templateFile,
             DirectoryInfo queryDirectory,
