@@ -220,6 +220,24 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Sort the current stream of the query. To do this we run through all the results, sort them,
+        /// and then start a new loop.
+        /// </summary>
+        /// <param name="ordering"></param>
+        /// <param name="queryModel"></param>
+        /// <param name="orderByClause"></param>
+        /// <param name="index"></param>
+        public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
+        {
+            ///
+            /// Only number types can be sorted.
+            ///
+
+
+            base.VisitOrdering(ordering, queryModel, orderByClause, index);
+        }
+
+        /// <summary>
         /// Get/Set the container that can be usef for MEF'ing things.
         /// </summary>
         public CompositionContainer MEFContainer { get; private set; }

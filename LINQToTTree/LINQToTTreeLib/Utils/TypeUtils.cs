@@ -65,5 +65,17 @@ namespace LINQToTTreeLib.Utils
             return attr;
         }
 
+        /// <summary>
+        /// A type we know how to deal with as a number. For example, we can sum it, etc.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static bool IsNumberType(this Type v)
+        {
+            return v == typeof(int)
+                || v == typeof(short)
+                || v == typeof(double)
+                || v == typeof(float);
+        }
     }
 }

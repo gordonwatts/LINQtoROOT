@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -59,10 +60,7 @@ namespace LINQToTTreeLib.ResultOperators
             // We only know how to sum basic types
             //
 
-            if (sumType != typeof(int)
-                && sumType != typeof(short)
-                && sumType != typeof(double)
-                && sumType != typeof(float))
+            if (!sumType.IsNumberType())
             {
                 throw new InvalidOperationException(string.Format("Do not know how to generate C++ to sum type {0}.", sumType.Name));
             }

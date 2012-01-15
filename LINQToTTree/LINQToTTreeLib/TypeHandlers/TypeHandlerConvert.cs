@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
@@ -101,11 +102,7 @@ namespace LINQToTTreeLib.TypeHandlers
 
             var result = ExpressionToCPP.InternalGetExpression(cvtExpr.Operand, gc, null, container);
 
-            if (
-                result.Type != typeof(int)
-                && result.Type != typeof(double)
-                && result.Type != typeof(float)
-                )
+            if (!result.Type.IsNumberType())
             {
                 throw new NotImplementedException("Do not know how to convert '" + srcExpr.Type.Name + "' to a double!");
             }
