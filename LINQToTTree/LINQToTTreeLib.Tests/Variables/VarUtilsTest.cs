@@ -1,5 +1,6 @@
 // <copyright file="VarUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
@@ -31,6 +32,13 @@ namespace LINQToTTreeLib.Variables
             Assert.IsNotNull(result, "null return for the type! Bad!");
             Assert.IsTrue(result.Length > 0, "Length of string should not be zero!");
             return result;
+        }
+
+        [TestMethod]
+        public void TestAsCppTypeFor()
+        {
+            string result = VarUtils.AsCPPType(typeof(Dictionary<int, double>));
+            Assert.AreEqual("map<int, double>", result, "Map type");
         }
 
         [TestMethod]

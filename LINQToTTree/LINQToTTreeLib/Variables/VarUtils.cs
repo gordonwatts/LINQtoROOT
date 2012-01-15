@@ -174,6 +174,14 @@ namespace LINQToTTreeLib.Variables
             {
                 return string.Format("vector<{0}>", t.GetElementType().AsCPPType());
             }
+            else if (t.IsGenericType)
+            {
+                if (t.GetGenericTypeDefinition().Name == "Dictionary`2")
+                {
+                    var tlist = t.GetGenericArguments();
+                    return string.Format("map<{0}, {1}>", tlist[0].AsCPPType(), tlist[1].AsCPPType());
+                }
+            }
             else
             {
 
@@ -206,13 +214,12 @@ namespace LINQToTTreeLib.Variables
                 {
                     return t.FullName.Substring(19) + "*";
                 }
-
-                ///
-                /// Ok - if this is an object, for example, the enclosing ntuple object
-                /// 
-
-                return t.Name;
             }
+            ///
+            /// Ok - if this is an object, for example, the enclosing ntuple object
+            /// 
+
+            return t.Name;
         }
 
         public static bool IsPointerType(this Type t)
