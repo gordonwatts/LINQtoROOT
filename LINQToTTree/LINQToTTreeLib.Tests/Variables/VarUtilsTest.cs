@@ -38,7 +38,14 @@ namespace LINQToTTreeLib.Variables
         public void TestAsCppTypeFor()
         {
             string result = VarUtils.AsCPPType(typeof(Dictionary<int, double>));
-            Assert.AreEqual("map<int, double>", result, "Map type");
+            Assert.AreEqual("map<int, double >", result, "Map type");
+        }
+
+        [TestMethod]
+        public void TestAsCppTypeForMapArray()
+        {
+            string result = VarUtils.AsCPPType(typeof(Dictionary<int, double[]>));
+            Assert.AreEqual("map<int, vector<double> >", result, "map type of array");
         }
 
         [TestMethod]

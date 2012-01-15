@@ -179,7 +179,7 @@ namespace LINQToTTreeLib.Variables
                 if (t.GetGenericTypeDefinition().Name == "Dictionary`2")
                 {
                     var tlist = t.GetGenericArguments();
-                    return string.Format("map<{0}, {1}>", tlist[0].AsCPPType(), tlist[1].AsCPPType());
+                    return string.Format("map<{0}, {1} >", tlist[0].AsCPPType(), tlist[1].AsCPPType());
                 }
             }
             else
