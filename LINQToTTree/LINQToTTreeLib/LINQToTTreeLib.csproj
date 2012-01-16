@@ -133,7 +133,7 @@
     <Compile Include="QueryResultCache.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
-    <Compile Include="QueryVisitors\StatementLoopOverSortedPairValue.cs" />
+    <Compile Include="Statements\StatementLoopOverSortedPairValue.cs" />
     <Compile Include="Statements\StatementRecordPairValues.cs" />
     <Compile Include="relinq\AsQueriableExpressionNode.cs" />
     <Compile Include="relinq\AsQueriableResultOperator.cs" />
