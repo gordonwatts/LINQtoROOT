@@ -59,7 +59,8 @@ namespace LINQToTTreeLib.Statements
                     yield return string.Format("for (int i_index = tempListing.size()-1; i_index >= 0; i_index--) {{");
                 }
                 yield return string.Format("  const vector<int> &sublist({0}[tempListing[i_index]];", _mapRecord.RawValue);
-                yield return string.Format("  for (int {0} = 0; {0} < sublist.size(); {0}++) {{", _indexVariable.RawValue);
+                yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist.size(); i_sindex++) {{", _indexVariable.RawValue);
+                yield return string.Format("  {0} = sublist[i_sindex];", _indexVariable.RawValue);
 
                 foreach (var l in RenderInternalCode())
                 {
