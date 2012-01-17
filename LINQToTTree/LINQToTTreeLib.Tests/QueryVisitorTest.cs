@@ -378,6 +378,30 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestGroupSimple()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select from v in evt.var1 group v by v;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2
+                      select grp.Count();
+
+            var final = cnt.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.Inconclusive("no result written yet");
+            // Look for the sorting somewhere in here...
+            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
+            Assert.IsTrue(sortThere, "No sort call in the code");
+        }
+
+        [TestMethod]
         public void TestSortReverseSimple()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
