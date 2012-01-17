@@ -4,6 +4,8 @@ using System.ComponentModel.Composition.Hosting;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using Remotion.Linq.Clauses;
+using System.Linq.Expressions;
+using LINQToTTreeLib.CodeAttributes;
 namespace LINQToTTreeLib.Utils
 {
     internal static class ExpressionUtilities
@@ -89,5 +91,27 @@ namespace LINQToTTreeLib.Utils
 
             return "(" + rv + ")";
         }
+
+        /// <summary>
+        /// Is this something like:
+        ///   obj.jets where jets is an array that points off to a "regrouped" variable? If so, then we
+        ///   don't want to do the translation here.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public static bool IsRootObjectArrayReference(this MemberExpression expression)
+        {
+            if (!expression.Type.IsArray)
+                return false;
+
+            if (expression.Expression.Type.TypeHasAttribute<TranslateToClassAttribute>() == null)
+                return false;
+
+            if (TypeUtils.TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member) == null)
+                return false;
+
+            return true;
+        }
+
     }
 }
