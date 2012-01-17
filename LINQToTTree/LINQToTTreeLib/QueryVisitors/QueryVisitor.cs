@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -217,6 +218,56 @@ namespace LINQToTTreeLib
         {
             var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(selectClause.Selector, _codeContext);
             _codeContext.SetLoopVariable(expr, _codeContext.LoopIndexVariable);
+        }
+
+        /// <summary>
+        /// Sort the current stream of the query. To do this we run through all the results, sort them,
+        /// and then start a new loop.
+        /// </summary>
+        /// <param name="ordering"></param>
+        /// <param name="queryModel"></param>
+        /// <param name="orderByClause"></param>
+        /// <param name="index"></param>
+        public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
+        {
+            //
+            // Only number types can be sorted.
+            //
+
+            if (!ordering.Expression.Type.IsNumberType())
+                throw new InvalidOperationException(string.Format("Don't know how to sort query by type '{0}'.", ordering.Expression.Type.Name));
+
+            //
+            // First, record all the indicies and the values. This is what we are going to be sorting.
+            // 
+
+            var mapRecord = DeclarableParameter.CreateDeclarableParameterMapExpression(ordering.Expression.Type, typeof(int).MakeArrayType());
+            _codeEnv.AddOutsideLoop(mapRecord);
+
+            var savePairValues = new StatementRecordPairValues(mapRecord,
+                ExpressionToCPP.GetExpression(ordering.Expression, _codeEnv, _codeContext, MEFContainer),
+                ExpressionToCPP.GetExpression(_codeContext.LoopIndexVariable, _codeEnv, _codeContext, MEFContainer));
+            _codeEnv.Add(savePairValues);
+
+            _codeEnv.Pop();
+
+            //
+            // Now, we need to sort and loop over the variables in the map. This is a bit of a messy
+            // multi-line statement, and it is a compound statement.
+            //
+
+            var goodIndex = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            _codeEnv.Add(goodIndex);
+
+            var sortAndRunLoop = new StatementLoopOverSortedPairValue(mapRecord, goodIndex, ordering.OrderingDirection == OrderingDirection.Asc);
+            _codeEnv.Add(sortAndRunLoop);
+
+            var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
+            var lv = _codeContext.LoopIndexVariable as ParameterExpression;
+            if (lv == null)
+                throw new InvalidOperationException("Unable to look at loop index variable that isn't a parameter");
+            _codeContext.Add(lv.Name, pindex);
+            _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable, pindex), pindex);
         }
 
         /// <summary>

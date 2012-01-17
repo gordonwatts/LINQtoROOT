@@ -54,12 +54,14 @@
     <Reference Include="libCoreWrapper, Version=2.2.4255.4082, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libGrafWrapper, Version=2.2.4255.4170, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libHistWrapper, Version=2.2.4255.4144, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libMathCoreWrapper, Version=2.2.4255.4092, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libNetWrapper, Version=2.2.4255.4132, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="libPhysicsWrapper, Version=2.2.4255.4095, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
@@ -69,6 +71,8 @@
     <Reference Include="libThreadWrapper, Version=2.2.4255.4098, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
     </Reference>
+    <Reference Include="libTreePlayerWrapper, Version=2.2.4255.4192, Culture=neutral, processorArchitecture=x86" />
+    <Reference Include="libTreeWrapper, Version=2.2.4255.4181, Culture=neutral, processorArchitecture=x86" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NVelocity, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -79,6 +83,7 @@
       <HintPath>..\Libraries\Remotion\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>

@@ -44,6 +44,19 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
+        /// Create a Dictionary type. This maps to a std::map....
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="type_2"></param>
+        /// <returns></returns>
+        public static DeclarableParameter CreateDeclarableParameterMapExpression(System.Type indexType, System.Type valueType)
+        {
+            var gDict = typeof(System.Collections.Generic.Dictionary<int, int>).GetGenericTypeDefinition();
+            var sDict = gDict.MakeGenericType(new Type[] { indexType, valueType });
+            return new DeclarableParameter(sDict, string.Format("{0}Map", sDict.CreateUniqueVariableName()));
+        }
+
+        /// <summary>
         /// Build the variable.
         /// </summary>
         /// <param name="varType"></param>

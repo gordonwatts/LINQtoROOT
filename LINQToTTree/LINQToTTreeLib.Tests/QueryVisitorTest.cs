@@ -357,6 +357,48 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSortSimple()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select (from v in evt.var1
+                            orderby v
+                            select v).Take(2).Sum();
+            var r1 = from evt in r
+                     where evt > 10
+                     select evt;
+            var r2 = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            // Look for the sorting somewhere in here...
+            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
+            Assert.IsTrue(sortThere, "No sort call in the code");
+        }
+
+        [TestMethod]
+        public void TestSortReverseSimple()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select (from v in evt.var1
+                            orderby v descending
+                            select v).Take(2).Sum();
+            var r1 = from evt in r
+                     where evt > 10
+                     select evt;
+            var r2 = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            // Look for the sorting somewhere in here...
+            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
+            Assert.IsTrue(sortThere, "No sort call in the code");
+        }
+
+        [TestMethod]
         public void TestTranslatedAggregate()
         {
             var model = GetModel(() => (
@@ -402,7 +444,7 @@ namespace LINQToTTreeLib
 
             Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
         }
-        
+
         [TestMethod]
         public void TestTranslatedNestedLoop()
         {
