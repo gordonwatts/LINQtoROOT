@@ -15,11 +15,20 @@ namespace LINQToTTreeLib.Tests
     public class TypeUtilsTest
     {
         [TestMethod]
-        public void CreateUniqueVarNameForMap()
+        public void TestUniqueVarNameForMap()
         {
             var name = typeof(Dictionary<int, double>).CreateUniqueVariableName();
             Console.WriteLine(name);
             Assert.IsFalse(name.Contains("`"), "Name contains a `");
+        }
+
+        [TestMethod]
+        public void TestUniqueVarNameForArray()
+        {
+            var name = typeof(int[]).CreateUniqueVariableName();
+            Console.WriteLine(name);
+            Assert.IsFalse(name.Contains("["), "Name contains a [");
+
         }
     }
 }

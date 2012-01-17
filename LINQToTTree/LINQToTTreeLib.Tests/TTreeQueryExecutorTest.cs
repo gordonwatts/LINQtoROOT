@@ -1491,7 +1491,47 @@ namespace LINQToTTreeLib
                                 orderby v ascending
                                 select v).Take(2).Sum();
 
-            var dude = dudeQ.Where(x => x < 3).Count();
+            // The first two elements are 0 and 1, so 0 + 1 == 1.
+            var dude = dudeQ.Where(x => x == 1).Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
+        public void TestSortDescending()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                orderby v descending
+                                select v).Take(2).Sum();
+
+            // The last two elements are 9 and 8, so 9 + 8 = 17.
+            var dude = dudeQ.Where(x => x == 17).Count();
 
             var query = DummyQueryExectuor.LastQueryModel;
 

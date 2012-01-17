@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Utils
         /// <returns></returns>
         public static string CreateUniqueVariableName(this Type sourceType)
         {
-            return ("a" + sourceType.Name).CreateUniqueVariableName().Replace("`", "_");
+            return ("a" + sourceType.Name).CreateUniqueVariableName();
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace LINQToTTreeLib.Utils
         public static string CreateUniqueVariableName(this string varbasename)
         {
             _variableNameCounter += 1;
-            return varbasename + "_" + _variableNameCounter.ToString();
+            return (varbasename + "_" + _variableNameCounter.ToString()).Replace("`", "_").Replace("[", "_").Replace("]", "_");
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
 {
@@ -43,20 +44,21 @@ namespace LINQToTTreeLib.Statements
         {
             if (Statements.Any())
             {
-                yield return string.Format("vector<int> tempListing;");
+                var tempListingName = typeof(int[]).CreateUniqueVariableName();
+                yield return string.Format("vector<int> {0};", tempListingName);
                 yield return string.Format("for({0}::const_iterator i_itr = {1}.begin(); i_itr != {1}.end(); i_itr++) {{", _mapRecord.Type.AsCPPType(), _mapRecord.RawValue);
-                yield return string.Format("  tempListing.push_back(i_itr->first);");
+                yield return string.Format("  {0}.push_back(i_itr->first);", tempListingName);
                 yield return string.Format("}}");
-                yield return string.Format("sort(tempListing.begin(), tempListing.end());");
+                yield return string.Format("sort({0}.begin(), {0}.end());", tempListingName);
                 if (_sortAscending)
                 {
-                    yield return string.Format("for (int i_index = 0; i_index < tempListing.size(); i_index++) {{");
+                    yield return string.Format("for (int i_index = 0; i_index < {0}.size(); i_index++) {{", tempListingName);
                 }
                 else
                 {
-                    yield return string.Format("for (int i_index = tempListing.size()-1; i_index >= 0; i_index--) {{");
+                    yield return string.Format("for (int i_index = {0}.size()-1; i_index >= 0; i_index--) {{", tempListingName);
                 }
-                yield return string.Format("  const vector<int> &sublist({0}[tempListing[i_index]]);", _mapRecord.RawValue);
+                yield return string.Format("  const vector<int> &sublist({0}[{1}[i_index]]);", _mapRecord.RawValue, tempListingName);
                 yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist.size(); i_sindex++) {{", _indexVariable.RawValue);
                 yield return string.Format("  {0} = sublist[i_sindex];", _indexVariable.RawValue);
 
