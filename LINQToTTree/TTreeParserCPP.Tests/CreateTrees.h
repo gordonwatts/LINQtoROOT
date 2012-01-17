@@ -175,13 +175,13 @@ namespace TTreeParserCPPTests {
 			int ientries = 0;
 
 			TTree *t = new TTree("dude", "left field");
-			auto brAddrEnt = t->Branch ("n/I", &ientries);
-			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[n]/I");
+			auto brAddrEnt = t->Branch ("n", &ientries);
+			auto brAddrArr = t->Branch ("arr[n]/I", &ientries);
 
 			for (int i = 0; i < entries; i++) {
 				ientries = 10;
 				for (int j = 0; j < ientries; j++) {
-					bogus[j] = i;
+					bogus[i] = j;
 				}
 				t->Fill();
 			}
