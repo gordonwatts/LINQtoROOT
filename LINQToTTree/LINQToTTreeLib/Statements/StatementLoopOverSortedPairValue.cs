@@ -29,8 +29,6 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentNullException("mapRecord");
             if (goodIndex == null)
                 throw new ArgumentNullException("goodIndex");
-            if (sortAscending == null)
-                throw new ArgumentNullException("sortAscending");
 
             this._mapRecord = mapRecord;
             this._indexVariable = goodIndex;
