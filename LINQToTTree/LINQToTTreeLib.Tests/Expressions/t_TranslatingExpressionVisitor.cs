@@ -22,6 +22,7 @@ namespace LINQToTTreeLib.Tests
         {
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
+            LINQToTTreeLib.Utils.TypeUtils._variableNameCounter = 0;
         }
 
         [TestCleanup]
