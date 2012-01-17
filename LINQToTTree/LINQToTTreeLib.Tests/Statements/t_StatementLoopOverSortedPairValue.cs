@@ -55,13 +55,5 @@ namespace LINQToTTreeLib.Tests
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
             Assert.AreEqual(allSame, canComb, "not expected combination!");
         }
-
-        [TestMethod]
-        public void TestBreak()
-        {
-            //
-            // Double for loop - do we deal with a "break" statement correctl?
-            Assert.Inconclusive("Not written yet");
-        }
     }
 }

@@ -1506,6 +1506,49 @@ namespace LINQToTTreeLib
             Assert.AreEqual(result, numberOfIter);
         }
 
+        /// <summary>
+        /// First sometimes uses a break in the code - make sure that we deal with it correctly.
+        /// </summary>
+        [TestMethod]
+        public void TestSortAscendingWithFirst()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                orderby v ascending
+                                select v).First();
+
+            // The first two elements are 0 and 1, so 0 + 1 == 1.
+            var dude = dudeQ.Where(x => x < 5).Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
         [TestMethod]
         public void TestSortDescending()
         {
