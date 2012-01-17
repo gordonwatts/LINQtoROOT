@@ -159,6 +159,7 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(NotImplementedException))]
         [DeploymentItem("ComplexNtupleTestInput.root")]
         public void GenerateClassesTestNoClassInfo()
         {
@@ -169,7 +170,6 @@ namespace LINQToTTreeLib.Tests
             var t = f.Get("btag") as ROOTNET.Interface.NTTree;
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
-            Assert.AreEqual(2, result[0].Items.Count, "The int's should be there");
         }
 
         [TestMethod]
@@ -185,21 +185,6 @@ namespace LINQToTTreeLib.Tests
             var obj = result[0];
             Assert.IsFalse(obj.NtupleProxyPath.Contains("#"), "proxy path: " + obj.NtupleProxyPath);
             Assert.IsFalse(obj.UserInfoPath.Contains("#"), "user path: " + obj.UserInfoPath);
-        }
-
-        [TestMethod]
-        [DeploymentItem("atest.root")]
-        public void TestTreeWithUnknownClasses()
-        {
-            var f = new ROOTNET.NTFile("atest.root", "READ");
-            var t = f.Get("CollectionTree") as ROOTNET.Interface.NTTree;
-            var p = new ParseTTree();
-            var result = p.GenerateClasses(t).ToArray();
-
-            Assert.AreEqual(1, result.Length, "# of classes");
-            var obj = result[0];
-
-            Assert.AreEqual(0, obj.Items.Where(c => c.ItemType.Contains("ROOTNET.Interface")).Count(), "Expecting no rootnet.interface type items");
         }
 
 #if false
@@ -487,7 +472,6 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(fhpp.FullName, result[0].NtupleProxyPath, "ntuple proxy path incorrect");
         }
 
-#if notinnewworld
         /// <summary>
         /// WARNING - you must start devenv in a vs 2010 command line window so that "cl" is availible.
         /// </summary>
@@ -516,7 +500,6 @@ namespace LINQToTTreeLib.Tests
             var compile = ROOTNET.NTSystem.gSystem.CompileMacro("TestProxyBuild.C");
             Assert.AreEqual(1, compile, "compile error for built macro - make sure that cl is a good command by starting devenv with vs command line!!");
         }
-#endif
 
         [TestMethod]
         public void TestProxyGenerationContents()

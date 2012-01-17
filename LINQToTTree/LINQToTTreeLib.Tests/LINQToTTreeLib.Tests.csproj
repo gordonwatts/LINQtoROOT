@@ -632,6 +632,7 @@
     <Compile Include="Statements\StatementCheckLoopPairwiseTest.cs" />
     <Compile Include="Statements\StatementAnyAllDetectorTest.cs" />
     <Compile Include="Statements\StatemenRecordValueTest.cs" />
+    <Compile Include="Expressions\t_ExpressionResolver.cs" />
     <Compile Include="Expressions\t_DeclarableParameter.cs" />
     <Compile Include="Statements\t_StatementRecordPairValues.cs" />
     <Compile Include="Statements\t_StatementLoopOverSortedPairValue.cs" />
