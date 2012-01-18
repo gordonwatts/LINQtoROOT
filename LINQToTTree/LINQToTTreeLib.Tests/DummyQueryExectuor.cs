@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.CPPCode;
+using LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
-using LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -61,6 +61,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new ROAsQueriable());
                 MEFUtilities.AddPart(new ROSum());
                 MEFUtilities.AddPart(new ROFirstLast());
+                MEFUtilities.AddPart(new ROGroup());
 
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
