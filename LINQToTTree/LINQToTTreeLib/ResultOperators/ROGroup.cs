@@ -24,25 +24,6 @@ namespace LINQToTTreeLib.ResultOperators
             return resultOperatorType == typeof(GroupResultOperator);
         }
 
-        class myinfo<TKey, TElement> : IGrouping<TKey, TElement>
-        {
-
-            public TKey Key
-            {
-                get { throw new NotImplementedException(); }
-            }
-
-            public IEnumerator<TElement> GetEnumerator()
-            {
-                throw new NotImplementedException();
-            }
-
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         /// <summary>
         /// Process the grouping operator. We have to sort through the items, group them, and then
         /// create an object we can be translated later to access the items or the Key. We need to return
@@ -71,10 +52,29 @@ namespace LINQToTTreeLib.ResultOperators
             // Now create the object that will be handed back for later parsing.
             //
 
-            var t_return = typeof(myinfo<int, int>).GetGenericTypeDefinition().MakeGenericType(new Type[] { groupOp.KeySelector.Type, groupOp.ElementSelector.Type });
-            var e_return = typeof(IEnumerable<int>).GetGenericTypeDefinition().MakeGenericType(new Type[] { t_return.GetType() });
+            var t_return = typeof(GroupByTypeTag<int, int>).GetGenericTypeDefinition().MakeGenericType(new Type[] { groupOp.KeySelector.Type, groupOp.ElementSelector.Type });
 
-            return Expression.Constant(null, e_return);
+            return Expression.Constant(null, t_return);
         }
     }
+
+    /// <summary>
+    /// Helper class that is used later on in the code to deal with
+    /// the array decoding.
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TElement"></typeparam>
+    class GroupByTypeTag<TKey, TElement> : IEnumerable<IGrouping<TKey, TElement>>
+    {
+        public IEnumerator<IGrouping<TKey, TElement>> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }
