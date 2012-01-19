@@ -17,10 +17,12 @@ namespace LINQToTTreeLib.Expressions
     {
         /// <summary>
         /// Given an array expression return an array info that cna be used
-        /// for the various needed things. Throws or returns a good array reference object!
+        /// for the various needed things. Throws if it can't figure out how to do
+        /// a loop. It might return null, in which case the array index context has
+        /// just been "setup".
         /// </summary>
         /// <param name="expr"></param>
-        /// <returns></returns>
+        /// <returns>null, if no further setup is required to run the loop, and an IArrayInfo if further work is required.</returns>
         private static IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             ///
@@ -30,13 +32,14 @@ namespace LINQToTTreeLib.Expressions
             if (IsArrayType(expr))
                 return new ArrayInfoVector(expr);
 
-            ///
-            /// Is it a sub-query expression?
-            /// 
+            //
+            // Is it a sub-query expression? This will be null if this works out ok.
+            // 
 
             if (expr is SubQueryExpression)
             {
-                return LoopOverSubQuery(expr, gc, cc, container);
+                LoopOverSubQuery(expr, gc, cc, container);
+                return null;
             }
 
             //
@@ -46,24 +49,35 @@ namespace LINQToTTreeLib.Expressions
 
             var translated = AttemptTranslationToArray(expr, cc);
             if (translated != null)
-                return LoopOverSubQuery(translated, gc, cc, container);
+            {
+                LoopOverSubQuery(translated, gc, cc, container);
+                return null;
+            }
 
-            ///
-            /// We have no idea how to deal with this!
-            /// 
+            //
+            // We have no idea how to deal with this!
+            // 
 
             throw new ArgumentException("Type '" + expr.Type.Name + "' ('" + expr.ToString() + "') is not an array we know how to deal with");
         }
 
-        private static IArrayInfo LoopOverSubQuery(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        /// <summary>
+        /// Some common code to evaluate a sub-query. The sub query is just a loop - so we buidl that context
+        /// and leave us in the middle of the loop for re-linq to add later code. Since we setup the context, we
+        /// always return null (there is no further context that needs to be done).
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        private static void LoopOverSubQuery(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
-            /// The sub-query expression will just run. We need to parse the result and see what happens. We reutnr
-            /// null in the end because it is the "context" that is getting setup.
+            // The sub-query expression will just run. We need to parse the result and see what happens. We reutnr
+            // null in the end because it is the "context" that is getting setup.
 
             var val = ExpressionToCPP.GetExpression(expr, gc, cc, container);
             if (val != null)
                 throw new ArgumentException("What looked like an array (type '" + expr.Type.Name + "') seems to have returned a value: '" + val.RawValue + "'");
-            return null;
         }
 
         /// <summary>
@@ -75,7 +89,7 @@ namespace LINQToTTreeLib.Expressions
         {
             List<string> cookies = new List<string>();
             var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
-            var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e=>e);
+            var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e => e);
             return r as SubQueryExpression;
         }
 
