@@ -76,5 +76,4 @@ namespace LINQToTTreeLib.ResultOperators
             throw new NotImplementedException();
         }
     }
-
 }
