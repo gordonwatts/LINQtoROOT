@@ -431,5 +431,11 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         {
             throw new NotImplementedException();
         }
+
+
+        public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

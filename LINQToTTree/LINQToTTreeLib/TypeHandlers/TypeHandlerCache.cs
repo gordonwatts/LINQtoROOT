@@ -132,5 +132,22 @@ namespace LINQToTTreeLib.TypeHandlers
             }
             return h;
         }
+
+        /// <summary>
+        /// Try to do a member reference. Return null if we can't do it.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        internal IValue TryMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        {
+            var h = FindHandler(expr.Type, false);
+            if (h == null)
+                return null;
+
+            return h.ProcessMemberReference(expr, gc, cc, container);
+            throw new NotImplementedException();
+        }
     }
 }

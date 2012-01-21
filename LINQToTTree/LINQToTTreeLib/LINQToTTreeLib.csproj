@@ -133,7 +133,6 @@
     <Compile Include="QueryResultCache.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
-    <Compile Include="ResultOperators\IGrouping.cs" />
     <Compile Include="ResultOperators\ROGroup.cs" />
     <Compile Include="Statements\StatementLoopOverGroups.cs" />
     <Compile Include="Statements\StatementLoopOverSortedPairValue.cs" />

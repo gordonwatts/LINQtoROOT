@@ -222,5 +222,18 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         {
             return expr;
         }
+
+        /// <summary>
+        /// Processed later on in the stack usign the default symbols.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        {
+            return null;
+        }
     }
 }

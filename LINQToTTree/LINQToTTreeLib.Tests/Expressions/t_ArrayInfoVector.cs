@@ -70,6 +70,12 @@ namespace LINQToTTreeLib.Tests
             {
                 return expr;
             }
+
+
+            public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                return null;
+            }
         }
 
         [TestCleanup]

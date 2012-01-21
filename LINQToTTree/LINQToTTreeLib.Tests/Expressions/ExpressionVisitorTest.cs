@@ -230,7 +230,8 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "run");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            MEFUtilities.Compose(new TypeHandlerCache());
+            var r = ExpressionToCPP.GetExpression(e, gc, null, MEFUtilities.MEFContainer);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("(*d).run", r.RawValue, "incorrect reference");
@@ -241,7 +242,8 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "run");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            MEFUtilities.Compose(new TypeHandlerCache());
+            var r = ExpressionToCPP.GetExpression(e, gc, null, MEFUtilities.MEFContainer);
             var refLeaves = gc.ReferencedLeafNames.ToArray();
             Assert.AreEqual(1, refLeaves.Length, "# of referenced leaves is incorrect");
             Assert.AreEqual("run", refLeaves[0], "Referenced leaf name incorrect");
@@ -252,7 +254,8 @@ namespace LINQToTTreeLib
         {
             var e = Expression.Field(Expression.Variable(typeof(ntup), "d"), "numbers");
             GeneratedCode gc = new GeneratedCode();
-            var r = ExpressionToCPP.GetExpression(e, gc, null, null);
+            MEFUtilities.Compose(new TypeHandlerCache());
+            var r = ExpressionToCPP.GetExpression(e, gc, null, MEFUtilities.MEFContainer);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(IEnumerable<int>), r.Type, "incorrect type");
             Assert.AreEqual("(*d).numbers", r.RawValue, "incorrect reference");

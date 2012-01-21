@@ -75,6 +75,12 @@ namespace LINQToTTreeLib.TypeHandlers
             {
                 throw new NotImplementedException();
             }
+
+
+            public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 
@@ -149,6 +155,12 @@ namespace LINQToTTreeLib.TypeHandlers
                                     (expression, out _result, _codeEnv, MEFContainer);
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessNew(TypeHandlerCache, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
+        }
+
+        [TestMethod]
+        public void TestNewMember()
+        {
+            Assert.Inconclusive();
         }
     }
 }
