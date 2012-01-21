@@ -144,6 +144,11 @@ namespace LINQToTTreeLib.ResultOperators
         /// The variable that is used to index the group itself - so the index we use to iterate over the group.
         /// </summary>
         public DeclarableParameter GroupIndexVariable { get; set; }
+
+        /// <summary>
+        /// The statement being used to do the actual looping over a group
+        /// </summary>
+        public StatementLoopOverGroups GroupLoopStatement { get; set; }
     }
 
     /// <summary>
@@ -193,6 +198,7 @@ namespace LINQToTTreeLib.ResultOperators
             var o = ctor.Invoke(new object[] { }) as BaseGroupInfo;
             o.MapRecord = groupObj.MapRecord;
             o.GroupIndexVariable = groupIndex;
+            o.GroupLoopStatement = loopOverGroups;
 
             var loopVar = Expression.Constant(o);
 
@@ -264,12 +270,18 @@ namespace LINQToTTreeLib.ResultOperators
                 if (expr.Member.Name != "Key")
                     throw new InvalidOperationException(string.Format("Unknown access to the member '{0}' of a LINQ GroupBy object.", expr.Member.Name));
 
+                var cexpr = expr.Expression as ConstantExpression;
+                if (cexpr == null)
+                    throw new InvalidOperationException("Group by reference to Key is null");
+                var groupObj = cexpr.Value as BaseGroupInfo;
+                if (groupObj == null)
+                    throw new InvalidOperationException("Group object reference is null");
+
                 //
-                // Extract the main object
+                // Extract the main object that we are iterating over.
                 //
 
-
-                throw new NotImplementedException();
+                return groupObj.GroupLoopStatement.GroupKeyReference;
             }
         }
 
