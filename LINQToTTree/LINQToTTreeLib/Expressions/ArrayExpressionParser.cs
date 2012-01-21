@@ -184,7 +184,7 @@ namespace LINQToTTreeLib.Expressions
     {
         public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
         {
-            return new Tuple<Expression, Expression>(context.LoopVariable, context.LoopIndexVariable);
+            return null;
         }
     }
 

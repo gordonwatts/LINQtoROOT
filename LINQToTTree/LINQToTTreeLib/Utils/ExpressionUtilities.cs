@@ -1,11 +1,11 @@
 ﻿
 using System;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
-using Remotion.Linq.Clauses;
-using System.Linq.Expressions;
 using LINQToTTreeLib.CodeAttributes;
+using Remotion.Linq.Clauses;
 namespace LINQToTTreeLib.Utils
 {
     internal static class ExpressionUtilities
@@ -18,6 +18,8 @@ namespace LINQToTTreeLib.Utils
         public static IVariableScopeHolder CodeLoopOverArrayInfo(this IArrayInfo arrayRef, IQuerySource query, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             var indexVar = arrayRef.AddLoop(gc, cc, container);
+            if (indexVar == null)
+                return null;
 
             ///
             /// Next, make sure the index variable can be used for later references!

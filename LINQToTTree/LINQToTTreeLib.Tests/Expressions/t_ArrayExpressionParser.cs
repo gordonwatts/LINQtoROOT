@@ -24,10 +24,14 @@ namespace LINQToTTreeLib.Tests
         [TestInitialize]
         public void Setup()
         {
+            ArrayExpressionParser.ResetParser();
             MEFUtilities.MyClassInit();
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new DealWithInt32());
+            MEFUtilities.AddPart(new ArrayTypeFactory());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new TranslatedArrayFactory());
             MEFUtilities.AddPart(new LINQToTTreeLib.ResultOperators.ROTakeSkipOperators());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
@@ -85,7 +89,7 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void TestForNonArray()
         {
             var gc = new GeneratedCode();
