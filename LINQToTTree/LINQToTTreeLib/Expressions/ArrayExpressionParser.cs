@@ -33,13 +33,20 @@ namespace LINQToTTreeLib.Expressions
                 return new ArrayInfoVector(expr);
 
             //
-            // Is it a sub-query expression? This will be null if this works out ok.
+            // Is it a sub-query expression? This will be null if this works out ok. If it doesn't work
+            // out to be null, then it returned some sort of object, which we will now have to loop over.
             // 
 
             if (expr is SubQueryExpression)
             {
-                LoopOverSubQuery(expr, gc, cc, container);
-                return null;
+                var resolved = expr.Resolve(gc, cc, container);
+                if (resolved == null)
+                    return null;
+
+                if (resolved is SubQueryExpression)
+                    throw new InvalidOperationException(string.Format("Unable to translate '{0}' to something we can loop over!", expr.ToString()));
+
+                return GetIArrayInfo(resolved, gc, cc, container);
             }
 
             //
@@ -50,8 +57,7 @@ namespace LINQToTTreeLib.Expressions
             var translated = AttemptTranslationToArray(expr, cc);
             if (translated != null)
             {
-                LoopOverSubQuery(translated, gc, cc, container);
-                return null;
+                return GetIArrayInfo(translated, gc, cc, container);
             }
 
             //
