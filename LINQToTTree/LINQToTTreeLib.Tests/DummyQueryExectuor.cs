@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.CPPCode;
@@ -69,6 +70,11 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new TypeHandlerCache());
                 MEFUtilities.AddPart(new TypeHandlerCPPCode());
                 MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+                MEFUtilities.AddPart(new GroupByArrayFactor());
+
+                MEFUtilities.AddPart(new ArrayTypeFactory());
+                MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+                MEFUtilities.AddPart(new TranslatedArrayFactory());
             }
 
             var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);
