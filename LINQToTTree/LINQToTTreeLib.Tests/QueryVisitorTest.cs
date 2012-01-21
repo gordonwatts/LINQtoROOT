@@ -417,11 +417,6 @@ namespace LINQToTTreeLib
 
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
-
-            Assert.Inconclusive("no result written yet");
-            // Look for the sorting somewhere in here...
-            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
-            Assert.IsTrue(sortThere, "No sort call in the code");
         }
 
         [TestMethod]
