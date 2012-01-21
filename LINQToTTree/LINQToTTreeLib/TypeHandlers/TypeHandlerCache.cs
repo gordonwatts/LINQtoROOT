@@ -142,7 +142,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="container"></param>
         internal IValue TryMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
-            var h = FindHandler(expr.Type, false);
+            var h = FindHandler(expr.Expression.Type, false);
             if (h == null)
                 return null;
 

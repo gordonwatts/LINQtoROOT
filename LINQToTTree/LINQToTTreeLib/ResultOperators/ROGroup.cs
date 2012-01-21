@@ -111,7 +111,7 @@ namespace LINQToTTreeLib.ResultOperators
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TElement"></typeparam>
-    class GroupByType<TKey, TElement> : IGrouping<TKey, TElement>
+    class GroupByType<TKey, TElement> : BaseGroupInfo, IGrouping<TKey, TElement>
     {
 
         public TKey Key
@@ -139,6 +139,11 @@ namespace LINQToTTreeLib.ResultOperators
         /// Keep track the map that holds the groups and the items in the group.
         /// </summary>
         public DeclarableParameter MapRecord { get; set; }
+
+        /// <summary>
+        /// The variable that is used to index the group itself - so the index we use to iterate over the group.
+        /// </summary>
+        public DeclarableParameter GroupIndexVariable { get; set; }
     }
 
     /// <summary>
@@ -147,40 +152,6 @@ namespace LINQToTTreeLib.ResultOperators
     [Export(typeof(IArrayInfoFactory))]
     internal class GroupByArrayFactor : IArrayInfoFactory
     {
-        /// <summary>
-        /// If we end up here, then we are trying to resolve a group by object. This means a loop
-        /// must be generated. We really return nothing in this case as well as all we have left is
-        /// a loop context. Really, this should be refactored, but it has to do with the way that a subquery
-        /// is resolved.
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <param name="codeEnv"></param>
-        /// <param name="container"></param>
-        /// <returns></returns>
-        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
-        {
-
-#if false
-
-            //
-            // Now, we need to sort and loop over the variables in the map. This is a bit of a messy
-            // multi-line statement, and it is a compound statement.
-            //
-
-
-            var sortAndRunLoop = new StatementLoopOverSortedPairValue(mapRecord, goodIndex, ordering.OrderingDirection == OrderingDirection.Asc);
-            _codeEnv.Add(sortAndRunLoop);
-
-            var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
-            var lv = _codeContext.LoopIndexVariable as ParameterExpression;
-            if (lv == null)
-                throw new InvalidOperationException("Unable to look at loop index variable that isn't a parameter");
-            _codeContext.Add(lv.Name, pindex);
-            _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable, pindex), pindex);
-#endif
-            return null;
-        }
-
         /// <summary>
         /// See if we can't resolve a group-by object into a looper of some sort.
         /// </summary>
@@ -219,7 +190,10 @@ namespace LINQToTTreeLib.ResultOperators
 
             var t_return = typeof(GroupByType<int, int>).GetGenericTypeDefinition().MakeGenericType(param.Value.GetType().GetGenericArguments());
             var ctor = t_return.GetConstructor(new Type[] { });
-            var o = ctor.Invoke(new object[] { });
+            var o = ctor.Invoke(new object[] { }) as BaseGroupInfo;
+            o.MapRecord = groupObj.MapRecord;
+            o.GroupIndexVariable = groupIndex;
+
             var loopVar = Expression.Constant(o);
 
             return new SimpleLoopVarSetting(loopVar, groupIndex);
@@ -243,6 +217,62 @@ namespace LINQToTTreeLib.ResultOperators
                 return new Tuple<Expression, Expression>(_loopVariable, _loopIndex);
             }
         }
+
+        [Export(typeof(ITypeHandler))]
+        internal class HandleGroupType : ITypeHandler
+        {
+            public bool CanHandle(Type t)
+            {
+                return t.Name == "GroupByType`2";
+            }
+
+            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
+            {
+                return expr;
+            }
+
+            public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// We are accessing a member of this group object.
+            /// </summary>
+            /// <param name="expr"></param>
+            /// <param name="gc"></param>
+            /// <param name="cc"></param>
+            /// <param name="container"></param>
+            /// <returns></returns>
+            public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+            {
+                if (expr.Member.Name != "Key")
+                    throw new InvalidOperationException(string.Format("Unknown access to the member '{0}' of a LINQ GroupBy object.", expr.Member.Name));
+
+                //
+                // Extract the main object
+                //
+
+
+                throw new NotImplementedException();
+            }
+        }
+
 
     }
 
