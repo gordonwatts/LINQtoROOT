@@ -99,6 +99,9 @@ namespace LINQToTTreeLib.Expressions
     {
         public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
         {
+            if (expr is SubQueryExpression)
+                return null;
+
             var translated = AttemptTranslationToArray(expr, cc);
             if (translated != null)
             {
