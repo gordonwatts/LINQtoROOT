@@ -78,10 +78,17 @@ namespace LINQToTTreeLib.TypeHandlers.TranslationTypes
             throw new NotImplementedException();
         }
 
-
+        /// <summary>
+        /// This will be handled later on, by the general infrastructure.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
         public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }
