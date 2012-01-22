@@ -71,11 +71,12 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new TypeHandlerCPPCode());
                 MEFUtilities.AddPart(new TypeHandlerTranslationClass());
                 MEFUtilities.AddPart(new GroupByArrayFactor());
+                MEFUtilities.AddPart(new GroupByFactory());
 
                 MEFUtilities.AddPart(new ArrayTypeFactory());
                 MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
                 MEFUtilities.AddPart(new TranslatedArrayFactory());
-                MEFUtilities.AddPart(new LINQToTTreeLib.ResultOperators.GroupByArrayFactor.HandleGroupType());
+                MEFUtilities.AddPart(new HandleGroupType());
             }
 
             var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);

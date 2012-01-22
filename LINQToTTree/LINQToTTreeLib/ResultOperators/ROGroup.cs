@@ -82,6 +82,8 @@ namespace LINQToTTreeLib.ResultOperators
             var o = ctor.Invoke(new object[] { }) as BaseGroupInfo;
 
             o.MapRecord = mapRecord;
+            o.TargetExpression = groupOp.ElementSelector;
+            o.TargetExpressionLoopVariable = cc.LoopIndexVariable;
 
             return Expression.Constant(o, t_return);
         }
@@ -149,6 +151,16 @@ namespace LINQToTTreeLib.ResultOperators
         /// The statement being used to do the actual looping over a group
         /// </summary>
         public StatementLoopOverGroups GroupLoopStatement { get; set; }
+
+        /// <summary>
+        /// The expression that we are putting into the group.
+        /// </summary>
+        public Expression TargetExpression { get; set; }
+
+        /// <summary>
+        /// The expression that is used in the target to select it out.
+        /// </summary>
+        public Expression TargetExpressionLoopVariable { get; set; }
     }
 
     /// <summary>
@@ -197,6 +209,8 @@ namespace LINQToTTreeLib.ResultOperators
             var ctor = t_return.GetConstructor(new Type[] { });
             var o = ctor.Invoke(new object[] { }) as BaseGroupInfo;
             o.MapRecord = groupObj.MapRecord;
+            o.TargetExpression = groupObj.TargetExpression;
+            o.TargetExpressionLoopVariable = groupObj.TargetExpressionLoopVariable;
             o.GroupIndexVariable = groupIndex;
             o.GroupLoopStatement = loopOverGroups;
 
@@ -205,87 +219,138 @@ namespace LINQToTTreeLib.ResultOperators
             return new SimpleLoopVarSetting(loopVar, groupIndex);
         }
 
-        /// <summary>
-        /// Just set to the values we are given.
-        /// </summary>
-        class SimpleLoopVarSetting : IArrayInfo
-        {
-            private Expression _loopVariable;
-            private Expression _loopIndex;
-
-            public SimpleLoopVarSetting(Expression o, Expression groupIndex)
-            {
-                this._loopVariable = o;
-                this._loopIndex = groupIndex;
-            }
-            public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
-            {
-                return new Tuple<Expression, Expression>(_loopVariable, _loopIndex);
-            }
-        }
-
-        [Export(typeof(ITypeHandler))]
-        internal class HandleGroupType : ITypeHandler
-        {
-            public bool CanHandle(Type t)
-            {
-                return t.Name == "GroupByType`2";
-            }
-
-            public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
-            {
-                return expr;
-            }
-
-            public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
-            {
-                throw new NotImplementedException();
-            }
-
-            public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
-            {
-                throw new NotImplementedException();
-            }
-
-            /// <summary>
-            /// We are accessing a member of this group object.
-            /// </summary>
-            /// <param name="expr"></param>
-            /// <param name="gc"></param>
-            /// <param name="cc"></param>
-            /// <param name="container"></param>
-            /// <returns></returns>
-            public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
-            {
-                if (expr.Member.Name != "Key")
-                    throw new InvalidOperationException(string.Format("Unknown access to the member '{0}' of a LINQ GroupBy object.", expr.Member.Name));
-
-                var cexpr = expr.Expression as ConstantExpression;
-                if (cexpr == null)
-                    throw new InvalidOperationException("Group by reference to Key is null");
-                var groupObj = cexpr.Value as BaseGroupInfo;
-                if (groupObj == null)
-                    throw new InvalidOperationException("Group object reference is null");
-
-                //
-                // Extract the main object that we are iterating over.
-                //
-
-                return groupObj.GroupLoopStatement.GroupKeyReference;
-            }
-        }
-
-
     }
 
+    /// <summary>
+    /// Just set to the values we are given.
+    /// </summary>
+    class SimpleLoopVarSetting : IArrayInfo
+    {
+        private Expression _loopVariable;
+        private Expression _loopIndex;
+
+        public SimpleLoopVarSetting(Expression o, Expression groupIndex)
+        {
+            this._loopVariable = o;
+            this._loopIndex = groupIndex;
+        }
+        public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+        {
+            return new Tuple<Expression, Expression>(_loopVariable, _loopIndex);
+        }
+    }
+
+    [Export(typeof(ITypeHandler))]
+    internal class HandleGroupType : ITypeHandler
+    {
+        public bool CanHandle(Type t)
+        {
+            return t.Name == "GroupByType`2";
+        }
+
+        public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
+        {
+            return expr;
+        }
+
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// We are accessing a member of this group object.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        {
+            if (expr.Member.Name != "Key")
+                throw new InvalidOperationException(string.Format("Unknown access to the member '{0}' of a LINQ GroupBy object.", expr.Member.Name));
+
+            var cexpr = expr.Expression as ConstantExpression;
+            if (cexpr == null)
+                throw new InvalidOperationException("Group by reference to Key is null");
+            var groupObj = cexpr.Value as BaseGroupInfo;
+            if (groupObj == null)
+                throw new InvalidOperationException("Group object reference is null");
+
+            //
+            // Extract the main object that we are iterating over.
+            //
+
+            return groupObj.GroupLoopStatement.GroupKeyReference;
+        }
+    }
+
+    /// <summary>
+    /// The group-by is also enumerable - so we need to be able to deal with that here...
+    /// </summary>
+    [Export(typeof(IArrayInfoFactory))]
+    internal class GroupByFactory : IArrayInfoFactory
+    {
+        /// <summary>
+        /// Parse the group by enum into an arrary. For us, this is a loop over the vector array of the second argument of
+        /// the iterator that was created in the above array info factory. :-)
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <param name="ReGetIArrayInfo"></param>
+        /// <returns></returns>
+        public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
+        {
+            //
+            // Make sure this is something we want
+            //
+
+            if (expr.Type.Name != "IGrouping`2" || cc.LoopVariable.Type.Name != "GroupByType`2")
+                return null;
+            var param = cc.LoopVariable as ConstantExpression;
+            if (param == null)
+                return null;
+
+            var groupObj = param.Value as BaseGroupInfo;
+            if (groupObj == null)
+                throw new InvalidOperationException("Group by type object has a null value - should never happen!");
+
+            //
+            // Ok, now code up the loop over the interior.
+            //
+
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s = new Statements.StatementLoopOverGroupItems(groupObj.GroupLoopStatement.GroupItemsReference, counter);
+            gc.Add(s);
+
+            //
+            // Finally, return the loop index variable.
+            // We queue up a replacement as well - so we can make sure that when the origianl loop variable is referenced, we
+            // are actually referencing the interior one.
+            //
+
+            var loopExpression = groupObj.TargetExpression;
+            cc.Add((groupObj.TargetExpressionLoopVariable as ParameterExpression).Name, Expression.Parameter(typeof(int), s.LoopItemIndex));
+
+            return new SimpleLoopVarSetting(loopExpression, counter);
+        }
+    }
 }

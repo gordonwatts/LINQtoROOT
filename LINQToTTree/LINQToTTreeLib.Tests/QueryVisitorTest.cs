@@ -411,7 +411,45 @@ namespace LINQToTTreeLib
             var cnt = from evt in r
                       from grp in evt
                       where grp.Key == 2
-                      select grp.Count();
+                      select grp.Key;
+
+            var final = cnt.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestGroupAndCount()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select from v in evt.var1 group v by v;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2 && grp.Count() > 5
+                      select grp.Key;
+
+            var final = cnt.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestGroupAndCutAndCount()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select from v in evt.var1 group v by v;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2 && grp.Where(v => v > 1).Count() > 5
+                      select grp.Key;
 
             var final = cnt.Count();
 
