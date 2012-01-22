@@ -1589,6 +1589,48 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestGroupByAccessKey()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.Key == 2
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
         public void TestInitalizerWithROOTVariable()
         {
             const int numberOfIter = 25;

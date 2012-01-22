@@ -34,7 +34,7 @@ namespace LINQToTTreeLib.Statements
                 // on index variables.
                 //
 
-                yield return string.Format("for ({0}::const_iterator {1} = {0}.begin(); {1} != {0}.end(); {1}++)", _mapOfGroups.RawValue, _iterator);
+                yield return string.Format("for ({0}::const_iterator {1} = {2}.begin(); {1} != {2}.end(); {1}++)", _mapOfGroups.Type.AsCPPType(), _iterator, _mapOfGroups.RawValue);
                 foreach (var l in RenderInternalCode())
                 {
                     yield return l;
