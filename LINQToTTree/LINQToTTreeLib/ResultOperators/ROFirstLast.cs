@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(indexExpr.Type);
             indexSeen.SetInitialValue("-1");
 
             gc.AddOutsideLoop(valueWasSeen);
@@ -119,7 +119,13 @@ namespace LINQToTTreeLib.ResultOperators
                 gc.Add(new Statements.StatementThrowIfTrue(test, "First predicate executed on a null sequence"));
             }
 
-            var firstlastValue = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, Expression.Parameter(typeof(int), indexSeen.RawValue));
+            //
+            // Finally, we need the new expression. For this we basically just ask for the translated expression. We
+            // also add a substitution for later on for more complex expressions.
+            //
+
+            var firstlastValue = cc.LoopVariable;
+            cc.Add(indexExpr.ParameterName(), indexSeen);
 
             if (cacheResult)
             {
