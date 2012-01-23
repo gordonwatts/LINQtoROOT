@@ -458,6 +458,52 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSortGroupByKey()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ = from evt in q
+                        select (from v in evt.var1
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         select (from grp in evt
+                                 orderby grp.Key descending
+                                 select grp).First();
+
+            var dudeQ2 = from evt in dudeQ1
+                         where evt.Key == 10 && evt.Count() == 1
+                         select evt;
+
+            var dudq = dudeQ2.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestSortGroupByItems()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ = from evt in q
+                        select (from v in evt.var1
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         select (from grp in evt
+                                 where grp.Count() >= 5
+                                 where grp.OrderBy(s => s).First() == 12
+                                 select grp);
+
+            var dudeQ2 = from evt in dudeQ1
+                         where evt.Count() > 1
+                         select evt;
+            var r = dudeQ2.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+
+        [TestMethod]
         public void TestSortReverseSimple()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
