@@ -194,10 +194,7 @@ namespace LINQToTTreeLib.ResultOperators
             // Loop over the groups. groupIndex represents the actual group index.
             //
 
-            var groupIndex = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            gc.Add(groupIndex);
-
-            var loopOverGroups = new Statements.StatementLoopOverGroups(groupObj.MapRecord, groupIndex);
+            var loopOverGroups = new Statements.StatementLoopOverGroups(groupObj.MapRecord);
             gc.Add(loopOverGroups);
 
             //
@@ -211,12 +208,12 @@ namespace LINQToTTreeLib.ResultOperators
             o.MapRecord = groupObj.MapRecord;
             o.TargetExpression = groupObj.TargetExpression;
             o.TargetExpressionLoopVariable = groupObj.TargetExpressionLoopVariable;
-            o.GroupIndexVariable = groupIndex;
+            o.GroupIndexVariable = loopOverGroups.IndexVariable;
             o.GroupLoopStatement = loopOverGroups;
 
             var loopVar = Expression.Constant(o);
 
-            return new SimpleLoopVarSetting(loopVar, groupIndex);
+            return new SimpleLoopVarSetting(loopVar, loopOverGroups.IndexVariable);
         }
 
     }

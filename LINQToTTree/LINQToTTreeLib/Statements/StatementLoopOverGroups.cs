@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 
@@ -8,21 +9,18 @@ namespace LINQToTTreeLib.Statements
     class StatementLoopOverGroups : StatementInlineBlockBase, IStatementLoop
     {
         private IValue _mapOfGroups;
-        private IValue _groupIndex;
-
-        string _iterator;
+        private DeclarableParameter _groupIndex;
 
         /// <summary>
         /// Do a loop over a list of declareable groups.
         /// </summary>
         /// <param name="mapOfGroups"></param>
         /// <param name="groupIndex"></param>
-        public StatementLoopOverGroups(IValue mapOfGroups, IValue groupIndex)
+        public StatementLoopOverGroups(IValue mapOfGroups)
         {
             // TODO: Complete member initialization
             this._mapOfGroups = mapOfGroups;
-            this._groupIndex = groupIndex;
-            _iterator = string.Format("itr_{0}", _mapOfGroups.Type.CreateUniqueVariableName());
+            this._groupIndex = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
         }
 
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
@@ -34,7 +32,9 @@ namespace LINQToTTreeLib.Statements
                 // on index variables.
                 //
 
-                yield return string.Format("for ({0}::const_iterator {1} = {2}.begin(); {1} != {2}.end(); {1}++)", _mapOfGroups.Type.AsCPPType(), _iterator, _mapOfGroups.RawValue);
+                var tmpSizeName = typeof(int).CreateUniqueVariableName();
+                yield return string.Format("int {0} = {1}.size();", tmpSizeName, _mapOfGroups.RawValue);
+                yield return string.Format("for (int {0} = 0; {0} < {1}; {0}++)", _groupIndex.RawValue, tmpSizeName);
                 foreach (var l in RenderInternalCode())
                 {
                     yield return l;
@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new ValSimple(string.Format("{0}->first", _iterator), _mapOfGroups.Type.GetGenericArguments()[0]);
+                return new ValSimple(string.Format("({0}.begin() + {1})->first", _mapOfGroups.RawValue, _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[0]);
             }
         }
 
@@ -70,8 +70,13 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new ValSimple(string.Format("{0}->second", _iterator), _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType());
+                return new ValSimple(string.Format("({0}.begin() + {1})->second", _mapOfGroups.RawValue, _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType());
             }
         }
+
+        /// <summary>
+        /// Get the index that we are currently using for looping
+        /// </summary>
+        public DeclarableParameter IndexVariable { get { return _groupIndex; } }
     }
 }
