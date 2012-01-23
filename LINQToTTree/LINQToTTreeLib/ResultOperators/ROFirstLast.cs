@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -75,9 +76,7 @@ namespace LINQToTTreeLib.ResultOperators
             //  - We actually allow for a default variable.
             //
 
-            bool cacheResult = cc.LoopVariable.Type == typeof(int)
-                || cc.LoopVariable.Type == typeof(double)
-                || cc.LoopVariable.Type == typeof(float);
+            bool cacheResult = cc.LoopVariable.Type.IsNumberType();
             cacheResult = cacheResult && !bombIfNothing;
 
             //
