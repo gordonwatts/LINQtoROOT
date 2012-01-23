@@ -39,7 +39,7 @@ namespace LINQToTTreeLib.Statements
         {
             if (Statements.Any())
             {
-                yield return string.Format("for (int {0} = 0; {0} <= {1}.size(); {0}++)", _counter.RawValue, _groupArray.RawValue);
+                yield return string.Format("for (int {0} = 0; {0} < {1}.size(); {0}++)", _counter.RawValue, _groupArray.RawValue);
                 foreach (var l in RenderInternalCode())
                 {
                     yield return "  " + l;
