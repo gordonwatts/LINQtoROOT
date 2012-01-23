@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using Remotion.Linq.Clauses;
 namespace LINQToTTreeLib.Utils
 {
@@ -113,6 +114,23 @@ namespace LINQToTTreeLib.Utils
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// If this is a parameter of some sort, returns the name. Otherwise, throws.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public static string ParameterName(this Expression expr)
+        {
+            var lv = expr as ParameterExpression;
+            if (lv != null)
+                return lv.Name;
+
+            var dv = expr as DeclarableParameter;
+            if (dv == null)
+                throw new InvalidOperationException("Unable to look at loop index variable that isn't a parameter");
+            return dv.ParameterName;
         }
 
     }

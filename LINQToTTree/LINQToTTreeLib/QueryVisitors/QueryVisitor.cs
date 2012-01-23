@@ -263,25 +263,9 @@ namespace LINQToTTreeLib
             _codeEnv.Add(sortAndRunLoop);
 
             var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
-            var lv = GetLoopIndexVaraibleName();
+            var lv = _codeContext.LoopIndexVariable.ParameterName();
             _codeContext.Add(lv, pindex);
             _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable, pindex), pindex);
-        }
-
-        /// <summary>
-        /// Extract the loop index parameter name.
-        /// </summary>
-        /// <returns></returns>
-        private string GetLoopIndexVaraibleName()
-        {
-            var lv = _codeContext.LoopIndexVariable as ParameterExpression;
-            if (lv != null)
-                return lv.Name;
-
-            var dv = _codeContext.LoopIndexVariable as DeclarableParameter;
-            if (dv == null)
-                throw new InvalidOperationException("Unable to look at loop index variable that isn't a parameter");
-            return dv.ParameterName;
         }
 
         /// <summary>
