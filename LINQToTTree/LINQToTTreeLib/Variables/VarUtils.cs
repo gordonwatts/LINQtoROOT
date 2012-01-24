@@ -222,6 +222,11 @@ namespace LINQToTTreeLib.Variables
             return t.Name;
         }
 
+        /// <summary>
+        /// Returns true if this is a pointer to a class of some sort.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static bool IsPointerType(this Type t)
         {
             if (t == null)
