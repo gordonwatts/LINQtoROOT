@@ -241,7 +241,7 @@ namespace LINQToTTreeLib
             // First, record all the indicies and the values. This is what we are going to be sorting.
             // 
 
-            var mapRecord = DeclarableParameter.CreateDeclarableParameterMapExpression(ordering.Expression.Type, typeof(int).MakeArrayType());
+            var mapRecord = DeclarableParameter.CreateDeclarableParameterMapExpression(ordering.Expression.Type, _codeContext.LoopIndexVariable.Type.MakeArrayType());
             _codeEnv.AddOutsideLoop(mapRecord);
 
             var savePairValues = new StatementRecordPairValues(mapRecord,
