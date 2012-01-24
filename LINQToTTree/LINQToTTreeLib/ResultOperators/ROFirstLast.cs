@@ -99,7 +99,8 @@ namespace LINQToTTreeLib.ResultOperators
 
             var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(indexExpr.Type);
-            indexSeen.SetInitialValue("-1");
+            if (indexSeen.Type.IsNumberType())
+                indexSeen.SetInitialValue("-1");
 
             gc.AddOutsideLoop(valueWasSeen);
             gc.AddOutsideLoop(indexSeen);
