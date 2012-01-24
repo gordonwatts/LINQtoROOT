@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -178,10 +179,19 @@ namespace LINQToTTreeLib.Variables
             }
             else if (t.IsGenericType)
             {
-                if (t.GetGenericTypeDefinition().Name == "Dictionary`2")
+                var genericDef = t.GetGenericTypeDefinition();
+                if (genericDef.Name == "Dictionary`2")
                 {
                     var tlist = t.GetGenericArguments();
                     return string.Format("map<{0}, {1} >", tlist[0].AsCPPType(), tlist[1].AsCPPType());
+                }
+                else if (genericDef == typeof(IEnumerable<int>).GetGenericTypeDefinition())
+                {
+                    return string.Format("{0}::const_iterator", t.GetGenericArguments()[0].AsCPPType());
+                }
+                else
+                {
+                    throw new InvalidOperationException(string.Format("Do not know how to convert generic type '{0}' to a C++ type", t.FullName));
                 }
             }
             else
@@ -217,6 +227,7 @@ namespace LINQToTTreeLib.Variables
                     return t.FullName.Substring(19) + "*";
                 }
             }
+
             ///
             /// Ok - if this is an object, for example, the enclosing ntuple object
             /// 

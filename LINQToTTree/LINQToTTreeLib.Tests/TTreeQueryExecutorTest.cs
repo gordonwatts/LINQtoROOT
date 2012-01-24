@@ -1660,6 +1660,7 @@ namespace LINQToTTreeLib
             var dudq = dudeQ1.Count();
 
             var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             //
             // Ok, now we can actually see if we can make it "go".
