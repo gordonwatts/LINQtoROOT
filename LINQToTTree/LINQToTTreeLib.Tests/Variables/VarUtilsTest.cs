@@ -204,5 +204,30 @@ namespace LINQToTTreeLib.Variables
             Assert.IsTrue(typeof(ROOTNET.NTH1F).IsROOTClass(), "type ROOTNET.NTH1F");
             Assert.IsTrue(typeof(ROOTNET.Interface.NTH1F).IsROOTClass(), "type ROOTNET.Interface.NTH1F");
         }
+
+        [TestMethod]
+        public void TestReplacement()
+        {
+            CodeContext cc = new CodeContext();
+            cc.Add("expr1", Expression.Parameter(typeof(int), "expr2"));
+            cc.Add("expr3", Expression.Parameter(typeof(int), "expr1"));
+
+            Assert.AreEqual("expr5", (new ValSimple("expr5", typeof(int))).PerformAllSubstitutions(cc).RawValue, "no translation expected 1");
+            Assert.AreEqual("expr2", (new ValSimple("expr1", typeof(int))).PerformAllSubstitutions(cc).RawValue, "no translation expected 2");
+            Assert.AreEqual("expr2", (new ValSimple("expr3", typeof(int))).PerformAllSubstitutions(cc).RawValue, "no translation expected 3");
+            Assert.AreEqual("expr2 + expr5", (new ValSimple("expr1 + expr5", typeof(int))).PerformAllSubstitutions(cc).RawValue, "no translation expected 4");
+            Assert.AreEqual("expr2 + expr2", (new ValSimple("expr1 + expr1", typeof(int))).PerformAllSubstitutions(cc).RawValue, "no translation expected 5");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestReplacementInfiniate()
+        {
+            CodeContext cc = new CodeContext();
+            cc.Add("expr2", Expression.Parameter(typeof(int), "expr1"));
+            cc.Add("expr1", Expression.Parameter(typeof(int), "expr2"));
+
+            Assert.AreEqual("expr1", (new ValSimple("expr1", typeof(int))).PerformAllSubstitutions(cc).RawValue, "no translation expected");
+        }
     }
 }

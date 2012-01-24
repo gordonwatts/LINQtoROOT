@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -256,6 +258,47 @@ namespace LINQToTTreeLib.Variables
             if (t == null)
                 throw new ArgumentNullException("type must not be null");
             return t.Name.Substring(1).IsROOTClass();
+        }
+
+        /// <summary>
+        /// Performs all expression subsitutions known by the code context on the input. It does not
+        /// touch the input - but returns a new IValue. Types are not tracked.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cc"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This exists because sometimes you need to do this sort of replacement when dealing with complex
+        /// expressions that don't translated to C# easily. In partiuclar, for example, the iterator expressions
+        /// that are used to move through maps in the Group By operators. Otherwise, the regular GetExpression would
+        /// do this just fine.
+        /// </remarks>
+        public static IValue PerformAllSubstitutions(this IValue input, CodeContext cc)
+        {
+            var vFinder = new Regex(@"\b(?<vname>[\w]*)\b");
+            string v = input.RawValue;
+            bool subDone = true;
+            int count = 0;
+            while (subDone)
+            {
+                count++;
+                if (count > 100)
+                    throw new InvalidOperationException(string.Format("Unable to translate '{0}' due to too many sutstitutions.", input.RawValue));
+
+                subDone = false;
+                foreach (Match match in vFinder.Matches(v))
+                {
+                    var vname = match.Groups["vname"].Value;
+                    var r = cc.GetReplacement(vname);
+                    if (r != null)
+                    {
+                        v = Regex.Replace(v, string.Format(@"\b{0}\b", vname), r.ParameterName());
+                        subDone = true;
+                    }
+                }
+            }
+
+            return new ValSimple(v, input.Type);
         }
     }
 }
