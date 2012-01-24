@@ -1,7 +1,5 @@
-using System;
-using Microsoft.Pex.Framework;
-using LINQToTTreeLib.Statements;
 using LinqToTTreeInterfacesLib;
+using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -12,14 +10,13 @@ namespace LINQToTTreeLib.Statements
         [PexFactoryMethod(typeof(StatementLoopOverSortedPairValue))]
         public static StatementLoopOverSortedPairValue Create(
             IValue mapRecord_iValue,
-            IValue goodIndex_iValue1,
             bool sortAscending_b,
             IStatement value_iStatement
         )
         {
             StatementLoopOverSortedPairValue statementLoopOverSortedPairValue
                = new StatementLoopOverSortedPairValue
-                     (mapRecord_iValue, goodIndex_iValue1, sortAscending_b);
+                     (mapRecord_iValue, sortAscending_b);
             ((StatementInlineBlockBase)statementLoopOverSortedPairValue).Parent =
               value_iStatement;
             return statementLoopOverSortedPairValue;

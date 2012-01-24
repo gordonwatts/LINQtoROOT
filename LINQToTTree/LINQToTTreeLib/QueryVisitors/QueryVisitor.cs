@@ -256,13 +256,10 @@ namespace LINQToTTreeLib
             // multi-line statement, and it is a compound statement.
             //
 
-            var goodIndex = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            _codeEnv.Add(goodIndex);
-
-            var sortAndRunLoop = new StatementLoopOverSortedPairValue(mapRecord, goodIndex, ordering.OrderingDirection == OrderingDirection.Asc);
+            var sortAndRunLoop = new StatementLoopOverSortedPairValue(mapRecord, ordering.OrderingDirection == OrderingDirection.Asc);
             _codeEnv.Add(sortAndRunLoop);
 
-            var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
+            var pindex = sortAndRunLoop.IndexVariable;
             var lv = _codeContext.LoopIndexVariable.ParameterName();
             _codeContext.Add(lv, pindex);
             _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable, pindex), pindex);
