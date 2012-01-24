@@ -147,7 +147,6 @@ namespace LINQToTTreeLib.ResultOperators
                 gc.Pop();
 
                 return actualValue;
-
             }
             else
             {

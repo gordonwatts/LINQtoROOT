@@ -401,6 +401,20 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSortTranslatedObjects()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r = from evt in q
+                    select (from j in evt.jets
+                            orderby j.var1
+                            select j).Take(2).Sum(js => js.var1);
+
+            var r2 = r.Sum();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
         public void TestGroupSimple()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
