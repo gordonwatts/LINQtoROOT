@@ -295,7 +295,7 @@ namespace LINQToTTreeLib.ResultOperators
             // Extract the main object that we are iterating over.
             //
 
-            return groupObj.GroupLoopStatement.GroupKeyReference;
+            return groupObj.GroupLoopStatement.GroupKeyReference.PerformAllSubstitutions(cc);
         }
     }
 
