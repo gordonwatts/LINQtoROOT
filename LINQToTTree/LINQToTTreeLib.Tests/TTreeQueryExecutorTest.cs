@@ -1574,8 +1574,8 @@ namespace LINQToTTreeLib
                                 orderby v ascending
                                 select v).First();
 
-            // The first two elements are 0 and 1, so 0 + 1 == 1.
-            var dude = dudeQ.Where(x => x < 5).Count();
+            // The first element is 0.
+            var dude = dudeQ.Where(x => x == 0).Count();
 
             var query = DummyQueryExectuor.LastQueryModel;
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
@@ -1587,7 +1587,7 @@ namespace LINQToTTreeLib
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(result, numberOfIter);
+            Assert.AreEqual(numberOfIter, result);
         }
 
         [TestMethod]
