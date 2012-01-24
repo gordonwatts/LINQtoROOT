@@ -273,7 +273,7 @@ namespace LINQToTTreeLib.Variables
         /// that are used to move through maps in the Group By operators. Otherwise, the regular GetExpression would
         /// do this just fine.
         /// </remarks>
-        public static IValue PerformAllSubstitutions(this IValue input, CodeContext cc)
+        public static IValue PerformAllSubstitutions(this IValue input, ICodeContext cc)
         {
             var vFinder = new Regex(@"\b(?<vname>[\w]*)\b");
             string v = input.RawValue;

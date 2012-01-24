@@ -8,6 +8,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -335,7 +336,7 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s = new Statements.StatementLoopOverGroupItems(groupObj.GroupLoopStatement.GroupItemsReference, counter);
+            var s = new Statements.StatementLoopOverGroupItems(groupObj.GroupLoopStatement.GroupItemsReference.PerformAllSubstitutions(cc), counter);
             gc.Add(s);
 
             //
