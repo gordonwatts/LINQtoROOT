@@ -77,6 +77,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
                 MEFUtilities.AddPart(new TranslatedArrayFactory());
                 MEFUtilities.AddPart(new HandleGroupType());
+                MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
             }
 
             var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);
