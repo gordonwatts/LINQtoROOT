@@ -1757,7 +1757,7 @@ namespace LINQToTTreeLib
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
             var result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(numberOfIter * vectorSize, result);
+            Assert.AreEqual(numberOfIter, result);
         }
 
         [TestMethod]
