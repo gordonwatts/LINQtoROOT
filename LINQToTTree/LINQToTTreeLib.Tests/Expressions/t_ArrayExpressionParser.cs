@@ -29,9 +29,9 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new DealWithInt32());
-            MEFUtilities.AddPart(new ArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
-            MEFUtilities.AddPart(new TranslatedArrayFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             MEFUtilities.AddPart(new LINQToTTreeLib.ResultOperators.ROTakeSkipOperators());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();

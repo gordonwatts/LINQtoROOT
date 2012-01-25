@@ -73,9 +73,9 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new GroupByArrayFactor());
                 MEFUtilities.AddPart(new GroupByFactory());
 
-                MEFUtilities.AddPart(new ArrayTypeFactory());
+                MEFUtilities.AddPart(new ArrayArrayInfoFactory());
                 MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
-                MEFUtilities.AddPart(new TranslatedArrayFactory());
+                MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
                 MEFUtilities.AddPart(new HandleGroupType());
                 MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
             }

@@ -113,7 +113,7 @@ namespace LINQToTTreeLib.Expressions
     /// then we should be looping over that.
     /// </summary>
     [Export(typeof(IArrayInfoFactory))]
-    internal class TranslatedArrayFactory : IArrayInfoFactory
+    internal class TranslatedArrayInfoFactory : IArrayInfoFactory
     {
         public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
         {
@@ -147,7 +147,7 @@ namespace LINQToTTreeLib.Expressions
     /// If this is an array type - a simple one (like int[]).
     /// </summary>
     [Export(typeof(IArrayInfoFactory))]
-    internal class ArrayTypeFactory : IArrayInfoFactory
+    internal class ArrayArrayInfoFactory : IArrayInfoFactory
     {
         public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
         {
