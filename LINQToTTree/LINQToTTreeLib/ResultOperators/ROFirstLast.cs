@@ -152,7 +152,7 @@ namespace LINQToTTreeLib.ResultOperators
             else
             {
                 // No need to cache the result - so no need to add extra code.
-                return firstlastValue;
+                return firstlastValue.ReplaceSubExpression(indexExpr, indexSeen);
             }
         }
     }
