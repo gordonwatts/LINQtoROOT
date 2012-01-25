@@ -1834,7 +1834,7 @@ namespace LINQToTTreeLib
                                  select grp).First();
 
             var dudeQ2 = from evt in dudeQ1
-                         where evt.Key == 10 && evt.Count() == 1
+                         where evt.Key == 9 && evt.Count() == 1
                          select evt;
 
             var dudq = dudeQ2.Count();
