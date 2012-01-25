@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 cc = new CodeContext();
             }
-            return InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container);
+            return InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container).PerformAllSubstitutions(cc);
         }
 
         /// <summary>

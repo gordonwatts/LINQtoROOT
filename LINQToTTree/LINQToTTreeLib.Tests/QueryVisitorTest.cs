@@ -845,7 +845,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestGroupingWithAnonymousObjectOneLevelDown()
+        public void TestAnonymousObjectOneLevelDown()
         {
             var q = new QueriableDummy<ntupWithObjects>();
 

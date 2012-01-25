@@ -91,6 +91,24 @@ namespace LINQToTTreeLib.Expressions
     }
 
     /// <summary>
+    /// If we are looking at a reference to a query expression, then look up the reference and try to process that.
+    /// </summary>
+    [Export(typeof(IArrayInfoFactory))]
+    internal class SubQueryExpressionArrayInfoFactory : IArrayInfoFactory
+    {
+        public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
+        {
+            if (!(expr is QuerySourceReferenceExpression))
+                return null;
+
+            var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
+            var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e => e);
+
+            return ReGetIArrayInfo(r);
+        }
+    }
+
+    /// <summary>
     /// If this is an array type (like an anonymous type) that isn't an array yet, but might be translated to one,
     /// then we should be looping over that.
     /// </summary>
@@ -118,7 +136,6 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private static Expression AttemptTranslationToArray(Expression expr, ICodeContext cc)
         {
-            List<string> cookies = new List<string>();
             var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
             var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e => e);
             return r as SubQueryExpression;

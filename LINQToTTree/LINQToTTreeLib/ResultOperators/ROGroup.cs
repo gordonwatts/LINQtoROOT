@@ -295,7 +295,7 @@ namespace LINQToTTreeLib.ResultOperators
             // Extract the main object that we are iterating over.
             //
 
-            return groupObj.GroupLoopStatement.GroupKeyReference;
+            return groupObj.GroupLoopStatement.GroupKeyReference.PerformAllSubstitutions(cc);
         }
     }
 
@@ -321,13 +321,30 @@ namespace LINQToTTreeLib.ResultOperators
             // Make sure this is something we want
             //
 
-            if (expr.Type.Name != "IGrouping`2" || cc.LoopVariable.Type.Name != "GroupByType`2")
-                return null;
-            var param = cc.LoopVariable as ConstantExpression;
-            if (param == null)
-                return null;
+            BaseGroupInfo groupObj;
 
-            var groupObj = param.Value as BaseGroupInfo;
+            if (expr.Type.IsGenericType
+                && expr.Type.GetGenericTypeDefinition() == typeof(IGrouping<int, int>).GetGenericTypeDefinition()
+                && cc.LoopVariable.Type.IsGenericType
+                && cc.LoopVariable.Type.GetGenericTypeDefinition() == typeof(GroupByType<int, int>).GetGenericTypeDefinition())
+            {
+                var param = cc.LoopVariable as ConstantExpression;
+                if (param == null)
+                    return null;
+
+                groupObj = param.Value as BaseGroupInfo;
+            }
+            else if (expr is ConstantExpression
+                && expr.Type.IsGenericType
+                && expr.Type.GetGenericTypeDefinition() == typeof(GroupByType<int, int>).GetGenericTypeDefinition())
+            {
+                groupObj = (expr as ConstantExpression).Value as BaseGroupInfo;
+            }
+            else
+            {
+                return null;
+            }
+
             if (groupObj == null)
                 throw new InvalidOperationException("Group by type object has a null value - should never happen!");
 

@@ -1,7 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
@@ -20,7 +21,8 @@ namespace LINQToTTreeLib.Statements
         {
             // TODO: Complete member initialization
             this._mapOfGroups = mapOfGroups;
-            this._groupIndex = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var iteratorType = typeof(IEnumerable<int>).GetGenericTypeDefinition().MakeGenericType(new Type[] { mapOfGroups.Type });
+            this._groupIndex = DeclarableParameter.CreateDeclarableParameterExpression(iteratorType);
         }
 
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
@@ -32,9 +34,7 @@ namespace LINQToTTreeLib.Statements
                 // on index variables.
                 //
 
-                var tmpSizeName = typeof(int).CreateUniqueVariableName();
-                yield return string.Format("int {0} = {1}.size();", tmpSizeName, _mapOfGroups.RawValue);
-                yield return string.Format("for (int {0} = 0; {0} < {1}; {0}++)", _groupIndex.RawValue, tmpSizeName);
+                yield return string.Format("for ({0} {1} = {2}.begin(); {1} != {2}.end(); {1}++)", _groupIndex.Type.AsCPPType(), _groupIndex.RawValue, _mapOfGroups.RawValue);
                 foreach (var l in RenderInternalCode())
                 {
                     yield return l;
@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new ValSimple(string.Format("({0}.begin() + {1})->first", _mapOfGroups.RawValue, _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[0]);
+                return new ValSimple(string.Format("{0}->first", _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[0]);
             }
         }
 
@@ -70,7 +70,7 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new ValSimple(string.Format("({0}.begin() + {1})->second", _mapOfGroups.RawValue, _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType());
+                return new ValSimple(string.Format("{0}->second", _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType());
             }
         }
 
