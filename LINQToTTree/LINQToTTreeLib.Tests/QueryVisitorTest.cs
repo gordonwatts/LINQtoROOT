@@ -434,6 +434,22 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestGroupLongRange()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ = from evt in q
+                        from v in evt.var1
+                        group v by v into lists
+                        from i in lists
+                        where i == 5
+                        select i;
+
+            var r = dudeQ.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
         public void TestGroupAndCount()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
