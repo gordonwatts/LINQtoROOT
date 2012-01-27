@@ -181,7 +181,8 @@ namespace LINQToTTreeLib.ResultOperators
         /// <returns></returns>
         public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
         {
-            if (expr.Type.Name != "GroupByTypeTagEnum`2")
+            if (!expr.Type.IsGenericType
+                || expr.Type.GetGenericTypeDefinition() != typeof(GroupByTypeTagEnum<int, int>).GetGenericTypeDefinition())
                 return null;
             var param = expr as ConstantExpression;
             if (param == null)
@@ -243,7 +244,8 @@ namespace LINQToTTreeLib.ResultOperators
     {
         public bool CanHandle(Type t)
         {
-            return t.Name == "GroupByType`2";
+            return t.IsGenericType
+            && t.GetGenericTypeDefinition() == typeof(GroupByType<int, int>).GetGenericTypeDefinition();
         }
 
         public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, CompositionContainer container)
