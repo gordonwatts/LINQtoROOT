@@ -49,6 +49,13 @@ namespace LINQToTTreeLib.Variables
         }
 
         [TestMethod]
+        public void TestAsCppTypeForMapArrayIter()
+        {
+            string result = VarUtils.AsCPPType(typeof(IEnumerable<Dictionary<int, double[]>>));
+            Assert.AreEqual("map<int, vector<double> >::const_iterator", result, "map type of array");
+        }
+
+        [TestMethod]
         public void TestCPPType()
         {
             Assert.AreEqual("int", AsCPPType(typeof(int)), "int incorrect");
@@ -62,6 +69,12 @@ namespace LINQToTTreeLib.Variables
         public void TestCPPArrayType()
         {
             Assert.AreEqual("vector<int>", AsCPPType(typeof(int[])), "int array");
+        }
+
+        [TestMethod]
+        public void TestCPPArrayIteratorType()
+        {
+            Assert.AreEqual("vector<int>::const_iterator", AsCPPType(typeof(IEnumerable<int[]>)), "int array iterator");
         }
 
         [TestMethod]
