@@ -20,6 +20,15 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
+        /// Create the dummy query executor.
+        /// </summary>
+        /// <param name="baseType">The base type we are looping over</param>
+        public DummyQueryExectuor(Type baseType)
+        {
+            _baseType = baseType;
+        }
+
+        /// <summary>
         /// The result of the query
         /// </summary>
         public GeneratedCode Result { get; private set; }
@@ -80,7 +89,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
             }
 
-            var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);
+            var qv = new QueryVisitor(Result, new CodeContext() { BaseNtupleObjectType = _baseType }, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
             MEFInitialPartCount = MEFUtilities.CountParts();
@@ -105,5 +114,10 @@ namespace LINQToTTreeLib.Tests
             //return default(T);
             throw new NotImplementedException("You can't use this query '{0}' as it returns a Single element rather than a scalar. Use a different result operator (like Count, for example)");
         }
+
+        /// <summary>
+        /// The type of the master ntuple object.
+        /// </summary>
+        private Type _baseType;
     }
 }

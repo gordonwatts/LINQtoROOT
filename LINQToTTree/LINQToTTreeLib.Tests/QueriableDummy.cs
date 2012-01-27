@@ -14,7 +14,7 @@ namespace LINQToTTreeLib.Tests
         /// Get ourselves setup!
         /// </summary>
         public QueriableDummy()
-            : base(QueriableTTree<T>.CreateLINQToTTreeParser(), new DummyQueryExectuor())
+            : base(QueriableTTree<T>.CreateLINQToTTreeParser(), new DummyQueryExectuor(typeof(T)))
         {
         }
 

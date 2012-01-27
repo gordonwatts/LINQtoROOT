@@ -33,6 +33,11 @@ namespace LINQToTTreeLib
         public void Setup()
         {
             MEFUtilities.MyClassInit();
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new HandleGroupType());
+            MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
         }
 
         [TestCleanup]
@@ -368,7 +373,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(toTransNtupe) };
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             cc.Add(model.MainFromClause, Expression.Parameter(typeof(toTransNtupe), "q"));
@@ -399,7 +404,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             cc.Add(model.MainFromClause, Expression.Parameter(typeof(dummyntup), "q"));
@@ -440,7 +445,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
 
             cc.Add(model.MainFromClause, Expression.Parameter(typeof(dummyntup), "q"));

@@ -292,5 +292,10 @@ namespace LINQToTTreeLib
         {
             get { return _cachedCookies; }
         }
+
+        /// <summary>
+        /// The base type for the ntuple we are looping over.
+        /// </summary>
+        public Type BaseNtupleObjectType { get; set; }
     }
 }

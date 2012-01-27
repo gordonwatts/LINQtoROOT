@@ -42,10 +42,9 @@ namespace LINQToTTreeLib
             _codeEnv = code;
             _codeContext = context;
             MEFContainer = container;
+
             if (_codeContext == null)
                 _codeContext = new CodeContext();
-
-            SubExpressionParse = false;
         }
 
         /// <summary>
@@ -89,11 +88,6 @@ namespace LINQToTTreeLib
 
             throw new InvalidOperationException("LINQToTTree can't translate the operator '" + resultOperator.ToString() + "'");
         }
-
-        /// <summary>
-        /// Get/Set indicator if we are parsing a sub expression and thus should generate teh loop ourselves
-        /// </summary>
-        public bool SubExpressionParse { get; set; }
 
         /// <summary>
         /// Keep track of the main index variable if it should be gotten rid of!
@@ -142,7 +136,7 @@ namespace LINQToTTreeLib
             /// For the main clause we will just define the variable as "this".
             /// 
 
-            if (!SubExpressionParse)
+            if (fromClause.ItemType == _codeContext.BaseNtupleObjectType)
             {
                 _mainIndex = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause, _codeEnv, _codeContext, MEFContainer);
             }

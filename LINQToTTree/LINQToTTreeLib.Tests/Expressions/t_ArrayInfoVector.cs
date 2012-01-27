@@ -21,8 +21,6 @@ namespace LINQToTTreeLib.Tests
     [TestClass()]
     public class TestArrayInfoVector
     {
-
-
         [TestInitialize]
         public void Setup()
         {

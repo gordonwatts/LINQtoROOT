@@ -72,7 +72,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -124,7 +124,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -143,7 +143,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -199,7 +199,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -226,7 +226,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -255,7 +255,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -293,7 +293,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -330,7 +330,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -571,7 +571,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -597,7 +597,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -626,7 +626,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
