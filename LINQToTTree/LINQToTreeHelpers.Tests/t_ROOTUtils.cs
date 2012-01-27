@@ -76,7 +76,7 @@ namespace LINQToTreeHelpers.Tests
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }
