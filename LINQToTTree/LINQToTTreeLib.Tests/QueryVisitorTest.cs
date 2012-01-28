@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
@@ -34,6 +35,7 @@ namespace LINQToTTreeLib
         {
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
+            ArrayExpressionParser.ResetParser();
         }
 
         [TestCleanup]
@@ -66,8 +68,11 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -115,8 +120,11 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new TypeHandlerROOT());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -131,8 +139,11 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -184,8 +195,11 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new TakeOperatorTestLoopVar());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -212,7 +226,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new TypeHandlerCache());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -237,8 +251,11 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -272,8 +289,11 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -306,8 +326,11 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -378,6 +401,279 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSortSimpleCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select (from v in evt.var1
+                            orderby v
+                            select v).Take(2).Sum();
+            var r1 = from evt in r
+                     where evt > 10
+                     select evt;
+            var r2 = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var rr = from evt in q
+                     select (from v in evt.var1
+                             orderby v
+                             select v).Take(2).Sum();
+            var rr1 = from evt in rr
+                      where evt > 10
+                      select evt;
+            var rr2 = rr1.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query2, query1);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
+            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 2);
+        }
+
+        /// <summary>
+        /// Look at the statements, make sure they are all the same size.
+        /// </summary>
+        /// <param name="iEnumerable"></param>
+        /// <param name="iEnumerable_2"></param>
+        private void CompareNumbersOfStatements(System.Collections.Generic.IEnumerable<IStatement> sExpected, System.Collections.Generic.IEnumerable<IStatement> sActual, int statementsToCheck)
+        {
+            Assert.AreEqual(sExpected.Count(), sActual.Count(), "# of statements incorrect");
+            int count = 0;
+            foreach (var sPair in sExpected.Zip(sActual, (ae, aa) => Tuple.Create(ae, aa)))
+            {
+                count += 1;
+                Assert.AreEqual(sPair.Item1.GetType(), sPair.Item2.GetType(), "Statement type mis-match");
+                if (sPair.Item1 is IStatementCompound)
+                {
+                    if (statementsToCheck >= count)
+                        CompareNumbersOfStatements((sPair.Item1 as IStatementCompound).Statements, (sPair.Item2 as IStatementCompound).Statements, 1000);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestSortTranslatedObjects()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r = from evt in q
+                    select (from j in evt.jets
+                            orderby j.var1
+                            select j).Take(2).Sum(js => js.var1);
+
+            var r2 = r.Sum();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestGroupSimple()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select from v in evt.var1 group v by v;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2
+                      select grp.Key;
+
+            var final = cnt.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestGroupTranslatedGroup()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r = from evt in q
+                    select from v in evt.jets group v by v.var1;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2 && grp.Count() == 1
+                      select grp.Key;
+            var final = cnt.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestGroupSimpleCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r1 = from evt in q
+                     select from v in evt.var1 group v by v;
+
+            var cnt1 = from evt in r1
+                       from grp in evt
+                       where grp.Key == 2
+                       select grp.Key;
+
+            var f1 = cnt1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2 = from evt in q
+                     select from v in evt.var1 group v by v;
+
+            var cnt2 = from evt in r2
+                       from grp in evt
+                       where grp.Key == 2
+                       select grp.Key;
+
+            var f2 = cnt2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query2, query1);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
+            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 1);
+        }
+
+        [TestMethod]
+        public void TestGroupLongRangeCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ1 = from evt in q
+                         from v in evt.var1
+                         group v by v into lists
+                         from i in lists
+                         where i == 5
+                         select i;
+            var r1 = dudeQ1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var dudeQ2 = from evt in q
+                         from v in evt.var1
+                         group v by v into lists
+                         from i in lists
+                         where i == 5
+                         select i;
+
+            var r2 = dudeQ2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query2, query1);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
+            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 1);
+        }
+
+        [TestMethod]
+        public void TestGroupLongRange()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ = from evt in q
+                        from v in evt.var1
+                        group v by v into lists
+                        from i in lists
+                        where i == 5
+                        select i;
+
+            var r = dudeQ.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestGroupAndCount()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select from v in evt.var1 group v by v;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2 && grp.Count() > 5
+                      select grp.Key;
+
+            var final = cnt.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestGroupAndCutAndCount()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select from v in evt.var1 group v by v;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2 && grp.Where(v => v > 1).Count() > 5
+                      select grp.Key;
+
+            var final = cnt.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestSortGroupByKey()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ = from evt in q
+                        select (from v in evt.var1
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         select (from grp in evt
+                                 orderby grp.Key descending
+                                 select grp).First();
+
+            var dudeQ2 = from evt in dudeQ1
+                         where evt.Key == 10 && evt.Count() == 1
+                         select evt;
+
+            var dudq = dudeQ2.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestSortGroupByItems()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ = from evt in q
+                        select (from v in evt.var1
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         select (from grp in evt
+                                 where grp.Count() >= 5
+                                 where grp.OrderBy(s => s).First() == 12
+                                 select grp);
+
+            var dudeQ2 = from evt in dudeQ1
+                         where evt.Count() > 1
+                         select evt;
+            var r = dudeQ2.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+        }
+
+        [TestMethod]
         public void TestSortReverseSimple()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
@@ -408,11 +704,14 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROSum());
             MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -431,11 +730,14 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROFirstLast());
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -457,11 +759,14 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -696,7 +1001,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestGroupingWithAnonymousObjectOneLevelDown()
+        public void TestAnonymousObjectOneLevelDown()
         {
             var q = new QueriableDummy<ntupWithObjects>();
 

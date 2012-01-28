@@ -5,6 +5,8 @@ using LinqToTTreeInterfacesLib;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Expressions
 {

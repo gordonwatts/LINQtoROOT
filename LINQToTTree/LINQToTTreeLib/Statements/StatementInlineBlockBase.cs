@@ -133,10 +133,9 @@ namespace LINQToTTreeLib.Statements
             if (v.Type.IsArray)
                 return "";
 
-            if (v.Type.IsGenericType)
+            if (v.Type.IsClass || v.Type.IsGenericType)
             {
-                if (v.Type.GetGenericTypeDefinition().Name == "Dictionary`2")
-                    return "";
+                return "";
             }
 
             throw new NotSupportedException(string.Format("Don't know how to do default value for C++ variable of type {0}.", v.Type.ToString()));

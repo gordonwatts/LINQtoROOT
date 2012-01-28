@@ -8,8 +8,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
-
-
     /// <summary>
     ///This is a test class for StatementLoopOverSortedPairValueTest and is intended
     ///to contain all StatementLoopOverSortedPairValueTest Unit Tests
@@ -54,6 +52,12 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNotNull(statement, "Second statement null should cause a failure");
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
             Assert.AreEqual(allSame, canComb, "not expected combination!");
+        }
+
+        [TestMethod]
+        public void TestStatementCreation()
+        {
+            var v = StatementLoopOverSortedPairValueFactory.Create(true);
         }
     }
 }

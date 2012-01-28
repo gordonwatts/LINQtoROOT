@@ -16,7 +16,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Save how we are going to go after the statement and generate it.
         /// </summary>
-        /// <param name="mapStorage"></param>
+        /// <param name="mapStorage">We own this variable - we can change its name</param>
         /// <param name="indexVar"></param>
         /// <param name="indexValue"></param>
         public StatementRecordPairValues(IDeclaredParameter mapStorage, IValue indexVar, IValue indexValue)
@@ -77,8 +77,11 @@ namespace LINQToTTreeLib.Statements
                 return false;
             if (other._indexValue.RawValue != _indexValue.RawValue)
                 return false;
-            if (other._mapRecord.RawValue != _mapRecord.RawValue)
+            if (other._mapRecord.Type != _mapRecord.Type)
                 return false;
+
+            optimize.TryRenameVarialbeOneLevelUp(other._mapRecord.ParameterName, _mapRecord);
+
             return true;
         }
 

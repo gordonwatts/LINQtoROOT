@@ -117,7 +117,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Help with the next test
         /// </summary>
-        class dummyVarName : IDeclaredParameter
+        public class dummyVarName : IDeclaredParameter
         {
             public dummyVarName(string name, Type t)
             {

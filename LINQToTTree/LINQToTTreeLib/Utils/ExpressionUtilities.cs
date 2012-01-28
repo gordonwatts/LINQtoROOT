@@ -1,11 +1,12 @@
 ﻿
 using System;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
-using Remotion.Linq.Clauses;
-using System.Linq.Expressions;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
+using Remotion.Linq.Clauses;
 namespace LINQToTTreeLib.Utils
 {
     internal static class ExpressionUtilities
@@ -18,6 +19,8 @@ namespace LINQToTTreeLib.Utils
         public static IVariableScopeHolder CodeLoopOverArrayInfo(this IArrayInfo arrayRef, IQuerySource query, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             var indexVar = arrayRef.AddLoop(gc, cc, container);
+            if (indexVar == null)
+                return null;
 
             ///
             /// Next, make sure the index variable can be used for later references!
@@ -111,6 +114,23 @@ namespace LINQToTTreeLib.Utils
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// If this is a parameter of some sort, returns the name. Otherwise, throws.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public static string ParameterName(this Expression expr)
+        {
+            var lv = expr as ParameterExpression;
+            if (lv != null)
+                return lv.Name;
+
+            var dv = expr as DeclarableParameter;
+            if (dv == null)
+                throw new InvalidOperationException("Unable to look at loop index variable that isn't a parameter");
+            return dv.ParameterName;
         }
 
     }

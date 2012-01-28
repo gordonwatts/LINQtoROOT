@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 namespace LINQToTTreeLib.Statements
@@ -13,7 +14,7 @@ namespace LINQToTTreeLib.Statements
     public class StatementLoopOverSortedPairValue : StatementInlineBlockBase, IStatementLoop
     {
         private IValue _mapRecord;
-        private IValue _indexVariable;
+        private DeclarableParameter _indexVariable;
         private bool _sortAscending;
 
         /// <summary>
@@ -22,18 +23,34 @@ namespace LINQToTTreeLib.Statements
         /// <param name="mapRecord"></param>
         /// <param name="goodIndex"></param>
         /// <param name="sortAscending"></param>
-        public StatementLoopOverSortedPairValue(IValue mapRecord, IValue goodIndex, bool sortAscending)
+        public StatementLoopOverSortedPairValue(IValue mapRecord, bool sortAscending)
         {
             // Null checks
-
             if (mapRecord == null)
                 throw new ArgumentNullException("mapRecord");
-            if (goodIndex == null)
-                throw new ArgumentNullException("goodIndex");
 
             this._mapRecord = mapRecord;
-            this._indexVariable = goodIndex;
             this._sortAscending = sortAscending;
+
+            //
+            // We will need an index to go through the sorted items that are
+            // stored in the array.
+            //
+
+            var indexVariableType = mapRecord.Type.GetGenericArguments()[1];
+            if (!indexVariableType.IsArray)
+                throw new ArgumentException(string.Format("Unable to loop over a map that isn't a map of arrays ({0}).", mapRecord.Type.FullName));
+            indexVariableType = indexVariableType.GetElementType();
+
+            this._indexVariable = DeclarableParameter.CreateDeclarableParameterExpression(indexVariableType);
+        }
+
+        /// <summary>
+        /// Returns the indexing variable that loops over the items we are looking at.
+        /// </summary>
+        public DeclarableParameter IndexVariable
+        {
+            get { return _indexVariable; }
         }
 
         /// <summary>
@@ -44,8 +61,9 @@ namespace LINQToTTreeLib.Statements
         {
             if (Statements.Any())
             {
-                var tempListingName = typeof(int[]).CreateUniqueVariableName();
-                yield return string.Format("vector<int> {0};", tempListingName);
+                var sortValueTypeArray = _mapRecord.Type.GetGenericArguments()[0].MakeArrayType();
+                var tempListingName = sortValueTypeArray.CreateUniqueVariableName();
+                yield return string.Format("{0} {1};", sortValueTypeArray.AsCPPType(), tempListingName);
                 yield return string.Format("for({0}::const_iterator i_itr = {1}.begin(); i_itr != {1}.end(); i_itr++) {{", _mapRecord.Type.AsCPPType(), _mapRecord.RawValue);
                 yield return string.Format("  {0}.push_back(i_itr->first);", tempListingName);
                 yield return string.Format("}}");
@@ -58,16 +76,41 @@ namespace LINQToTTreeLib.Statements
                 {
                     yield return string.Format("for (int i_index = {0}.size()-1; i_index >= 0; i_index--) {{", tempListingName);
                 }
-                yield return string.Format("  const vector<int> &sublist({0}[{1}[i_index]]);", _mapRecord.RawValue, tempListingName);
+
+                //
+                // To make life simple, create an alias to the list so we can write the code more
+                // cleanly below (and some hints to the compiler??).
+                //
+
+                var subListType = _mapRecord.Type.GetGenericArguments()[1];
+                yield return string.Format("  const {0} &sublist({1}[{2}[i_index]]);", subListType.AsCPPType(), _mapRecord.RawValue, tempListingName);
+
+                //
+                // Protect ourselves from break's that occur in the inner loop.
+                //
+
                 var breakSeenVar = typeof(bool).CreateUniqueVariableName();
                 yield return string.Format("  bool {0}breakSeen = true;", breakSeenVar);
                 yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist.size(); i_sindex++) {{", _indexVariable.RawValue);
-                yield return string.Format("    {0} = sublist[i_sindex];", _indexVariable.RawValue);
+
+                //
+                // The index variable is what will be used by everyone - so we will just set it here.
+                //
+
+                yield return string.Format("    const {0} {1} = sublist[i_sindex];", _indexVariable.Type.AsCPPType(), _indexVariable.RawValue);
+
+                //
+                // Render the code in the inner loop
+                //
 
                 foreach (var l in RenderInternalCode())
                 {
-                    yield return "    " + l;
+                    yield return "      " + l;
                 }
+
+                //
+                // And clean up!
+                //
 
                 yield return string.Format("    {0}breakSeen = false;", breakSeenVar);
 
@@ -92,9 +135,19 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            return _indexVariable.RawValue == other._indexVariable.RawValue
-                && _mapRecord.RawValue == other._mapRecord.RawValue
+            bool candoIt =
+                _mapRecord.RawValue == other._mapRecord.RawValue
                 && _sortAscending == other._sortAscending;
+
+            // Normally we would use the optimzation service to do this. However, the variable is declared
+            // explicitly in this block - hard coded, you might say. As a result, we just do a rename here - because
+            // the opt.TryRenameVariableOneLevelUp can't find the decl and so will fail!
+            other.RenameVariable(other._indexVariable.ParameterName, _indexVariable.RawValue);
+
+            if (candoIt)
+                Combine(other, opt);
+
+            return candoIt;
         }
 
         /// <summary>
@@ -106,6 +159,7 @@ namespace LINQToTTreeLib.Statements
         {
             _indexVariable.RenameRawValue(origName, newName);
             _mapRecord.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
     }
 }

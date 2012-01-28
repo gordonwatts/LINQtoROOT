@@ -226,7 +226,6 @@ namespace LINQToTTreeLib.Expressions
                     throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
 
                 QueryVisitor qv = new QueryVisitor(GeneratedCode, CodeContext, MEFContainer);
-                qv.SubExpressionParse = true;
                 MEFContainer.SatisfyImportsOnce(qv);
 
                 ///

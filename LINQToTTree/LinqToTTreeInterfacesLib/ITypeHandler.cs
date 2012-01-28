@@ -81,5 +81,16 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="container"></param>
         /// <returns></returns>
         Expression ProcessNew(NewExpression expression, out IValue result, IGeneratedQueryCode gc, CompositionContainer container);
+
+        /// <summary>
+        /// Process a member reference ("instan.Key" for example). A null return means that
+        /// it couldn't be handled. Throw means it should have been handled, but wasn't.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container);
     }
 }

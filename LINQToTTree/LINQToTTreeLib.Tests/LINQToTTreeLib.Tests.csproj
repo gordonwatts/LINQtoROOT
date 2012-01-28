@@ -231,6 +231,7 @@
     <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
     <Compile Include="Factories\StatementInlineBlockFactory.cs" />
     <Compile Include="Factories\StatementLoopOverGoodFactory.cs" />
+    <Compile Include="Factories\StatementLoopOverGroupItemsFactory.cs" />
     <Compile Include="Factories\StatementLoopOverSortedPairValueFactory.cs" />
     <Compile Include="Factories\StatementMinMaxTestFactory.cs" />
     <Compile Include="Factories\StatementPairLoopFactory.cs" />
@@ -488,14 +489,37 @@
     <Compile Include="Statements\StatementLoopOverGoodTest.TestTryCombine.g.cs">
       <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementLoopOverGroupItemsTest.CodeItUpTest.g.cs">
+      <DependentUpon>StatementLoopOverGroupItemsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGroupItemsTest.cs" />
+    <Compile Include="Statements\StatementLoopOverGroupItemsTest.RenameVariableTest.g.cs">
+      <DependentUpon>StatementLoopOverGroupItemsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGroupItemsTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementLoopOverGroupItemsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGroupsTest.CodeItUpTest.g.cs">
+      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGroupsTest.Constructor.g.cs">
+      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGroupsTest.cs" />
+    <Compile Include="Statements\StatementLoopOverGroupsTest.RenameVariableTest.g.cs">
+      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementLoopOverGroupsTest.TestTryCombine.g.cs">
+      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementLoopOverSortedPairValueTest.CodeItUpTest.g.cs">
-      <DependentUpon>t_StatementLoopOverSortedPairValue.cs</DependentUpon>
+      <DependentUpon>StatementLoopOverSortedPairValueTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementLoopOverSortedPairValueTest.RenameVariableTest.g.cs">
-      <DependentUpon>t_StatementLoopOverSortedPairValue.cs</DependentUpon>
+      <DependentUpon>StatementLoopOverSortedPairValueTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementLoopOverSortedPairValueTest.TestTryCombine.g.cs">
-      <DependentUpon>t_StatementLoopOverSortedPairValue.cs</DependentUpon>
+      <DependentUpon>StatementLoopOverSortedPairValueTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementPairLoopTest.cs" />
     <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">
@@ -517,13 +541,13 @@
       <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementRecordPairValuesTest.CodeItUpTest.g.cs">
-      <DependentUpon>t_StatementRecordPairValues.cs</DependentUpon>
+      <DependentUpon>StatementRecordPairValuesTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementRecordPairValuesTest.RenameVariableTest.g.cs">
-      <DependentUpon>t_StatementRecordPairValues.cs</DependentUpon>
+      <DependentUpon>StatementRecordPairValuesTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementRecordPairValuesTest.TestTryCombine.g.cs">
-      <DependentUpon>t_StatementRecordPairValues.cs</DependentUpon>
+      <DependentUpon>StatementRecordPairValuesTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
       <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
@@ -634,8 +658,8 @@
     <Compile Include="Statements\StatemenRecordValueTest.cs" />
     <Compile Include="Expressions\t_ExpressionResolver.cs" />
     <Compile Include="Expressions\t_DeclarableParameter.cs" />
-    <Compile Include="Statements\t_StatementRecordPairValues.cs" />
-    <Compile Include="Statements\t_StatementLoopOverSortedPairValue.cs" />
+    <Compile Include="Statements\StatementRecordPairValuesTest.cs" />
+    <Compile Include="Statements\StatementLoopOverSortedPairValueTest.cs" />
     <Compile Include="Utils\t_TypeUtils.cs" />
     <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
       <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>

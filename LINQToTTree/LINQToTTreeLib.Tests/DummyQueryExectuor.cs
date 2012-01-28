@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.CPPCode;
+using LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
-using LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -16,6 +17,15 @@ namespace LINQToTTreeLib.Tests
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Create the dummy query executor.
+        /// </summary>
+        /// <param name="baseType">The base type we are looping over</param>
+        public DummyQueryExectuor(Type baseType)
+        {
+            _baseType = baseType;
         }
 
         /// <summary>
@@ -61,6 +71,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new ROAsQueriable());
                 MEFUtilities.AddPart(new ROSum());
                 MEFUtilities.AddPart(new ROFirstLast());
+                MEFUtilities.AddPart(new ROGroup());
 
                 MEFUtilities.AddPart(new TypeHandlerROOT());
                 MEFUtilities.AddPart(new TypeHandlerHelpers());
@@ -68,9 +79,17 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new TypeHandlerCache());
                 MEFUtilities.AddPart(new TypeHandlerCPPCode());
                 MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+                MEFUtilities.AddPart(new GroupByArrayFactor());
+                MEFUtilities.AddPart(new GroupByFactory());
+
+                MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+                MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+                MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+                MEFUtilities.AddPart(new HandleGroupType());
+                MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
             }
 
-            var qv = new QueryVisitor(Result, null, MEFUtilities.MEFContainer);
+            var qv = new QueryVisitor(Result, new CodeContext() { BaseNtupleObjectType = _baseType }, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
             MEFInitialPartCount = MEFUtilities.CountParts();
@@ -95,5 +114,10 @@ namespace LINQToTTreeLib.Tests
             //return default(T);
             throw new NotImplementedException("You can't use this query '{0}' as it returns a Single element rather than a scalar. Use a different result operator (like Count, for example)");
         }
+
+        /// <summary>
+        /// The type of the master ntuple object.
+        /// </summary>
+        private Type _baseType;
     }
 }

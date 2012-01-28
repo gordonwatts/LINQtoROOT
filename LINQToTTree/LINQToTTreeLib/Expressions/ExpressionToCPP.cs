@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 cc = new CodeContext();
             }
-            return InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container);
+            return InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container).PerformAllSubstitutions(cc);
         }
 
         /// <summary>
@@ -332,6 +332,23 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
+            //
+            // See if we have special handling for this.
+            //
+
+            var r = TypeHandlers.TryMemberReference(expression, _codeEnv, _codeContext, MEFContainer);
+            if (r != null)
+            {
+                _result = r;
+                return expression;
+            }
+
+            //
+            // Ok - we need to do this the normal way - we split things in
+            // two - and do the base expression and then try to apply the
+            // member to that.
+            //
+
             var baseExpr = GetExpression(expression.Expression);
 
             ///

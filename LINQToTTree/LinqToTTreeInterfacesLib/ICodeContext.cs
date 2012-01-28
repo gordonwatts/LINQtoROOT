@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Remotion.Linq.Clauses;
 
@@ -85,5 +86,11 @@ namespace LinqToTTreeInterfacesLib
         /// calculating the cache.
         /// </summary>
         List<string> CacheCookies { get; }
+
+        /// <summary>
+        /// Returns the type that we are looping over - the base type. This is an implied loop - so we
+        /// just avoid making an actual loop over it. :-)
+        /// </summary>
+        Type BaseNtupleObjectType { get; }
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -75,9 +76,7 @@ namespace LINQToTTreeLib.ResultOperators
             //  - We actually allow for a default variable.
             //
 
-            bool cacheResult = cc.LoopVariable.Type == typeof(int)
-                || cc.LoopVariable.Type == typeof(double)
-                || cc.LoopVariable.Type == typeof(float);
+            bool cacheResult = cc.LoopVariable.Type.IsNumberType();
             cacheResult = cacheResult && !bombIfNothing;
 
             //
@@ -99,8 +98,9 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            indexSeen.SetInitialValue("-1");
+            var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(indexExpr.Type);
+            if (indexSeen.Type.IsNumberType())
+                indexSeen.SetInitialValue("-1");
 
             gc.AddOutsideLoop(valueWasSeen);
             gc.AddOutsideLoop(indexSeen);
@@ -120,7 +120,13 @@ namespace LINQToTTreeLib.ResultOperators
                 gc.Add(new Statements.StatementThrowIfTrue(test, "First predicate executed on a null sequence"));
             }
 
-            var firstlastValue = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, Expression.Parameter(typeof(int), indexSeen.RawValue));
+            //
+            // Finally, we need the new expression. For this we basically just ask for the translated expression. We
+            // also add a substitution for later on for more complex expressions.
+            //
+
+            var firstlastValue = cc.LoopVariable;
+            cc.Add(indexExpr.ParameterName(), indexSeen);
 
             if (cacheResult)
             {
@@ -142,12 +148,11 @@ namespace LINQToTTreeLib.ResultOperators
                 gc.Pop();
 
                 return actualValue;
-
             }
             else
             {
                 // No need to cache the result - so no need to add extra code.
-                return firstlastValue;
+                return firstlastValue.ReplaceSubExpression(indexExpr, indexSeen);
             }
         }
     }

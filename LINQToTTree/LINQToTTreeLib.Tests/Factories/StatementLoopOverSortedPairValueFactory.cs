@@ -1,7 +1,5 @@
-using System;
+using LINQToTTreeLib.Expressions;
 using Microsoft.Pex.Framework;
-using LINQToTTreeLib.Statements;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -11,23 +9,22 @@ namespace LINQToTTreeLib.Statements
         /// <summary>A factory for LINQToTTreeLib.Statements.StatementLoopOverSortedPairValue instances</summary>
         [PexFactoryMethod(typeof(StatementLoopOverSortedPairValue))]
         public static StatementLoopOverSortedPairValue Create(
-            IValue mapRecord_iValue,
-            IValue goodIndex_iValue1,
-            bool sortAscending_b,
-            IStatement value_iStatement
+            bool sortAscending_b
         )
         {
+            //
+            // The value type is actually a map - so an IGrouping usually, and the second guy is an array over
+            // something.
+            //
+
+            var keyType = typeof(int);
+            var indexType = typeof(int);
+            var iv = DeclarableParameter.CreateDeclarableParameterMapExpression(keyType, indexType.MakeArrayType());
+
             StatementLoopOverSortedPairValue statementLoopOverSortedPairValue
                = new StatementLoopOverSortedPairValue
-                     (mapRecord_iValue, goodIndex_iValue1, sortAscending_b);
-            ((StatementInlineBlockBase)statementLoopOverSortedPairValue).Parent =
-              value_iStatement;
+                     (iv, sortAscending_b);
             return statementLoopOverSortedPairValue;
-
-            // TODO: Edit factory method of StatementLoopOverSortedPairValue
-            // This method should be able to configure the object in all possible ways.
-            // Add as many parameters as needed,
-            // and assign their values to each field by using the API.
         }
     }
 }
