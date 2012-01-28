@@ -401,6 +401,61 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSortSimpleCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select (from v in evt.var1
+                            orderby v
+                            select v).Take(2).Sum();
+            var r1 = from evt in r
+                     where evt > 10
+                     select evt;
+            var r2 = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var rr = from evt in q
+                     select (from v in evt.var1
+                             orderby v
+                             select v).Take(2).Sum();
+            var rr1 = from evt in rr
+                      where evt > 10
+                      select evt;
+            var rr2 = rr1.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query2, query1);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
+            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 2);
+        }
+
+        /// <summary>
+        /// Look at the statements, make sure they are all the same size.
+        /// </summary>
+        /// <param name="iEnumerable"></param>
+        /// <param name="iEnumerable_2"></param>
+        private void CompareNumbersOfStatements(System.Collections.Generic.IEnumerable<IStatement> sExpected, System.Collections.Generic.IEnumerable<IStatement> sActual, int statementsToCheck)
+        {
+            Assert.AreEqual(sExpected.Count(), sActual.Count(), "# of statements incorrect");
+            int count = 0;
+            foreach (var sPair in sExpected.Zip(sActual, (ae, aa) => Tuple.Create(ae, aa)))
+            {
+                count += 1;
+                Assert.AreEqual(sPair.Item1.GetType(), sPair.Item2.GetType(), "Statement type mis-match");
+                if (sPair.Item1 is IStatementCompound)
+                {
+                    if (statementsToCheck >= count)
+                        CompareNumbersOfStatements((sPair.Item1 as IStatementCompound).Statements, (sPair.Item2 as IStatementCompound).Statements, 1000);
+                }
+            }
+        }
+
+        [TestMethod]
         public void TestSortTranslatedObjects()
         {
             var q = new QueriableDummy<ntupWithObjects>();
