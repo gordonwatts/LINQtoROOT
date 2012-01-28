@@ -66,10 +66,11 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            if (_groupIndex.RawValue != other._groupIndex.RawValue)
-                return false;
             if (_mapOfGroups.RawValue != other._mapOfGroups.RawValue)
                 return false;
+
+            // We declare group index by hand, so we have to do the renaming by hand here too.
+            other.RenameVariable(other._groupIndex.RawValue, _groupIndex.RawValue);
 
             Combine(other, opt);
             return true;

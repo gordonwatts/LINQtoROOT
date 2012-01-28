@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -11,12 +12,12 @@ namespace LINQToTTreeLib.Statements
     public class StatementLoopOverGroupItems : StatementInlineBlockBase, IStatementLoop
     {
         private IValue _groupArray;
-        private IValue _counter;
+        private DeclarableParameter _counter;
 
-        public StatementLoopOverGroupItems(IValue arrayToLoopOver, IValue counter)
+        public StatementLoopOverGroupItems(IValue arrayToLoopOver)
         {
             _groupArray = arrayToLoopOver;
-            _counter = counter;
+            _counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             if (_groupArray == null)
                 throw new ArgumentNullException("arrayToLoopOver");
@@ -69,8 +70,10 @@ namespace LINQToTTreeLib.Statements
 
             if (_groupArray.RawValue != other._groupArray.RawValue)
                 return false;
-            if (_counter.RawValue != other._counter.RawValue)
-                return false;
+
+            // We declare counter explicitly in the loop above - so we need to force the rename below rather
+            // that rely on declared parameters.
+            other.RenameVariable(other._counter.RawValue, _counter.RawValue);
 
             Combine(other, opt);
             return true;
@@ -92,5 +95,9 @@ namespace LINQToTTreeLib.Statements
             _counter.RenameRawValue(origName, newName);
         }
 
+        /// <summary>
+        /// Return the counter that we use to walk over the group items.
+        /// </summary>
+        public System.Linq.Expressions.Expression Counter { get { return _counter; } }
     }
 }

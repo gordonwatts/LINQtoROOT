@@ -10,12 +10,11 @@ namespace LINQToTTreeLib.Statements
         [PexFactoryMethod(typeof(StatementLoopOverGroupItems))]
         public static StatementLoopOverGroupItems Create(
             IValue arrayToLoopOver_iValue,
-            IValue counter_iValue1,
             IStatement value_iStatement
         )
         {
             StatementLoopOverGroupItems statementLoopOverGroupItems
-               = new StatementLoopOverGroupItems(arrayToLoopOver_iValue, counter_iValue1);
+               = new StatementLoopOverGroupItems(arrayToLoopOver_iValue);
             ((StatementInlineBlockBase)statementLoopOverGroupItems).Parent =
               value_iStatement;
             return statementLoopOverGroupItems;

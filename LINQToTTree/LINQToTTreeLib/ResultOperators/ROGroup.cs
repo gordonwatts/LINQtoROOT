@@ -354,8 +354,7 @@ namespace LINQToTTreeLib.ResultOperators
             // Ok, now code up the loop over the interior.
             //
 
-            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s = new Statements.StatementLoopOverGroupItems(groupObj.GroupLoopStatement.GroupItemsReference.PerformAllSubstitutions(cc), counter);
+            var s = new Statements.StatementLoopOverGroupItems(groupObj.GroupLoopStatement.GroupItemsReference.PerformAllSubstitutions(cc));
             gc.Add(s);
 
             //
@@ -367,7 +366,7 @@ namespace LINQToTTreeLib.ResultOperators
             var loopExpression = groupObj.TargetExpression;
             cc.Add((groupObj.TargetExpressionLoopVariable as ParameterExpression).Name, Expression.Parameter(typeof(int), s.LoopItemIndex));
 
-            return new SimpleLoopVarSetting(loopExpression, counter);
+            return new SimpleLoopVarSetting(loopExpression, s.Counter);
         }
     }
 }

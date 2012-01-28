@@ -489,6 +489,74 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestGroupSimpleCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r1 = from evt in q
+                     select from v in evt.var1 group v by v;
+
+            var cnt1 = from evt in r1
+                       from grp in evt
+                       where grp.Key == 2
+                       select grp.Key;
+
+            var f1 = cnt1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2 = from evt in q
+                     select from v in evt.var1 group v by v;
+
+            var cnt2 = from evt in r2
+                       from grp in evt
+                       where grp.Key == 2
+                       select grp.Key;
+
+            var f2 = cnt2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query2, query1);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
+            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 1);
+        }
+
+        [TestMethod]
+        public void TestGroupLongRangeCombine()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ1 = from evt in q
+                         from v in evt.var1
+                         group v by v into lists
+                         from i in lists
+                         where i == 5
+                         select i;
+            var r1 = dudeQ1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var dudeQ2 = from evt in q
+                         from v in evt.var1
+                         group v by v into lists
+                         from i in lists
+                         where i == 5
+                         select i;
+
+            var r2 = dudeQ2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query2, query1);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var st = query.QueryCode().First();
+            Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
+            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 1);
+        }
+
+        [TestMethod]
         public void TestGroupLongRange()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
