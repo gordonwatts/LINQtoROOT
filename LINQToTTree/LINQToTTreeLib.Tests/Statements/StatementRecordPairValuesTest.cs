@@ -56,12 +56,5 @@ namespace LINQToTTreeLib.Tests
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
             Assert.AreEqual(allSame, canComb, "not expected combination!");
         }
-
-        [TestMethod]
-        public static void TestMultipleValuesSame()
-        {
-            // Make sure we can deal with when more then one item has the same value.
-            Assert.Inconclusive("ops");
-        }
     }
 }
