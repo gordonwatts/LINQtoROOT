@@ -489,6 +489,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestGroupTranslatedGroup()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r = from evt in q
+                    select from v in evt.jets group v by v.var1;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2 && grp.Count() == 1
+                      select grp.Key;
+            var final = cnt.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
         public void TestGroupSimpleCombine()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
