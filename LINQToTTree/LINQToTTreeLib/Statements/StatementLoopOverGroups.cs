@@ -7,7 +7,10 @@ using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
-    class StatementLoopOverGroups : StatementInlineBlockBase, IStatementLoop
+    /// <summary>
+    /// Statement that loops over the groups found by a previous GroupBy predicate.
+    /// </summary>
+    public class StatementLoopOverGroups : StatementInlineBlockBase, IStatementLoop
     {
         private IValue _mapOfGroups;
         private DeclarableParameter _groupIndex;
@@ -19,12 +22,18 @@ namespace LINQToTTreeLib.Statements
         /// <param name="groupIndex"></param>
         public StatementLoopOverGroups(IValue mapOfGroups)
         {
-            // TODO: Complete member initialization
+            if (mapOfGroups == null)
+                throw new ArgumentNullException("mapOfGroups");
+
             this._mapOfGroups = mapOfGroups;
             var iteratorType = typeof(IEnumerable<int>).GetGenericTypeDefinition().MakeGenericType(new Type[] { mapOfGroups.Type });
             this._groupIndex = DeclarableParameter.CreateDeclarableParameterExpression(iteratorType);
         }
 
+        /// <summary>
+        /// Return the code for this statement.
+        /// </summary>
+        /// <returns></returns>
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
             if (Statements.Any())
@@ -42,14 +51,41 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+        /// <summary>
+        /// If we are the same, then combine!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="opt"></param>
+        /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
-            throw new System.NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementLoopOverGroups;
+            if (other == null)
+                return false;
+
+            if (_groupIndex.RawValue != other._groupIndex.RawValue)
+                return false;
+            if (_mapOfGroups.RawValue != other._mapOfGroups.RawValue)
+                return false;
+
+            Combine(other, opt);
+            return true;
         }
 
+        /// <summary>
+        /// Rename all variables in this statement.
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
-            throw new System.NotImplementedException();
+            _mapOfGroups.RenameRawValue(origName, newName);
+            _groupIndex.RenameParameter(origName, newName);
+            _groupIndex.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
 
         /// <summary>

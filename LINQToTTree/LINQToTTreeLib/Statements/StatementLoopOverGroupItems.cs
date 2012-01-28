@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Used in a group-by set of commands. This is for the interior loop over items.
     /// </summary>
-    class StatementLoopOverGroupItems : StatementInlineBlockBase, IStatementLoop
+    public class StatementLoopOverGroupItems : StatementInlineBlockBase, IStatementLoop
     {
         private IValue _groupArray;
         private IValue _counter;
@@ -17,6 +17,11 @@ namespace LINQToTTreeLib.Statements
         {
             _groupArray = arrayToLoopOver;
             _counter = counter;
+
+            if (_groupArray == null)
+                throw new ArgumentNullException("arrayToLoopOver");
+            if (_counter == null)
+                throw new ArgumentNullException("counter");
         }
 
         /// <summary>
@@ -47,14 +52,44 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+        /// <summary>
+        /// See if we can combine statements
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="opt"></param>
+        /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
-            throw new NotImplementedException();
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            var other = statement as StatementLoopOverGroupItems;
+            if (other == null)
+                return false;
+
+            if (_groupArray.RawValue != other._groupArray.RawValue)
+                return false;
+            if (_counter.RawValue != other._counter.RawValue)
+                return false;
+
+            Combine(other, opt);
+            return true;
         }
 
+        /// <summary>
+        /// Rename any variables we know about in this statement.
+        /// </summary>
+        /// <param name="origName"></param>
+        /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(origName))
+                throw new ArgumentNullException("origName");
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentNullException("newName");
+            RenameBlockVariables(origName, newName);
+            _groupArray.RenameRawValue(origName, newName);
+            _counter.RenameRawValue(origName, newName);
         }
 
     }

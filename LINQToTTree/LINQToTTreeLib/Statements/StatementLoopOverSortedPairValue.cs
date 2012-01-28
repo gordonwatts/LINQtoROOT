@@ -26,7 +26,6 @@ namespace LINQToTTreeLib.Statements
         public StatementLoopOverSortedPairValue(IValue mapRecord, bool sortAscending)
         {
             // Null checks
-
             if (mapRecord == null)
                 throw new ArgumentNullException("mapRecord");
 
@@ -136,9 +135,14 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            return _indexVariable.RawValue == other._indexVariable.RawValue
+            bool candoIt = _indexVariable.RawValue == other._indexVariable.RawValue
                 && _mapRecord.RawValue == other._mapRecord.RawValue
                 && _sortAscending == other._sortAscending;
+
+            if (candoIt)
+                Combine(other, opt);
+
+            return candoIt;
         }
 
         /// <summary>
@@ -150,6 +154,7 @@ namespace LINQToTTreeLib.Statements
         {
             _indexVariable.RenameRawValue(origName, newName);
             _mapRecord.RenameRawValue(origName, newName);
+            RenameBlockVariables(origName, newName);
         }
     }
 }
