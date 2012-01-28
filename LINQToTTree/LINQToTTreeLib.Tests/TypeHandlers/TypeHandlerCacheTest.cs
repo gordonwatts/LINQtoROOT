@@ -156,11 +156,5 @@ namespace LINQToTTreeLib.TypeHandlers
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessNew(TypeHandlerCache, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
-
-        [TestMethod]
-        public void TestNewMember()
-        {
-            Assert.Inconclusive();
-        }
     }
 }

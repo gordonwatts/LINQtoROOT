@@ -8,23 +8,10 @@
 // If the contents of this file becomes outdated, e.g. if it does not
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
-using System;
-using LINQToTTreeLib.Statements;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementLoopOverGroupsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGroupsTest))]
-[PexRaisedException(typeof(NullReferenceException))]
-public void RenameVariableTestThrowsNullReferenceException604()
-{
-    StatementLoopOverGroups statementLoopOverGroups;
-    statementLoopOverGroups = this.RenameVariableTest
-                                  ((StatementLoopOverGroups)null, (string)null, (string)null);
-}
     }
 }
