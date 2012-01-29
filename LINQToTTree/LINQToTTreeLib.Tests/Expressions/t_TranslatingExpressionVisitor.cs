@@ -22,6 +22,7 @@ namespace LINQToTTreeLib.Tests
         {
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
+            LINQToTTreeLib.Utils.TypeUtils._variableNameCounter = 0;
         }
 
         [TestCleanup]
@@ -406,57 +407,6 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(0, (arAccess.Right as ConstantExpression).Value, "imporper array acess");
 
             Assert.AreEqual(typeof(int), result.Type, "result type not right");
-        }
-
-        [TestMethod]
-        public void TestObjectArrayCompare()
-        {
-            Expression<Func<SourceType2, int, int, bool>> lambaExpr = (s, a1, a2) => s.jets[a1] == s.jets[a2];
-            List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
-
-            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
-            Assert.AreEqual(ExpressionType.Equal, result.NodeType, "Expected an equal");
-
-            var b = result as BinaryExpression;
-            Assert.IsInstanceOfType(b.Left, typeof(ParameterExpression), "Left expr");
-            Assert.IsInstanceOfType(b.Right, typeof(ParameterExpression), "Right expr");
-
-            var r = b.Right as ParameterExpression;
-            var l = b.Left as ParameterExpression;
-
-            Assert.AreEqual("a1", l.Name, "Left paramter name");
-            Assert.AreEqual("a2", r.Name, "Right paramter name");
-        }
-
-        [TestMethod]
-        public void TestObjectArrayCompareToNull()
-        {
-            Expression<Func<SourceType2, int, int, bool>> lambaExpr = (s, a1, a2) => s.jets[a1] == null;
-            List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
-
-            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
-            Assert.AreEqual(ExpressionType.Equal, result.NodeType, "Expected an equal");
-
-            var b = result as BinaryExpression;
-            Assert.IsInstanceOfType(b.Left, typeof(ParameterExpression), "Left expr");
-            Assert.IsInstanceOfType(b.Right, typeof(ConstantExpression), "Right expr");
-
-            var r = b.Right as ParameterExpression;
-            var l = b.Left as ConstantExpression;
-
-            //Assert.Inconclusive("Do we want to allow the user to write this - what does it mean??");
-            // The way this get coded up is pretty harmless. So I guess we let it go...
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void TestObjectArrayToConstNullCompare()
-        {
-            Expression<Func<SourceType2, bool>> lambaExpr = (s) => s.jets[0] == null;
-            List<string> caches = new List<string>();
-            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
         }
 
         [TestMethod]

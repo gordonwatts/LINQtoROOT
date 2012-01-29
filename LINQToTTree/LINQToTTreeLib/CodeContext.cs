@@ -130,10 +130,6 @@ namespace LINQToTTreeLib
             if (loopExpression == null)
                 throw new ArgumentNullException("can not set a null loop variable");
 
-            if (indexVariable != null)
-                if (indexVariable.Type != typeof(int))
-                    throw new ArgumentException("The index variable must be an integer");
-
             LoopVariable = loopExpression;
             LoopIndexVariable = indexVariable;
         }
@@ -296,5 +292,10 @@ namespace LINQToTTreeLib
         {
             get { return _cachedCookies; }
         }
+
+        /// <summary>
+        /// The base type for the ntuple we are looping over.
+        /// </summary>
+        public Type BaseNtupleObjectType { get; set; }
     }
 }

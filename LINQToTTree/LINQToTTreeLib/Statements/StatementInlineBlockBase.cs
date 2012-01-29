@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -123,9 +124,7 @@ namespace LINQToTTreeLib.Statements
             if (v.InitialValue != null)
                 return v.InitialValue.RawValue;
 
-            if (v.Type == typeof(int)
-                || v.Type == typeof(double)
-                || v.Type == typeof(float))
+            if (v.Type.IsNumberType())
                 return "0";
 
             if (v.Type == typeof(bool))
@@ -133,6 +132,11 @@ namespace LINQToTTreeLib.Statements
 
             if (v.Type.IsArray)
                 return "";
+
+            if (v.Type.IsClass || v.Type.IsGenericType)
+            {
+                return "";
+            }
 
             throw new NotSupportedException(string.Format("Don't know how to do default value for C++ variable of type {0}.", v.Type.ToString()));
         }

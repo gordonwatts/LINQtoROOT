@@ -56,7 +56,9 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="rootFiles"></param>
         /// <param name="treeName"></param>
-        public TTreeQueryExecutor(FileInfo[] rootFiles, string treeName, Type baseNtupleObject)
+        /// <param name="baseNtupleObject">The type of the ntuple object that we are translating *to*, contains all the proxy definitions, etc.</param>
+        /// <param name="startingNtupeObjectType">The type of teh ntuple that started this translation, if different - mostly used for testing.</param>
+        public TTreeQueryExecutor(FileInfo[] rootFiles, string treeName, Type baseNtupleObject, Type startingNtupeObjectType = null)
         {
             TraceHelpers.TraceInfo(2, "Initializing TTreeQueryExecutor");
             CleanupQuery = true;
@@ -165,6 +167,14 @@ namespace LINQToTTreeLib
                 var asPairs = rawClasses.Zip(rawIncludes, (sCls, sInc) => new string[] { sCls, sInc });
                 _exeReq.ClassesToDictify = asPairs.ToArray();
             }
+
+            //
+            // Save the ntuple object we are using.
+            //
+
+            _baseNtupleObjectType = startingNtupeObjectType;
+            if (_baseNtupleObjectType == null)
+                _baseNtupleObjectType = baseNtupleObject;
 
             ///
             /// Save the values
@@ -284,7 +294,7 @@ namespace LINQToTTreeLib
             /// 
 
             var result = new GeneratedCode();
-            var codeContext = new CodeContext();
+            var codeContext = new CodeContext() { BaseNtupleObjectType = _baseNtupleObjectType };
 
             var qv = new QueryVisitor(result, codeContext, _gContainer);
             _gContainer.SatisfyImportsOnce(qv);
@@ -756,6 +766,11 @@ namespace LINQToTTreeLib
         /// When the class has been initalized, we set this to true. Make sure we run MEF.
         /// </summary>
         static CompositionContainer _gContainer = null;
+
+        /// <summary>
+        /// The base type of the ntuple we are looping over.
+        /// </summary>
+        private Type _baseNtupleObjectType;
 
         /// <summary>
         /// Run init for this class.

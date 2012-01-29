@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -174,6 +177,23 @@ namespace LINQToTTreeLib.Variables
             {
                 return string.Format("vector<{0}>", t.GetElementType().AsCPPType());
             }
+            else if (t.IsGenericType)
+            {
+                var genericDef = t.GetGenericTypeDefinition();
+                if (genericDef.Name == "Dictionary`2")
+                {
+                    var tlist = t.GetGenericArguments();
+                    return string.Format("map<{0}, {1} >", tlist[0].AsCPPType(), tlist[1].AsCPPType());
+                }
+                else if (genericDef == typeof(IEnumerable<int>).GetGenericTypeDefinition())
+                {
+                    return string.Format("{0}::const_iterator", t.GetGenericArguments()[0].AsCPPType());
+                }
+                else
+                {
+                    throw new InvalidOperationException(string.Format("Do not know how to convert generic type '{0}' to a C++ type", t.FullName));
+                }
+            }
             else
             {
 
@@ -206,15 +226,20 @@ namespace LINQToTTreeLib.Variables
                 {
                     return t.FullName.Substring(19) + "*";
                 }
-
-                ///
-                /// Ok - if this is an object, for example, the enclosing ntuple object
-                /// 
-
-                return t.Name;
             }
+
+            ///
+            /// Ok - if this is an object, for example, the enclosing ntuple object
+            /// 
+
+            return t.Name;
         }
 
+        /// <summary>
+        /// Returns true if this is a pointer to a class of some sort.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static bool IsPointerType(this Type t)
         {
             if (t == null)
@@ -244,6 +269,50 @@ namespace LINQToTTreeLib.Variables
             if (t == null)
                 throw new ArgumentNullException("type must not be null");
             return t.Name.Substring(1).IsROOTClass();
+        }
+
+        /// <summary>
+        /// Performs all expression subsitutions known by the code context on the input. It does not
+        /// touch the input - but returns a new IValue. Types are not tracked.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cc"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This exists because sometimes you need to do this sort of replacement when dealing with complex
+        /// expressions that don't translated to C# easily. In partiuclar, for example, the iterator expressions
+        /// that are used to move through maps in the Group By operators. Otherwise, the regular GetExpression would
+        /// do this just fine.
+        /// </remarks>
+        public static IValue PerformAllSubstitutions(this IValue input, ICodeContext cc)
+        {
+            var vFinder = new Regex(@"\b(?<vname>[\w]*)\b");
+            string v = input.RawValue;
+            bool subDone = true;
+            int count = 0;
+            while (subDone)
+            {
+                count++;
+                if (count > 100)
+                    throw new InvalidOperationException(string.Format("Unable to translate '{0}' due to too many sutstitutions.", input.RawValue));
+
+                subDone = false;
+                foreach (Match match in vFinder.Matches(v))
+                {
+                    var vname = match.Groups["vname"].Value;
+                    var r = cc.GetReplacement(vname);
+                    if (r != null)
+                    {
+                        v = Regex.Replace(v, string.Format(@"\b{0}\b", vname), r.ParameterName());
+                        subDone = true;
+                    }
+                }
+            }
+
+            if (count == 1)
+                return input;
+
+            return new ValSimple(v, input.Type);
         }
     }
 }

@@ -1,8 +1,11 @@
 ﻿
 using System;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using Remotion.Linq.Clauses;
 namespace LINQToTTreeLib.Utils
 {
@@ -16,6 +19,8 @@ namespace LINQToTTreeLib.Utils
         public static IVariableScopeHolder CodeLoopOverArrayInfo(this IArrayInfo arrayRef, IQuerySource query, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             var indexVar = arrayRef.AddLoop(gc, cc, container);
+            if (indexVar == null)
+                return null;
 
             ///
             /// Next, make sure the index variable can be used for later references!
@@ -89,5 +94,44 @@ namespace LINQToTTreeLib.Utils
 
             return "(" + rv + ")";
         }
+
+        /// <summary>
+        /// Is this something like:
+        ///   obj.jets where jets is an array that points off to a "regrouped" variable? If so, then we
+        ///   don't want to do the translation here.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public static bool IsRootObjectArrayReference(this MemberExpression expression)
+        {
+            if (!expression.Type.IsArray)
+                return false;
+
+            if (expression.Expression.Type.TypeHasAttribute<TranslateToClassAttribute>() == null)
+                return false;
+
+            if (TypeUtils.TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member) == null)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// If this is a parameter of some sort, returns the name. Otherwise, throws.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public static string ParameterName(this Expression expr)
+        {
+            var lv = expr as ParameterExpression;
+            if (lv != null)
+                return lv.Name;
+
+            var dv = expr as DeclarableParameter;
+            if (dv == null)
+                throw new InvalidOperationException("Unable to look at loop index variable that isn't a parameter");
+            return dv.ParameterName;
+        }
+
     }
 }

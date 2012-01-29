@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
 
@@ -225,7 +226,6 @@ namespace LINQToTTreeLib.Expressions
                     throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
 
                 QueryVisitor qv = new QueryVisitor(GeneratedCode, CodeContext, MEFContainer);
-                qv.SubExpressionParse = true;
                 MEFContainer.SatisfyImportsOnce(qv);
 
                 ///
@@ -270,6 +270,124 @@ namespace LINQToTTreeLib.Expressions
                 // trouble!
 
                 return null;
+            }
+
+            /// <summary>
+            /// Look for object compares (like "==" and "!=") between objects. If we see one, then we
+            /// parse it out explicitly.
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitBinaryExpression(BinaryExpression expression)
+            {
+                // If this is a binary expression, and it is == or !=, it could be that we have an object compare
+                // of the translated objects.
+                if (expression.NodeType == ExpressionType.Equal
+                    || expression.NodeType == ExpressionType.NotEqual)
+                {
+                    var b = expression as BinaryExpression;
+                    var cmpLeft = Resolve(b.Left, GeneratedCode, CodeContext, MEFContainer);
+                    var cmpRight = Resolve(b.Right, GeneratedCode, CodeContext, MEFContainer);
+                    var blArray = ExtractObjectArrayName(cmpLeft);
+                    var brArray = ExtractObjectArrayName(cmpRight);
+                    if (blArray == brArray
+                        && blArray != null)
+                    {
+                        var lindex = CheckNotConst(ExtractObjectArrayIndex(cmpLeft));
+                        var rindex = CheckNotConst(ExtractObjectArrayIndex(cmpRight));
+
+                        return Expression.MakeBinary(expression.NodeType, lindex, rindex);
+                    }
+                    else if (blArray != null && IsNullConstant(b.Right))
+                    {
+                        var index = CheckNotConst(ExtractObjectArrayIndex(cmpLeft));
+                        return Expression.Equal(index, Expression.Constant(-1));
+                    }
+                    else if (brArray != null && IsNullConstant(cmpLeft))
+                    {
+                        var index = CheckNotConst(ExtractObjectArrayIndex(cmpRight));
+                        return Expression.Equal(Expression.Constant(-1), index);
+                    }
+                    else
+                    {
+                        // In this case it isn't a special binary expression, so just build it up as we would expect.
+                        return Expression.MakeBinary(expression.NodeType, cmpLeft, cmpRight);
+                    }
+                }
+                else
+                {
+                    // Everything else we let go as we might otherwise.
+                    return base.VisitBinaryExpression(expression);
+                }
+            }
+
+            /// <summary>
+            /// See if this is a constant reference to the "null" keyword.
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            private bool IsNullConstant(Expression expression)
+            {
+                var cexpr = expression as ConstantExpression;
+                if (cexpr == null)
+                    return false;
+                return cexpr.Value == null;
+            }
+
+            /// <summary>
+            /// If the expression passed in is a const expression, then throw.
+            /// </summary>
+            /// <param name="lindex"></param>
+            /// <returns></returns>
+            private Expression CheckNotConst(Expression expr)
+            {
+                if (expr is ConstantExpression)
+                    throw new NotSupportedException(string.Format("A constant expression array reference is not allowed ('{0}').", expr.ToString()));
+                return expr;
+            }
+
+            /// <summary>
+            /// Check to see if a generic expression is a tranlsated array reference.
+            /// </summary>
+            /// <param name="exp"></param>
+            /// <returns></returns>
+            private bool GenericExpressionIsRootObjectArrayReference(Expression exp)
+            {
+                var arrayLookup = exp as BinaryExpression;
+                if (arrayLookup == null)
+                    return false;
+
+                var me = arrayLookup.Left as MemberExpression;
+                if (me == null)
+                    return false;
+
+                return me.IsRootObjectArrayReference();
+            }
+
+            /// <summary>
+            /// This should represent somethign that points into an array list of translated objects. Make sure that is
+            /// true, and if it is, attempt to reconstruct the actual name of the array. Return null if it isn't.
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            private string ExtractObjectArrayName(Expression expression)
+            {
+                if (!GenericExpressionIsRootObjectArrayReference(expression))
+                    return null;
+
+                var index = expression as BinaryExpression;
+                return index.Left.ToString();
+            }
+
+            /// <summary>
+            /// Given we know this is an index lookup, return the expression used for the array index.
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            private Expression ExtractObjectArrayIndex(Expression expression)
+            {
+                var lookup = expression as BinaryExpression;
+                return lookup.Right;
             }
 
             /// <summary>

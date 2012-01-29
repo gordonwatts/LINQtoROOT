@@ -336,5 +336,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         {
             throw new NotImplementedException();
         }
+
+
+        public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

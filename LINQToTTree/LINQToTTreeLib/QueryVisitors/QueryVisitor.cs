@@ -4,6 +4,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -41,10 +42,9 @@ namespace LINQToTTreeLib
             _codeEnv = code;
             _codeContext = context;
             MEFContainer = container;
+
             if (_codeContext == null)
                 _codeContext = new CodeContext();
-
-            SubExpressionParse = false;
         }
 
         /// <summary>
@@ -88,11 +88,6 @@ namespace LINQToTTreeLib
 
             throw new InvalidOperationException("LINQToTTree can't translate the operator '" + resultOperator.ToString() + "'");
         }
-
-        /// <summary>
-        /// Get/Set indicator if we are parsing a sub expression and thus should generate teh loop ourselves
-        /// </summary>
-        public bool SubExpressionParse { get; set; }
 
         /// <summary>
         /// Keep track of the main index variable if it should be gotten rid of!
@@ -141,7 +136,7 @@ namespace LINQToTTreeLib
             /// For the main clause we will just define the variable as "this".
             /// 
 
-            if (!SubExpressionParse)
+            if (fromClause.ItemType == _codeContext.BaseNtupleObjectType)
             {
                 _mainIndex = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause, _codeEnv, _codeContext, MEFContainer);
             }
@@ -217,6 +212,51 @@ namespace LINQToTTreeLib
         {
             var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(selectClause.Selector, _codeContext);
             _codeContext.SetLoopVariable(expr, _codeContext.LoopIndexVariable);
+        }
+
+        /// <summary>
+        /// Sort the current stream of the query. To do this we run through all the results, sort them,
+        /// and then start a new loop.
+        /// </summary>
+        /// <param name="ordering"></param>
+        /// <param name="queryModel"></param>
+        /// <param name="orderByClause"></param>
+        /// <param name="index"></param>
+        public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
+        {
+            //
+            // Only number types can be sorted.
+            //
+
+            if (!ordering.Expression.Type.IsNumberType())
+                throw new InvalidOperationException(string.Format("Don't know how to sort query by type '{0}'.", ordering.Expression.Type.Name));
+
+            //
+            // First, record all the indicies and the values. This is what we are going to be sorting.
+            // 
+
+            var mapRecord = DeclarableParameter.CreateDeclarableParameterMapExpression(ordering.Expression.Type, _codeContext.LoopIndexVariable.Type.MakeArrayType());
+            _codeEnv.AddOutsideLoop(mapRecord);
+
+            var savePairValues = new StatementRecordPairValues(mapRecord,
+                ExpressionToCPP.GetExpression(ordering.Expression, _codeEnv, _codeContext, MEFContainer),
+                ExpressionToCPP.GetExpression(_codeContext.LoopIndexVariable, _codeEnv, _codeContext, MEFContainer));
+            _codeEnv.Add(savePairValues);
+
+            _codeEnv.Pop();
+
+            //
+            // Now, we need to sort and loop over the variables in the map. This is a bit of a messy
+            // multi-line statement, and it is a compound statement.
+            //
+
+            var sortAndRunLoop = new StatementLoopOverSortedPairValue(mapRecord, ordering.OrderingDirection == OrderingDirection.Asc);
+            _codeEnv.Add(sortAndRunLoop);
+
+            var pindex = sortAndRunLoop.IndexVariable;
+            var lv = _codeContext.LoopIndexVariable.ParameterName();
+            _codeContext.Add(lv, pindex);
+            _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable, pindex), pindex);
         }
 
         /// <summary>

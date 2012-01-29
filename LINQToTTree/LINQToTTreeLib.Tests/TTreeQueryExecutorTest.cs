@@ -213,7 +213,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple_nothing));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple_nothing), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -241,7 +241,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple_with_proxy));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple_with_proxy), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -269,7 +269,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -298,7 +298,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = "junk.cppxdude";
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -335,7 +335,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -377,7 +377,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }
@@ -395,7 +395,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             ///
             /// Get a simple query we can "play" with
@@ -433,7 +433,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             Assert.AreEqual(0, exe.CountExecutionRuns, "exe runs initialization");
             Assert.AreEqual(0, exe.CountCacheHits, "cache hits initialization");
@@ -483,7 +483,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             Assert.AreEqual(0, exe.CountExecutionRuns, "exe runs initialization");
             Assert.AreEqual(0, exe.CountCacheHits, "cache hits initialization");
@@ -539,7 +539,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
         }
 
@@ -567,7 +567,7 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
 
             var dir = new DirectoryInfo(Path.GetTempPath() + "\\LINQToROOT"); ;
@@ -676,7 +676,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
 
             ///
@@ -738,7 +738,7 @@ namespace LINQToTTreeLib
             /// Now run
             /// 
 
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
 
             Assert.AreEqual(1, result, "The result should have run correctly.");
@@ -864,7 +864,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, 0);
         }
@@ -901,7 +901,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArrEvents));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, 0);
         }
@@ -938,7 +938,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArrEvents));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -975,7 +975,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(25, result, "Incorrect number of iterations found");
         }
@@ -1013,7 +1013,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
         }
 
@@ -1048,7 +1048,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -1084,7 +1084,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -1120,7 +1120,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, 0);
         }
@@ -1156,7 +1156,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(0, result);
         }
@@ -1193,7 +1193,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -1231,7 +1231,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
 
@@ -1270,7 +1270,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
 
@@ -1309,7 +1309,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
 
@@ -1346,7 +1346,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -1382,7 +1382,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -1424,7 +1424,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
@@ -1467,7 +1467,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -1510,7 +1510,478 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void TestSortAscending()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                orderby v ascending
+                                select v).Take(2).Sum();
+
+            // The first two elements are 0 and 1, so 0 + 1 == 1.
+            var dude = dudeQ.Where(x => x == 1).Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
+        public void TestSortAscendingTranslated()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArrEvents>();
+
+            var dudeQ = from evt in q
+                        select (from v in evt.jets
+                                orderby v.myvectorofint ascending
+                                select v).Take(2).Sum(j => j.myvectorofint);
+
+            // The first two elements are 0 and 1, so 0 + 1 == 1.
+            var dude = dudeQ.Sum();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArrEvents));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        /// <summary>
+        /// First sometimes uses a break in the code - make sure that we deal with it correctly.
+        /// </summary>
+        [TestMethod]
+        public void TestSortAscendingWithFirst()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                orderby v ascending
+                                select v).First();
+
+            // The first element is 0.
+            var dude = dudeQ.Where(x => x == 0).Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void TestSortDescending()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                orderby v descending
+                                select v).Take(2).Sum();
+
+            // The last two elements are 9 and 8, so 9 + 8 = 17.
+            var dude = dudeQ.Where(x => x == 17).Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
+        public void TestGroupByAccessKey()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.Key == 2
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
+        [TestMethod]
+        public void TestGroupByCountItems()
+        {
+            const int numberOfIter = 25;
+            const int vectorSize = 10;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vectorSize);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.Count() == 1
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter * vectorSize, result);
+        }
+
+        [TestMethod]
+        public void TestGroupBySortItems()
+        {
+            const int numberOfIter = 25;
+            const int vectorSize = 10;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vectorSize);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.OrderBy(v => v).First() == 0
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void TestGroupByAccessItems1()
+        {
+            const int numberOfIter = 25;
+            const int vectorSize = 10;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vectorSize);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.Where(v => v == 2).Any()
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void TestGroupByAccessItems2()
+        {
+            const int numberOfIter = 25;
+            const int vectorSize = 10;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vectorSize);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.Where(v => v == 22).Any()
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
+        public void TestGroupByAndSortKey()
+        {
+            const int numberOfIter = 25;
+            const int vectorSize = 10;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vectorSize);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         select (from grp in evt
+                                 orderby grp.Key descending
+                                 select grp).First();
+
+            var dudeQ2 = from evt in dudeQ1
+                         where evt.Key == 9 && evt.Count() == 1
+                         select evt;
+
+            var dudq = dudeQ2.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void TestGroupByWithInto()
+        {
+            const int numberOfIter = 25;
+            const int vectorSize = 10;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter, vectorSize);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        from v in evt.myvectorofint
+                        group v by v into lists
+                        from i in lists
+                        where i == 5
+                        select i;
+
+            var r = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
@@ -1542,7 +2013,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             var result = exe.ExecuteScalar<ROOTNET.Interface.NTH1F>(query);
             Assert.AreEqual(result.Entries, numberOfIter);
             Assert.AreEqual("hi", result.Name, "histogram name");
@@ -1578,7 +2049,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(0, result, "Didn't add correctly");
             Assert.AreEqual("hi", mainHist.Name, "histogram name changed");
@@ -1614,7 +2085,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(0, result, "Didn't add correctly");
             Assert.AreEqual("hi", mainHist.Name, "histogram name changed");
@@ -1657,7 +2128,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             var r1f = exe.ExecuteScalarAsFuture<int>(query1);
             var r2f = exe.ExecuteScalarAsFuture<int>(query2);

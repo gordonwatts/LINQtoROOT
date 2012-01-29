@@ -95,7 +95,7 @@ namespace LINQToTTreeLib
             /// to not translate this. It will be delt with further above us.
             /// 
 
-            if (IsRootObjectArrayReference(expression))
+            if (expression.IsRootObjectArrayReference())
                 return expression;
 
             ///
@@ -163,45 +163,6 @@ namespace LINQToTTreeLib
             /// 
 
             return base.VisitMemberExpression(expression);
-        }
-
-        /// <summary>
-        /// Is this something like:
-        ///   obj.jets where jets is an array that points off to a "regrouped" variable? If so, then we
-        ///   don't want to do the translation here.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        private bool IsRootObjectArrayReference(MemberExpression expression)
-        {
-            if (!expression.Type.IsArray)
-                return false;
-
-            if (expression.Expression.Type.TypeHasAttribute<TranslateToClassAttribute>() == null)
-                return false;
-
-            if (TypeUtils.TypeHasAttribute<TTreeVariableGroupingAttribute>(expression.Member) == null)
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Check to see if a generic expression is a tranlsated array reference.
-        /// </summary>
-        /// <param name="exp"></param>
-        /// <returns></returns>
-        private bool GenericExpressionIsRootObjectArrayReference(Expression exp)
-        {
-            var arrayLookup = exp as BinaryExpression;
-            if (arrayLookup == null)
-                return false;
-
-            var me = arrayLookup.Left as MemberExpression;
-            if (me == null)
-                return false;
-
-            return IsRootObjectArrayReference(me);
         }
 
         /// <summary>
@@ -452,87 +413,7 @@ namespace LINQToTTreeLib
                 }
             }
 
-            // If this is a binary expression, and it is == or !=, it could be that we have an object compare
-            // of the translated objects.
-            if (expression.NodeType == ExpressionType.Equal
-                || expression.NodeType == ExpressionType.NotEqual)
-            {
-                var b = expression as BinaryExpression;
-                var cmpLeft = Resolver(b.Left);
-                var cmpRight = Resolver(b.Right);
-                var blArray = ExtractObjectArrayName(cmpLeft);
-                var brArray = ExtractObjectArrayName(cmpRight);
-                if (blArray == brArray
-                    && blArray != null)
-                {
-                    var lindex = CheckNotConst(ExtractObjectArrayIndex(cmpLeft));
-                    var rindex = CheckNotConst(ExtractObjectArrayIndex(cmpRight));
-
-                    return Expression.MakeBinary(expression.NodeType, lindex, rindex);
-                }
-                else if (blArray != null && IsNullConstant(b.Right))
-                {
-                    var index = CheckNotConst(ExtractObjectArrayIndex(cmpLeft));
-                    return Expression.Equal(index, Expression.Constant(-1));
-                }
-                else if (brArray != null && IsNullConstant(cmpLeft))
-                {
-                    var index = CheckNotConst(ExtractObjectArrayIndex(cmpRight));
-                    return Expression.Equal(Expression.Constant(-1), index);
-                }
-            }
             return base.VisitBinaryExpression(expression);
-        }
-
-        /// <summary>
-        /// If the expression passed in is a const expression, then throw.
-        /// </summary>
-        /// <param name="lindex"></param>
-        /// <returns></returns>
-        private Expression CheckNotConst(Expression expr)
-        {
-            if (expr is ConstantExpression)
-                throw new NotSupportedException(string.Format("A constant expression array reference is not allowed ('{0}').", expr.ToString()));
-            return expr;
-        }
-
-        /// <summary>
-        /// See if this is a constant reference to the "null" keyword.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        private bool IsNullConstant(Expression expression)
-        {
-            var cexpr = expression as ConstantExpression;
-            if (cexpr == null)
-                return false;
-            return cexpr.Value == null;
-        }
-
-        /// <summary>
-        /// This should represent somethign that points into an array list of translated objects. Make sure that is
-        /// true, and if it is, attempt to reconstruct the actual name of the array. Return null if it isn't.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        private string ExtractObjectArrayName(Expression expression)
-        {
-            if (!GenericExpressionIsRootObjectArrayReference(expression))
-                return null;
-
-            var index = expression as BinaryExpression;
-            return index.Left.ToString();
-        }
-
-        /// <summary>
-        /// Given we know this is an index lookup, return the expression used for the array index.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        private Expression ExtractObjectArrayIndex(Expression expression)
-        {
-            var lookup = expression as BinaryExpression;
-            return lookup.Right;
         }
 
         /// <summary>

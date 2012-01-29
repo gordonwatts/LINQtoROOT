@@ -90,7 +90,7 @@ namespace LINQToTTreeLib.Tests
             //
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestUtils.TestNtupeArr));
             var q1future = exe.ExecuteScalarAsFuture<int>(query1);
             var q2future = exe.ExecuteScalarAsFuture<int>(query2);
 

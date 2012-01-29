@@ -21,8 +21,6 @@ namespace LINQToTTreeLib.Tests
     [TestClass()]
     public class TestArrayInfoVector
     {
-
-
         [TestInitialize]
         public void Setup()
         {
@@ -69,6 +67,12 @@ namespace LINQToTTreeLib.Tests
             public Expression ProcessConstantReferenceExpression(ConstantExpression expr, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
                 return expr;
+            }
+
+
+            public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+            {
+                return null;
             }
         }
 
