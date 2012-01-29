@@ -483,6 +483,9 @@ namespace LINQToTTreeLib
         {
 #pragma warning disable 0649
             public int[] val1;
+            public int n;
+            [ArraySizeIndex("n")]
+            public int[] val2;
 #pragma warning restore 0649
         }
 
@@ -492,6 +495,14 @@ namespace LINQToTTreeLib
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        [TestMethod]
+        public void TestClassArrayCPPSize()
+        {
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val2.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            Assert.AreEqual("(*arr).n", result.RawValue, "actual translation incorrect");
         }
 
         [TestMethod]
