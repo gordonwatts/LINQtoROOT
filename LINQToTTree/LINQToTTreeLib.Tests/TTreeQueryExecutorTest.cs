@@ -765,6 +765,7 @@ namespace LINQToTTreeLib
             public System.Linq.Expressions.Expression HeldExpression { get; set; }
 
 #pragma warning disable 0169
+            [ArraySizeIndex("n")]
             public int[] arr;
             public int n;
 #pragma warning restore 0169
@@ -798,7 +799,7 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestSingleIndexArray));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
