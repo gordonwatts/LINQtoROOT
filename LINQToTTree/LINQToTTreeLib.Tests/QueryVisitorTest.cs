@@ -1443,6 +1443,46 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSimpleLoopSTLVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.vals.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "missing size() call");
+        }
+
+        /// <summary>
+        /// A C++ array test.
+        /// </summary>
+        public class dummyntupCPP
+        {
+            public int nSize;
+
+            [ArraySizeIndex("nSize")]
+            public int[] vals;
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopCPPArray()
+        {
+            var q = new QueriableDummy<dummyntupCPP>();
+            var r1 = from evt in q
+                     select evt.vals.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsFalse(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "size() should not be used");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".nSize")).Any(), "missing reference to the variale with the size");
+        }
+
+        [TestMethod]
         public void TestVectorLoopAnyCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();

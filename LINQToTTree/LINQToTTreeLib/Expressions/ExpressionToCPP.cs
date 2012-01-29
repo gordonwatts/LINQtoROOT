@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
@@ -316,10 +317,37 @@ namespace LINQToTTreeLib.Expressions
 
         /// <summary>
         /// The expression is trying to figure out how long this array is.
+        /// 
+        /// 1) if this is a member access and the member has an ArrayIndex attribute, then use
+        ///    that to determine what size array we are dealing with.
+        /// 2) All else fails, assume this is a vector<> and use that.
         /// </summary>
         /// <param name="expression"></param>
         private void VisitArrayLength(UnaryExpression expression)
         {
+            //
+            // Is the operand of this guy in the right form to do the lookup?
+            //
+
+            if (expression.Operand.NodeType == ExpressionType.MemberAccess)
+            {
+                var ma = expression.Operand as MemberExpression;
+                var attr = ma.Member.TypeHasAttribute<ArraySizeIndexAttribute>();
+                if (attr != null)
+                {
+                    var arraySize = Expression.Field(ma.Expression, attr.LeafName);
+                    if (!arraySize.Type.IsNumberType())
+                        throw new InvalidOperationException(string.Format("Array size leaf '{0}' is not a number ({1})", attr.LeafName, arraySize.Type.Name));
+
+                    _result = GetExpression(arraySize);
+                    return;
+                }
+            }
+
+            //
+            // If we fall through here, then we assume this is a vector<> array
+            //
+
             var arrayBase = GetExpression(expression.Operand);
             _result = new ValSimple(arrayBase.AsObjectReference(expression.Operand) + ".size()", expression.Type);
         }

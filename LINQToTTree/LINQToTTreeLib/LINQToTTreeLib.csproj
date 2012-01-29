@@ -102,6 +102,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeAttributes\ArraySizeIndexAttribute.cs" />
     <Compile Include="CodeAttributes\CPPCodeAttribute.cs" />
     <Compile Include="CodeAttributes\CPPHelperClassAttribute.cs" />
     <Compile Include="CodeAttributes\IndexToOtherObjectArrayAttribute.cs" />
