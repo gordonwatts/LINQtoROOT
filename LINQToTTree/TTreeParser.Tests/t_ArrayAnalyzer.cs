@@ -119,6 +119,21 @@ namespace TTreeParser.Tests
         }
 
         [TestMethod]
+        public void TestWithOneIndexedArray()
+        {
+            var aa = new ArrayAnalyzer();
+            var tree = CreateTrees.CreateTreeWithIndexedSimpleVector(20);
+
+            ROOTClassShell sh = new ROOTClassShell();
+            sh.Add(new classitem() { ItemType = "int[]", Name = "arr" });
+            var result = aa.DetermineAllArrayLengths(sh, tree, 10);
+            Assert.AreEqual(10, result.Length, "# of events");
+            Assert.IsTrue(result.All(x => x.Length == 1), "# of arrays");
+            Assert.IsTrue(result.All(x => x[0].Item2 == 10), "Length of array");
+            Assert.IsTrue(result.All(x => x[0].Item1 == "arr"), "variable name");
+        }
+
+        [TestMethod]
         public void TestWithTwoArrays()
         {
             var aa = new ArrayAnalyzer();
