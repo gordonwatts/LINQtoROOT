@@ -175,7 +175,7 @@ namespace TTreeParserCPPTests {
 			int ientries = 0;
 
 			TTree *t = new TTree("dude", "left field");
-			auto brAddrEnt = t->Branch ("n/I", &ientries);
+			auto brAddrEnt = t->Branch ("base", &ientries, "n/I");
 			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[n]/I");
 
 			for (int i = 0; i < entries; i++) {

@@ -244,6 +244,7 @@ namespace TTreeParser
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="eventsToAnalyze"></param>
+        /// <returns>The outter index is one per event, and the inner index is for all arrays. Each array has a name and its size in the tuple.</returns>
         internal Tuple<string, int>[][] DetermineAllArrayLengths(ROOTClassShell classinfo, ROOTNET.Interface.NTTree tree, long eventsToAnalyze)
         {
             if (tree.Entries == 0)

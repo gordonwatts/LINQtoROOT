@@ -106,6 +106,7 @@ namespace TTreeParser.Tests
         [TestMethod]
         public void TestWithOneArray()
         {
+
             var aa = new ArrayAnalyzer();
             var tree = CreateTrees.CreateTreeWithSimpleSingleVector(20);
 
@@ -122,7 +123,11 @@ namespace TTreeParser.Tests
         public void TestWithOneIndexedArray()
         {
             var aa = new ArrayAnalyzer();
+
+            string filename = "TestWithOneIndexedArray.root";
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
             var tree = CreateTrees.CreateTreeWithIndexedSimpleVector(20);
+            f.Write();
 
             ROOTClassShell sh = new ROOTClassShell();
             sh.Add(new classitem() { ItemType = "int[]", Name = "arr" });
@@ -131,6 +136,8 @@ namespace TTreeParser.Tests
             Assert.IsTrue(result.All(x => x.Length == 1), "# of arrays");
             Assert.IsTrue(result.All(x => x[0].Item2 == 10), "Length of array");
             Assert.IsTrue(result.All(x => x[0].Item1 == "arr"), "variable name");
+
+            f.Close();
         }
 
         [TestMethod]
