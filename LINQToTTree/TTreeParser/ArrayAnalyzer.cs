@@ -260,8 +260,9 @@ namespace TTreeParser
                          where item.ItemType.Contains("[]")
                          select item.Name;
 
+            //  + "@.size()"
             var counterlist = (from item in arrays
-                               let treeForm = new ROOTNET.NTTreeFormula(item, item + "@.size()", tree)
+                               let treeForm = new ROOTNET.NTTreeFormula(item, string.Format("Length$({0})", item), tree)
                                where treeForm.IsGoodFormula()
                                select treeForm).ToArray();
 
