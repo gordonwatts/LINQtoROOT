@@ -170,6 +170,54 @@ namespace TTreeClassGenerator
 
             userInfo = FillInDefaults(classSpec, userInfo);
 
+            //
+            // Do some quick checks for consistency
+            //
+
+            foreach (var cls in classSpec.Classes)
+            {
+                // Check that the index for all c-style arrays is "good".
+                var CStyleArrays = from item in cls.Items
+                                   where item is ItemCStyleArray
+                                   let cSpec = item as ItemCStyleArray
+                                   select cSpec.IndexName;
+
+                var IndexTypes = (from indexer in CStyleArrays
+                                  let match = (from item in cls.Items
+                                               where item.Name == indexer
+                                               select item).FirstOrDefault()
+                                  select Tuple.Create(indexer, match)).ToArray();
+
+                var missingIndexTypes = (from indexer in IndexTypes
+                                         where indexer.Item2 == null
+                                         select indexer).ToArray();
+
+                if (missingIndexTypes.Length > 0)
+                {
+                    var msg = new StringBuilder();
+                    msg.Append("C Style arrays used index variables that I can't find in the class: ");
+                    foreach (var vname in missingIndexTypes)
+                    {
+                        msg.Append(vname + " ");
+                    }
+                    throw new InvalidOperationException(msg.ToString());
+                }
+
+                var nonIntIndexTypes = (from index in IndexTypes
+                                        where index.Item2.ItemType != "int"
+                                        select index).ToArray();
+                if (nonIntIndexTypes.Length > 0)
+                {
+                    var msg = new StringBuilder();
+                    msg.Append("C Style arrays used index variables that are not integers: ");
+                    foreach (var vname in nonIntIndexTypes)
+                    {
+                        msg.AppendFormat("{0}({1}) ", vname.Item2.Name, vname.Item2.ItemType);
+                    }
+                    throw new InvalidOperationException(msg.ToString());
+                }
+            }
+
             ///
             /// Ok, open the output file
             /// 
@@ -598,6 +646,16 @@ namespace TTreeClassGenerator
         {
             if (item == null)
                 throw new ArgumentNullException("item - can't have a null item in an ntuple!");
+
+            // If there are any attributes associated with this guy, dump them out.
+            if (item is IClassItemExtraAttributes)
+            {
+                var e = item as IClassItemExtraAttributes;
+                foreach (var attr in e.GetAttributes())
+                {
+                    output.WriteLine("    [{0}]", attr);
+                }
+            }
 
             string t = item.ItemType;
             output.WriteLine("    public {0} {1};", t, item.Name.FixupLeafName());

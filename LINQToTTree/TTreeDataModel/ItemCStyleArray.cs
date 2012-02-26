@@ -5,7 +5,7 @@ namespace TTreeDataModel
     /// <summary>
     /// Represents a C style array
     /// </summary>
-    public class ItemCStyleArray : IClassItem
+    public class ItemCStyleArray : IClassItem, IClassItemExtraAttributes
     {
         /// <summary>
         /// Craete an item for output that contains a C style array.
@@ -34,5 +34,14 @@ namespace TTreeDataModel
 
         [XmlAttribute]
         public string IndexName { get; set; }
+
+        /// <summary>
+        /// Return the extra attribute to mark this guy as an index.
+        /// </summary>
+        /// <returns></returns>
+        public System.Collections.Generic.IEnumerable<string> GetAttributes()
+        {
+            yield return string.Format("ArraySizeIndexAttribute(\"{0}\")", IndexName);
+        }
     }
 }
