@@ -476,13 +476,12 @@ namespace TTreeParser
                 return ExtractTemplateItem(leaf, result as TemplateParser.TemplateInfo);
             }
 
-            ///
-            /// Next, check if it is an array. We are currently not translating
-            /// raw C++ arrays.
-            /// 
+            //
+            // Next, check if it is an C++ array.
+            // 
 
             if (leaf.Title.Contains("["))
-                return null;
+                return ExtractCArrayInfo(leaf);
 
             ///
             /// Ok - so it is a single "object" or similar. So we need to look at it and figure
@@ -506,6 +505,38 @@ namespace TTreeParser
                 throw new InvalidOperationException("Unknown type - cant' translate '" + className + "'.");
             }
             return toAdd;
+        }
+
+        /// <summary>
+        /// Look for an array specification from a ROOT title.
+        /// </summary>
+        private Regex _arrParser = new Regex(@"^(?<vname>\w+)\[(?<index>\w+)\]$");
+
+        /// <summary>
+        /// This looks like a C style array - that is "[" and "]" are being used. Extract the index in it
+        /// and pass it along.
+        /// </summary>
+        /// <param name="leaf"></param>
+        /// <returns></returns>
+        private IClassItem ExtractCArrayInfo(ROOTNET.Interface.NTLeaf leaf)
+        {
+            //
+            // First, parse out the information for this array
+            //
+
+            var m = _arrParser.Match(leaf.Title);
+            if (!m.Success)
+                return null;
+
+            var vname = m.Groups["vname"].Value;
+            var iname = m.Groups["index"].Value;
+            var tname = TypeDefTranslator.ResolveTypedef(leaf.TypeName).SimpleCPPTypeToCSharpType() + "[]";
+
+            //
+            // Create the item that will hold the info required.
+            //
+
+            return new ItemCStyleArray(tname, vname, iname);
         }
 
         /// <summary>

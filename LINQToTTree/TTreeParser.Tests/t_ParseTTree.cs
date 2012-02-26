@@ -91,6 +91,29 @@ namespace LINQToTTreeLib.Tests
             CheckSerialization(result, "GenerateClassesTestSingleBasicType");
         }
 
+        [TestMethod]
+        public void GenerateClassesTestCPPName()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector(20);
+            var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "should only be top level class");
+            var item = result[0];
+            Assert.AreEqual(2, item.Items.Count(), "# of items found");
+            Assert.AreEqual(1, item.Items.Where(i => i.ItemType == "int").Count(), "# found variables");
+            var i1 = item.Items.Where(i => i.ItemType == "int").First();
+            Assert.AreEqual("n", i1.Name, "index name");
+            Assert.AreEqual(1, item.Items.Where(i => i.ItemType == "int[]").Count(), "# of int[] variables");
+            var i2 = item.Items.Where(i => i.ItemType == "int[]").First();
+            Assert.AreEqual("arr", i2.Name, "arr name");
+            var i2asA = i2 as ItemCStyleArray;
+            Assert.AreEqual("n", i2asA.IndexName, "index name");
+
+            CheckSerialization(result, "GenerateClassesTestCPPName");
+        }
+
 #if false
         /// Test case doesn't work b/c I don't know how to create a tree with a leaf name that contains a "::".
         [TestMethod]
