@@ -335,11 +335,19 @@ namespace LINQToTTreeLib.Expressions
                 var attr = ma.Member.TypeHasAttribute<ArraySizeIndexAttribute>();
                 if (attr != null)
                 {
-                    var arraySize = Expression.Field(ma.Expression, attr.LeafName);
-                    if (!arraySize.Type.IsNumberType())
-                        throw new InvalidOperationException(string.Format("Array size leaf '{0}' is not a number ({1})", attr.LeafName, arraySize.Type.Name));
+                    if (attr.IsConstantExpression)
+                    {
+                        var v = Int32.Parse(attr.LeafName);
+                        _result = GetExpression(Expression.Constant(v));
+                    }
+                    else
+                    {
+                        var arraySize = Expression.Field(ma.Expression, attr.LeafName);
+                        if (!arraySize.Type.IsNumberType())
+                            throw new InvalidOperationException(string.Format("Array size leaf '{0}' is not a number ({1})", attr.LeafName, arraySize.Type.Name));
 
-                    _result = GetExpression(arraySize);
+                        _result = GetExpression(arraySize);
+                    }
                     return;
                 }
             }

@@ -15,6 +15,7 @@ namespace LINQToTTreeLib.CodeAttributes
         public ArraySizeIndexAttribute(string leafName)
         {
             this._arraySizeLeaf = leafName;
+            IsConstantExpression = false;
         }
 
         /// <summary>
@@ -24,5 +25,10 @@ namespace LINQToTTreeLib.CodeAttributes
         {
             get { return _arraySizeLeaf; }
         }
+
+        /// <summary>
+        /// Get/Set if this should be treated as a constant expressiln ("20").
+        /// </summary>
+        public bool IsConstantExpression { get; set; }
     }
 }
