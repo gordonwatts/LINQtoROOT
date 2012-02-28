@@ -141,6 +141,27 @@ namespace TTreeParser.Tests
         }
 
         [TestMethod]
+        public void TestWithOneConstIndexedArray()
+        {
+            var aa = new ArrayAnalyzer();
+
+            string filename = "TestWithOneConstIndexedArray.root";
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
+            var tree = CreateTrees.CreateTreeWithConstIndexedSimpleVector(20);
+            f.Write();
+
+            ROOTClassShell sh = new ROOTClassShell();
+            sh.Add(new classitem() { ItemType = "int[]", Name = "arr" });
+            var result = aa.DetermineAllArrayLengths(sh, tree, 10);
+            Assert.AreEqual(10, result.Length, "# of events");
+            Assert.IsTrue(result.All(x => x.Length == 1), "# of arrays");
+            Assert.IsTrue(result.All(x => x[0].Item2 == 20), "Length of array");
+            Assert.IsTrue(result.All(x => x[0].Item1 == "arr"), "variable name");
+
+            f.Close();
+        }
+
+        [TestMethod]
         public void TestWithTwoArrays()
         {
             var aa = new ArrayAnalyzer();

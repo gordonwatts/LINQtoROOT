@@ -533,10 +533,16 @@ namespace TTreeParser
             var tname = TypeDefTranslator.ResolveTypedef(leaf.TypeName).SimpleCPPTypeToCSharpType() + "[]";
 
             //
+            // Is the a reference to a number or another leaf?
+            //
+
+            bool isConst = iname.All(char.IsDigit);
+
+            //
             // Create the item that will hold the info required.
             //
 
-            return new ItemCStyleArray(tname, vname, iname);
+            return new ItemCStyleArray(tname, vname, iname) { ConstIndex = isConst };
         }
 
         /// <summary>

@@ -36,6 +36,12 @@ namespace TTreeDataModel
         public string IndexName { get; set; }
 
         /// <summary>
+        /// Get/Set that this index is a const rather than a leaf name.
+        /// </summary>
+        [XmlAttribute]
+        public bool ConstIndex { get; set; }
+
+        /// <summary>
         /// Return the extra attribute to mark this guy as an index.
         /// </summary>
         /// <returns></returns>
