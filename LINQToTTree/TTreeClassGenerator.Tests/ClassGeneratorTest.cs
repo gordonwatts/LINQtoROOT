@@ -665,7 +665,45 @@ namespace TTreeClassGenerator
             /// Look through this to see if we can make sure there are no renames!
             Assert.IsTrue(FindInFile(outputFile, "int[] arr"), "Array Decl missing");
             Assert.IsTrue(FindInFile(outputFile, "int n"), "Index decl missing");
-            Assert.IsTrue(FindInFile(outputFile, "ArraySizeIndexAttribute(\"n\")"), "Missing array size index attribute");
+            Assert.IsTrue(FindInFile(outputFile, "ArraySizeIndex(\"n\")"), "Missing array size index attribute");
+        }
+
+        [TestMethod]
+        public void TestConstCStyleArray()
+        {
+            // Simple set of types for an index array
+            var vArray = new ItemCStyleArray("int[]", "arr", "10") { ConstIndex = true };
+            var vIndex = new ItemSimpleType("n", "int");
+            FileInfo proxyFile = new FileInfo("TestConstCStyleArray.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(vIndex);
+            mainClass.Add(vArray);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo()
+            {
+                Groups = new ArrayGroup[] { new ArrayGroup() {
+                Name = "ungrouped",
+                Variables = new VariableInfo[] {
+                    new VariableInfo() { NETName = "n", TTreeName = "n" },
+                    new VariableInfo() { NETName = "arr", TTreeName = "arr"}
+                } } }
+            };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestCStyleArray.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleRename", userinfo } });
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsTrue(FindInFile(outputFile, "int[] arr"), "Array Decl missing");
+            Assert.IsTrue(FindInFile(outputFile, "int n"), "Index decl missing");
+            Assert.IsTrue(FindInFile(outputFile, "[ArraySizeIndex(\"10\", IsConstantExpression = true)]"), "Missing array size index attribute");
         }
 
         [TestMethod]

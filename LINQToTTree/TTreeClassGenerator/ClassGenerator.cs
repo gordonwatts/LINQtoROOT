@@ -176,10 +176,11 @@ namespace TTreeClassGenerator
 
             foreach (var cls in classSpec.Classes)
             {
-                // Check that the index for all c-style arrays is "good".
+                // Check that the index variable for all c-style arrays is "good".
                 var CStyleArrays = from item in cls.Items
                                    where item is ItemCStyleArray
                                    let cSpec = item as ItemCStyleArray
+                                   where !cSpec.ConstIndex
                                    select cSpec.IndexName;
 
                 var IndexTypes = (from indexer in CStyleArrays

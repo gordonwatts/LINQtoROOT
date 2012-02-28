@@ -47,7 +47,14 @@ namespace TTreeDataModel
         /// <returns></returns>
         public System.Collections.Generic.IEnumerable<string> GetAttributes()
         {
-            yield return string.Format("ArraySizeIndexAttribute(\"{0}\")", IndexName);
+            if (!ConstIndex)
+            {
+                yield return string.Format("ArraySizeIndex(\"{0}\")", IndexName);
+            }
+            else
+            {
+                yield return string.Format("ArraySizeIndex(\"{0}\", IsConstantExpression = true)", IndexName);
+            }
         }
     }
 }
