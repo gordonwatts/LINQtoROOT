@@ -1528,7 +1528,17 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSimpleLoopEnumerabelRangeWithVar()
         {
-            Assert.Inconclusive("with a unknown var in the range");
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in Enumerable.Range(0, evt.run)
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
         }
 
         [TestMethod]
