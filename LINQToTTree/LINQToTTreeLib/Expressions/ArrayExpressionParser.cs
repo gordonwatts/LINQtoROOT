@@ -194,6 +194,92 @@ namespace LINQToTTreeLib.Expressions
     }
 
     /// <summary>
+    /// The person is trying to loop over an Enumerable.Range expression. Bring it.
+    /// </summary>
+    [Export(typeof(IArrayInfoFactory))]
+    internal class EnumerableRangeArrayTypeFactory : IArrayInfoFactory
+    {
+        /// <summary>
+        /// Return the array info for an eumerable range.
+        /// </summary>
+        class EnumerableRangeArrayInfo : IArrayInfo
+        {
+            /// <summary>
+            /// The min value that the loop starts at
+            /// </summary>
+            private int _minValue;
+
+            /// <summary>
+            /// The max value the loop starts at.
+            /// </summary>
+            private int _maxValue;
+
+            /// <summary>
+            /// Create a array loop maker.
+            /// </summary>
+            /// <param name="minValue"></param>
+            /// <param name="maxValue"></param>
+            public EnumerableRangeArrayInfo(int minValue, int maxValue)
+            {
+                // TODO: Complete member initialization
+                this._minValue = minValue;
+                this._maxValue = maxValue;
+            }
+
+            /// <summary>
+            /// Actually add the loop to the code and return everything!
+            /// </summary>
+            /// <param name="env"></param>
+            /// <param name="context"></param>
+            /// <param name="container"></param>
+            /// <returns></returns>
+            public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+            {
+                // Create the index variable!
+                var loopVariable = Expression.Variable(typeof(int), typeof(int).CreateUniqueVariableName());
+                var floop = new Statements.StatementForLoop(loopVariable.Name, new Variables.ValSimple(_maxValue.ToString(), typeof(int)));
+                env.Add(floop);
+
+                return Tuple.Create(loopVariable as Expression, loopVariable as Expression);
+            }
+        }
+
+        /// <summary>
+        /// Do a type check, and then create the range info... which is dirt simple, of course!
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <param name="ReGetIArrayInfo"></param>
+        /// <returns></returns>
+        public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
+        {
+            if (expr.NodeType != ExpressionType.Constant)
+                return null;
+            var ri = (expr as ConstantExpression).Value as IEnumerable<int>;
+            if (ri == null)
+                return null;
+
+            // We can't actually tell what the heck this thing is, so we are going to have to iterate over it, I'm afraid...
+            var e = ri.GetEnumerator();
+            int minValue = 0;
+            int maxValue = 0;
+            if (e.MoveNext())
+            {
+                minValue = e.Current;
+                maxValue = minValue;
+                while (e.MoveNext())
+                    maxValue = e.Current;
+                maxValue++; // b/c the loop is <, not <= when we code it in C++.
+            }
+
+            return new EnumerableRangeArrayInfo(minValue, maxValue);
+        }
+    }
+
+
+    /// <summary>
     /// Return an array info that does nothing... this is a place holder in the case that the
     /// code has already been generated.
     /// </summary>

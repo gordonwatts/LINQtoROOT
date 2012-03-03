@@ -1525,6 +1525,18 @@ namespace LINQToTTreeLib
             Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
         }
 
+        [TestMethod]
+        public void TestSimpleLoopEnumerabelRangeWithVar()
+        {
+            Assert.Inconclusive("with a unknown var in the range");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopEnumerableRangeNonZeroStart()
+        {
+            Assert.Inconclusive();
+        }
+
         /// <summary>
         /// A C++ array test.
         /// </summary>

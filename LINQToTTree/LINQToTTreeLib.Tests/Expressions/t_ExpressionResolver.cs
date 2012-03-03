@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.TypeHandlers;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -58,7 +59,7 @@ namespace LINQToTTreeLib.Tests
             // Extract the code and count the number of loops. There should be just one for that "where" sub-expression.
 
             var code = DummyQueryExectuor.FinalResult.CodeBody.Statements;
-            var loopCount = code.Where(s => s is LINQToTTreeLib.Expressions.ArrayInfoVector.StatementVectorLoop).Count();
+            var loopCount = code.Where(s => s is StatementForLoop).Count();
             Assert.AreEqual(1, loopCount, "# of loops incorrect");
         }
 

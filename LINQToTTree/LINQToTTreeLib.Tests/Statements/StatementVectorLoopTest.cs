@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,7 +11,7 @@ using NVelocity.App;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
-    [TestClass, PexClass(typeof(ArrayInfoVector.StatementVectorLoop))]
+    [TestClass, PexClass(typeof(StatementForLoop))]
     public partial class StatementVectorLoopTest
     {
         [TestInitialize]
@@ -70,33 +70,33 @@ namespace LINQToTTreeLib.Tests.Statements
 
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
-        public IEnumerable<string> CodeItUp([PexAssumeUnderTest]ArrayInfoVector.StatementVectorLoop target)
+        public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementForLoop target)
         {
             IEnumerable<string> result = target.CodeItUp();
             return result;
         }
 
         [PexMethod]
-        public void TestTryCombine([PexAssumeUnderTest]ArrayInfoVector.StatementVectorLoop target, IStatement s)
+        public void TestTryCombine([PexAssumeUnderTest]StatementForLoop target, IStatement s)
         {
             /// We should never be able to combine any filter statements currently!
 
             var val = new Variables.ValSimple("true", typeof(bool));
             var result = target.TryCombineStatement(s, null);
 
-            if (s.GetType() != typeof(ArrayInfoVector.StatementVectorLoop))
+            if (s.GetType() != typeof(StatementForLoop))
             {
                 Assert.IsFalse(result, "Types not right");
             }
             else
             {
-                var other = s as ArrayInfoVector.StatementVectorLoop;
+                var other = s as StatementForLoop;
                 Assert.AreEqual(other.ArrayLength == target.ArrayLength, result, "for loops not conssitent");
             }
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public IStatement TestRename([PexAssumeUnderTest] ArrayInfoVector.StatementVectorLoop statement, [PexAssumeNotNull] string oldname, [PexAssumeNotNull]string newname)
+        public IStatement TestRename([PexAssumeUnderTest] StatementForLoop statement, [PexAssumeNotNull] string oldname, [PexAssumeNotNull]string newname)
         {
             var origianllines = statement.CodeItUp().ToArray();
             statement.RenameVariable(oldname, newname);
