@@ -55,6 +55,16 @@ namespace LINQToTTreeLib
             public int run;
             public int[] vals;
             public int[][] val2D;
+
+            [ArraySizeIndex("run")]
+            public int[] valC1D;
+
+            [ArraySizeIndex("20", IsConstantExpression = true)]
+            public int[] valC1DConst;
+
+            [ArraySizeIndex("20", IsConstantExpression = true, Index = 0)]
+            [ArraySizeIndex("run", Index = 1)]
+            public int[][] valC2D;
         }
 
         [TestMethod]
@@ -1454,6 +1464,49 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "missing size() call");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopCVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.valC1D.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopCConstVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.valC1DConst.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopC2DConstVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.valC2D.Where(s => s.Count() > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
         }
 
         /// <summary>
