@@ -505,9 +505,9 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestClassArrayCPPConstAccess()
         {
-            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1[5];
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val3[5];
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
-            Assert.AreEqual("arr.val3[5]", result.RawValue, "lookup translation incorrect");
+            Assert.AreEqual("(*(*arr).val3)[5]", result.RawValue, "lookup translation incorrect");
         }
 
         [TestMethod]
@@ -531,7 +531,7 @@ namespace LINQToTTreeLib
         {
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val3[5];
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
-            Assert.AreEqual("arr.val3[5]", result.RawValue, "lookup translation incorrect");
+            Assert.AreEqual("(*(*arr).val3)[5]", result.RawValue, "lookup translation incorrect");
         }
 
         [TestMethod]
@@ -540,7 +540,7 @@ namespace LINQToTTreeLib
             // Index == 0
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val4[1][2];
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
-            Assert.AreEqual("arr.val4[1][2]", result.RawValue, "2d array access");
+            Assert.AreEqual("((*(*arr).val4)[1])[2]", result.RawValue, "2d array access");
         }
 
         [TestMethod]

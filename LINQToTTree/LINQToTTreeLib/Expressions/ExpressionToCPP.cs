@@ -226,11 +226,19 @@ namespace LINQToTTreeLib.Expressions
                     resultType = expression.Type;
                     break;
 
-
+                // How we do array lookup depends on the array type we are looking up!
                 case ExpressionType.ArrayIndex:
                     resultType = expression.Type;
-                    op = "at";
-                    format = "{0}.at({2})";
+                    if (IsAccessingConstArray(expression))
+                    {
+                        op = "[]";
+                        format = "{0}[{2}]";
+                    }
+                    else
+                    {
+                        op = "at";
+                        format = "{0}.at({2})";
+                    }
                     break;
 
                 case ExpressionType.And:
@@ -282,6 +290,19 @@ namespace LINQToTTreeLib.Expressions
             _result = new ValSimple(bld.ToString(), resultType);
 
             return expression;
+        }
+
+        /// <summary>
+        /// Determine if this expression (which is an array access) is going after a const array.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private bool IsAccessingConstArray(BinaryExpression expression)
+        {
+            var arrInfo = DetermineArrayLengthInfo(expression);
+            if (arrInfo.Item2.NodeType != ExpressionType.MemberAccess)
+                return false;
+            return (arrInfo.Item2 as MemberExpression).Member.TypeHasAttribute<ArraySizeIndexAttribute>() != null;
         }
 
         /// <summary>
