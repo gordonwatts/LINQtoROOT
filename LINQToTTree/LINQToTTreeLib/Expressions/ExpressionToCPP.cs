@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -326,15 +327,24 @@ namespace LINQToTTreeLib.Expressions
         private void VisitArrayLength(UnaryExpression expression)
         {
             //
-            // Is the operand of this guy in the right form to do the lookup?
+            // This may be a multi-index array. In order to get the actual
+            // length we need to look down as many levels as we can do do the lookup.
             //
 
-            if (expression.Operand.NodeType == ExpressionType.MemberAccess)
+            var arrInfo = DetermineArrayLengthInfo(expression.Operand);
+            if (arrInfo.Item2.NodeType == ExpressionType.MemberAccess)
             {
-                var ma = expression.Operand as MemberExpression;
-                var attr = ma.Member.TypeHasAttribute<ArraySizeIndexAttribute>();
-                if (attr != null)
+                var ma = arrInfo.Item2 as MemberExpression;
+                var attrs = ma.Member.TypeHasAttributes<ArraySizeIndexAttribute>();
+                if (attrs != null && attrs.Length != 0)
                 {
+                    // Determine which index this is.
+                    var attr = (from a in attrs
+                                where a.Index == arrInfo.Item1.Count
+                                select a).FirstOrDefault();
+                    if (attr == null)
+                        throw new InvalidOperationException(string.Format("Unable to find index info for index 0 for the expression {0}.", expression.ToString()));
+
                     if (attr.IsConstantExpression)
                     {
                         var v = Int32.Parse(attr.LeafName);
@@ -358,6 +368,26 @@ namespace LINQToTTreeLib.Expressions
 
             var arrayBase = GetExpression(expression.Operand);
             _result = new ValSimple(arrayBase.AsObjectReference(expression.Operand) + ".size()", expression.Type);
+        }
+
+        /// <summary>
+        /// We need to take a look at this item to see if it is an array access. If so,
+        /// we want to find out all we can about it.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns>A tuple with a list of the expressions to do the lookup and what we are doing the lookup against</returns>
+        private Tuple<List<Expression>, Expression> DetermineArrayLengthInfo(Expression expression)
+        {
+            if (expression.NodeType != ExpressionType.ArrayIndex)
+            {
+                // We have reached teh bottom of the pile!
+                return Tuple.Create(new List<Expression>(), expression);
+            }
+
+            var br = expression as BinaryExpression;
+            var levelDown = DetermineArrayLengthInfo(br.Left);
+            levelDown.Item1.Add(br.Right);
+            return levelDown;
         }
 
         /// <summary>

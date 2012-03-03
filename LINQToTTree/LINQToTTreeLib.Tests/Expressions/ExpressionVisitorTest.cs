@@ -488,6 +488,9 @@ namespace LINQToTTreeLib
             public int[] val2;
             [ArraySizeIndex("20", IsConstantExpression = true)]
             public int[] val3;
+            [ArraySizeIndex("20", IsConstantExpression = true, Index = 0)]
+            [ArraySizeIndex("30", IsConstantExpression = true, Index = 1)]
+            public int[][] val4;
 #pragma warning restore 0649
         }
 
@@ -497,6 +500,14 @@ namespace LINQToTTreeLib
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1.Length;
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("(*(*arr).val1).size()", result.RawValue, "actual translation incorrect");
+        }
+
+        [TestMethod]
+        public void TestClassArrayCPPConstAccess()
+        {
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val1[5];
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            Assert.AreEqual("arr.val3[5]", result.RawValue, "lookup translation incorrect");
         }
 
         [TestMethod]
@@ -513,6 +524,42 @@ namespace LINQToTTreeLib
             Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val3.Length;
             var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
             Assert.AreEqual("20", result.RawValue, "actual translation incorrect");
+        }
+
+        [TestMethod]
+        public void TestClassArrayCPPAccess()
+        {
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val3[5];
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            Assert.AreEqual("arr.val3[5]", result.RawValue, "lookup translation incorrect");
+        }
+
+        [TestMethod]
+        public void TestClassArrayCPP2D1stAcces()
+        {
+            // Index == 0
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val4[1][2];
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            Assert.AreEqual("arr.val4[1][2]", result.RawValue, "2d array access");
+        }
+
+        [TestMethod]
+        public void TestClassArrayCPP2D1st()
+        {
+            // Index == 0
+            Expression<Func<ResultType0, int>> arrayLenLambda = arr => arr.val4.Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda, typeof(int));
+            Assert.AreEqual("20", result.RawValue, "index 0 size");
+        }
+
+        [TestMethod]
+        public void TestClassArrayCPP2D2nd()
+        {
+            // Index == 1
+            Expression<Func<ResultType0, int>> arrayLenLambda1 = arr => arr.val4[0].Length;
+            var result = RunArrayLengthOnExpression(arrayLenLambda1, typeof(int));
+            Assert.AreEqual("30", result.RawValue, "index 1 size");
+
         }
 
         [TestMethod]

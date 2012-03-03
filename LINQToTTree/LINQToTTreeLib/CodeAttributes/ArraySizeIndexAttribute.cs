@@ -6,7 +6,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// An attribute to dectorate a C++ style array - and indicate the
     /// leaf name that contains the length we "care" about.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
     sealed class ArraySizeIndexAttribute : Attribute
     {
         readonly string _arraySizeLeaf;
@@ -30,5 +30,11 @@ namespace LINQToTTreeLib.CodeAttributes
         /// Get/Set if this should be treated as a constant expressiln ("20").
         /// </summary>
         public bool IsConstantExpression { get; set; }
+
+        /// <summary>
+        /// Get/Set which array coordinate this refers to. 0 is the left most
+        /// array index.
+        /// </summary>
+        public int Index { get; set; }
     }
 }

@@ -66,6 +66,19 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
+        /// Check to see if the method has a custom attribute.
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="memberInfo"></param>
+        /// <returns></returns>
+        public static T[] TypeHasAttributes<T>(this MemberInfo memberInfo)
+            where T : class
+        {
+            var attr = memberInfo.GetCustomAttributes(typeof(T), false).Cast<T>().ToArray();
+            return attr;
+        }
+
+        /// <summary>
         /// A type we know how to deal with as a number. For example, we can sum it, etc.
         /// </summary>
         /// <param name="v"></param>
