@@ -1509,6 +1509,22 @@ namespace LINQToTTreeLib
             Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
         }
 
+        [TestMethod]
+        public void TestSimpleLoopEnumerableRange()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in Enumerable.Range(0, 20)
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+        }
+
         /// <summary>
         /// A C++ array test.
         /// </summary>
