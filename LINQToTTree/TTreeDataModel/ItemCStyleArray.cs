@@ -82,7 +82,7 @@ namespace TTreeDataModel
         {
             foreach (var index in Indicies)
             {
-                if (index.indexConst)
+                if (!index.indexConst)
                 {
                     yield return string.Format("ArraySizeIndex(\"{0}\", Index = {1})", index.indexBoundName, index.indexPosition);
                 }

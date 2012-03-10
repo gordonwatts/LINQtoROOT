@@ -180,8 +180,9 @@ namespace TTreeClassGenerator
                 var CStyleArrays = from item in cls.Items
                                    where item is ItemCStyleArray
                                    let cSpec = item as ItemCStyleArray
-                                   where !cSpec.ConstIndex
-                                   select cSpec.IndexName;
+                                   from cindex in cSpec.Indicies
+                                   where !cindex.indexConst
+                                   select cindex.indexBoundName;
 
                 var IndexTypes = (from indexer in CStyleArrays
                                   let match = (from item in cls.Items
