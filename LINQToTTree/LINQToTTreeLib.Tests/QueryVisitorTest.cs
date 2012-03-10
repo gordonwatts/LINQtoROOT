@@ -1572,12 +1572,25 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=0; a")).Any(), "missing lower limit reference");
         }
 
         [TestMethod]
         public void TestSimpleLoopEnumerableRangeNonZeroStart()
         {
-            Assert.Inconclusive();
+            int[] seq = { 2, 3, 4, 5 };
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in seq
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
         }
 
         /// <summary>

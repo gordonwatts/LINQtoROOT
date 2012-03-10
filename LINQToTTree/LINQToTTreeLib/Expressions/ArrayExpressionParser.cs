@@ -239,7 +239,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 // Create the index variable!
                 var loopVariable = Expression.Variable(typeof(int), typeof(int).CreateUniqueVariableName());
-                var floop = new Statements.StatementForLoop(loopVariable.Name, _maxValue);
+                var floop = new Statements.StatementForLoop(loopVariable.Name, _maxValue, _minValue);
                 env.Add(floop);
 
                 return Tuple.Create(loopVariable as Expression, loopVariable as Expression);

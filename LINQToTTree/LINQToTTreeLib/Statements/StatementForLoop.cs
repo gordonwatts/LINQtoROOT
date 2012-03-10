@@ -2,6 +2,7 @@
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -11,6 +12,8 @@ namespace LINQToTTreeLib.Statements
     public class StatementForLoop : StatementInlineBlockBase, IStatementLoop
     {
         public IValue ArrayLength { get; set; }
+        public IValue InitialValue { get; set; }
+
         string _loopVariable;
 
         /// <summary>
@@ -18,10 +21,14 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="loopVariable"></param>
         /// <param name="arraySizeVar"></param>
-        public StatementForLoop(string loopVariable, IValue arraySizeVar)
+        /// <param name="startValue">Inital spot in array, defaults to zero</param>
+        public StatementForLoop(string loopVariable, IValue arraySizeVar, IValue startValue = null)
         {
             ArrayLength = arraySizeVar;
             _loopVariable = loopVariable;
+            InitialValue = startValue;
+            if (InitialValue == null)
+                InitialValue = new ValSimple("0", typeof(int));
         }
 
         /// <summary>
@@ -34,7 +41,7 @@ namespace LINQToTTreeLib.Statements
             {
                 var arrIndex = typeof(int).CreateUniqueVariableName();
                 yield return string.Format("int {0} = {1};", arrIndex, ArrayLength.RawValue);
-                yield return string.Format("for (int {0}=0; {0} < {1}; {0}++)", _loopVariable, arrIndex);
+                yield return string.Format("for (int {0}={2}; {0} < {1}; {0}++)", _loopVariable, arrIndex, InitialValue.RawValue);
                 foreach (var l in RenderInternalCode())
                 {
                     yield return l;
