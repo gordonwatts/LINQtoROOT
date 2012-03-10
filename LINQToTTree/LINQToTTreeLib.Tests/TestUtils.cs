@@ -248,19 +248,29 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
-        public static FileInfo CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
+        public static FileInfo CreateFileOf(string filename, Func<ROOTNET.NTTree> maker)
         {
-            string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
             FileInfo result = new FileInfo(filename);
             if (result.Exists)
                 return result;
 
             var f = new ROOTNET.NTFile(filename, "RECREATE");
-            var tree = TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize);
+            var tree = maker();
             f.Write();
             f.Close();
             result.Refresh();
             return result;
+        }
+
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        public static FileInfo CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
+        {
+            string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
+            return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize));
         }
 
         /// <summary>
@@ -271,16 +281,7 @@ namespace LINQToTTreeLib.Tests
         public static FileInfo CreateFileOfIndexedInt(int numberOfIter)
         {
             string filename = "FileOfIndexedInt" + numberOfIter.ToString() + ".root";
-            FileInfo result = new FileInfo(filename);
-            if (result.Exists)
-                return result;
-
-            var f = new ROOTNET.NTFile(filename, "RECREATE");
-            TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector(numberOfIter);
-            f.Write();
-            f.Close();
-            result.Refresh();
-            return result;
+            return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector(numberOfIter));
         }
 
         /// <summary>
@@ -291,16 +292,7 @@ namespace LINQToTTreeLib.Tests
         public static FileInfo CreateFileOfInt(int numberOfIter)
         {
             string filename = "intonly_" + numberOfIter.ToString() + ".root";
-            FileInfo result = new FileInfo(filename);
-            if (result.Exists)
-                return result;
-
-            var f = new ROOTNET.NTFile(filename, "RECREATE");
-            var tree = TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter);
-            f.Write();
-            f.Close();
-            result.Refresh();
-            return result;
+            return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter));
         }
 
         /// <summary>
