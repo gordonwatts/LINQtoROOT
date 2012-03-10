@@ -5,7 +5,9 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 
@@ -207,19 +209,19 @@ namespace LINQToTTreeLib.Expressions
             /// <summary>
             /// The min value that the loop starts at
             /// </summary>
-            private int _minValue;
+            private IValue _minValue;
 
             /// <summary>
             /// The max value the loop starts at.
             /// </summary>
-            private int _maxValue;
+            private IValue _maxValue;
 
             /// <summary>
             /// Create a array loop maker.
             /// </summary>
             /// <param name="minValue"></param>
             /// <param name="maxValue"></param>
-            public EnumerableRangeArrayInfo(int minValue, int maxValue)
+            public EnumerableRangeArrayInfo(IValue minValue, IValue maxValue)
             {
                 // TODO: Complete member initialization
                 this._minValue = minValue;
@@ -237,7 +239,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 // Create the index variable!
                 var loopVariable = Expression.Variable(typeof(int), typeof(int).CreateUniqueVariableName());
-                var floop = new Statements.StatementForLoop(loopVariable.Name, new Variables.ValSimple(_maxValue.ToString(), typeof(int)));
+                var floop = new Statements.StatementForLoop(loopVariable.Name, _maxValue);
                 env.Add(floop);
 
                 return Tuple.Create(loopVariable as Expression, loopVariable as Expression);
@@ -254,6 +256,47 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="ReGetIArrayInfo"></param>
         /// <returns></returns>
         public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
+        {
+            if (expr.NodeType == ExpressionType.Constant)
+                return ProcessPossibleConstEnumerableRange(expr, gc, cc, container, ReGetIArrayInfo);
+
+            if (expr.NodeType == EnumerableRangeExpression.ExpressionType)
+                return ProcessEnumerableRangeExpression(expr, gc, cc, container, ReGetIArrayInfo);
+
+            return null;
+        }
+
+        /// <summary>
+        /// We have an enumerable range expression. Process it! :-)
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <param name="ReGetIArrayInfo"></param>
+        /// <returns></returns>
+        private IArrayInfo ProcessEnumerableRangeExpression(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
+        {
+            var er = expr as EnumerableRangeExpression;
+
+            var minVal = ExpressionToCPP.GetExpression(er.LowBoundary, gc, cc, container);
+            var maxVal = ExpressionToCPP.GetExpression(er.HighBoundary, gc, cc, container);
+
+            return new EnumerableRangeArrayInfo(minVal, maxVal);
+        }
+
+        /// <summary>
+        /// A constant expression may be a IEnumerable type as a constant (in short, the user
+        /// already has a pattern implemented). We support only continuous patterns right now,
+        /// so look at it, and extract it.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <param name="ReGetIArrayInfo"></param>
+        /// <returns></returns>
+        private IArrayInfo ProcessPossibleConstEnumerableRange(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
         {
             if (expr.NodeType != ExpressionType.Constant)
                 return null;
@@ -274,7 +317,8 @@ namespace LINQToTTreeLib.Expressions
                 maxValue++; // b/c the loop is <, not <= when we code it in C++.
             }
 
-            return new EnumerableRangeArrayInfo(minValue, maxValue);
+            return new EnumerableRangeArrayInfo(new ValSimple(minValue.ToString(), typeof(int)),
+                new ValSimple(maxValue.ToString(), typeof(int)));
         }
     }
 

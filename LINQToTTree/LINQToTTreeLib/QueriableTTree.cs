@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.relinq;
 using Remotion.Linq;
 using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
@@ -115,10 +116,16 @@ namespace LINQToTTreeLib
             var newProvider = new CompoundNodeTypeProvider(ourProviders.Concat(new INodeTypeProvider[] { defaultNodeTypeProvider }));
 
             //
-            // Create the query provider
+            // All the various transformers we need...
             //
 
             var transformerRegistry = ExpressionTransformerRegistry.CreateDefault();
+            transformerRegistry.Register(new EnumerableRangeExpressionTransformer());
+
+            //
+            // Create the query provider
+            //
+
             var expressionTreeParser = new ExpressionTreeParser(
                 newProvider,
                 ExpressionTreeParser.CreateDefaultProcessor(transformerRegistry));

@@ -1542,6 +1542,14 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestComplexEnumerableRangeLoop()
+        {
+            // If the enumerable expression isn't a simple counting, we don't know how to
+            // deal with it. So throw an error!
+        }
+
+        [TestMethod]
         public void TestSimpleLoopEnumerableRangeNonZeroStart()
         {
             Assert.Inconclusive();
