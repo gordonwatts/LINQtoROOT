@@ -109,8 +109,39 @@ namespace LINQToTTreeLib.Tests
             var i2 = item.Items.Where(i => i.ItemType == "int[]").First();
             Assert.AreEqual("arr", i2.Name, "arr name");
             var i2asA = i2 as ItemCStyleArray;
-            Assert.AreEqual("n", i2asA.IndexName, "index name");
-            Assert.IsFalse(i2asA.ConstIndex, "const index");
+            Assert.AreEqual(1, i2asA.Indicies.Count, "# of indicies");
+            Assert.AreEqual("n", i2asA.Indicies[0].indexBoundName, "index name");
+            Assert.AreEqual(0, i2asA.Indicies[0].indexPosition, "index name");
+            Assert.IsFalse(i2asA.Indicies[0].indexConst, "index const");
+
+            CheckSerialization(result, "GenerateClassesTestCPPName");
+        }
+
+        [TestMethod]
+        public void GenerateClassesTestCPPName2D()
+        {
+            // Test an array that is 2D C style
+
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector2D(20);
+            var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "should only be top level class");
+            var item = result[0];
+            Assert.AreEqual(1, item.Items.Count(), "# of items found");
+            var item1 = item.Items[0];
+            Assert.AreEqual("int[][]", item1.ItemType, "2d array type");
+            Assert.AreEqual("arr", item1.Name, "arr name");
+
+            var i2asA = item1 as ItemCStyleArray;
+            Assert.AreEqual(2, i2asA.Indicies.Count, "# of indicies");
+            Assert.AreEqual("5", i2asA.Indicies[0].indexBoundName, "index name");
+            Assert.AreEqual(0, i2asA.Indicies[0].indexPosition, "index name");
+            Assert.IsTrue(i2asA.Indicies[0].indexConst, "index const");
+            Assert.AreEqual("4", i2asA.Indicies[1].indexBoundName, "index name");
+            Assert.AreEqual(0, i2asA.Indicies[1].indexPosition, "index name");
+            Assert.IsTrue(i2asA.Indicies[1].indexConst, "index const");
 
             CheckSerialization(result, "GenerateClassesTestCPPName");
         }
@@ -130,8 +161,10 @@ namespace LINQToTTreeLib.Tests
             var i2 = item.Items.Where(i => i.ItemType == "int[]").First();
             Assert.AreEqual("arr", i2.Name, "arr name");
             var i2asA = i2 as ItemCStyleArray;
-            Assert.AreEqual("20", i2asA.IndexName, "index name");
-            Assert.IsTrue(i2asA.ConstIndex, "const index");
+            Assert.AreEqual(1, i2asA.Indicies.Count, "# of indicies");
+            Assert.AreEqual("20", i2asA.Indicies[0].indexBoundName, "index name");
+            Assert.AreEqual(0, i2asA.Indicies[0].indexPosition, "index name");
+            Assert.IsTrue(i2asA.Indicies[0].indexConst, "index const");
 
             CheckSerialization(result, "GenerateClassesTestCPPName");
         }
