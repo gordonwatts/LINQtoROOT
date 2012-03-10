@@ -1545,8 +1545,33 @@ namespace LINQToTTreeLib
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestComplexEnumerableRangeLoop()
         {
-            // If the enumerable expression isn't a simple counting, we don't know how to
-            // deal with it. So throw an error!
+            int[] seq = { 0, 2, 4, 6 };
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in seq
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestSeqEnumerableRangeLoop()
+        {
+            int[] seq = { 0, 1, 2, 3, 4, 5 };
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in seq
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
         }
 
         [TestMethod]

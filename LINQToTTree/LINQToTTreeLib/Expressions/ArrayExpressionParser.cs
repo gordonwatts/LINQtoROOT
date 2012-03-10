@@ -153,7 +153,7 @@ namespace LINQToTTreeLib.Expressions
     {
         public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
         {
-            if (IsArrayType(expr))
+            if (IsArrayType(expr) && expr.NodeType != ExpressionType.Constant)
                 return new ArrayInfoVector(expr);
             return null;
         }
@@ -313,7 +313,11 @@ namespace LINQToTTreeLib.Expressions
                 minValue = e.Current;
                 maxValue = minValue;
                 while (e.MoveNext())
+                {
+                    if (maxValue + 1 != e.Current)
+                        throw new InvalidOperationException("Attempt to loop over index array that isn't sequential - not yet supported!");
                     maxValue = e.Current;
+                }
                 maxValue++; // b/c the loop is <, not <= when we code it in C++.
             }
 
