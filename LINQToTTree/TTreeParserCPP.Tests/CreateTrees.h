@@ -192,6 +192,26 @@ namespace TTreeParserCPPTests {
 		}
 
 		/// Create a tree with some number of TLZ's.
+		static ROOTNET::NTTree ^CreateTreeWithIndexedConstSimpleVector(int entries)
+		{
+			int bogus[5];
+			int ientries = 0;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[5]/I");
+
+			for (int i = 0; i < entries; i++) {
+				for (int j = 0; j < 5; j++) {
+					bogus[j] = 1;
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddrArr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with some number of TLZ's.
 		static ROOTNET::NTTree ^CreateTreeWithIndexedSimpleVector2D(int entries)
 		{
 			int bogus2[5][5];
