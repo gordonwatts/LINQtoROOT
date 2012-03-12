@@ -168,7 +168,7 @@ namespace TTreeParserCPPTests {
 			return gcnew ROOTNET::NTTree(t);
 		}
 
-		/// Create a tree with some number of TLZ's.
+		/// Create a tree with an index array
 		static ROOTNET::NTTree ^CreateTreeWithIndexedSimpleVector(int entries)
 		{
 			int bogus[20];
@@ -191,7 +191,7 @@ namespace TTreeParserCPPTests {
 			return gcnew ROOTNET::NTTree(t);
 		}
 
-		/// Create a tree with some number of TLZ's.
+		/// Create a tree with a constant indexed array
 		static ROOTNET::NTTree ^CreateTreeWithIndexedConstSimpleVector(int entries)
 		{
 			int bogus[5];
@@ -203,6 +203,28 @@ namespace TTreeParserCPPTests {
 			for (int i = 0; i < entries; i++) {
 				for (int j = 0; j < 5; j++) {
 					bogus[j] = 1;
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddrArr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with a constant indexed 2D array
+		static ROOTNET::NTTree ^CreateTreeWithIndexed2DConstSimpleVector(int entries)
+		{
+			int bogus[5][5];
+			int ientries = 0;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[5][5]/I");
+
+			for (int i = 0; i < entries; i++) {
+				for (int j1 = 0; j1 < 5; j1++) {
+					for (int j2 = 0; j2 < 5; j2++) {
+						bogus[j1][j2] = 1;
+					}
 				}
 				t->Fill();
 			}

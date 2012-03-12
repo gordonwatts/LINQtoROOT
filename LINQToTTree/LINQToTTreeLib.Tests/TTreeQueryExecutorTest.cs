@@ -2197,12 +2197,127 @@ namespace LINQToTTreeLib
             Assert.AreEqual(25, result, "Incorrect number of iterations found");
         }
 
+        /// <summary>
+        /// Dirt simply test ntuple. Actually matches one that exists on disk.
+        /// </summary>
+        public class TestNtupeC2DConstArr : IExpressionHolder
+        {
+            public TestNtupeC2DConstArr(Expression holder)
+            {
+                HeldExpression = holder;
+            }
+#pragma warning disable 0169
+            [ArraySizeIndex("5", Index = 0, IsConstantExpression = true)]
+            [ArraySizeIndex("5", Index = 1, IsConstantExpression = true)]
+            public int[][] arr;
+#pragma warning restore 0169
+
+            public System.Linq.Expressions.Expression HeldExpression { get; set; }
+        }
+
+        [TestMethod]
+        public void TestCArray2DConst()
+        {
+            // Test arr[5].
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOf("TestCArray2DConst.root", () => TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexed2DConstSimpleVector(numberOfIter));
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeC2DConstArr>();
+            var dudeQ = from evt in q
+                        let c = (from c1 in evt.arr
+                                 from c2 in c1
+                                 select c2).Count()
+                        where c == 25
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeC2DConstArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(25, result, "Incorrect number of iterations found");
+        }
+
+        /// <summary>
+        /// Dirt simply test ntuple. Actually matches one that exists on disk.
+        /// </summary>
+        public class TestNtupeCIndexedArr : IExpressionHolder
+        {
+            public TestNtupeCIndexedArr(Expression holder)
+            {
+                HeldExpression = holder;
+            }
+#pragma warning disable 0169
+            [ArraySizeIndex("n")]
+            public int[] arr;
+            public int n;
+#pragma warning restore 0169
+
+            public System.Linq.Expressions.Expression HeldExpression { get; set; }
+        }
+
+        [TestMethod]
+        public void TestCArrayIndexed()
+        {
+            // Test arr[5].
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOf("TestCArrayIndexed.root", () => TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector(numberOfIter));
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeCIndexedArr>();
+            var dudeQ = from evt in q
+                        where (evt.arr.Count() == evt.n)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeCIndexedArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(25, result, "Incorrect number of iterations found");
+        }
+
         [TestMethod]
         public void TestCArrayConstEnumerable()
         {
             // Test arr[5].
             const int numberOfIter = 25;
-            var rootFile = TestUtils.CreateFileOf("TestCArrayConst.root", () => TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedConstSimpleVector(numberOfIter));
+            var rootFile = TestUtils.CreateFileOf("TestCArrayConstEnumerable.root", () => TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedConstSimpleVector(numberOfIter));
 
             ///
             /// Generate a proxy .h file that we can use
