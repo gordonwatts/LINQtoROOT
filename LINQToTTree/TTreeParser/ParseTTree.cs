@@ -476,13 +476,12 @@ namespace TTreeParser
                 return ExtractTemplateItem(leaf, result as TemplateParser.TemplateInfo);
             }
 
-            ///
-            /// Next, check if it is an array. We are currently not translating
-            /// raw C++ arrays.
-            /// 
+            //
+            // Next, check if it is an C++ array.
+            // 
 
             if (leaf.Title.Contains("["))
-                return null;
+                return ExtractCArrayInfo(leaf);
 
             ///
             /// Ok - so it is a single "object" or similar. So we need to look at it and figure
@@ -506,6 +505,50 @@ namespace TTreeParser
                 throw new InvalidOperationException("Unknown type - cant' translate '" + className + "'.");
             }
             return toAdd;
+        }
+
+        /// <summary>
+        /// Look for an array specification from a ROOT title.
+        /// </summary>
+        private Regex _arrParser = new Regex(@"^(?<vname>\w+)(?:\[(?<iname>\w+)\])+$");
+
+        /// <summary>
+        /// This looks like a C style array - that is "[" and "]" are being used. Extract the index in it
+        /// and pass it along.
+        /// </summary>
+        /// <param name="leaf"></param>
+        /// <returns></returns>
+        private IClassItem ExtractCArrayInfo(ROOTNET.Interface.NTLeaf leaf)
+        {
+            //
+            // Grab the name first.
+            //
+
+            var m = _arrParser.Match(leaf.Title);
+            if (!m.Success)
+                return null;
+
+            var vname = m.Groups["vname"].Value;
+            var tname = TypeDefTranslator.ResolveTypedef(leaf.TypeName).SimpleCPPTypeToCSharpType();
+            for (int i = 0; i < m.Groups["iname"].Captures.Count; i++)
+            {
+                tname += "[]";
+            }
+            var arr = new ItemCStyleArray(tname, vname);
+
+            //
+            // Now, loop through and grab all the indicies we can find.
+            //
+
+            int index = 0;
+            foreach (var indexBound in m.Groups["iname"].Captures.Cast<Capture>())
+            {
+                index++;
+                var iname = indexBound.Value;
+                bool isConst = iname.All(char.IsDigit);
+                arr.Add(0, iname, isConst);
+            }
+            return arr;
         }
 
         /// <summary>

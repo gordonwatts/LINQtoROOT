@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
@@ -9,7 +8,6 @@ using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing.Structure;
 
 namespace LINQToTTreeLib.Tests
@@ -126,22 +124,6 @@ namespace LINQToTTreeLib.Tests
             public int run;
             public int[] vals;
 #pragma warning restore 0649
-        }
-
-        [TestMethod]
-        public void TestSubQueryExpression()
-        {
-            var q = new dummyntup();
-            q.vals = new int[] { 1, 2, 3, 4, 5 };
-            var model = GetModel(() => (from j in q.vals select j).Take(1));
-            var sq = new SubQueryExpression(model);
-
-            GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext();
-
-            ArrayExpressionParser.ParseArrayExpression(null, sq, gc, cc, MEFUtilities.MEFContainer);
-
-            Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }
     }
 }

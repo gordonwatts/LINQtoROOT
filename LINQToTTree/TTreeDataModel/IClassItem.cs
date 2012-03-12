@@ -5,6 +5,7 @@ namespace TTreeDataModel
     [XmlInclude(typeof(ItemVector))]
     [XmlInclude(typeof(ItemSimpleType))]
     [XmlInclude(typeof(ItemROOTClass))]
+    [XmlInclude(typeof(ItemCStyleArray))]
     public abstract class IClassItem
     {
         /// <summary>

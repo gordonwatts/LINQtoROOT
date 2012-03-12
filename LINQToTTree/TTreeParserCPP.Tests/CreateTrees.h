@@ -167,6 +167,115 @@ namespace TTreeParserCPPTests {
 
 			return gcnew ROOTNET::NTTree(t);
 		}
+
+		/// Create a tree with an index array
+		static ROOTNET::NTTree ^CreateTreeWithIndexedSimpleVector(int entries)
+		{
+			int bogus[20];
+			int ientries = 0;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrEnt = t->Branch ("base", &ientries, "n/I");
+			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[n]/I");
+
+			for (int i = 0; i < entries; i++) {
+				ientries = 10;
+				for (int j = 0; j < ientries; j++) {
+					bogus[j] = i;
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddrEnt);
+			t->ResetBranchAddress(brAddrArr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with a constant indexed array
+		static ROOTNET::NTTree ^CreateTreeWithIndexedConstSimpleVector(int entries)
+		{
+			int bogus[5];
+			int ientries = 0;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[5]/I");
+
+			for (int i = 0; i < entries; i++) {
+				for (int j = 0; j < 5; j++) {
+					bogus[j] = 1;
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddrArr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with a constant indexed 2D array
+		static ROOTNET::NTTree ^CreateTreeWithIndexed2DConstSimpleVector(int entries)
+		{
+			int bogus[5][5];
+			int ientries = 0;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[5][5]/I");
+
+			for (int i = 0; i < entries; i++) {
+				for (int j1 = 0; j1 < 5; j1++) {
+					for (int j2 = 0; j2 < 5; j2++) {
+						bogus[j1][j2] = 1;
+					}
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddrArr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with some number of TLZ's.
+		static ROOTNET::NTTree ^CreateTreeWithIndexedSimpleVector2D(int entries)
+		{
+			int bogus2[5][5];
+			int ientries = 0;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrArr = t->Branch("stuff", &bogus2, "arr[5][4]/I");
+
+			for (int i = 0; i < entries; i++) {
+				for (int i1 = 0; i1 < 5; i1++) {
+					for (int i2 = 0; i2 < 4; i2++) {
+						bogus2[i1][i2] = 1;
+					}
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddrArr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
+		/// Create a tree with some number of TLZ's.
+		static ROOTNET::NTTree ^CreateTreeWithConstIndexedSimpleVector(int entries)
+		{
+			int bogus[20];
+			int ientries = 0;
+
+			TTree *t = new TTree("dude", "left field");
+			auto brAddrArr = t->Branch ("stuff", &bogus, "arr[20]/I");
+
+			for (int i = 0; i < entries; i++) {
+				ientries = 20;
+				for (int j = 0; j < ientries; j++) {
+					bogus[j] = i;
+				}
+				t->Fill();
+			}
+			t->ResetBranchAddress(brAddrArr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
 		static ROOTNET::NTTree ^CreateTreeWithSimpleSingleVector(int entries, int vectorsize)
 		{
 			vector<int> bogus;

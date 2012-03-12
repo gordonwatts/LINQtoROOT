@@ -244,6 +244,7 @@ namespace TTreeParser
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="eventsToAnalyze"></param>
+        /// <returns>The outter index is one per event, and the inner index is for all arrays. Each array has a name and its size in the tuple.</returns>
         internal Tuple<string, int>[][] DetermineAllArrayLengths(ROOTClassShell classinfo, ROOTNET.Interface.NTTree tree, long eventsToAnalyze)
         {
             if (tree.Entries == 0)
@@ -259,8 +260,9 @@ namespace TTreeParser
                          where item.ItemType.Contains("[]")
                          select item.Name;
 
+            //  + "@.size()"
             var counterlist = (from item in arrays
-                               let treeForm = new ROOTNET.NTTreeFormula(item, item + "@.size()", tree)
+                               let treeForm = new ROOTNET.NTTreeFormula(item, string.Format("Length$({0})", item), tree)
                                where treeForm.IsGoodFormula()
                                select treeForm).ToArray();
 

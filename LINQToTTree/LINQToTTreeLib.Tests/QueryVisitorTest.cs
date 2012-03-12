@@ -55,6 +55,16 @@ namespace LINQToTTreeLib
             public int run;
             public int[] vals;
             public int[][] val2D;
+
+            [ArraySizeIndex("run")]
+            public int[] valC1D;
+
+            [ArraySizeIndex("20", IsConstantExpression = true)]
+            public int[] valC1DConst;
+
+            [ArraySizeIndex("20", IsConstantExpression = true, Index = 0)]
+            [ArraySizeIndex("run", Index = 1)]
+            public int[][] valC2D;
         }
 
         [TestMethod]
@@ -1440,6 +1450,207 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             // First for loop to crord, 2 to test, and then the two aggregates
             Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopSTLVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.vals.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "missing size() call");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopCVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.valC1D.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopCConstVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.valC1DConst.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopC2DConstVector()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select evt.valC2D.Where(s => s.Count() > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopEnumerableRange()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in Enumerable.Range(0, 20)
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopEnumerabelRangeWithVar()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in Enumerable.Range(0, evt.run)
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopEnumerabelRangeWithVarNZStart()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in Enumerable.Range(2, evt.run)
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestComplexEnumerableRangeLoop()
+        {
+            int[] seq = { 0, 2, 4, 6 };
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in seq
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestSeqEnumerableRangeLoop()
+        {
+            int[] seq = { 0, 1, 2, 3, 4, 5 };
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in seq
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=0; a")).Any(), "missing lower limit reference");
+        }
+
+        [TestMethod]
+        public void TestSeqEnumerableRangeLoopWithNonZeroStart()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in Enumerable.Range(2, 6)
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 8")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopEnumerableRangeNonZeroStart()
+        {
+            int[] seq = { 2, 3, 4, 5 };
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in seq
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+        }
+
+        /// <summary>
+        /// A C++ array test.
+        /// </summary>
+        public class dummyntupCPP
+        {
+            public int nSize;
+
+            [ArraySizeIndex("nSize")]
+            public int[] vals;
+        }
+
+        [TestMethod]
+        public void TestSimpleLoopCPPArray()
+        {
+            var q = new QueriableDummy<dummyntupCPP>();
+            var r1 = from evt in q
+                     select evt.vals.Where(s => s > 5).Count();
+            var r = r1.Where(v => v > 5).Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.IsFalse(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "size() should not be used");
+            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".nSize")).Any(), "missing reference to the variale with the size");
         }
 
         [TestMethod]
