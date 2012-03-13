@@ -581,6 +581,21 @@ namespace LINQToTTreeLib.Tests
             //Assert.IsFalse(CheckForLineContaining(fhpp, "junk_macro_parsettree.C"), "Checking for junk_macro in the file");
         }
 
+        [TestMethod]
+        [DeploymentItem("EVNT-short.root")]
+        public void TestComplexObjectATLASMCFile()
+        {
+            // Do we correctly parse an ATLAS MC file?
+            var f = ROOTNET.NTFile.Open("EVNT-short.root", "READ");
+            var t = f.Get("CollectionTree") as ROOTNET.Interface.NTTree;
+
+            var p = new ParseTTree();
+            var r = p.GenerateClasses(t).ToArray();
+
+            f.Close();
+            Assert.Inconclusive();
+        }
+
         /// <summary>
         /// Check to see if this file contains a certian string in any of its lines.
         /// </summary>
