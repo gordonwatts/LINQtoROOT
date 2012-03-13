@@ -596,6 +596,21 @@ namespace LINQToTTreeLib.Tests
             Assert.Inconclusive();
         }
 
+        [TestMethod]
+        [DeploymentItem("btagobjs.root")]
+        public void TestComplexObjectNiceObjectFile()
+        {
+            // Do we correctly parse an ATLAS MC file?
+            var f = ROOTNET.NTFile.Open("btagobjs.root", "READ");
+            var t = f.Get("btagging") as ROOTNET.Interface.NTTree;
+
+            var p = new ParseTTree();
+            var r = p.GenerateClasses(t).ToArray();
+
+            f.Close();
+            Assert.Inconclusive();
+        }
+
         /// <summary>
         /// Check to see if this file contains a certian string in any of its lines.
         /// </summary>
