@@ -39,7 +39,7 @@ namespace TTreeParser
 
             var masterClass = new ROOTClassShell(tree.Name);
 
-            foreach (var c in ExtractClassesFromBranchList(masterClass, tree.GetListOfBranches().Cast<ROOTNET.Interface.NTBranch>()))
+            foreach (var c in ExtractClassesFromBranchList(masterClass, tree.ListOfBranches.Cast<ROOTNET.Interface.NTBranch>()))
             {
                 yield return c;
             }
@@ -510,13 +510,32 @@ namespace TTreeParser
         private IEnumerable<ROOTClassShell> BuildMetadataForTTreeClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch, ROOTNET.Interface.NTClass cls)
         {
             //
+            // We will define the class, and it will be exactly what is given to use by the
+            // tree.
+            //
+
+            container.Add(new ItemSimpleType(branch.Name, branch.GetClassName()));
+
+            //
             // We are going to build our own class type here.
             //
 
-            //container.Add(new ItemROOTClass(branch.Name, branch.GetClassName()));
-            //var treeClass = new ROOTClassShell(cls.Name);
+            var treeClass = new ROOTClassShell(cls.Name);
 
-            return Enumerable.Empty<ROOTClassShell>();
+            //
+            // Now, loop over the branches and add them in, returning any classes we had to generate.
+            //
+
+            foreach (var c in ExtractClassesFromBranchList(treeClass, branch.ListOfBranches.Cast<ROOTNET.Interface.NTBranch>()))
+            {
+                yield return c;
+            }
+
+            //
+            // Finally, the one we just built!
+            //
+
+            yield return treeClass;
         }
 
         /// <summary>
@@ -637,12 +656,26 @@ namespace TTreeParser
         {
             if (templateInfo.TemplateName == "vector")
             {
-                return new ItemVector(TemplateParser.TranslateToCSharp(templateInfo), leaf.Name);
+                return new ItemVector(TemplateParser.TranslateToCSharp(templateInfo), ExtractVarName(leaf));
             }
             else
             {
                 throw new NotImplementedException("We rae not able to handle template classes other than vector: '" + templateInfo.TemplateName + "'");
             }
+        }
+
+        /// <summary>
+        /// Correctly extract the leaf name. If it is an array, then it might not be what we are expecting here...
+        /// </summary>
+        /// <param name="leaf"></param>
+        /// <returns></returns>
+        private string ExtractVarName(ROOTNET.Interface.NTLeaf leaf)
+        {
+            var m = _arrParser.Match(leaf.Title);
+            if (!m.Success)
+                return leaf.Name;
+
+            return m.Groups["vname"].Value;
         }
 
         /// <summary>

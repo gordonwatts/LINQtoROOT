@@ -596,13 +596,29 @@ namespace TTreeParser.Tests
             var mainClass = r.FindClass("CollectionTree");
             Assert.IsNotNull(mainClass, "CollectionTree class not found");
 
-            // Check that the MC info is in there
+            // Check that the top level classes are present.
             var eventInfo = mainClass.FindItem("EventInfo_p3_McEventInfo");
             Assert.IsNotNull(eventInfo, "EventInfo_p3_McEventInfo");
             var eventInfoClass = r.FindClass(eventInfo.ItemType);
             Assert.IsNotNull(eventInfoClass, string.Format("Event info class {0} wasn't found in the list", eventInfo.ItemType));
+            var mcCollection = mainClass.FindItem("McEventCollection_p4_GEN_EVENT");
+            Assert.IsNotNull(mcCollection, "McEventCollection");
+            var mcCollectionClass = r.FindClass(mcCollection.ItemType);
+            Assert.IsNotNull(mcCollectionClass, string.Format("Mc Collection class {0} wasn't foudn in the list", mcCollection.ItemType));
 
-            Assert.Inconclusive();
+            // The McEventInfo guy should have one item in it.
+            Assert.AreEqual(1, eventInfoClass.Items.Count, "# items in the event info class");
+            Assert.AreEqual("m_AllTheData", eventInfoClass.Items[0].Name, "m_AllTheData name");
+            Assert.AreEqual("uint[]", eventInfoClass.Items[0].ItemType, "m_AllTheData type");
+
+            // The McCollection has a bunch more stuff in it
+            Assert.AreEqual(13, mcCollectionClass.Items.Count, "# items in the McCollection class");
+            var rsignalProcessId = mcCollectionClass.FindItem("m_signalProcessId");
+            Assert.IsNotNull(rsignalProcessId, "m_signalProcessId item");
+            Assert.AreEqual("int[]", rsignalProcessId.ItemType, "m_signalProcessId type");
+            var rWeights = mcCollectionClass.FindItem("m_weights");
+            Assert.IsNotNull(rWeights, "m_weights item");
+            Assert.AreEqual("double[]", rWeights.ItemType, "m_weights type");
         }
 
         [TestMethod]
