@@ -109,6 +109,7 @@
     <Compile Include="t_ParseTTree.cs" />
     <Compile Include="t_TemplateParser.cs" />
     <Compile Include="t_Utils.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TTreeDataModel\TTreeDataModel.csproj">

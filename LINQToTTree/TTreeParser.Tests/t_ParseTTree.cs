@@ -6,9 +6,8 @@ using System.Linq;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TTreeDataModel;
-using TTreeParser;
 
-namespace LINQToTTreeLib.Tests
+namespace TTreeParser.Tests
 {
     /// <summary>
     ///This is a test class for ParseTTreeTest and is intended
@@ -591,8 +590,18 @@ namespace LINQToTTreeLib.Tests
 
             var p = new ParseTTree();
             var r = p.GenerateClasses(t).ToArray();
-
             f.Close();
+
+            // Get the root class first.
+            var mainClass = r.FindClass("CollectionTree");
+            Assert.IsNotNull(mainClass, "CollectionTree class not found");
+
+            // Check that the MC info is in there
+            var eventInfo = mainClass.FindItem("EventInfo_p3_McEventInfo");
+            Assert.IsNotNull(eventInfo, "EventInfo_p3_McEventInfo");
+            var eventInfoClass = r.FindClass(eventInfo.ItemType);
+            Assert.IsNotNull(eventInfoClass, string.Format("Event info class {0} wasn't found in the list", eventInfo.ItemType));
+
             Assert.Inconclusive();
         }
 
