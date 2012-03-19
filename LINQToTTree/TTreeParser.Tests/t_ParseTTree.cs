@@ -6,9 +6,8 @@ using System.Linq;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TTreeDataModel;
-using TTreeParser;
 
-namespace LINQToTTreeLib.Tests
+namespace TTreeParser.Tests
 {
     /// <summary>
     ///This is a test class for ParseTTreeTest and is intended
@@ -579,6 +578,62 @@ namespace LINQToTTreeLib.Tests
             FileInfo fhpp = new FileInfo("ntuple_dude.h");
 
             //Assert.IsFalse(CheckForLineContaining(fhpp, "junk_macro_parsettree.C"), "Checking for junk_macro in the file");
+        }
+
+        [TestMethod]
+        [DeploymentItem("EVNT-short.root")]
+        public void TestComplexObjectATLASMCFile()
+        {
+            // Do we correctly parse an ATLAS MC file?
+            var f = ROOTNET.NTFile.Open("EVNT-short.root", "READ");
+            var t = f.Get("CollectionTree") as ROOTNET.Interface.NTTree;
+
+            var p = new ParseTTree();
+            var r = p.GenerateClasses(t).ToArray();
+            f.Close();
+
+            // Get the root class first.
+            var mainClass = r.FindClass("CollectionTree");
+            Assert.IsNotNull(mainClass, "CollectionTree class not found");
+
+            // Check that the top level classes are present.
+            var eventInfo = mainClass.FindItem("EventInfo_p3_McEventInfo");
+            Assert.IsNotNull(eventInfo, "EventInfo_p3_McEventInfo");
+            var eventInfoClass = r.FindClass(eventInfo.ItemType);
+            Assert.IsNotNull(eventInfoClass, string.Format("Event info class {0} wasn't found in the list", eventInfo.ItemType));
+            var mcCollection = mainClass.FindItem("McEventCollection_p4_GEN_EVENT");
+            Assert.IsNotNull(mcCollection, "McEventCollection");
+            var mcCollectionClass = r.FindClass(mcCollection.ItemType);
+            Assert.IsNotNull(mcCollectionClass, string.Format("Mc Collection class {0} wasn't foudn in the list", mcCollection.ItemType));
+
+            // The McEventInfo guy should have one item in it.
+            Assert.AreEqual(1, eventInfoClass.Items.Count, "# items in the event info class");
+            Assert.AreEqual("m_AllTheData", eventInfoClass.Items[0].Name, "m_AllTheData name");
+            Assert.AreEqual("uint[]", eventInfoClass.Items[0].ItemType, "m_AllTheData type");
+
+            // The McCollection has a bunch more stuff in it
+            Assert.AreEqual(13, mcCollectionClass.Items.Count, "# items in the McCollection class");
+            var rsignalProcessId = mcCollectionClass.FindItem("m_signalProcessId");
+            Assert.IsNotNull(rsignalProcessId, "m_signalProcessId item");
+            Assert.AreEqual("int[]", rsignalProcessId.ItemType, "m_signalProcessId type");
+            var rWeights = mcCollectionClass.FindItem("m_weights");
+            Assert.IsNotNull(rWeights, "m_weights item");
+            Assert.AreEqual("double[]", rWeights.ItemType, "m_weights type");
+        }
+
+        [TestMethod]
+        [DeploymentItem("btagobjs.root")]
+        public void TestComplexObjectNiceObjectFile()
+        {
+            // Do we correctly parse an ATLAS MC file?
+            var f = ROOTNET.NTFile.Open("btagobjs.root", "READ");
+            var t = f.Get("btagging") as ROOTNET.Interface.NTTree;
+
+            var p = new ParseTTree();
+            var r = p.GenerateClasses(t).ToArray();
+
+            f.Close();
+            Assert.Inconclusive();
         }
 
         /// <summary>
