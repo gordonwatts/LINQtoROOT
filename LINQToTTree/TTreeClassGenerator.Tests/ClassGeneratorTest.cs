@@ -920,7 +920,7 @@ namespace TTreeClassGenerator
         [TestMethod]
         [DeploymentItem("CollectionTreeConfig-000.ntup")]
         [DeploymentItem("EVNT-short.ntupom")]
-        public void TestXMLParsing()
+        public void TestParseXMLOfTTreeWithInterior()
         {
             var basexml = new FileInfo("EVNT-short.ntupom");
             Assert.IsTrue(basexml.Exists, "can't find input xml file");

@@ -154,10 +154,13 @@ namespace TTreeClassGenerator
 
             foreach (var c in classSpec.Classes)
             {
-                if (c.NtupleProxyPath == null)
-                    throw new ArgumentNullException("Class '" + c.Name + "' has no ntuple proxy. Can't generate a class for it.");
-                if (!File.Exists(c.NtupleProxyPath))
-                    throw new ArgumentNullException("Class '" + c.Name + "'s ntuple proxy does not exist at " + c.NtupleProxyPath + ". Can't generate a class for it.");
+                if (!c.IsTTreeSubClass)
+                {
+                    if (c.NtupleProxyPath == null)
+                        throw new ArgumentNullException("Class '" + c.Name + "' has no ntuple proxy. Can't generate a class for it.");
+                    if (!File.Exists(c.NtupleProxyPath))
+                        throw new ArgumentNullException("Class '" + c.Name + "'s ntuple proxy does not exist at " + c.NtupleProxyPath + ". Can't generate a class for it.");
+                }
             }
 
             var classByName = (from c in classSpec.Classes
@@ -288,44 +291,47 @@ namespace TTreeClassGenerator
 
                         Action writeOutExtra = () =>
                         {
-                            output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
-
-                            output.WriteLine("    public static string[] _gObjectFiles= {");
-                            foreach (var item in classSpec.ClassImplimintationFiles)
+                            if (!cls.IsTTreeSubClass)
                             {
-                                output.WriteLine("      @\"" + item + "\",");
-                            }
-                            output.WriteLine("    };");
+                                output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
 
-                            output.WriteLine("    public static string[] _gCINTLines= {");
-                            if (cls.CINTExtraInfo != null)
-                            {
-                                foreach (var item in cls.CINTExtraInfo)
+                                output.WriteLine("    public static string[] _gObjectFiles= {");
+                                foreach (var item in classSpec.ClassImplimintationFiles)
                                 {
                                     output.WriteLine("      @\"" + item + "\",");
                                 }
-                            }
-                            output.WriteLine("    };");
+                                output.WriteLine("    };");
 
-                            output.WriteLine("    public static string[] _gClassesToDeclare= {");
-                            if (cls.ClassesToGenerate != null)
-                            {
-                                foreach (var item in cls.ClassesToGenerate)
+                                output.WriteLine("    public static string[] _gCINTLines= {");
+                                if (cls.CINTExtraInfo != null)
                                 {
-                                    output.WriteLine("      @\"" + item.classSpec + "\",");
+                                    foreach (var item in cls.CINTExtraInfo)
+                                    {
+                                        output.WriteLine("      @\"" + item + "\",");
+                                    }
                                 }
-                            }
-                            output.WriteLine("    };");
+                                output.WriteLine("    };");
 
-                            output.WriteLine("    public static string[] _gClassesToDeclareIncludes = {");
-                            if (cls.ClassesToGenerate != null)
-                            {
-                                foreach (var item in cls.ClassesToGenerate)
+                                output.WriteLine("    public static string[] _gClassesToDeclare= {");
+                                if (cls.ClassesToGenerate != null)
                                 {
-                                    output.WriteLine("      @\"" + item.includeFiles + "\",");
+                                    foreach (var item in cls.ClassesToGenerate)
+                                    {
+                                        output.WriteLine("      @\"" + item.classSpec + "\",");
+                                    }
                                 }
+                                output.WriteLine("    };");
+
+                                output.WriteLine("    public static string[] _gClassesToDeclareIncludes = {");
+                                if (cls.ClassesToGenerate != null)
+                                {
+                                    foreach (var item in cls.ClassesToGenerate)
+                                    {
+                                        output.WriteLine("      @\"" + item.includeFiles + "\",");
+                                    }
+                                }
+                                output.WriteLine("    };");
                             }
-                            output.WriteLine("    };");
                         };
 
                         ///

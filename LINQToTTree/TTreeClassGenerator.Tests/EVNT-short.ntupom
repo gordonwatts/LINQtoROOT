@@ -6,9 +6,11 @@
       <Items>
         <IClassItem xsi:type="ItemVector" ItemType="uint[]" Name="m_AllTheData" />
       </Items>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>McEventCollection_p4</Name>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
       <Items>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessId">
           <Indicies>
@@ -87,6 +89,7 @@
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>McEventCollection_p4</Name>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
       <Items>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_x">
           <Indicies>
@@ -137,6 +140,7 @@
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>McEventCollection_p4</Name>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
       <Items>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_px">
           <Indicies>
@@ -226,6 +230,7 @@
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>McEventCollection_p4</Name>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
       <Items>
         <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="m_genEvents" />
         <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="m_genVertices" />

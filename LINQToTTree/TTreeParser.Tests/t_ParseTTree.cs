@@ -625,6 +625,8 @@ namespace TTreeParser.Tests
             var rWeights = mcCollectionClass.FindItem("m_weights");
             Assert.IsNotNull(rWeights, "m_weights item");
             Assert.AreEqual("double[]", rWeights.ItemType, "m_weights type");
+
+            CheckSerialization(r, "TestComplexObjectATLASMCFile");
         }
 
 #if false
