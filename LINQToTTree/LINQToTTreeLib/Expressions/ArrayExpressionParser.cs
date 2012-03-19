@@ -55,8 +55,10 @@ namespace LINQToTTreeLib.Expressions
             {
                 _parser = new ArrayExpressionParser();
                 container.SatisfyImportsOnce(_parser);
+                Console.WriteLine("Imported the array parser with {0} parsers.", _parser._handlers.Count());
             }
 
+            Console.WriteLine("Doing array parser lookup with {0} parsers.", _parser._handlers.Count());
             var result = _parser.GetIArrayInfo(expr, gc, cc, container);
 
             if (result == null)
