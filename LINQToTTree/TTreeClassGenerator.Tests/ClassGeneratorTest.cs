@@ -797,6 +797,38 @@ namespace TTreeClassGenerator
             cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestSimpleRename", userinfo } });
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(InvalidDataException))]
+        public void TestDuplicateClassNames()
+        {
+            var vIndex = new ItemSimpleType("n", "int");
+            FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(vIndex);
+
+            ROOTClassShell mainClass1 = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            mainClass1.Add(vIndex);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass, mainClass1 }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo()
+            {
+                Groups = new ArrayGroup[] { new ArrayGroup() {
+                Name = "ungrouped",
+                Variables = new VariableInfo[] {
+                    new VariableInfo() { NETName = "n", TTreeName = "n" },
+                } } }
+            };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("TestDuplicateClassNames.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "TestDuplicateClassNames", userinfo } });
+        }
+
         private void DumpOutputFile(FileInfo outputFile)
         {
             foreach (var l in LinesInFile(outputFile))

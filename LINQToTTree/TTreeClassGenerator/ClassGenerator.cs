@@ -156,6 +156,21 @@ namespace TTreeClassGenerator
                     throw new ArgumentNullException("Class '" + c.Name + "'s ntuple proxy does not exist at " + c.NtupleProxyPath + ". Can't generate a class for it.");
             }
 
+            var classByName = (from c in classSpec.Classes
+                              group c by c.Name into g
+                              where g.Count() > 1
+                              select g.Key).ToArray();
+            if (classByName.Length > 0)
+            {
+                var msg = new StringBuilder();
+                msg.AppendFormat("The following classes have the same name:");
+                foreach (var cname in classByName)
+                {
+                    msg.AppendFormat(" {0}", cname);
+                }
+                throw new InvalidDataException(msg.ToString());
+            }
+
             foreach (var c in classSpec.ClassImplimintationFiles)
             {
                 if (c == null)
