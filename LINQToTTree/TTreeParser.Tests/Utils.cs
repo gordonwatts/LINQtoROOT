@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TTreeDataModel;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TTreeParser.Tests
 {
@@ -14,6 +15,7 @@ namespace TTreeParser.Tests
         /// <returns></returns>
         public static ROOTClassShell FindClass(this IEnumerable<ROOTClassShell> classes, string name)
         {
+            Assert.AreEqual(1, classes.Where(c => c.Name == name).Count(), string.Format("# of classes called {0}", name));
             return classes.Where(c => c.Name == name).FirstOrDefault();
         }
 
