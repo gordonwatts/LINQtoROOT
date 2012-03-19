@@ -39,6 +39,7 @@ namespace TTreeParser.Tests
         {
             ROOTNET.NTApplication.GetApplications();
             ROOTNET.NTSystem.gSystem.Load("libRIO");
+            SimpleLogging.ResetLogging();
         }
 
         /// <summary>

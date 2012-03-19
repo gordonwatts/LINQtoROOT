@@ -16,6 +16,12 @@ namespace TTreeParser
             _outputs.Add(Console.Out);
         }
 
+        public static void ResetLogging()
+        {
+            _outputs.Clear();
+            _outputs.Add(Console.Out);
+        }
+
         /// <summary>
         /// Add a stream to log
         /// </summary>
