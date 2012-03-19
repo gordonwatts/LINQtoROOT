@@ -9,6 +9,7 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -24,6 +25,7 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
             ntuple.Reset();
+            ArrayExpressionParser.ResetParser();
 
             /// Get the path for the other nutple guy correct! Since Pex and tests run from different places in the directory structure we have to
             /// do some work to find the top leve!
