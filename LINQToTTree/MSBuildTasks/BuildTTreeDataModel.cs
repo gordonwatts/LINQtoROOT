@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using System.Text;
 
 namespace MSBuildTasks
 {
@@ -70,11 +71,25 @@ namespace MSBuildTasks
             }
             catch (Exception e)
             {
-                Log.LogError("ParseError", "ParseError", "ParseError", inputDM.ItemSpec, 0, 0, 0, 0, "Failed to parse: " + e.Message);
+                Log.LogError("ParseError", "ParseError", "ParseError", inputDM.ItemSpec, 0, 0, 0, 0, "Failed to parse: " + DumpExceptoin(e));
                 return false;
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Dump an error out
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private string DumpExceptoin(Exception e)
+        {
+            StringBuilder msg = new StringBuilder();
+            msg.AppendFormat("{0} ({1})", e.Message, e.StackTrace);
+            if (e.InnerException != null)
+                msg.AppendFormat(" - which was caused by {0}", DumpExceptoin(e.InnerException));
+            return msg.ToString();
         }
     }
 }
