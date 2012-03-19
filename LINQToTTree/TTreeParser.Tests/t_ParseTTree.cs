@@ -622,6 +622,8 @@ namespace TTreeParser.Tests
             Assert.AreEqual("double[]", rWeights.ItemType, "m_weights type");
         }
 
+#if false
+        // We don't know how to do this yet.
         [TestMethod]
         [DeploymentItem("btagobjs.root")]
         public void TestComplexObjectNiceObjectFile()
@@ -636,6 +638,7 @@ namespace TTreeParser.Tests
             f.Close();
             Assert.Inconclusive();
         }
+#endif
 
         /// <summary>
         /// Check to see if this file contains a certian string in any of its lines.
