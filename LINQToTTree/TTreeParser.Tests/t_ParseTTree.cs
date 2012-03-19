@@ -596,6 +596,7 @@ namespace TTreeParser.Tests
             // Get the root class first.
             var mainClass = r.FindClass("CollectionTree");
             Assert.IsNotNull(mainClass, "CollectionTree class not found");
+            Assert.IsFalse(mainClass.IsTTreeSubClass, "main class isn't a sub-tree class!");
 
             // Check that the top level classes are present.
             var eventInfo = mainClass.FindItem("EventInfo_p3_McEventInfo");
@@ -606,6 +607,10 @@ namespace TTreeParser.Tests
             Assert.IsNotNull(mcCollection, "McEventCollection");
             var mcCollectionClass = r.FindClass(mcCollection.ItemType);
             Assert.IsNotNull(mcCollectionClass, string.Format("Mc Collection class {0} wasn't foudn in the list", mcCollection.ItemType));
+
+            // Check that the sub classes are set up here.
+            Assert.IsTrue(eventInfoClass.IsTTreeSubClass, "event info sub class setting");
+            Assert.IsTrue(mcCollectionClass.IsTTreeSubClass, "mc collection class sub-class setting");
 
             // The McEventInfo guy should have one item in it.
             Assert.AreEqual(1, eventInfoClass.Items.Count, "# items in the event info class");

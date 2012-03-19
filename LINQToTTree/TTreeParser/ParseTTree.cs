@@ -520,7 +520,7 @@ namespace TTreeParser
             // We are going to build our own class type here.
             //
 
-            var treeClass = new ROOTClassShell(cls.Name);
+            var treeClass = new ROOTClassShell(cls.Name) { IsTTreeSubClass = true };
 
             //
             // Now, loop over the branches and add them in, returning any classes we had to generate.
