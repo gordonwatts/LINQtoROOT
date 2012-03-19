@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TTreeUserInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Groups>
+    <ArrayGroup Name="ungrouped">
+      <Variables>
+        <VariableInfo NETName="EventInfo_p3_McEventInfo" TTreeName="EventInfo_p3_McEventInfo" />
+        <VariableInfo NETName="McEventCollection_p4_GEN_EVENT" TTreeName="McEventCollection_p4_GEN_EVENT" />
+      </Variables>
+    </ArrayGroup>
+  </Groups>
+</TTreeUserInfo>

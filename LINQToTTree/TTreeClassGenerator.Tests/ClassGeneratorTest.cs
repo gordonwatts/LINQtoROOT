@@ -917,6 +917,17 @@ namespace TTreeClassGenerator
             ClassGenerator target = new ClassGenerator();
             target.GenerateClasss(f, f, null);
         }
+
+        [TestMethod]
+        [DeploymentItem("CollectionTreeConfig-000.ntup")]
+        [DeploymentItem("EVNT-short.ntupom")]
+        public void TestXMLParsing()
+        {
+            var basexml = new FileInfo("EVNT-short.ntupom");
+            Assert.IsTrue(basexml.Exists, "can't find input xml file");
+            var t = new ClassGenerator();
+            t.GenerateClasss(basexml, new FileInfo("TestXMLParsing.cs"), "Bogus");
+        }
     }
 
 }

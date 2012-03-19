@@ -68,7 +68,11 @@ namespace TTreeClassGenerator
 
             foreach (var c in classSpec.Classes)
             {
-                c.NtupleProxyPath = FindFileInDefaultPaths(c.NtupleProxyPath, inputXMLFile).FullName;
+                var f = FindFileInDefaultPaths(c.NtupleProxyPath, inputXMLFile);
+                if (f != null)
+                {
+                    c.NtupleProxyPath = f.FullName;
+                }
             }
 
             ///

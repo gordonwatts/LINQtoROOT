@@ -82,7 +82,14 @@
       <Name>TTreeDataModel</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="CollectionTreeConfig-000.ntup">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="EVNT-short.ntupom">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassGeneratorTest.cs" />
     <Compile Include="ClassGeneratorTest.GenerateClassFromClasses.g.cs">
