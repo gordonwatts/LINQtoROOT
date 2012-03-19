@@ -104,7 +104,6 @@ namespace TTreeClassGenerator
                 {
                     ROOTClassShell rcs = new ROOTClassShell();
                     rcs.Name = "dude_" + i.ToString();
-                    rcs.SubClassName = null;
 
                     for (int j = 0; j < i; j++)
                     {
