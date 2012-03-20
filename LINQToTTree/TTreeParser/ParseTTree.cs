@@ -533,6 +533,11 @@ namespace TTreeParser
         }
 
         /// <summary>
+        /// Keep track of the class names we've used already so we keep everything unique.
+        /// </summary>
+        private IDictionary<string, int> _classNameCounter = new Dictionary<string, int>();
+
+        /// <summary>
         /// A class has been defined only in the local tree. We need to parse through it and extract
         /// enough into to build a class on our own so that it can be correctly referenced in LINQ.
         /// </summary>
@@ -543,17 +548,38 @@ namespace TTreeParser
         private IEnumerable<ROOTClassShell> BuildMetadataForTTreeClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch, ROOTNET.Interface.NTClass cls)
         {
             //
+            // Get a unique classname. Attempt to do "the right thing".
+            //
+
+            string className = cls.Name;
+            if (branch is ROOTNET.Interface.NTBranchElement)
+            {
+                var cn = (branch as ROOTNET.Interface.NTBranchElement).ClonesName;
+                if (!string.IsNullOrWhiteSpace(cn))
+                    className = cn;
+            }
+            if (_classNameCounter.ContainsKey(className))
+            {
+                _classNameCounter[className] += 1;
+                className = string.Format("{0}_{1}", className, _classNameCounter[className]);
+            }
+            else
+            {
+                _classNameCounter[className] = 0;
+            }
+
+            //
             // We will define the class, and it will be exactly what is given to use by the
             // tree.
             //
 
-            container.Add(new ItemSimpleType(branch.Name, branch.GetClassName()));
+            container.Add(new ItemSimpleType(branch.Name, className));
 
             //
             // We are going to build our own class type here.
             //
 
-            var treeClass = new ROOTClassShell(cls.Name) { IsTTreeSubClass = true };
+            var treeClass = new ROOTClassShell(className) { IsTTreeSubClass = true };
 
             //
             // Now, loop over the branches and add them in, returning any classes we had to generate.
@@ -581,9 +607,9 @@ namespace TTreeParser
         {
             string className = TypeDefTranslator.ResolveTypedef(leaf.TypeName);
 
-            ///
-            /// First, see if this is a template of some sort.
-            /// 
+            //
+            // First, see if this is a template of some sort.
+            // 
 
             var result = TemplateParser.ParseForTemplates(className);
             if (result is TemplateParser.TemplateInfo)

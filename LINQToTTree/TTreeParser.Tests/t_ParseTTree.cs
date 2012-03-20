@@ -617,14 +617,18 @@ namespace TTreeParser.Tests
             Assert.AreEqual("m_AllTheData", eventInfoClass.Items[0].Name, "m_AllTheData name");
             Assert.AreEqual("uint[]", eventInfoClass.Items[0].ItemType, "m_AllTheData type");
 
-            // The McCollection has a bunch more stuff in it
-            Assert.AreEqual(13, mcCollectionClass.Items.Count, "# items in the McCollection class");
-            var rsignalProcessId = mcCollectionClass.FindItem("m_signalProcessId");
-            Assert.IsNotNull(rsignalProcessId, "m_signalProcessId item");
-            Assert.AreEqual("int[]", rsignalProcessId.ItemType, "m_signalProcessId type");
-            var rWeights = mcCollectionClass.FindItem("m_weights");
-            Assert.IsNotNull(rWeights, "m_weights item");
-            Assert.AreEqual("double[]", rWeights.ItemType, "m_weights type");
+            // The McCollection has a bunch more stuff in it, namely 3 items.
+            Assert.AreEqual(3, mcCollectionClass.Items.Count, "# items in the McCollection class");
+            var rGenParticle = mcCollectionClass.FindItem("m_genParticles");
+            Assert.IsNotNull(rGenParticle, "gen particle");
+            Assert.AreEqual("GenParticle_p4", rGenParticle.ItemType, "gen particle type");
+
+            // And go down one more level just to check. :-)
+            var rGenParticle_p4Class = r.FindClass(rGenParticle.ItemType);
+            Assert.IsNotNull(rGenParticle_p4Class, "gen particle class spec");
+            var rpx = rGenParticle_p4Class.FindItem("m_px");
+            Assert.IsNotNull(rpx, "m_px in the gen particle class");
+            Assert.AreEqual("float[]", rpx.ItemType, "m_px type");
 
             CheckSerialization(r, "TestComplexObjectATLASMCFile");
         }
