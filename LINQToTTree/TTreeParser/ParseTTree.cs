@@ -39,10 +39,16 @@ namespace TTreeParser
 
             var masterClass = new ROOTClassShell(tree.Name);
 
-            foreach (var c in ExtractClassesFromBranchList(masterClass, tree.ListOfBranches.Cast<ROOTNET.Interface.NTBranch>()))
+            var subClassesByName = from sc in ExtractClassesFromBranchList(masterClass, tree.ListOfBranches.Cast<ROOTNET.Interface.NTBranch>())
+                                   group sc by sc.Name;
+            var subClasses = from scg in subClassesByName
+                             where ForceClassesSame (scg)
+                             select scg.First();
+            foreach (var sc in subClasses)
             {
-                yield return c;
+                yield return sc;
             }
+
 
             ///
             /// Last thing we need to do is create a proxy for the class.
@@ -84,6 +90,33 @@ namespace TTreeParser
             /// 
 
             yield return masterClass;
+        }
+
+        /// <summary>
+        /// Make sure that this list of classes is totally in common.
+        /// </summary>
+        /// <param name="scg"></param>
+        /// <returns></returns>
+        private bool ForceClassesSame(IEnumerable<ROOTClassShell> scg)
+        {
+            var f = scg.First();
+            foreach (var o in scg.Skip(1))
+            {
+                if (f.IsTTreeSubClass != o.IsTTreeSubClass)
+                    throw new InvalidDataException(string.Format("IsTreeCubclass not the same in duplicate {0} classes.", f.Name));
+                if (f.Items.Count != o.Items.Count)
+                    throw new InvalidDataException(string.Format("Number of items is not the same in duplicate {0} classes.", f.Name));
+                foreach (var item in f.Items.Zip(o.Items, (n1, n2) => Tuple.Create(n1, n2)))
+                {
+                    if (item.Item1.Name != item.Item2.Name)
+                        throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item names", f.Name));
+                    if (item.Item1.ItemType != item.Item2.ItemType)
+                        throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item types", f.Name));
+                    
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
