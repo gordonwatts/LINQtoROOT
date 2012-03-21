@@ -629,6 +629,12 @@ namespace TTreeParser.Tests
             var rpx = rGenParticle_p4Class.FindItem("m_px");
             Assert.IsNotNull(rpx, "m_px in the gen particle class");
             Assert.AreEqual("float[]", rpx.ItemType, "m_px type");
+            Assert.IsInstanceOfType(rpx, typeof(ItemCStyleArray), "m_px should be a c-style array");
+            var rpxC = rpx as ItemCStyleArray;
+            Assert.AreEqual(1, rpxC.Indicies.Count, "# of indicies on m_px");
+            Assert.AreEqual(0, rpxC.Indicies[0].indexPosition, "m_px index boundary");
+            Assert.AreEqual(false, rpxC.Indicies[0].indexConst, "m_px index boundary");
+            Assert.AreEqual("m_GenParticles.GetEntries()", rpxC.Indicies[0].indexBoundName, "m_px index boundary");
 
             CheckSerialization(r, "TestComplexObjectATLASMCFile");
         }
