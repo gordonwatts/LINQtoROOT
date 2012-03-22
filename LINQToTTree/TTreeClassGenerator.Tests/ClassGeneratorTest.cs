@@ -634,7 +634,7 @@ namespace TTreeClassGenerator
         public void TestCStyleArray()
         {
             // Simple set of types for an index array
-            var vArray = new ItemCStyleArray("int[]", "arr");
+            var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "n", false);
             var vIndex = new ItemSimpleType("n", "int");
             FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
@@ -691,7 +691,7 @@ namespace TTreeClassGenerator
         public void TestConstCStyleArray()
         {
             // Simple set of types for an index array
-            var vArray = new ItemCStyleArray("int[]", "arr");
+            var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "10", true);
             var vIndex = new ItemSimpleType("n", "int");
             FileInfo proxyFile = new FileInfo("TestConstCStyleArray.cpp");
@@ -733,7 +733,7 @@ namespace TTreeClassGenerator
         public void TestCSyleArrayNonIntIndex()
         {
             // Simple set of types for an index array
-            var vArray = new ItemCStyleArray("int[]", "arr");
+            var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "n", false);
             var vIndex = new ItemSimpleType("n", "float");
             FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
@@ -767,7 +767,7 @@ namespace TTreeClassGenerator
         public void TestCStyleArrayBadIndexName()
         {
             // Simple set of types for an index array
-            var vArray = new ItemCStyleArray("int[]", "arr");
+            var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "i", false);
             var vIndex = new ItemSimpleType("n", "int");
             FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
@@ -917,6 +917,7 @@ namespace TTreeClassGenerator
             target.GenerateClasss(f, f, null);
         }
 
+#if false
         [TestMethod]
         [DeploymentItem("CollectionTreeConfig-000.ntup")]
         [DeploymentItem("EVNT-short.ntupom")]
@@ -927,6 +928,7 @@ namespace TTreeClassGenerator
             var t = new ClassGenerator();
             t.GenerateClasss(basexml, new FileInfo("TestXMLParsing.cs"), "Bogus");
         }
+#endif
     }
 
 }
