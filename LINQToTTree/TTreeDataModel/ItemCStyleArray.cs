@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace TTreeDataModel
 {
     /// <summary>
-    /// Represents a C style array
+    /// Represents a C style array of some other item type.
     /// </summary>
     public class ItemCStyleArray : IClassItem, IClassItemExtraAttributes
     {
@@ -14,10 +14,10 @@ namespace TTreeDataModel
         /// <param name="type"></param>
         /// <param name="name"></param>
         /// <param name="indexItem"></param>
-        public ItemCStyleArray(string type, string name)
+        public ItemCStyleArray(string type, IClassItem baseItem)
         {
             ItemType = type;
-            Name = name;
+            BaseItem = baseItem;
             Indicies = new List<IndexInfo>();
         }
 
@@ -27,6 +27,7 @@ namespace TTreeDataModel
         public ItemCStyleArray()
         {
             Indicies = new List<IndexInfo>();
+            BaseItem = new ItemSimpleType("dude", "int"); // Dummy so we are immune to set order!
         }
 
         /// <summary>
@@ -47,10 +48,15 @@ namespace TTreeDataModel
         public override string ItemType { get; set; }
 
         /// <summary>
-        /// Get/Set the name of this TTree variable. (arr).
+        /// Get/Set the name of this TTree variable. (arr). We are
+        /// get/setting the base item type here, to remain consistent.
         /// </summary>
         [XmlAttribute]
-        public override string Name { get; set; }
+        public override string Name
+        {
+            get { return BaseItem.Name; }
+            set { BaseItem.Name = value; }
+        }
 
         /// <summary>
         /// Info for each context.
@@ -75,11 +81,33 @@ namespace TTreeDataModel
         public List<IndexInfo> Indicies { get; set; }
 
         /// <summary>
+        /// The base item we are making an array of.
+        /// </summary>
+        [XmlElement]
+        public IClassItem BaseItem { get; set; }
+
+        /// <summary>
         /// Return the extra attribute to mark this guy as an index.
         /// </summary>
         /// <returns></returns>
         public System.Collections.Generic.IEnumerable<string> GetAttributes()
         {
+            //
+            // If our base item has any attributes, follow up on that...
+            //
+
+            if (BaseItem is IClassItemExtraAttributes)
+            {
+                foreach (var index in (BaseItem as IClassItemExtraAttributes).GetAttributes())
+                {
+                    yield return index;
+                }
+            }
+
+            //
+            // Now emit something for each index we are following.
+            //
+
             foreach (var index in Indicies)
             {
                 if (!index.indexConst)

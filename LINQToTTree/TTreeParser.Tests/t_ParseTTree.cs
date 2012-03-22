@@ -170,6 +170,23 @@ namespace TTreeParser.Tests
         }
 
 #if false
+        [TestMethod]
+        public void TestGenerateClasses2DCStyleVector()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithCStyleVectorArray();
+            var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
+            var result = p.GenerateClasses(t).ToArray();
+
+            Assert.AreEqual(1, result.Length, "only one top level class here");
+            var citem = result[0];
+            Assert.AreEqual(1, citem.Items.Count, "# of items");
+            var item = citem.Items[0];
+            Assert.IsInstanceOfType(item, typeof(ItemCStyleArray), "item type");
+        }
+#endif
+
+#if false
         /// Test case doesn't work b/c I don't know how to create a tree with a leaf name that contains a "::".
         [TestMethod]
         public void TestClassWithDoubleColonName()
@@ -634,7 +651,16 @@ namespace TTreeParser.Tests
             Assert.AreEqual(1, rpxC.Indicies.Count, "# of indicies on m_px");
             Assert.AreEqual(0, rpxC.Indicies[0].indexPosition, "m_px index boundary");
             Assert.AreEqual(false, rpxC.Indicies[0].indexConst, "m_px index boundary");
-            Assert.AreEqual("m_GenParticles.GetEntries()", rpxC.Indicies[0].indexBoundName, "m_px index boundary");
+            Assert.AreEqual("m_genParticles.GetEntries()", rpxC.Indicies[0].indexBoundName, "m_px index boundary");
+
+            // getVerticies has a vector in it - so we get a 2D guy. Check that.
+            var rGenVerticiesClass = r.FindClass("GenVertex_p4");
+            var rWeights = rGenVerticiesClass.FindItem("m_weights");
+            Assert.IsNotNull(rWeights, "the m_weights member of genVerticies");
+            Assert.AreEqual("float[][]", rWeights.ItemType, "m_weights type");
+            Assert.IsInstanceOfType(rWeights, typeof(ItemCStyleArray), "type of rWeigths guy");
+            var rWeightsC = rWeights as ItemCStyleArray;
+            Assert.AreEqual("m_genVertices.GetEntries()", rWeightsC.Indicies[0].indexBoundName, "rWeights index boundary");
 
             CheckSerialization(r, "TestComplexObjectATLASMCFile");
         }

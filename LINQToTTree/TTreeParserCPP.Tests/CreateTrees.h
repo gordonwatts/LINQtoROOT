@@ -338,6 +338,27 @@ namespace TTreeParserCPPTests {
 			return gcnew ROOTNET::NTTree(t);
 		}
 
+		/// Pathalogical, but it occurs all the time in ATLAS files. :(
+		static ROOTNET::NTTree ^CreateTreeWithCStyleVectorArray()
+		{
+			vector<float> myarray[5];
+
+			TTree *t = new TTree("CreateTreeWithCStyleVectorArray", "left field");
+			auto brAddr = t->Branch("myarr", &myarray);
+
+			for (int i = 0; i < 5; i++) {
+				for (int cnt = 0; cnt < 10; cnt++) {
+					myarray[i].push_back(cnt);
+				}
+			}
+
+			t->Fill();
+
+			t->ResetBranchAddress(brAddr);
+
+			return gcnew ROOTNET::NTTree(t);
+		}
+
 		/// Create a tree with an integer array and something "normal"
 		static ROOTNET::NTTree ^CreateTreeWithSimpleSingleVectorAndItem(int entries)
 		{

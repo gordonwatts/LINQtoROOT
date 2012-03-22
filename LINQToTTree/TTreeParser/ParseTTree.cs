@@ -628,17 +628,60 @@ namespace TTreeParser
         }
 
         /// <summary>
-        /// A simple item, or an item, at least, that root knows how to deal with and for which
-        /// we should have a complete, portable, guy ready for.
+        /// Holds the leaf info we need to pass around in order to parse a leaf's type
+        /// and variable name.
+        /// </summary>
+        private struct SimpleLeafInfo
+        {
+            public string Name;
+            public string Title;
+            public string TypeName;
+
+            public SimpleLeafInfo(ROOTNET.Interface.NTLeaf leaf)
+            {
+                Name = leaf.Name;
+                Title = leaf.Title;
+                TypeName = leaf.TypeName;
+            }
+
+            public SimpleLeafInfo(SimpleLeafInfo old)
+            {
+                Name = old.Name;
+                Title = old.Title;
+                TypeName = old.TypeName;
+            }
+        }
+
+        /// <summary>
+        /// Create the item info struct for an item that is simple. That is, simple arrays, or objects
+        /// that root knows how to deal with. This is actually complex, as ROOT has several ways of specifying this,
+        /// unfortunately.
+        /// 1) There is the item type (leaf.TypeName). This could be "int" or "vector-blah-blah"
+        /// 2) In the title there may be a "[stuff]" whihc means if it was "int" it becomes "int[]". :-)
+        ///    This is for dealing with a c-style array.
         /// </summary>
         /// <param name="leaf"></param>
         /// <returns></returns>
         private IClassItem ExtractSimpleItem(ROOTNET.Interface.NTLeaf leaf)
         {
+            return ExtractSimpleItem(new SimpleLeafInfo(leaf));
+        }
+
+        private IClassItem ExtractSimpleItem(SimpleLeafInfo leaf)
+        {
             string className = TypeDefTranslator.ResolveTypedef(leaf.TypeName);
 
             //
-            // First, see if this is a template of some sort.
+            // Check if it is a c-style array. If it is, then the title will contain
+            // the specification we need to look at for the c-style array bit. This will get
+            // called recursively to parse the actual type after the c-style array bit is stripped off.
+            // 
+
+            if (leaf.Title.Contains("["))
+                return ExtractCArrayInfo(leaf);
+
+            //
+            // Next, if the type is a template, special parse that.
             // 
 
             var result = TemplateParser.ParseForTemplates(className);
@@ -646,13 +689,6 @@ namespace TTreeParser
             {
                 return ExtractTemplateItem(leaf, result as TemplateParser.TemplateInfo);
             }
-
-            //
-            // Next, check if it is an C++ array.
-            // 
-
-            if (leaf.Title.Contains("["))
-                return ExtractCArrayInfo(leaf);
 
             ///
             /// Ok - so it is a single "object" or similar. So we need to look at it and figure
@@ -684,12 +720,12 @@ namespace TTreeParser
         private Regex _arrParser = new Regex(@"^(?<vname>\w+)(?:\[(?<iname>\w+)\])+$");
 
         /// <summary>
-        /// This looks like a C style array - that is "[" and "]" are being used. Extract the index in it
+        /// This looks like a C style array - that is "[" and "]" are being used, and in the title. Extract the index in it
         /// and pass it along.
         /// </summary>
         /// <param name="leaf"></param>
         /// <returns></returns>
-        private IClassItem ExtractCArrayInfo(ROOTNET.Interface.NTLeaf leaf)
+        private IClassItem ExtractCArrayInfo(SimpleLeafInfo leaf)
         {
             //
             // Grab the name first.
@@ -700,12 +736,24 @@ namespace TTreeParser
                 return null;
 
             var vname = m.Groups["vname"].Value;
-            var tname = TypeDefTranslator.ResolveTypedef(leaf.TypeName).SimpleCPPTypeToCSharpType();
+
+            //
+            // Next job is to parse the remaining type into a simple item that we can use...
+            // this allows for "arbitrary" items that are C-style arrays.
+            //
+
+            var baseItem = ExtractSimpleItem(new SimpleLeafInfo() { Title = vname, Name = vname, TypeName = leaf.TypeName });
+
+            //
+            // Great! And then the new type will be whatever the type is of this base item, but indexed...
+            //
+
+            var tname = baseItem.ItemType;
             for (int i = 0; i < m.Groups["iname"].Captures.Count; i++)
             {
                 tname += "[]";
             }
-            var arr = new ItemCStyleArray(tname, vname);
+            var arr = new ItemCStyleArray(tname, baseItem);
 
             //
             // Now, loop through and grab all the indicies we can find.
@@ -741,7 +789,7 @@ namespace TTreeParser
         /// <param name="leaf"></param>
         /// <param name="templateInfo"></param>
         /// <returns></returns>
-        private IClassItem ExtractTemplateItem(ROOTNET.Interface.NTLeaf leaf, TemplateParser.TemplateInfo templateInfo)
+        private IClassItem ExtractTemplateItem(SimpleLeafInfo leaf, TemplateParser.TemplateInfo templateInfo)
         {
             if (templateInfo.TemplateName == "vector")
             {
@@ -758,7 +806,7 @@ namespace TTreeParser
         /// </summary>
         /// <param name="leaf"></param>
         /// <returns></returns>
-        private string ExtractVarName(ROOTNET.Interface.NTLeaf leaf)
+        private string ExtractVarName(SimpleLeafInfo leaf)
         {
             var m = _arrParser.Match(leaf.Title);
             if (!m.Success)
