@@ -42,7 +42,7 @@ namespace TTreeParser
             var subClassesByName = from sc in ExtractClassesFromBranchList(masterClass, tree.ListOfBranches.Cast<ROOTNET.Interface.NTBranch>())
                                    group sc by sc.Name;
             var subClasses = from scg in subClassesByName
-                             where ForceClassesSame (scg)
+                             where ForceClassesSame(scg)
                              select scg.First();
             foreach (var sc in subClasses)
             {
@@ -112,7 +112,7 @@ namespace TTreeParser
                         throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item names", f.Name));
                     if (item.Item1.ItemType != item.Item2.ItemType)
                         throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item types", f.Name));
-                    
+
                 }
             }
 
@@ -548,16 +548,22 @@ namespace TTreeParser
         private IEnumerable<ROOTClassShell> BuildMetadataForTTreeClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch, ROOTNET.Interface.NTClass cls)
         {
             //
-            // Get a unique classname. Attempt to do "the right thing".
+            // Get a unique classname. Attempt to do "the right thing". In particular, if this is a clones array of some
+            // struct, it is not a "named" class, so use the name of the clones array instead.
             //
 
             string className = cls.Name;
+            bool isClonesArray = false;
             if (branch is ROOTNET.Interface.NTBranchElement)
             {
                 var cn = (branch as ROOTNET.Interface.NTBranchElement).ClonesName;
                 if (!string.IsNullOrWhiteSpace(cn))
+                {
                     className = cn;
+                    isClonesArray = true;
+                }
             }
+
             if (_classNameCounter.ContainsKey(className))
             {
                 _classNameCounter[className] += 1;
@@ -588,6 +594,30 @@ namespace TTreeParser
             foreach (var c in ExtractClassesFromBranchList(treeClass, branch.ListOfBranches.Cast<ROOTNET.Interface.NTBranch>()))
             {
                 yield return c;
+            }
+
+            //
+            // The class we just used may well have C-style arrays in it, and they
+            // are indexed on this as a clones array. If that is the case, the index
+            // will be named <clones-array-name>_. We need to turn that into
+            // clones-array-name.GetEntries(), as that is what is used by the
+            // proxy we are generating.
+            //
+
+            if (isClonesArray)
+            {
+                var cBoundName = string.Format("{0}_", branch.Name);
+                var cstyleArrayIndicies = from item in treeClass.Items
+                                          where item is ItemCStyleArray
+                                          let citem = item as ItemCStyleArray
+                                          from index in citem.Indicies
+                                          where !index.indexConst && index.indexBoundName == cBoundName
+                                          select index;
+                var cGEBoundName = string.Format("{0}.GetEntries()", branch.Name);
+                foreach (var item in cstyleArrayIndicies)
+                {
+                    item.indexBoundName = cGEBoundName;
+                }
             }
 
             //
