@@ -9,233 +9,303 @@
       <IsTTreeSubClass>true</IsTTreeSubClass>
     </ROOTClassShell>
     <ROOTClassShell>
-      <Name>McEventCollection_p4</Name>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <Name>GenEvent_p4</Name>
       <Items>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessId">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_signalProcessId" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_eventNbr">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_eventNbr" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_eventScale">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_eventScale" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQCD">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_alphaQCD" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQED">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_alphaQED" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessVtx">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_signalProcessVtx" />
         </IClassItem>
-        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="m_weights" />
-        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="m_pdfinfo" />
-        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="m_randomStates" />
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_weights">
+          <Indicies>
+            <indexPosition>0</indexPosition>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexConst>false</indexConst>
+          </Indicies>
+          <BaseItem xsi:type="ItemVector" ItemType="double[]" Name="m_weights" />
+        </IClassItem>
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_pdfinfo">
+          <Indicies>
+            <indexPosition>0</indexPosition>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexConst>false</indexConst>
+          </Indicies>
+          <BaseItem xsi:type="ItemVector" ItemType="double[]" Name="m_pdfinfo" />
+        </IClassItem>
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_randomStates">
+          <Indicies>
+            <indexPosition>0</indexPosition>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexConst>false</indexConst>
+          </Indicies>
+          <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_randomStates" />
+        </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesBegin">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_verticesBegin" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesEnd">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_verticesEnd" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesBegin">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_particlesBegin" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesEnd">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents_</indexBoundName>
+            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_particlesEnd" />
         </IClassItem>
       </Items>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
     </ROOTClassShell>
     <ROOTClassShell>
-      <Name>McEventCollection_p4</Name>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <Name>GenVertex_p4</Name>
       <Items>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_x">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices_</indexBoundName>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_x" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_y">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices_</indexBoundName>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_y" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_z">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices_</indexBoundName>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_z" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_t">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices_</indexBoundName>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_t" />
         </IClassItem>
-        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesIn" />
-        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesOut" />
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesIn">
+          <Indicies>
+            <indexPosition>0</indexPosition>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexConst>false</indexConst>
+          </Indicies>
+          <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesIn" />
+        </IClassItem>
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesOut">
+          <Indicies>
+            <indexPosition>0</indexPosition>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexConst>false</indexConst>
+          </Indicies>
+          <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesOut" />
+        </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_id">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices_</indexBoundName>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_id" />
         </IClassItem>
-        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="m_weights" />
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[][]" Name="m_weights">
+          <Indicies>
+            <indexPosition>0</indexPosition>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexConst>false</indexConst>
+          </Indicies>
+          <BaseItem xsi:type="ItemVector" ItemType="float[]" Name="m_weights" />
+        </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices_</indexBoundName>
+            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_barcode" />
         </IClassItem>
       </Items>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
     </ROOTClassShell>
     <ROOTClassShell>
-      <Name>McEventCollection_p4</Name>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <Name>GenParticle_p4</Name>
       <Items>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_px">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_px" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_py">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_py" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_pz">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_pz" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_m">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_m" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_pdgId">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_pdgId" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_status">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_status" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_thetaPolarization">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_thetaPolarization" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_phiPolarization">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_phiPolarization" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_prodVtx">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_prodVtx" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_endVtx">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_endVtx" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_barcode" />
         </IClassItem>
         <IClassItem xsi:type="ItemCStyleArray" ItemType="short[]" Name="m_recoMethod">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles_</indexBoundName>
+            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
+          <BaseItem xsi:type="ItemSimpleType" ItemType="short" Name="m_recoMethod" />
         </IClassItem>
       </Items>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>McEventCollection_p4</Name>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
       <Items>
-        <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="m_genEvents" />
-        <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="m_genVertices" />
-        <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="m_genParticles" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="GenEvent_p4" Name="m_genEvents" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="GenVertex_p4" Name="m_genVertices" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="GenParticle_p4" Name="m_genParticles" />
       </Items>
+      <IsTTreeSubClass>true</IsTTreeSubClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>CollectionTree</Name>
@@ -243,8 +313,9 @@
         <IClassItem xsi:type="ItemSimpleType" ItemType="EventInfo_p3" Name="EventInfo_p3_McEventInfo" />
         <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="McEventCollection_p4_GEN_EVENT" />
       </Items>
-      <NtupleProxyPath>C:\Users\Gordon\Documents\Visual Studio 2010\Projects\testAutoCObject\testAutoCObject\ntuple_CollectionTree.h</NtupleProxyPath>
-      <UserInfoPath>C:\Users\Gordon\Documents\Visual Studio 2010\Projects\testAutoCObject\testAutoCObject\CollectionTreeConfig-000.ntup</UserInfoPath>
+      <IsTTreeSubClass>false</IsTTreeSubClass>
+      <NtupleProxyPath>c:\users\gwatts\documents\visual studio 2010\Projects\testATLASMC\testATLASMC\ntuple_CollectionTree.h</NtupleProxyPath>
+      <UserInfoPath>c:\users\gwatts\documents\visual studio 2010\Projects\testATLASMC\testATLASMC\CollectionTreeConfig-000.ntup</UserInfoPath>
       <ClassesToGenerate>
         <ClassForDictionary>
           <classSpec>vector&lt;long&gt;</classSpec>

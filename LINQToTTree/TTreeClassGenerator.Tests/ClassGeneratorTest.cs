@@ -917,7 +917,6 @@ namespace TTreeClassGenerator
             target.GenerateClasss(f, f, null);
         }
 
-#if false
         [TestMethod]
         [DeploymentItem("CollectionTreeConfig-000.ntup")]
         [DeploymentItem("EVNT-short.ntupom")]
@@ -928,7 +927,6 @@ namespace TTreeClassGenerator
             var t = new ClassGenerator();
             t.GenerateClasss(basexml, new FileInfo("TestXMLParsing.cs"), "Bogus");
         }
-#endif
     }
 
 }

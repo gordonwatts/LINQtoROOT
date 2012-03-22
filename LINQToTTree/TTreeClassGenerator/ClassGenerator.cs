@@ -164,9 +164,9 @@ namespace TTreeClassGenerator
             }
 
             var classByName = (from c in classSpec.Classes
-                              group c by c.Name into g
-                              where g.Count() > 1
-                              select g.Key).ToArray();
+                               group c by c.Name into g
+                               where g.Count() > 1
+                               select g.Key).ToArray();
             if (classByName.Length > 0)
             {
                 var msg = new StringBuilder();
@@ -203,7 +203,7 @@ namespace TTreeClassGenerator
                                    where item is ItemCStyleArray
                                    let cSpec = item as ItemCStyleArray
                                    from cindex in cSpec.Indicies
-                                   where !cindex.indexConst
+                                   where !cindex.indexConst && !cindex.indexBoundName.EndsWith(".GetEntries()")
                                    select cindex.indexBoundName;
 
                 var IndexTypes = (from indexer in CStyleArrays
