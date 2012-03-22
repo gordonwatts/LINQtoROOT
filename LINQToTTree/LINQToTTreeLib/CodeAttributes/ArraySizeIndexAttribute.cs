@@ -7,7 +7,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// leaf name that contains the length we "care" about.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = true)]
-    sealed class ArraySizeIndexAttribute : Attribute
+    public sealed class ArraySizeIndexAttribute : Attribute
     {
         readonly string _arraySizeLeaf;
 
