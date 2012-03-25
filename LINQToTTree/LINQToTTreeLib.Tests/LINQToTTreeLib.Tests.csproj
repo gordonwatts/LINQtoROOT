@@ -214,6 +214,7 @@
     <Compile Include="Expressions\SubExpressionReplacementTest.TestReplacement.g.cs">
       <DependentUpon>SubExpressionReplacementTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Expressions\t_ExpressionsOnImpliedObjects.cs" />
     <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
     <Compile Include="Factories\CodeOptimizerTestFactory.cs" />
     <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />

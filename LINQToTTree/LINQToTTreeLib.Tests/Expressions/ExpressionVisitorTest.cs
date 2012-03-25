@@ -479,58 +479,6 @@ namespace LINQToTTreeLib
             return result;
         }
 
-        public class EventInfo_p3 : IExpressionHolder
-        {
-            public Expression HeldExpression { get; private set; }
-            public EventInfo_p3(Expression expr) { HeldExpression = expr; }
-
-#pragma warning disable 0649
-            public uint[] m_AllTheData;
-            [ArraySizeIndex("EventInfo_p3_McEventInfo.GetEntries()", Index = 0)]
-            public float[] m_px;
-#pragma warning restore 0649
-        }
-        public class SubObjectCollectionTree : IExpressionHolder
-        {
-            public Expression HeldExpression { get; private set; }
-            public SubObjectCollectionTree(Expression expr) { HeldExpression = expr; }
-
-#pragma warning disable 0649
-            public EventInfo_p3 EventInfo_p3_McEventInfo;
-#pragma warning restore 0649
-            public static string _gProxyFile = @"C:\Users\gwatts\Documents\Visual Studio 2010\Projects\testATLASMC\testATLASMC\ntuple_CollectionTree.h";
-            public static string[] _gObjectFiles = {
-    };
-            public static string[] _gCINTLines = {
-    };
-            public static string[] _gClassesToDeclare = {
-      @"vector<long>",
-      @"vector<float>",
-    };
-            public static string[] _gClassesToDeclareIncludes = {
-      @"vector",
-      @"vector",
-    };
-        }
-
-        [TestMethod]
-        public void TestClassSubObjectArrayReference()
-        {
-            Expression<Func<SubObjectCollectionTree, uint>> arrayAccessLambda = arr => arr.EventInfo_p3_McEventInfo.m_AllTheData[0];
-            var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(uint));
-            Assert.AreEqual("((*arr).EventInfo_p3_McEventInfo).m_AllTheData.At(0)", result.RawValue, "Value of array access in sub-object");
-            Assert.Inconclusive(result.RawValue);
-        }
-
-        [TestMethod]
-        public void TestClassSubObjectArraySize()
-        {
-            Expression<Func<SubObjectCollectionTree, int>> arrayAccessLambda = arr => arr.EventInfo_p3_McEventInfo.m_px.Length;
-            var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(int));
-            Assert.AreEqual("((*arr).EventInfo_p3_McEventInfo).GetEntries()", result.RawValue, "Value of array access in sub-object");
-            Assert.Inconclusive(result.RawValue);
-        }
-
         class ResultType0
         {
 #pragma warning disable 0649
