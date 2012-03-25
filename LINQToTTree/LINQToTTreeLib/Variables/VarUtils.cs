@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Variables
@@ -54,17 +55,29 @@ namespace LINQToTTreeLib.Variables
                 /// If this is an array, then we need to look a little deeper.
                 ///
 
-                if (val.Type.IsArray)
+                if (destExpression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null)
                 {
-                    ///
-                    /// Now, look to see if this is member expression. If not, then it is an
-                    /// array.
-                    /// 
+                    isObject = false;
+                }
+                else if (val.Type.IsArray)
+                {
+                    //
+                    // If the des type is an array, there are some refrences that we should allow to go by without
+                    // treating them like objects.
+                    //
 
                     if (destExpression.NodeType == ExpressionType.ArrayIndex)
                     {
+                        // We are looking into an array - standard thing is not to do a de-ref.
                         isObject = false;
                     }
+                    else if (destExpression.NodeType == ExpressionType.MemberAccess
+                      && (destExpression as MemberExpression).Expression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null)
+                    {
+                        // Here we are in side a tclonesarray, where somethign has an array in it. So, again, avoid the de-ref.
+                        isObject = false;
+                    }
+
                 }
             }
 

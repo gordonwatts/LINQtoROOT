@@ -35,6 +35,7 @@ namespace LINQToTTreeLib.Tests.Expressions
             MEFUtilities.MyClassDone();
         }
 
+        [TClonesArrayImpliedClass]
         public class EventInfo_p3 : IExpressionHolder
         {
             public Expression HeldExpression { get; private set; }
@@ -45,101 +46,71 @@ namespace LINQToTTreeLib.Tests.Expressions
 #pragma warning restore 0649
         }
 
+        [TClonesArrayImpliedClass]
         public class GenEvent_p4 : IExpressionHolder
         {
             public Expression HeldExpression { get; private set; }
             public GenEvent_p4(Expression expr) { HeldExpression = expr; }
 
 #pragma warning disable 0649
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public int[] m_signalProcessId;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public int[] m_eventNbr;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public double[] m_eventScale;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public double[] m_alphaQCD;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public double[] m_alphaQED;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public int[] m_signalProcessVtx;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public double[][] m_weights;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public double[][] m_pdfinfo;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public int[][] m_randomStates;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public uint[] m_verticesBegin;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public uint[] m_verticesEnd;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public uint[] m_particlesBegin;
-            [ArraySizeIndex("m_genEvents.GetEntries()", Index = 0)]
             public uint[] m_particlesEnd;
 #pragma warning restore 0649
         }
 
+        [TClonesArrayImpliedClass]
         public class GenVertex_p4 : IExpressionHolder
         {
             public Expression HeldExpression { get; private set; }
             public GenVertex_p4(Expression expr) { HeldExpression = expr; }
 
 #pragma warning disable 0649
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public float[] m_x;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public float[] m_y;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public float[] m_z;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public float[] m_t;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public int[][] m_particlesIn;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public int[][] m_particlesOut;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public int[] m_id;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public float[][] m_weights;
-            [ArraySizeIndex("m_genVertices.GetEntries()", Index = 0)]
             public int[] m_barcode;
 #pragma warning restore 0649
         }
 
+        [TClonesArrayImpliedClass]
         public class GenParticle_p4 : IExpressionHolder
         {
             public Expression HeldExpression { get; private set; }
             public GenParticle_p4(Expression expr) { HeldExpression = expr; }
 
 #pragma warning disable 0649
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public float[] m_px;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public float[] m_py;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public float[] m_pz;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public float[] m_m;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public int[] m_pdgId;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public int[] m_status;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public float[] m_thetaPolarization;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public float[] m_phiPolarization;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public int[] m_prodVtx;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public int[] m_endVtx;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public int[] m_barcode;
-            [ArraySizeIndex("m_genParticles.GetEntries()", Index = 0)]
             public short[] m_recoMethod;
 #pragma warning restore 0649
         }
 
+        [TClonesArrayImpliedClass]
         public class McEventCollection_p4 : IExpressionHolder
         {
             public Expression HeldExpression { get; private set; }
@@ -168,8 +139,7 @@ namespace LINQToTTreeLib.Tests.Expressions
         {
             Expression<Func<CollectionTree, uint>> arrayAccessLambda = arr => arr.EventInfo_p3_McEventInfo.m_AllTheData[0];
             var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(uint));
-            Assert.AreEqual("((*arr).EventInfo_p3_McEventInfo).m_AllTheData.At(0)", result.RawValue, "Value of array access in sub-object");
-            Assert.Inconclusive(result.RawValue);
+            Assert.AreEqual("((*arr).EventInfo_p3_McEventInfo.m_AllTheData).at(0)", result.RawValue, "Value of array access in sub-object");
         }
 
         [TestMethod]
@@ -177,8 +147,7 @@ namespace LINQToTTreeLib.Tests.Expressions
         {
             Expression<Func<CollectionTree, int>> arrayAccessLambda = arr => arr.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length;
             var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(int));
-            Assert.AreEqual("((*arr).EventInfo_p3_McEventInfo).GetEntries()", result.RawValue, "Value of array access in sub-object");
-            Assert.Inconclusive(result.RawValue);
+            Assert.AreEqual("(*arr).McEventCollection_p4_GEN_EVENT.m_genParticles.GetEntries()", result.RawValue, "Value of array access in sub-object");
         }
 
         private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)

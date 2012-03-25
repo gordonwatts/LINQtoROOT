@@ -15,6 +15,9 @@ using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib.Expressions
 {
+    /// <summary>
+    /// Convert an expression to C++... everything else should have been done by now.
+    /// </summary>
     class ExpressionToCPP : ThrowingExpressionTreeVisitor
     {
         /// <summary>
@@ -368,17 +371,30 @@ namespace LINQToTTreeLib.Expressions
 
                     if (attr.IsConstantExpression)
                     {
+                        // The array size is constant every event - so we just use the raw number for the size.
                         var v = Int32.Parse(attr.LeafName);
                         _result = GetExpression(Expression.Constant(v));
                     }
                     else
                     {
+                        // The array is indexed by another raw variable leaf (like "n").
                         var arraySize = Expression.Field(ma.Expression, attr.LeafName);
                         if (!arraySize.Type.IsNumberType())
                             throw new InvalidOperationException(string.Format("Array size leaf '{0}' is not a number ({1})", attr.LeafName, arraySize.Type.Name));
 
                         _result = GetExpression(arraySize);
                     }
+                    return;
+                }
+
+                //
+                // See if it is a TClonesArray generated object. If that is the case, then the length is on the parent type, with a GetEntries() call, as specified.
+                //
+
+                var cattrs = ma.Expression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>();
+                if (cattrs != null)
+                {
+                    _result = new ValSimple(string.Format("{0}.GetEntries()", GetExpression(ma.Expression).AsObjectReference(ma.Expression)), typeof(int));
                     return;
                 }
             }
@@ -448,20 +464,20 @@ namespace LINQToTTreeLib.Expressions
             var leafName = expression.Member.Name;
             _codeEnv.AddReferencedLeaf(leafName);
 
+            //
+            // If this is a generic - there is pretty much only one thing we know how to deal with, IEnumerable.
+            //
+
             if (expression.Type.IsGenericType)
             {
                 if (expression.Type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
-                    _result = new ValSimple(baseExpr.AsObjectReference() + "." + leafName, expression.Type);
+                    _result = new ValSimple(baseExpr.AsObjectReference(expression) + "." + leafName, expression.Type);
                 }
                 else
                 {
                     throw new NotImplementedException("Can't deal with a generic type for iterator for " + expression.Type.Name + ".");
                 }
-            }
-            else if (expression.Type.IsArray)
-            {
-                _result = new ValSimple(baseExpr.AsObjectReference() + "." + leafName, expression.Type);
             }
 
             ///
@@ -471,7 +487,7 @@ namespace LINQToTTreeLib.Expressions
 
             if (_result == null)
             {
-                _result = new ValSimple(baseExpr.AsObjectReference() + "." + leafName, expression.Type);
+                _result = new ValSimple(baseExpr.AsObjectReference(expression.Expression) + "." + leafName, expression.Type);
             }
 
             return expression;
