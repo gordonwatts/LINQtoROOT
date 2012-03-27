@@ -597,11 +597,10 @@ namespace TTreeParser
             }
 
             //
-            // The class we just used may well have C-style arrays in it, and they
-            // are indexed on this as a clones array. If that is the case, the index
-            // will be named <clones-array-name>_. We need to turn that into
-            // clones-array-name.GetEntries(), as that is what is used by the
-            // proxy we are generating.
+            // The arrays in a tclones arrays are funny. The proxy generated parses them as seperate arrays, but their length is
+            // basically the size of the tclonesarray. So we have to use that as the length. This is implied be cause we've marked
+            // this class as a tclones array class already (above - the IsTTreeSubClass). So for the index we mark it as an index,
+            // but we just marked the bound as "implied" - this will be picked up by the code when it is generated later on.
             //
 
             if (isClonesArray)
@@ -613,10 +612,9 @@ namespace TTreeParser
                                           from index in citem.Indicies
                                           where !index.indexConst && index.indexBoundName == cBoundName
                                           select index;
-                var cGEBoundName = string.Format("{0}.GetEntries()", branch.Name);
                 foreach (var item in cstyleArrayIndicies)
                 {
-                    item.indexBoundName = cGEBoundName;
+                    item.indexBoundName = "implied";
                 }
             }
 

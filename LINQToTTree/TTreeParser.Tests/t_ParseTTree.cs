@@ -651,7 +651,7 @@ namespace TTreeParser.Tests
             Assert.AreEqual(1, rpxC.Indicies.Count, "# of indicies on m_px");
             Assert.AreEqual(0, rpxC.Indicies[0].indexPosition, "m_px index boundary");
             Assert.AreEqual(false, rpxC.Indicies[0].indexConst, "m_px index boundary");
-            Assert.AreEqual("m_genParticles.GetEntries()", rpxC.Indicies[0].indexBoundName, "m_px index boundary");
+            Assert.AreEqual("implied", rpxC.Indicies[0].indexBoundName, "m_px index boundary");
 
             // getVerticies has a vector in it - so we get a 2D guy. Check that.
             var rGenVerticiesClass = r.FindClass("GenVertex_p4");
@@ -660,7 +660,7 @@ namespace TTreeParser.Tests
             Assert.AreEqual("float[][]", rWeights.ItemType, "m_weights type");
             Assert.IsInstanceOfType(rWeights, typeof(ItemCStyleArray), "type of rWeigths guy");
             var rWeightsC = rWeights as ItemCStyleArray;
-            Assert.AreEqual("m_genVertices.GetEntries()", rWeightsC.Indicies[0].indexBoundName, "rWeights index boundary");
+            Assert.AreEqual("implied", rWeightsC.Indicies[0].indexBoundName, "rWeights index boundary");
 
             CheckSerialization(r, "TestComplexObjectATLASMCFile");
         }
