@@ -930,6 +930,8 @@ namespace TTreeClassGenerator
             Assert.IsTrue(output.Exists, "Output file existance");
             Assert.AreEqual(5, CountInFile(output, "TClonesArrayImpliedClass"), "# of TClonesArrayImpliedClass attributes");
             Assert.AreEqual(1, CountInFile(output, "class Queryable"), "# of Queryable classes");
+            Assert.AreEqual(1, CountInFile(output, ": IExpressionHolder"), "# of Expression holder classeS");
+            Assert.AreEqual(0, CountInFile(output, "ArraySizeIndex"), "# of times the ArraySizeIndex method appears"); // implied for tclones array guys...
         }
     }
 

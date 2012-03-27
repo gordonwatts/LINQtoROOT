@@ -362,12 +362,16 @@ namespace TTreeClassGenerator
                         if (cls.IsTTreeSubClass)
                         {
                             output.WriteLine("  [TClonesArrayImpliedClass]");
+                            output.WriteLine("  public class {0}", rawClassName);
+                            output.WriteLine("  {");
                         }
-
-                        output.WriteLine("  public class {0} : IExpressionHolder", rawClassName);
-                        output.WriteLine("  {");
-                        output.WriteLine("    public Expression HeldExpression {get; private set;}");
-                        output.WriteLine("    public {0} (Expression expr) {{ HeldExpression = expr; }}", rawClassName);
+                        else
+                        {
+                            output.WriteLine("  public class {0} : IExpressionHolder", rawClassName);
+                            output.WriteLine("  {");
+                            output.WriteLine("    public Expression HeldExpression {get; private set;}");
+                            output.WriteLine("    public {0} (Expression expr) {{ HeldExpression = expr; }}", rawClassName);
+                        }
                         output.WriteLine();
 
                         ///
