@@ -112,7 +112,11 @@ namespace TTreeDataModel
             {
                 if (!index.indexConst)
                 {
-                    yield return string.Format("ArraySizeIndex(\"{0}\", Index = {1})", index.indexBoundName, index.indexPosition);
+                    // Index is implied if we are in the middle of a tclones array class.
+                    if (index.indexBoundName != "implied")
+                    {
+                        yield return string.Format("ArraySizeIndex(\"{0}\", Index = {1})", index.indexBoundName, index.indexPosition);
+                    }
                 }
                 else
                 {

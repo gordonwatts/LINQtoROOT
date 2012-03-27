@@ -203,7 +203,7 @@ namespace TTreeClassGenerator
                                    where item is ItemCStyleArray
                                    let cSpec = item as ItemCStyleArray
                                    from cindex in cSpec.Indicies
-                                   where !cindex.indexConst && !cindex.indexBoundName.EndsWith(".GetEntries()")
+                                   where !cindex.indexConst && cindex.indexBoundName != "implied"
                                    select cindex.indexBoundName;
 
                 var IndexTypes = (from indexer in CStyleArrays

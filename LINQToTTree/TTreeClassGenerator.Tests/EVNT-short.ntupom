@@ -14,7 +14,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessId">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_signalProcessId" />
@@ -22,7 +22,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_eventNbr">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_eventNbr" />
@@ -30,7 +30,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_eventScale">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_eventScale" />
@@ -38,7 +38,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQCD">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_alphaQCD" />
@@ -46,7 +46,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQED">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_alphaQED" />
@@ -54,7 +54,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessVtx">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_signalProcessVtx" />
@@ -62,7 +62,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_weights">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="double[]" Name="m_weights" />
@@ -70,7 +70,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_pdfinfo">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="double[]" Name="m_pdfinfo" />
@@ -78,7 +78,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_randomStates">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_randomStates" />
@@ -86,7 +86,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesBegin">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_verticesBegin" />
@@ -94,7 +94,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesEnd">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_verticesEnd" />
@@ -102,7 +102,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesBegin">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_particlesBegin" />
@@ -110,7 +110,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesEnd">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genEvents.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_particlesEnd" />
@@ -124,7 +124,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_x">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_x" />
@@ -132,7 +132,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_y">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_y" />
@@ -140,7 +140,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_z">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_z" />
@@ -148,7 +148,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_t">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_t" />
@@ -156,7 +156,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesIn">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesIn" />
@@ -164,7 +164,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesOut">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesOut" />
@@ -172,7 +172,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_id">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_id" />
@@ -180,7 +180,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[][]" Name="m_weights">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="float[]" Name="m_weights" />
@@ -188,7 +188,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genVertices.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_barcode" />
@@ -202,7 +202,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_px">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_px" />
@@ -210,7 +210,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_py">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_py" />
@@ -218,7 +218,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_pz">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_pz" />
@@ -226,7 +226,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_m">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_m" />
@@ -234,7 +234,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_pdgId">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_pdgId" />
@@ -242,7 +242,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_status">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_status" />
@@ -250,7 +250,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_thetaPolarization">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_thetaPolarization" />
@@ -258,7 +258,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_phiPolarization">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_phiPolarization" />
@@ -266,7 +266,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_prodVtx">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_prodVtx" />
@@ -274,7 +274,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_endVtx">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_endVtx" />
@@ -282,7 +282,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_barcode" />
@@ -290,7 +290,7 @@
         <IClassItem xsi:type="ItemCStyleArray" ItemType="short[]" Name="m_recoMethod">
           <Indicies>
             <indexPosition>0</indexPosition>
-            <indexBoundName>m_genParticles.GetEntries()</indexBoundName>
+            <indexBoundName>implied</indexBoundName>
             <indexConst>false</indexConst>
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="short" Name="m_recoMethod" />
