@@ -395,20 +395,23 @@ namespace TTreeClassGenerator
                         /// against the trees!
                         /// 
 
-                        output.WriteLine("  /// Helper classes");
-                        output.WriteLine("  public static class Queryable{0}", cls.Name.FixupClassName());
-                        output.WriteLine("  {");
-                        output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
-                        output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo rootFile, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
-                        output.WriteLine("    {");
-                        output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name.FixupClassName());
-                        output.WriteLine("    }");
-                        output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
-                        output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo[] rootFiles, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
-                        output.WriteLine("    {");
-                        output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name.FixupClassName());
-                        output.WriteLine("    }");
-                        output.WriteLine("  }");
+                        if (!cls.IsTTreeSubClass)
+                        {
+                            output.WriteLine("  /// Helper classes");
+                            output.WriteLine("  public static class Queryable{0}", cls.Name.FixupClassName());
+                            output.WriteLine("  {");
+                            output.WriteLine("    /// Create a LINQ to TTree interface for a file and optional tree name");
+                            output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo rootFile, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
+                            output.WriteLine("    {");
+                            output.WriteLine("      return new QueriableTTree<{0}>(rootFile, treeName);", cls.Name.FixupClassName());
+                            output.WriteLine("    }");
+                            output.WriteLine("    /// Create a LINQ to TTree interface for a list of files and optional tree name");
+                            output.WriteLine("    public static QueriableTTree<{0}> Create (this FileInfo[] rootFiles, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
+                            output.WriteLine("    {");
+                            output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name.FixupClassName());
+                            output.WriteLine("    }");
+                            output.WriteLine("  }");
+                        }
                     }
                     catch (Exception e)
                     {
