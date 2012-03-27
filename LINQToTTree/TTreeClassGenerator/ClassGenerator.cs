@@ -242,9 +242,9 @@ namespace TTreeClassGenerator
                 }
             }
 
-            ///
-            /// Ok, open the output file
-            /// 
+            //
+            // Now, start generating the output classes!
+            //
 
             using (var output = outputCSFile.CreateText())
             {
@@ -352,6 +352,16 @@ namespace TTreeClassGenerator
                                     output.WriteLine();
                                 }
                             }
+                        }
+
+                        //
+                        // Write out the class header.
+                        // If this is a generated class, then we need an attribute to mark it.
+                        //
+
+                        if (cls.IsTTreeSubClass)
+                        {
+                            output.WriteLine("  [TClonesArrayImpliedClass]");
                         }
 
                         output.WriteLine("  public class {0} : IExpressionHolder", rawClassName);

@@ -925,7 +925,11 @@ namespace TTreeClassGenerator
             var basexml = new FileInfo("EVNT-short.ntupom");
             Assert.IsTrue(basexml.Exists, "can't find input xml file");
             var t = new ClassGenerator();
-            t.GenerateClasss(basexml, new FileInfo("TestXMLParsing.cs"), "Bogus");
+            var output = new FileInfo("TestXMLParsing.cs");
+            t.GenerateClasss(basexml, output, "Bogus");
+            Assert.IsTrue(output.Exists, "Output file existance");
+            Assert.AreEqual(5, CountInFile(output, "TClonesArrayImpliedClass"), "# of TClonesArrayImpliedClass attributes");
+            Assert.AreEqual(1, CountInFile(output, "class Queryable"), "# of Queryable classes");
         }
     }
 
