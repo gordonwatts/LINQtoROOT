@@ -582,6 +582,45 @@ namespace LINQToTTreeLib
             Assert.AreEqual("val1", refVars[0], "Name of referenced leaf");
         }
 
+        [TClonesArrayImpliedClass]
+        class ResultType2TClonesArray
+        {
+#pragma warning disable 0649
+            public int[] arr;
+#pragma warning restore 0649
+        }
+
+        [TClonesArrayImpliedClass]
+        class ResultType2TBase
+        {
+#pragma warning disable 0649
+            public ResultType2TClonesArray arrholder;
+#pragma warning restore 0649
+        }
+
+        class ResultType2
+        {
+#pragma warning disable 0649
+            public ResultType2TBase bs;
+#pragma warning restore 0649
+        }
+
+        [TestMethod]
+        public void TestTClonesArrayLength()
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            Expression<Func<ResultType2, int>> arrayLenLambda = q => q.bs.arrholder.arr.Length;
+
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+            var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+            Assert.AreEqual("(*q).bs.arrholder.GetEntries()", r.RawValue, "Array length fo a tclones array");
+        }
+
         class ResultTypeTLZ
         {
 #pragma warning disable 0649
