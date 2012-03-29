@@ -35,35 +35,35 @@ namespace LINQToTTreeLib.Variables
         {
             StringBuilder bld = new StringBuilder();
 
-            ///
-            /// If it isn't a pointer type (that is, a class) then
-            /// this is easy
-            /// 
+            //
+            // If it isn't a pointer type (that is, a class) then
+            // this is easy
+            // 
 
             if (!val.Type.IsPointerType())
                 return val.RawValue;
 
-            ///
-            /// Ok, now, we now this is a class. Now, if we know nothing about the expression
-            /// then we have to bail
-            /// 
+            //
+            // We are adding a member de-referencing. If we know something about the thing we are de-referencing,
+            // then use that in deciding if in C++ this is a pointer or not. The basic problem is that C# doesn't tell
+            // the difference between a pointer or an object - so we have to infer it.
+            // 
 
             bool isObject = true;
             if (destExpression != null)
             {
-                ///
-                /// If this is an array, then we need to look a little deeper.
-                ///
-
-                if (destExpression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null)
+                if (destExpression.NodeType == ExpressionType.MemberAccess
+                    && (destExpression as MemberExpression).Member.TypeHasAttribute<NotAPointerAttribute>() != null)
                 {
+                    // We are looking at a.b.c, and c is declared as not being a pointer. So we don't do a pointer de-ref.
+
                     isObject = false;
                 }
                 else if (val.Type.IsArray)
                 {
                     //
                     // If the des type is an array, there are some refrences that we should allow to go by without
-                    // treating them like objects.
+                    // treating them like objects. This is where we are expecting [] or .at right after this guy.
                     //
 
                     if (destExpression.NodeType == ExpressionType.ArrayIndex)
@@ -71,13 +71,6 @@ namespace LINQToTTreeLib.Variables
                         // We are looking into an array - standard thing is not to do a de-ref.
                         isObject = false;
                     }
-                    else if (destExpression.NodeType == ExpressionType.MemberAccess
-                      && (destExpression as MemberExpression).Expression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null)
-                    {
-                        // Here we are in side a tclonesarray, where somethign has an array in it. So, again, avoid the de-ref.
-                        isObject = false;
-                    }
-
                 }
             }
 

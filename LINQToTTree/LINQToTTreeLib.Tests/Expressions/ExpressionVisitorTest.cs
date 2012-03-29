@@ -586,6 +586,7 @@ namespace LINQToTTreeLib
         class ResultType2TClonesArray
         {
 #pragma warning disable 0649
+            [NotAPointer]
             public int[] arr;
 #pragma warning restore 0649
         }
@@ -593,6 +594,7 @@ namespace LINQToTTreeLib
         class ResultType2TBase
         {
 #pragma warning disable 0649
+            [NotAPointer]
             public ResultType2TClonesArray arrholder;
 #pragma warning restore 0649
         }
@@ -600,6 +602,7 @@ namespace LINQToTTreeLib
         class ResultType2
         {
 #pragma warning disable 0649
+            [NotAPointer]
             public ResultType2TBase bs;
 #pragma warning restore 0649
         }
@@ -633,7 +636,7 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
             var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
-            Assert.AreEqual("(*q).bs.arrholder.arr.at(0)", r.RawValue, "Array length fo a tclones array");
+            Assert.AreEqual("((*q).bs.arrholder.arr).at(0)", r.RawValue, "Array length fo a tclones array");
         }
 
         // A true TClonesArray structure is built here, with the guys in it being arrays but collected

@@ -108,6 +108,7 @@
     <Compile Include="CodeAttributes\CPPCodeAttribute.cs" />
     <Compile Include="CodeAttributes\CPPHelperClassAttribute.cs" />
     <Compile Include="CodeAttributes\IndexToOtherObjectArrayAttribute.cs" />
+    <Compile Include="CodeAttributes\NotAPointerAttribute.cs" />
     <Compile Include="CodeAttributes\RenameVariableAttribute.cs" />
     <Compile Include="CodeAttributes\TClonesArrayImpliedClassAttribute.cs" />
     <Compile Include="CodeAttributes\TranslateToClassAttribute.cs" />
