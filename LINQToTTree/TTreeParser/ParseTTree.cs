@@ -102,7 +102,7 @@ namespace TTreeParser
             var f = scg.First();
             foreach (var o in scg.Skip(1))
             {
-                if (f.IsTTreeSubClass != o.IsTTreeSubClass)
+                if (f.IsTClonesArrayClass != o.IsTClonesArrayClass)
                     throw new InvalidDataException(string.Format("IsTreeCubclass not the same in duplicate {0} classes.", f.Name));
                 if (f.Items.Count != o.Items.Count)
                     throw new InvalidDataException(string.Format("Number of items is not the same in duplicate {0} classes.", f.Name));
@@ -585,7 +585,7 @@ namespace TTreeParser
             // We are going to build our own class type here.
             //
 
-            var treeClass = new ROOTClassShell(className) { IsTTreeSubClass = true };
+            var treeClass = new ROOTClassShell(className) { IsTClonesArrayClass = true };
 
             //
             // Now, loop over the branches and add them in, returning any classes we had to generate.
