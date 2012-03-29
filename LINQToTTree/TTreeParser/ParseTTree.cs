@@ -103,7 +103,9 @@ namespace TTreeParser
             foreach (var o in scg.Skip(1))
             {
                 if (f.IsTClonesArrayClass != o.IsTClonesArrayClass)
-                    throw new InvalidDataException(string.Format("IsTreeCubclass not the same in duplicate {0} classes.", f.Name));
+                    throw new InvalidDataException(string.Format("IsTClonesArrayClass not the same in duplicate {0} classes.", f.Name));
+                if (f.IsTopLevelClass != o.IsTopLevelClass)
+                    throw new InvalidDataException(string.Format("IsTopLevelClass is not the same in duplicate {0} classes.", f.Name));
                 if (f.Items.Count != o.Items.Count)
                     throw new InvalidDataException(string.Format("Number of items is not the same in duplicate {0} classes.", f.Name));
                 foreach (var item in f.Items.Zip(o.Items, (n1, n2) => Tuple.Create(n1, n2)))
@@ -553,14 +555,14 @@ namespace TTreeParser
             //
 
             string className = cls.Name;
-            bool isClonesArray = false;
+            bool mightBeClonesArray = false;
             if (branch is ROOTNET.Interface.NTBranchElement)
             {
                 var cn = (branch as ROOTNET.Interface.NTBranchElement).ClonesName;
                 if (!string.IsNullOrWhiteSpace(cn))
                 {
                     className = cn;
-                    isClonesArray = true;
+                    mightBeClonesArray = true;
                 }
             }
 
@@ -585,7 +587,7 @@ namespace TTreeParser
             // We are going to build our own class type here.
             //
 
-            var treeClass = new ROOTClassShell(className) { IsTClonesArrayClass = true };
+            var treeClass = new ROOTClassShell(className) { IsTopLevelClass = false };
 
             //
             // Now, loop over the branches and add them in, returning any classes we had to generate.
@@ -603,7 +605,7 @@ namespace TTreeParser
             // but we just marked the bound as "implied" - this will be picked up by the code when it is generated later on.
             //
 
-            if (isClonesArray)
+            if (mightBeClonesArray)
             {
                 var cBoundName = string.Format("{0}_", branch.Name);
                 var cstyleArrayIndicies = from item in treeClass.Items
@@ -612,10 +614,13 @@ namespace TTreeParser
                                           from index in citem.Indicies
                                           where !index.indexConst && index.indexBoundName == cBoundName
                                           select index;
+                bool foundTClonesArray = false;
                 foreach (var item in cstyleArrayIndicies)
                 {
                     item.indexBoundName = "implied";
+                    foundTClonesArray = true;
                 }
+                treeClass.IsTClonesArrayClass = foundTClonesArray;
             }
 
             //

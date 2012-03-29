@@ -56,6 +56,9 @@ namespace TTreeParser.Tests
             Assert.AreEqual("dude", result[0].Name, "class name incorrect");
             Assert.AreEqual(0, result[0].Items.Count(), "empty tree...");
 
+            Assert.IsTrue(result[0].IsTopLevelClass, "top level class");
+            Assert.IsFalse(result[0].IsTClonesArrayClass, "tclones array");
+
             CheckSerialization(result, "GenerateClassesEmptyTree");
         }
 
@@ -614,6 +617,7 @@ namespace TTreeParser.Tests
             var mainClass = r.FindClass("CollectionTree");
             Assert.IsNotNull(mainClass, "CollectionTree class not found");
             Assert.IsFalse(mainClass.IsTClonesArrayClass, "main class isn't a sub-tree class!");
+            Assert.IsTrue(mainClass.IsTopLevelClass, "main class shoudl be top level class");
 
             // Check that the top level classes are present.
             var eventInfo = mainClass.FindItem("EventInfo_p3_McEventInfo");
@@ -626,8 +630,11 @@ namespace TTreeParser.Tests
             Assert.IsNotNull(mcCollectionClass, string.Format("Mc Collection class {0} wasn't foudn in the list", mcCollection.ItemType));
 
             // Check that the sub classes are set up here.
-            Assert.IsTrue(eventInfoClass.IsTClonesArrayClass, "event info sub class setting");
-            Assert.IsTrue(mcCollectionClass.IsTClonesArrayClass, "mc collection class sub-class setting");
+            Assert.IsFalse(eventInfoClass.IsTClonesArrayClass, "event info sub class setting");
+            Assert.IsFalse(eventInfoClass.IsTopLevelClass, "event info sub class setting");
+
+            Assert.IsFalse(mcCollectionClass.IsTClonesArrayClass, "mc collection class sub-class setting");
+            Assert.IsFalse(mcCollectionClass.IsTClonesArrayClass, "mc collection class sub-class setting");
 
             // The McEventInfo guy should have one item in it.
             Assert.AreEqual(1, eventInfoClass.Items.Count, "# items in the event info class");
@@ -643,6 +650,10 @@ namespace TTreeParser.Tests
             // And go down one more level just to check. :-)
             var rGenParticle_p4Class = r.FindClass(rGenParticle.ItemType);
             Assert.IsNotNull(rGenParticle_p4Class, "gen particle class spec");
+
+            Assert.IsFalse(rGenParticle_p4Class.IsTopLevelClass, "get particle class top level class");
+            Assert.IsTrue(rGenParticle_p4Class.IsTClonesArrayClass, "gen particle class tclones array");
+
             var rpx = rGenParticle_p4Class.FindItem("m_px");
             Assert.IsNotNull(rpx, "m_px in the gen particle class");
             Assert.AreEqual("float[]", rpx.ItemType, "m_px type");
