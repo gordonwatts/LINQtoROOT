@@ -227,6 +227,7 @@ namespace TTreeClassGenerator
         {
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
+            Assert.IsFalse(simple.NotAPointer, "not a pointer");
             FileInfo proxyFile = new FileInfo("TestNoGroupsProxy.cpp");
             using (var writer = proxyFile.CreateText())
             {
@@ -932,6 +933,7 @@ namespace TTreeClassGenerator
             Assert.AreEqual(1, CountInFile(output, "class Queryable"), "# of Queryable classes");
             Assert.AreEqual(1, CountInFile(output, ": IExpressionHolder"), "# of Expression holder classeS");
             Assert.AreEqual(0, CountInFile(output, "ArraySizeIndex"), "# of times the ArraySizeIndex method appears"); // implied for tclones array guys...
+            Assert.AreEqual(34, CountInFile(output, "[NotAPointer]"), "# of NotAPointer attributes");
         }
     }
 

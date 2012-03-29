@@ -8,10 +8,12 @@ namespace TTreeDataModel
         {
             Name = p;
             ItemType = "ROOTNET.Interface.N" + className;
+            NotAPointer = false;
         }
 
         public ItemROOTClass()
         {
+            NotAPointer = false;
         }
 
 
@@ -19,5 +21,10 @@ namespace TTreeDataModel
         public override string ItemType { get; set; }
         [XmlAttribute]
         public override string Name { get; set; }
+        /// <summary>
+        /// Get/Set this not being a ponter.
+        /// </summary>
+        [XmlAttribute]
+        public override bool NotAPointer { get; set; }
     }
 }

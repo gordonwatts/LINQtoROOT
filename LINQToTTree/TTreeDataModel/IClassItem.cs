@@ -19,5 +19,11 @@ namespace TTreeDataModel
         /// </summary>
         [XmlAttribute]
         abstract public string Name { get; set; }
+
+        /// <summary>
+        /// Get/Set if this is a pointer to another object.
+        /// </summary>
+        [XmlAttribute]
+        abstract public bool NotAPointer { get; set; }
     }
 }

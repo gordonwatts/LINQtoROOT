@@ -17,6 +17,7 @@ namespace TTreeDataModel
             _vectorType = vectorCSDecl;
             ItemType = vectorCSDecl;
             Name = vectorName;
+            NotAPointer = false;
         }
 
         /// <summary>
@@ -24,6 +25,7 @@ namespace TTreeDataModel
         /// </summary>
         public ItemVector()
         {
+            NotAPointer = false;
         }
 
         [XmlAttribute]
@@ -31,5 +33,11 @@ namespace TTreeDataModel
 
         [XmlAttribute]
         public override string Name { get; set; }
+
+        /// <summary>
+        /// Get/Set this not being a ponter.
+        /// </summary>
+        [XmlAttribute]
+        public override bool NotAPointer { get; set; }
     }
 }

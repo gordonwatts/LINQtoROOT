@@ -4,7 +4,7 @@
     <ROOTClassShell>
       <Name>EventInfo_p3</Name>
       <Items>
-        <IClassItem xsi:type="ItemVector" ItemType="uint[]" Name="m_AllTheData" />
+        <IClassItem xsi:type="ItemVector" ItemType="uint[]" Name="m_AllTheData" NotAPointer="true"/>
       </Items>
       <IsTopLevelClass>false</IsTopLevelClass>
       <IsTClonesArrayClass>false</IsTClonesArrayClass>
@@ -12,7 +12,7 @@
     <ROOTClassShell>
       <Name>GenEvent_p4</Name>
       <Items>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessId">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessId" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -20,7 +20,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_signalProcessId" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_eventNbr">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_eventNbr" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -28,7 +28,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_eventNbr" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_eventScale">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_eventScale" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -36,7 +36,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_eventScale" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQCD">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQCD" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -44,7 +44,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_alphaQCD" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQED">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[]" Name="m_alphaQED" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -52,7 +52,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="double" Name="m_alphaQED" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessVtx">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_signalProcessVtx" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -60,7 +60,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_signalProcessVtx" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_weights">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_weights" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -68,7 +68,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="double[]" Name="m_weights" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_pdfinfo">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="double[][]" Name="m_pdfinfo" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -76,7 +76,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="double[]" Name="m_pdfinfo" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_randomStates">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_randomStates" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -84,7 +84,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_randomStates" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesBegin">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesBegin" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -92,7 +92,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_verticesBegin" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesEnd">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_verticesEnd" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -100,7 +100,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_verticesEnd" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesBegin">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesBegin" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -108,7 +108,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_particlesBegin" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesEnd">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="uint[]" Name="m_particlesEnd" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -123,7 +123,7 @@
     <ROOTClassShell>
       <Name>GenVertex_p4</Name>
       <Items>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_x">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_x" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -131,7 +131,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_x" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_y">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_y" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -139,7 +139,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_y" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_z">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_z" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -147,7 +147,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_z" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_t">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_t" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -155,7 +155,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_t" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesIn">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesIn" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -163,7 +163,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesIn" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesOut">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[][]" Name="m_particlesOut" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -171,7 +171,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="int[]" Name="m_particlesOut" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_id">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_id" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -179,7 +179,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_id" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[][]" Name="m_weights">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[][]" Name="m_weights" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -187,7 +187,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemVector" ItemType="float[]" Name="m_weights" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -202,7 +202,7 @@
     <ROOTClassShell>
       <Name>GenParticle_p4</Name>
       <Items>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_px">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_px" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -210,7 +210,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_px" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_py">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_py" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -218,7 +218,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_py" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_pz">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_pz" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -226,7 +226,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_pz" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_m">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_m" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -234,7 +234,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_m" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_pdgId">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_pdgId" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -242,7 +242,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_pdgId" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_status">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_status" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -250,7 +250,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_status" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_thetaPolarization">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_thetaPolarization" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -258,7 +258,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_thetaPolarization" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_phiPolarization">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="float[]" Name="m_phiPolarization" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -266,7 +266,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="float" Name="m_phiPolarization" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_prodVtx">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_prodVtx" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -274,7 +274,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_prodVtx" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_endVtx">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_endVtx" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -282,7 +282,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_endVtx" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="int[]" Name="m_barcode" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>
@@ -290,7 +290,7 @@
           </Indicies>
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_barcode" />
         </IClassItem>
-        <IClassItem xsi:type="ItemCStyleArray" ItemType="short[]" Name="m_recoMethod">
+        <IClassItem xsi:type="ItemCStyleArray" ItemType="short[]" Name="m_recoMethod" NotAPointer="true">
           <Indicies>
             <indexPosition>0</indexPosition>
             <indexBoundName>implied</indexBoundName>

@@ -19,6 +19,7 @@ namespace TTreeDataModel
             ItemType = type;
             BaseItem = baseItem;
             Indicies = new List<IndexInfo>();
+            NotAPointer = false;
         }
 
         /// <summary>
@@ -28,6 +29,7 @@ namespace TTreeDataModel
         {
             Indicies = new List<IndexInfo>();
             BaseItem = new ItemSimpleType("dude", "int"); // Dummy so we are immune to set order!
+            NotAPointer = false;
         }
 
         /// <summary>
@@ -124,5 +126,11 @@ namespace TTreeDataModel
                 }
             }
         }
+
+        /// <summary>
+        /// Get/Set this not being a ponter.
+        /// </summary>
+        [XmlAttribute]
+        public override bool NotAPointer { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace TTreeDataModel
         {
             Name = name;
             ItemType = itemtype;
+            NotAPointer = false;
         }
 
         /// <summary>
@@ -15,6 +16,7 @@ namespace TTreeDataModel
         /// </summary>
         public ItemSimpleType()
         {
+            NotAPointer = false;
         }
 
         /// <summary>
@@ -26,5 +28,10 @@ namespace TTreeDataModel
 
         [XmlAttribute]
         public override string Name { get; set; }
+        /// <summary>
+        /// Get/Set this not being a ponter.
+        /// </summary>
+        [XmlAttribute]
+        public override bool NotAPointer { get; set; }
     }
 }

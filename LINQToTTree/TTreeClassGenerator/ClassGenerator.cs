@@ -458,6 +458,7 @@ namespace TTreeClassGenerator
         {
             public override string ItemType { get; set; }
             public override string Name { get; set; }
+            public override bool NotAPointer { get; set; }
         }
 
         /// <summary>
@@ -703,6 +704,8 @@ namespace TTreeClassGenerator
                 {
                     output.WriteLine("    [{0}]", attr);
                 }
+                if (item.NotAPointer)
+                    output.WriteLine("    [NotAPointer]");
             }
 
             string t = item.ItemType;
