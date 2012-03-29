@@ -232,7 +232,7 @@ namespace LINQToTTreeLib.Expressions
                 // How we do array lookup depends on the array type we are looking up!
                 case ExpressionType.ArrayIndex:
                     resultType = expression.Type;
-                    if (IsAccessingConstArray(expression))
+                    if (ArrayAccessDoesNotSupportAt(expression))
                     {
                         op = "[]";
                         format = "{0}[{2}]";
@@ -296,16 +296,35 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// Determine if this expression (which is an array access) is going after a const array.
+        /// Determine if this expression (which is an array access) when translated supports the "at" operator,
+        /// which is a little slower, but definately safer.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        private bool IsAccessingConstArray(BinaryExpression expression)
+        private bool ArrayAccessDoesNotSupportAt(BinaryExpression expression)
         {
             var arrInfo = DetermineArrayLengthInfo(expression);
             if (arrInfo.Item2.NodeType != ExpressionType.MemberAccess)
                 return false;
-            return (arrInfo.Item2 as MemberExpression).Member.TypeHasAttribute<ArraySizeIndexAttribute>() != null;
+            var me = arrInfo.Item2 as MemberExpression;
+
+            //
+            // If it has an array index attribute, then we should use the normal []
+            //
+
+            if (me.Member.TypeHasAttribute<ArraySizeIndexAttribute>() != null)
+                return true;
+
+            //
+            // If this type is an array index attribute, and this is the first index, then 
+            // we should also be using the [] access to get past the TClonesArray stuff (which
+            // does not support .at).
+            //
+
+            if (arrInfo.Item1.Count == 1 && me.Expression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null)
+                return true;
+
+            return false;
         }
 
         /// <summary>
@@ -411,7 +430,7 @@ namespace LINQToTTreeLib.Expressions
         /// We need to take a look at this item to see if it is an array access. If so,
         /// we want to find out all we can about it.
         /// </summary>
-        /// <param name="expression"></param>
+        /// <param name="expression">The expression that does the array access. Flunk out if it doesn't</param>
         /// <returns>A tuple with a list of the expressions to do the lookup and what we are doing the lookup against</returns>
         private Tuple<List<Expression>, Expression> DetermineArrayLengthInfo(Expression expression)
         {

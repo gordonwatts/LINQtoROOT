@@ -641,23 +641,27 @@ namespace LINQToTTreeLib
 
         // A true TClonesArray structure is built here, with the guys in it being arrays but collected
         // grouped objects (as one might expect).
+        [TClonesArrayImpliedClass]
         class ResultType3TClonesArray
         {
 #pragma warning disable 0649
-            public int arr;
+            [NotAPointer]
+            public int[] arr;
 #pragma warning restore 0649
         }
 
         class ResultType3TBase
         {
 #pragma warning disable 0649
-            public ResultType3TClonesArray[] arrholder;
+            [NotAPointer]
+            public ResultType3TClonesArray arrholder;
 #pragma warning restore 0649
         }
 
         class ResultType3
         {
 #pragma warning disable 0649
+            [NotAPointer]
             public ResultType3TBase bs;
 #pragma warning restore 0649
         }
@@ -677,7 +681,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
 
-            Expression<Func<ResultType3, int>> arrayLenLambda = q => q.bs.arrholder.Length;
+            Expression<Func<ResultType3, int>> arrayLenLambda = q => q.bs.arrholder.arr.Length;
 
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
@@ -694,13 +698,13 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
 
-            Expression<Func<ResultType3, int>> arrayLenLambda = q => q.bs.arrholder[0].arr;
+            Expression<Func<ResultType3, int>> arrayLenLambda = q => q.bs.arrholder.arr[0];
 
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
             var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
-            Assert.AreEqual("(*q).bs.arrholder.arr[0]", r.RawValue, "Array length fo a tclones array");
+            Assert.AreEqual("((*q).bs.arrholder.arr)[0]", r.RawValue, "Array length fo a tclones array");
         }
 
         [TestMethod]
