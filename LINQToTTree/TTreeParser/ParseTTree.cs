@@ -581,7 +581,7 @@ namespace TTreeParser
             // tree.
             //
 
-            container.Add(new ItemSimpleType(branch.Name, className));
+            container.Add(new ItemSimpleType(branch.Name, className) { NotAPointer = true });
 
             //
             // We are going to build our own class type here.
@@ -621,6 +621,16 @@ namespace TTreeParser
                     foundTClonesArray = true;
                 }
                 treeClass.IsTClonesArrayClass = foundTClonesArray;
+
+            }
+
+            //
+            // Dereferencing this guy should not cause a pointer deref!
+            //
+
+            foreach (var item in treeClass.Items)
+            {
+                item.NotAPointer = true;
             }
 
             //

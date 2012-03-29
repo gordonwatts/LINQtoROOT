@@ -90,6 +90,7 @@ namespace TTreeParser.Tests
             var item = result[0];
             Assert.AreEqual(5, item.Items.Count(), "Expected 5 items in there");
             Assert.IsTrue(item.Items.All(i => i.ItemType == "int"), "Not everything is an int!");
+            Assert.IsTrue(item.Items.All(i => !i.NotAPointer), "Not A Pointer is set");
 
             CheckSerialization(result, "GenerateClassesTestSingleBasicType");
         }
@@ -622,10 +623,12 @@ namespace TTreeParser.Tests
             // Check that the top level classes are present.
             var eventInfo = mainClass.FindItem("EventInfo_p3_McEventInfo");
             Assert.IsNotNull(eventInfo, "EventInfo_p3_McEventInfo");
+            Assert.IsTrue(eventInfo.NotAPointer, "event info not a pointer");
             var eventInfoClass = r.FindClass(eventInfo.ItemType);
             Assert.IsNotNull(eventInfoClass, string.Format("Event info class {0} wasn't found in the list", eventInfo.ItemType));
             var mcCollection = mainClass.FindItem("McEventCollection_p4_GEN_EVENT");
             Assert.IsNotNull(mcCollection, "McEventCollection");
+            Assert.IsTrue(mcCollection.NotAPointer, "mc event collection not a pointer");
             var mcCollectionClass = r.FindClass(mcCollection.ItemType);
             Assert.IsNotNull(mcCollectionClass, string.Format("Mc Collection class {0} wasn't foudn in the list", mcCollection.ItemType));
 
@@ -640,11 +643,13 @@ namespace TTreeParser.Tests
             Assert.AreEqual(1, eventInfoClass.Items.Count, "# items in the event info class");
             Assert.AreEqual("m_AllTheData", eventInfoClass.Items[0].Name, "m_AllTheData name");
             Assert.AreEqual("uint[]", eventInfoClass.Items[0].ItemType, "m_AllTheData type");
+            Assert.IsTrue(eventInfoClass.Items[0].NotAPointer, "array on event info class not a pointer");
 
             // The McCollection has a bunch more stuff in it, namely 3 items.
             Assert.AreEqual(3, mcCollectionClass.Items.Count, "# items in the McCollection class");
             var rGenParticle = mcCollectionClass.FindItem("m_genParticles");
             Assert.IsNotNull(rGenParticle, "gen particle");
+            Assert.IsTrue(rGenParticle.NotAPointer, "gen particle not a item");
             Assert.AreEqual("GenParticle_p4", rGenParticle.ItemType, "gen particle type");
 
             // And go down one more level just to check. :-)
@@ -656,6 +661,7 @@ namespace TTreeParser.Tests
 
             var rpx = rGenParticle_p4Class.FindItem("m_px");
             Assert.IsNotNull(rpx, "m_px in the gen particle class");
+            Assert.IsTrue(rpx.NotAPointer, "m_px in the gen particle class not a pointer");
             Assert.AreEqual("float[]", rpx.ItemType, "m_px type");
             Assert.IsInstanceOfType(rpx, typeof(ItemCStyleArray), "m_px should be a c-style array");
             var rpxC = rpx as ItemCStyleArray;
