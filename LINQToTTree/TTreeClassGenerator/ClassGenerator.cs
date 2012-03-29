@@ -154,7 +154,7 @@ namespace TTreeClassGenerator
 
             foreach (var c in classSpec.Classes)
             {
-                if (!c.IsTClonesArrayClass)
+                if (c.IsTopLevelClass)
                 {
                     if (c.NtupleProxyPath == null)
                         throw new ArgumentNullException("Class '" + c.Name + "' has no ntuple proxy. Can't generate a class for it.");
@@ -291,7 +291,7 @@ namespace TTreeClassGenerator
 
                         Action writeOutExtra = () =>
                         {
-                            if (!cls.IsTClonesArrayClass)
+                            if (cls.IsTopLevelClass)
                             {
                                 output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
 
@@ -362,6 +362,10 @@ namespace TTreeClassGenerator
                         if (cls.IsTClonesArrayClass)
                         {
                             output.WriteLine("  [TClonesArrayImpliedClass]");
+                        }
+
+                        if (!cls.IsTopLevelClass)
+                        {
                             output.WriteLine("  public class {0}", rawClassName);
                             output.WriteLine("  {");
                         }
@@ -399,7 +403,7 @@ namespace TTreeClassGenerator
                         /// against the trees!
                         /// 
 
-                        if (!cls.IsTClonesArrayClass)
+                        if (cls.IsTopLevelClass)
                         {
                             output.WriteLine("  /// Helper classes");
                             output.WriteLine("  public static class Queryable{0}", cls.Name.FixupClassName());

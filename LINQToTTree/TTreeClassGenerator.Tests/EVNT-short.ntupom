@@ -6,7 +6,8 @@
       <Items>
         <IClassItem xsi:type="ItemVector" ItemType="uint[]" Name="m_AllTheData" />
       </Items>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <IsTopLevelClass>false</IsTopLevelClass>
+      <IsTClonesArrayClass>false</IsTClonesArrayClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>GenEvent_p4</Name>
@@ -116,7 +117,8 @@
           <BaseItem xsi:type="ItemSimpleType" ItemType="uint" Name="m_particlesEnd" />
         </IClassItem>
       </Items>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <IsTopLevelClass>false</IsTopLevelClass>
+      <IsTClonesArrayClass>true</IsTClonesArrayClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>GenVertex_p4</Name>
@@ -194,7 +196,8 @@
           <BaseItem xsi:type="ItemSimpleType" ItemType="int" Name="m_barcode" />
         </IClassItem>
       </Items>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <IsTopLevelClass>false</IsTopLevelClass>
+      <IsTClonesArrayClass>true</IsTClonesArrayClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>GenParticle_p4</Name>
@@ -296,7 +299,8 @@
           <BaseItem xsi:type="ItemSimpleType" ItemType="short" Name="m_recoMethod" />
         </IClassItem>
       </Items>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <IsTopLevelClass>false</IsTopLevelClass>
+      <IsTClonesArrayClass>true</IsTClonesArrayClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>McEventCollection_p4</Name>
@@ -305,7 +309,8 @@
         <IClassItem xsi:type="ItemSimpleType" ItemType="GenVertex_p4" Name="m_genVertices" />
         <IClassItem xsi:type="ItemSimpleType" ItemType="GenParticle_p4" Name="m_genParticles" />
       </Items>
-      <IsTTreeSubClass>true</IsTTreeSubClass>
+      <IsTopLevelClass>false</IsTopLevelClass>
+      <IsTClonesArrayClass>false</IsTClonesArrayClass>
     </ROOTClassShell>
     <ROOTClassShell>
       <Name>CollectionTree</Name>
@@ -313,7 +318,8 @@
         <IClassItem xsi:type="ItemSimpleType" ItemType="EventInfo_p3" Name="EventInfo_p3_McEventInfo" />
         <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="McEventCollection_p4_GEN_EVENT" />
       </Items>
-      <IsTTreeSubClass>false</IsTTreeSubClass>
+      <IsTopLevelClass>true</IsTopLevelClass>
+      <IsTClonesArrayClass>false</IsTClonesArrayClass>
       <NtupleProxyPath>c:\users\gwatts\documents\visual studio 2010\Projects\testATLASMC\testATLASMC\ntuple_CollectionTree.h</NtupleProxyPath>
       <UserInfoPath>c:\users\gwatts\documents\visual studio 2010\Projects\testATLASMC\testATLASMC\CollectionTreeConfig-000.ntup</UserInfoPath>
       <ClassesToGenerate>
