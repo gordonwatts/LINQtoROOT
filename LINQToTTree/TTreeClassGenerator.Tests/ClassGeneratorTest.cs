@@ -925,6 +925,13 @@ namespace TTreeClassGenerator
         {
             var basexml = new FileInfo("EVNT-short.ntupom");
             Assert.IsTrue(basexml.Exists, "can't find input xml file");
+
+            using (var h = new FileInfo("ntuple_CollectionTree.h").CreateText())
+            {
+                h.WriteLine("hi");
+                h.Close();
+            }
+
             var t = new ClassGenerator();
             var output = new FileInfo("TestXMLParsing.cs");
             t.GenerateClasss(basexml, output, "Bogus");
