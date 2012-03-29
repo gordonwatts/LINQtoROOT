@@ -649,6 +649,9 @@ namespace LINQToTTreeLib
             public int[] arr;
             [NotAPointer]
             public int[][] arr2D;
+            [NotAPointer]
+            [ArraySizeIndex("5", IsConstantExpression = true, Index = 1)]
+            public int[][] arr2DConst;
 #pragma warning restore 0649
         }
 
@@ -724,6 +727,23 @@ namespace LINQToTTreeLib
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
             var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
             Assert.AreEqual("(((*q).bs.arrholder.arr2D)[0]).at(1)", r.RawValue, "Array length fo a tclones array");
+        }
+
+        [TestMethod]
+        public void TeatACA2DConstLength()
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+
+            Expression<Func<ResultType3, int>> arrayLenLambda = q => q.bs.arrholder.arr2DConst[0].Length;
+
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+            var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+            Assert.AreEqual("5", r.RawValue, "Array length fo a tclones array");
         }
 
         [TestMethod]
