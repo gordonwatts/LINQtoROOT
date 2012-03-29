@@ -647,6 +647,8 @@ namespace LINQToTTreeLib
 #pragma warning disable 0649
             [NotAPointer]
             public int[] arr;
+            [NotAPointer]
+            public int[][] arr2D;
 #pragma warning restore 0649
         }
 
@@ -705,6 +707,23 @@ namespace LINQToTTreeLib
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
             var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
             Assert.AreEqual("((*q).bs.arrholder.arr)[0]", r.RawValue, "Array length fo a tclones array");
+        }
+
+        [TestMethod]
+        public void TeatACA2DAccess()
+        {
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+
+            Expression<Func<ResultType3, int>> arrayLenLambda = q => q.bs.arrholder.arr2D[0][1];
+
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
+            var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
+            Assert.AreEqual("(((*q).bs.arrholder.arr2D)[0]).at(1)", r.RawValue, "Array length fo a tclones array");
         }
 
         [TestMethod]
