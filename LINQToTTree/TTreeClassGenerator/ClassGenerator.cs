@@ -704,9 +704,9 @@ namespace TTreeClassGenerator
                 {
                     output.WriteLine("    [{0}]", attr);
                 }
-                if (item.NotAPointer)
-                    output.WriteLine("    [NotAPointer]");
             }
+            if (item.NotAPointer)
+                output.WriteLine("    [NotAPointer]");
 
             string t = item.ItemType;
             output.WriteLine("    public {0} {1};", t, item.Name.FixupLeafName());

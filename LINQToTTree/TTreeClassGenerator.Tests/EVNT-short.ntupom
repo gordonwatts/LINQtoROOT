@@ -305,9 +305,9 @@
     <ROOTClassShell>
       <Name>McEventCollection_p4</Name>
       <Items>
-        <IClassItem xsi:type="ItemSimpleType" ItemType="GenEvent_p4" Name="m_genEvents" />
-        <IClassItem xsi:type="ItemSimpleType" ItemType="GenVertex_p4" Name="m_genVertices" />
-        <IClassItem xsi:type="ItemSimpleType" ItemType="GenParticle_p4" Name="m_genParticles" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="GenEvent_p4" Name="m_genEvents" NotAPointer="true" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="GenVertex_p4" Name="m_genVertices" NotAPointer="true"/>
+        <IClassItem xsi:type="ItemSimpleType" ItemType="GenParticle_p4" Name="m_genParticles" NotAPointer="true"/>
       </Items>
       <IsTopLevelClass>false</IsTopLevelClass>
       <IsTClonesArrayClass>false</IsTClonesArrayClass>
@@ -315,8 +315,8 @@
     <ROOTClassShell>
       <Name>CollectionTree</Name>
       <Items>
-        <IClassItem xsi:type="ItemSimpleType" ItemType="EventInfo_p3" Name="EventInfo_p3_McEventInfo" />
-        <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="McEventCollection_p4_GEN_EVENT" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="EventInfo_p3" Name="EventInfo_p3_McEventInfo" NotAPointer ="true"/>
+        <IClassItem xsi:type="ItemSimpleType" ItemType="McEventCollection_p4" Name="McEventCollection_p4_GEN_EVENT" NotAPointer ="true"/>
       </Items>
       <IsTopLevelClass>true</IsTopLevelClass>
       <IsTClonesArrayClass>false</IsTClonesArrayClass>
