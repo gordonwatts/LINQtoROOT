@@ -188,6 +188,14 @@ namespace LINQToTTreeLib.Tests.Expressions
             Assert.AreEqual("(*arr).McEventCollection_p4_GEN_EVENT.m_genParticles.GetEntries()", result.RawValue, "Value of array access in sub-object");
         }
 
+        [TestMethod]
+        public void TestClassSubObjectVectorSize()
+        {
+            Expression<Func<CollectionTree, int>> arrayAccessLambda = arr => arr.EventInfo_p3_McEventInfo.m_AllTheData.Length;
+            var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(int));
+            Assert.AreEqual("(*((*arr).EventInfo_p3_McEventInfo.m_AllTheData)).size()", result.RawValue, "Value of array access in vector in proxy container");
+        }
+
         private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)
         {
             MEFUtilities.AddPart(new QVResultOperators());
