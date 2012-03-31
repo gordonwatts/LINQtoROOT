@@ -140,7 +140,7 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="expression">The expression that does the array access. Flunk out if it doesn't</param>
         /// <returns>A tuple with a list of the expressions to do the lookup and what we are doing the lookup against</returns>
-        public static Tuple<List<Expression>, Expression> DetermineArrayLengthInfo(this Expression expression)
+        public static Tuple<List<Expression>, Expression> DetermineArrayIndexInfo(this Expression expression)
         {
             if (expression.NodeType != ExpressionType.ArrayIndex)
             {
@@ -149,7 +149,7 @@ namespace LINQToTTreeLib.Utils
             }
 
             var br = expression as BinaryExpression;
-            var levelDown = DetermineArrayLengthInfo(br.Left);
+            var levelDown = DetermineArrayIndexInfo(br.Left);
             levelDown.Item1.Add(br.Right);
             return levelDown;
         }
@@ -161,7 +161,7 @@ namespace LINQToTTreeLib.Utils
         /// <returns></returns>
         public static Expression RemoveArrayReferences (this Expression expr)
         {
-            return expr.DetermineArrayLengthInfo().Item2;
+            return expr.DetermineArrayIndexInfo().Item2;
         }
 
     }
