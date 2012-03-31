@@ -303,7 +303,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private bool ArrayAccessDoesNotSupportAt(BinaryExpression expression)
         {
-            var arrInfo = expression.DetermineArrayLengthInfo();
+            var arrInfo = expression.DetermineArrayIndexInfo();
             if (arrInfo.Item2.NodeType != ExpressionType.MemberAccess)
                 return false;
             var me = arrInfo.Item2 as MemberExpression;
@@ -374,7 +374,7 @@ namespace LINQToTTreeLib.Expressions
             // length we need to look down as many levels as we can do do the lookup.
             //
 
-            var arrInfo = expression.Operand.DetermineArrayLengthInfo();
+            var arrInfo = expression.Operand.DetermineArrayIndexInfo();
             if (arrInfo.Item2.NodeType == ExpressionType.MemberAccess)
             {
                 var ma = arrInfo.Item2 as MemberExpression;
@@ -408,13 +408,17 @@ namespace LINQToTTreeLib.Expressions
 
                 //
                 // See if it is a TClonesArray generated object. If that is the case, then the length is on the parent type, with a GetEntries() call, as specified.
+                // and only do the first as a get entries.
                 //
 
-                var cattrs = ma.Expression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>();
-                if (cattrs != null)
+                if (arrInfo.Item1.Count == 0)
                 {
-                    _result = new ValSimple(string.Format("{0}.GetEntries()", GetExpression(ma.Expression).AsObjectReference(ma.Expression)), typeof(int));
-                    return;
+                    var cattrs = ma.Expression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>();
+                    if (cattrs != null)
+                    {
+                        _result = new ValSimple(string.Format("{0}.GetEntries()", GetExpression(ma.Expression).AsObjectReference(ma.Expression)), typeof(int));
+                        return;
+                    }
                 }
             }
 
