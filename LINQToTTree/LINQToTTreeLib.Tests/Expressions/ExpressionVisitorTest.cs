@@ -726,7 +726,7 @@ namespace LINQToTTreeLib
             CodeContext cc = new CodeContext();
             MEFUtilities.Compose(new QueryVisitor(gc, cc, MEFUtilities.MEFContainer));
             var r = ExpressionToCPP.GetExpression(arrayLenLambda, gc, cc, MEFUtilities.MEFContainer);
-            Assert.AreEqual("(((*q).bs.arrholder.arr2D)[0]).at(1)", r.RawValue, "Array length fo a tclones array");
+            Assert.AreEqual("(*((*q).bs.arrholder.arr2D)[0]).at(1)", r.RawValue, "Array length fo a tclones array");
         }
 
         [TestMethod]
