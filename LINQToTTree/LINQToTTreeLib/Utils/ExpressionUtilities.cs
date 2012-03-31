@@ -7,6 +7,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using Remotion.Linq.Clauses;
+using System.Collections.Generic;
 namespace LINQToTTreeLib.Utils
 {
     internal static class ExpressionUtilities
@@ -131,6 +132,36 @@ namespace LINQToTTreeLib.Utils
             if (dv == null)
                 throw new InvalidOperationException("Unable to look at loop index variable that isn't a parameter");
             return dv.ParameterName;
+        }
+
+        /// <summary>
+        /// We need to take a look at this item to see if it is an array access. If so,
+        /// we want to find out all we can about it.
+        /// </summary>
+        /// <param name="expression">The expression that does the array access. Flunk out if it doesn't</param>
+        /// <returns>A tuple with a list of the expressions to do the lookup and what we are doing the lookup against</returns>
+        public static Tuple<List<Expression>, Expression> DetermineArrayLengthInfo(this Expression expression)
+        {
+            if (expression.NodeType != ExpressionType.ArrayIndex)
+            {
+                // We have reached teh bottom of the pile!
+                return Tuple.Create(new List<Expression>(), expression);
+            }
+
+            var br = expression as BinaryExpression;
+            var levelDown = DetermineArrayLengthInfo(br.Left);
+            levelDown.Item1.Add(br.Right);
+            return levelDown;
+        }
+
+        /// <summary>
+        /// Remove all array references till we get to the root member.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public static Expression RemoveArrayReferences (this Expression expr)
+        {
+            return expr.DetermineArrayLengthInfo().Item2;
         }
 
     }
