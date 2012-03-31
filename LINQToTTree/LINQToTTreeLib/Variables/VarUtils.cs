@@ -59,18 +59,28 @@ namespace LINQToTTreeLib.Variables
 
                     isObject = false;
                 }
-                else if (val.Type.IsArray)
+                else if (val.Type.IsArray && destExpression.NodeType == ExpressionType.ArrayIndex)
                 {
                     //
-                    // If the des type is an array, there are some refrences that we should allow to go by without
-                    // treating them like objects. This is where we are expecting [] or .at right after this guy.
+                    // Dealing with the proper array acces is complex:
+                    //   vector<vector<int>> stuff; -> stuff[0] -> object should be false.
+                    //   vector<vector<TLorentzVector>> stuff; -> stuff[0] -> object should be false.
+                    //   TClonesArray vector<int> stuff[] -> stuff[0] -> object should be true!
                     //
 
-                    if (destExpression.NodeType == ExpressionType.ArrayIndex)
+                    var rootMember = destExpression.RemoveArrayReferences();
+                    bool isTClonesMember = false;
+                    if (rootMember.NodeType == ExpressionType.MemberAccess)
                     {
-                        // We are looking into an array - standard thing is not to do a de-ref.
-                        isObject = false;
+                        var rootType = (rootMember as MemberExpression).Expression.Type;
+                        isTClonesMember = rootType.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null;
                     }
+
+                    //
+                    // This is a normal array if it isn't size a tclones array.
+                    //
+
+                    isObject = isTClonesMember;
                 }
             }
 

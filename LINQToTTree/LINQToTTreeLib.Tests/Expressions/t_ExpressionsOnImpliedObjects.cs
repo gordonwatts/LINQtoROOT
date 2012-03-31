@@ -200,7 +200,7 @@ namespace LINQToTTreeLib.Tests.Expressions
         {
             Expression<Func<CollectionTree, double>> arrayAccessLambda = arr => arr.McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0][1];
             var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(double));
-            Assert.AreEqual("((*(*arr).McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0]).at(1))", result.RawValue, "Value of array access in vector in proxy container");
+            Assert.AreEqual("(*((*arr).McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights)[0]).at(1)", result.RawValue, "Value of array access in vector in proxy container");
 
         }
 
@@ -209,7 +209,7 @@ namespace LINQToTTreeLib.Tests.Expressions
         {
             Expression<Func<CollectionTree, int>> arrayAccessLambda = arr => arr.McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0].Length;
             var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(int));
-            Assert.AreEqual("((*(*arr).McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0]).size())", result.RawValue, "Value of array access in vector in proxy container");
+            Assert.AreEqual("(*((*arr).McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights)[0]).size()", result.RawValue, "Value of array access in vector in proxy container");
 
         }
 

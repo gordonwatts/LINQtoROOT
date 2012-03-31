@@ -303,7 +303,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private bool ArrayAccessDoesNotSupportAt(BinaryExpression expression)
         {
-            var arrInfo = DetermineArrayLengthInfo(expression);
+            var arrInfo = expression.DetermineArrayLengthInfo();
             if (arrInfo.Item2.NodeType != ExpressionType.MemberAccess)
                 return false;
             var me = arrInfo.Item2 as MemberExpression;
@@ -374,7 +374,7 @@ namespace LINQToTTreeLib.Expressions
             // length we need to look down as many levels as we can do do the lookup.
             //
 
-            var arrInfo = DetermineArrayLengthInfo(expression.Operand);
+            var arrInfo = expression.Operand.DetermineArrayLengthInfo();
             if (arrInfo.Item2.NodeType == ExpressionType.MemberAccess)
             {
                 var ma = arrInfo.Item2 as MemberExpression;
@@ -424,26 +424,6 @@ namespace LINQToTTreeLib.Expressions
 
             var arrayBase = GetExpression(expression.Operand);
             _result = new ValSimple(arrayBase.AsObjectReference(expression.Operand) + ".size()", expression.Type);
-        }
-
-        /// <summary>
-        /// We need to take a look at this item to see if it is an array access. If so,
-        /// we want to find out all we can about it.
-        /// </summary>
-        /// <param name="expression">The expression that does the array access. Flunk out if it doesn't</param>
-        /// <returns>A tuple with a list of the expressions to do the lookup and what we are doing the lookup against</returns>
-        private Tuple<List<Expression>, Expression> DetermineArrayLengthInfo(Expression expression)
-        {
-            if (expression.NodeType != ExpressionType.ArrayIndex)
-            {
-                // We have reached teh bottom of the pile!
-                return Tuple.Create(new List<Expression>(), expression);
-            }
-
-            var br = expression as BinaryExpression;
-            var levelDown = DetermineArrayLengthInfo(br.Left);
-            levelDown.Item1.Add(br.Right);
-            return levelDown;
         }
 
         /// <summary>
