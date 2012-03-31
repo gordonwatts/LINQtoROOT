@@ -41,7 +41,6 @@ namespace LINQToTTreeLib.Tests.Expressions
             public EventInfo_p3(Expression expr) { HeldExpression = expr; }
 
 #pragma warning disable 0649
-            [NotAPointer]
             public uint[] m_AllTheData;
 #pragma warning restore 0649
         }
@@ -177,7 +176,7 @@ namespace LINQToTTreeLib.Tests.Expressions
         {
             Expression<Func<CollectionTree, uint>> arrayAccessLambda = arr => arr.EventInfo_p3_McEventInfo.m_AllTheData[0];
             var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(uint));
-            Assert.AreEqual("((*arr).EventInfo_p3_McEventInfo.m_AllTheData).at(0)", result.RawValue, "Value of array access in sub-object");
+            Assert.AreEqual("(*(*arr).EventInfo_p3_McEventInfo.m_AllTheData).at(0)", result.RawValue, "Value of array access in sub-object");
         }
 
         [TestMethod]
@@ -193,7 +192,25 @@ namespace LINQToTTreeLib.Tests.Expressions
         {
             Expression<Func<CollectionTree, int>> arrayAccessLambda = arr => arr.EventInfo_p3_McEventInfo.m_AllTheData.Length;
             var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(int));
-            Assert.AreEqual("(*((*arr).EventInfo_p3_McEventInfo.m_AllTheData)).size()", result.RawValue, "Value of array access in vector in proxy container");
+            Assert.AreEqual("(*(*arr).EventInfo_p3_McEventInfo.m_AllTheData).size()", result.RawValue, "Value of array access in vector in proxy container");
+        }
+
+        [TestMethod]
+        public void TestDoubleArrayVectorAccess()
+        {
+            Expression<Func<CollectionTree, double>> arrayAccessLambda = arr => arr.McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0][1];
+            var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(double));
+            Assert.AreEqual("((*(*arr).McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0]).at(1))", result.RawValue, "Value of array access in vector in proxy container");
+
+        }
+
+        [TestMethod]
+        public void TestDoubleArrayVectorLength()
+        {
+            Expression<Func<CollectionTree, int>> arrayAccessLambda = arr => arr.McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0].Length;
+            var result = RunArrayLengthOnExpression(arrayAccessLambda, typeof(int));
+            Assert.AreEqual("((*(*arr).McEventCollection_p4_GEN_EVENT.m_genEvents.m_weights[0]).size())", result.RawValue, "Value of array access in vector in proxy container");
+
         }
 
         private static IValue RunArrayLengthOnExpression(Expression arrayLenLambda, Type expectedType)
