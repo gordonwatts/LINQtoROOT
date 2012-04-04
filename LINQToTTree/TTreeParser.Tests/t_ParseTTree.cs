@@ -643,7 +643,7 @@ namespace TTreeParser.Tests
             Assert.AreEqual(1, eventInfoClass.Items.Count, "# items in the event info class");
             Assert.AreEqual("m_AllTheData", eventInfoClass.Items[0].Name, "m_AllTheData name");
             Assert.AreEqual("uint[]", eventInfoClass.Items[0].ItemType, "m_AllTheData type");
-            Assert.IsTrue(eventInfoClass.Items[0].NotAPointer, "array on event info class not a pointer");
+            Assert.IsFalse(eventInfoClass.Items[0].NotAPointer, "array on event info class not a pointer");
 
             // The McCollection has a bunch more stuff in it, namely 3 items.
             Assert.AreEqual(3, mcCollectionClass.Items.Count, "# items in the McCollection class");

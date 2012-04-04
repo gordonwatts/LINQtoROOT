@@ -625,12 +625,15 @@ namespace TTreeParser
             }
 
             //
-            // Dereferencing this guy should not cause a pointer deref!
+            // If this is a tclones array - and it is a real array, then we don't want to de-reference anything.
             //
 
-            foreach (var item in treeClass.Items)
+            if (treeClass.IsTClonesArrayClass)
             {
-                item.NotAPointer = true;
+                foreach (var item in treeClass.Items)
+                {
+                    item.NotAPointer = true;
+                }
             }
 
             //
