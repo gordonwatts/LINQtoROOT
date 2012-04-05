@@ -119,6 +119,54 @@ namespace LINQToTreeHelpers
             return deta * deta + deltaphi * deltaphi;
 #endif
         }
+
+        /// <summary>
+        /// Create a TLorentzVector from px, py, pz, and E.
+        /// </summary>
+        /// <param name="px"></param>
+        /// <param name="py"></param>
+        /// <param name="pz"></param>
+        /// <param name="E"></param>
+        /// <returns></returns>
+        [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+            Code = new string[]{
+                "TLorentzVector tlzUnique;",
+                "tlzUnique.SetPtEtaPhiE(px, py, pz, E);",
+                "CreateTLZPxPyPzE = &tlzUnique;"
+            })]
+        public static ROOTNET.NTLorentzVector CreateTLZPxPyPzE(double px, double py, double pz, double E)
+        {
+            throw new NotImplementedException("This should never get called!");
+#if false
+            var tlz = new ROOTNET.NTLorentzVector();
+            tlz.SetPxPyPzE(px, py, pz, E);
+            return tlz;
+#endif
+        }
+
+        /// <summary>
+        /// Create a TLorentzVector from px, py, pz, and M.
+        /// </summary>
+        /// <param name="px"></param>
+        /// <param name="py"></param>
+        /// <param name="pz"></param>
+        /// <param name="M"></param>
+        /// <returns></returns>
+        [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+            Code = new string[]{
+                "TLorentzVector tlzUnique;",
+                "tlzUnique.SetXYZM(px, py, pz, M);",
+                "CreateTLZPxPyPzM = &tlzUnique;"
+            })]
+        public static ROOTNET.NTLorentzVector CreateTLZPxPyPzM(double px, double py, double pz, double M)
+        {
+            throw new NotImplementedException("This should never get called!");
+#if false
+            var tlz = new ROOTNET.NTLorentzVector();
+            tlz.SetXYZM(px, py, pz, M);
+            return tlz;
+#endif
+        }
         #endregion
 
     }
