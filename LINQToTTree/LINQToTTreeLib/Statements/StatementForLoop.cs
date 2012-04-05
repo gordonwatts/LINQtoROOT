@@ -24,11 +24,22 @@ namespace LINQToTTreeLib.Statements
         /// <param name="startValue">Inital spot in array, defaults to zero</param>
         public StatementForLoop(string loopVariable, IValue arraySizeVar, IValue startValue = null)
         {
+            if (string.IsNullOrWhiteSpace(loopVariable))
+                throw new ArgumentNullException("loopVariable");
+            if (arraySizeVar == null)
+                throw new ArgumentNullException("arraySizeVar");
+
             ArrayLength = arraySizeVar;
             _loopVariable = loopVariable;
             InitialValue = startValue;
             if (InitialValue == null)
                 InitialValue = new ValSimple("0", typeof(int));
+
+            if (ArrayLength.Type != typeof(int))
+                throw new ArgumentException("arraySizeVar must be an integer");
+            if (InitialValue.Type != typeof(int))
+                throw new ArgumentException("startValue must be an integer");
+
         }
 
         /// <summary>
@@ -63,9 +74,15 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
+            // This shouldn't happen... we own the loop variable!!
+            if (other._loopVariable == _loopVariable)
+                throw new InvalidOperationException("Loop variables identical in attempt to combine StatementForLoop!");
+
             // If we are looping over the same thing, then we can combine.
 
             if (other.ArrayLength.RawValue != ArrayLength.RawValue)
+                return false;
+            if (other.InitialValue.RawValue != InitialValue.RawValue)
                 return false;
 
             // We need to rename the loop variable in the second guy
@@ -87,6 +104,7 @@ namespace LINQToTTreeLib.Statements
         public override void RenameVariable(string origName, string newName)
         {
             ArrayLength.RenameRawValue(origName, newName);
+            InitialValue.RenameRawValue(origName, newName);
             _loopVariable = _loopVariable.ReplaceVariableNames(origName, newName);
             RenameBlockVariables(origName, newName);
         }

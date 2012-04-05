@@ -437,6 +437,16 @@
     <Compile Include="Statements\StatementFilterTest.TestTryCombine.g.cs">
       <DependentUpon>StatementFilterTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Statements\StatementForLoopTest.cs" />
+    <Compile Include="Statements\StatementForLoopTest.TestCombineDifInitial.g.cs">
+      <DependentUpon>StatementForLoopTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementForLoopTest.TestCombineIdentical.g.cs">
+      <DependentUpon>StatementForLoopTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementForLoopTest.TestCTor.g.cs">
+      <DependentUpon>StatementForLoopTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.CodeItUp.g.cs">
       <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
     </Compile>
