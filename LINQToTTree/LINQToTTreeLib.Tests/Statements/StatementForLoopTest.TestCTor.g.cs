@@ -18,5 +18,59 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementForLoopTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCTorThrowsArgumentNullException710()
+{
+    StatementForLoop statementForLoop;
+    statementForLoop =
+      this.TestCTor((IDeclaredParameter)null, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCTorThrowsArgumentNullException425()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementForLoop statementForLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementForLoop =
+      this.TestCTor((IDeclaredParameter)dummyVarName, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCTorThrowsArgumentException180()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementForLoop statementForLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementForLoop = this.TestCTor
+                           ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCTorThrowsArgumentException4()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementForLoop statementForLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementForLoop = this.TestCTor((IDeclaredParameter)dummyVarName, 
+                                     (IValue)dummyVarName, (IValue)dummyVarName);
+}
     }
 }

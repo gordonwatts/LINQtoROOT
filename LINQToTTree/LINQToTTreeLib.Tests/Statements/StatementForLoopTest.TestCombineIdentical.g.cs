@@ -18,5 +18,54 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementForLoopTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCombineIdenticalThrowsArgumentNullException81()
+{
+    this.TestCombineIdentical((IDeclaredParameter)null, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCombineIdenticalThrowsArgumentNullException130()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    this.TestCombineIdentical
+        ((IDeclaredParameter)dummyVarName, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCombineIdenticalThrowsArgumentException870()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    this.TestCombineIdentical
+        ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCombineIdenticalThrowsArgumentException142()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    this.TestCombineIdentical((IDeclaredParameter)dummyVarName, 
+                              (IValue)dummyVarName, (IValue)dummyVarName);
+}
     }
 }

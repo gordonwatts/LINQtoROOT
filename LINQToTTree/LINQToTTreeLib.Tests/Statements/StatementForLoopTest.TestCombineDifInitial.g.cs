@@ -18,5 +18,57 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementForLoopTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCombineDifInitialThrowsArgumentNullException89()
+{
+    this.TestCombineDifInitial
+        ((IDeclaredParameter)null, (IValue)null, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCombineDifInitialThrowsArgumentNullException110()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    this.TestCombineDifInitial
+        ((IDeclaredParameter)dummyVarName, (IValue)null, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCombineDifInitialThrowsArgumentException42()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    this.TestCombineDifInitial
+        ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+         (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCombineDifInitialThrowsArgumentException834()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    this.TestCombineDifInitial
+        ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+         (IValue)dummyVarName, (IValue)null);
+}
     }
 }
