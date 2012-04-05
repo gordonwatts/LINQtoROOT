@@ -3,6 +3,7 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -14,7 +15,7 @@ namespace LINQToTTreeLib.Statements
         public IValue ArrayLength { get; set; }
         public IValue InitialValue { get; set; }
 
-        string _loopVariable;
+        IDeclaredParameter _loopVariable;
 
         /// <summary>
         /// Create a for loop statement.
@@ -22,9 +23,9 @@ namespace LINQToTTreeLib.Statements
         /// <param name="loopVariable"></param>
         /// <param name="arraySizeVar"></param>
         /// <param name="startValue">Inital spot in array, defaults to zero</param>
-        public StatementForLoop(string loopVariable, IValue arraySizeVar, IValue startValue = null)
+        public StatementForLoop(IDeclaredParameter loopVariable, IValue arraySizeVar, IValue startValue = null)
         {
-            if (string.IsNullOrWhiteSpace(loopVariable))
+            if (loopVariable == null)
                 throw new ArgumentNullException("loopVariable");
             if (arraySizeVar == null)
                 throw new ArgumentNullException("arraySizeVar");
@@ -52,7 +53,7 @@ namespace LINQToTTreeLib.Statements
             {
                 var arrIndex = typeof(int).CreateUniqueVariableName();
                 yield return string.Format("int {0} = {1};", arrIndex, ArrayLength.RawValue);
-                yield return string.Format("for (int {0}={2}; {0} < {1}; {0}++)", _loopVariable, arrIndex, InitialValue.RawValue);
+                yield return string.Format("for (int {0}={2}; {0} < {1}; {0}++)", _loopVariable.RawValue, arrIndex, InitialValue.RawValue);
                 foreach (var l in RenderInternalCode())
                 {
                     yield return l;
@@ -87,7 +88,10 @@ namespace LINQToTTreeLib.Statements
 
             // We need to rename the loop variable in the second guy
 
-            other.RenameVariable(other._loopVariable, _loopVariable);
+            // Are they the same? _index is independent and we can alter it.
+            if (!(opt.TryRenameVarialbeOneLevelUp(other._loopVariable.RawValue, _loopVariable)))
+                    return false;
+
 
             // Combine everything
 
@@ -105,7 +109,7 @@ namespace LINQToTTreeLib.Statements
         {
             ArrayLength.RenameRawValue(origName, newName);
             InitialValue.RenameRawValue(origName, newName);
-            _loopVariable = _loopVariable.ReplaceVariableNames(origName, newName);
+            _loopVariable.RenameParameter(origName, newName);
             RenameBlockVariables(origName, newName);
         }
     }

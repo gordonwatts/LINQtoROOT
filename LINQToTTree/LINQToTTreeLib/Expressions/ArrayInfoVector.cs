@@ -49,14 +49,14 @@ namespace LINQToTTreeLib.Expressions
             /// translate this - that only gets to happen when one is actually looking at a final result.
             /// 
 
-            var loopVariable = Expression.Variable(typeof(int), typeof(int).CreateUniqueVariableName());
+            var loopVariable = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var indexExpression = Expression.MakeBinary(ExpressionType.ArrayIndex, _arrayExpression, loopVariable);
 
             ///
             /// Now the for loop statement!
             /// 
 
-            env.Add(new StatementForLoop(loopVariable.Name, lenTranslation));
+            env.Add(new StatementForLoop(loopVariable, lenTranslation));
 
             ///
             /// Return the index expression - the thing that can be used to replace all expressions and

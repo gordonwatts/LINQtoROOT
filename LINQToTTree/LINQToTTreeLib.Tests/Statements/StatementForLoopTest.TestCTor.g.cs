@@ -18,41 +18,5 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementForLoopTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementForLoopTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestCTorThrowsArgumentNullException867()
-{
-    StatementForLoop statementForLoop;
-    statementForLoop = this.TestCTor("", (IValue)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementForLoopTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void TestCTorThrowsArgumentException744()
-{
-    StatementInlineBlockTest.dummyVarName dummyVarName;
-    StatementForLoop statementForLoop;
-    dummyVarName =
-      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
-    dummyVarName.InitialValue = (IValue)null;
-    dummyVarName.Declare = false;
-    dummyVarName.RawValue = (string)null;
-    statementForLoop = this.TestCTor("", (IValue)dummyVarName, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementForLoopTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void TestCTorThrowsArgumentException()
-{
-    StatementInlineBlockTest.dummyVarName dummyVarName;
-    StatementForLoop statementForLoop;
-    dummyVarName =
-      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
-    dummyVarName.InitialValue = (IValue)null;
-    dummyVarName.Declare = false;
-    dummyVarName.RawValue = (string)null;
-    statementForLoop = this.TestCTor("", (IValue)dummyVarName, (IValue)dummyVarName);
-}
     }
 }

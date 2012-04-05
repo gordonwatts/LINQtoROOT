@@ -238,8 +238,8 @@ namespace LINQToTTreeLib.Expressions
             public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
             {
                 // Create the index variable!
-                var loopVariable = Expression.Variable(typeof(int), typeof(int).CreateUniqueVariableName());
-                var floop = new Statements.StatementForLoop(loopVariable.Name, _maxValue, _minValue);
+                var loopVariable = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                var floop = new Statements.StatementForLoop(loopVariable, _maxValue, _minValue);
                 env.Add(floop);
 
                 return Tuple.Create(loopVariable as Expression, loopVariable as Expression);
