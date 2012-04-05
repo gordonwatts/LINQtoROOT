@@ -21,6 +21,9 @@ Math Acos(System.Double) => std::acos(double)
 Math Atan(System.Double) => std::atan(double)
 Math Atan2(System.Double, double) => std::atan(double, double)
 
+Math Sqrt(System.Double) => std::sqrt(double)
+Math Sqrt(System.Single) => std::sqrt(float)
+
 Math Abs(System.Double) => std::abs(double)
 Math Abs(System.Single) => std::abs(float)
 Math Abs(System.Int32) => std::abs(int)
