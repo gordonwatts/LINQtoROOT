@@ -1570,6 +1570,34 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSimpleLoopEnumerabelRangeWithVarCombine()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r1 = from evt in q
+                     select (from i in Enumerable.Range(0, evt.run)
+                             where evt.valC1DConst[i] > 5
+                             select evt.valC1DConst[i]).Count();
+            var r = r1.Where(v => v > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = r1.Where(v => v > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+
+            var forstatement = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(forstatement, "for statement isn't a block!");
+            Assert.AreEqual(1, forstatement.Statements.Count(), "# of statements in the for loop");
+
+            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(ifstatement, "if statement pointer");
+            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
+        }
+
+        [TestMethod]
         public void TestSimpleLoopEnumerabelRangeWithVarNZStart()
         {
             var q = new QueriableDummy<dummyntup>();
