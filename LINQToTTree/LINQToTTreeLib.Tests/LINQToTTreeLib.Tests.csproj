@@ -308,6 +308,7 @@
     <Compile Include="QueryResultCacheTest.Lookup.g.cs">
       <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="QueryVisitorOnImpliedObjectsTest.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitorTest.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitorTest.Format.g.cs">
       <DependentUpon>FormattingQueryVisitorTest.cs</DependentUpon>
