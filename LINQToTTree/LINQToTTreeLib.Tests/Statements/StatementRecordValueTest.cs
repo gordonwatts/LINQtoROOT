@@ -10,12 +10,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace LINQToTTreeLib.Tests
 {
     /// <summary>
-    ///This is a test class for TestStatemenRecordValue and is intended
-    ///to contain all TestStatemenRecordValue Unit Tests
+    ///This is a test class for TestStatementRecordValue and is intended
+    ///to contain all TestStatementRecordValue Unit Tests
     ///</summary>
     [TestClass]
     [PexClass(typeof(StatementRecordValue))]
-    public partial class TestStatemenRecordValue
+    public partial class TestStatementRecordValue
     {
         [TestInitialize]
         public void TestInit()

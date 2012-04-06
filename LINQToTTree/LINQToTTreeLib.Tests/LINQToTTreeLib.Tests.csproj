@@ -578,13 +578,13 @@
     </Compile>
     <Compile Include="Statements\StatementVectorLoopTest.cs" />
     <Compile Include="Statements\TestStatemenRecordValue.TestCodeItUp.g.cs">
-      <DependentUpon>StatemenRecordValueTest.cs</DependentUpon>
+      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\TestStatemenRecordValue.TestRenameVariable.g.cs">
-      <DependentUpon>StatemenRecordValueTest.cs</DependentUpon>
+      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\TestStatemenRecordValue.TestTryCombineStatement.g.cs">
-      <DependentUpon>StatemenRecordValueTest.cs</DependentUpon>
+      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\TestStatementAnyAllDetector.TestCodeItUp.g.cs">
       <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
@@ -597,6 +597,12 @@
     </Compile>
     <Compile Include="Statements\TestStatementCheckLoopPairwise.TestStatementCheckLoopPairwiseConstructor.g.cs">
       <DependentUpon>StatementCheckLoopPairwiseTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementRecordValue.TestRenameVariable.g.cs">
+      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\TestStatementRecordValue.TestTryCombineStatement.g.cs">
+      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\Utils.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
@@ -669,7 +675,7 @@
     <Compile Include="Statements\StatementAssignTest.cs" />
     <Compile Include="Statements\StatementCheckLoopPairwiseTest.cs" />
     <Compile Include="Statements\StatementAnyAllDetectorTest.cs" />
-    <Compile Include="Statements\StatemenRecordValueTest.cs" />
+    <Compile Include="Statements\StatementRecordValueTest.cs" />
     <Compile Include="Expressions\t_ExpressionResolver.cs" />
     <Compile Include="Expressions\t_DeclarableParameter.cs" />
     <Compile Include="Statements\StatementRecordPairValuesTest.cs" />

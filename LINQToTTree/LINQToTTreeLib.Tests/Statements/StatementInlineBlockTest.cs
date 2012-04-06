@@ -137,7 +137,6 @@ namespace LINQToTTreeLib.Statements
 
             public void RenameRawValue(string oldname, string newname)
             {
-                throw new NotImplementedException();
             }
 
             public string ParameterName
