@@ -177,9 +177,48 @@ namespace LINQToTTreeLib.Tests
             query1.DumpCodeToConsole();
 
             Assert.AreEqual(1, query1.CodeBody.Statements.Count(), "# statements in the code body");
-            var block = query1.CodeBody.Statements.First() as IBookingStatementBlock;
-            Assert.IsNotNull(block, "top level statement");
-            Assert.AreEqual(1, block.Statements.Count(), "# of statements in the code");
+            var forblock = query1.CodeBody.Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock, "top level statement");
+            Assert.AreEqual(1, forblock.Statements.Count(), "# of statements in the code");
+        }
+
+        [TestMethod]
+        public void TestQueryOnNonTClonesObjectCombine()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var r1 = from evt in q
+                     from p in evt.EventInfo_p3_McEventInfo.m_AllTheData
+                     select p;
+            var r = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            var r2 = r1.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query1.CodeBody.Statements.Count(), "# statements in the code body");
+            var forblock = query1.CodeBody.Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock, "top level statement");
+            Assert.AreEqual(2, forblock.Statements.Count(), "# of statements in the code");
+        }
+
+        /// <summary>
+        /// Do the code combination we require!
+        /// </summary>
+        /// <param name="gcs"></param>
+        /// <returns></returns>
+        private IExecutableCode CombineQueries(params IExecutableCode[] gcs)
+        {
+            var combinedInfo = new CombinedGeneratedCode();
+            foreach (var cq in gcs)
+            {
+                combinedInfo.AddGeneratedCode(cq);
+            }
+
+            return combinedInfo;
         }
     }
 }
