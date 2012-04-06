@@ -9,10 +9,61 @@
 // compile anymore, you may delete this file and invoke Pex again.
 // </auto-generated>
 using System;
+using LINQToTTreeLib.Statements;
+using LinqToTTreeInterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Pex.Framework.Generated;
 
 namespace LINQToTTreeLib.Tests
 {
     public partial class TestStatementRecordValue
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatementRecordValue))]
+public void TestCodeItUp51801()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementRecordValue statementRecordValue;
+    string[] ss;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                                (IDeclaredParameter)dummyVarName, false);
+    ss = this.TestCodeItUp(statementRecordValue);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(2, ss.Length);
+    Assert.AreEqual<string>(" = ;", ss[0]);
+    Assert.AreEqual<string>(" = true;", ss[1]);
+    Assert.IsNotNull((object)statementRecordValue);
+    Assert.IsNull(statementRecordValue.Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatementRecordValue))]
+public void TestCodeItUp18101()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementRecordValue statementRecordValue;
+    string[] ss;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                                (IDeclaredParameter)dummyVarName, true);
+    ss = this.TestCodeItUp(statementRecordValue);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(3, ss.Length);
+    Assert.AreEqual<string>(" = ;", ss[0]);
+    Assert.AreEqual<string>(" = true;", ss[1]);
+    Assert.AreEqual<string>("break;", ss[2]);
+    Assert.IsNotNull((object)statementRecordValue);
+    Assert.IsNull(statementRecordValue.Parent);
+}
     }
 }

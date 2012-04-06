@@ -21,7 +21,45 @@ namespace LINQToTTreeLib.Tests
     {
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatementRecordValue))]
-public void TestTryCombineStatement189()
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineStatementThrowsArgumentNullException549()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementRecordValue statementRecordValue;
+    bool b;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                                (IDeclaredParameter)dummyVarName, false);
+    b = this.TestTryCombineStatement
+            (statementRecordValue, (IStatement)null, (ICodeOptimizationService)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatementRecordValue))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineStatementThrowsArgumentNullException985()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementRecordValue statementRecordValue;
+    bool b;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                                (IDeclaredParameter)dummyVarName, false);
+    b = this.TestTryCombineStatement(statementRecordValue, 
+                                     (IStatement)statementRecordValue, (ICodeOptimizationService)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatementRecordValue))]
+public void TestTryCombineStatement18901()
 {
     StatementInlineBlockTest.dummyVarName dummyVarName;
     StatementRecordValue statementRecordValue;
@@ -34,18 +72,18 @@ public void TestTryCombineStatement189()
     dummyVarName.Declare = false;
     dummyVarName.RawValue = (string)null;
     statementRecordValue = StatementRecordValueFactory.Create
-                               ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
-                                (IDeclaredParameter)dummyVarName, false);
-    statementRecordValue1 = StatementRecordValueFactory.Create
-                                ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
-                                 (IDeclaredParameter)dummyVarName, false);
+                               ((IDeclaredParameter)dummyVarName, (IValue)null, 
+                                (IDeclaredParameter)null, false);
+    statementRecordValue1 =
+      StatementRecordValueFactory.Create((IDeclaredParameter)null, (IValue)null, 
+                                         (IDeclaredParameter)dummyVarName, false);
     codeOptimizerTest = CodeOptimizerTestFactory.Create(false);
     b = this.TestTryCombineStatement
-            (statementRecordValue1, (IStatement)statementRecordValue, 
-                                    (ICodeOptimizationService)codeOptimizerTest);
+            (statementRecordValue, (IStatement)statementRecordValue1, 
+                                   (ICodeOptimizationService)codeOptimizerTest);
     Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementRecordValue1);
-    Assert.IsNull(statementRecordValue1.Parent);
+    Assert.IsNotNull((object)statementRecordValue);
+    Assert.IsNull(statementRecordValue.Parent);
 }
     }
 }
