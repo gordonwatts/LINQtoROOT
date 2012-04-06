@@ -364,7 +364,7 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             var loopExpression = groupObj.TargetExpression;
-            cc.Add((groupObj.TargetExpressionLoopVariable as ParameterExpression).Name, Expression.Parameter(typeof(int), s.LoopItemIndex));
+            cc.Add(groupObj.TargetExpressionLoopVariable.ParameterName(), Expression.Parameter(typeof(int), s.LoopItemIndex));
 
             return new SimpleLoopVarSetting(loopExpression, s.Counter);
         }

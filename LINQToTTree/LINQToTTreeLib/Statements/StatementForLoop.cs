@@ -3,7 +3,6 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -87,10 +86,7 @@ namespace LINQToTTreeLib.Statements
                 return false;
 
             // We need to rename the loop variable in the second guy
-
-            // Are they the same? _index is independent and we can alter it.
-            if (!(opt.TryRenameVarialbeOneLevelUp(other._loopVariable.RawValue, _loopVariable)))
-                    return false;
+            other.RenameVariable(other._loopVariable.ParameterName, _loopVariable.ParameterName);
 
 
             // Combine everything
