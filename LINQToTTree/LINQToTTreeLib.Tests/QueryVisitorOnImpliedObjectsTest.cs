@@ -199,10 +199,104 @@ namespace LINQToTTreeLib.Tests
 
             query.DumpCodeToConsole();
 
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query code blocks");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
+            var forblock = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock, "top level statement");
+            Assert.AreEqual(2, forblock.Statements.Count(), "# of statements in the code");
+        }
+
+        [TestMethod]
+        public void TestQueryOnTClonesObject()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var r1 = from evt in q
+                     from p in evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px
+                     select p;
+            var r = r1.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
             Assert.AreEqual(1, query1.CodeBody.Statements.Count(), "# statements in the code body");
             var forblock = query1.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock, "top level statement");
+            Assert.AreEqual(1, forblock.Statements.Count(), "# of statements in the code");
+        }
+
+        [TestMethod]
+        public void TestQueryOnTClonesObjectCombine()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var r1 = from evt in q
+                     from p in evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px
+                     select p;
+            var r = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            r = r1.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            var qu = query.QueryCode().First();
+            Assert.AreEqual(1, qu.Statements.Count(), "# statements in the code body");
+            var forblock = qu.Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock, "top level statement");
             Assert.AreEqual(2, forblock.Statements.Count(), "# of statements in the code");
+        }
+
+        [TestMethod]
+        public void TestQueryOnTClonesObjectWithEnumerble()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var r1 = from evt in q
+                     from pindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length)
+                     select pindex;
+            var r = r1.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.AreEqual(2, query1.CodeBody.Statements.Count(), "# statements in the code body");
+            var forblock = query1.CodeBody.Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock, "top level statement");
+            Assert.AreEqual(1, forblock.Statements.Count(), "# of statements in the code");
+            var forblock2 = query1.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock2, "2nd for block");
+            Assert.AreEqual(1, forblock2.Statements.Count(), "# of for #2 statement statements");
+        }
+
+        [TestMethod]
+        public void TestQueryOnTClonesObjectWithEnumerbleCombine()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var r1 = from evt in q
+                     from pindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length)
+                     select pindex;
+            var r = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            r = r1.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# statements in the code body");
+            var forblock = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock, "top level statement");
+            Assert.AreEqual(1, forblock.Statements.Count(), "# of statements in the code");
+            var forblock2 = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(forblock2, "2nd for block");
+            Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
 
         /// <summary>
