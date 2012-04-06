@@ -59,6 +59,7 @@ public void TestTryCombineStatementThrowsArgumentNullException985()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatementRecordValue))]
+[ExpectedException(typeof(ArgumentNullException))]
 public void TestTryCombineStatement18901()
 {
     StatementInlineBlockTest.dummyVarName dummyVarName;
