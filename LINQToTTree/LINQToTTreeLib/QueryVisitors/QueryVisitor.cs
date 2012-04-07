@@ -260,6 +260,18 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// We don't implement this yet. Make that explicit.
+        /// </summary>
+        /// <param name="groupJoinClause"></param>
+        /// <param name="queryModel"></param>
+        /// <param name="index"></param>
+        public override void VisitGroupJoinClause(GroupJoinClause groupJoinClause, QueryModel queryModel, int index)
+        {
+            throw new NotImplementedException("Group Join clauses in LINQ are not yet implemented");
+            //base.VisitGroupJoinClause(groupJoinClause, queryModel, index);
+        }
+
+        /// <summary>
         /// Get/Set the container that can be usef for MEF'ing things.
         /// </summary>
         public CompositionContainer MEFContainer { get; private set; }

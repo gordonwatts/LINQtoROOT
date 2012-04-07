@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
@@ -358,7 +359,61 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNotNull(forblock2, "2nd for block");
             Assert.AreEqual(1, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
-        
+
+        [TestMethod]
+        public void TestJoinOnTClonesObjectWithEnumerableExplicit()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var particles = from evt in q
+                            select new
+                            {
+                                Particles = from pindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length)
+                                            let vtxInitBC = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[pindex]
+                                            where vtxInitBC < 0
+                                            let vtxInitIndex = (from vindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode.Length)
+                                                                where evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode[vindex] == vtxInitBC
+                                                                select vindex).FirstOrDefault()
+                                            select new
+                                            {
+                                                Px = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px[pindex],
+                                                Py = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_py[pindex],
+                                                PInitX = evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[vtxInitIndex]
+                                            }
+                            };
+            var r = particles.Where(plst => plst.Particles.Any(p => p.PInitX > 0)).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotImplementedException))]
+        public void TestJoinOnTClonesObjectWithEnumerable()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var particles = from evt in q
+                            select new
+                            {
+                                Particles = from pindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length)
+                                            join vindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x.Length)
+                                            on evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[pindex] equals evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode[vindex] into productionVertexList
+                                            where productionVertexList.Count() == 1
+                                            let vtxInitIndex = productionVertexList.First()
+                                            select new
+                                            {
+                                                Px = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px[pindex],
+                                                Py = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_py[pindex],
+                                                PInitX = evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[vtxInitIndex]
+                                            }
+                            };
+            var r = particles.Where(plst => plst.Particles.Any(p => p.PInitX > 0)).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+
         /// <summary>
         /// Do the code combination we require!
         /// </summary>
