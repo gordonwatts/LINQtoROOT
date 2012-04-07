@@ -106,6 +106,13 @@ namespace LINQToTTreeLib.Expressions
             var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
             var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e => e);
 
+            //
+            // If we don't know what we are doing here, bail!
+            //
+
+            if (r == expr)
+                return null;
+
             return ReGetIArrayInfo(r);
         }
     }
