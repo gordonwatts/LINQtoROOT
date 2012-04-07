@@ -153,40 +153,66 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         private class BlockRenamer : ICodeOptimizationService
         {
-            private IBookingStatementBlock _holderBlock;
+            /// <summary>
+            /// Track the holder block for old variables.
+            /// </summary>
+            private IBookingStatementBlock _holderBlockOld;
 
-            public BlockRenamer(IBookingStatementBlock holder)
+            /// <summary>
+            /// Track the holder block for new variables.
+            /// </summary>
+            private IBookingStatementBlock _holderBlockNew;
+
+            public BlockRenamer(IBookingStatementBlock holderOldStatements, IBookingStatementBlock holderNewStatements)
             {
-                if (holder == null)
+                if (holderOldStatements == null)
                     throw new ArgumentNullException("holder");
-                this._holderBlock = holder;
+                this._holderBlockOld = holderOldStatements;
+                if (holderNewStatements == null)
+                    throw new ArgumentNullException("holder");
+                this._holderBlockNew = holderNewStatements;
             }
 
             /// <summary>
             /// Rename succeeds if we can find the declared variable, amone other things.
             /// </summary>
-            /// <param name="oldName"></param>
-            /// <param name="newName"></param>
-            /// <returns></returns>
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newName)
+            /// <param name="oldName">Name of the old parameter that we are replacing</param>
+            /// <param name="newParam">The new parameter we will replace it with</param>
+            /// <param name="newHolderBlock">The booking context we are currently looking at for the new name (the _holder) of the statement we are looking at</param>
+            /// <returns>True if the variables could be renamed (and the rename is done), false otherwise</returns>
+            /// <remarks>
+            /// The newHolderBlock is needed because it is used to determine if the new variable is declared in the same place
+            /// or not.
+            /// </remarks>
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newParam)
             {
                 //
                 // First, see if we can find the block where the variable is declared.
                 //
 
-                var vr = FindDeclaredVariable(oldName, _holderBlock);
+                var vr = FindDeclaredVariable(oldName, _holderBlockOld);
 
                 if (vr == null)
                     return false;
 
+                //
+                // Make sure that the variable we are switching to is also declared. If it is an "external" then we
+                // are going to have a problem here! And, the variables had better be declared the same "scope" above, or
+                // that means they are also being used for something different.
+                //
+
+                var vrNew = FindDeclaredVariable(newParam.ParameterName, _holderBlockNew);
+                if (vrNew == null || vrNew.Item3 != vr.Item3)
+                    return false;
+
                 // Check that its initialization is the same!
-                bool initValueSame = (vr.Item1.InitialValue == null && newName.InitialValue == null)
-                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.Type == newName.InitialValue.Type && vr.Item1.InitialValue.RawValue == newName.InitialValue.RawValue));
+                bool initValueSame = (vr.Item1.InitialValue == null && newParam.InitialValue == null)
+                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.Type == newParam.InitialValue.Type && vr.Item1.InitialValue.RawValue == newParam.InitialValue.RawValue));
                 if (!initValueSame)
                     return false;
 
                 // Rename the variable!
-                vr.Item2.RenameVariable(oldName, newName.ParameterName);
+                vr.Item2.RenameVariable(oldName, newParam.ParameterName);
 
                 return true;
             }
@@ -196,8 +222,8 @@ namespace LINQToTTreeLib.Statements
             /// </summary>
             /// <param name="oldName"></param>
             /// <param name="statement"></param>
-            /// <returns></returns>
-            private Tuple<IDeclaredParameter, IBookingStatementBlock> FindDeclaredVariable(string oldName, IStatement statement)
+            /// <returns>A tuple of the declared old variable, the block it was booked in, and how far up the chain we had to go to find it.</returns>
+            private Tuple<IDeclaredParameter, IBookingStatementBlock, int> FindDeclaredVariable(string oldName, IStatement statement)
             {
                 if (statement == null)
                     return null;
@@ -207,10 +233,13 @@ namespace LINQToTTreeLib.Statements
                     var hr = statement as IBookingStatementBlock;
                     var vr = hr.DeclaredVariables.Where(v => v.ParameterName == oldName).FirstOrDefault();
                     if (vr != null)
-                        return Tuple.Create(vr, hr);
+                        return Tuple.Create(vr, hr, 0);
                 }
 
-                return FindDeclaredVariable(oldName, statement.Parent);
+                var onedown = FindDeclaredVariable(oldName, statement.Parent);
+                if (onedown == null)
+                    return null;
+                return Tuple.Create(onedown.Item1, onedown.Item2, onedown.Item3 + 1);
             }
 
             /// <summary>
@@ -220,7 +249,7 @@ namespace LINQToTTreeLib.Statements
             /// <param name="newName"></param>
             public void ForceRenameVariable(string originalName, string newName)
             {
-                _holderBlock.RenameVariable(originalName, newName);
+                _holderBlockOld.RenameVariable(originalName, newName);
             }
         }
 
@@ -262,7 +291,7 @@ namespace LINQToTTreeLib.Statements
             ICodeOptimizationService myopt;
             if (parent != null)
             {
-                myopt = new BlockRenamer(parent);
+                myopt = new BlockRenamer(parent, this);
             }
             else
             {

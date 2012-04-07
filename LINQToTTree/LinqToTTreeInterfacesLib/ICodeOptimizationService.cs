@@ -12,7 +12,12 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="oldName">The old variable which we shoudl find in the enclosing block and rename</param>
         /// <param name="newVariable">The new variable we want it renamed to</param>
-        /// <returns></returns>
+        /// <returns>True if the renaming was allowed to proceed (and the renaming is complete)</returns>
+        /// <remarks>
+        /// If the new variable is an external result (i.e. not declared) then the rename can't proceed. Further,
+        /// if the new variable is declared at a different level above the new holder than the old stataement above the older holder,
+        /// that means the two are used for different things - so it can't procced, again.
+        /// </remarks>
         bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable);
 
         /// <summary>

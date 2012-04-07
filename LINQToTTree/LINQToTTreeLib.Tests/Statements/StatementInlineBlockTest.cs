@@ -376,6 +376,39 @@ namespace LINQToTTreeLib.Statements
         }
 
         [TestMethod]
+        public void TestCombineWithRenameAtDifferentLevels()
+        {
+            // Try to combine two statements that look like they should combine,
+            // but one variable is declared at a different "level" than the other
+            // up the hierarchy.
+
+            var inline1 = new StatementInlineBlock();
+            var inline11 = new StatementInlineBlock();
+            inline1.Add(inline11);
+            var inline2 = new StatementInlineBlock();
+            var inline22 = new StatementInlineBlock();
+            inline2.Add(inline22);
+
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            inline1.Add(vdecl1);
+            inline22.Add(vdecl2);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline11.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline22.Add(s2);
+
+            var result = inline1.TryCombineStatement(inline2, null);
+            Assert.IsTrue(result, "try combine should go ok");
+            Assert.AreEqual(1, inline1.Statements.Count(), "# statements inside inline 1");
+            var innerBlock = inline1.Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(innerBlock, "inner block a booking statement");
+            Assert.AreEqual(2, innerBlock.Statements.Count(), "Statements in inner block should not have combined");
+        }
+
+        [TestMethod]
         public void TestCombineWithRenameVarsDifferent()
         {
             // If the varialbes are initialized differently, then we can't combine them!
@@ -426,6 +459,34 @@ namespace LINQToTTreeLib.Statements
             var result = inline1.TryCombineStatement(inline2, null);
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(3, inline1.Statements.Count(), "bad # of combined statements");
+        }
+
+        [TestMethod]
+        public void TestCombineWithRenameVarsNotDeclR()
+        {
+            // If one of the variables isn't declared, then this is a "result" and it shouldn't
+            // be combined (or similar - whatever, it is outside the block). So we can't
+            // do the combine for now!
+            // This is the same guy as above - but in reverse order. This is important because
+            // this test needs to be symetric.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var vdecl2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            inline1.Add(vdecl1);
+
+            var s1 = new CombineTestStatement(vdecl1);
+            inline1.Add(s1);
+            var s2 = new CombineTestStatement(vdecl2);
+            inline2.Add(s2);
+            inline2.Add(new Statements.StatementSimpleStatement(string.Format("dude = {0}", vdecl2.RawValue)));
+
+            var result = inline2.TryCombineStatement(inline1, null);
+            Assert.IsTrue(result, "try combine didn't work");
+            Assert.AreEqual(3, inline2.Statements.Count(), "bad # of combined statements");
         }
     }
 }
