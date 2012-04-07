@@ -414,6 +414,24 @@ namespace LINQToTTreeLib.Tests
             Assert.Inconclusive();
         }
 
+        [TestMethod]
+        public void TestJoinOnTClonesObjectBoth()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            var pvPairs = from evt in q
+                          from pindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx.Length)
+                          select Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode.Length)
+                              .Where(i => evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[pindex] == evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode[i])
+                              .FirstOrDefault();
+
+            var r = pvPairs.Where(i => i > 4).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+
         /// <summary>
         /// Do the code combination we require!
         /// </summary>
