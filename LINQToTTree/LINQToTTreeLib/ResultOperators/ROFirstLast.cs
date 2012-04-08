@@ -109,10 +109,11 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
 
             //
-            // Ok - we now pop out, and throw an exception if we are supposed to always have a number, and then continue on.
+            // Next we have to pop up a few levels. Basically, up enough that we can figure out if we are sitting
+            // at something a break is going to "take care of".
             //
 
-            gc.Pop();
+            gc.Pop(true);
 
             if (bombIfNothing)
             {
