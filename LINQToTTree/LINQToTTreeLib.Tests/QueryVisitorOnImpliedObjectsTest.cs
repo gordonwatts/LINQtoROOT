@@ -384,6 +384,7 @@ namespace LINQToTTreeLib.Tests
             var r = particles.Where(plst => plst.Particles.Any(p => p.PInitX > 0)).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            // Make sure we don't throw here.
         }
 
         [TestMethod]
@@ -410,8 +411,6 @@ namespace LINQToTTreeLib.Tests
             var r = particles.Where(plst => plst.Particles.Any(p => p.PInitX > 0)).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
-
-            Assert.Inconclusive();
         }
 
         [TestMethod]
@@ -429,7 +428,10 @@ namespace LINQToTTreeLib.Tests
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.Inconclusive();
+            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements");
+            var scnd = query.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
+            Assert.AreEqual(4, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
         /// <summary>
