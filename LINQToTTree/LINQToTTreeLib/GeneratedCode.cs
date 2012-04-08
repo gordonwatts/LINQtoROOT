@@ -189,7 +189,6 @@ namespace LINQToTTreeLib
 
             bool foundLoop = CurrentScopePointer is IStatementLoop;
 
-
             //
             // Run through the scope and make sure we get it right...
             //
@@ -313,11 +312,20 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Pop one level of booking statements off our pointer - where our current scope is!
         /// </summary>
-        public void Pop()
+        public void Pop(bool popPastLoopStatement = false)
         {
-            if (_scopeState.Count == 0)
-                throw new InvalidOperationException("Unable to pop a level up in generated code when we've not gone down a level");
-            CurrentScope = _scopeState.Pop();
+            while (true)
+            {
+                if (_scopeState.Count == 0)
+                    throw new InvalidOperationException("Unable to pop a level up in generated code when we've not gone down a level");
+
+                bool isLoopStatement = CurrentScopePointer is IStatementLoop;
+
+                CurrentScope = _scopeState.Pop();
+
+                if (!popPastLoopStatement || isLoopStatement)
+                    return;
+            }
         }
     }
 }

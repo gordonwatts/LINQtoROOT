@@ -20,7 +20,7 @@ namespace LINQToTTreeLib
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentNullException))]
-public void AddCompoundStatementTestThrowsArgumentNullException269()
+public void AddCompoundStatementTestThrowsArgumentNullException692()
 {
     this.AddCompoundStatementTest((IStatement)null);
 }
@@ -35,7 +35,7 @@ public void AddCompoundStatementTest818()
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 [ExpectedException(typeof(ArgumentException))]
-public void AddCompoundStatementTestThrowsArgumentException489()
+public void AddCompoundStatementTestThrowsArgumentException892()
 {
     GeneratedCodeTest.SimpleStatement s0 = new GeneratedCodeTest.SimpleStatement();
     GeneratedCodeTest.SimpleStatement s1 = new GeneratedCodeTest.SimpleStatement();
@@ -47,20 +47,20 @@ public void AddCompoundStatementTestThrowsArgumentException489()
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 public void AddCompoundStatementTest81801()
 {
-    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
-    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
-    ((GeneratedCodeTest.CompoundStatement)compoundBookingStatement).Parent =
-      (IStatement)null;
-    this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
+    GeneratedCodeTest.CompoundStatement compoundStatement;
+    compoundStatement = new GeneratedCodeTest.CompoundStatement();
+    compoundStatement.Parent = (IStatement)null;
+    this.AddCompoundStatementTest((IStatement)compoundStatement);
 }
 [TestMethod]
 [PexGeneratedBy(typeof(GeneratedCodeTest))]
 public void AddCompoundStatementTest81802()
 {
-    GeneratedCodeTest.CompoundStatement compoundStatement;
-    compoundStatement = new GeneratedCodeTest.CompoundStatement();
-    compoundStatement.Parent = (IStatement)null;
-    this.AddCompoundStatementTest((IStatement)compoundStatement);
+    GeneratedCodeTest.CompoundBookingStatement compoundBookingStatement;
+    compoundBookingStatement = new GeneratedCodeTest.CompoundBookingStatement();
+    ((GeneratedCodeTest.CompoundStatement)compoundBookingStatement).Parent =
+      (IStatement)null;
+    this.AddCompoundStatementTest((IStatement)compoundBookingStatement);
 }
     }
 }

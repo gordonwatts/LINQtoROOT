@@ -410,8 +410,51 @@ namespace LINQToTTreeLib
             gc.Pop();
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestPopUpOneLevelLoopEmpty()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            gc.Pop(true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestPopUpOneLevelLoopInline()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            gc.Add(new StatementInlineBlock());
+            gc.Pop(true);
+        }
+
+        [TestMethod]
+        public void TestPopUpOneLevelLoopWithLoop()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            var loopV = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(new StatementForLoop(loopV, new Variables.ValSimple("5", typeof(int))));
+            gc.Pop(true);
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements present now");
+            gc.Add(new StatementBreak());
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements present now");
+        }
+
+        [TestMethod]
+        public void TestPopUpOneLevelLoopWithLoopDeeper()
+        {
+            GeneratedCode gc = new GeneratedCode();
+            var loopV = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(new StatementForLoop(loopV, new Variables.ValSimple("5", typeof(int))));
+            gc.Add(new StatementInlineBlock());
+            gc.Add(new StatementBreak());
+            gc.Pop(true);
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements present now");
+            gc.Add(new StatementBreak());
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements present now");
+        }
+
         [PexMethod]
-        public void Pop([PexAssumeNotNull]IStatement s)
+        public void Pop([PexAssumeNotNull]IStatement s, bool popPastLoop)
         {
             var gc = new GeneratedCode();
             int depth = gc.Depth;
@@ -420,7 +463,7 @@ namespace LINQToTTreeLib
             bool good = s is IBookingStatementBlock;
             try
             {
-                gc.Pop();
+                gc.Pop(popPastLoop);
                 Assert.AreEqual(depth, gc.Depth, "Depth isn't set correctly");
                 Assert.IsTrue(good, "booking statement");
             }
@@ -433,7 +476,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestCompoundStatemet()
         {
-            Pop(new LINQToTTreeLib.Statements.StatementInlineBlock());
+            Pop(new LINQToTTreeLib.Statements.StatementInlineBlock(), false);
         }
 
         [TestMethod]

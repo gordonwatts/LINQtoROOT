@@ -94,6 +94,10 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Pop up one level in the nesting hierarchy. This means one full booking level (it has to be a booking level).
         /// </summary>
-        void Pop();
+        /// <remarks>
+        /// Throws if it can't complete its task.
+        /// </remarks>
+        /// <param name="popPastLoop">True if contexts should be popped off until we pop-off a IStatementLoop.</param>
+        void Pop(bool popPastLoop = false);
     }
 }
