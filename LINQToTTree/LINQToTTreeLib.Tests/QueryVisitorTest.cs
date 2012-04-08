@@ -247,6 +247,38 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSelectWithNewTuple()
+        {
+            ///
+            /// Make sure we can also use SelectMany directly, rather than always having to do the
+            /// for loop.
+            /// 
+
+            var model = GetModel(() => (
+                from q in new QueriableDummy<dummyntup>()
+                select new Tuple<int, int>(q.run, q.run)
+                ).Aggregate(0, (acc, va) => acc + va.Item1));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROCount());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+
+            /// SelectMany is something that is auto-parsed by re-linq if we are using a recent
+            /// enough query.
+
+            qv.VisitQueryModel(model);
+            gc.DumpCodeToConsole();
+
+            var goodlines = gc.CodeBody.CodeItUp().Where(s => s.Contains("+((*this).run)")).Count();
+            Assert.AreEqual(1, goodlines, "# of times the .run appears");
+        }
+
+        [TestMethod]
         public void TestSubQueryForStatements()
         {
             /// Make sure a sub query works correctly...

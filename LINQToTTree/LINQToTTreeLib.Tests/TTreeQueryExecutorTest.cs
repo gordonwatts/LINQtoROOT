@@ -4,12 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -340,6 +340,68 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void TestCreateTupleWithNew()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = from evt in q
+                       select new Tuple<int, int>(evt.run, evt.run);
+            var r = dude.Where(i => i.Item1 > 0).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public void TestCreateTupleWithCreate()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = from evt in q
+                       select Tuple.Create(evt.run, evt.run);
+            var r = dude.Where(i => i.Item1 > 0).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
         }
 
         [CPPHelperClass]

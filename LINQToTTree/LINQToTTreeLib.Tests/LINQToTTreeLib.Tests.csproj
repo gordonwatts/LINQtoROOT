@@ -316,6 +316,7 @@
     <Compile Include="QueryVisitors\FormattingQueryVisitorTest.TestQueryDoesntCrash.g.cs">
       <DependentUpon>FormattingQueryVisitorTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="QueryVisitors\CreateTupleExpressionTransformerTest.cs" />
     <Compile Include="QueryVisitorTest.cs" />
     <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>

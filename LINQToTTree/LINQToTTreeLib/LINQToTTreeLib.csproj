@@ -136,6 +136,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueriableTTree.cs" />
     <Compile Include="QueryResultCache.cs" />
+    <Compile Include="QueryVisitors\CreateTupleExpressionTransformer.cs" />
     <Compile Include="QueryVisitors\EnumerableRangeExpression.cs" />
     <Compile Include="QueryVisitors\EnumerableRangeExpressionTransformer.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
