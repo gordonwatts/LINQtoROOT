@@ -81,9 +81,31 @@ namespace LINQToTTreeLib.ResultOperators
             var c = result.Count();
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
-            var res = DummyQueryExectuor.FinalResult;
-            res.DumpCodeToConsole();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
 
+            Assert.AreEqual(3, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            Assert.IsInstanceOfType(query.CodeBody.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(query.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+        }
+
+        [TestMethod]
+        public void TestFirstDownOne()
+        {
+            var q = new QueriableDummy<ntup2>();
+
+            // Make sure that the "if" statement we use to do the after-check has been popped up the right number of levels.
+            var result = from evt in q
+                         where evt.run.Where(r => r > 5).First() > 10
+                         select evt;
+            var c = result.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+            Assert.AreEqual(3, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            Assert.IsInstanceOfType(query.CodeBody.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(query.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
         }
 
         [TranslateToClass(typeof(ResultType1))]
