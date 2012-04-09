@@ -26,9 +26,9 @@ namespace LINQToTTreeLib.Statements
         private IDeclaredParameter _valueWasSeen;
 
         /// <summary>
-        /// If true, then break from our current loop once something has been seen.
+        /// If true, then only record the first value we see.
         /// </summary>
-        private bool _breakOnSeen;
+        private bool _recordOnlyFirstValue;
 
         /// <summary>
         /// Create the statement block
@@ -36,9 +36,9 @@ namespace LINQToTTreeLib.Statements
         /// <param name="indexSeen"></param>
         /// <param name="indexValue"></param>
         /// <param name="valueWasSeen"></param>
-        /// <param name="breakOnFirstSet"></param>
+        /// <param name="recordOnlyFirstValue"></param>
         public StatementRecordValue(IDeclaredParameter indexSaveLocation, IValue indexExpression,
-            IDeclaredParameter markWhenSeen, bool breakOnFirstSet)
+            IDeclaredParameter markWhenSeen, bool recordOnlyFirstValue)
         {
             if (indexSaveLocation == null)
                 throw new ArgumentNullException("_indexSeen");
@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.Statements
             this._indexSeen = indexSaveLocation;
             this._indexValue = indexExpression;
             this._valueWasSeen = markWhenSeen;
-            this._breakOnSeen = breakOnFirstSet;
+            this._recordOnlyFirstValue = recordOnlyFirstValue;
         }
 
         /// <summary>
@@ -60,11 +60,17 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("{0} = {1};", _indexSeen.RawValue, _indexValue.RawValue);
-            yield return string.Format("{0} = true;", _valueWasSeen.RawValue);
-            if (_breakOnSeen)
+            string indent = "";
+            if (_recordOnlyFirstValue)
             {
-                yield return "break;";
+                yield return string.Format("if (!{0}) {{", _valueWasSeen.RawValue);
+                indent = "  ";
+            }
+            yield return string.Format("{2}{0} = {1};", _indexSeen.RawValue, _indexValue.RawValue, indent);
+            yield return string.Format("{1}{0} = true;", _valueWasSeen.RawValue, indent);
+            if (_recordOnlyFirstValue)
+            {
+                yield return "}";
             }
         }
 
