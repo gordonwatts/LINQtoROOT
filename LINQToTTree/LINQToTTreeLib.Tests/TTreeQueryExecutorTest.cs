@@ -931,7 +931,53 @@ namespace LINQToTTreeLib
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(result, 0);
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
+        public void TestFirstCodeCombine()
+        {
+            // Run a First(), but do it twice. The reason is to make sure that
+            // the code doesn't step on itself with a break statement.
+
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ1 = from evt in q
+                         where (evt.myvectorofint.First() > 0)
+                         select evt;
+            var dude1 = dudeQ1.Count();
+            var query1 = DummyQueryExectuor.LastQueryModel;
+
+            var dudeQ2 = from evt in q
+                         where (evt.myvectorofint.Skip(1).First() > 0)
+                         select evt;
+            var dude2 = dudeQ2.Count();
+            var query2 = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result2 = exe.ExecuteScalarAsFuture<int>(query2);
+            var result1 = exe.ExecuteScalarAsFuture<int>(query1);
+            Assert.AreEqual(0, result1.Value, "result 1");
+            Assert.AreEqual(numberOfIter, result2.Value, "result 2");
         }
 
         [TestMethod]
