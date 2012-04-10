@@ -153,62 +153,203 @@ namespace LINQToTTreeLib
             return source.FutureAggregate(seed, func);
         }
 
+        #region Invoke Helpers
+
         /// <summary>
-        /// Invoke stubs. When applied to an Expression of type Func it will allow the expression to be lifted (whole cloth) into the
-        /// query. This is a way of writing functions in this brave new world of expression trees.
+        /// Invoke an expression with no arguments. The expression will be substituted (at the expression tree level) into the query.
         /// </summary>
         /// <typeparam name="R"></typeparam>
         /// <param name="function"></param>
         /// <returns></returns>
-        #region Invoke Helpers
         public static R Invoke<R>(this Expression<Func<R>> function)
         {
             throw new NotSupportedException("No direct call allowed");
         }
 
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <returns></returns>
         public static R Invoke<A1, R>(this Expression<Func<A1, R>> function, A1 arg1)
         {
             throw new NotSupportedException("No direct call allowed");
         }
 
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, R>(this Expression<Func<A1, A2, R>> function, A1 arg1, A2 arg2)
         {
             throw new NotSupportedException("No direct call allowed");
         }
 
-        public static R Invoke<A1, A2, R>(this Expression<Func<A1, A2, R>> function, A1 arg1, A2 arg2)
-        {
-            throw new NotSupportedException("No direct call allowed");
-        }
-
-        public static R Invoke<A1, A2, R>(this Expression<Func<A1, A2, R>> function, A1 arg1, A2 arg2)
-        {
-            throw new NotSupportedException("No direct call allowed");
-        }
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="A3"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, A3, R>(this Expression<Func<A1, A2, A3, R>> function, A1 arg1, A2 arg2, A3 arg3)
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="A3"></typeparam>
+        /// <typeparam name="A4"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, A3, A4, R>(this Expression<Func<A1, A2, A3, A4, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4)
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="A3"></typeparam>
+        /// <typeparam name="A4"></typeparam>
+        /// <typeparam name="A5"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <param name="arg5"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, A3, A4, A5, R>(this Expression<Func<A1, A2, A3, A4, A5, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5)
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="A3"></typeparam>
+        /// <typeparam name="A4"></typeparam>
+        /// <typeparam name="A5"></typeparam>
+        /// <typeparam name="A6"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <param name="arg5"></param>
+        /// <param name="arg6"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, A3, A4, A5, A6, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6)
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="A3"></typeparam>
+        /// <typeparam name="A4"></typeparam>
+        /// <typeparam name="A5"></typeparam>
+        /// <typeparam name="A6"></typeparam>
+        /// <typeparam name="A7"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <param name="arg5"></param>
+        /// <param name="arg6"></param>
+        /// <param name="arg7"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, A3, A4, A5, A6, A7, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, A7, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6, A7 arg7)
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="A3"></typeparam>
+        /// <typeparam name="A4"></typeparam>
+        /// <typeparam name="A5"></typeparam>
+        /// <typeparam name="A6"></typeparam>
+        /// <typeparam name="A7"></typeparam>
+        /// <typeparam name="A8"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <param name="arg5"></param>
+        /// <param name="arg6"></param>
+        /// <param name="arg7"></param>
+        /// <param name="arg8"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, A3, A4, A5, A6, A7, A8, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, A7, A8, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6, A7 arg7, A8 arg8)
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        /// <summary>
+        /// Invoke an expression with arguments. The expression will be substituted (at the expression tree level) into the query.
+        /// </summary>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <typeparam name="A3"></typeparam>
+        /// <typeparam name="A4"></typeparam>
+        /// <typeparam name="A5"></typeparam>
+        /// <typeparam name="A6"></typeparam>
+        /// <typeparam name="A7"></typeparam>
+        /// <typeparam name="A8"></typeparam>
+        /// <typeparam name="A9"></typeparam>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="arg4"></param>
+        /// <param name="arg5"></param>
+        /// <param name="arg6"></param>
+        /// <param name="arg7"></param>
+        /// <param name="arg8"></param>
+        /// <param name="arg9"></param>
+        /// <returns></returns>
         public static R Invoke<A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, A7, A8, A9, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6, A7 arg7, A8 arg8, A9 arg9)
         {
             throw new NotSupportedException("No direct call allowed");
