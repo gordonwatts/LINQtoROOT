@@ -675,6 +675,7 @@
     <Compile Include="Expressions\t_DeclarableParameter.cs" />
     <Compile Include="Statements\StatementRecordPairValuesTest.cs" />
     <Compile Include="Statements\StatementLoopOverSortedPairValueTest.cs" />
+    <Compile Include="QueryVisitors\ExpressionVariableInvokeExpressionTransformerTest.cs" />
     <Compile Include="Utils\t_TypeUtils.cs" />
     <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
       <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>

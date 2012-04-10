@@ -152,5 +152,15 @@ namespace LINQToTTreeLib
 
             return source.FutureAggregate(seed, func);
         }
+
+        public static R Invoke<R>(this Expression<Func<R>> function)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+
+        public static R Invoke<A1, R>(this Expression<Func<A1, R>> function, A1 arg1)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
     }
 }
