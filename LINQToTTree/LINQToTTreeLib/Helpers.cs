@@ -153,6 +153,14 @@ namespace LINQToTTreeLib
             return source.FutureAggregate(seed, func);
         }
 
+        /// <summary>
+        /// Invoke stubs. When applied to an Expression of type Func it will allow the expression to be lifted (whole cloth) into the
+        /// query. This is a way of writing functions in this brave new world of expression trees.
+        /// </summary>
+        /// <typeparam name="R"></typeparam>
+        /// <param name="function"></param>
+        /// <returns></returns>
+        #region Invoke Helpers
         public static R Invoke<R>(this Expression<Func<R>> function)
         {
             throw new NotSupportedException("No direct call allowed");
@@ -162,5 +170,49 @@ namespace LINQToTTreeLib
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        public static R Invoke<A1, A2, R>(this Expression<Func<A1, A2, R>> function, A1 arg1, A2 arg2)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+
+        public static R Invoke<A1, A2, R>(this Expression<Func<A1, A2, R>> function, A1 arg1, A2 arg2)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+
+        public static R Invoke<A1, A2, R>(this Expression<Func<A1, A2, R>> function, A1 arg1, A2 arg2)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        public static R Invoke<A1, A2, A3, R>(this Expression<Func<A1, A2, A3, R>> function, A1 arg1, A2 arg2, A3 arg3)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        public static R Invoke<A1, A2, A3, A4, R>(this Expression<Func<A1, A2, A3, A4, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        public static R Invoke<A1, A2, A3, A4, A5, R>(this Expression<Func<A1, A2, A3, A4, A5, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        public static R Invoke<A1, A2, A3, A4, A5, A6, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        public static R Invoke<A1, A2, A3, A4, A5, A6, A7, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, A7, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6, A7 arg7)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        public static R Invoke<A1, A2, A3, A4, A5, A6, A7, A8, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, A7, A8, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6, A7 arg7, A8 arg8)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        public static R Invoke<A1, A2, A3, A4, A5, A6, A7, A8, A9, R>(this Expression<Func<A1, A2, A3, A4, A5, A6, A7, A8, A9, R>> function, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6, A7 arg7, A8 arg8, A9 arg9)
+        {
+            throw new NotSupportedException("No direct call allowed");
+        }
+        #endregion
     }
 }
