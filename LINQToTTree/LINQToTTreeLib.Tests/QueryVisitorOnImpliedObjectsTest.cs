@@ -434,6 +434,30 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(4, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
+        [TestMethod]
+        public void TestJoinOnTClonesObjectWithFunctionCall()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            Expression<Func<CollectionTree, int, int>> finder = (evt, particleIndex) =>
+                Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode.Length)
+                .Where(i => evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[particleIndex] == evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode[i])
+                .FirstOrDefault();
+
+            var pvPairs = from evt in q
+                          from pindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx.Length)
+                          select finder.Invoke(evt, pindex);
+
+            var r = pvPairs.Where(i => i > 4).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements");
+            var scnd = query.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
+            Assert.AreEqual(4, scnd.Statements.Count(), "# of statements in second for loop");
+        }
+
         /// <summary>
         /// Do the code combination we require!
         /// </summary>
