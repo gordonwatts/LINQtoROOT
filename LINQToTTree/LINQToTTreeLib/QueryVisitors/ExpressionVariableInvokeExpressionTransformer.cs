@@ -63,6 +63,11 @@ namespace LINQToTTreeLib.QueryVisitors
             private Dictionary<ParameterExpression, Expression> _parameterLookup = new Dictionary<ParameterExpression, Expression>();
 
             /// <summary>
+            /// Keep track of the lambda's we are processing - so we can detect recursion.
+            /// </summary>
+            private Stack<LambdaExpression> _lambdasInProgress = new Stack<LambdaExpression>();
+
+            /// <summary>
             /// If this is a method call expression, then we should do the "usual" with it.
             /// </summary>
             /// <param name="expression"></param>
@@ -91,6 +96,14 @@ namespace LINQToTTreeLib.QueryVisitors
                 var lambda = functionExpression as LambdaExpression;
 
                 //
+                // Check for recursion. We don't actually alter teh stack at this point - if we call ourselves
+                // again while processing an argument we don't care - that isn't recursion!
+                //
+
+                if (_lambdasInProgress.Any(l => l == lambda))
+                    throw new NotSupportedException("Recursion isn't supported in expression function calling!");
+
+                //
                 // Ok - we got a real one. So the next thing to do is take the arguments
                 // and add them to our list and dive down.
                 //
@@ -101,15 +114,18 @@ namespace LINQToTTreeLib.QueryVisitors
                 foreach (var apair in lambda.Parameters.Zip(expression.Arguments.Skip(1), (p, a) => Tuple.Create(p, a)))
                 {
                     if (_parameterLookup.ContainsKey(apair.Item1))
-                        throw new NotSupportedException("Can't resuse a parameter that is already used!");
+                        throw new InvalidOperationException("Can't resuse a parameter that is already used!");
                     _parameterLookup[apair.Item1] = VisitExpression(apair.Item2);
                 }
 
                 //
-                // Now we are ready to process the body of the lambda and do the replacement.
+                // Now we are ready to process the body of the lambda and do the replacement. Mark this lambda as
+                // being processed so we can detect recursion.
                 //
 
+                _lambdasInProgress.Push(lambda);
                 var r = VisitExpression(lambda.Body);
+                _lambdasInProgress.Pop();
 
                 //
                 // Next, clean up the parameter replacement

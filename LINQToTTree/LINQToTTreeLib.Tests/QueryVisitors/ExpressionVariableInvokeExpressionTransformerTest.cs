@@ -139,6 +139,20 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNotNull(r);
             Assert.AreEqual("((2 + 1) + 1)", r.ToString(), "Expression result");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void TestRecursionInvokation()
+        {
+            Expression<Func<int, int>> adder = null;
+            adder = i => adder.Invoke(i) + 1;
+
+            Expression<Func<int>> doit = () => adder.Invoke(1);
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as MethodCallExpression);
+        }
     }
 }
 
