@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
@@ -75,6 +76,30 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         public Expression ProcessConstantReferenceExpression(ConstantExpression expr, CompositionContainer container)
         {
             return expr;
+        }
+
+
+        /// <summary>
+        /// Called during the high-level expression parsing. We will parse the expression and method to other expressions...
+        /// So we drive everything through (get rid of sub-queries, etc.). First part of two pass parsing. Second part is below
+        /// that will actually generate the C++ code.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="context"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
+        {
+            //
+            // Pick apart the various things in the method call we need.
+            //
+
+            var robj = expr.Object.Resolve(gc, context, container);
+            var method = expr.Method;
+            var rargs = expr.Arguments.Select(e => e.Resolve(gc, context, container));
+
+            return Expression.Call(robj, method, rargs);
         }
 
         /// <summary>
@@ -208,19 +233,6 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                 builtArgs.Append(ExpressionToCPP.GetExpression(a, gc, null, container).CastToType(a));
             }
             builtArgs.Append(")");
-        }
-
-        /// <summary>
-        /// We do no expression transformation - so just let it go.
-        /// </summary>
-        /// <param name="expr"></param>
-        /// <param name="gc"></param>
-        /// <param name="context"></param>
-        /// <param name="container"></param>
-        /// <returns></returns>
-        public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
-        {
-            return expr;
         }
 
         /// <summary>

@@ -458,6 +458,38 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(4, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
+        [TestMethod]
+        public void TestJoinOnTClonesObjectWithNestedFunctionCall()
+        {
+            var q = new QueriableDummy<CollectionTree>();
+
+            Expression<Func<CollectionTree, int, int>> finder = (evt, particleIndex) =>
+                Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode.Length)
+                .Where(i => evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[particleIndex] == evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode[i])
+                .FirstOrDefault();
+
+            Expression<Func<CollectionTree, int, ROOTNET.NTVector3>> vertexPostion =
+                (evt, i) => new ROOTNET.NTVector3(
+                    evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[i],
+                    evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_y[i],
+                    evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_z[i]
+                    );
+
+            var pvPairs = from evt in q
+                          from pindex in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx.Length)
+                          let idx = finder.Invoke(evt, pindex)
+                          select vertexPostion.Invoke(evt, idx);
+
+            var r = pvPairs.Where(i => i.Mag() > 4).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements");
+            var scnd = query.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
+            Assert.AreEqual(12, scnd.Statements.Count(), "# of statements in second for loop");
+        }
+
         /// <summary>
         /// Do the code combination we require!
         /// </summary>
