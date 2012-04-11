@@ -31,6 +31,23 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, (ad.Right as ConstantExpression).Value, "right value");
         }
 
+        [TestMethod]
+        public void TestSimpleExpressionCompile()
+        {
+            Expression<Func<int, int>> adder = i => i + 1;
+
+            Expression<Func<int>> doit = () => adder.Compile()(5);
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as InvocationExpression);
+            Assert.IsNotNull(r);
+            Assert.AreEqual(ExpressionType.Add, r.NodeType, "node type of result");
+            var ad = r as BinaryExpression;
+            Assert.AreEqual(5, (ad.Left as ConstantExpression).Value, "left value");
+            Assert.AreEqual(1, (ad.Right as ConstantExpression).Value, "right value");
+        }
+
         /// <summary>
         /// for a static property access test below.
         /// </summary>
@@ -112,6 +129,51 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestNestedFunctionCompile()
+        {
+            Expression<Func<int, int>> add1 = i => i + 1;
+            Expression<Func<int, int>> add2 = i => add1.Compile()(i) + 2;
+
+            Expression<Func<int>> doit = () => add2.Compile()(5);
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as InvocationExpression);
+            Assert.IsNotNull(r);
+            Assert.AreEqual("((5 + 1) + 2)", r.ToString(), "Expression result");
+        }
+
+        [TestMethod]
+        public void TestNestedFunctionMixed1()
+        {
+            Expression<Func<int, int>> add1 = i => i + 1;
+            Expression<Func<int, int>> add2 = i => add1.Invoke(i) + 2;
+
+            Expression<Func<int>> doit = () => add2.Compile()(5);
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as InvocationExpression);
+            Assert.IsNotNull(r);
+            Assert.AreEqual("((5 + 1) + 2)", r.ToString(), "Expression result");
+        }
+
+        [TestMethod]
+        public void TestNestedFunctionMixed2()
+        {
+            Expression<Func<int, int>> add1 = i => i + 1;
+            Expression<Func<int, int>> add2 = i => add1.Compile()(i) + 2;
+
+            Expression<Func<int>> doit = () => add2.Invoke(5);
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as MethodCallExpression);
+            Assert.IsNotNull(r);
+            Assert.AreEqual("((5 + 1) + 2)", r.ToString(), "Expression result");
+        }
+
+        [TestMethod]
         public void TestSimpleExpressionWithComplexArg()
         {
             Expression<Func<int, int>> add1 = i => i + 1;
@@ -122,6 +184,21 @@ namespace LINQToTTreeLib.Tests
 
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
+            Assert.IsNotNull(r);
+            Assert.AreEqual("(((5 + 3) + 1) + 2)", r.ToString(), "Expression result");
+        }
+
+        [TestMethod]
+        public void TestSimpleExpressionWithComplexArgCompile()
+        {
+            Expression<Func<int, int>> add1 = i => i + 1;
+            Expression<Func<int, int>> add2 = i => add1.Compile()(i + 3) + 2;
+
+            Expression<Func<int>> doit = () => add2.Compile()(5);
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as InvocationExpression);
             Assert.IsNotNull(r);
             Assert.AreEqual("(((5 + 3) + 1) + 2)", r.ToString(), "Expression result");
         }
@@ -141,6 +218,20 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TestNestedArgExpressionCompile()
+        {
+            Expression<Func<int, int>> adder = i => i + 1;
+
+            Expression<Func<int>> doit = () => adder.Compile()(adder.Compile()(2));
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as InvocationExpression);
+            Assert.IsNotNull(r);
+            Assert.AreEqual("((2 + 1) + 1)", r.ToString(), "Expression result");
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void TestRecursionInvokation()
         {
@@ -152,6 +243,20 @@ namespace LINQToTTreeLib.Tests
 
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void TestRecursionInvokationCompile()
+        {
+            Expression<Func<int, int>> adder = null;
+            adder = i => adder.Compile()(i) + 1;
+
+            Expression<Func<int>> doit = () => adder.Compile()(1);
+            var expr = doit.Body;
+
+            var target = new ExpressionVariableInvokeExpressionTransformer();
+            var r = target.Transform(expr as InvocationExpression);
         }
     }
 }

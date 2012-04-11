@@ -12,14 +12,14 @@ namespace LINQToTTreeLib.QueryVisitors
     /// When a user puts a variable of type Expression with an argument of Func and appends .Invoke(arg1, arg2),
     /// this translator lifts the expression out and stuffs it inline... this is a way to do function calls, baby!
     /// </summary>
-    public class ExpressionVariableInvokeExpressionTransformer : IExpressionTransformer<MethodCallExpression>
+    public class ExpressionVariableInvokeExpressionTransformer : IExpressionTransformer<MethodCallExpression>, IExpressionTransformer<InvocationExpression>
     {
         /// <summary>
         /// We deal only with the method calls.
         /// </summary>
         public ExpressionType[] SupportedExpressionTypes
         {
-            get { return new ExpressionType[] { ExpressionType.Call }; }
+            get { return new ExpressionType[] { ExpressionType.Call, ExpressionType.Invoke }; }
         }
 
         /// <summary>
@@ -46,6 +46,37 @@ namespace LINQToTTreeLib.QueryVisitors
             //
             // Ok, this is real. Get the expression. The compiler should make sure that
             // all types match properly.
+            //
+
+            var exprFinder = new ExpressionFunctionExpander();
+            return exprFinder.VisitExpression(expression);
+        }
+
+        /// <summary>
+        /// An invokation. Attempt to decode the Compile from an Expression. Support the normal ".NET" way of doing things
+        /// as opposed to the "invoke" method above (which has a slightly cleaner syntax, but not much!).
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public Expression Transform(InvocationExpression expression)
+        {
+            //
+            // Fail quickly looking for the call
+            //
+
+            if (expression.Expression.NodeType != ExpressionType.Call)
+                return expression;
+
+            var callExpr = expression.Expression as MethodCallExpression;
+            if (callExpr.Object == null)
+                return expression;
+            if (!typeof(Expression).IsAssignableFrom(callExpr.Object.Type))
+                return expression;
+            if (callExpr.Method.Name != "Compile")
+                return expression;
+
+            //
+            // Now, pick a part the expression type and make sure it is a func!
             //
 
             var exprFinder = new ExpressionFunctionExpander();
@@ -90,7 +121,25 @@ namespace LINQToTTreeLib.QueryVisitors
                 // So this is a little ugly.
                 //
 
-                var functionExpression = ExtractFunctionExpression(expression.Arguments[0]) as Expression;
+                var lexpr = expression.Arguments[0];
+                var exprArgs = expression.Arguments.Skip(1).ToArray();
+                return CallLambdaExpression(lexpr, exprArgs);
+            }
+
+            /// <summary>
+            /// Given an expression that will resolve to our actual lambda expression, lift it and do
+            /// argument replacement as instructed by the arguments that go along with it.
+            /// </summary>
+            /// <param name="exprOfLambda">Expression that when evaluated will lead to a ConstantExpression that is the Expression we should be lifting in.</param>
+            /// <param name="args">The arguments to supply to the lambda function.</param>
+            /// <returns></returns>
+            private Expression CallLambdaExpression(Expression exprOfLambda, Expression[] args)
+            {
+                //
+                // Resolve the expression to get a hold of the actual object.
+                //
+
+                var functionExpression = ExtractFunctionExpression(exprOfLambda) as Expression;
                 if (functionExpression.NodeType != ExpressionType.Lambda)
                     throw new NotSupportedException("Expression isn't of type lambda");
                 var lambda = functionExpression as LambdaExpression;
@@ -108,10 +157,10 @@ namespace LINQToTTreeLib.QueryVisitors
                 // and add them to our list and dive down.
                 //
 
-                if (lambda.Parameters.Count != (expression.Arguments.Count - 1))
+                if (lambda.Parameters.Count != args.Length)
                     throw new InvalidOperationException("Number of parameters does not match!");
 
-                foreach (var apair in lambda.Parameters.Zip(expression.Arguments.Skip(1), (p, a) => Tuple.Create(p, a)))
+                foreach (var apair in lambda.Parameters.Zip(args, (p, a) => Tuple.Create(p, a)))
                 {
                     if (_parameterLookup.ContainsKey(apair.Item1))
                         throw new InvalidOperationException("Can't resuse a parameter that is already used!");
@@ -229,6 +278,48 @@ namespace LINQToTTreeLib.QueryVisitors
                 if (_parameterLookup.TryGetValue(paramExpr, out r))
                     return r;
                 return paramExpr;
+            }
+
+            /// <summary>
+            /// Someone is trying to invoke a delegate. Unless this look like expression.Compile()(args), we will just pass it on.
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitInvocationExpression(InvocationExpression expression)
+            {
+                //
+                // See if we can figure it out quickly, and just go on if this isn't the right type.
+                // The x-checking isn't water tight here, but you'll have to go to some effort to
+                // fool it (i.e. we don't check that the generic type is Expression, for example).
+                //
+
+                if (expression.Expression.NodeType != ExpressionType.Call)
+                    return base.VisitInvocationExpression(expression);
+
+                var callExpr = expression.Expression as MethodCallExpression;
+                if (callExpr.Object == null
+                    || !typeof(Expression).IsAssignableFrom(callExpr.Object.Type)
+                    || callExpr.Method.Name != "Compile")
+                {
+                    return base.VisitInvocationExpression(expression);
+                }
+
+                Expression functionExpression = callExpr.Object as Expression;
+                if (!functionExpression.Type.IsGenericType
+                    || functionExpression.Type.GetGenericArguments().Length != 1)
+                    return base.VisitInvocationExpression(expression);
+
+                var expressionGenericArgs = functionExpression.Type.GetGenericArguments()[0];
+                if (!expressionGenericArgs.IsGenericType
+                    || !expressionGenericArgs.FullName.StartsWith("System.Func"))
+                    return base.VisitInvocationExpression(expression);
+
+                //
+                // Great! We are set. Next, get ahold of the actual expression (the
+                // const value).
+                //
+
+                return CallLambdaExpression(functionExpression, expression.Arguments.ToArray());
             }
         }
     }
