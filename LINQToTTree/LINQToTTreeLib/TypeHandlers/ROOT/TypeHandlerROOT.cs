@@ -205,7 +205,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                     builtArgs.Append(",");
                 }
                 first = false;
-                builtArgs.Append(ExpressionToCPP.InternalGetExpression(a, gc, null, container).CastToType(a));
+                builtArgs.Append(ExpressionToCPP.GetExpression(a, gc, null, container).CastToType(a));
             }
             builtArgs.Append(")");
         }
