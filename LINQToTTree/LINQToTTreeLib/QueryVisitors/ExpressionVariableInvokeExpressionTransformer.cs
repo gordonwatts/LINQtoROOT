@@ -14,13 +14,22 @@ namespace LINQToTTreeLib.QueryVisitors
     /// </summary>
     public class ExpressionVariableInvokeExpressionTransformer : IExpressionTransformer<MethodCallExpression>, IExpressionTransformer<InvocationExpression>
     {
-        /// <summary>
-        /// We deal only with the method calls.
-        /// </summary>
-        public ExpressionType[] SupportedExpressionTypes
+        public ExpressionVariableInvokeExpressionTransformer(ExpressionType[] typesIknow = null)
         {
-            get { return new ExpressionType[] { ExpressionType.Call, ExpressionType.Invoke }; }
+            if (typesIknow == null)
+            {
+                SupportedExpressionTypes = new ExpressionType[] { ExpressionType.Call };
+            }
+            else
+            {
+                SupportedExpressionTypes = typesIknow;
+            }
         }
+
+        /// <summary>
+        /// What we can deal with.
+        /// </summary>
+        public ExpressionType[] SupportedExpressionTypes { get; private set; }
 
         /// <summary>
         /// If this is one of our Invoke method calls, then we can try to do expression replacement.
