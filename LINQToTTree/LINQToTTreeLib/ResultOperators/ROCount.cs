@@ -63,5 +63,28 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(new StatementAggregate(accumulator, addResolved));
             return accumulator;
         }
+
+        /// <summary>
+        /// Try to do a fast count. Basically, what we are dealing with here is the fact that we have
+        /// a simple array, we need only take its length, and return that.
+        /// </summary>
+        /// <param name="resultOperator"></param>
+        /// <param name="queryModel"></param>
+        /// <param name="_codeEnv"></param>
+        /// <param name="_codeContext"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+        {
+            //
+            // We just need to return a length expression. We are low enough level we need to do some basic resolution.
+            //
+
+            if (!queryModel.MainFromClause.FromExpression.Type.IsArray)
+                return Tuple.Create(false, null as Expression);
+
+            var lengthExpr = Expression.ArrayLength(queryModel.MainFromClause.FromExpression).Resolve(_codeEnv, _codeContext, container);
+            return Tuple.Create(true, lengthExpr as Expression);
+        }
     }
 }

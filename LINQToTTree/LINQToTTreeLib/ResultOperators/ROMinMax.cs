@@ -112,6 +112,11 @@ namespace LINQToTTreeLib.ResultOperators
             return vMaxMin;
         }
 
+        public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+        {
+            return null;
+        }
+
         /// <summary>
         /// Is this a type C++ knows how to compare??
         /// </summary>

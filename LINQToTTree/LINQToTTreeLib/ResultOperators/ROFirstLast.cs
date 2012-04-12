@@ -156,5 +156,11 @@ namespace LINQToTTreeLib.ResultOperators
                 return firstlastValue.ReplaceSubExpression(indexExpr, indexSeen);
             }
         }
+
+        public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+        {
+            return null;
+        }
+
     }
 }
