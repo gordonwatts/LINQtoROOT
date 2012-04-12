@@ -264,11 +264,8 @@ namespace LINQToTTreeLib.Tests
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query1.CodeBody.Statements.Count(), "# statements in the code body");
-            var forblock = query1.CodeBody.Statements.First() as IBookingStatementBlock;
-            Assert.IsNotNull(forblock, "top level statement");
-            Assert.AreEqual(1, forblock.Statements.Count(), "# of statements in the code");
-            var forblock2 = query1.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query1.CodeBody.Statements.Count(), "# statements in the code body");
+            var forblock2 = query1.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
             Assert.AreEqual(1, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
@@ -291,11 +288,8 @@ namespace LINQToTTreeLib.Tests
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# statements in the code body");
-            var forblock = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
-            Assert.IsNotNull(forblock, "top level statement");
-            Assert.AreEqual(1, forblock.Statements.Count(), "# of statements in the code");
-            var forblock2 = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
+            var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
             Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
@@ -321,13 +315,10 @@ namespace LINQToTTreeLib.Tests
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# statements in the code body");
-            var forblock = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
-            Assert.IsNotNull(forblock, "top level statement");
-            Assert.AreEqual(2, forblock.Statements.Count(), "# of statements in the code");
-            var forblock2 = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
+            var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
-            Assert.AreEqual(1, forblock2.Statements.Count(), "# of for #2 statement statements");
+            Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
 
         [TestMethod]
@@ -351,13 +342,10 @@ namespace LINQToTTreeLib.Tests
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# statements in the code body");
-            var forblock = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
-            Assert.IsNotNull(forblock, "top level statement");
-            Assert.AreEqual(2, forblock.Statements.Count(), "# of statements in the code");
-            var forblock2 = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
+            var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
-            Assert.AreEqual(1, forblock2.Statements.Count(), "# of for #2 statement statements");
+            Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
 
         [TestMethod]
@@ -428,10 +416,10 @@ namespace LINQToTTreeLib.Tests
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements");
-            var scnd = query.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
+            var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
-            Assert.AreEqual(4, scnd.Statements.Count(), "# of statements in second for loop");
+            Assert.AreEqual(3, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
         [TestMethod]
@@ -452,10 +440,10 @@ namespace LINQToTTreeLib.Tests
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements");
-            var scnd = query.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
+            var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
-            Assert.AreEqual(4, scnd.Statements.Count(), "# of statements in second for loop");
+            Assert.AreEqual(3, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
         [TestMethod]
@@ -484,10 +472,10 @@ namespace LINQToTTreeLib.Tests
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements");
-            var scnd = query.CodeBody.Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
+            var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
-            Assert.AreEqual(12, scnd.Statements.Count(), "# of statements in second for loop");
+            Assert.AreEqual(9, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
         /// <summary>
