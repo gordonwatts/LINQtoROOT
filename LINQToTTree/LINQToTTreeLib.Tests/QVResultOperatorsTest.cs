@@ -51,6 +51,11 @@ namespace LINQToTTreeLib.Utils
             {
                 throw new NotImplementedException();
             }
+
+            public Tuple<bool, Expression> ProcessIdentityQuery(Remotion.Linq.Clauses.ResultOperatorBase resultOperator, Remotion.Linq.QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+            {
+                return null;
+            }
         }
 
         [PexMethod]

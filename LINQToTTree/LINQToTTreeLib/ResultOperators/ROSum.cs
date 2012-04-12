@@ -111,6 +111,12 @@ namespace LINQToTTreeLib.ResultOperators
             return divide;
         }
 
+
+        public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+        {
+            return null;
+        }
+
         /// <summary>
         /// Given the input type, return the type for the Average operator.
         /// </summary>

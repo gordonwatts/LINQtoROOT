@@ -28,5 +28,18 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="container"></param>
         /// <returns></returns>
         Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
+
+        /// <summary>
+        /// Return an expression that represents the result for this scalar operator that is running on an
+        /// identity query. Since this in identity query, nothign has happened yet - the RO is responsible for everything.
+        /// </summary>
+        /// <param name="resultOperator"></param>
+        /// <param name="queryModel"></param>
+        /// <param name="_codeEnv"></param>
+        /// <param name="_codeContext"></param>
+        /// <param name="container"></param>
+        /// <returns>Return false if it can't be done, otherwise return the result expression (null is also valid)</returns>
+        System.Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
+
     }
 }

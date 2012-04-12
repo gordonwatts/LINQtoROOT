@@ -63,5 +63,10 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Add(new StatementAggregate(accumulator, addResolved));
             return accumulator;
         }
+
+        public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+        {
+            return null;
+        }
     }
 }

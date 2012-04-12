@@ -88,6 +88,12 @@ namespace LINQToTTreeLib.ResultOperators
 
             return Expression.Constant(o, t_return);
         }
+
+        public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
+        {
+            return null;
+        }
+
     }
 
     /// <summary>

@@ -132,9 +132,9 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
         {
-            ///
-            /// For the main clause we will just define the variable as "this".
-            /// 
+            //
+            // For the main clause we will just define the variable as "this".
+            // 
 
             if (fromClause.ItemType == _codeContext.BaseNtupleObjectType)
             {
@@ -152,14 +152,31 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitQueryModel(QueryModel queryModel)
         {
+            //
+            // If the query model is something that is trivial, then
+            // perhaps there is a short-cut we can take?
+            //
+
+            if (queryModel.IsIdentityQuery() && queryModel.ResultOperators.Count == 1)
+            {
+                var ro = queryModel.ResultOperators[0];
+                var processor = _operators.FindScalarROProcessor(ro.GetType());
+                if (processor != null)
+                {
+                    var result = processor.ProcessIdentityQuery(ro, queryModel, _codeEnv, _codeContext, MEFContainer);
+                    if (result != null
+                        && result.Item1)
+                    {
+                        _codeEnv.SetResult(result.Item2);
+                        return;
+                    }
+                }
+            }
+
+            //
+            // If we drop through here. 
+
             base.VisitQueryModel(queryModel);
-
-            ///
-            /// If a main index variable was declared that has now lost its usefulness, we should get rid of it.
-            /// 
-
-            //if (_mainIndex != null)
-            //    _mainIndex.Pop();
         }
 
         /// <summary>
