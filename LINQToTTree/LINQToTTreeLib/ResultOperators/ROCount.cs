@@ -77,11 +77,13 @@ namespace LINQToTTreeLib.ResultOperators
         public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
         {
             //
-            // We just need to return a length expression. No need to even emit any C++ code!
+            // We just need to return a length expression. We are low enough level we need to do some basic resolution.
             //
 
-            var lengthExpr = Expression.ArrayLength(queryModel.MainFromClause.FromExpression).Resolve(_codeEnv, _codeContext, container);
+            if (!queryModel.MainFromClause.FromExpression.Type.IsArray)
+                return Tuple.Create(false, null as Expression);
 
+            var lengthExpr = Expression.ArrayLength(queryModel.MainFromClause.FromExpression).Resolve(_codeEnv, _codeContext, container);
             return Tuple.Create(true, lengthExpr as Expression);
         }
     }

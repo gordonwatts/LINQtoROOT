@@ -1347,7 +1347,7 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]
