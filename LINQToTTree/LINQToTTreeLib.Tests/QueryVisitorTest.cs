@@ -162,6 +162,51 @@ namespace LINQToTTreeLib
             Assert.IsNotNull(cc.LoopVariable, "Loop variable is null!");
         }
 
+        [TestMethod]
+        public void TestCount()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = q.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            query1.DumpCodeToConsole();
+
+            Assert.AreEqual(3, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+        }
+
+        [TestMethod]
+        public void TestCountOnArray()
+        {
+            var q = new QueriableDummy<ntupArray>();
+
+            var r1 = from evt in q
+                     select evt.run.Count();
+            var r2 = r1.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            query1.DumpCodeToConsole();
+
+            // With the .Count() on an identity query, this is optimized to just 3 lines of code.
+            Assert.AreEqual(3, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+        }
+
+        [TestMethod]
+        public void TestCountOnArrayWithIf()
+        {
+            var q = new QueriableDummy<ntupArray>();
+
+            var r1 = from evt in q
+                     select evt.run.Count(i => i > 1);
+            var r2 = r1.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            query1.DumpCodeToConsole();
+
+            // With the .Count() on an identity query, this is optimized to just 3 lines of code.
+            Assert.AreEqual(12, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+        }
+
         /// <summary>
         /// Dummy to test that the loop variable when we get here is actually pointing to the right thing!
         /// </summary>
