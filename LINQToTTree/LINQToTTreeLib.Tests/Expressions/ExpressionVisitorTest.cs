@@ -419,20 +419,7 @@ namespace LINQToTTreeLib
             /// The top level statement should be a loop over whatever it is we are looping over!
             /// 
 
-            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "Incorrect looping statement");
-            Assert.IsFalse(gc.CodeBody.Statements.First().CodeItUp().First().Contains("<generated>"), "Contains a funny variable name: " + gc.CodeBody.Statements.First().CodeItUp().First());
-            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected one declared variable");
-
-            ///
-            /// Next, make sure if we add a statement it goes where we think it should - after teh stuff that has been added,
-            /// not inside it.
-            /// 
-
-            gc.Add(new Statements.StatementSimpleStatement("dude"));
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Scope has not been reset");
-
-            Assert.AreEqual(0, cc.NumberOfParams, "Impromper # of parameter replacements left over");
+            Assert.AreEqual(0, gc.CodeBody.Statements.Count(), "Expect only the loop statement");
         }
 
         [TestMethod]
