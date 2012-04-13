@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -24,7 +24,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             //
 
             if (templateFile == null)
-                return null;
+                throw new ArgumentNullException("A template file must exist for this to work!");
             if (!templateFile.Exists)
                 throw new FileNotFoundException("Unable to find C++ code to use for PROOF query", templateFile.FullName);
 
