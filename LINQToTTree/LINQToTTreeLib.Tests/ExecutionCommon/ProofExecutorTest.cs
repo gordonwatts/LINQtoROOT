@@ -1,9 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using LINQToTTreeLib.ExecutionCommon;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -29,6 +29,7 @@ namespace LINQToTTreeLib.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
+        [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
         public void TestForBogusDS()
         {
             var targetr = new ProofExecutor();
@@ -36,7 +37,8 @@ namespace LINQToTTreeLib.Tests
             env.RootFiles = new[] { CreateProofRef("bogusdatasetname") };
 
             targetr.Environment = env;
-            targetr.Execute(null, null, null);
+            FileInfo runner = new FileInfo("queryTestSimpleQuery.cxx");
+            targetr.Execute(runner, null, null);
         }
 
         private ExecutionEnvironment CreateSimpleEnvironment()
@@ -61,17 +63,6 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        public void TestForSimpleRun()
-        {
-            // This should work all the way through.
-            var targetr = new ProofExecutor();
-            var env = CreateSimpleEnvironment();
-
-            targetr.Environment = env;
-            targetr.Execute(null, null, null);
-        }
-
-        [TestMethod]
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
         public void TestSimpleQuery()
         {
@@ -89,7 +80,7 @@ namespace LINQToTTreeLib.Tests
             var o = r["aInt32_1"];
             Assert.IsInstanceOfType(o, typeof(ROOTNET.NTH1I), "return histo type");
             var h = o as ROOTNET.NTH1I;
-            Assert.AreEqual(2000, (int) h.GetBinContent(1), "Answer from query");
+            Assert.AreEqual(2000, (int)h.GetBinContent(1), "Answer from query");
         }
 
         [PexMethod]
