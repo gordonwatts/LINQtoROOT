@@ -49,6 +49,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Keep track of all modules that we've loaded
+        /// </summary>
+        private List<string> _loadedModuleNames = new List<string>();
+
+        /// <summary>
         /// Run the execution on the PROOF cluster specified in the list of URI's we need to execute.
         /// </summary>
         /// <param name="templateFile"></param>
@@ -77,6 +82,15 @@ namespace LINQToTTreeLib.ExecutionCommon
             OrganizeUris();
 
             //
+            // Put us in the query directory
+            //
+
+            var oldDir = System.Environment.CurrentDirectory;
+            System.Environment.CurrentDirectory = queryDirectory.FullName;
+            ROOTNET.NTSystem.gSystem.ChangeDirectory(queryDirectory.FullName);
+            var cdr = ROOTNET.NTSystem.gSystem.WorkingDirectory();
+
+            //
             // A key "funny" thing about this is we need to track all the files used by this query and make sure they make it up to the
             // PROOF server. So we need to scan for all files and figure out where they are, and add them to a list of files that needs
             // to be sent.
@@ -94,21 +108,22 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             //
-            // Next, we need to build the proof job and the objects.
+            // Next, we need to build the proof job and the objects, and make sure something silly didn't go wrong!
             //
 
             var r = pc.Load(fList.ToString());
             if (r != 0)
                 throw new InvalidOperationException(string.Format("Unable to compile and load selector in PROOF. Error: {0}", r));
-
-            //
-            // Now run the PROOF query
-            //
+            _loadedModuleNames.Add(templateFile.Name.Replace(".", "_"));
 
             var objName = Path.GetFileNameWithoutExtension(templateFile.Name);
             var cls = ROOTNET.NTClass.GetClass(objName);
             if (cls == null)
                 throw new InvalidOperationException(string.Format("Unable to locate compiled object named '{0}'.", objName));
+
+            //
+            // Now run the PROOF query
+            //
 
             var rResult = pc.Process(PROOFDSNames(), objName);
             var log = pc.GetLastLog();
@@ -117,10 +132,32 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 throw new ProofException(string.Format("Faild to run PROOF query (error from Process method was {0})", rResult), log);
             }
+
+            //
+            // Next, grab all the PROOF objects
+            //
+
+            var outputList = pc.GetOutputList();
+            var result = new Dictionary<string, ROOTNET.Interface.NTObject>();
+            foreach (var o in outputList)
+            {
+                var name = o.Name;
+                result[name] = o;
+            }
+
+            //
+            // Now that it is run, we can unload everything we loaded up!
+            //
+
+            _proofConnection.Close();
+            _proofConnection = null;
+            ExecutionUtilities.UnloadAllModules(_loadedModuleNames);
+
             //
             // Clean up
             //
 
+            System.Environment.CurrentDirectory = oldDir;
             if (Environment.CleanupQuery)
             {
                 if (queryDirectory != null)
@@ -132,7 +169,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Return back all the objects that came back from the script
             //
 
-            return null;
+            return result;
         }
 
         /// <summary>

@@ -27,6 +27,16 @@ namespace LINQToTTreeLib.Tests
             return new Uri(string.Format("proof://{0}/{1}", proofTestNode, dsName));
         }
 
+        public string tempDir = Path.GetTempPath() + "\\TestLINQToROOTDummyDir";
+
+        [TestInitialize]
+        public void SetupTest()
+        {
+            if (Directory.Exists(tempDir))
+                Directory.Delete(tempDir, true);
+            Directory.CreateDirectory(tempDir);
+        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
@@ -57,7 +67,7 @@ namespace LINQToTTreeLib.Tests
         {
             var result = CreateSimpleEnvironment();
 
-            result.TreeName = "CollectionTree";
+            result.TreeName = "btagd3pd";
 
             return result;
         }
@@ -68,13 +78,15 @@ namespace LINQToTTreeLib.Tests
         [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
         public void TestSimpleQuery()
         {
-            FileInfo runner = new FileInfo("queryTestSimpleQuery.cxx");
+            FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
+            CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
+            CopyToTempDir("ntuple_CollectionTree.h");
             Assert.IsTrue(runner.Exists, "Main C++ file missing");
             var targetr = new ProofExecutor();
             var env = CreateSimpleQueryEnvironment();
 
             targetr.Environment = env;
-            var r = targetr.Execute(runner, null, null);
+            var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
 
             Assert.IsNotNull(r, "nothing came back!");
             Assert.AreEqual(1, r.Count, "# of returned values from query");
@@ -83,6 +95,20 @@ namespace LINQToTTreeLib.Tests
             Assert.IsInstanceOfType(o, typeof(ROOTNET.NTH1I), "return histo type");
             var h = o as ROOTNET.NTH1I;
             Assert.AreEqual(2000, (int)h.GetBinContent(1), "Answer from query");
+        }
+
+        /// <summary>
+        /// Move everything to a temp dir... mostly to make sure that we are in a directory
+        /// with no spaces int he path b/c ROOT dosen't know how to deal with them!
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private FileInfo CopyToTempDir(string p)
+        {
+            var dest = new FileInfo(string.Format("{0}\\{1}", tempDir, p));
+            File.Copy(p, dest.FullName);
+            dest.Refresh();
+            return dest;
         }
 
         [PexMethod]

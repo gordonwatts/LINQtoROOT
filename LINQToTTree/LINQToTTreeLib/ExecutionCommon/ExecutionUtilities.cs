@@ -332,5 +332,48 @@ namespace LINQToTTreeLib.ExecutionCommon
                              select fstr;
             return foundFiles.Any();
         }
+
+        /// <summary>
+        /// Unload all modules that we've loaded. This should have root release the lock on everything.
+        /// </summary>
+        public static void UnloadAllModules(List<string> loadedModuleNames)
+        {
+            ///
+            /// The library names are a simple "_" replacement. However, the full path must be given to the
+            /// unload function. To avoid any issues we just scan the library list that ROOT has right now, find the
+            /// ones we care about, and unload them. In general this is not a good idea, so when there are random
+            /// crashes this might be a good place to come first! :-)
+            /// 
+
+            var gSystem = ROOTNET.NTSystem.gSystem;
+            var libraries = gSystem.Libraries.Split(' ');
+            loadedModuleNames.Reverse();
+
+            var full_lib_names = from m in loadedModuleNames
+                                 from l in libraries
+                                 where l.Contains(m)
+                                 select l;
+
+            ///
+            /// Before unloading we need to make sure that we aren't
+            /// holding onto any pointers back to these guys!
+            /// 
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            ///
+            /// Now that we have them, unload them. Since repeated unloading
+            /// cases erorr messages to the concole, clear the list so we don't
+            /// make a mistake later.
+            /// 
+
+            foreach (var m in full_lib_names)
+            {
+                gSystem.Unload(m);
+            }
+
+            loadedModuleNames.Clear();
+        }
     }
 }
