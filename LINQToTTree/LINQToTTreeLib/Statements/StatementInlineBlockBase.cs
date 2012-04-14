@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.Statements
         /// Add a variable to the list.
         /// </summary>
         /// <param name="variableToDeclare"></param>
-        public void Add(IDeclaredParameter variableToDeclare)
+        public void Add(IDeclaredParameter variableToDeclare, bool failIfAlreadyThere = true)
         {
             if (variableToDeclare == null)
                 throw new ArgumentNullException("Must not declare a null variable");
@@ -60,7 +60,11 @@ namespace LINQToTTreeLib.Statements
                           where v.ParameterName == variableToDeclare.ParameterName
                           select v;
             if (findOld.FirstOrDefault() != null)
+            {
+                if (!failIfAlreadyThere)
+                    return;
                 throw new ArgumentException("Variable '" + variableToDeclare.ParameterName + "' has already been declared in this block!");
+            }
 
             _variables.Add(variableToDeclare);
         }

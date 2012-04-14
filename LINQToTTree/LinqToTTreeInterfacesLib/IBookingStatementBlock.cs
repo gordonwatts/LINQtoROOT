@@ -13,7 +13,7 @@ namespace LinqToTTreeInterfacesLib
         /// at the start of the block.
         /// </summary>
         /// <param name="variableToDeclare"></param>
-        void Add(IDeclaredParameter variableToDeclare);
+        void Add(IDeclaredParameter variableToDeclare, bool failIfAlreadyPresent = true);
 
         /// <summary>
         /// Returns the list of variables that are declared in this compound block

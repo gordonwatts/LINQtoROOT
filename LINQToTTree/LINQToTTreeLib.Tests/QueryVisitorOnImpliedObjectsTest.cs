@@ -478,6 +478,56 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(9, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
+        public class ParticleInfo
+        {
+            public ROOTNET.Interface.NTLorentzVector TLZ { get; set; }
+            public int PDGID { get; set; }
+            public ROOTNET.Interface.NTVector3 vtxInit { get; set; }
+            public ROOTNET.Interface.NTVector3 vtxTerm { get; set; }
+        }
+
+        public static Expression<Func<CollectionTree, int, int>> FindVertexFromBC = (evt, vtxBC) =>
+            (from vtxIdx in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode.Length)
+             where vtxBC == evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode[vtxIdx]
+             select vtxIdx).First();
+
+        /// <summary>
+        /// Given a vertex index, return the 3D vector for the position.
+        /// </summary>
+        public static Expression<Func<CollectionTree, int, ROOTNET.Interface.NTVector3>> VertexVector = (evt, index) =>
+            new ROOTNET.NTVector3(evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
+                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
+                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index]);
+
+        [TestMethod]
+        public void TestRepeatedInvokationCrash()
+        {
+            // A crash that happened in one of my seperate programs...
+
+            var q = new QueriableDummy<CollectionTree>();
+            var particles = from evt in q
+                            select (from i_p in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length)
+                                    let px = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px[i_p]
+                                    let py = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_py[i_p]
+                                    let pz = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_pz[i_p]
+                                    let m = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_m[i_p]
+                                    let pdgid = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_pdgId[i_p]
+                                    let vtxInitBC = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[i_p]
+                                    let vtxTermBC = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_endVtx[i_p]
+                                    let vtxInitIdx = FindVertexFromBC.Invoke(evt, vtxInitBC)
+                                    let vtxTermIdx = FindVertexFromBC.Invoke(evt, vtxTermBC)
+                                    select new ParticleInfo
+                                    {
+                                        PDGID = pdgid,
+                                        vtxInit = VertexVector.Invoke(evt, vtxInitIdx),
+                                        vtxTerm = VertexVector.Invoke(evt, vtxTermIdx)
+                                    });
+
+            var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm.Mag() > 1.0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
         /// <summary>
         /// Do the code combination we require!
         /// </summary>

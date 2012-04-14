@@ -25,7 +25,7 @@ namespace LinqToTTreeInterfacesLib
         /// Book a variable at the inner most scope
         /// </summary>
         /// <param name="v"></param>
-        void Add(IDeclaredParameter v);
+        void Add(IDeclaredParameter v, bool failIfAlreadyThere = true);
 
         /// <summary>
         /// Add in an outter scope. Fails badly if that outter scope doesn't exist yet!

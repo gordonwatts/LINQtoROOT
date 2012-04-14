@@ -153,11 +153,11 @@ namespace LINQToTTreeLib
         /// declarations.
         /// </summary>
         /// <param name="v"></param>
-        public void Add(IDeclaredParameter v)
+        public void Add(IDeclaredParameter v, bool failIfALreadyThere = true)
         {
             if (v == null)
                 throw new ArgumentNullException("Cannot add a null variable!");
-            CurrentDeclarationScopePointer.Add(v);
+            CurrentDeclarationScopePointer.Add(v, failIfALreadyThere);
         }
 
         /// <summary>

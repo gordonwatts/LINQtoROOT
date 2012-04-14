@@ -6,6 +6,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,6 +27,7 @@ namespace LINQToTTreeLib
             DummyQueryExectuor.GlobalInitalized = false;
             ntuple.Reset();
             ArrayExpressionParser.ResetParser();
+            TypeUtils._variableNameCounter = 0;
 
             /// Get the path for the other nutple guy correct! Since Pex and tests run from different places in the directory structure we have to
             /// do some work to find the top leve!
@@ -1153,6 +1155,7 @@ namespace LINQToTTreeLib
             var dude = dudeQ.Count();
 
             var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             ///
             /// Ok, now we can actually see if we can make it "go".

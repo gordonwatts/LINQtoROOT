@@ -256,7 +256,7 @@ namespace LINQToTTreeLib.Expressions
                     GeneratedCode.CurrentScope = scope;
                     if (r is IDeclaredParameter)
                     {
-                        GeneratedCode.Add(r as IDeclaredParameter);
+                        GeneratedCode.Add(r as IDeclaredParameter, false);
                     }
                     GeneratedCode.ResetResult();
                     return r;

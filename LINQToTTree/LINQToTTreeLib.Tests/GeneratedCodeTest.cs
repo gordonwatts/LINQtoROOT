@@ -120,7 +120,7 @@ namespace LINQToTTreeLib
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock
         {
             private List<IDeclaredParameter> _vlist = new List<IDeclaredParameter>();
-            public void Add(IDeclaredParameter variableToDeclare)
+            public void Add(IDeclaredParameter variableToDeclare, bool failifthere)
             {
                 _vlist.Add(variableToDeclare);
             }
