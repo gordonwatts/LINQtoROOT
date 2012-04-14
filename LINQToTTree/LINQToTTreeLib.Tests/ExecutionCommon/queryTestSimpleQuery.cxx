@@ -18,12 +18,12 @@ using std::string;
 #endif
 
 
-class query0 : public ntuple_CollectionTree
+class queryTestSimpleQuery : public ntuple_CollectionTree
 {
 public:
 	/// So there is some init that CINT will know about
 	/// (I don't know why this is required, but it is).
-	query0()
+	queryTestSimpleQuery()
 	{
 	}
 

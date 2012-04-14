@@ -64,6 +64,8 @@ namespace LINQToTTreeLib.Tests
 
         [TestMethod]
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
+        [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
+        [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
         public void TestSimpleQuery()
         {
             FileInfo runner = new FileInfo("queryTestSimpleQuery.cxx");

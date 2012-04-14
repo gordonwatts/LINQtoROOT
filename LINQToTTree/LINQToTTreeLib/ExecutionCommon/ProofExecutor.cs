@@ -2,14 +2,52 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
     /// <summary>
     /// Execute a query on a remote proof cluster.
     /// </summary>
-    class ProofExecutor : IQueryExectuor
+    public class ProofExecutor : IQueryExectuor
     {
+        [Serializable]
+        public class ProofException : Exception
+        {
+            /// <summary>
+            /// Use the log info and a custom text message to generate an exception.
+            /// </summary>
+            /// <param name="message"></param>
+            /// <param name="log"></param>
+            /// <returns></returns>
+            private static string MakeMessage(string message, ROOTNET.Interface.NTMacro log)
+            {
+                var bld = new StringBuilder();
+
+                bld.AppendLine(message);
+                if (log != null)
+                {
+                    bld.AppendLine("  PROOF log:");
+                    foreach (var line in log.GetListOfLines().Cast<ROOTNET.Interface.NTObjString>())
+                    {
+                        if (line != null)
+                        {
+                            bld.AppendFormat("  -> {0}", line.Name);
+                        }
+                    }
+                }
+
+                return bld.ToString();
+            }
+            public ProofException() { }
+            public ProofException(string message, ROOTNET.Interface.NTMacro log) : base(MakeMessage(message, log)) { }
+            public ProofException(string message, Exception inner, ROOTNET.Interface.NTMacro log) : base(MakeMessage(message, log), inner) { }
+            protected ProofException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context)
+                : base(info, context) { }
+        }
+
         /// <summary>
         /// Run the execution on the PROOF cluster specified in the list of URI's we need to execute.
         /// </summary>
@@ -28,21 +66,57 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (!templateFile.Exists)
                 throw new FileNotFoundException("Unable to find C++ code to use for PROOF query", templateFile.FullName);
 
+            if (Environment.ExtraComponentFiles != null && Environment.ExtraComponentFiles.Length > 0)
+                throw new NotSupportedException("PROOF executor does not support extra component files!");
+
             //
-            // Make sure everythign is inialized
+            // Make sure everythign is inialized and ready for this query.
             //
 
+            ExecutionUtilities.Init();
             OrganizeUris();
+
+            //
+            // A key "funny" thing about this is we need to track all the files used by this query and make sure they make it up to the
+            // PROOF server. So we need to scan for all files and figure out where they are, and add them to a list of files that needs
+            // to be sent.
+            //
+
+            var pc = GetProofConnection();
+
+            var allIncludeFiles = ExecutionUtilities.FindGoodIncludeFilesRecursive(templateFile);
+            var fList = new StringBuilder();
+            fList.Append(string.Format("{0}+", templateFile.Name));
+            foreach (var f in allIncludeFiles)
+            {
+                fList.Append(string.Format(",{0}", f.Name));
+                PushFileToMaster(pc, f.Name);
+            }
+
+            //
+            // Next, we need to build the proof job and the objects.
+            //
+
+            var r = pc.Load(fList.ToString());
+            if (r != 0)
+                throw new InvalidOperationException(string.Format("Unable to compile and load selector in PROOF. Error: {0}", r));
 
             //
             // Now run the PROOF query
             //
 
-            var pc = GetProofConnection();
-            var r = pc.Process(PROOFDSNames(), string.Format("{0}+", templateFile.Name));
-            if (r == -1)
-                throw new InvalidOperationException("Faild to run PROOF query");
+            var objName = Path.GetFileNameWithoutExtension(templateFile.Name);
+            var cls = ROOTNET.NTClass.GetClass(objName);
+            if (cls == null)
+                throw new InvalidOperationException(string.Format("Unable to locate compiled object named '{0}'.", objName));
 
+            var rResult = pc.Process(PROOFDSNames(), objName);
+            var log = pc.GetLastLog();
+            if (rResult == -1)
+            {
+
+                throw new ProofException(string.Format("Faild to run PROOF query (error from Process method was {0})", rResult), log);
+            }
             //
             // Clean up
             //
@@ -163,7 +237,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (_proofConnection == null)
             {
-                _proofConnection = new ROOTNET.NTProof(string.Format("proof://{0}", _proofHost));
+                _proofConnection = ROOTNET.NTProof.Open(string.Format("proof://{0}", _proofHost));
             }
             return _proofConnection;
         }
@@ -172,5 +246,18 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Contains the environment needed to run the execution.
         /// </summary>
         public ExecutionEnvironment Environment { get; set; }
+
+        /// <summary>
+        /// Push a file to make sure it gets up there.
+        /// </summary>
+        /// <param name="proof"></param>
+        /// <param name="file"></param>
+        private static void PushFileToMaster(ROOTNET.Interface.NTProof proof, string file)
+        {
+            var masterLocation = string.Format("~/session-{0}/master-0-{1}/", proof.SessionTag, proof.SessionTag);
+
+            var mgr = proof.Manager;
+            mgr.PutFile(file, masterLocation);
+        }
     }
 }
