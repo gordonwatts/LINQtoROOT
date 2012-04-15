@@ -122,6 +122,22 @@ namespace LINQToTTreeLib.ExecutionCommon
                 throw new InvalidOperationException(string.Format("Unable to locate compiled object named '{0}'.", objName));
 
             //
+            // Load up teh variables that need to go over to the cluster.
+            //
+
+            TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
+            pc.InputList.Clear();
+
+            foreach (var item in varsToTransfer)
+            {
+                var obj = item.Value as ROOTNET.Interface.NTNamed;
+                if (obj == null)
+                    throw new InvalidOperationException("Can only deal with named objects");
+                var cloned = obj.Clone(item.Key);
+                pc.InputList.Add(cloned);
+            }
+
+            //
             // Now run the PROOF query
             //
 
@@ -129,7 +145,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             var log = pc.GetLastLog();
             if (rResult == -1)
             {
-
                 throw new ProofException(string.Format("Faild to run PROOF query (error from Process method was {0})", rResult), log);
             }
 
