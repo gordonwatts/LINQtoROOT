@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Remotion.Linq;
 using Remotion.Linq.Clauses;
 
 namespace LinqToTTreeInterfacesLib
@@ -41,6 +42,14 @@ namespace LinqToTTreeInterfacesLib
         IVariableScopeHolder Add(IQuerySource query, Expression expression);
 
         /// <summary>
+        /// We've parsed a sub-query and gotten a result. Cache it incase the sub-query
+        /// appears again in later code.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <param name="result"></param>
+        IVariableScopeHolder Add(Remotion.Linq.QueryModel queryModel, Expression result);
+
+        /// <summary>
         /// Returns the expression that has been stored under this name.
         /// Returns null if the translation does not exist.
         /// </summary>
@@ -54,6 +63,13 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="exprName"></param>
         /// <returns></returns>
         Expression GetReplacement(IQuerySource exprName);
+
+        /// <summary>
+        /// If we have seen this query model before, return a sub-expression for it.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <returns>the expression the contains the result, or null if we don't know about it yet</returns>
+        Expression GetReplacement(QueryModel queryModel);
 
         /// <summary>
         /// Remove an expression from the repository - allows restoration via the

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using Remotion.Linq;
 using Remotion.Linq.Clauses;
 
 namespace LINQToTTreeLib
@@ -167,6 +168,23 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Returns the query model cache
+        /// </summary>
+        private Dictionary<QueryModel, Expression> _queryModelCache = new Dictionary<QueryModel, Expression>();
+
+        /// <summary>
+        /// Save a query model result for later lookup.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public IVariableScopeHolder Add(Remotion.Linq.QueryModel queryModel, Expression result)
+        {
+            _queryModelCache[queryModel] = result;
+            return null;
+        }
+
+        /// <summary>
         /// Remove the definition of a internal variable, and return a popper to allow us
         /// to restore the magic! :-)
         /// </summary>
@@ -280,6 +298,19 @@ namespace LINQToTTreeLib
             if (!_queryReplacement.ContainsKey(query))
                 return null;
             return _queryReplacement[query];
+        }
+
+        /// <summary>
+        /// Get back a query replacement. Null we can't find it.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <returns></returns>
+        public Expression GetReplacement(QueryModel queryModel)
+        {
+            Expression result = null;
+            if (_queryModelCache.TryGetValue(queryModel, out result))
+                return result;
+            return null;
         }
 
         private List<string> _cachedCookies = new List<string>();

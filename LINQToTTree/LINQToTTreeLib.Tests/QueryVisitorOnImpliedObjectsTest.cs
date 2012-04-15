@@ -475,7 +475,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
             var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
-            Assert.AreEqual(9, scnd.Statements.Count(), "# of statements in second for loop");
+            Assert.AreEqual(5, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
         public class ParticleInfo
