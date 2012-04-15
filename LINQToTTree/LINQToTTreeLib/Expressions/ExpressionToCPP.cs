@@ -141,6 +141,7 @@ namespace LINQToTTreeLib.Expressions
             //
 
             var resultInCode = DeclarableParameter.CreateDeclarableParameterExpression(expression.Type);
+            _codeEnv.Add(resultInCode);
             _result = resultInCode;
 
             //
