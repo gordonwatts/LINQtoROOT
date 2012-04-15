@@ -44,6 +44,13 @@ namespace LINQToTTreeLib.Variables
                 return val.RawValue;
 
             //
+            // If this is a "null" reference, then just return it.
+            //
+
+            if (val.RawValue == "0")
+                return val.RawValue;
+
+            //
             // We are adding a member de-referencing. If we know something about the thing we are de-referencing,
             // then use that in deciding if in C++ this is a pointer or not. The basic problem is that C# doesn't tell
             // the difference between a pointer or an object - so we have to infer it.

@@ -204,6 +204,10 @@ namespace LINQToTTreeLib.Expressions
             {
                 _result = new ValSimple(expression.Value as string, typeof(string));
             }
+            else if (expression.Value == null)
+            {
+                _result = new ValSimple("0", expression.Type);
+            }
             else
             {
                 _result = TypeHandlers.ProcessConstantReference(expression, _codeEnv, MEFContainer);
