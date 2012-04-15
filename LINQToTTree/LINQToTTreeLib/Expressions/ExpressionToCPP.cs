@@ -114,6 +114,56 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
+        /// Deal with an inline conditional expression (test ? ans1 : ans2). We can translate this directly to C++, fortunately!
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// We turn this into a real if statement, rather than a fake if statement. This is to try to keep any code
+        /// associated with the side that won't be executed, not being executed.
+        /// </remarks>
+        protected override Expression VisitConditionalExpression(ConditionalExpression expression)
+        {
+            var testExpression = expression.Test;
+            var trueExpression = expression.IfTrue;
+            var falseExpression = expression.IfFalse;
+
+            //
+            // Run the test.
+            //
+
+            var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            _codeEnv.Add(testBoolInCode);
+            _codeEnv.Add(new Statements.StatementAssign(testBoolInCode, GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer)));
+
+            //
+            // Next, do the result cache.
+            //
+
+            var resultInCode = DeclarableParameter.CreateDeclarableParameterExpression(expression.Type);
+            _result = resultInCode;
+
+            //
+            // If true, if false...
+            //
+
+            var topScope = _codeEnv.CurrentScope;
+            _codeEnv.Add(new Statements.StatementFilter(testBoolInCode));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer)));
+            _codeEnv.CurrentScope = topScope;
+
+            _codeEnv.Add(new Statements.StatementFilter(GetExpression(Expression.Not(testBoolInCode), _codeEnv, _codeContext, MEFContainer)));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer)));
+            _codeEnv.CurrentScope = topScope;
+
+            //
+            // Result is set. back we go!
+            //
+
+            return expression;
+        }
+
+        /// <summary>
         /// List of the type handlers that we can use to process things.
         /// </summary>
         [Import]

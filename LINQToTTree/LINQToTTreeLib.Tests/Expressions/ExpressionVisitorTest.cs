@@ -1029,6 +1029,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestInlineSwitch()
+        {
+            Expression<Func<int, int>> expr = a => a == 0 ? 1 : 0;
+            var e = expr.Body;
+
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.Compose(new TypeHandlerTranslationClass());
+            var r = ExpressionToCPP.GetExpression(e, gc, null, MEFUtilities.MEFContainer);
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(typeof(int), r.Type, "type of result expression");
+            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
         public void TestInvokeAccrossTranslation()
         {
             ///
