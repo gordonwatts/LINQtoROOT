@@ -109,6 +109,7 @@ namespace LINQToTTreeLib
 
         List<BinaryExpressionTestCase> BinaryTestCases = new List<BinaryExpressionTestCase>()
         {
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.NotEqual, LHS=Expression.Parameter(typeof(ROOTNET.NTVector3), "a"), RHS=Expression.Constant(null, typeof(ROOTNET.NTVector3)), ExpectedType=typeof(bool), ExpectedValue="a!=0"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.NotEqual, LHS=Expression.Constant(null, typeof(ROOTNET.NTVector3)), RHS=Expression.Constant(null, typeof(ROOTNET.NTVector3)), ExpectedType=typeof(bool), ExpectedValue="0!=0"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Equal, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10==10"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.GreaterThan, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10>10"},

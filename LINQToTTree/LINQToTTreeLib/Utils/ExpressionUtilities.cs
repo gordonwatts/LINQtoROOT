@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
@@ -7,7 +8,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using Remotion.Linq.Clauses;
-using System.Collections.Generic;
 namespace LINQToTTreeLib.Utils
 {
     internal static class ExpressionUtilities
@@ -159,9 +159,29 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public static Expression RemoveArrayReferences (this Expression expr)
+        public static Expression RemoveArrayReferences(this Expression expr)
         {
             return expr.DetermineArrayIndexInfo().Item2;
+        }
+
+        /// <summary>
+        /// Test for an expression that is nul.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public static bool IsNull(this Expression expr)
+        {
+            if (expr == null)
+                throw new ArgumentNullException("expr");
+
+            var c = expr as ConstantExpression;
+            if (c == null)
+                return false;
+
+            if (c.Value == null)
+                return true;
+
+            return false;
         }
 
     }

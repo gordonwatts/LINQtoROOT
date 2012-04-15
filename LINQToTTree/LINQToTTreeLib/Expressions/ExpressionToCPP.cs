@@ -227,6 +227,7 @@ namespace LINQToTTreeLib.Expressions
             string op = "";
             bool CastToFinalType = false;
             string format = "{0}{1}{2}";
+            bool treatAsPointers = false;
 
             Type resultType = null;
             switch (expression.NodeType)
@@ -247,6 +248,12 @@ namespace LINQToTTreeLib.Expressions
                 case ExpressionType.Equal:
                     op = "==";
                     resultType = typeof(bool);
+                    treatAsPointers = expression.Left.IsNull() || expression.Right.IsNull();
+                    break;
+                case ExpressionType.NotEqual:
+                    op = "!=";
+                    resultType = typeof(bool);
+                    treatAsPointers = expression.Left.IsNull() || expression.Right.IsNull();
                     break;
                 case ExpressionType.GreaterThan:
                     op = ">";
@@ -262,11 +269,6 @@ namespace LINQToTTreeLib.Expressions
                     break;
                 case ExpressionType.LessThanOrEqual:
                     op = "<=";
-                    resultType = typeof(bool);
-                    break;
-
-                case ExpressionType.NotEqual:
-                    op = "!=";
                     resultType = typeof(bool);
                     break;
 
@@ -334,13 +336,13 @@ namespace LINQToTTreeLib.Expressions
             string sRHS, sLHS;
             if (CastToFinalType)
             {
-                sRHS = RHS.CastToType(expression);
-                sLHS = LHS.CastToType(expression);
+                sRHS = RHS.CastToType(expression, ignorePointer: treatAsPointers);
+                sLHS = LHS.CastToType(expression, ignorePointer: treatAsPointers);
             }
             else
             {
-                sRHS = RHS.CastToType(expression.Right);
-                sLHS = LHS.CastToType(expression.Left);
+                sRHS = RHS.CastToType(expression.Right, ignorePointer: treatAsPointers);
+                sLHS = LHS.CastToType(expression.Left, ignorePointer: treatAsPointers);
             }
 
             StringBuilder bld = new StringBuilder();

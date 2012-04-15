@@ -130,12 +130,14 @@ namespace LINQToTTreeLib.Variables
         /// <param name="sourceValue"></param>
         /// <param name="expressionDestType"></param>
         /// <returns></returns>
-        public static string CastToType(this IValue sourceValue, Expression expressionDestType)
+        public static string CastToType(this IValue sourceValue, Expression expressionDestType, bool ignorePointer = false)
         {
             if (sourceValue == null || expressionDestType == null)
                 throw new ArgumentNullException("Cannot pass ource or dest type/vars as null");
 
-            var objRefForm = sourceValue.AsObjectReference(expressionDestType);
+            string objRefForm = sourceValue.RawValue;
+            if (!ignorePointer)
+                objRefForm = sourceValue.AsObjectReference(expressionDestType);
 
             ///
             /// If the type is already there or if the type is an array, then we will do no conversion.
