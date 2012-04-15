@@ -560,10 +560,15 @@ namespace LINQToTTreeLib.Tests
                                         vtxTerm = VertexVectorQ.Invoke(evt, vtxTermIdx)
                                     });
 
-            var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm.Mag() > 1.0).Count();
+            var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm != null).Where(p => p.vtxTerm.Mag() > 1.0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
-            Assert.Inconclusive();
+
+            // Just check that we don't crash... For now. The code generated here is
+            // awful, and definately needs improvement.
+            //  -> common sub-expression lifting.
+            //  -> make sure that stuff on the other side of the if statement doesn't get
+            //     when the if branch isn't taken (currently it is moved outside).
         }
 
         /// <summary>
