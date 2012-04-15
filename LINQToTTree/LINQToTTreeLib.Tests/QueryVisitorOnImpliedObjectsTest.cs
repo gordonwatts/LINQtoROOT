@@ -529,6 +529,44 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
+        /// Given a vertex index, return the 3D vector for the position. Null if the index is -1.
+        /// </summary>
+        public static Expression<Func<CollectionTree, int, ROOTNET.Interface.NTVector3>> VertexVectorQ = (evt, index) =>
+            index == -1 ? null : new ROOTNET.NTVector3(evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
+                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
+                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index]);
+
+        [TestMethod]
+        public void TestComplexInlineIf()
+        {
+            // A crash that happened in one of my seperate programs...
+
+            var q = new QueriableDummy<CollectionTree>();
+            var particles = from evt in q
+                            select (from i_p in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length)
+                                    let px = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px[i_p]
+                                    let py = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_py[i_p]
+                                    let pz = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_pz[i_p]
+                                    let m = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_m[i_p]
+                                    let pdgid = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_pdgId[i_p]
+                                    let vtxInitBC = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[i_p]
+                                    let vtxTermBC = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_endVtx[i_p]
+                                    let vtxInitIdx = vtxInitBC == 0 ? -1 : FindVertexFromBC.Invoke(evt, vtxInitBC)
+                                    let vtxTermIdx = vtxTermBC == 0 ? -1 : FindVertexFromBC.Invoke(evt, vtxTermBC)
+                                    select new ParticleInfo
+                                    {
+                                        PDGID = pdgid,
+                                        vtxInit = VertexVectorQ.Invoke(evt, vtxInitIdx),
+                                        vtxTerm = VertexVectorQ.Invoke(evt, vtxTermIdx)
+                                    });
+
+            var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm.Mag() > 1.0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+            Assert.Inconclusive();
+        }
+
+        /// <summary>
         /// Do the code combination we require!
         /// </summary>
         /// <param name="gcs"></param>
