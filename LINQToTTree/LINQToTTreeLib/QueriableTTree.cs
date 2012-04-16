@@ -12,7 +12,8 @@ using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
 namespace LINQToTTreeLib
 {
     /// <summary>
-    /// Represents the querieable item we will be running against.
+    /// Represents the querieable item we will be running against. The ctors fo this class take several different style
+    /// inputs.
     /// </summary>
     public class QueriableTTree<T> : QueryableBase<T>
     {
@@ -21,8 +22,10 @@ namespace LINQToTTreeLib
         /// generated with the proper meta data so things like the scanner source file can be found!
         /// Runs on data in a single source file.
         /// </summary>
-        public QueriableTTree(FileInfo rootFile, string treeName)
-            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new FileInfo[] { rootFile }, treeName, typeof(T)))
+        /// <param name="rootFile">The uri of a root file. Should use one of the support schemes (see docs)</param>
+        /// <param name="treeName">Name of the tree in the list of files we are to process</param>
+        public QueriableTTree(Uri rootFile, string treeName)
+            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new Uri[] { rootFile }, treeName, typeof(T)))
         {
             TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with 1 file for tree '{0}'", treeName));
         }
@@ -32,8 +35,36 @@ namespace LINQToTTreeLib
         /// generated with the proper meta data so things like the scanner source file can be found!
         /// Runs on data in a multiple source files.
         /// </summary>
-        public QueriableTTree(FileInfo[] rootFiles, string treeName)
+        /// <param name="rootFiles">The uri of a root file. Should use one of the support schemes (see docs)</param>
+        /// <param name="treeName">Name of the tree in the list of files we are to process</param>
+        public QueriableTTree(Uri[] rootFiles, string treeName)
             : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(rootFiles, treeName, typeof(T)))
+        {
+            TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with {1} file for tree '{0}'", treeName, rootFiles.Length));
+        }
+
+        /// <summary>
+        /// Create a new LINQ Querable object that will go after a TTree. The ntuple type must have been
+        /// generated with the proper meta data so things like the scanner source file can be found!
+        /// Runs on data in a multiple source files.
+        /// </summary>
+        /// <param name="rootFile">A complete and existing file that we should run over</param>
+        /// <param name="treeName">Name of the tree in the list of files we are to process</param>
+        public QueriableTTree(FileInfo rootFile, string treeName)
+            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new Uri[] { new Uri("file://" + rootFile.FullName) }, treeName, typeof(T)))
+        {
+            TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with 1 file for tree '{0}'", treeName));
+        }
+
+        /// <summary>
+        /// Create a new LINQ Querable object that will go after a TTree. The ntuple type must have been
+        /// generated with the proper meta data so things like the scanner source file can be found!
+        /// Runs on data in a multiple source files.
+        /// </summary>
+        /// <param name="rootFiles">A complete and existing file list that we should run over</param>
+        /// <param name="treeName">Name of the tree in the list of files we are to process</param>
+        public QueriableTTree(FileInfo[] rootFiles, string treeName)
+            : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(rootFiles.Select(u => new Uri("file://" + u.FullName)).ToArray(), treeName, typeof(T)))
         {
             TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with {1} file for tree '{0}'", treeName, rootFiles.Length));
         }

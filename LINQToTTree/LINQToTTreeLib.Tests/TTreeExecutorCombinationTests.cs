@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System;
 using System.Linq;
 using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -90,7 +90,7 @@ namespace LINQToTTreeLib.Tests
             //
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestUtils.TestNtupeArr));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
             var q1future = exe.ExecuteScalarAsFuture<int>(query1);
             var q2future = exe.ExecuteScalarAsFuture<int>(query2);
 

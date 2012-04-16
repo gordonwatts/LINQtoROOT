@@ -17,36 +17,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestTryCombineThrowsArgumentNullException238()
-{
-    this.TestTryCombine((IStatement)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void TestTryCombine818()
-{
-    StatementInlineBlock statementInlineBlock;
-    statementInlineBlock = StatementInlineBlockFactory.Create
-                               ((IStatement[])null, (IDeclaredParameter[])null);
-    this.TestTryCombine((IStatement)statementInlineBlock);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-public void TestTryCombine81801()
-{
-    StatementInlineBlock statementInlineBlock;
-    StatementInlineBlock statementInlineBlock1;
-    statementInlineBlock = StatementInlineBlockFactory.Create
-                               ((IStatement[])null, (IDeclaredParameter[])null);
-    IStatement[] iStatements = new IStatement[1];
-    IDeclaredParameter[] iDeclaredParameters = new IDeclaredParameter[0];
-    iStatements[0] = (IStatement)statementInlineBlock;
-    statementInlineBlock1 =
-      StatementInlineBlockFactory.Create(iStatements, iDeclaredParameters);
-    this.TestTryCombine((IStatement)statementInlineBlock1);
-}
     }
 }

@@ -15,29 +15,5 @@ namespace LINQToTTreeLib.Utils
 {
     public partial class FileUtilsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated244()
-{
-    this.MakeSureFileNotUpdated((string)null, (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated134()
-{
-    this.MakeSureFileNotUpdated((string)null, "");
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated300()
-{
-    this.MakeSureFileNotUpdated("", (string)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(FileUtilsTest))]
-public void MakeSureFileNotUpdated580()
-{
-    this.MakeSureFileNotUpdated((string)null, "\0\0");
-}
     }
 }

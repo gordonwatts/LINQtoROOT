@@ -16,49 +16,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementSimpleStatementTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-public void CodeItUp280()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    IEnumerable<string> iEnumerable;
-    statementSimpleStatement = StatementSimpleStatementFactory.Create("\0", false);
-    iEnumerable = this.CodeItUp(statementSimpleStatement);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)statementSimpleStatement);
-    Assert.AreEqual<string>("\0", statementSimpleStatement.Line);
-    Assert.AreEqual<bool>(false, statementSimpleStatement.AddSemicolon);
-    Assert.IsNull(statementSimpleStatement.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-public void CodeItUp28001()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    IEnumerable<string> iEnumerable;
-    statementSimpleStatement =
-      StatementSimpleStatementFactory.Create("\0\ufeff", false);
-    iEnumerable = this.CodeItUp(statementSimpleStatement);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)statementSimpleStatement);
-    Assert.AreEqual<string>("\0\ufeff", statementSimpleStatement.Line);
-    Assert.AreEqual<bool>(false, statementSimpleStatement.AddSemicolon);
-    Assert.IsNull(statementSimpleStatement.Parent);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
-public void CodeItUp28002()
-{
-    StatementSimpleStatement statementSimpleStatement;
-    IEnumerable<string> iEnumerable;
-    statementSimpleStatement =
-      StatementSimpleStatementFactory.Create("\0\ufeff", true);
-    iEnumerable = this.CodeItUp(statementSimpleStatement);
-    Assert.IsNotNull((object)iEnumerable);
-    Assert.IsNotNull((object)statementSimpleStatement);
-    Assert.AreEqual<string>("\0\ufeff", statementSimpleStatement.Line);
-    Assert.AreEqual<bool>(true, statementSimpleStatement.AddSemicolon);
-    Assert.IsNull(statementSimpleStatement.Parent);
-}
     }
 }

@@ -17,15 +17,5 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class ROPairWiseAllTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROPairWiseAllTest))]
-public void CanHandle657()
-{
-    bool b;
-    ROUniqueCombinations s0 = new ROUniqueCombinations();
-    b = this.CanHandle(s0, (Type)null);
-    Assert.AreEqual<bool>(false, b);
-    Assert.IsNotNull((object)s0);
-}
     }
 }

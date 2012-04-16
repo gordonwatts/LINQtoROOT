@@ -248,18 +248,18 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
-        public static FileInfo CreateFileOf(string filename, Func<ROOTNET.NTTree> maker)
+        public static Uri CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
         {
             FileInfo result = new FileInfo(filename);
+            var u = new Uri("file://" + result.FullName);
             if (result.Exists)
-                return result;
+                return u;
 
             var f = new ROOTNET.NTFile(filename, "RECREATE");
             var tree = maker();
             f.Write();
             f.Close();
-            result.Refresh();
-            return result;
+            return u;
         }
 
         /// <summary>
@@ -310,13 +310,13 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="rootFile"></param>
         /// <returns></returns>
-        public static FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName)
+        public static FileInfo GenerateROOTProxy(Uri rootFile, string rootTupleName)
         {
             ///
             /// First, load up the TTree
             /// 
 
-            var tfile = new ROOTNET.NTFile(rootFile.FullName, "READ");
+            var tfile = new ROOTNET.NTFile(rootFile.LocalPath, "READ");
             var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
             Assert.IsNotNull(tree, "Tree couldn't be found");
 
@@ -337,5 +337,18 @@ namespace LINQToTTreeLib.Tests
             tree.MakeProxy("scanner", "junk.C", null, "nohist");
             return new FileInfo("scanner.h");
         }
+
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        public static Uri CreateFileOfIntAsURI(int numberOfIter)
+        {
+            var f = CreateFileOfInt(numberOfIter);
+            Uri u = new Uri("file://" + f.FullName);
+            return u;
+        }
+
     }
 }

@@ -68,15 +68,17 @@ namespace LINQToTTreeLib
             CountCacheHits = 0;
             CountExecutionRuns = 0;
 
-            ///
-            /// Basic checks
-            /// 
+            //
+            // Basic checks
+            // 
 
+            // The tree name and object type.
             if (string.IsNullOrWhiteSpace(treeName))
                 throw new ArgumentException("The tree name must be valid");
             if (baseNtupleObject == null)
                 throw new ArgumentNullException("baseNtupleObject");
 
+            // The uri's for the files.
             if (rootFiles == null || rootFiles.Length == 0)
                 throw new ArgumentException("The TTree Query Exector was given an empty array of root files - a valid root files is required to work!");
 
@@ -89,18 +91,17 @@ namespace LINQToTTreeLib
             }
 
             var badFiles = (from f in rootFiles
-                            where !f.Exists
+                            where !UriGood(f)
                             select f).ToArray();
             if (badFiles.Length > 0)
             {
                 StringBuilder bld = new StringBuilder();
-                bld.Append("The following file(s) do not exist and so can't be processed: ");
+                bld.Append("The following URI(s) do not exist or are not recognized and so can't be processed: ");
                 foreach (var f in badFiles)
                 {
-                    bld.AppendFormat("{0} ", f.FullName);
+                    bld.AppendFormat("{0} ", f.LocalPath);
                 }
                 throw new FileNotFoundException(bld.ToString());
-
             }
 
             ///
@@ -184,6 +185,23 @@ namespace LINQToTTreeLib
             _exeReq.TreeName = treeName;
             _cintLines = cintLines;
             TraceHelpers.TraceInfo(3, "Done Initializing TTreeQueryExecutor");
+        }
+
+        /// <summary>
+        /// Check to make sure the URI is a good one. Currently we only deal
+        /// with file URI's, so this will x-check that.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        private bool UriGood(Uri f)
+        {
+            if (f.Scheme != "file")
+                return false;
+
+            if (!File.Exists(f.LocalPath))
+                return false;
+
+            return true;
         }
 
         /// <summary>

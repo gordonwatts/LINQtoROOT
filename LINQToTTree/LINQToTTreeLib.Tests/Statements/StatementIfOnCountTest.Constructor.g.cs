@@ -17,14 +17,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementIfOnCountTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException320()
-{
-    StatementIfOnCount statementIfOnCount;
-    statementIfOnCount = this.Constructor((IDeclaredParameter)null, 
-                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
-}
     }
 }

@@ -18,14 +18,5 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementLoopOverGoodTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException542()
-{
-    StatementLoopOverGood statementLoopOverGood;
-    statementLoopOverGood =
-      this.Constructor((IValue)null, (IValue)null, (IDeclaredParameter)null);
-}
     }
 }

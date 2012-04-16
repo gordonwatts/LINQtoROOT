@@ -19,29 +19,5 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
     public partial class TypeHandlerCPPCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void CodeMethodCallThrowsArgumentNullException279()
-{
-    TypeHandlerCPPCode typeHandlerCPPCode;
-    IValue iValue;
-    typeHandlerCPPCode = new TypeHandlerCPPCode();
-    iValue = this.CodeMethodCall(typeHandlerCPPCode, (MethodCallExpression)null, 
-                                 (IGeneratedQueryCode)null, (CompositionContainer)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(TypeHandlerCPPCodeTest))]
-[ExpectedException(typeof(InvalidOperationException))]
-public void CodeMethodCallThrowsInvalidOperationException599()
-{
-    TypeHandlerCPPCode typeHandlerCPPCode;
-    MethodCallExpression methodCallExpression;
-    IValue iValue;
-    typeHandlerCPPCode = new TypeHandlerCPPCode();
-    methodCallExpression = MethodCallExpressionFactory.Create();
-    iValue = this.CodeMethodCall(typeHandlerCPPCode, methodCallExpression, 
-                                 (IGeneratedQueryCode)null, (CompositionContainer)null);
-}
     }
 }

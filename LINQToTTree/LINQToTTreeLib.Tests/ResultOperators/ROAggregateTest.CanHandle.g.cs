@@ -16,15 +16,5 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROAggregateTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROAggregateTest))]
-public void CanHandle930()
-{
-    bool b;
-    ROAggregate s0 = new ROAggregate();
-    b = this.CanHandle(s0, (Type)null);
-    Assert.AreEqual<bool>(false, b);
-    Assert.IsNotNull((object)s0);
-}
     }
 }

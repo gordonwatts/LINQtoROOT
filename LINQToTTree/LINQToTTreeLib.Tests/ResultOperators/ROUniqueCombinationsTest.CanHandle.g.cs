@@ -18,25 +18,5 @@ namespace LINQToTTreeLib.Tests.ResultOperators
 {
     public partial class ROUniqueCombinationsTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROUniqueCombinationsTest))]
-public void CanHandle657()
-{
-    bool b;
-    ROUniqueCombinations s0 = new ROUniqueCombinations();
-    b = this.CanHandle(s0, (Type)null);
-    Assert.AreEqual<bool>(false, b);
-    Assert.IsNotNull((object)s0);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(ROUniqueCombinationsTest))]
-public void CanHandle508()
-{
-    bool b;
-    ROUniqueCombinations s0 = new ROUniqueCombinations();
-    b = this.CanHandle(s0, typeof(UniqueCombinationsResultOperator));
-    Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)s0);
-}
     }
 }

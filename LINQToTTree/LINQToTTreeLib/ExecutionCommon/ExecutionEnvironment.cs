@@ -1,11 +1,12 @@
 ﻿
+using System;
 namespace LINQToTTreeLib.ExecutionCommon
 {
     /// <summary>
     /// A list of various things that are needed to actually run one of our runs. Hopefully,
     /// other than the stuff specific for a particular query, this is everything.
     /// </summary>
-    class ExecutionEnvironment
+    public class ExecutionEnvironment
     {
         /// <summary>
         /// Some classes will require a dict to be made in order for the loading
@@ -33,6 +34,6 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// List of the root files that need to be run over.
         /// </summary>
-        public System.IO.FileInfo[] RootFiles { get; set; }
+        public Uri[] RootFiles { get; set; }
     }
 }

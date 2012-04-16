@@ -17,13 +17,5 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(StatementFilterTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ConstructorThrowsArgumentNullException596()
-{
-    StatementFilter statementFilter;
-    statementFilter = this.Constructor((IValue)null);
-}
     }
 }

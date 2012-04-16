@@ -21,68 +21,6 @@ namespace LINQToTTreeLib
         [TestMethod]
         [PexGeneratedBy(typeof(GeneratedCodeTest))]
         [ExpectedException(typeof(ArgumentException))]
-        public void TestChangeScopeThrowsArgumentException899()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create
-                                       ((IStatement[])null, (IDeclaredParameter[])null);
-            IStatement[] iStatements = new IStatement[0];
-            this.TestChangeScope(iStatements,
-                                 (IStatement)statementInlineBlock, (IStatement)statementInlineBlock);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestChangeScopeThrowsArgumentNullException208()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create
-                                       ((IStatement[])null, (IDeclaredParameter[])null);
-            IStatement[] iStatements = new IStatement[1];
-            this.TestChangeScope(iStatements,
-                                 (IStatement)statementInlineBlock, (IStatement)statementInlineBlock);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestChangeScopeThrowsArgumentException314()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create
-                                       ((IStatement[])null, (IDeclaredParameter[])null);
-            IStatement[] iStatements = new IStatement[1];
-            iStatements[0] = (IStatement)statementInlineBlock;
-            this.TestChangeScope(iStatements,
-                                 (IStatement)statementInlineBlock, (IStatement)statementInlineBlock);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestChangeScopeThrowsArgumentNullException919()
-        {
-            StatementInlineBlock statementInlineBlock;
-            statementInlineBlock = StatementInlineBlockFactory.Create
-                                       ((IStatement[])null, (IDeclaredParameter[])null);
-            IStatement[] iStatements = new IStatement[2];
-            iStatements[0] = (IStatement)statementInlineBlock;
-            this.TestChangeScope(iStatements,
-                                 (IStatement)statementInlineBlock, (IStatement)statementInlineBlock);
-        }
-        [TestMethod]
-        [PexGeneratedBy(typeof(GeneratedCodeTest))]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestChangeScopeThrowsArgumentException357()
-        {
-            StatementInlineBlock statementInlineBlock;
-            StatementInlineBlock statementInlineBlock1;
-            statementInlineBlock = StatementInlineBlockFactory.Create
-                                       ((IStatement[])null, (IDeclaredParameter[])null);
-            statementInlineBlock1 = StatementInlineBlockFactory.Create
-                                        ((IStatement[])null, (IDeclaredParameter[])null);
-            IStatement[] iStatements = new IStatement[2];
-            StatementInlineBlock statementInlineBlock2 = new StatementInlineBlock();
-            iStatements[0] = (IStatement)statementInlineBlock1;
-            iStatements[1] = (IStatement)statementInlineBlock;
             this.TestChangeScope(iStatements,
                                  (IStatement)statementInlineBlock2, (IStatement)statementInlineBlock2);
         }
@@ -107,8 +45,5 @@ namespace LINQToTTreeLib
             statementInlineBlock1 = StatementInlineBlockFactory.Create
                                         ((IStatement[])null, (IDeclaredParameter[])null);
             IStatement[] iStatements1 = new IStatement[0];
-            this.TestChangeScope(iStatements1,
-                                 (IStatement)statementInlineBlock, (IStatement)statementInlineBlock1);
-        }
     }
 }

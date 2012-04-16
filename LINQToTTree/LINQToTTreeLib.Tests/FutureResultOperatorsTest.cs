@@ -1,6 +1,5 @@
 // <copyright file="FutureResultOperatorsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using System.IO;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
@@ -47,26 +46,6 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Create an output int file... unique so we don't have to regenerate...
-        /// </summary>
-        /// <param name="numberOfIter"></param>
-        /// <returns></returns>
-        private FileInfo CreateFileOfInt(int numberOfIter)
-        {
-            string filename = "intonly_" + numberOfIter.ToString() + ".root";
-            FileInfo result = new FileInfo(filename);
-            if (result.Exists)
-                return result;
-
-            var f = new ROOTNET.NTFile(filename, "RECREATE");
-            var tree = TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter);
-            f.Write();
-            f.Close();
-            result.Refresh();
-            return result;
-        }
-
-        /// <summary>
         /// Ntuple with emptys for everything.
         /// </summary>
         public class ntuple
@@ -80,39 +59,6 @@ namespace LINQToTTreeLib
                 _gProxyFile = "";
                 _gObjectFiles = new string[0];
             }
-        }
-
-        /// <summary>
-        /// Given the root file and the root-tuple name, generate a proxy file 
-        /// </summary>
-        /// <param name="rootFile"></param>
-        /// <returns></returns>
-        private FileInfo GenerateROOTProxy(FileInfo rootFile, string rootTupleName)
-        {
-            ///
-            /// First, load up the TTree
-            /// 
-
-            var tfile = new ROOTNET.NTFile(rootFile.FullName, "READ");
-            var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
-            Assert.IsNotNull(tree, "Tree couldn't be found");
-
-            ///
-            /// Create the proxy sub-dir if not there already, and put the dummy macro in there
-            /// 
-
-            using (var w = File.CreateText("junk.C"))
-            {
-                w.Write("int junk() {return 10.0;}");
-                w.Close();
-            }
-
-            ///
-            /// Create the macro proxy now
-            /// 
-
-            tree.MakeProxy("scanner", "junk.C", null, "nohist");
-            return new FileInfo("scanner.h");
         }
 
         /// <summary>Test stub for FutureCount(IQueryable`1&lt;!!0&gt;)</summary>
@@ -141,8 +87,8 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = CreateFileOfInt(numberOfIter);
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Count();
             var query = DummyQueryExectuor.LastQueryModel;
@@ -165,8 +111,8 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = CreateFileOfInt(numberOfIter);
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Where(v => v.run > 0).Count();
             var query = DummyQueryExectuor.LastQueryModel;
@@ -189,8 +135,8 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = CreateFileOfInt(numberOfIter);
-            var proxyFile = GenerateROOTProxy(rootFile, "dude");
+            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude1 = q.Count();
             var query1 = DummyQueryExectuor.LastQueryModel;

@@ -21,16 +21,5 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROMinMaxTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(ROMinMaxTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void ProcessResultOperatorThrowsArgumentNullException979()
-{
-    Expression expression;
-    ROMinMax s0 = new ROMinMax();
-    expression =
-      this.ProcessResultOperator(s0, (ResultOperatorBase)null, (QueryModel)null, 
-                                 (IGeneratedQueryCode)null, (ICodeContext)null, (CompositionContainer)null);
-}
     }
 }

@@ -16,12 +16,5 @@ namespace LINQToTTreeLib
 {
     public partial class GeneratedCodeTest
     {
-[TestMethod]
-[PexGeneratedBy(typeof(GeneratedCodeTest))]
-[PexRaisedException(typeof(TypeInitializationException))]
-public void AddCompoundThrowsTypeInitializationException344()
-{
-    this.AddCompound();
-}
     }
 }

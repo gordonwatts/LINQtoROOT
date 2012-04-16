@@ -46,13 +46,13 @@ namespace LINQToTTreeLib
         internal void CacheItem(
             [PexAssumeUnderTest]QueryResultCache target,
             object[] inputObjs,
-            FileInfo _rootFile,
+            Uri _rootFile,
             string[] cachecookies,
             QueryModel qm,
             NTObject o
         )
         {
-            target.CacheItem(target.GetKey(new FileInfo[] { _rootFile }, "test", inputObjs, cachecookies, qm), o);
+            target.CacheItem(target.GetKey(new Uri[] { _rootFile }, "test", inputObjs, cachecookies, qm), o);
             // TODO: add assertions to method QueryResultCacheTest.CacheItem(QueryResultCache, FileInfo, QueryModel, NTObject)
         }
 
@@ -61,7 +61,7 @@ namespace LINQToTTreeLib
         [PexMethod]
         internal Tuple<bool, T> Lookup<T>(
             [PexAssumeUnderTest]QueryResultCache target,
-            FileInfo _rootFile,
+            Uri _rootFile,
             string treeName,
             object[] inputObjects,
             string[] cacheStrings,
@@ -70,7 +70,7 @@ namespace LINQToTTreeLib
             bool checkDates = false
         )
         {
-            var result = target.Lookup<T>(target.GetKey(new FileInfo[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates), varSaver, null);
+            var result = target.Lookup<T>(target.GetKey(new Uri[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates), varSaver, null);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
             // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
@@ -218,7 +218,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="subDirName"></param>
         /// <returns></returns>
-        private FileInfo MakeRootFile(string subDirName)
+        private Uri MakeRootFile(string subDirName)
         {
             DirectoryInfo inf = new DirectoryInfo(".\\" + subDirName);
             if (inf.Exists)
@@ -230,7 +230,7 @@ namespace LINQToTTreeLib
                 r.WriteLine("hi");
                 r.Close();
             }
-            return f;
+            return new Uri("file://" + f.FullName);
         }
 
         [TestMethod]
@@ -248,6 +248,16 @@ namespace LINQToTTreeLib
         private void TestHitDriver(int queryIndex)
         {
             var f = MakeRootFile("TestHitDriver");
+            TestForCachingOnUri(queryIndex, f);
+        }
+
+        /// <summary>
+        /// Look to see if we can figure out what the hit is on this Uri.
+        /// </summary>
+        /// <param name="queryIndex"></param>
+        /// <param name="f"></param>
+        private void TestForCachingOnUri(int queryIndex, Uri f)
+        {
             var query = MakeQuery(queryIndex);
 
             /// Cache a result
@@ -256,11 +266,28 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
 
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
+        }
+
+        [TestMethod]
+        public void TestNoProofHit()
+        {
+            // Make sure that a new proof dataset works just fine.
+            var f = new Uri("proof://tev03.phys.washington.edu/JetBackToBack_v006_PeriodA");
+            var query = MakeQuery(0);
+
+            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", null, null, query, new DummySaver()).Item1, "cache should be empty for this proof guy!");
+        }
+
+        [TestMethod]
+        public void TestHitForProofDataset()
+        {
+            var f = new Uri("proof://tev03.phys.washington.edu/JetBackToBack_v006_PeriodA");
+            TestForCachingOnUri(0, f);
         }
 
         [TestMethod]
@@ -276,8 +303,8 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            var k1 = q.GetKey(new FileInfo[] { f1, f2 }, "test", null, null, query);
-            var k2 = q.GetKey(new FileInfo[] { f2, f1 }, "test", null, null, query);
+            var k1 = q.GetKey(new Uri[] { f1, f2 }, "test", null, null, query);
+            var k2 = q.GetKey(new Uri[] { f2, f1 }, "test", null, null, query);
             q.CacheItem(k1, h);
 
             //
@@ -293,7 +320,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestForFileOutOfDate()
         {
-            var f = MakeRootFile("TestForFileOutOfDate");
+            var u = MakeRootFile("TestForFileOutOfDate");
+            var f = new FileInfo(u.LocalPath);
             var query = MakeQuery(0);
 
             /// Cache a result
@@ -302,7 +330,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), h);
 
             /// Modify the file
 
@@ -316,12 +344,12 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), checkDates: true);
+            var r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
 
             // Next, update the cache and look to make sure that the cache returns a hit this time!
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
-            r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), checkDates: true);
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), h);
+            r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsTrue(r.Item1, "altered file should have made this fail");
         }
 
@@ -337,11 +365,11 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
 
             /// Modify the file
 
-            using (var w = f.CreateText())
+            using (var w = File.CreateText(f.LocalPath))
             {
                 w.WriteLine("fork it!");
                 w.Close();
@@ -365,7 +393,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
 
             /// And make sure the lookup fails now!
 
@@ -394,7 +422,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now!
 
@@ -428,7 +456,7 @@ namespace LINQToTTreeLib
                 h.Directory = null;
                 h.SetBinContent(1, 5.0);
 
-                q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
+                q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
             }
 
             /// And make sure the lookup works now!
@@ -462,7 +490,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now!
 
@@ -489,7 +517,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
@@ -514,7 +542,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
@@ -540,7 +568,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new FileInfo[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
 
             var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "expected hit");

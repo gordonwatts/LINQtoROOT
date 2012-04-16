@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using LINQToTTreeLib.Tests;
+using System.Linq;
 using LINQToTTreeLib;
+using LINQToTTreeLib.Tests;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
 
 namespace LINQToTreeHelpers.Tests
@@ -44,14 +42,14 @@ namespace LINQToTreeHelpers.Tests
         {
             MEFUtilities.MyClassDone();
         }
-        
+
         /// <summary>
         /// Make sure DeltaR2 compiles!
         /// </summary>
         [TestMethod]
         public void TestDeltaR2()
         {
-            var rootFile = TestUtils.CreateFileOfInt(10);
+            var rootFile = TestUtils.CreateFileOfIntAsURI(10);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -77,6 +75,7 @@ namespace LINQToTreeHelpers.Tests
 
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupe));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }
