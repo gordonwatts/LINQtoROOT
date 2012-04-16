@@ -49,7 +49,7 @@ namespace LINQToTreeHelpers.Tests
         [TestMethod]
         public void TestDeltaR2()
         {
-            var rootFile = TestUtils.CreateFileOfIntAsURI(10);
+            var rootFile = TestUtils.CreateFileOfInt(10);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -74,8 +74,7 @@ namespace LINQToTreeHelpers.Tests
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupe));
-            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }

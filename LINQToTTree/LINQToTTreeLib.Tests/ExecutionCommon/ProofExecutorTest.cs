@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using LINQToTTreeLib.ExecutionCommon;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -72,6 +71,7 @@ namespace LINQToTTreeLib.Tests
             return result;
         }
 
+#if false
         [TestMethod]
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
         [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
@@ -96,6 +96,7 @@ namespace LINQToTTreeLib.Tests
             var h = o as ROOTNET.NTH1I;
             Assert.AreEqual(2000, (int)h.GetBinContent(1), "Answer from query");
         }
+#endif
 
         /// <summary>
         /// Move everything to a temp dir... mostly to make sure that we are in a directory

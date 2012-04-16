@@ -87,14 +87,14 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             var result = exe.ExecuteScalarAsFuture<int>(query);
 
@@ -111,14 +111,14 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Where(v => v.run > 0).Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             var result = exe.ExecuteScalarAsFuture<int>(query);
 
@@ -135,7 +135,7 @@ namespace LINQToTTreeLib
         {
             int numberOfIter = 10;
 
-            var rootFile = TestUtils.CreateFileOfIntAsURI(numberOfIter);
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude1 = q.Count();
@@ -145,7 +145,7 @@ namespace LINQToTTreeLib
             var query2 = DummyQueryExectuor.LastQueryModel;
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new FileInfo[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             var result1 = exe.ExecuteScalarAsFuture<int>(query1);
             var result2 = exe.ExecuteScalarAsFuture<int>(query2);

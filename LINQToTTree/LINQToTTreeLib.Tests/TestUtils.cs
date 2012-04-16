@@ -248,7 +248,7 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
-        public static Uri CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
+        public static Uri CreateFileOf(string filename, Func<ROOTNET.NTTree> maker)
         {
             FileInfo result = new FileInfo(filename);
             var u = new Uri("file://" + result.FullName);
@@ -267,7 +267,7 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
-        public static FileInfo CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
+        public static Uri CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
         {
             string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
             return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize));
@@ -278,7 +278,7 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
-        public static FileInfo CreateFileOfIndexedInt(int numberOfIter)
+        public static Uri CreateFileOfIndexedInt(int numberOfIter)
         {
             string filename = "FileOfIndexedInt" + numberOfIter.ToString() + ".root";
             return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector(numberOfIter));
@@ -289,7 +289,7 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="numberOfIter"></param>
         /// <returns></returns>
-        public static FileInfo CreateFileOfInt(int numberOfIter)
+        public static Uri CreateFileOfInt(int numberOfIter)
         {
             string filename = "intonly_" + numberOfIter.ToString() + ".root";
             return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateOneIntTree(numberOfIter));
@@ -337,18 +337,5 @@ namespace LINQToTTreeLib.Tests
             tree.MakeProxy("scanner", "junk.C", null, "nohist");
             return new FileInfo("scanner.h");
         }
-
-        /// <summary>
-        /// Create an output int file... unique so we don't have to regenerate...
-        /// </summary>
-        /// <param name="numberOfIter"></param>
-        /// <returns></returns>
-        public static Uri CreateFileOfIntAsURI(int numberOfIter)
-        {
-            var f = CreateFileOfInt(numberOfIter);
-            Uri u = new Uri("file://" + f.FullName);
-            return u;
-        }
-
     }
 }

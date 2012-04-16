@@ -58,7 +58,7 @@ namespace LINQToTTreeLib
         /// <param name="treeName"></param>
         /// <param name="baseNtupleObject">The type of the ntuple object that we are translating *to*, contains all the proxy definitions, etc.</param>
         /// <param name="startingNtupeObjectType">The type of teh ntuple that started this translation, if different - mostly used for testing.</param>
-        public TTreeQueryExecutor(FileInfo[] rootFiles, string treeName, Type baseNtupleObject, Type startingNtupeObjectType = null)
+        public TTreeQueryExecutor(Uri[] rootFiles, string treeName, Type baseNtupleObject, Type startingNtupeObjectType = null)
         {
             TraceHelpers.TraceInfo(2, "Initializing TTreeQueryExecutor");
             CleanupQuery = true;
