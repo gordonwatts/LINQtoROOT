@@ -290,6 +290,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (_proofConnection == null)
             {
                 _proofConnection = ROOTNET.NTProof.Open(string.Format("proof://{0}", _proofHost));
+                if (_proofConnection == null)
+                    throw new ArgumentException(string.Format("Unable to open proof server at '{0}'", _proofHost));
             }
             return _proofConnection;
         }

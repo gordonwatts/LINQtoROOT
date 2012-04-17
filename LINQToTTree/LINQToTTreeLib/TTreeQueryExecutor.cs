@@ -402,7 +402,22 @@ namespace LINQToTTreeLib
             /// together in order to have them run remotely!
             /// 
 
-            IQueryExectuor local = new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+            IQueryExectuor local = null;
+            if (_exeReq.RootFiles.Length == 0)
+                throw new InvalidOperationException("Not root files or datasets to run this query on");
+            if (_exeReq.RootFiles.All(t => t.Scheme == "file"))
+            {
+                local = new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+            }
+            else if (_exeReq.RootFiles.All(t => t.Scheme == "proof"))
+            {
+                local = new ProofExecutor() { Environment = _exeReq };
+            }
+            else
+            {
+                throw new InvalidOperationException("ROOT Files must be all PROOF or all locally accessible files! Nothing else is understood.");
+            }
+
             var results = local.Execute(templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
 
             ///
