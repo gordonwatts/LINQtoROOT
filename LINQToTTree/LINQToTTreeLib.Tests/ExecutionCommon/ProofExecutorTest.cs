@@ -36,6 +36,7 @@ namespace LINQToTTreeLib.Tests
             Directory.CreateDirectory(tempDir);
         }
 
+#if false
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
@@ -49,6 +50,7 @@ namespace LINQToTTreeLib.Tests
             FileInfo runner = new FileInfo("queryTestSimpleQuery.cxx");
             targetr.Execute(runner, null, null);
         }
+#endif
 
         private ExecutionEnvironment CreateSimpleEnvironment()
         {

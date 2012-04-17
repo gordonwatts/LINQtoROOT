@@ -195,6 +195,9 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private bool UriGood(Uri f)
         {
+            if (f.Scheme == "proof")
+                return true;
+
             if (f.Scheme != "file")
                 return false;
 
