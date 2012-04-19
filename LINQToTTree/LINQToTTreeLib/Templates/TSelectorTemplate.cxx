@@ -127,7 +127,7 @@ private:
 		///
 
 		if (dynamic_cast<TObject*> (GetOutputList()->FindObject(objName.c_str())) == 0) {
-			GetOutputList()->Add(o);
+			GetOutputList()->Add(o->Clone());
 		}
 	}
 
