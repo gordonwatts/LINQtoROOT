@@ -484,6 +484,8 @@ namespace LINQToTTreeLib.Tests
             public int PDGID { get; set; }
             public ROOTNET.Interface.NTVector3 vtxInit { get; set; }
             public ROOTNET.Interface.NTVector3 vtxTerm { get; set; }
+            public bool vtxTermOK { get; set; }
+            public bool vtxInitOK { get; set; }
         }
 
         public static Expression<Func<CollectionTree, int, int>> FindVertexFromBC = (evt, vtxBC) =>
@@ -532,12 +534,13 @@ namespace LINQToTTreeLib.Tests
         /// Given a vertex index, return the 3D vector for the position. Null if the index is -1.
         /// </summary>
         public static Expression<Func<CollectionTree, int, ROOTNET.Interface.NTVector3>> VertexVectorQ = (evt, index) =>
-            index == -1 ? null : new ROOTNET.NTVector3(evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
+            new ROOTNET.NTVector3(evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
                 evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
                 evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index]);
 
         [TestMethod]
-        public void TestComplexInlineIf()
+        [ExpectedException(typeof(NotSupportedException))] // No reference queries in the true/false of an if
+        public void TestInlineIfWithComplexIfthenAnswers()
         {
             // A crash that happened in one of my seperate programs...
 
@@ -569,6 +572,45 @@ namespace LINQToTTreeLib.Tests
             //  -> common sub-expression lifting.
             //  -> make sure that stuff on the other side of the if statement doesn't get
             //     when the if branch isn't taken (currently it is moved outside).
+        }
+
+        [TestMethod]
+        public void TestInlineIfWithGoodTest()
+        {
+            // A crash that happened in one of my seperate programs...
+
+            var q = new QueriableDummy<CollectionTree>();
+            var particles = from evt in q
+                            select (from i_p in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px.Length)
+                                    let px = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px[i_p]
+                                    let py = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_py[i_p]
+                                    let pz = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_pz[i_p]
+                                    let m = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_m[i_p]
+                                    let pdgid = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_pdgId[i_p]
+                                    let vtxInitBC = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_prodVtx[i_p]
+                                    let vtxTermBC = evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_endVtx[i_p]
+                                    let vtxInitIdx = FindVertexFromBC.Invoke(evt, vtxInitBC)
+                                    let vtxTermIdx = FindVertexFromBC.Invoke(evt, vtxTermBC)
+                                    select new ParticleInfo
+                                    {
+                                        PDGID = pdgid,
+                                        vtxInitOK = vtxInitBC != 0,
+                                        vtxTermOK = vtxTermBC != 0,
+                                        vtxInit = VertexVectorQ.Invoke(evt, vtxInitIdx),
+                                        vtxTerm = VertexVectorQ.Invoke(evt, vtxTermIdx)
+                                    });
+
+            var prs = particles.SelectMany(p => p).Where(p => p.vtxTermOK).Where(p => p.vtxTerm.Mag() > 1.0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            // We want to make sure that the vtxTerm stuff is not evaluated unless the vtxTermOK passes first...
+            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.CodeBody.Statements.Count(), "# of statements in top level loop");
+            var topLevelLoop = DummyQueryExectuor.FinalResult.CodeBody.Statements.First() as LINQToTTreeLib.Statements.StatementForLoop;
+            Assert.IsNotNull(topLevelLoop, "Top level loop isn't right");
+            Assert.AreEqual(1, topLevelLoop.Statements.Count(), "# of statements in the top level block are incorrect");
+            var ifStatement = topLevelLoop.Statements.First() as LINQToTTreeLib.Statements.StatementFilter;
+            Assert.IsNotNull(ifStatement, "If statement first in the for loop");
         }
 
         /// <summary>

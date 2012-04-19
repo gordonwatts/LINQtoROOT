@@ -1049,6 +1049,25 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void TestInlineSwitchWithQuerySE()
+        {
+            // QuerySubexpressions inside the true or false clause aren't allowed
+            // because we don't do statement ordering correctly (the statements will pop
+            // out before the if statement - so the filtering doesn't work well!
+
+            Expression<Func<SourceIAT, int>> expr = a => a.muons.Length == 0 ? 1 : (from m in a.muons where m.values > 0.0 select a).Count();
+            var e = expr.Body;
+
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            MEFUtilities.AddPart(new TypeHandlerCache());
+            MEFUtilities.Compose(new TypeHandlerTranslationClass());
+            var r = ExpressionToCPP.GetExpression(e, gc, null, MEFUtilities.MEFContainer);
+            gc.DumpCodeToConsole();
+        }
+
+        [TestMethod]
         public void TestInvokeAccrossTranslation()
         {
             ///
