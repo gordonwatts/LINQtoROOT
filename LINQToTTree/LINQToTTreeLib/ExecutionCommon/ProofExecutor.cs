@@ -28,20 +28,41 @@ namespace LINQToTTreeLib.ExecutionCommon
                 if (log != null)
                 {
                     bld.AppendLine("  PROOF log:");
-                    foreach (var line in log.GetListOfLines().Cast<ROOTNET.Interface.NTObjString>())
+                    foreach (var line in log.AsStrings())
                     {
-                        if (line != null)
+                        bld.AppendLine(string.Format("  -> {0}", line));
+                    }
+                }
+
+                return bld.ToString();
+            }
+
+            private static string MakeMessage(string message, IEnumerable<ROOTNET.Interface.NTMacro> logs)
+            {
+                var bld = new StringBuilder();
+
+                bld.AppendLine(message);
+                if (logs != null)
+                {
+                    bld.AppendLine("  PROOF log:");
+                    foreach (var log in logs)
+                    {
+                        foreach (var line in log.AsStrings())
                         {
-                            bld.AppendFormat("  -> {0}", line.Name);
+                            bld.AppendLine(string.Format("  -> {0}", line));
                         }
                     }
                 }
 
                 return bld.ToString();
             }
+
             public ProofException() { }
             public ProofException(string message, ROOTNET.Interface.NTMacro log) : base(MakeMessage(message, log)) { }
             public ProofException(string message, Exception inner, ROOTNET.Interface.NTMacro log) : base(MakeMessage(message, log), inner) { }
+
+            public ProofException(string message, IEnumerable<ROOTNET.Interface.NTMacro> log) : base(MakeMessage(message, log)) { }
+            public ProofException(string message, Exception inner, IEnumerable<ROOTNET.Interface.NTMacro> log) : base(MakeMessage(message, log), inner) { }
             protected ProofException(
               System.Runtime.Serialization.SerializationInfo info,
               System.Runtime.Serialization.StreamingContext context)
@@ -141,11 +162,18 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Now run the PROOF query
             //
 
-            var rResult = pc.Process(PROOFDSNames(), objName);
-            var log = pc.GetLastLog();
-            if (rResult == -1)
+            var rResult = pc.Process(PROOFDSNames(), objName, "", 10000);
+
+            Console.WriteLine("result is {0}", rResult);
+
+            var logMessages = pc.GetLastLog();
+
+            if (rResult == 0 || logMessages.ContainsString("kPROOF_FATAL"))
             {
-                throw new ProofException(string.Format("Faild to run PROOF query (error from Process method was {0})", rResult), log);
+                var mgr = pc.GetManager();
+                var logs = mgr.GetSessionLogs();
+                var macroLogs = logs.ListOfLogs.Cast<ROOTNET.Interface.NTProofLogElem>().Select(mc => mc.Macro);
+                throw new ProofException(string.Format("Faild to run PROOF query (error from Process method was {0})", rResult), new ROOTNET.Interface.NTMacro[] { logMessages }.Concat(macroLogs));
             }
 
             //
@@ -166,6 +194,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             _proofConnection.Close();
             _proofConnection = null;
+
             ExecutionUtilities.UnloadAllModules(_loadedModuleNames);
 
             //
@@ -312,6 +341,38 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             var mgr = proof.Manager;
             mgr.PutFile(file, masterLocation);
+        }
+    }
+
+    /// <summary>
+    /// Some helpers for us.
+    /// </summary>
+    public static class ProofHelpers
+    {
+        /// <summary>
+        /// Does the log contain anything "interesting"?
+        /// </summary>
+        /// <param name="macro"></param>
+        /// <returns></returns>
+        public static bool ContainsString(this ROOTNET.Interface.NTMacro macro, string whatisinthere)
+        {
+            return macro.AsStrings().Any(l => l.Contains(whatisinthere));
+        }
+
+        /// <summary>
+        /// Return the log as a series of strings.
+        /// </summary>
+        /// <param name="log"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> AsStrings(this ROOTNET.Interface.NTMacro log)
+        {
+            foreach (var line in log.GetListOfLines().Cast<ROOTNET.Interface.NTObjString>())
+            {
+                if (line != null)
+                {
+                    yield return line.Name;
+                }
+            }
         }
     }
 }
