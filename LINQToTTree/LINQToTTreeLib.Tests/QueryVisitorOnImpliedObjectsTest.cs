@@ -539,7 +539,7 @@ namespace LINQToTTreeLib.Tests
                 evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index]);
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))] // No reference queries in the true/false of an if
+        [ExpectedException(typeof(NotSupportedException))]
         public void TestInlineIfWithComplexIfthenAnswers()
         {
             // A crash that happened in one of my seperate programs...

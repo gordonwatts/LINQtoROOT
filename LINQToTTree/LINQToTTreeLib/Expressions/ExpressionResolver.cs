@@ -416,6 +416,54 @@ namespace LINQToTTreeLib.Expressions
                 return TypeHandlers.ProcessConstantReferenceAsExpression(expression, MEFContainer);
             }
 
+            #region Conditional Expression Checking
+            /// <summary>
+            /// We only support a sub-class of expressions for now - so we'd better make sure we are protected!
+            /// </summary>
+            /// <param name="expression"></param>
+            /// <returns></returns>
+            protected override Expression VisitConditionalExpression(ConditionalExpression expression)
+            {
+                if (CheckForSubQueries.CheckExpression(expression.IfFalse)
+                    || CheckForSubQueries.CheckExpression(expression.IfTrue))
+                    throw new NotSupportedException(string.Format("Complex true/false clauses in a conditional expression are not supported: '{0}'", expression.ToString()));
+
+                return base.VisitConditionalExpression(expression);
+            }
+
+            /// <summary>
+            /// Quick expression traversal object to look for sub-expressions.
+            /// </summary>
+            private class CheckForSubQueries : ExpressionTreeVisitor
+            {
+                public static bool CheckExpression(Expression expr)
+                {
+                    var e = new CheckForSubQueries();
+                    e.VisitExpression(expr);
+                    return e.SawSubQuery;
+                }
+
+                /// <summary>
+                /// Get us configured correctly.
+                /// </summary>
+                private CheckForSubQueries()
+                {
+                    SawSubQuery = false;
+                }
+
+                /// <summary>
+                /// Returns true if a sub-query was found.
+                /// </summary>
+                public bool SawSubQuery { get; set; }
+
+                protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+                {
+                    SawSubQuery = true;
+                    return expression;
+                }
+            }
+
+            #endregion
         }
     }
 }
