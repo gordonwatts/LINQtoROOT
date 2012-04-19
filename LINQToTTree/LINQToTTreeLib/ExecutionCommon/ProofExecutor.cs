@@ -191,6 +191,13 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             //
+            // Clean up
+            //
+
+            System.Environment.CurrentDirectory = oldDir;
+            Console.WriteLine(" ****** Can't delete the directory containing the source code because PROOF won't let it go.");
+#if false
+            //
             // Now that it is run, we can unload everything we loaded up!
             //
 
@@ -199,13 +206,6 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             ExecutionUtilities.UnloadAllModules(_loadedModuleNames);
 
-            //
-            // Clean up
-            //
-
-            System.Environment.CurrentDirectory = oldDir;
-            Console.WriteLine(" ****** Can't delete the directory containing the source code because PROOF won't let it go.");
-#if false
             if (Environment.CleanupQuery)
             {
                 if (queryDirectory != null)
