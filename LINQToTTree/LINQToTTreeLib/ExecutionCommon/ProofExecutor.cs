@@ -164,11 +164,13 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             var rResult = pc.Process(PROOFDSNames(), objName, "", 10000);
 
-            Console.WriteLine("result is {0}", rResult);
+            //
+            // There is an error if the result is non zero or there is an error in the short log.
+            // If there is an error, build a full log message and throw it!
+            //
 
             var logMessages = pc.GetLastLog();
-
-            if (rResult == 0 || logMessages.ContainsString("kPROOF_FATAL"))
+            if (rResult != 0 || logMessages.ContainsString("kPROOF_FATAL"))
             {
                 var mgr = pc.GetManager();
                 var logs = mgr.GetSessionLogs();
