@@ -370,6 +370,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             foreach (var m in full_lib_names)
             {
+                Console.WriteLine("Unloading... {0}", m);
                 gSystem.Unload(m);
             }
 
