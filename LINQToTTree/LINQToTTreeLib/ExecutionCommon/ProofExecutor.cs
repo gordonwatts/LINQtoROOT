@@ -162,7 +162,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Now run the PROOF query
             //
 
-            var rResult = pc.Process(PROOFDSNames(), objName, "", 10000);
+            var rResult = pc.Process(PROOFDSNames(), objName, "");
 
             //
             // There is an error if the result is non zero or there is an error in the short log.
@@ -204,12 +204,15 @@ namespace LINQToTTreeLib.ExecutionCommon
             //
 
             System.Environment.CurrentDirectory = oldDir;
+            Console.WriteLine(" ****** Can't delete the directory containing the source code because PROOF won't let it go.");
+#if false
             if (Environment.CleanupQuery)
             {
                 if (queryDirectory != null)
                     if (queryDirectory.Exists)
                         queryDirectory.Delete();
             }
+#endif
 
             //
             // Return back all the objects that came back from the script
