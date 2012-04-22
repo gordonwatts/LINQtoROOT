@@ -1002,5 +1002,73 @@ namespace LINQToTTreeLib.Tests
             var bstring = result.ToString().Substring(result.ToString().IndexOf(").") + 1);
             Assert.AreEqual(".Vec[0].Pt()", bstring, "Expression considered");
         }
+
+        public class SourceType8Container1
+        {
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType8), "muons")]
+            [RenameVariable("specialIndex")]
+            public SourceType8Container2 theMuon;
+
+            [TTreeVariableGrouping]
+            [RenameVariable("vectors")]
+            public ROOTNET.NTLorentzVector vec;
+        }
+
+        public class SourceType8Container2
+        {
+            [TTreeVariableGrouping]
+            public int val;
+        }
+
+        [TranslateToClass(typeof(ResultType8))]
+        public class SourceType8
+        {
+            [TTreeVariableGrouping]
+            public SourceType8Container1[] jets;
+
+            [TTreeVariableGrouping]
+            public SourceType8Container2[] muons;
+        }
+
+        public class ResultType8
+        {
+            public ResultType8(Expression holder)
+            {
+            }
+            public int[] val;
+            public int[] specialIndex;
+            public ROOTNET.NTLorentzVector[] vectors;
+        }
+
+        [TestMethod]
+        public void TestTLZInArrayGroup()
+        {
+            Expression<Func<SourceType8, ROOTNET.NTLorentzVector>> loader = s => s.jets[0].vec;
+
+            //
+            // Do the translation
+            // 
+
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches, e => e);
+            var bstring = result.ToString().Substring(result.ToString().IndexOf(").") + 1);
+            Assert.AreEqual(".vectors[0]", bstring, "Expression considered");
+        }
+
+        [TestMethod]
+        public void TestTLZInArrayGroupItem()
+        {
+            Expression<Func<SourceType8, double>> loader = s => s.jets[0].vec.Pt();
+
+            //
+            // Do the translation
+            // 
+
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches, e => e);
+            var bstring = result.ToString().Substring(result.ToString().IndexOf(").") + 1);
+            Assert.AreEqual(".vectors[0].Pt()", bstring, "Expression considered");
+        }
     }
 }
