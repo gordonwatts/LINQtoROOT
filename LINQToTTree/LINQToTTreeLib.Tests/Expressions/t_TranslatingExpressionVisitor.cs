@@ -954,5 +954,53 @@ namespace LINQToTTreeLib.Tests
             var exprTans = TranslatingExpressionVisitor.Translate(ntracks, caches, e => e);
             Assert.AreEqual(initialDesc, exprTans.ToString(), "shouldn't have touched it");
         }
+
+        [TranslateToClass(typeof(ResultType7))]
+        public class SourceType7
+        {
+            [RenameVariable("Vec")]
+            public ROOTNET.NTLorentzVector[] vec;
+        }
+
+        public class ResultType7
+        {
+            public ResultType7(Expression holder)
+            {
+
+            }
+            public ROOTNET.NTLorentzVector[] Vec;
+            public int[] Val;
+            public int[] same;
+        }
+
+        [TestMethod]
+        public void TestTLZRenameSingle()
+        {
+            Expression<Func<SourceType7, ROOTNET.NTLorentzVector>> loader = s => s.vec[0];
+
+            //
+            // Do the translation
+            // 
+
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches, e => e);
+            var bstring = result.ToString().Substring(result.ToString().IndexOf(").") + 1);
+            Assert.AreEqual(".Vec[0]", bstring, "Expression considered");
+        }
+
+        [TestMethod]
+        public void TestTLZRenameToMethod()
+        {
+            Expression<Func<SourceType7, double>> loader = s => s.vec[0].Pt();
+
+            //
+            // Do the translation
+            // 
+
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(loader.Body, caches, e => e);
+            var bstring = result.ToString().Substring(result.ToString().IndexOf(").") + 1);
+            Assert.AreEqual(".Vec[0].Pt()", bstring, "Expression considered");
+        }
     }
 }

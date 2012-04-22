@@ -61,7 +61,7 @@ namespace LINQToTTreeLib
             /// attributes assocated with the final type!
             /// 
 
-            if (expression != null && expression.Type.IsClass)
+            if (expression != null && !expression.IsLeafType())
                 return expression;
 
             return VisitExpressionImplemented(expression);
@@ -404,7 +404,7 @@ namespace LINQToTTreeLib
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
             // If this is an array index, then...
-            if (expression.NodeType == ExpressionType.ArrayIndex && !expression.Type.IsClass)
+            if (expression.NodeType == ExpressionType.ArrayIndex && expression.IsLeafType())
             {
                 var rootExpr = expression.Left as MemberExpression;
                 if (rootExpr != null)

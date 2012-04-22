@@ -7,7 +7,9 @@ using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses;
+
 namespace LINQToTTreeLib.Utils
 {
     internal static class ExpressionUtilities
@@ -180,6 +182,32 @@ namespace LINQToTTreeLib.Utils
 
             if (c.Value == null)
                 return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// See if this class is a leaf class - that is a class that
+        /// is on the end of everything - like a TLorentzVector. NOT,
+        /// for example, one of the classes we are using do groupings.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public static bool IsLeafType(this Expression expr)
+        {
+            // If this isn't a class at all, then this is a leaf type.
+            if (!expr.Type.IsClass)
+                return true;
+
+            // Now, is this a leaf class or not? For example, a
+            // ROOT class would be something like this.
+
+            if (expr.Type.IsROOTClass())
+                return true;
+
+            //
+            // Soem class, and we don't know about it. Assume the worse.
+            //
 
             return false;
         }
