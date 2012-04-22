@@ -44,6 +44,26 @@ namespace LINQToTreeHelpers.Tests
         }
 
         [TestMethod]
+        public void TestProofInDSProduction()
+        {
+            string dsspec = @"machine HIGGS
+{
+  macro solDir = ""C:\Users\gwatts\Documents\ATLAS\Projects\HVAssociatedTests""
+  macro dataDir = \\tango.phys.washington.edu\tev-scratch3\users\gwatts\mc\
+
+  testMC = ""$solDir\EVNT-short.root""
+  ggH12020 = ""$dataDir\mc11_7TeV.105377.Pythia_HV_ggH_mH120_mVPI20*\*.root.1""
+  ggH12020p = ""proof://tev11.washington.edu/HV_ggH_mH120_mVPI20""
+}";
+            DataSetFinder.ParseSpecFromString(dsspec);
+            DataSetFinder.MachineName = "HIGGS";
+
+            var ds = DataSetFinder.FindROOTFilesForDS("ggH12020p");
+            Assert.AreEqual(1, ds.Length, "# of files found");
+            Assert.AreEqual("proof://tev11.washington.edu/HV_ggH_mH120_mVPI20", ds[0].OriginalString, "DS name");
+        }
+
+        [TestMethod]
         public void TestTagsInDS()
         {
             string dsspec = "machine junk { J1 (ttbar, dude) = *.root }";
