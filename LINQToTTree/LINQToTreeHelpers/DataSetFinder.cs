@@ -72,6 +72,7 @@ namespace LINQToTreeHelpers
             .Or(Parse.Char('_'))
             .Or(Parse.Char('-'))
             .Or(Parse.Char('$'))
+            .Or(Parse.Char('/'))
             .Or(Parse.Char('*'));
 
         private static readonly Parser<string> FilePathStringUnquoted =
@@ -282,7 +283,7 @@ namespace LINQToTreeHelpers
         ///     Console.WriteLine("There are {0} files in dataset '{1}'.", files.Length, dsname);
         ///     var data = ROOTLINQ.QueryableCollectionTree.Create(files);
         /// </example>
-        public static FileInfo[] FindROOTFilesForDS(string dsName)
+        public static Uri[] FindROOTFilesForDS(string dsName)
         {
             var result = FindMachinesDatasets();
 
@@ -297,7 +298,7 @@ namespace LINQToTreeHelpers
             {
                 var files = FindFilesInSearchStrings(macroReplacedSearchStrings.ToArray());
                 var sortedFiles = from f in files
-                                  orderby f.FullName ascending
+                                  orderby f.OriginalString ascending
                                   select f;
                 return sortedFiles.ToArray();
             }
@@ -393,7 +394,7 @@ namespace LINQToTreeHelpers
         /// </summary>
         /// <param name="searchStrings"></param>
         /// <returns></returns>
-        private static FileInfo[] FindFilesInSearchStrings(string[] searchStrings)
+        private static Uri[] FindFilesInSearchStrings(string[] searchStrings)
         {
             foreach (var ss in searchStrings)
             {
@@ -421,8 +422,18 @@ namespace LINQToTreeHelpers
         /// </summary>
         /// <param name="searchString"></param>
         /// <returns></returns>
-        private static FileInfo[] FindFilesInSearchString(string searchString)
+        private static Uri[] FindFilesInSearchString(string searchString)
         {
+            //
+            // Depending on the type of search string we do different things. For example, if this is a listing of a dataset on a
+            // proof end-point, we support no wildcards!
+            //
+
+            if (searchString.StartsWith("proof://"))
+            {
+                return new Uri[] { new Uri(searchString) };
+            }
+
             //
             // Seperate out any leading "\\". In this case we need to do \\\\server\\share before we even get started
             // 
@@ -458,7 +469,7 @@ namespace LINQToTreeHelpers
         /// <param name="leadingDir"></param>
         /// <param name="searchString"></param>
         /// <returns></returns>
-        private static IEnumerable<FileInfo> FindFilesRecursive(string leadingDir, string searchString)
+        private static IEnumerable<Uri> FindFilesRecursive(string leadingDir, string searchString)
         {
             //
             // First, if there is just a file spec left, then do the search!
@@ -468,7 +479,7 @@ namespace LINQToTreeHelpers
             {
                 foreach (var f in Directory.GetFiles(leadingDir, searchString))
                 {
-                    yield return new FileInfo(f);
+                    yield return new Uri(string.Format("file://{0}", f));
                 }
 
                 yield break;

@@ -32,6 +32,18 @@ namespace LINQToTreeHelpers.Tests
         }
 
         [TestMethod]
+        public void TestProofInDS()
+        {
+            string dsspec = "machine junk { J1 = proof://tev11.washington.edu/LINQToTTreeTestDS }";
+            DataSetFinder.ParseSpecFromString(dsspec);
+            DataSetFinder.MachineName = "junk";
+
+            var ds = DataSetFinder.FindROOTFilesForDS("J1");
+            Assert.AreEqual(1, ds.Length, "# of files found");
+            Assert.AreEqual("proof://tev11.washington.edu/LINQToTTreeTestDS", ds[0].OriginalString, "DS name");
+        }
+
+        [TestMethod]
         public void TestTagsInDS()
         {
             string dsspec = "machine junk { J1 (ttbar, dude) = *.root }";
