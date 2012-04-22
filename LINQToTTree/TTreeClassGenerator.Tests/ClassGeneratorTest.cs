@@ -358,7 +358,7 @@ namespace TTreeClassGenerator
 
             DumpOutputFile(outputFile);
 
-            Assert.AreEqual(2, CountInFile(outputFile, "##Shapes"), "Missing reference ot the shapes object");
+            Assert.AreEqual(3, CountInFile(outputFile, "##Shapes"), "Missing reference ot the shapes object");
         }
 
         [TestMethod]
