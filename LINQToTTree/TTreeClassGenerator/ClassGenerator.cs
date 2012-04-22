@@ -419,7 +419,7 @@ namespace TTreeClassGenerator
                             output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name.FixupClassName());
                             output.WriteLine("    }");
                             output.WriteLine("    /// Create a LINQ to TTree interface for a list of urls and optional tree name");
-                            output.WriteLine("    public static QueriableTTree<{0}> Create (this Uri[] rootURLs, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
+                            output.WriteLine("    public static QueriableTTree<{0}> Create (this System.Uri[] rootURLs, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
                             output.WriteLine("    {");
                             output.WriteLine("      return new QueriableTTree<{0}>(rootURLs, treeName);", cls.Name.FixupClassName());
                             output.WriteLine("    }");
