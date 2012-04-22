@@ -1,0 +1,10 @@
+﻿machine BOGUS
+{
+}
+
+machine SEVENUP
+{
+  ggH12020p = proof://tev11.washington.edu/HV_ggH_mH120_mVPI20
+
+  ggH12020p2 = "proof://tev11.washington.edu/HV_ggH_mH120_mVPI20"
+}

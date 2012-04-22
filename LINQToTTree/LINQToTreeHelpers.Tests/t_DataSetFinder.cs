@@ -46,7 +46,20 @@ namespace LINQToTreeHelpers.Tests
         [TestMethod]
         public void TestProofInDSProduction()
         {
-            string dsspec = @"machine HIGGS
+            string dsspec = @"
+machine BOGUS
+{
+}
+
+machine SEVENUP
+{
+  macro solDir = ""C:\Users\gwatts\Documents\Visual Studio 2010\Projects\HVAssociatedTests""
+
+  ggH12020p = proof://tev11.phys.washington.edu/HV_ggH_mH120_mVPI20
+  testMC = ""$solDir\EVNT-short.root""
+}
+
+machine HIGGS
 {
   macro solDir = ""C:\Users\gwatts\Documents\ATLAS\Projects\HVAssociatedTests""
   macro dataDir = \\tango.phys.washington.edu\tev-scratch3\users\gwatts\mc\
@@ -58,6 +71,17 @@ namespace LINQToTreeHelpers.Tests
             DataSetFinder.ParseSpecFromString(dsspec);
             DataSetFinder.MachineName = "HIGGS";
 
+            var ds = DataSetFinder.FindROOTFilesForDS("ggH12020p");
+            Assert.AreEqual(1, ds.Length, "# of files found");
+            Assert.AreEqual("proof://tev11.washington.edu/HV_ggH_mH120_mVPI20", ds[0].OriginalString, "DS name");
+        }
+
+        [TestMethod]
+        [DeploymentItem("dataset-list.txt")]
+        public void TestInputFromAFile()
+        {
+            DataSetFinder.MachineName = "SEVENUP";
+            DataSetFinder.AddFile("dataset-list.txt");
             var ds = DataSetFinder.FindROOTFilesForDS("ggH12020p");
             Assert.AreEqual(1, ds.Length, "# of files found");
             Assert.AreEqual("proof://tev11.washington.edu/HV_ggH_mH120_mVPI20", ds[0].OriginalString, "DS name");

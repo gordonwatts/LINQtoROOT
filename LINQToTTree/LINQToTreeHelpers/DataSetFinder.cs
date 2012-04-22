@@ -261,6 +261,16 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
+        /// Add a file to the list of files to be loaded. Shoudl be called before
+        /// first access.
+        /// </summary>
+        /// <param name="fname"></param>
+        public static void AddFile(string fname)
+        {
+            gFiles.Add(fname);
+        }
+
+        /// <summary>
         /// Fetches the list of files associated with the passed in dataset name. The (default) machine
         /// name and the dataset files are used to find the proper set of files. Full wildcard resolution
         /// is also performed, of course.
@@ -687,8 +697,8 @@ namespace LINQToTreeHelpers
                 {
                     var line = reader.ReadLine();
 
-                    var commentIndex = line.IndexOf("//");
-                    if (commentIndex >= 0)
+                    var commentIndex = line.IndexOf("#");
+                    if (commentIndex >= 0 || line.StartsWith("//"))
                     {
                         line = line.Substring(0, commentIndex);
                     }
