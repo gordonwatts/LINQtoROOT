@@ -18,5 +18,117 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementPairLoopTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementPairLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void StatementPairLoopCtorThrowsArgumentNullException475()
+{
+    StatementPairLoop statementPairLoop;
+    statementPairLoop = this.StatementPairLoopCtor((IDeclaredParameter)null, 
+                                                   (IDeclaredParameter)null, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementPairLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void StatementPairLoopCtorThrowsArgumentNullException715()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementPairLoop statementPairLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = "";
+    statementPairLoop =
+      this.StatementPairLoopCtor((IDeclaredParameter)dummyVarName, 
+                                 (IDeclaredParameter)null, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementPairLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void StatementPairLoopCtorThrowsArgumentNullException72()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementPairLoop statementPairLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = "";
+    statementPairLoop =
+      this.StatementPairLoopCtor((IDeclaredParameter)dummyVarName, 
+                                 (IDeclaredParameter)dummyVarName, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementPairLoopTest))]
+public void StatementPairLoopCtor629()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementPairLoop statementPairLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementPairLoop =
+      this.StatementPairLoopCtor((IDeclaredParameter)dummyVarName, 
+                                 (IDeclaredParameter)dummyVarName, (IDeclaredParameter)dummyVarName);
+    Assert.IsNotNull((object)statementPairLoop);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementPairLoop).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementPairLoop).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementPairLoop).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementPairLoopTest))]
+public void StatementPairLoopCtor216()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementPairLoop statementPairLoop;
+    string[] ss;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementPairLoop = StatementPairLoopFactory.Create
+                            ((IDeclaredParameter)dummyVarName, (IDeclaredParameter)dummyVarName, 
+                             (IDeclaredParameter)dummyVarName, 
+                             (IStatement[])null, (IDeclaredParameter[])null);
+    ss = this.StatementPairLoopCtor(statementPairLoop);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(0, ss.Length);
+    Assert.IsNotNull((object)statementPairLoop);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementPairLoop).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementPairLoop).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementPairLoop).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementPairLoopTest))]
+public void StatementPairLoopCtor21601()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementPairLoop statementPairLoop;
+    string[] ss;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    IDeclaredParameter[] iDeclaredParameters = new IDeclaredParameter[1];
+    iDeclaredParameters[0] = (IDeclaredParameter)dummyVarName;
+    statementPairLoop = StatementPairLoopFactory.Create
+                            ((IDeclaredParameter)dummyVarName, (IDeclaredParameter)dummyVarName, 
+                             (IDeclaredParameter)dummyVarName, (IStatement[])null, iDeclaredParameters);
+    ss = this.StatementPairLoopCtor(statementPairLoop);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(0, ss.Length);
+    Assert.IsNotNull((object)statementPairLoop);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementPairLoop).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementPairLoop).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementPairLoop).Parent);
+}
     }
 }

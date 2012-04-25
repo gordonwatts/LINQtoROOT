@@ -17,5 +17,15 @@ namespace LINQToTTreeLib
 {
     public partial class CPPTranslatorTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CPPTranslatorTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TranslateGeneratedCodeThrowsArgumentNullException230()
+{
+    CPPTranslator cPPTranslator;
+    Dictionary<string, object> dictionary;
+    cPPTranslator = CPPTranslatorFactory.Create();
+    dictionary = this.TranslateGeneratedCode(cPPTranslator, (GeneratedCode)null);
+}
     }
 }

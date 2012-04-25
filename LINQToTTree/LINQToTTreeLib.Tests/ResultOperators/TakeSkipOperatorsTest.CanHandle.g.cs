@@ -17,5 +17,25 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class TakeSkipOperatorsTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+public void CanHandle938()
+{
+    bool b;
+    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+    b = this.CanHandle(s0, (Type)null);
+    Assert.AreEqual<bool>(false, b);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(TakeSkipOperatorsTest))]
+public void CanHandle463()
+{
+    bool b;
+    ROTakeSkipOperators s0 = new ROTakeSkipOperators();
+    b = this.CanHandle(s0, typeof(TakeResultOperator));
+    Assert.AreEqual<bool>(true, b);
+    Assert.IsNotNull((object)s0);
+}
     }
 }

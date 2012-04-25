@@ -15,5 +15,19 @@ namespace LINQToTTreeLib
 {
     public partial class CodeContextTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CodeContextTest))]
+public void Constructor256()
+{
+    CodeContext codeContext;
+    codeContext = this.Constructor();
+    Assert.IsNotNull((object)codeContext);
+    Assert.IsNull(codeContext.LoopVariable);
+    Assert.IsNull(codeContext.LoopIndexVariable);
+    Assert.IsNotNull(codeContext.CacheCookies);
+    Assert.AreEqual<int>(0, codeContext.CacheCookies.Capacity);
+    Assert.AreEqual<int>(0, codeContext.CacheCookies.Count);
+    Assert.IsNull(codeContext.BaseNtupleObjectType);
+}
     }
 }

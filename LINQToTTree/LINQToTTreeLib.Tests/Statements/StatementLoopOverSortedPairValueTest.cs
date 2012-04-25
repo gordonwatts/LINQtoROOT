@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -45,13 +47,13 @@ namespace LINQToTTreeLib.Tests
             return target;
         }
 
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public static void TestTryCombine([PexAssumeUnderTest] StatementLoopOverSortedPairValue target, IStatement statement)
         {
             var canComb = target.TryCombineStatement(statement, null);
             Assert.IsNotNull(statement, "Second statement null should cause a failure");
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
-            Assert.AreEqual(allSame, canComb, "not expected combination!");
+            Assert.IsTrue(allSame == canComb || target.Statements.Count() == 0, "not expected combination!");
         }
 
         [TestMethod]

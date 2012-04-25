@@ -17,5 +17,13 @@ namespace LINQToTTreeLib.Expressions
 {
     public partial class ExpressionStringConverterTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ExpressionStringConverterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void FormatThrowsArgumentNullException14()
+{
+    string s;
+    s = this.Format((Expression)null);
+}
     }
 }

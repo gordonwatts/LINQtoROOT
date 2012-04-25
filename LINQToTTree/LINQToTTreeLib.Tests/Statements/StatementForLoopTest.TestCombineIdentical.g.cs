@@ -27,34 +27,6 @@ public void TestCombineIdenticalThrowsArgumentNullException81()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementForLoopTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestCombineIdenticalThrowsArgumentNullException130()
-{
-    StatementInlineBlockTest.dummyVarName dummyVarName;
-    dummyVarName =
-      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
-    dummyVarName.InitialValue = (IValue)null;
-    dummyVarName.Declare = false;
-    dummyVarName.RawValue = (string)null;
-    this.TestCombineIdentical
-        ((IDeclaredParameter)dummyVarName, (IValue)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementForLoopTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void TestCombineIdenticalThrowsArgumentException870()
-{
-    StatementInlineBlockTest.dummyVarName dummyVarName;
-    dummyVarName =
-      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
-    dummyVarName.InitialValue = (IValue)null;
-    dummyVarName.Declare = false;
-    dummyVarName.RawValue = (string)null;
-    this.TestCombineIdentical
-        ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementForLoopTest))]
 [ExpectedException(typeof(ArgumentException))]
 public void TestCombineIdenticalThrowsArgumentException142()
 {
@@ -66,6 +38,34 @@ public void TestCombineIdenticalThrowsArgumentException142()
     dummyVarName.RawValue = (string)null;
     this.TestCombineIdentical((IDeclaredParameter)dummyVarName, 
                               (IValue)dummyVarName, (IValue)dummyVarName);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCombineIdenticalThrowsArgumentNullException820()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = "";
+    this.TestCombineIdentical
+        ((IDeclaredParameter)dummyVarName, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCombineIdenticalThrowsArgumentException901()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = "";
+    this.TestCombineIdentical
+        ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, (IValue)null);
 }
     }
 }

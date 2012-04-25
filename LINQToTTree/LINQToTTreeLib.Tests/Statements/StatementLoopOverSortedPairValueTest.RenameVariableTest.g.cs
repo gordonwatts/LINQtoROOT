@@ -18,5 +18,105 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementLoopOverSortedPairValueTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+public void RenameVariableTest68()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue1;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    statementLoopOverSortedPairValue1 = this.RenameVariableTest
+                                            (statementLoopOverSortedPairValue, (string)null, (string)null);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue1);
+    Assert.IsNotNull(statementLoopOverSortedPairValue1.IndexVariable);
+    Assert.AreEqual<string>
+        ("aInt32_2", statementLoopOverSortedPairValue1.IndexVariable.ParameterName);
+    Assert.IsNull(statementLoopOverSortedPairValue1.IndexVariable.InitialValue);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverSortedPairValue1)
+                       .DeclaredVariables);
+    Assert.IsNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Parent);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue);
+    Assert.IsTrue(object.ReferenceEquals((object)statementLoopOverSortedPairValue, 
+                                         (object)statementLoopOverSortedPairValue1));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+public void RenameVariableTest418()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue1;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    statementLoopOverSortedPairValue1 = this.RenameVariableTest
+                                            (statementLoopOverSortedPairValue, "aInt32_2", (string)null);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue1);
+    Assert.IsNotNull(statementLoopOverSortedPairValue1.IndexVariable);
+    Assert.AreEqual<string>
+        ((string)null, statementLoopOverSortedPairValue1.IndexVariable.ParameterName);
+    Assert.IsNull(statementLoopOverSortedPairValue1.IndexVariable.InitialValue);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverSortedPairValue1)
+                       .DeclaredVariables);
+    Assert.IsNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Parent);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue);
+    Assert.IsTrue(object.ReferenceEquals((object)statementLoopOverSortedPairValue, 
+                                         (object)statementLoopOverSortedPairValue1));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+public void RenameVariableTest6801()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue1;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    statementLoopOverSortedPairValue1 = this.RenameVariableTest
+                                            (statementLoopOverSortedPairValue, (string)null, (string)null);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue1);
+    Assert.IsNotNull(statementLoopOverSortedPairValue1.IndexVariable);
+    Assert.AreEqual<string>
+        ("aInt32_2", statementLoopOverSortedPairValue1.IndexVariable.ParameterName);
+    Assert.IsNull(statementLoopOverSortedPairValue1.IndexVariable.InitialValue);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverSortedPairValue1)
+                       .DeclaredVariables);
+    Assert.IsNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Parent);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue);
+    Assert.IsTrue(object.ReferenceEquals((object)statementLoopOverSortedPairValue, 
+                                         (object)statementLoopOverSortedPairValue1));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+public void RenameVariableTest846()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue1;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    statementLoopOverSortedPairValue1 = this.RenameVariableTest
+                                            (statementLoopOverSortedPairValue, "aDictionary_2_1Map", (string)null);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue1);
+    Assert.IsNotNull(statementLoopOverSortedPairValue1.IndexVariable);
+    Assert.AreEqual<string>
+        ("aInt32_2", statementLoopOverSortedPairValue1.IndexVariable.ParameterName);
+    Assert.IsNull(statementLoopOverSortedPairValue1.IndexVariable.InitialValue);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverSortedPairValue1)
+                       .DeclaredVariables);
+    Assert.IsNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue1).Parent);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue);
+    Assert.IsTrue(object.ReferenceEquals((object)statementLoopOverSortedPairValue, 
+                                         (object)statementLoopOverSortedPairValue1));
+}
     }
 }

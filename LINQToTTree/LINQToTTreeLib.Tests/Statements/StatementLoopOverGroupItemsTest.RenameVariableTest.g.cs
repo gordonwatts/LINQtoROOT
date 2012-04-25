@@ -19,5 +19,122 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementLoopOverGroupItemsTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGroupItemsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException600()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGroupItems statementLoopOverGroupItems;
+    StatementLoopOverGroupItems statementLoopOverGroupItems1;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGroupItems = StatementLoopOverGroupItemsFactory.Create
+                                      ((IValue)dummyVarName, (IStatement)null);
+    statementLoopOverGroupItems1 = this.RenameVariableTest
+                                       (statementLoopOverGroupItems, (string)null, (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGroupItemsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException582()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGroupItems statementLoopOverGroupItems;
+    StatementLoopOverGroupItems statementLoopOverGroupItems1;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGroupItems = StatementLoopOverGroupItemsFactory.Create
+                                      ((IValue)dummyVarName, (IStatement)null);
+    statementLoopOverGroupItems1 =
+      this.RenameVariableTest(statementLoopOverGroupItems, "", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGroupItemsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException895()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGroupItems statementLoopOverGroupItems;
+    StatementLoopOverGroupItems statementLoopOverGroupItems1;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGroupItems = StatementLoopOverGroupItemsFactory.Create
+                                      ((IValue)dummyVarName, (IStatement)null);
+    statementLoopOverGroupItems1 =
+      this.RenameVariableTest(statementLoopOverGroupItems, "\0", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGroupItemsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException729()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGroupItems statementLoopOverGroupItems;
+    StatementLoopOverGroupItems statementLoopOverGroupItems1;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGroupItems = StatementLoopOverGroupItemsFactory.Create
+                                      ((IValue)dummyVarName, (IStatement)null);
+    statementLoopOverGroupItems1 =
+      this.RenameVariableTest(statementLoopOverGroupItems, "\u0100", (string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGroupItemsTest))]
+public void RenameVariableTest396()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGroupItems statementLoopOverGroupItems;
+    StatementLoopOverGroupItems statementLoopOverGroupItems1;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGroupItems = StatementLoopOverGroupItemsFactory.Create
+                                      ((IValue)dummyVarName, (IStatement)null);
+    statementLoopOverGroupItems1 =
+      this.RenameVariableTest(statementLoopOverGroupItems, "\u0100", "\u0100");
+    Assert.IsNotNull((object)statementLoopOverGroupItems1);
+    Assert.IsNotNull(statementLoopOverGroupItems1.Counter);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGroupItems1).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGroupItems1).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGroupItems1).Parent);
+    Assert.IsNotNull((object)statementLoopOverGroupItems);
+    Assert.IsTrue(object.ReferenceEquals((object)statementLoopOverGroupItems, 
+                                         (object)statementLoopOverGroupItems1));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGroupItemsTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void RenameVariableTestThrowsArgumentNullException661()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGroupItems statementLoopOverGroupItems;
+    StatementLoopOverGroupItems statementLoopOverGroupItems1;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGroupItems = StatementLoopOverGroupItemsFactory.Create
+                                      ((IValue)dummyVarName, (IStatement)null);
+    statementLoopOverGroupItems1 =
+      this.RenameVariableTest(statementLoopOverGroupItems, "\u0089", "\t");
+}
     }
 }

@@ -18,5 +18,63 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementLoopOverGoodTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException420()
+{
+    StatementLoopOverGood statementLoopOverGood;
+    statementLoopOverGood =
+      this.Constructor((IValue)null, (IValue)null, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException666()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGood statementLoopOverGood;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGood =
+      this.Constructor((IValue)dummyVarName, (IValue)null, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException577()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGood statementLoopOverGood;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGood = this.Constructor
+                                ((IValue)dummyVarName, (IValue)dummyVarName, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGoodTest))]
+public void Constructor220()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGood statementLoopOverGood;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGood = this.Constructor((IValue)dummyVarName, 
+                                             (IValue)dummyVarName, (IDeclaredParameter)dummyVarName);
+    Assert.IsNotNull((object)statementLoopOverGood);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverGood).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGood).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGood).Parent);
+}
     }
 }

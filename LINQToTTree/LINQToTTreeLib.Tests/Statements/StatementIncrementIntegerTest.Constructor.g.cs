@@ -18,5 +18,27 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIncrementIntegerTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException701()
+{
+    StatementIncrementInteger statementIncrementInteger;
+    statementIncrementInteger = this.Constructor((IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIncrementIntegerTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException290()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementIncrementInteger statementIncrementInteger;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementIncrementInteger = this.Constructor((IDeclaredParameter)dummyVarName);
+}
     }
 }

@@ -21,5 +21,15 @@ namespace LINQToTTreeLib
 {
     public partial class ROCountTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessResultOperatorThrowsArgumentNullException524()
+{
+    Expression expression;
+    ROCount s0 = new ROCount();
+    expression = this.ProcessResultOperator
+                     (s0, (CountResultOperator)null, (QueryModel)null, (GeneratedCode)null);
+}
     }
 }

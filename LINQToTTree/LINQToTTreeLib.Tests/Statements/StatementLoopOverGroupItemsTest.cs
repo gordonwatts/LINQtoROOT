@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var canComb = target.TryCombineStatement(statement, null);
             Assert.IsNotNull(statement, "Second statement null should cause a failure");
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
-            Assert.AreEqual(allSame, canComb, "not expected combination!");
+            Assert.IsTrue(allSame == canComb || target.Statements.Count() == 0, "not expected combination!");
         }
     }
 }

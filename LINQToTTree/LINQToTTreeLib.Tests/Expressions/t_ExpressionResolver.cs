@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.Tests
     ///to contain all TestExpressionResolver Unit Tests
     ///</summary>
     [TestClass, PexClass(typeof(ExpressionResolver))]
-    public class TestExpressionResolver
+    public partial class TestExpressionResolver
     {
         [TestInitialize]
         public void TestInit()
@@ -38,6 +38,7 @@ namespace LINQToTTreeLib.Tests
         [PexMethod]
         public Expression RunResolve(Expression source, IGeneratedQueryCode gc, ICodeContext cc)
         {
+            MEFUtilities.Compose(new TypeHandlerCache());
             return ExpressionResolver.Resolve(source, gc, cc, MEFUtilities.MEFContainer);
         }
 

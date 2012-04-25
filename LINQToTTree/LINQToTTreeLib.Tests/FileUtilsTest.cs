@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.Utils
             // TODO: add assertions to method FileUtilsTest.WriteTextIfNotDuplicate(FileInfo)
         }
 
-        [PexMethod(MaxConditions = 2000)]
+        [PexMethod(MaxConditions = 2000, MaxRunsWithoutNewTests = 400)]
         public void MakeSureFileIsRight(string textToWrite)
         {
             FileInfo f = new FileInfo("MakeSureFileIsRight.txt");

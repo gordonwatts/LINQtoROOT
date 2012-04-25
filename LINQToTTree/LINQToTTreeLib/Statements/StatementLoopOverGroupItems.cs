@@ -20,7 +20,7 @@ namespace LINQToTTreeLib.Statements
             _counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
             if (_groupArray == null)
-                throw new ArgumentNullException("arrayToLoopOver");
+                throw new ArgumentNullException("_groupArray");
             if (_counter == null)
                 throw new ArgumentNullException("counter");
         }

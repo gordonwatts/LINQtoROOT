@@ -59,8 +59,7 @@ public void TestTryCombineStatementThrowsArgumentNullException985()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(TestStatementRecordValue))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestTryCombineStatement18901()
+public void TestTryCombineStatement189()
 {
     StatementInlineBlockTest.dummyVarName dummyVarName;
     StatementRecordValue statementRecordValue;
@@ -73,18 +72,18 @@ public void TestTryCombineStatement18901()
     dummyVarName.Declare = false;
     dummyVarName.RawValue = (string)null;
     statementRecordValue = StatementRecordValueFactory.Create
-                               ((IDeclaredParameter)dummyVarName, (IValue)null, 
-                                (IDeclaredParameter)null, false);
-    statementRecordValue1 =
-      StatementRecordValueFactory.Create((IDeclaredParameter)null, (IValue)null, 
-                                         (IDeclaredParameter)dummyVarName, false);
+                               ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                                (IDeclaredParameter)dummyVarName, false);
+    statementRecordValue1 = StatementRecordValueFactory.Create
+                                ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                                 (IDeclaredParameter)dummyVarName, false);
     codeOptimizerTest = CodeOptimizerTestFactory.Create(false);
     b = this.TestTryCombineStatement
-            (statementRecordValue, (IStatement)statementRecordValue1, 
-                                   (ICodeOptimizationService)codeOptimizerTest);
+            (statementRecordValue1, (IStatement)statementRecordValue, 
+                                    (ICodeOptimizationService)codeOptimizerTest);
     Assert.AreEqual<bool>(true, b);
-    Assert.IsNotNull((object)statementRecordValue);
-    Assert.IsNull(statementRecordValue.Parent);
+    Assert.IsNotNull((object)statementRecordValue1);
+    Assert.IsNull(statementRecordValue1.Parent);
 }
     }
 }

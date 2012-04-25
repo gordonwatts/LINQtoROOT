@@ -78,7 +78,7 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsTrue(postdir[0].Contains("breakSeen = false"), "seen break line not reset '" + postdir[0] + "'.");
         }
 
-        [PexMethod]
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public bool TestTryCombine([PexAssumeUnderTest] StatementPairLoop pairloop, IStatement statement, ICodeOptimizationService codeOpt)
         {
             var result = pairloop.TryCombineStatement(statement, codeOpt);

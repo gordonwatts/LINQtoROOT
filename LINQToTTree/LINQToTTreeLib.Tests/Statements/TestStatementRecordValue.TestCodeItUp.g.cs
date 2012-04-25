@@ -42,5 +42,30 @@ namespace LINQToTTreeLib.Tests
             Assert.IsNull(statementRecordValue.Parent);
         }
 
+[TestMethod]
+[PexGeneratedBy(typeof(TestStatementRecordValue))]
+public void TestCodeItUp208()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementRecordValue statementRecordValue;
+    string[] ss;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementRecordValue = StatementRecordValueFactory.Create
+                               ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                                (IDeclaredParameter)dummyVarName, true);
+    ss = this.TestCodeItUp(statementRecordValue);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(4, ss.Length);
+    Assert.AreEqual<string>("if (!) {", ss[0]);
+    Assert.AreEqual<string>("   = ;", ss[1]);
+    Assert.AreEqual<string>("   = true;", ss[2]);
+    Assert.AreEqual<string>("}", ss[3]);
+    Assert.IsNotNull((object)statementRecordValue);
+    Assert.IsNull(statementRecordValue.Parent);
+}
     }
 }

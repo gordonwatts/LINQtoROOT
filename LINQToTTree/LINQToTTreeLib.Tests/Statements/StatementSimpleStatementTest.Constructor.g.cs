@@ -16,5 +16,56 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementSimpleStatementTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException600()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor("");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException170()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor((string)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException368()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor(";");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException223()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor(";;");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+public void Constructor722()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor("\0;;");
+    Assert.IsNotNull((object)statementSimpleStatement);
+    Assert.AreEqual<string>("\0", statementSimpleStatement.Line);
+    Assert.AreEqual<bool>(true, statementSimpleStatement.AddSemicolon);
+    Assert.IsNull(statementSimpleStatement.Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementSimpleStatementTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ConstructorThrowsArgumentException171()
+{
+    StatementSimpleStatement statementSimpleStatement;
+    statementSimpleStatement = this.Constructor(";\u2000");
+}
     }
 }

@@ -158,7 +158,7 @@ namespace LINQToTTreeLib.Statements
 
             public void RenameParameter(string oldname, string newname)
             {
-                throw new NotImplementedException();
+                return;
             }
         }
 

@@ -17,5 +17,75 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException449()
+{
+    this.TestTryCombine((IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException256()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock = StatementInlineBlockFactory.Create
+                               ((IStatement[])null, (IDeclaredParameter[])null);
+    this.TestTryCombine((IStatement)statementInlineBlock);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException428()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementIfOnCount statementIfOnCount;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementIfOnCount = StatementIfOnCountFactory.Create
+                             ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                              StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                              (IStatement[])null, (IDeclaredParameter[])null);
+    this.TestTryCombine((IStatement)statementIfOnCount);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException891()
+{
+    StatementInlineBlock statementInlineBlock;
+    StatementInlineBlock statementInlineBlock1;
+    statementInlineBlock = StatementInlineBlockFactory.Create
+                               ((IStatement[])null, (IDeclaredParameter[])null);
+    IStatement[] iStatements = new IStatement[1];
+    iStatements[0] = (IStatement)statementInlineBlock;
+    statementInlineBlock1 =
+      StatementInlineBlockFactory.Create(iStatements, (IDeclaredParameter[])null);
+    this.TestTryCombine((IStatement)statementInlineBlock1);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException326()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementIfOnCount statementIfOnCount;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    IDeclaredParameter[] iDeclaredParameters = new IDeclaredParameter[1];
+    iDeclaredParameters[0] = (IDeclaredParameter)dummyVarName;
+    statementIfOnCount = StatementIfOnCountFactory.Create
+                             ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, 
+                              StatementIfOnCount.ComparisonOperator.GreaterThan, 
+                              (IStatement[])null, iDeclaredParameters);
+    this.TestTryCombine((IStatement)statementIfOnCount);
+}
     }
 }

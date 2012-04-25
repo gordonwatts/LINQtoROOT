@@ -14,7 +14,7 @@ namespace LINQToTTreeLib.Tests
     ///</summary>
     [TestClass()]
     [PexClass(typeof(ProofExecutor))]
-    public class TestProofExecutor
+    public partial class TestProofExecutor
     {
         /// <summary>
         /// Machine we can use for testing.
@@ -119,8 +119,6 @@ namespace LINQToTTreeLib.Tests
         {
             var target = new ProofExecutor();
             target.Environment = env;
-
-            Assert.Inconclusive();
         }
     }
 }

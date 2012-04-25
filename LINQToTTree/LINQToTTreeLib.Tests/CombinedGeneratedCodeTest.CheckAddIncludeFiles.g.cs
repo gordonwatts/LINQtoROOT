@@ -16,5 +16,65 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+public void CheckAddIncludeFiles271()
+{
+    string[] ss = new string[0];
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CheckAddIncludeFilesThrowsArgumentException398()
+{
+    string[] ss = new string[1];
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void CheckAddIncludeFilesThrowsArgumentException621()
+{
+    string[] ss = new string[1];
+    ss[0] = "";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException268()
+{
+    string[] ss = new string[1];
+    ss[0] = "\0";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException473()
+{
+    string[] ss = new string[1];
+    ss[0] = "\u0100";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException88()
+{
+    string[] ss = new string[1];
+    ss[0] = "\0\0";
+    this.CheckAddIncludeFiles(ss);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void CheckAddIncludeFilesThrowsArgumentNullException34()
+{
+    string[] ss = new string[1];
+    ss[0] = "\u0100\u0100";
+    this.CheckAddIncludeFiles(ss);
+}
     }
 }

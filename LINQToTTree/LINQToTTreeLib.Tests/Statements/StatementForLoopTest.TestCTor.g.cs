@@ -29,36 +29,6 @@ public void TestCTorThrowsArgumentNullException710()
 }
 [TestMethod]
 [PexGeneratedBy(typeof(StatementForLoopTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void TestCTorThrowsArgumentNullException425()
-{
-    StatementInlineBlockTest.dummyVarName dummyVarName;
-    StatementForLoop statementForLoop;
-    dummyVarName =
-      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
-    dummyVarName.InitialValue = (IValue)null;
-    dummyVarName.Declare = false;
-    dummyVarName.RawValue = (string)null;
-    statementForLoop =
-      this.TestCTor((IDeclaredParameter)dummyVarName, (IValue)null, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementForLoopTest))]
-[ExpectedException(typeof(ArgumentException))]
-public void TestCTorThrowsArgumentException180()
-{
-    StatementInlineBlockTest.dummyVarName dummyVarName;
-    StatementForLoop statementForLoop;
-    dummyVarName =
-      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
-    dummyVarName.InitialValue = (IValue)null;
-    dummyVarName.Declare = false;
-    dummyVarName.RawValue = (string)null;
-    statementForLoop = this.TestCTor
-                           ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, (IValue)null);
-}
-[TestMethod]
-[PexGeneratedBy(typeof(StatementForLoopTest))]
 [ExpectedException(typeof(ArgumentException))]
 public void TestCTorThrowsArgumentException4()
 {
@@ -71,6 +41,36 @@ public void TestCTorThrowsArgumentException4()
     dummyVarName.RawValue = (string)null;
     statementForLoop = this.TestCTor((IDeclaredParameter)dummyVarName, 
                                      (IValue)dummyVarName, (IValue)dummyVarName);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestCTorThrowsArgumentNullException3()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementForLoop statementForLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = "";
+    statementForLoop =
+      this.TestCTor((IDeclaredParameter)dummyVarName, (IValue)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementForLoopTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestCTorThrowsArgumentException916()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementForLoop statementForLoop;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = "";
+    statementForLoop = this.TestCTor
+                           ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName, (IValue)null);
 }
     }
 }
