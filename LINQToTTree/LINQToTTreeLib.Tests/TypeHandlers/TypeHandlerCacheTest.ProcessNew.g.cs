@@ -19,5 +19,17 @@ namespace LINQToTTreeLib.TypeHandlers
 {
     public partial class TypeHandlerCacheTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHandlerCacheTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ProcessNewThrowsArgumentNullException313()
+{
+    TypeHandlerCache typeHandlerCache;
+    Expression expression;
+    typeHandlerCache = new TypeHandlerCache();
+    IValue iValue = (IValue)null;
+    expression = this.ProcessNew(typeHandlerCache, (NewExpression)null, 
+                                 out iValue, (IGeneratedQueryCode)null, (CompositionContainer)null);
+}
     }
 }

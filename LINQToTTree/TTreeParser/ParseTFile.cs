@@ -79,6 +79,8 @@ namespace TTreeParser
             var fFurtherInfo = new FileInfo(Path.ChangeExtension(inputFile.FullName, ".root-extra-info"));
             Dictionary<string, string[]> extraInfo = fFurtherInfo.ParseAsINIFile(true);
 
+            Console.WriteLine("Parsing the file '{0}'", inputFile.Name);
+
             foreach (var cls in ParseTDirectory(f))
             {
                 if (extraInfo.ContainsKey("CINT"))

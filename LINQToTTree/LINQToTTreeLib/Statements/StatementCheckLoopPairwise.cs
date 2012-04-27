@@ -37,6 +37,8 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentNullException("index2");
             if (passedArray == null)
                 throw new ArgumentNullException("passedArray");
+            if (passedArray.Type == null)
+                throw new ArgumentNullException("Passed array type should not be null");
             if (!passedArray.Type.IsArray)
                 throw new ArgumentException("passedArray isn't an array type");
 

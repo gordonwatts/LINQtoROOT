@@ -17,5 +17,25 @@ namespace LINQToTTreeLib.ResultOperators
 {
     public partial class ROMinMaxTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(ROMinMaxTest))]
+public void CanHandle898()
+{
+    bool b;
+    ROMinMax s0 = new ROMinMax();
+    b = this.CanHandle(s0, (Type)null);
+    Assert.AreEqual<bool>(false, b);
+    Assert.IsNotNull((object)s0);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(ROMinMaxTest))]
+public void CanHandle107()
+{
+    bool b;
+    ROMinMax s0 = new ROMinMax();
+    b = this.CanHandle(s0, typeof(MaxResultOperator));
+    Assert.AreEqual<bool>(true, b);
+    Assert.IsNotNull((object)s0);
+}
     }
 }

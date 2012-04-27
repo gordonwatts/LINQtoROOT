@@ -17,5 +17,113 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementInlineBlockTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException571()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock = StatementInlineBlockFactory.Create
+                               ((IStatement[])null, (IDeclaredParameter[])null);
+    this.Add(statementInlineBlock, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException213()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementInlineBlock statementInlineBlock;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    IDeclaredParameter[] iDeclaredParameters = new IDeclaredParameter[1];
+    iDeclaredParameters[0] = (IDeclaredParameter)dummyVarName;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, iDeclaredParameters);
+    this.Add(statementInlineBlock, (IDeclaredParameter)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddThrowsArgumentException692()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementInlineBlock statementInlineBlock;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    IDeclaredParameter[] iDeclaredParameters = new IDeclaredParameter[1];
+    iDeclaredParameters[0] = (IDeclaredParameter)dummyVarName;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, iDeclaredParameters);
+    this.Add(statementInlineBlock, (IDeclaredParameter)dummyVarName);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException274()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock = StatementInlineBlockFactory.Create
+                               ((IStatement[])null, (IDeclaredParameter[])null);
+    this.Add(statementInlineBlock, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void Add577()
+{
+    StatementInlineBlock statementInlineBlock;
+    statementInlineBlock = StatementInlineBlockFactory.Create
+                               ((IStatement[])null, (IDeclaredParameter[])null);
+    this.Add(statementInlineBlock, (IStatement)statementInlineBlock);
+    Assert.IsNotNull((object)statementInlineBlock);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Parent);
+    Assert.IsTrue(object.ReferenceEquals
+                      (((StatementInlineBlockBase)statementInlineBlock).Parent, 
+                       (object)statementInlineBlock));
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+public void Add57701()
+{
+    StatementInlineBlock statementInlineBlock;
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    statementInlineBlock = StatementInlineBlockFactory.Create
+                               ((IStatement[])null, (IDeclaredParameter[])null);
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    this.Add(statementInlineBlock, (IStatement)statementLoopOverSortedPairValue);
+    Assert.IsNotNull((object)statementInlineBlock);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementInlineBlock).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementInlineBlock).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementInlineBlock).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void AddThrowsArgumentNullException21()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementInlineBlock statementInlineBlock;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    IDeclaredParameter[] iDeclaredParameters = new IDeclaredParameter[1];
+    iDeclaredParameters[0] = (IDeclaredParameter)dummyVarName;
+    statementInlineBlock =
+      StatementInlineBlockFactory.Create((IStatement[])null, iDeclaredParameters);
+    this.Add(statementInlineBlock, (IStatement)null);
+}
     }
 }

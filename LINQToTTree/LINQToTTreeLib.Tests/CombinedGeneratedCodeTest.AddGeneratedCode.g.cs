@@ -18,5 +18,64 @@ namespace LINQToTTreeLib
 {
     public partial class CombinedGeneratedCodeTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException783()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[0];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException962()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException288()
+{
+    CombinedGeneratedCode combinedGeneratedCode;
+    string[] ss = new string[1];
+    ss[0] = "";
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, (IBookingStatementBlock[])null, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(CombinedGeneratedCodeTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void AddGeneratedCodeThrowsArgumentException373()
+{
+    StatementInlineBlock statementInlineBlock;
+    CombinedGeneratedCode combinedGeneratedCode;
+    statementInlineBlock = StatementInlineBlockFactory.Create
+                               ((IStatement[])null, (IDeclaredParameter[])null);
+    IBookingStatementBlock[] iBookingStatementBlocks = new IBookingStatementBlock[1]
+      ;
+    string[] ss = new string[1];
+    iBookingStatementBlocks[0] = (IBookingStatementBlock)statementInlineBlock;
+    combinedGeneratedCode =
+      CombinedGeneratedCodeFactory.Create((string[])null, (string[])null, 
+                                          (string[])null, iBookingStatementBlocks, ss);
+    this.AddGeneratedCode
+        (combinedGeneratedCode, (IExecutableCode)combinedGeneratedCode);
+}
     }
 }

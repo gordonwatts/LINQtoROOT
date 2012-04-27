@@ -18,5 +18,63 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementLoopOverSortedPairValueTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+public void TestTryCombine577()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    StatementLoopOverSortedPairValueTest.TestTryCombine
+        (statementLoopOverSortedPairValue, 
+         (IStatement)statementLoopOverSortedPairValue);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue);
+    Assert.IsNotNull(statementLoopOverSortedPairValue.IndexVariable);
+    Assert.AreEqual<string>
+        ("aInt32_2", statementLoopOverSortedPairValue.IndexVariable.ParameterName);
+    Assert.IsNull(statementLoopOverSortedPairValue.IndexVariable.InitialValue);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverSortedPairValue)
+                       .DeclaredVariables);
+    Assert.IsNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Parent);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void TestTryCombineThrowsArgumentNullException342()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    StatementLoopOverSortedPairValueTest.TestTryCombine
+        (statementLoopOverSortedPairValue, (IStatement)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+public void TestTryCombine57702()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue1;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    statementLoopOverSortedPairValue1 =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    StatementLoopOverSortedPairValueTest.TestTryCombine
+        (statementLoopOverSortedPairValue, 
+         (IStatement)statementLoopOverSortedPairValue1);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue);
+    Assert.IsNotNull(statementLoopOverSortedPairValue.IndexVariable);
+    Assert.AreEqual<string>
+        ("aInt32_2", statementLoopOverSortedPairValue.IndexVariable.ParameterName);
+    Assert.IsNull(statementLoopOverSortedPairValue.IndexVariable.InitialValue);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverSortedPairValue)
+                       .DeclaredVariables);
+    Assert.IsNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Parent);
+}
     }
 }

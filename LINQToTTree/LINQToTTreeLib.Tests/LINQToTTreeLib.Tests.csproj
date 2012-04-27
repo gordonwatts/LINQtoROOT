@@ -210,6 +210,9 @@
       <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
     </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
+    <Compile Include="ExecutionCommon\TestProofExecutor.TestForSaveExeEnvironment.g.cs">
+      <DependentUpon>ProofExecutorTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Expressions\ExpressionStringConverterTest.cs" />
     <Compile Include="Expressions\ExpressionStringConverterTest.Format.g.cs">
       <DependentUpon>ExpressionStringConverterTest.cs</DependentUpon>
@@ -225,6 +228,9 @@
     </Compile>
     <Compile Include="Expressions\SubExpressionReplacementTest.TestReplacement.g.cs">
       <DependentUpon>SubExpressionReplacementTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Expressions\TestExpressionResolver.RunResolve.g.cs">
+      <DependentUpon>t_ExpressionResolver.cs</DependentUpon>
     </Compile>
     <Compile Include="Expressions\t_ExpressionsOnImpliedObjects.cs" />
     <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
@@ -550,6 +556,12 @@
     </Compile>
     <Compile Include="Statements\StatementPairLoopTest.cs" />
     <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">
+      <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementPairLoopTest.TestRename.g.cs">
+      <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Statements\StatementPairLoopTest.TestTryCombine.g.cs">
       <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Statements\StatementRecordIndiciesTest.CodeItUpTest.g.cs">

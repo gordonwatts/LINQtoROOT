@@ -17,5 +17,12 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestTryCombineThrowsArgumentException474()
+{
+    this.TestTryCombine((IStatement)null);
+}
     }
 }

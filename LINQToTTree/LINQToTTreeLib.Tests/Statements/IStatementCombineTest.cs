@@ -18,7 +18,6 @@ namespace LINQToTTreeLib.Tests.Statements
     {
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         [PexUseType(typeof(StatementAssign))]
-        [PexUseType(typeof(StatementBreak))]
         [PexUseType(typeof(StatementCheckLoopPairwise))]
         [PexUseType(typeof(StatementFilter))]
         [PexUseType(typeof(StatementIfOnCount))]

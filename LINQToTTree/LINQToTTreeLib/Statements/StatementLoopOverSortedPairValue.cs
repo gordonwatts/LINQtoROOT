@@ -139,13 +139,16 @@ namespace LINQToTTreeLib.Statements
                 _mapRecord.RawValue == other._mapRecord.RawValue
                 && _sortAscending == other._sortAscending;
 
-            // Normally we would use the optimzation service to do this. However, the variable is declared
-            // explicitly in this block - hard coded, you might say. As a result, we just do a rename here - because
-            // the opt.TryRenameVariableOneLevelUp can't find the decl and so will fail!
-            other.RenameVariable(other._indexVariable.ParameterName, _indexVariable.RawValue);
-
             if (candoIt)
+            {
+                // Normally we would use the optimzation service to do this. However, the variable is declared
+                // explicitly in this block - hard coded, you might say. As a result, we just do a rename here - because
+                // the opt.TryRenameVariableOneLevelUp can't find the decl and so will fail!
+                other.RenameVariable(other._indexVariable.ParameterName, _indexVariable.RawValue);
+
+                // And combine the inline block part of the statement
                 Combine(other, opt);
+            }
 
             return candoIt;
         }

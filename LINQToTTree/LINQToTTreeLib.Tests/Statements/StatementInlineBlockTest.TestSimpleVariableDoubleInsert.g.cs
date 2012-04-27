@@ -16,5 +16,26 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementInlineBlockTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestSimpleVariableDoubleInsertThrowsArgumentException991()
+{
+    this.TestSimpleVariableDoubleInsert("", "");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestSimpleVariableDoubleInsertThrowsArgumentException679()
+{
+    this.TestSimpleVariableDoubleInsert("\0", "\0");
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementInlineBlockTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void TestSimpleVariableDoubleInsertThrowsArgumentException723()
+{
+    this.TestSimpleVariableDoubleInsert("\u0100", "\u0100");
+}
     }
 }

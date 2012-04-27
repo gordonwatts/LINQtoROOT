@@ -19,5 +19,16 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
     public partial class TypeHanlderROOTTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(TypeHanlderROOTTest))]
+[ExpectedException(typeof(ArgumentException))]
+public void ProcessNewThrowsArgumentException774()
+{
+    Expression expression;
+    TypeHandlerROOT s0 = new TypeHandlerROOT();
+    IValue iValue = (IValue)null;
+    expression =
+      this.ProcessNew(s0, (NewExpression)null, out iValue, (GeneratedCode)null);
+}
     }
 }

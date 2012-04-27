@@ -10,20 +10,22 @@
 // </auto-generated>
 using System;
 using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Pex.Framework.Generated;
 
-namespace LINQToTTreeLib.Expressions
+namespace LINQToTTreeLib.Tests
 {
-    public partial class ExpressionStringConverterTest
+    public partial class TestExpressionResolver
     {
 [TestMethod]
-[PexGeneratedBy(typeof(ExpressionStringConverterTest))]
-[ExpectedException(typeof(ArgumentNullException))]
-public void FormatThrowsArgumentNullException14()
+[PexGeneratedBy(typeof(TestExpressionResolver))]
+public void RunResolve995()
 {
-    string s;
-    s = this.Format((Expression)null);
+    Expression expression;
+    expression = this.RunResolve
+                     ((Expression)null, (IGeneratedQueryCode)null, (ICodeContext)null);
+    Assert.IsNull((object)expression);
 }
     }
 }

@@ -19,5 +19,14 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAggregateTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAggregateTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void StatementAggregateConstructorTestThrowsArgumentNullException5()
+{
+    StatementAggregate statementAggregate;
+    statementAggregate = this.StatementAggregateConstructorTest
+                             ((DeclarableParameter)null, (IValue)null);
+}
     }
 }

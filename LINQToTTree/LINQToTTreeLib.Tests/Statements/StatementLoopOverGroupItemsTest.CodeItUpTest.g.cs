@@ -18,5 +18,30 @@ namespace LINQToTTreeLib.Tests.Statements
 {
     public partial class StatementLoopOverGroupItemsTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverGroupItemsTest))]
+public void CodeItUpTest216()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementLoopOverGroupItems statementLoopOverGroupItems;
+    string[] ss;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementLoopOverGroupItems = StatementLoopOverGroupItemsFactory.Create
+                                      ((IValue)dummyVarName, (IStatement)null);
+    ss = this.CodeItUpTest(statementLoopOverGroupItems);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(0, ss.Length);
+    Assert.IsNotNull((object)statementLoopOverGroupItems);
+    Assert.IsNotNull(statementLoopOverGroupItems.Counter);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGroupItems).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverGroupItems).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementLoopOverGroupItems).Parent);
+}
     }
 }

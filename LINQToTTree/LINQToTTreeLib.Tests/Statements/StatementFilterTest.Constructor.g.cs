@@ -17,5 +17,31 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementFilterTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException335()
+{
+    StatementFilter statementFilter;
+    statementFilter = this.Constructor((IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementFilterTest))]
+public void Constructor366()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementFilter statementFilter;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementFilter = this.Constructor((IValue)dummyVarName);
+    Assert.IsNotNull((object)statementFilter);
+    Assert.IsNotNull(statementFilter.TestExpression);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementFilter).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementFilter).Parent);
+}
     }
 }

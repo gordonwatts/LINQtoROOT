@@ -17,5 +17,56 @@ namespace LINQToTTreeLib.Statements
 {
     public partial class StatementIfOnCountTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException95()
+{
+    StatementIfOnCount statementIfOnCount;
+    statementIfOnCount = this.Constructor((IDeclaredParameter)null, 
+                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void ConstructorThrowsArgumentNullException652()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementIfOnCount statementIfOnCount;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementIfOnCount = this.Constructor((IDeclaredParameter)dummyVarName, 
+                                          (IValue)null, StatementIfOnCount.ComparisonOperator.GreaterThan);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementIfOnCountTest))]
+public void Constructor925()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementIfOnCount statementIfOnCount;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementIfOnCount = this.Constructor((IDeclaredParameter)dummyVarName, 
+                                          (IValue)dummyVarName, StatementIfOnCount.ComparisonOperator.GreaterThan);
+    Assert.IsNotNull((object)statementIfOnCount);
+    Assert.IsNotNull(statementIfOnCount.Counter);
+    Assert.IsNotNull(statementIfOnCount.Limit);
+    Assert.IsTrue(
+                 object.ReferenceEquals(statementIfOnCount.Limit, statementIfOnCount.Counter)
+                 );
+    Assert.AreEqual<StatementIfOnCount.ComparisonOperator>
+        (StatementIfOnCount.ComparisonOperator.GreaterThan, 
+         statementIfOnCount.Comparison);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementIfOnCount).Statements);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementIfOnCount).DeclaredVariables);
+    Assert.IsNull(((StatementInlineBlockBase)statementIfOnCount).Parent);
+}
     }
 }

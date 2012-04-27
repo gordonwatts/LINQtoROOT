@@ -18,5 +18,28 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementLoopOverSortedPairValueTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementLoopOverSortedPairValueTest))]
+public void CodeItUpTest216()
+{
+    StatementLoopOverSortedPairValue statementLoopOverSortedPairValue;
+    string[] ss;
+    statementLoopOverSortedPairValue =
+      StatementLoopOverSortedPairValueFactory.Create(false);
+    ss = this.CodeItUpTest(statementLoopOverSortedPairValue);
+    Assert.IsNotNull((object)ss);
+    Assert.AreEqual<int>(0, ss.Length);
+    Assert.IsNotNull((object)statementLoopOverSortedPairValue);
+    Assert.IsNotNull(statementLoopOverSortedPairValue.IndexVariable);
+    Assert.AreEqual<string>
+        ("aInt32_2", statementLoopOverSortedPairValue.IndexVariable.ParameterName);
+    Assert.IsNull(statementLoopOverSortedPairValue.IndexVariable.InitialValue);
+    Assert.IsNotNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Statements);
+    Assert.IsNotNull(((StatementInlineBlockBase)statementLoopOverSortedPairValue)
+                       .DeclaredVariables);
+    Assert.IsNull
+        (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Parent);
+}
     }
 }

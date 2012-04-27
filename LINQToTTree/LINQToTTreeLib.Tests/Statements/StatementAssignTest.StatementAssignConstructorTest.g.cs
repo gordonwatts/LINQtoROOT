@@ -18,5 +18,49 @@ namespace LINQToTTreeLib.Tests
 {
     public partial class StatementAssignTest
     {
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAssignTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void StatementAssignConstructorTestThrowsArgumentNullException294()
+{
+    StatementAssign statementAssign;
+    statementAssign =
+      this.StatementAssignConstructorTest((IDeclaredParameter)null, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAssignTest))]
+[ExpectedException(typeof(ArgumentNullException))]
+public void StatementAssignConstructorTestThrowsArgumentNullException261()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementAssign statementAssign;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementAssign = this.StatementAssignConstructorTest
+                          ((IDeclaredParameter)dummyVarName, (IValue)null);
+}
+[TestMethod]
+[PexGeneratedBy(typeof(StatementAssignTest))]
+public void StatementAssignConstructorTest472()
+{
+    StatementInlineBlockTest.dummyVarName dummyVarName;
+    StatementAssign statementAssign;
+    dummyVarName =
+      new StatementInlineBlockTest.dummyVarName((string)null, (Type)null);
+    dummyVarName.InitialValue = (IValue)null;
+    dummyVarName.Declare = false;
+    dummyVarName.RawValue = (string)null;
+    statementAssign = this.StatementAssignConstructorTest
+                          ((IDeclaredParameter)dummyVarName, (IValue)dummyVarName);
+    Assert.IsNotNull((object)statementAssign);
+    Assert.IsNotNull(statementAssign.ResultVariable);
+    Assert.IsNotNull(statementAssign.Expression);
+    Assert.IsTrue(object.ReferenceEquals
+                      (statementAssign.Expression, statementAssign.ResultVariable));
+    Assert.IsNull(statementAssign.Parent);
+}
     }
 }

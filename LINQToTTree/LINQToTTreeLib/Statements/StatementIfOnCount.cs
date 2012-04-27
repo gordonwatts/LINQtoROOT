@@ -103,6 +103,9 @@ namespace LINQToTTreeLib.Statements
             if (statement == null)
                 throw new ArgumentNullException("statement");
 
+            if (opt == null)
+                throw new ArgumentNullException("opt");
+
             var other = statement as StatementIfOnCount;
             if (other == null)
                 return false;
