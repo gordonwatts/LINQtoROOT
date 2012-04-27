@@ -6,9 +6,23 @@
 #
 [CmdletBinding()]
 param (
-	[Parameter(mandatory=$true)]
-	[string] $assemblyPath
+	[Parameter()]
+	[string] $assemblyPath="PSPROOFUtils.dll"
 )
+
+#
+# Is it registered? If so, load it up!
+#
+
+$s = Get-PSSnapin -Registered | ? {$_.Name -eq "PROOFSnapIn"}
+if ($s)
+{
+	Write-Host "Snap-in already declared"
+	add-pssnapin "PROOFSnapIn"
+	return
+}
+
+Write-Host "Snapin is not known... I hope you are running as admin for this!"
 
 # Param checks
 
@@ -29,5 +43,5 @@ if ([IntPtr]::Size -eq 8)
 Set-Alias installutil $env:windir\Microsoft.NET\$FrameworkName\v4.0.30319\installutil
 installutil "$assemblyPath"
 
-# Just to show off
-Get-PSSnapin -Registered
+# Now, load it in for use
+add-pssnapin "PROOFSnapIn"
