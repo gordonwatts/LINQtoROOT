@@ -49,5 +49,15 @@ namespace PSPROOFUtils
             Cache.Update(ProofConnection);
             return Cache.GetDSItems();
         }
+
+        /// <summary>
+        /// Get the item for a dataset.
+        /// </summary>
+        /// <param name="path"></param>
+        internal ProofDataSetItem GetDSItems(string path)
+        {
+            Cache.Update(ProofConnection);
+            return Cache.GetDSItems(path);
+        }
     }
 }

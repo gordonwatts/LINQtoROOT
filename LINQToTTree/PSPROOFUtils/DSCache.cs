@@ -102,5 +102,15 @@ namespace PSPROOFUtils
         {
             return _cache.Values;
         }
+
+        /// <summary>
+        /// Return an item in our cache, or throw.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        internal ProofDataSetItem GetDSItems(string path)
+        {
+            return _cache[path];
+        }
     }
 }

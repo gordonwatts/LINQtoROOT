@@ -55,22 +55,13 @@ namespace PSPROOFUtils
 
         #region Item Overrides
         /// <summary>
-        /// Return an item from our drive.
+        /// Return an item from our drive - we just get the item object here!
         /// </summary>
         /// <param name="path"></param>
         protected override void GetItem(string path)
         {
-            Console.WriteLine("Path is {0}", path);
-        }
-
-        /// <summary>
-        /// Return the dynamic parameters for the Get-Item command.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        protected override object GetItemDynamicParameters(string path)
-        {
-            return new GetItemExtraParameters();
+            var i = PROOFDrive.GetDSItems(path);
+            WriteItemObject(i, i.Name, false);
         }
 
         protected override void SetItem(string path, object value)
