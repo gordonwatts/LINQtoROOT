@@ -8,7 +8,7 @@ namespace PSPROOFUtils
     /// Provider that implements datasets as a list of datasets...
     /// </summary>
     [CmdletProvider("PROOFDS", ProviderCapabilities.None)]
-    public class PROOFDatasetProvider : ContainerCmdletProvider
+    public class PROOFDatasetProvider : ContainerCmdletProvider, IContentCmdletProvider
     {
         #region Drive Overrides
         /// <summary>
@@ -18,10 +18,10 @@ namespace PSPROOFUtils
         /// <returns></returns>
         protected override PSDriveInfo NewDrive(PSDriveInfo drive)
         {
-            var b = new ProofDrive(drive);
-            b.ProofConnection = ROOTNET.NTProof.Open(drive.Root);
-            if (b.ProofConnection == null || !b.ProofConnection.IsValid())
+            var connection = ROOTNET.NTProof.Open(drive.Root);
+            if (connection == null || !connection.IsValid())
                 throw new ArgumentException(string.Format("Unable to connect to PROOF server at '{0}'", drive.Root));
+            var b = new ProofDrive(drive, connection);
             return b;
         }
 
@@ -45,8 +45,7 @@ namespace PSPROOFUtils
             var p = drive as ProofDrive;
             if (p == null)
                 throw new InvalidOperationException("Attempt to remove a PROOF drive for a drive that isn't PROOF!");
-            p.ProofConnection.Close();
-            p.ProofConnection = null;
+            p.Close();
 
             return drive;
         }
@@ -60,7 +59,7 @@ namespace PSPROOFUtils
         /// <param name="path"></param>
         protected override void GetItem(string path)
         {
-            var i = PROOFDrive.GetDSItems(path);
+            var i = PROOFDrive.GetDSItem(path);
             WriteItemObject(i, i.Name, false);
         }
 
@@ -177,6 +176,51 @@ namespace PSPROOFUtils
             return base.ConvertPath(path, filter, ref updatedPath, ref updatedFilter);
         }
 
+        #endregion
+
+        #region Content Methods
+        public void ClearContent(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object ClearContentDynamicParameters(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns a reader that gets the names of all the files
+        /// that are in this dataset.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public IContentReader GetContentReader(string path)
+        {
+            var item = PROOFDrive.GetDSItem(path, fullInformation: true);
+            return new DSContentReader(item);
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// We need no special parameters here.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public object GetContentReaderDynamicParameters(string path)
+        {
+            return null;
+        }
+
+        public IContentWriter GetContentWriter(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetContentWriterDynamicParameters(string path)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

@@ -31,11 +31,19 @@ namespace PSPROOFUtils
         private int _maxDatasetRetries = 10;
 
         /// <summary>
+        /// The proof connection.
+        /// </summary>
+        public ROOTNET.Interface.NTProof ProofConnection { get; set; }
+
+        /// <summary>
         /// Update the internal cache, if we need to...
         /// </summary>
-        /// <param name="ProofConnection"></param>
-        internal void Update(ROOTNET.Interface.NTProof proof)
+        /// <param name="ProofConnection">This is heald onto for teh rest of the lifetime of the cache</param>
+        internal void Update()
         {
+            if (ProofConnection == null)
+                throw new InvalidOperationException("Can't try to update the proof cache if the connection to proof hasn't been established");
+
             //
             // Is it time?
             //
@@ -48,8 +56,8 @@ namespace PSPROOFUtils
             //
 
             _cache.Clear();
-            var proofDS = LoadProofDSList(proof);
-            foreach (var dsname in proof.DataSets.Cast<ROOTNET.Interface.NTObjString>())
+            var proofDS = LoadProofDSList(ProofConnection);
+            foreach (var dsname in proofDS.Cast<ROOTNET.Interface.NTObjString>())
             {
                 //
                 // Ignore namespaces for now ("/users/gwatts/default/HG123");
@@ -63,6 +71,12 @@ namespace PSPROOFUtils
 
                 _cache[name] = new ProofDataSetItem(name);
             }
+
+            //
+            // Rest the cache time
+            //
+
+            _lastCacheUpdate = DateTime.Now;
         }
 
         /// <summary>
@@ -108,9 +122,18 @@ namespace PSPROOFUtils
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        internal ProofDataSetItem GetDSItems(string path)
+        internal ProofDataSetItem GetDSItem(string path, bool fullInformation)
         {
-            return _cache[path];
+            var item = _cache[path];
+
+            if (fullInformation && !item.InformationComplete)
+            {
+                var ds = ProofConnection.GetDataSet(item.Name);
+                var files = ds.List.Cast<ROOTNET.Interface.NTFileInfo>();
+                item.SetFullData(files);
+            }
+
+            return item;
         }
     }
 }

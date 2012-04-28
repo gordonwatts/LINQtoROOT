@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DSCache.cs" />
+    <Compile Include="DSContentReader.cs" />
     <Compile Include="ProofDataSetItem.cs" />
     <Compile Include="PROOFDatasetProvider.cs" />
     <Compile Include="ProofDrive.cs" />

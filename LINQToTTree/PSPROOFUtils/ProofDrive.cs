@@ -9,14 +9,39 @@ namespace PSPROOFUtils
     /// </summary>
     class ProofDrive : PSDriveInfo
     {
-        public ProofDrive(PSDriveInfo basicInfo)
+        /// <summary>
+        /// Create a proof drive that PS knows what to do with.
+        /// </summary>
+        /// <param name="basicInfo"></param>
+        /// <param name="connection"></param>
+        public ProofDrive(PSDriveInfo basicInfo, ROOTNET.Interface.NTProof connection)
             : base(basicInfo)
         {
             Cache = new DSCache();
+            ProofConnection = connection;
+            Cache.ProofConnection = connection;
         }
 
-        public ROOTNET.Interface.NTProof ProofConnection { get; set; }
-        public DSCache Cache { get; private set; }
+        /// <summary>
+        /// Close our connection to the proof server.
+        /// </summary>
+        internal void Close()
+        {
+            Cache.ProofConnection = null;
+            Cache = null;
+            ProofConnection.Close();
+            ProofConnection = null;
+        }
+
+        /// <summary>
+        /// The proof connection this drive represents.
+        /// </summary>
+        public ROOTNET.Interface.NTProof ProofConnection { get; private set; }
+
+        /// <summary>
+        /// The backing cache for this drive.
+        /// </summary>
+        private DSCache Cache { get; set; }
 
         /// <summary>
         /// Return true if this dataset exists.
@@ -36,7 +61,7 @@ namespace PSPROOFUtils
             // Make sure the cache is up to date, and then check it!
             //
 
-            Cache.Update(ProofConnection);
+            Cache.Update();
             return Cache.HasDataset(path);
         }
 
@@ -46,7 +71,7 @@ namespace PSPROOFUtils
         /// <returns></returns>
         internal IEnumerable<ProofDataSetItem> GetDSItems()
         {
-            Cache.Update(ProofConnection);
+            Cache.Update();
             return Cache.GetDSItems();
         }
 
@@ -54,10 +79,10 @@ namespace PSPROOFUtils
         /// Get the item for a dataset.
         /// </summary>
         /// <param name="path"></param>
-        internal ProofDataSetItem GetDSItems(string path)
+        internal ProofDataSetItem GetDSItem(string path, bool fullInformation = false)
         {
-            Cache.Update(ProofConnection);
-            return Cache.GetDSItems(path);
+            Cache.Update();
+            return Cache.GetDSItem(path, fullInformation);
         }
     }
 }
