@@ -18,7 +18,7 @@ namespace PSPROOFUtils
         /// <summary>
         /// The max age our cache is allowed to get to.
         /// </summary>
-        private TimeSpan _maxCacheAge = new TimeSpan(1000 * 60 * 5);
+        private TimeSpan _maxCacheAge = new TimeSpan(0, 5, 0);
 
         /// <summary>
         /// Track the actual cache
