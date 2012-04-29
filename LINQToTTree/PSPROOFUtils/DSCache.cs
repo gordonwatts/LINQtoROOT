@@ -66,10 +66,16 @@ namespace PSPROOFUtils
                 var name = dsname.Name.Split('/').Last();
 
                 //
+                // Fetch back the global metadata
+                //
+
+                var fc = proofDS.GetValue(dsname) as ROOTNET.Interface.NTFileCollection;
+
+                //
                 // This guy brings back only global meta-data information, so only store that!
                 //
 
-                _cache[name] = new ProofDataSetItem(name);
+                _cache[name] = new ProofDataSetItem(name, fc.NFiles, fc.NCorruptFiles, fc.NStagedFiles, fc.TotalSize);
             }
 
             //

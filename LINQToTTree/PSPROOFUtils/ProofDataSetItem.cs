@@ -13,10 +13,18 @@ namespace PSPROOFUtils
         /// Create a new dataset with only the name info valid.
         /// </summary>
         /// <param name="name"></param>
-        public ProofDataSetItem(string name)
+        public ProofDataSetItem(string name, long nFiles, long nCorruptFiles, long nStagedFiles, long totalSize)
         {
-            // TODO: Complete member initialization
-            this.Name = name;
+            Name = name;
+            NumberFiles = nFiles;
+            NumberCorruptFiles = nCorruptFiles;
+            NumberStagedFiles = nStagedFiles;
+            TotalSizeBytes = totalSize;
+
+            //
+            // Other initalization.
+            //
+
             InformationComplete = false;
         }
 
@@ -48,5 +56,25 @@ namespace PSPROOFUtils
         {
             return _files;
         }
+
+        /// <summary>
+        /// Total number of files in the dataset
+        /// </summary>
+        public long NumberFiles { get; private set; }
+
+        /// <summary>
+        /// Total number of corrupt files in the dataset
+        /// </summary>
+        public long NumberCorruptFiles { get; private set; }
+
+        /// <summary>
+        /// Total number of staged files in the dataset.
+        /// </summary>
+        public long NumberStagedFiles { get; private set; }
+
+        /// <summary>
+        /// Total size in bytes of the dataset.
+        /// </summary>
+        public long TotalSizeBytes { get; private set; }
     }
 }
