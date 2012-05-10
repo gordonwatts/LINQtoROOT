@@ -84,6 +84,7 @@ function Write-TTree-MetaData
 	if (-not (Test-Path $Path))
 	{
 		Write-Host "The path '$Path' was not found."
+		Write-Host " Looked relative to $($PWD.PATH) if it was a relative path you gave me!"
 		return
 	}
 	
