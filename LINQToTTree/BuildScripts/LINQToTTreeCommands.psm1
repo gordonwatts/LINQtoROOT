@@ -43,9 +43,45 @@ function add-to-project ($itemType, $project, $namespace = "")
 	}
 }
 
+
 # Parse a file
-function Write-TTree-MetaData ($Path = $(throw "-Path must be supplied"), $SubDirName = "", $Namespace = "ROOTLINQ")
+function Write-TTree-MetaData
 {
+<#
+.SYNOPSIS
+   Parse a ROOT file for all TTrees and insert ROOTLINQ support files into current project.
+.DESCRIPTION
+   Reads a ROOT file for all TTree's located at the top level directory. For each TTree it generates the meta-data
+   files required to use the ROOTLINQ query system and inserts them into the current project. Once the project has
+   been built you can write queries against these TTree's.
+.LINK
+	http://linqtoroot.codeplex.com
+.PARAMETER Path
+   Path to the ROOT file
+.PARAMETER SubDirName
+   If you wish the output files to be stored in a different sub-directory than the default. Defaults to the Namespace.
+.PARAMETER Namespace
+   The namespcae where the query objects should exist. Defaults to ROOTLINQ. You are strongly encouraged to use this!
+.Example
+   Write-TTree-MetaData EVNT-short.root -Namespace HVDATA
+
+   Will scan the file EVNT-short.root (located in the solution directory) for all TTree's and generate the XML files that
+   contain the required metadata. These XML files are inserted in your current project in a folder called "HVDAATA". The
+   objects will also exist in the HVDATA namespace.   
+#>
+	[CmdletBinding()]
+	param(
+	   [Parameter(Mandatory=$true, Position=0)]
+	   [Alias("RootFile")]
+	   [string]$Path,
+
+	   [Parameter()]
+	   [string]$SubDirName="",
+
+	   [Parameter]
+	   [string]$Namespace="ROOTLINQ"
+	)
+
 	# Config
 	if (-not (Test-Path $Path))
 	{
