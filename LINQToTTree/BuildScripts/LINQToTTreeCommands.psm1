@@ -30,17 +30,21 @@ function Get-RelativePath ($Folder, $filePath)
 #
 # A string of fileinfo's, insert them in the project with the time type!
 #
-function add-to-project ($itemType, $project)
+function add-to-project ($itemType, $project, $namespace = "")
 {
 	process
 	{
 		$rpath = Get-RelativePath $project.DirectoryPath $_.FullName
 		$bogus = $project.Xml.AddItem($itemType, $rpath)
+		if ($namespace)
+		{
+			$bogus1 = $bogus.AddMetadata("Namespace", $namespace)
+		}
 	}
 }
 
 # Parse a file
-function Write-TTree-MetaData ($Path = $(throw "-Path must be supplied"), $SubDirName = "")
+function Write-TTree-MetaData ($Path = $(throw "-Path must be supplied"), $SubDirName = "", $Namespace = "ROOTLINQ")
 {
 	# Config
 	if (-not (Test-Path $Path))
@@ -64,7 +68,14 @@ function Write-TTree-MetaData ($Path = $(throw "-Path must be supplied"), $SubDi
 	$destDir = ([System.IO.FileInfo] $p.FullName).Directory.FullName
 	if (-not $SubDirName)
 	{
-		$SubDirName = split-path -leaf $Path
+		if ($Namespace)
+		{
+			$SubDirName = $Namespace
+		}
+		else
+		{
+			$SubDirName = split-path -leaf $Path
+		}
 	}
 	$destDir = join-path $destDir $SubDirName
 	
@@ -80,7 +91,7 @@ function Write-TTree-MetaData ($Path = $(throw "-Path must be supplied"), $SubDi
 	
 	$allFiles = Get-ChildItem -Path $destDir
 	$allFiles | ? {$_.Extension -eq ".ntup"} | add-to-project "TTreeGroupSpec" $ms
-	$allFiles | ? {$_.Extension -eq ".ntupom"} | add-to-project "ROOTFileDataModel" $ms
+	$allFiles | ? {$_.Extension -eq ".ntupom"} | add-to-project "ROOTFileDataModel" $ms $Namespace
 
 	#
 	# Make sure everything is saved!
