@@ -75,10 +75,8 @@ function Write-TTree-MetaData
 	   [Alias("RootFile")]
 	   [string]$Path,
 
-	   [Parameter()]
 	   [string]$SubDirName="",
 
-	   [Parameter]
 	   [string]$Namespace="ROOTLINQ"
 	)
 
@@ -120,7 +118,7 @@ function Write-TTree-MetaData
 	#
 	
 	CmdTFileParser -d $destDir $Path
-	
+
 	#
 	# Now, attempt to insert them all into the project
 	#
