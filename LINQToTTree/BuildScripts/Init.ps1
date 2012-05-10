@@ -3,8 +3,8 @@ param($installPath, $toolsPath, $package, $project)
 # Setup environment for dealing with the the LINQToTTree environment.
 #
 
-Import-Module (Join-Path $toolsPath msbuild.psm1)
-Import-Module -Force "$toolsPath\LINQToTTreeCommands.psm1"
+Import-Module -DisableNameChecking (Join-Path $toolsPath msbuild.psm1)
+Import-Module -DisableNameChecking -Force "$toolsPath\LINQToTTreeCommands.psm1"
 
 Write-Host "Availible commands for LINQToTTree package:"
 Write-Host "Write-TTree-MetaData <path-to-root-file>"
