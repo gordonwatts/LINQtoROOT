@@ -202,7 +202,20 @@ namespace TTreeParser
         public static string SanitizedName(this ROOTNET.Interface.NTTree t)
         {
             var n = t.Name;
+            return n.SanitizedName();
+        }
+
+        /// <summary>
+        /// Returns a string that has any funny characters replaced by good ones - so we can use them in variable names.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static string SanitizedName(this string n)
+        {
             n = n.Replace("#", "_");
+            n = n.Replace(",", "_");
+            n = n.Replace("<", "");
+            n = n.Replace(">", "");
             return n;
         }
     }

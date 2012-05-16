@@ -682,6 +682,24 @@ namespace TTreeParser.Tests
             CheckSerialization(r, "TestComplexObjectATLASMCFile");
         }
 
+        [TestMethod]
+        [DeploymentItem("pairedarray.root")]
+        public void ParseArrayWithPairs()
+        {
+            // Do we correctly parse an ATLAS MC file?
+            var f = ROOTNET.NTFile.Open("pairedarray.root", "READ");
+            var t = f.Get("MetaData") as ROOTNET.Interface.NTTree;
+            Assert.IsNotNull(t, "no tree found");
+
+            var p = new ParseTTree();
+            var r = p.GenerateClasses(t).ToArray();
+            f.Close();
+
+            Assert.IsFalse(r.Any(c => c.Name.Contains(",")), "a name contains a comma");
+            Assert.IsFalse(r.Any(c => c.Name.Contains("<")), "a name contains a <");
+            Assert.IsFalse(r.Any(c => c.Name.Contains(">")), "a name contains a <");
+        }
+
 #if false
         // We don't know how to do this yet.
         [TestMethod]

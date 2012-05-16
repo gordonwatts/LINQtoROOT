@@ -134,6 +134,9 @@
     <None Include="btagobjs.root">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="pairedarray.root">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ComplexNtupleTestInput.root">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

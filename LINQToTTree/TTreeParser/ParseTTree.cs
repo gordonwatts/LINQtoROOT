@@ -558,7 +558,7 @@ namespace TTreeParser
             bool mightBeClonesArray = false;
             if (branch is ROOTNET.Interface.NTBranchElement)
             {
-                var cn = (branch as ROOTNET.Interface.NTBranchElement).ClonesName;
+                var cn = (branch as ROOTNET.Interface.NTBranchElement).ClonesName.SanitizedName();
                 if (!string.IsNullOrWhiteSpace(cn))
                 {
                     className = cn;
