@@ -697,7 +697,8 @@ namespace TTreeParser.Tests
 
             Assert.IsFalse(r.Any(c => c.Name.Contains(",")), "a name contains a comma");
             Assert.IsFalse(r.Any(c => c.Name.Contains("<")), "a name contains a <");
-            Assert.IsFalse(r.Any(c => c.Name.Contains(">")), "a name contains a <");
+            Assert.IsFalse(r.Any(c => c.Name.Contains(">")), "a name contains a >");
+            Assert.IsFalse(r.Any(c => c.Name.Contains(" ")), "a name contains a space ");
         }
 
 #if false
