@@ -314,6 +314,50 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("same", me.Member.Name, "member access bad");
         }
 
+        [TranslateToClass(typeof(ResultTypeCArray))]
+        class SourceTypeCArray
+        {
+#pragma warning disable 0649
+            public int[] val1;
+            public int n;
+            [RenameVariable("val2")]
+            public int[] myval2;
+            public int[] val3;
+            public int[][] val4;
+#pragma warning restore 0649
+        }
+
+        class ResultTypeCArray
+        {
+            public ResultTypeCArray(Expression holder)
+            {
+            }
+#pragma warning disable 0649
+            public int[] val1;
+            public int n;
+            [ArraySizeIndex("n")]
+            public int[] val2;
+            [ArraySizeIndex("20", IsConstantExpression = true)]
+            public int[] val3;
+            [ArraySizeIndex("20", IsConstantExpression = true, Index = 0)]
+            [ArraySizeIndex("30", IsConstantExpression = true, Index = 1)]
+            public int[][] val4;
+#pragma warning restore 0649
+        }
+
+        [TestMethod]
+        public void TestCArrayLengthRename()
+        {
+            Expression<Func<SourceTypeCArray, int>> arrayLenLambda = arr => arr.myval2.Length;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(arrayLenLambda.Body, caches, e => e);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var al = result as UnaryExpression;
+            Assert.AreEqual(ExpressionType.MemberAccess, al.Operand.NodeType, "member access");
+            var ma = al.Operand as MemberExpression;
+            Assert.AreEqual("val2", ma.Member.Name, "Member name");
+        }
+
         [TestMethod]
         public void TestTranslateClassButNotMember()
         {
