@@ -32,6 +32,19 @@ namespace LINQToTreeHelpers.Tests
         }
 
         [TestMethod]
+        public void TestComplexDSName()
+        {
+            string dsspec = "machine junk { J1-1_1 (ttbar) = *.root }";
+            DataSetFinder.ParseSpecFromString(dsspec);
+            DataSetFinder.MachineName = "junk";
+
+            var ds = DataSetFinder.DatasetNamesForTag("ttbar");
+            Assert.AreEqual(1, ds.Length, "# of datasets");
+            Assert.AreEqual("J1-1_1", ds[0], "ds name");
+
+        }
+
+        [TestMethod]
         public void TestProofInDS()
         {
             string dsspec = "machine junk { J1 = proof://tev11.washington.edu/LINQToTTreeTestDS }";

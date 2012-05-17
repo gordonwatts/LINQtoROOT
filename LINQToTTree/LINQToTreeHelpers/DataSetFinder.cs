@@ -43,7 +43,7 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Basic string token.
         /// </summary>
-        private static readonly Parser<string> Identifier = (Parse.LetterOrDigit.Or(Parse.Char('_'))).AtLeastOnce().Text().Token();
+        private static readonly Parser<string> Identifier = (Parse.LetterOrDigit.Or(Parse.Char('_')).Or(Parse.Char('-'))).AtLeastOnce().Text().Token();
 
         private static readonly Parser<string[]> IdentifierListSingle =
             from id1 in Identifier
