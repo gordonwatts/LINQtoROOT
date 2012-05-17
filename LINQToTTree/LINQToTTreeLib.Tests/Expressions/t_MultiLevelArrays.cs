@@ -197,6 +197,16 @@ namespace LINQToTTreeLib.Tests.Expressions
         }
 
         [TestMethod]
+        public void CheckCacheOnComplexLeaf()
+        {
+            Expression<Func<CollectionTree, uint>> lambda = ct => ct.evt.m_AllTheData[0];
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambda.Body, caches, e => e);
+            Assert.AreEqual(1, caches.Count, "# of items we reference");
+            Assert.AreEqual("evt->EventInfo_p3_McEventInfo", caches[0], "leaf name");
+        }
+
+        [TestMethod]
         public void TwoLevelRenameCheck()
         {
             Expression<Func<CollectionTree, int>> lambda = ct => ct.mc.m_genEvents.m_eventNbr[0];
