@@ -176,7 +176,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             bool runOK = true;
             string failReason = "";
-            var tstatus = pc.GetOutputList().Cast<ROOTNET.Interface.NTStatus>().Where(i => i != null).Where(i => i.Name == "PROOF_Status").FirstOrDefault();
+            var tstatus = pc.GetOutputList().Where(i => i is ROOTNET.Interface.NTStatus).Cast<ROOTNET.Interface.NTStatus>().Where(i => i.Name == "PROOF_Status").FirstOrDefault();
             if (tstatus == null)
             {
                 runOK = false;
