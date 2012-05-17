@@ -143,7 +143,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 throw new InvalidOperationException(string.Format("Unable to locate compiled object named '{0}'.", objName));
 
             //
-            // Load up teh variables that need to go over to the cluster.
+            // Load up the variables that need to go over to the cluster.
             //
 
             TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
@@ -165,13 +165,41 @@ namespace LINQToTTreeLib.ExecutionCommon
             var rResult = pc.Process(PROOFDSNames(), objName, "");
 
             //
+            // We need to do two things to get at the actual status of the run:
+            //  1. Look at the TStatus object called "PROOF_Status"
+            //  2. Check to see if GetMissingFIles() is empty.
+            // http://root.cern.ch/phpBB3/viewtopic.php?f=13&t=14536&p=63081#p63081
+            //
+
+            bool runOK = true;
+            string failReason = "";
+            var tstatus = pc.GetOutputList().Cast<ROOTNET.Interface.NTStatus>().Where(i => i != null).Where(i => i.Name == "PROOF_Status").FirstOrDefault();
+            if (tstatus == null)
+            {
+                runOK = false;
+            } else {
+                runOK = tstatus.ExitStatus != 0;
+                if (!runOK)
+                    failReason = string.Format("PROOF query status, {0}, was not zero.", tstatus.ExitStatus);
+            }
+
+            if (runOK)
+            {
+                runOK = pc.GetMissingFiles().NFiles == 0;
+                if (!runOK)
+                    failReason = string.Format("PROOF query failed because there were {0} missing files", pc.GetMissingFiles().NFiles);
+            }
+
+
+            //
             // There is an error if the result is non zero or there is an error in the short log.
             // If there is an error, build a full log message and throw it!
             //
 
-            var logMessages = pc.GetLastLog();
-            if (rResult != 0 || logMessages.ContainsString("kPROOF_FATAL"))
+            //if (rResult != 0 || logMessages.ContainsString("kPROOF_FATAL"))
+            if (!runOK)
             {
+                var logMessages = pc.GetLastLog();
                 var mgr = pc.GetManager();
                 var logs = mgr.GetSessionLogs();
                 var macroLogs = logs.ListOfLogs.Cast<ROOTNET.Interface.NTProofLogElem>().Select(mc => mc.Macro);
