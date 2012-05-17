@@ -43,19 +43,19 @@ namespace LINQToTreeHelpers
         /// <summary>
         /// Basic string token.
         /// </summary>
-        private static readonly Parser<string> Identifier = (Parse.LetterOrDigit.Or(Parse.Char('_')).Or(Parse.Char('-'))).AtLeastOnce().Text().Token();
+        private static readonly Parser<string> Identifier = (Parse.LetterOrDigit.Or(Parse.Char('_')).Or(Parse.Char('-'))).AtLeastOnce().Text().Token().Named("Identifier");
 
         private static readonly Parser<string[]> IdentifierListSingle =
             from id1 in Identifier
             select new string[] { id1 };
 
         private static readonly Parser<string[]> IdenifierListMoreThanOne =
-            from id1 in IdentifierListSingle
+            (from id1 in IdentifierListSingle
             from wh1 in Parse.WhiteSpace.Many()
             from comma in Parse.Char(',')
             from wh2 in Parse.WhiteSpace.Many()
             from idRest in IdentifierList
-            select id1.Concat(idRest).ToArray();
+            select id1.Concat(idRest).ToArray()).Named("Comma Seperated Identifier List");
 
         private static readonly Parser<string[]> IdentifierList =
             IdenifierListMoreThanOne.Or(IdentifierListSingle);
@@ -85,13 +85,14 @@ namespace LINQToTreeHelpers
             from openQ in Parse.Char('"')
             from searchstring in Parse.CharExcept('"').AtLeastOnce().Text()
             from closeQ in Parse.Char('"')
+            from wh2 in Parse.WhiteSpace.Many()
             select searchstring
             ).Named("FilePathStringQuoted");
 
         private static readonly Parser<string> FilePathString =
             (
             from whitespace in Parse.WhiteSpace.Many()
-            from fs in FilePathStringQuoted.Or(FilePathStringUnquoted)
+            from fs in FilePathStringQuoted.XOr(FilePathStringUnquoted)
             select fs
             ).Named("FilePathString");
 
@@ -104,9 +105,11 @@ namespace LINQToTreeHelpers
         /// one that matches!
         /// </summary>
         private static readonly Parser<string[]> MultiFileSearchString =
+            (
             from first in FilePathString
-            from rest in FilePathOrString.Many()
-            select (new string[] { first }.Concat(rest)).ToArray();
+            from rest in FilePathOrString.XMany()
+            select (new string[] { first }.Concat(rest)).ToArray()
+            ).Named("List of file search strings");
 
         private static readonly Parser<string> FilePathOrString =
             from orBar in Parse.Char('|')
@@ -124,18 +127,22 @@ namespace LINQToTreeHelpers
         }
 
         private static readonly Parser<NameValue> NameValueFinder =
+            (
             from n in Identifier
             from eq in Parse.Char('=')
             from v in Identifier
-            select new NameValue() { Name = n, Value = v };
+            select new NameValue() { Name = n, Value = v }
+            ).Named("Name-Value Pair");
 
         private static readonly Parser<NameValue> NamePathFinder =
+            (
             from n in Identifier
             from wh1 in Parse.WhiteSpace.Many()
             from eq in Parse.Char('=')
             from wh2 in Parse.WhiteSpace.Many()
             from v in FilePathString
-            select new NameValue() { Name = n, Value = v };
+            select new NameValue() { Name = n, Value = v }
+            ).Named("Name-Path Pair");
 
         /// <summary>
         /// A dataset. The dataset has a name and then it has a list of search strings. The list is sperated by
@@ -151,12 +158,15 @@ namespace LINQToTreeHelpers
         }
 
         private static readonly Parser<string[]> TagListParser =
+            (
             from openParen1 in Parse.Char('(')
             from tagNames in IdentifierList
             from openParen in Parse.Char(')')
-            select tagNames;
+            select tagNames
+            ).Named("Tag List Parser");
 
         private static readonly Parser<DataSetDefinition> DataSetDefinitionWithTagParser =
+            (
             from n in Identifier
             from wp1 in Parse.WhiteSpace.Many()
             from tags in TagListParser
@@ -164,15 +174,18 @@ namespace LINQToTreeHelpers
             from eq in Parse.Char('=')
             from wp3 in Parse.WhiteSpace.Many()
             from v in MultiFileSearchString.Or(FilePathStringAsArrayParser)
-            select new DataSetDefinition() { Name = n, SearchStrings = v, Tags = tags };
+            select new DataSetDefinition() { Name = n, SearchStrings = v, Tags = tags }
+            ).Named("Data Set Definition With Tags");
 
         private static readonly Parser<DataSetDefinition> DataSetDefinitionWithoutTagParser =
+            (
             from n in Identifier
             from wp2 in Parse.WhiteSpace.Many()
             from eq in Parse.Char('=')
             from wp3 in Parse.WhiteSpace.Many()
             from v in MultiFileSearchString.Or(FilePathStringAsArrayParser)
-            select new DataSetDefinition() { Name = n, SearchStrings = v, Tags = new string[0] };
+            select new DataSetDefinition() { Name = n, SearchStrings = v, Tags = new string[0] }
+            ).Named("Data Set Definition Without Tags");
 
         private static readonly Parser<DataSetDefinition> DataSetDefinitionParser =
             DataSetDefinitionWithTagParser.Or(DataSetDefinitionWithoutTagParser);
@@ -181,10 +194,11 @@ namespace LINQToTreeHelpers
         /// Parse a name value macro definition
         /// </summary>
         private static readonly Parser<NameValue> MacroDefinitionParser =
-            from whitespace in Parse.WhiteSpace.Many()
+            (
             from mdef in Parse.String("macro")
             from nv in NamePathFinder
-            select nv;
+            select nv
+            ).Named("Macro definition");
 
         /// <summary>
         /// Attempt to parse a machine string.
@@ -197,25 +211,27 @@ namespace LINQToTreeHelpers
         }
 
         private static readonly Parser<Machine> MachineParser =
+            (
             from whitespace0 in Parse.WhiteSpace.Many()
             from mh in Parse.String("machine")
             from mName in Identifier
             from openBracket in Parse.Char('{')
             from whitespace1 in Parse.WhiteSpace.Many()
-            from macros in MacroDefinitionParser.Many()
+            from macros in MacroDefinitionParser.XMany()
             from whitespace2 in Parse.WhiteSpace.Many()
-            from dataSets in DataSetDefinitionParser.Many()
+            from dataSets in DataSetDefinitionParser.XMany()
             from whitespace3 in Parse.WhiteSpace.Many()
             from closeBracket in Parse.Char('}')
             from whitespace4 in Parse.WhiteSpace.Many()
             from eol in Parse.Char('\n').Many()
-            select new Machine() { Name = mName, DS = dataSets.ToArray(), Macros = macros.ToArray() };
+            select new Machine() { Name = mName, DS = dataSets.ToArray(), Macros = macros.ToArray() }
+            ).Named("Top Level Machine");
 
         /// <summary>
         /// Pretend everything we can read is a single machine.
         /// </summary>
         private static readonly Parser<Machine> ParseNoMachineDef =
-            from ds in DataSetDefinitionParser.Many()
+            from ds in DataSetDefinitionParser.XMany()
             select new Machine() { Name = "", DS = ds.ToArray() };
 
         /// <summary>
@@ -695,13 +711,16 @@ namespace LINQToTreeHelpers
             {
                 while (!reader.EndOfStream)
                 {
-                    var line = reader.ReadLine();
+                    var line = reader.ReadLine().Trim();
+                    if (line.StartsWith("//"))
+                        continue;
 
                     var commentIndex = line.IndexOf("#");
-                    if (commentIndex >= 0 || line.StartsWith("//"))
+                    if (commentIndex >= 0)
                     {
                         line = line.Substring(0, commentIndex);
                     }
+                    line = line.Trim();
 
                     if (line.Length != 0)
                         yield return line;
