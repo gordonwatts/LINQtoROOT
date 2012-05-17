@@ -183,7 +183,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
             else
             {
-                runOK = tstatus.ExitStatus != 0;
+                runOK = tstatus.ExitStatus == 0;
                 if (!runOK)
                     failReason = string.Format("PROOF query status, {0}, was not zero.", tstatus.ExitStatus);
             }
