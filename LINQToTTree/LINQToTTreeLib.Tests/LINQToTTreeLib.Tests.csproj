@@ -233,6 +233,7 @@
       <DependentUpon>t_ExpressionResolver.cs</DependentUpon>
     </Compile>
     <Compile Include="Expressions\t_ExpressionsOnImpliedObjects.cs" />
+    <Compile Include="Expressions\t_MultiLevelArrays.cs" />
     <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
     <Compile Include="Factories\CodeOptimizerTestFactory.cs" />
     <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
