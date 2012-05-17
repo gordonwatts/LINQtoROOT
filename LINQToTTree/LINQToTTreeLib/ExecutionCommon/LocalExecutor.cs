@@ -108,6 +108,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             var objInputList = new ROOTNET.NTList();
             selector.InputList = objInputList;
 
+            var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+            ROOTNET.NTH1.AddDirectory(false);
             foreach (var item in variablesToLoad)
             {
                 var obj = item.Value as ROOTNET.Interface.NTNamed;
@@ -116,6 +118,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var cloned = obj.Clone(item.Key);
                 objInputList.Add(cloned);
             }
+            ROOTNET.NTH1.AddDirectory(oldHSet);
 
             //
             // Setup the cache for more efficient reading. We assume we are on a machine with plenty of memory

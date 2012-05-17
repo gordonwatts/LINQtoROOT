@@ -149,6 +149,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
             pc.InputList.Clear();
 
+            var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+            ROOTNET.NTH1.AddDirectory(false);
             foreach (var item in varsToTransfer)
             {
                 var obj = item.Value as ROOTNET.Interface.NTNamed;
@@ -157,6 +159,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var cloned = obj.Clone(item.Key);
                 pc.InputList.Add(cloned);
             }
+            ROOTNET.NTH1.AddDirectory(oldHSet);
 
             //
             // Now run the PROOF query

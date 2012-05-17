@@ -72,7 +72,10 @@ namespace LINQToTTreeLib.Variables.Savers
             if (rootObjInfo == null)
                 throw new InvalidOperationException("iVariable must be a ROOTObjectCopiedValue!");
 
+            var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+            ROOTNET.NTH1.AddDirectory(false);
             var result = named.Clone() as ROOTNET.Interface.NTNamed;
+            ROOTNET.NTH1.AddDirectory(oldHSet);
 
             ///
             /// Restore name and title - which might be different since our cache is blind
