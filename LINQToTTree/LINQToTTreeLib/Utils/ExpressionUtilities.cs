@@ -190,6 +190,7 @@ namespace LINQToTTreeLib.Utils
         /// See if this class is a leaf class - that is a class that
         /// is on the end of everything - like a TLorentzVector. NOT,
         /// for example, one of the classes we are using do groupings.
+        /// CStyle TClonesArrays are also ok to be leaves.
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
@@ -206,7 +207,24 @@ namespace LINQToTTreeLib.Utils
                 return true;
 
             //
-            // Soem class, and we don't know about it. Assume the worse.
+            // If this is a grouping class, then we are definately not a leaf
+            // class.
+            //
+
+            if (expr.NodeType == ExpressionType.MemberAccess)
+            {
+                var ma = expr as MemberExpression;
+                if (ma.Member.TypeHasAttribute<TTreeVariableGroupingAttribute>() != null)
+                    return false;
+                if (ma.Member.TypeHasAttribute<IndexToOtherObjectArrayAttribute>() != null)
+                    return false;
+
+                return true;
+            }
+
+            //
+            // Soem class, and we don't know about it, which means ROOT Must, so we should
+            // be ok with it (I hope).
             //
 
             return false;

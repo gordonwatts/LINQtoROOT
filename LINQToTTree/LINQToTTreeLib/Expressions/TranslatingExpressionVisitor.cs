@@ -83,6 +83,8 @@ namespace LINQToTTreeLib
         ///   arr.jets[0].member - do translate that
         ///   [Where jets is a grouped variable]
         ///   
+        ///   arr.mc.all_data[0] - translate this when "mc" is a rename, and all_data is a leaf.
+        ///   
         ///   arr.jets[0].muonindex.pt - translate that to the muon array
         ///   arr.jets[0].muonsindex[0].pt - translate to the first index of the muon array.
         /// </summary>

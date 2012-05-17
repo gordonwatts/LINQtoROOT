@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 
 namespace LINQToTTreeLib.Tests.Expressions
 {
@@ -193,7 +193,16 @@ namespace LINQToTTreeLib.Tests.Expressions
             Expression<Func<CollectionTree, uint>> lambda = ct => ct.evt.m_AllTheData[0];
             List<string> caches = new List<string>();
             var result = TranslatingExpressionVisitor.Translate(lambda.Body, caches, e => e);
-            Assert.AreEqual("ct.EventInfo-p3.m_AllTheData[0]", result.ToString(), "Final expression, translated");
+            Assert.AreEqual("value(LINQToTTreeLib.Tests.Expressions.t_MultiLevelArrays+CollectionTreeTranslatedTo).EventInfo_p3_McEventInfo.m_AllTheData[0]", result.ToString(), "Final expression, translated");
+        }
+
+        [TestMethod]
+        public void TwoLevelRenameCheck()
+        {
+            Expression<Func<CollectionTree, int>> lambda = ct => ct.mc.m_genEvents.m_eventNbr[0];
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambda.Body, caches, e => e);
+            Assert.AreEqual("value(LINQToTTreeLib.Tests.Expressions.t_MultiLevelArrays+CollectionTreeTranslatedTo).McEventCollection_p4_GEN_EVENT.m_genEvents.m_eventNbr[0]", result.ToString(), "Final expression, translated");
         }
     }
 }
