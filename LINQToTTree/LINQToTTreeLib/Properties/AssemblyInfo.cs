@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LINQToTTreeLib")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Base library to run ROOT TTree queries guided by LINQ")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("University of Washington")]
+[assembly: AssemblyCompany("G. Watts/UW Seattle")]
 [assembly: AssemblyProduct("LINQToTTreeLib")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
