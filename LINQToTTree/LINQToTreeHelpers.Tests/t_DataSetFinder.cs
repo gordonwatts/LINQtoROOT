@@ -57,6 +57,14 @@ namespace LINQToTreeHelpers.Tests
         }
 
         [TestMethod]
+        public void TestComplexDSNameWithWildcards()
+        {
+            string dsspec = "machine junk { ggH12020 = mc11_7TeV.105377.Pythia_HV_ggH_mH120_mVPI20*/*.root.1 }";
+            DataSetFinder.ParseSpecFromString(dsspec);
+            DataSetFinder.MachineName = "junk";
+        }
+
+        [TestMethod]
         public void TestProofInDSProduction()
         {
             string dsspec = @"
