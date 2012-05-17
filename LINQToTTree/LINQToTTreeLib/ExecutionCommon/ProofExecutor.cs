@@ -177,7 +177,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (tstatus == null)
             {
                 runOK = false;
-            } else {
+            }
+            else
+            {
                 runOK = tstatus.ExitStatus != 0;
                 if (!runOK)
                     failReason = string.Format("PROOF query status, {0}, was not zero.", tstatus.ExitStatus);
@@ -355,6 +357,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 if (_proofConnection == null)
                     throw new ArgumentException(string.Format("Unable to open proof server at '{0}'", _proofHost));
             }
+            if (!_proofConnection.IsValid())
+                throw new ArgumentException(string.Format("Failed to open proof server at '{0}'", _proofHost));
             return _proofConnection;
         }
 
