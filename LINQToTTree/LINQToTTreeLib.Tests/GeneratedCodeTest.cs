@@ -129,6 +129,10 @@ namespace LINQToTTreeLib
             {
                 get { return _vlist; }
             }
+            public IEnumerable<IDeclaredParameter> AllDeclaredVariables
+            {
+                get { return _vlist; }
+            }
         }
 
         /// <summary>

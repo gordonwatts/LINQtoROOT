@@ -78,6 +78,36 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return every single declared variable in the whole hierarchy!
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> AllDeclaredVariables
+        {
+            get
+            {
+                var b = FindBookingParent(Parent);
+                if (b != null)
+                    return _variables.Concat(b.AllDeclaredVariables);
+                return _variables;
+            }
+        }
+
+        /// <summary>
+        /// See if we can climb chain to find a booking guy
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private IBookingStatementBlock FindBookingParent(IStatement p)
+        {
+            while (p != null)
+            {
+                if (p is IBookingStatementBlock)
+                    return p as IBookingStatementBlock;
+                p = p.Parent;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Returns the lines of code - must be implemented by the surrounding guy.
         /// </summary>
         /// <returns></returns>

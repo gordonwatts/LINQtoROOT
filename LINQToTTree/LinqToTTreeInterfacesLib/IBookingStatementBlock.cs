@@ -19,5 +19,10 @@ namespace LinqToTTreeInterfacesLib
         /// Returns the list of variables that are declared in this compound block
         /// </summary>
         IEnumerable<IDeclaredParameter> DeclaredVariables { get; }
+
+        /// <summary>
+        /// Returns the list of variables that are declared in this compound block, and everyone above it.
+        /// </summary>
+        IEnumerable<IDeclaredParameter> AllDeclaredVariables { get; }
     }
 }
