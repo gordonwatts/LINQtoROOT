@@ -40,7 +40,14 @@ namespace LINQToTTreeLib.Statements
             if (InitialValue.Type != typeof(int))
                 throw new ArgumentException("startValue must be an integer");
 
+            arrIndex = typeof(int).CreateUniqueVariableName();
         }
+
+        /// <summary>
+        /// Keep track of the array index name - and hold it constant no matter how many times we have to code
+        /// things up! :-)
+        /// </summary>
+        private string arrIndex;
 
         /// <summary>
         /// Generate the code to do the looping. No need to generate anything if there is nothing to do! :-)
@@ -50,7 +57,6 @@ namespace LINQToTTreeLib.Statements
         {
             if (Statements.Any())
             {
-                var arrIndex = typeof(int).CreateUniqueVariableName();
                 yield return string.Format("int {0} = {1};", arrIndex, ArrayLength.RawValue);
                 yield return string.Format("for (int {0}={2}; {0} < {1}; {0}++)", _loopVariable.RawValue, arrIndex, InitialValue.RawValue);
                 foreach (var l in RenderInternalCode())

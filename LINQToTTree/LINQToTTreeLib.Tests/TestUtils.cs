@@ -42,31 +42,58 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
-        /// Dump the code to the console - for debugging a test...
+        /// Look through all the code, and dump out everythign to an ienumerable.
         /// </summary>
         /// <param name="code"></param>
-        public static void DumpCodeToConsole(this GeneratedCode code)
+        /// <returns></returns>
+        public static IEnumerable<string> DumpCode(this GeneratedCode code)
         {
-            Console.WriteLine("Declared Variables:");
+            yield return ("Declared Variables:");
             foreach (var var in code.CodeBody.DeclaredVariables)
             {
                 string initalValue = "default()";
                 if (var.InitialValue != null && var.InitialValue != null)
                     initalValue = var.InitialValue.RawValue;
 
-                Console.WriteLine(var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
+                yield return (var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
             }
-            Console.WriteLine("Code:");
+            yield return ("Code:");
 
-            code.CodeBody.DumpCodeToConsole();
+            foreach (var line in code.CodeBody.DumpCode())
+            {
+                yield return line;
+            }
 
             if (code.ResultValue == null)
             {
-                Console.WriteLine("Result Variable: <not set (null)>");
+                yield return ("Result Variable: <not set (null)>");
             }
             else
             {
-                Console.WriteLine("Result Variable: ", code.ResultValue.ToString());
+                yield return ("Result Variable: " + code.ResultValue.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Dump the code to the console - for debugging a test...
+        /// </summary>
+        /// <param name="code"></param>
+        public static void DumpCodeToConsole(this GeneratedCode code)
+        {
+            foreach (var line in code.DumpCode())
+            {
+                Console.WriteLine(line);
+            }
+        }
+        /// <summary>
+        /// Dump the code to the console - for debugging a test...
+        /// </summary>
+        /// <param name="code"></param>
+        public static void DumpCodeToConsole(this IExecutableCode code)
+        {
+            foreach (var line in code.DumpCode())
+            {
+                Console.WriteLine(line);
             }
         }
 
@@ -74,53 +101,57 @@ namespace LINQToTTreeLib.Tests
         /// Dump out info from a executable code dude.
         /// </summary>
         /// <param name="code"></param>
-        public static void DumpCodeToConsole(this IExecutableCode code)
+        public static IEnumerable<string> DumpCode(this IExecutableCode code)
         {
             Console.WriteLine("There are {0} Query Blocks:", code.QueryCode().Count());
             foreach (var qb in code.QueryCode())
             {
-                Console.WriteLine("Query Block:");
-                qb.DumpCodeToConsole("  ");
+                yield return ("Query Block:");
+                foreach (var line in qb.DumpCode("  "))
+                {
+                    yield return line;
+                };
             }
 
             if (code.ResultValues == null)
             {
-                Console.WriteLine("Result Variable: <not set (null)>");
+                yield return ("Result Variable: <not set (null)>");
             }
             else
             {
-                Console.WriteLine("There are {0} result variables.", code.ResultValues.Count());
+                yield return string.Format("There are {0} result variables.", code.ResultValues.Count());
                 foreach (var rv in code.ResultValues)
                 {
-                    Console.WriteLine("  Result Variable: {0}", rv.RawValue);
+                    yield return string.Format("  Result Variable: {0}", rv.RawValue);
                 }
             }
         }
 
         /// <summary>
-        /// Dump some code to the console for debugging.
+        /// Dump a compound statement
         /// </summary>
         /// <param name="code"></param>
         /// <param name="indent"></param>
-        public static void DumpCodeToConsole(this IStatementCompound code, string indent = "")
+        /// <returns></returns>
+        public static IEnumerable<string> DumpCode(this IStatementCompound code, string indent = "")
         {
             if (code is IBookingStatementBlock)
             {
                 var bs = code as IBookingStatementBlock;
-                Console.WriteLine("{0}There are {1} declared variables", indent, bs.DeclaredVariables.Count());
+                yield return string.Format("{0}There are {1} declared variables", indent, bs.DeclaredVariables.Count());
                 foreach (var var in bs.DeclaredVariables)
                 {
                     string initalValue = "default()";
                     if (var.InitialValue != null && var.InitialValue != null)
                         initalValue = var.InitialValue.RawValue;
 
-                    Console.WriteLine(indent + "  " + var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
+                    yield return string.Format(indent + "  " + var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
                 }
             }
-            Console.WriteLine("{0}Lines of code:", indent);
+            yield return string.Format("{0}Lines of code:", indent);
             foreach (var l in code.CodeItUp())
             {
-                Console.WriteLine("{0}  {1}", indent, l);
+                yield return string.Format("{0}  {1}", indent, l);
             }
         }
 

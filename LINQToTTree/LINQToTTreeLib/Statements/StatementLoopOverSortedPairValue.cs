@@ -43,6 +43,17 @@ namespace LINQToTTreeLib.Statements
             indexVariableType = indexVariableType.GetElementType();
 
             this._indexVariable = DeclarableParameter.CreateDeclarableParameterExpression(indexVariableType);
+
+            //
+            // Some internal variable names and types. Store for later use. We mostly have them here so we
+            // can keep the names stable accross CodeItUp() calls - which makes our testing of things
+            // a bit nicer!
+            //
+
+            sortValueTypeArray = _mapRecord.Type.GetGenericArguments()[0].MakeArrayType();
+            tempListingName = sortValueTypeArray.CreateUniqueVariableName();
+
+            breakSeenVar = typeof(bool).CreateUniqueVariableName();
         }
 
         /// <summary>
@@ -54,6 +65,21 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Keep track of what name we will use for listing. Mostly so if CodeItUp is called more than once we get back the same answer!
+        /// </summary>
+        private string tempListingName;
+
+        /// <summary>
+        /// Make sure that the array type is stored.
+        /// </summary>
+        private Type sortValueTypeArray;
+
+        /// <summary>
+        /// Mark if the bool variable has been seen yet or not.
+        /// </summary>
+        private string breakSeenVar;
+
+        /// <summary>
         /// Generate the code required.
         /// </summary>
         /// <returns></returns>
@@ -61,8 +87,6 @@ namespace LINQToTTreeLib.Statements
         {
             if (Statements.Any())
             {
-                var sortValueTypeArray = _mapRecord.Type.GetGenericArguments()[0].MakeArrayType();
-                var tempListingName = sortValueTypeArray.CreateUniqueVariableName();
                 yield return string.Format("{0} {1};", sortValueTypeArray.AsCPPType(), tempListingName);
                 yield return string.Format("for({0}::const_iterator i_itr = {1}.begin(); i_itr != {1}.end(); i_itr++) {{", _mapRecord.Type.AsCPPType(), _mapRecord.RawValue);
                 yield return string.Format("  {0}.push_back(i_itr->first);", tempListingName);
@@ -89,7 +113,6 @@ namespace LINQToTTreeLib.Statements
                 // Protect ourselves from break's that occur in the inner loop.
                 //
 
-                var breakSeenVar = typeof(bool).CreateUniqueVariableName();
                 yield return string.Format("  bool {0}breakSeen = true;", breakSeenVar);
                 yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist.size(); i_sindex++) {{", _indexVariable.RawValue);
 

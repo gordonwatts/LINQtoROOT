@@ -5,6 +5,8 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -176,6 +178,7 @@ namespace LINQToTTreeLib.Tests
 
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
+            CheckSingleDecl(query1.DumpCode());
 
             Assert.AreEqual(1, query1.CodeBody.Statements.Count(), "# statements in the code body");
             var forblock = query1.CodeBody.Statements.First() as IBookingStatementBlock;
@@ -199,6 +202,7 @@ namespace LINQToTTreeLib.Tests
             var query = CombineQueries(query1, query2);
 
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query code blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
@@ -219,6 +223,7 @@ namespace LINQToTTreeLib.Tests
 
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
+            CheckSingleDecl(query1.DumpCode());
 
             Assert.AreEqual(1, query1.CodeBody.Statements.Count(), "# statements in the code body");
             var forblock = query1.CodeBody.Statements.First() as IBookingStatementBlock;
@@ -242,6 +247,7 @@ namespace LINQToTTreeLib.Tests
             var query = CombineQueries(query1, query2);
 
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             var qu = query.QueryCode().First();
@@ -263,6 +269,7 @@ namespace LINQToTTreeLib.Tests
 
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
+            CheckSingleDecl(query1.DumpCode());
 
             Assert.AreEqual(1, query1.CodeBody.Statements.Count(), "# statements in the code body");
             var forblock2 = query1.CodeBody.Statements.First() as IBookingStatementBlock;
@@ -286,6 +293,7 @@ namespace LINQToTTreeLib.Tests
             var query = CombineQueries(query1, query2);
 
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
@@ -313,6 +321,7 @@ namespace LINQToTTreeLib.Tests
 
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
@@ -340,6 +349,7 @@ namespace LINQToTTreeLib.Tests
 
             var query = CombineQueries(query2, query1);
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
@@ -372,6 +382,7 @@ namespace LINQToTTreeLib.Tests
             var r = particles.Where(plst => plst.Particles.Any(p => p.PInitX > 0)).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
             // Make sure we don't throw here.
         }
 
@@ -399,6 +410,7 @@ namespace LINQToTTreeLib.Tests
             var r = particles.Where(plst => plst.Particles.Any(p => p.PInitX > 0)).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
         }
 
         [TestMethod]
@@ -415,6 +427,7 @@ namespace LINQToTTreeLib.Tests
             var r = pvPairs.Where(i => i > 4).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
             var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
@@ -439,6 +452,7 @@ namespace LINQToTTreeLib.Tests
             var r = pvPairs.Where(i => i > 4).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
             var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
@@ -471,6 +485,7 @@ namespace LINQToTTreeLib.Tests
             var r = pvPairs.Where(i => i.Mag() > 4).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
             var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
@@ -528,6 +543,7 @@ namespace LINQToTTreeLib.Tests
             var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm.Mag() > 1.0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
         }
 
         /// <summary>
@@ -566,6 +582,7 @@ namespace LINQToTTreeLib.Tests
             var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm != null).Where(p => p.vtxTerm.Mag() > 1.0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             // Just check that we don't crash... For now. The code generated here is
             // awful, and definately needs improvement.
@@ -603,6 +620,7 @@ namespace LINQToTTreeLib.Tests
             var prs = particles.SelectMany(p => p).Where(p => p.vtxTermOK).Where(p => p.vtxTerm.Mag() > 1.0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+            CheckSingleDecl(query.DumpCode());
 
             // We want to make sure that the vtxTerm stuff is not evaluated unless the vtxTermOK passes first...
             Assert.AreEqual(1, DummyQueryExectuor.FinalResult.CodeBody.Statements.Count(), "# of statements in top level loop");
@@ -611,6 +629,41 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, topLevelLoop.Statements.Count(), "# of statements in the top level block are incorrect");
             var ifStatement = topLevelLoop.Statements.First() as LINQToTTreeLib.Statements.StatementFilter;
             Assert.IsNotNull(ifStatement, "If statement first in the for loop");
+        }
+
+        /// <summary>
+        /// Clearing house to do a complete checking of no re-declared types.
+        /// </summary>
+        /// <param name="lines"></param>
+        private void CheckSingleDecl(IEnumerable<string> lines)
+        {
+            CheckSingleDecl(new string[] { "int", "double", "bool" }, lines);
+        }
+
+        /// <summary>
+        /// Check that "int" (or whatever) variables haven't been declared more than once.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="iEnumerable"></param>
+        private void CheckSingleDecl(string[] declTypes, IEnumerable<string> iEnumerable)
+        {
+            var searches = declTypes.Select (d => new Regex(string.Format(@"\b{0}\b\s+\b(\w+)\b", d))).ToArray();
+            var seenDecl = new SortedSet<string>();
+            foreach (var line in iEnumerable)
+            {
+                var found = from s in searches
+                            let m = s.Match(line)
+                            where m.Success
+                            select m.Groups[1].Value;
+                foreach (var f in found)
+                {
+                    if (seenDecl.Contains(f))
+                    {
+                        Assert.Fail(string.Format("Have seen the declaration of {0} twice", f));
+                    }
+                    seenDecl.Add(f);
+                }
+            }
         }
 
         /// <summary>
