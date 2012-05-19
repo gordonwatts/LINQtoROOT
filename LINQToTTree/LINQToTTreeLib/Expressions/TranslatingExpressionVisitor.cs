@@ -405,6 +405,19 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
+            //
+            // If we are comparing a "new" against a null, then we don't support that.
+            //
+
+            if (expression.Left.IsNull() || expression.Right.IsNull())
+            {
+                Expression nonNull = expression.Left.IsNull() ? expression.Right : expression.Left;
+                if (nonNull.NodeType == ExpressionType.New)
+                {
+                    throw new InvalidOperationException(string.Format("Doing a null comparison to a temporary object created in the query is very likely to generate incorrect code - not supported ({0})", expression.ToString()));
+                }
+            }
+
             // If this is an array index, then...
             if (expression.NodeType == ExpressionType.ArrayIndex && expression.IsLeafType())
             {

@@ -637,7 +637,7 @@ namespace LINQToTTreeLib.Tests
                                         vtxTerm = VertexVectorQ.Invoke(evt, vtxTermIdx)
                                     });
 
-            var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm != null).Where(p => p.vtxTerm.Mag() > 1.0).Count();
+            var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm.Mag() > 1.0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
             CheckSingleDecl(query.DumpCode());
