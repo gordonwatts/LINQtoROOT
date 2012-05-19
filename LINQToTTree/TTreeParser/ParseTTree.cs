@@ -581,7 +581,8 @@ namespace TTreeParser
             // tree.
             //
 
-            container.Add(new ItemSimpleType(branch.Name, className) { NotAPointer = true });
+            var varName = branch.Name.SanitizedName();
+            container.Add(new ItemSimpleType(varName, className) { NotAPointer = true });
 
             //
             // We are going to build our own class type here.
@@ -607,7 +608,7 @@ namespace TTreeParser
 
             if (mightBeClonesArray)
             {
-                var cBoundName = string.Format("{0}_", branch.Name);
+                var cBoundName = string.Format("{0}_", varName);
                 var cstyleArrayIndicies = from item in treeClass.Items
                                           where item is ItemCStyleArray
                                           let citem = item as ItemCStyleArray
@@ -809,7 +810,7 @@ namespace TTreeParser
         {
             if (templateInfo.TemplateName == "vector")
             {
-                return new ItemVector(TemplateParser.TranslateToCSharp(templateInfo), ExtractVarName(leaf));
+                return new ItemVector(TemplateParser.TranslateToCSharp(templateInfo), ExtractVarName(leaf).SanitizedName());
             }
             else
             {

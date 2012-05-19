@@ -14,6 +14,14 @@ namespace TTreeParser
     public class ParseTFile
     {
         /// <summary>
+        /// Setup the TFile parser and defaults.
+        /// </summary>
+        public ParseTFile()
+        {
+            ProxyGenerationLocation = new DirectoryInfo(".");
+        }
+
+        /// <summary>
         /// Where should the proxy be generated?
         /// </summary>
         public DirectoryInfo ProxyGenerationLocation { get; set; }

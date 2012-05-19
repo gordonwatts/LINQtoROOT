@@ -286,6 +286,26 @@ namespace TTreeParser.Tests
             Assert.IsFalse(obj.UserInfoPath.Contains("#"), "user path: " + obj.UserInfoPath);
         }
 
+        [TestMethod]
+        [DeploymentItem("atest.root")]
+        public void TestMCObjectsWithFunnyNames()
+        {
+            var f = new FileInfo("atest.root");
+            Assert.IsTrue(f.Exists, "File not there");
+
+            var p = new ParseTFile();
+            var results = p.ParseFile(f).ToArray();
+
+            foreach (var c in results)
+            {
+                foreach (var item in c.Items)
+                {
+                    Assert.IsFalse(item.Name.Contains("."), string.Format("Object {0} contains item {1}", c.Name, item.Name));
+                    Assert.IsFalse(item.Name.Contains(":"), string.Format("Object {0} contains item {1}", c.Name, item.Name));
+                }
+            }
+        }
+
 #if false
         /// This test relyies on having the ntuple stuff translated, something we are doing in the
         /// demos now, not here in the actual test cases - where we do everything ad-hoc.

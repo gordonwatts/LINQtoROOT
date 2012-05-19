@@ -217,6 +217,8 @@ namespace TTreeParser
             n = n.Replace("<", "");
             n = n.Replace(">", "");
             n = n.Replace(" ", "");
+            n = n.Replace(":", "");
+            n = n.Replace(".", "_");
             return n;
         }
     }
