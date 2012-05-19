@@ -56,7 +56,7 @@ namespace LINQToTTreeLib.Statements
             if (variableToDeclare == null)
                 throw new ArgumentNullException("Must not declare a null variable");
 
-            var findOld = from v in _variables
+            var findOld = from v in AllDeclaredVariables
                           where v.ParameterName == variableToDeclare.ParameterName
                           select v;
             if (findOld.FirstOrDefault() != null)
