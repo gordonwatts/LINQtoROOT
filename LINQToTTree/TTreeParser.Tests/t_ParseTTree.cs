@@ -298,8 +298,11 @@ namespace TTreeParser.Tests
 
             foreach (var c in results)
             {
+                Console.WriteLine("Class " + c.Name);
+                Assert.IsFalse(c.Name.Contains("."), string.Format("Class {0} contains bad characters", c.Name));
                 foreach (var item in c.Items)
                 {
+                    Console.WriteLine("  item " + item.Name + " - " + item.ItemType);
                     Assert.IsFalse(item.Name.Contains("."), string.Format("Object {0} contains item {1}", c.Name, item.Name));
                     Assert.IsFalse(item.Name.Contains(":"), string.Format("Object {0} contains item {1}", c.Name, item.Name));
                 }
