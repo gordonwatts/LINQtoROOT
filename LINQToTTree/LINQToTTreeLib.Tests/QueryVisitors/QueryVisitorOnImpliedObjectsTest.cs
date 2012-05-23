@@ -513,8 +513,8 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         public static Expression<Func<CollectionTree, int, ROOTNET.Interface.NTVector3>> VertexVector = (evt, index) =>
             new ROOTNET.NTVector3(evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
-                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
-                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index]);
+                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_y[index],
+                evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_z[index]);
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
@@ -568,7 +568,10 @@ namespace LINQToTTreeLib.Tests
                                         vtxTerm = VertexVector.Invoke(evt, vtxTermIdx)
                                     });
 
-            var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm.Px() > 6.0).Where(p => p.vtxTerm.Pt() > 5.0).Count();
+            var prs = particles.SelectMany(p => p)
+                .Where(p => p.vtxTerm.Px() > 6.0)
+                .Where(p => p.vtxTerm.Pt() > 5.0)
+                .Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
             CheckSingleDecl(query.DumpCode());
