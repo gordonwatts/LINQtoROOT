@@ -350,7 +350,7 @@ function configure-nuget-all ($BuildPath)
 		throw "Unable to locate nuget.exe - though it would be here: $nuget"
 	}
 	
-	$nugetRepository = "http://deeptalk.phys.washington.edu/rootNuGet/nuget;https://go.microsoft.com/fwlink/?LinkID=206669"
+	$nugetRepository = "https://go.microsoft.com/fwlink/?LinkID=206669"
 	
 	$log1 = configure-nuget "$BuildPath\LINQToTTree" $nugetRepository $nuget
 	$log2 = configure-nuget "$BuildPath\LINQToTTreeHelpers" $nugetRepository $nuget
