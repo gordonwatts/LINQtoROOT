@@ -289,21 +289,24 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 #
 # Given a nuget repository directory, figure out what versions of root are present there
 #
-function get-ROOT-versions ($URL)
+function get-ROOT-versions ($NuGetExe)
 {
 	# Get the RSS list of everything that is availible
-	$pkgInfo = [Xml] (new-object net.webclient).downloadstring($URL)
+	#$pkgInfo = [Xml] (new-object net.webclient).downloadstring($URL)
+	$pkgList = &NuGetExe list ROOTNET-Core
 	# List of all the core package names.
-	$corePackages = $pkgInfo.feed.entry | ? {$_.Title.InnerText.Contains("ROOTNET-Core")} | %{ @{ RVersion = $_.Title.InnerText.SubString(13); RDNVersion = $_.GetElementsByTagName("d:Version").Item(0).InnerText} } | % {New-Object PSObject -Property $_ }
+	#$corePackages = $pkgInfo.feed.entry | ? {$_.Title.InnerText.Contains("ROOTNET-Core")} | %{ @{ RVersion = $_.Title.InnerText.SubString(13); RDNVersion = $_.GetElementsByTagName("d:Version").Item(0).InnerText} } | % {New-Object PSObject -Property $_ }
+	$corePackages = $pkgList | %{ ,($_ -split " ") } | % { @{RVersion = $_[0].SubString(13); RDNVersion=$_[1]} } | % {New-Object PSObject -Property $_ }
 	return $corePackages
 }
 
 #
 # Return the list of ROOT versions from our official nuget feed. Use the most recent version of ROOT
 #
-function get-ROOT-Version-Names
+function get-ROOT-Version-Names ($NuGetExe)
 {
-    return $pkgs = get-ROOT-versions "https://go.microsoft.com/fwlink/?LinkID=206669" | %{$_.RVersion}
+    #return $pkgs = get-ROOT-versions "https://go.microsoft.com/fwlink/?LinkID=206669" | %{$_.RVersion}
+    return $pkgs = get-ROOT-versions $NuGetExe | %{$_.RVersion}
 }
 
 #

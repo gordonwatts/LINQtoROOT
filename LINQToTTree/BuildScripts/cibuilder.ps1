@@ -31,6 +31,6 @@ $version = $FileVersion -join "."
 
 #-nugetDistroDirectory $nugetPackageDir 
 $currentPath = Resolve-Path "."
-get-ROOT-Version-Names | %{build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release -ROOTPackage $_}
+get-ROOT-Version-Names ".\LINQToTTree\.nuget\nuget.exe" | %{build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release -ROOTPackage $_}
 
 
