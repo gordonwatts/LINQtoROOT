@@ -7,7 +7,7 @@ param([int] $BuildNumber = 0, [string] $NameSuffix = "-ci")
 
 $mod = Resolve-Path .\LINQToTTree\BuildScripts\BuildUtils.psm1
 $policy = Get-ExecutionPolicy
-Import-Module $mod
+Import-Module -DisableNameChecking $mod
 
 #
 # Some config - which might oneday be passed in as arguments!
