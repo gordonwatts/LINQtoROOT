@@ -293,7 +293,7 @@ function get-ROOT-versions ($NuGetExe)
 {
 	# Get the RSS list of everything that is availible
 	#$pkgInfo = [Xml] (new-object net.webclient).downloadstring($URL)
-	$pkgList = &NuGetExe list ROOTNET-Core
+	$pkgList = & $NuGetExe list ROOTNET-Core
 	# List of all the core package names.
 	#$corePackages = $pkgInfo.feed.entry | ? {$_.Title.InnerText.Contains("ROOTNET-Core")} | %{ @{ RVersion = $_.Title.InnerText.SubString(13); RDNVersion = $_.GetElementsByTagName("d:Version").Item(0).InnerText} } | % {New-Object PSObject -Property $_ }
 	$corePackages = $pkgList | %{ ,($_ -split " ") } | % { @{RVersion = $_[0].SubString(13); RDNVersion=$_[1]} } | % {New-Object PSObject -Property $_ }
