@@ -303,7 +303,7 @@ function get-ROOT-versions ($URL)
 #
 function get-ROOT-Version-Names
 {
-    return $pkgs = get-ROOT-versions "http://deeptalk.phys.washington.edu/rootNuGet/nuget/Packages" | %{$_.RVersion}
+    return $pkgs = get-ROOT-versions "https://go.microsoft.com/fwlink/?LinkID=206669" | %{$_.RVersion}
 }
 
 #
