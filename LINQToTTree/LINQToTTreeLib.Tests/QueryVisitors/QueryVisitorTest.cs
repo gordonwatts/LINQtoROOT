@@ -1479,7 +1479,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TsetTakeSkipCombine()
+        public void TestTakeSkipCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();
 
