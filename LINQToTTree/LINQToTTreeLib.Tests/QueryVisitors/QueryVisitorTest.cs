@@ -1899,6 +1899,25 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
+        [TestMethod]
+        public void TestQueryWithTLZArgument()
+        {
+            // Make sure something from TObject, rather than just TNamed, can be sent accross the wire and
+            // used at the other end.
+
+            var q = new QueriableDummy<ntup>();
+
+            var tlz = new ROOTNET.NTLorentzVector(1.0, 2.0, 3.0, 4.0);
+
+            var final = q.Aggregate(new ROOTNET.NTLorentzVector(), (acc, evt) => acc);
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            // Basically, here, we are just looking for a lack of an exception thrown.
+            Assert.Inconclusive();
+        }
+
         class ntupArray
         {
 #pragma warning disable 0649
