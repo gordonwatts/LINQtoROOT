@@ -382,6 +382,28 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestForNonTObjectCaching()
+        {
+            var f = MakeRootFile("TestForNonTObjectCaching");
+            var query = MakeQuery(0);
+
+            /// Cache a result
+
+            var h = new ROOTNET.NTLorentzVector(1.0, 2.0, 3.0, 4.0);
+            var q = new QueryResultCache();
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
+
+            /// And make sure the lookup gets back the same object!
+
+            var r = Lookup<ROOTNET.Interface.NTLorentzVector>(q, f, "test", null, null, query, new DummyHistoSaver());
+            Assert.IsTrue(r.Item1, "SHould get back the same object");
+            Assert.IsNotNull(r.Item2, "tlz should not be null");
+            Assert.AreEqual(1.0, r.Item2.X(), "x value");
+            Assert.AreEqual(2.0, r.Item2.Y(), "y value");
+            Assert.AreEqual(4.0, r.Item2.T(), "t value");
+        }
+        
+        [TestMethod]
         public void TestForTreeNameChanges()
         {
             var f = MakeRootFile("TestForTreeNameChanges");
