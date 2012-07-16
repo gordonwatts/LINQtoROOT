@@ -37,22 +37,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libHistWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libHistWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libHistWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libMathCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libMathCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libMathCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libPhysicsWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libPhysicsWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libRIOWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libRIOWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libRIOWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libThreadWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\libThreadWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libThreadWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,7 +62,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.2\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -76,9 +76,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="junk_macro_parsettree_CollectionTree.C">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -88,6 +85,9 @@
     <Content Include="query0.cxx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
