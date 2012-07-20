@@ -413,6 +413,16 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector" },
+                Code = new string[] {
+                "TLorentzVector tlzUnique (v1 + TLorentzVector(1.0, 1.0, 1.0, 1.0));",
+                "Inc = &tlzUnique;"
+            })]
+            public static ROOTNET.NTLorentzVector Inc(ROOTNET.NTLorentzVector v1, int amount)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -445,6 +455,35 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public void TestTLZPassing()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var value = q.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0), (a, v) => CPPHelperFunctions.Inc(a, v.run));
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var result = exe.ExecuteScalar<ROOTNET.Interface.NTLorentzVector>(query);
+            Assert.AreEqual(10.0, result.X(), "Number accumulated in X doesn't seem right");
         }
 
         [TestMethod]
