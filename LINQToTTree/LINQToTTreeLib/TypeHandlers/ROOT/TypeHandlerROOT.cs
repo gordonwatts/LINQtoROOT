@@ -44,9 +44,9 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             /// The value is a reference that will do the loading.
             /// 
 
-            var rootObject = expr.Value as ROOTNET.Interface.NTNamed;
+            var rootObject = expr.Value as ROOTNET.Interface.NTObject;
             if (rootObject == null)
-                throw new ArgumentException("the object to be stored must derive from NTNamed! Instead it is of type '" + expr.Value.GetType().Name + "'");
+                throw new ArgumentException("the object to be stored must derive from NTObject! Instead it is of type '" + expr.Value.GetType().Name + "'");
 
             //
             // Queue this object for transfer, get a "unique" name back. This will also double check

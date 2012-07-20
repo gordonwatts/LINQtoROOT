@@ -959,6 +959,12 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+            [CPPCode(Code = new string[] {"Reflex = v1"})]
+            public static ROOTNET.NTLorentzVector Reflex (ROOTNET.NTLorentzVector v1, int v2)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -1909,13 +1915,10 @@ namespace LINQToTTreeLib
 
             var tlz = new ROOTNET.NTLorentzVector(1.0, 2.0, 3.0, 4.0);
 
-            var final = q.Aggregate(new ROOTNET.NTLorentzVector(), (acc, evt) => acc);
+            var final = q.Aggregate(new ROOTNET.NTLorentzVector(), (acc, evt) => CPPHelperFunctions.Reflex(acc, evt.run));
 
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
-
-            // Basically, here, we are just looking for a lack of an exception thrown.
-            Assert.Inconclusive();
         }
 
         class ntupArray
