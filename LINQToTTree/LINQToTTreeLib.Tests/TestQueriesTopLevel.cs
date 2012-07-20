@@ -22,9 +22,7 @@ namespace LINQToTTreeLib.Tests
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
-            QueryResultCacheTest.SetupCacheDir();
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]

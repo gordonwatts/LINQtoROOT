@@ -15,7 +15,7 @@ namespace LINQToTTreeLib.Tests
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new TypeHandlerROOT());
             MEFUtilities.AddPart(new TypeHandlerHelpers());
             MEFUtilities.Compose(new TypeHandlers.TypeHandlerCache());

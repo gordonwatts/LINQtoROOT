@@ -34,6 +34,7 @@ namespace LINQToTTreeLib.Tests
             if (Directory.Exists(tempDir))
                 Directory.Delete(tempDir, true);
             Directory.CreateDirectory(tempDir);
+            TestUtils.ResetLINQLibrary();
         }
 
 #if false

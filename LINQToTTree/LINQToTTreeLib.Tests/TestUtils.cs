@@ -6,6 +6,9 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using NVelocity.App;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -367,6 +370,22 @@ namespace LINQToTTreeLib.Tests
 
             tree.MakeProxy("scanner", "junk.C", null, "nohist");
             return new FileInfo("scanner.h");
+        }
+
+        /// <summary>
+        /// Reset all the counters, etc., in the LINQ library
+        /// </summary>
+        public static void ResetLINQLibrary()
+        {
+            var a = ROOTNET.NTROOT.gROOT.GetApplication();
+            MEFUtilities.MyClassInit();
+            DummyQueryExectuor.GlobalInitalized = false;
+            ArrayExpressionParser.ResetParser();
+            TypeUtils._variableNameCounter = 0;
+            LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls.TypeHandlerReplacementCall.ClearTypeList();
+            var eng = new VelocityEngine();
+            eng.Init();
+            QueryResultCacheTest.SetupCacheDir();
         }
     }
 }

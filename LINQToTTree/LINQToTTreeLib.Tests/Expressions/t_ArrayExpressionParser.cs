@@ -22,8 +22,7 @@ namespace LINQToTTreeLib.Tests
         [TestInitialize]
         public void Setup()
         {
-            ArrayExpressionParser.ResetParser();
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new DealWithInt32());

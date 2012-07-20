@@ -24,9 +24,7 @@ namespace LINQToTTreeLib.ResultOperators
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
-            QueryResultCacheTest.SetupCacheDir();
+            TestUtils.ResetLINQLibrary();
 
             MEFUtilities.AddPart(new TypeHandlers.TypeHandlerConvert());
             MEFUtilities.AddPart(new ROFirstLast());

@@ -23,30 +23,13 @@ namespace LINQToTTreeLib
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
+            TestUtils.ResetLINQLibrary();
+
             ntuple.Reset();
-            ArrayExpressionParser.ResetParser();
-            TypeUtils._variableNameCounter = 0;
-
-            /// Get the path for the other nutple guy correct! Since Pex and tests run from different places in the directory structure we have to
-            /// do some work to find the top leve!
-
-            var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
-            while (currentDir.FindAllFiles("LINQToTTree.sln").Count() == 0)
-            {
-                currentDir = currentDir.Parent;
-            }
-            var projectDir = currentDir.Parent;
-
             ntuple._gCINTLines = null;
             ntuple._gObjectFiles = null;
             ntuple._gProxyFile = null;
 
-            var eng = new VelocityEngine();
-            eng.Init();
-
-            QueryResultCacheTest.SetupCacheDir();
         }
 
         [TestCleanup]

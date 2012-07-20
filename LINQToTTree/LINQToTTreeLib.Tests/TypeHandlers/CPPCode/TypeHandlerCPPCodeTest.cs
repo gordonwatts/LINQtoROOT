@@ -24,10 +24,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             var t = new TypeHandlerCache();
             MEFUtilities.Compose(t);
-            DummyQueryExectuor.GlobalInitalized = false;
         }
 
         [TestCleanup]

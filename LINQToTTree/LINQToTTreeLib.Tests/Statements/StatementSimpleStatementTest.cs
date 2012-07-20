@@ -8,6 +8,7 @@ using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Tests;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -21,7 +22,7 @@ namespace LINQToTTreeLib.Statements
         [TestInitialize]
         public void TestSTart()
         {
-            TypeUtils._variableNameCounter = 0;
+            TestUtils.ResetLINQLibrary();
         }
 
         /// <summary>Test stub for CodeItUp()</summary>

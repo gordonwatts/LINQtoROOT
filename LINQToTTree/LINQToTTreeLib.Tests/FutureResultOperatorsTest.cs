@@ -20,13 +20,7 @@ namespace LINQToTTreeLib
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
-
-            var eng = new VelocityEngine();
-            eng.Init();
-
-            QueryResultCacheTest.SetupCacheDir();
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]
