@@ -33,7 +33,8 @@ namespace LINQToTTreeLib.Variables.Savers
                          where s.CanHandle(iVariable)
                          select s).FirstOrDefault();
             if (saver == null)
-                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.Type.Name);
+                throw new InvalidOperationException("Unable to find an IVariableSaver for " + iVariable.Type.Name
+                    + ". This means that you are trying to transmit an object back from PROOF or a TTree::Process that I don't know how to flatten into a binary stream and combine multiple results from (PROOF)!");
             return saver;
         }
 
