@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -43,7 +44,10 @@ namespace LINQToTTreeLib.Statements
             var result = ResultVariable.ParameterName;
             var setTo = Expression.RawValue;
 
-            yield return result + "=" + setTo + ";";
+            var rIsObj = ResultVariable.Type.IsPointerType() ? "*" : "";
+            var sIsObj = Expression.Type.IsPointerType() ? "*" : "";
+
+            yield return rIsObj + result + "=" + sIsObj + setTo + ";";
         }
 
         public override string ToString()

@@ -130,5 +130,25 @@ namespace LINQToTTreeLib.Tests
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsFalse(result, "Expected combination would work");
         }
+
+        [TestMethod]
+        public void TestAggregateWithInt()
+        {
+            var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var b = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementAggregate(a, b);
+
+            Assert.AreEqual(string.Format("{0}={1};", a.RawValue, b.RawValue), s1.CodeItUp().First(), "Plain assignment");
+        }
+
+        [TestMethod]
+        public void TestAggregateWithTLZ()
+        {
+            var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ROOTNET.NTLorentzVector));
+            var b = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ROOTNET.NTLorentzVector));
+            var s1 = new StatementAggregate(a, b);
+
+            Assert.AreEqual(string.Format("*{0}=*{1};", a.RawValue, b.RawValue), s1.CodeItUp().First(), "Plain assignment");
+        }
     }
 }
