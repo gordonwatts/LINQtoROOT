@@ -259,7 +259,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             /// This should never happen - but we are depending on so many different things to go right here!
             if (result != 1)
-                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - This is a very bad internal error - inspect the file to see if you can see what went wrong and report!!!");
+                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - This is a very bad internal error - inspect the C++ file to see if you can see what went wrong and report - LINQtoTTree should not be able to generate bad C++ code!!!");
 
             _loadedModuleNames.Add(templateRunner.Name.Replace(".", "_"));
         }
