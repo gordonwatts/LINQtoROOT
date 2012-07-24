@@ -109,9 +109,7 @@ private:
 	$v.VariableType $v.VariableName;
 #end
 
-	/// Store an object to send back. We encase it in a FlowObject because the list
-	/// of objects that goes back is "flat" and FlowObject holds onto
-	/// a tag that tells us where this should be stored later. Helps!
+	/// Store an object to send back.
 	void Book(TObject *o)
 	{
 		string objName("");
