@@ -414,9 +414,9 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-            [CPPCode(IncludeFiles = new string[] { "TLorentzVector" },
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
                 Code = new string[] {
-                "TLorentzVector tlzUnique (v1 + TLorentzVector(1.0, 1.0, 1.0, 1.0));",
+                "TLorentzVector tlzUnique (*v1 + TLorentzVector(1.0, 1.0, 1.0, 1.0));",
                 "Inc = &tlzUnique;"
             })]
             public static ROOTNET.NTLorentzVector Inc(ROOTNET.NTLorentzVector v1, int amount)
@@ -458,9 +458,9 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestTLZPassing()
+        public void TestTLZPassing1()
         {
-            var rootFile = TestUtils.CreateFileOfInt(10);
+            var rootFile = TestUtils.CreateFileOfVectorInt(5);
 
             ///
             /// Generate a proxy .h file that we can use
@@ -472,8 +472,11 @@ namespace LINQToTTreeLib
             /// Get a simple query we can "play" with
             /// 
 
-            var q = new QueriableDummy<TestNtupe>();
-            var value = q.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0), (a, v) => CPPHelperFunctions.Inc(a, v.run));
+            var q = new QueriableDummy<TestNtupeArr>();
+            var entries = from evt in q
+                          where evt.myvectorofint.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0), (a, v) => CPPHelperFunctions.Inc(a, v)).X() > 9
+                          select evt;
+            var c = entries.Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
             ///
@@ -481,9 +484,9 @@ namespace LINQToTTreeLib
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
-            var result = exe.ExecuteScalar<ROOTNET.Interface.NTLorentzVector>(query);
-            Assert.AreEqual(10.0, result.X(), "Number accumulated in X doesn't seem right");
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(0, result, "Number accumulated in X doesn't seem right");
         }
 
         [TestMethod]
