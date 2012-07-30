@@ -8,6 +8,7 @@ using Remotion.Linq;
 using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using Remotion.Linq.Parsing.Structure;
 using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
+using LINQToTTreeLib.QueryVisitors.RemoteNew;
 
 namespace LINQToTTreeLib
 {
@@ -153,6 +154,7 @@ namespace LINQToTTreeLib
             var transformerRegistry = ExpressionTransformerRegistry.CreateDefault();
             transformerRegistry.Register(new EnumerableRangeExpressionTransformer());
             transformerRegistry.Register(new CreateTupleExpressionTransformer());
+            transformerRegistry.Register(new RemoteNewExpressionTransformer());
             transformerRegistry.Register<MethodCallExpression>(new ExpressionVariableInvokeExpressionTransformer(new ExpressionType[] { ExpressionType.Call }));
             transformerRegistry.Register<InvocationExpression>(new ExpressionVariableInvokeExpressionTransformer(new ExpressionType[] { ExpressionType.Invoke }));
 

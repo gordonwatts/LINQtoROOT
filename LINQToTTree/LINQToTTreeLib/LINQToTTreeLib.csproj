@@ -152,6 +152,8 @@
     <Compile Include="QueryVisitors\ExpressionVariableInvokeExpressionTransformer.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
+    <Compile Include="QueryVisitors\RemoteNew\RemoteNewExpression.cs" />
+    <Compile Include="QueryVisitors\RemoteNew\RemoteNewExpressionTransformer.cs" />
     <Compile Include="ResultOperators\ROGroup.cs" />
     <Compile Include="Statements\StatementLoopOverGroupItems.cs" />
     <Compile Include="Statements\StatementLoopOverGroups.cs" />
