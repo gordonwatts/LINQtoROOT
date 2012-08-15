@@ -57,34 +57,34 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\libCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.34.01.win32.vc10.2.5\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libGrafWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.5\lib\net40\libGrafWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Tree-v5.34.01.win32.vc10.2.5\lib\net40\libGrafWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libHistWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libHistWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.34.01.win32.vc10.2.5\lib\net40\libHistWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libMathCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libMathCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.34.01.win32.vc10.2.5\lib\net40\libMathCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libNetWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.5\lib\net40\libNetWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Tree-v5.34.01.win32.vc10.2.5\lib\net40\libNetWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libPhysicsWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libPhysicsWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.34.01.win32.vc10.2.5\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libRIOWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libRIOWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.34.01.win32.vc10.2.5\lib\net40\libRIOWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libThreadWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libThreadWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Core-v5.34.01.win32.vc10.2.5\lib\net40\libThreadWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreePlayerWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.5\lib\net40\libTreePlayerWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Tree-v5.34.01.win32.vc10.2.5\lib\net40\libTreePlayerWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.5\lib\net40\libTreeWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Tree-v5.34.01.win32.vc10.2.5\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -97,7 +97,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.34.01.win32.vc10.2.5\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

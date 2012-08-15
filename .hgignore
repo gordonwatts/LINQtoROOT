@@ -1,0 +1,16 @@
+syntax: glob
+LINQToTTree/_UpgradeReport_Files/*
+LINQToTTree/TestResults/*
+*.user
+*.opensdf
+*.sdf
+LINQToTTree/LINQToTTree.suo
+LINQToTTree/LINQToTTree.v11.suo
+LINQToTTree/UpgradeLog.XML
+LINQToTTree/LINQToTTree.sln.docstates.suo
+LINQToTTree/UpgradeLog.htm
+syntax: regexp
+.*/bin/.*
+.*/Debug/.*
+.*/Release/.*
+.*/Packages/.*

@@ -15,7 +15,7 @@ namespace LINQToTreeHelpers.FutureUtils
             {
                 throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
             }
-            ROOTNET.NTDirectory.gDirectory.cd("root:");
+            ROOTNET.NTDirectory.CurrentDirectory().cd("root:");
             return f;
         }
 
