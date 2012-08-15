@@ -78,17 +78,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper, Version=2.5.4576.1114, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\libCoreWrapper.dll</HintPath>
+    <Reference Include="libCoreWrapper, Version=2.5.4580.36588, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Packages\ROOTNET-Dynamic-v5.34.01.win32.vc10.2.5\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libTreeWrapper, Version=2.5.4576.1203, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Packages\ROOTNET-Tree-v5.30.01.win32.vc10.2.5\lib\net40\libTreeWrapper.dll</HintPath>
+    <Reference Include="libTreeWrapper, Version=2.5.4580.36690, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Packages\ROOTNET-Tree-v5.34.01.win32.vc10.2.5\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.5.4576.1025, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.5.4580.36494, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Packages\ROOTNET-Dynamic-v5.34.01.win32.vc10.2.5\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
