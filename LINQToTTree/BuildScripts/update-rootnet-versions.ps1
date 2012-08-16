@@ -8,9 +8,9 @@ param($newVersion)
 # Get a list of all packages.config files.
 #
 
-$allfiles = Get-ChildItem -Recurse packages.config
+$allConfigfiles = Get-ChildItem -Recurse packages.config
 
-if (-not $allfiles)
+if (-not $allConfigfiles)
 {
     Write-Host "No packages.config files found!"
 }
@@ -21,7 +21,15 @@ if (-not $allfiles)
 # was passed in on the command line.
 #
 
-$oldVersions = $allfiles | Get-Content | ? {$_ -match "-(v[\.0-9]+)\.win32"} | % {$Matches[1]} | Sort-Object -Unique
+$oldVersions = $allConfigfiles | Get-Content | ? {$_ -match "-(v[\.0-9]+)\.win32"} | % {$Matches[1]} | Sort-Object -Unique
+
+#
+# We have to do this replacement in the project files as well as the
+# nuget files.
+#
+
+$projectFiles = Get-ChildItem -Recurse *.csproj,*.vcxproj
+$allfiles = $allConfigfiles, $projectFiles
 
 #
 # For each old version, update the file! :-)
