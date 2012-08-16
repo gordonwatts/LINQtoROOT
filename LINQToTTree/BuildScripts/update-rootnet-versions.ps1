@@ -29,7 +29,7 @@ $oldVersions = $allConfigfiles | Get-Content | ? {$_ -match "-(v[\.0-9]+)\.win32
 #
 
 $projectFiles = Get-ChildItem -Recurse *.csproj,*.vcxproj
-$allfiles = $allConfigfiles, $projectFiles
+$allfiles = $allConfigfiles + $projectFiles
 
 #
 # For each old version, update the file! :-)
