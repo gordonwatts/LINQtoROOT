@@ -63,6 +63,16 @@ namespace TTreeParser
         }
 
         /// <summary>
+        /// Is this class a template type or not?
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        public static bool IsTemplateClass (this ROOTNET.Interface.NTClass cls)
+        {
+            return cls.Name.Contains("<");
+        }
+
+        /// <summary>
         /// Figure out what a C++ type would look like in C#. Only simple types are done.
         /// </summary>
         /// <param name="cppTypeName"></param>

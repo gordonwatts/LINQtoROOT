@@ -18,6 +18,7 @@ namespace TTreeParser.Tests
         {
             ROOTNET.NTApplication.GetApplications();
             ROOTNET.NTSystem.gSystem.Load("libRIO");
+            ROOTNET.NTSystem.gSystem.Load("vector");
             SimpleLogging.ResetLogging();
         }
 
@@ -27,13 +28,13 @@ namespace TTreeParser.Tests
         /// <param name="fname"></param>
         /// <param name="treename"></param>
         /// <returns></returns>
-        ROOTNET.NTTree GetTree(string fname, string treename)
+        Tuple<ROOTNET.NTTree, ROOTNET.NTFile> GetTree(string fname, string treename)
         {
             var f = new ROOTNET.NTFile(fname, "READ");
             Assert.IsTrue(f.IsOpen(), "Test file not found");
             var t = f.Get(treename) as ROOTNET.NTTree;
             Assert.IsNotNull(t, "Tree not found");
-            return t;
+            return Tuple.Create(t, f);
         }
 
         [TestMethod]
@@ -42,7 +43,7 @@ namespace TTreeParser.Tests
         {
             var t = GetTree("short-nonsplit.root", "CollectionTree");
             var p = new ParseTTree();
-            var result = p.GenerateClasses(t).ToArray();
+            var result = p.GenerateClasses(t.Item1).ToArray();
             Assert.AreEqual(1, result.Where(c => c.IsTopLevelClass).Count(), "# of top level classes");
             Assert.AreEqual(6, result.Count(), "Total number of classes");
         }

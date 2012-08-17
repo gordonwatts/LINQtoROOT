@@ -364,7 +364,7 @@ namespace TTreeParser
                         if (cls == null || !cls.IsShellTClass() || cls.IsSTLClass())
                         {
                             // This is a class known to ROOT or
-                            // it is something very simple (int, etc.).
+                            // it is something very simple (int, vector<int>, etc.).
                             try
                             {
                                 IClassItem toAdd = ExtractUnsplitKnownClass(leaf);
@@ -433,6 +433,41 @@ namespace TTreeParser
             {
                 if (item == null)
                     throw new ArgumentNullException("Streamer element was null");
+                var itemCls = item.ClassPointer;
+                if (itemCls == null)
+                {
+                    // This is going to be something like "int", or totally unknown!
+                    c.Add(ExtractSimpleItem(new SimpleLeafInfo() { Name = item.FullName, TypeName = item.TypeName, Title = item.FullName }));
+                } else if (!itemCls.IsShellTClass())
+                {
+                    try
+                    {
+                        // We know about this class, and can use ROOT infrasturcutre to do the parsing for it.
+                        // Protect against funny template arguments we can't deal with now - just skip them.
+                        var itemC = ExtractSimpleItem(new SimpleLeafInfo() { Name = item.FullName, TypeName = itemCls.Name, Title = item.FullName });
+                        c.Add(itemC);
+                    }
+                    catch (Exception e)
+                    {
+                        SimpleLogging.Log(string.Format("Unable to deal with streamer type '{0}', skiping member '{1}': {2}", itemCls.Name, item.FullName, e.Message));
+                    }
+                }
+                else
+                {
+                    // Unknown to ROOT class. How we handle this, exactly, depends if it is a template class or if it is
+                    // a raw class.
+                    if (itemCls.IsTemplateClass())
+                    {
+                        var newClassDefs = ExtractROOTTemplateClass(c, item.FullName, itemCls.Name);
+                        clist.AddRange(newClassDefs);
+                    }
+                    else
+                    {
+                        var newClassDefs = new List<ROOTClassShell>(ExtractUnsplitUnknownClass(itemCls));
+                        var thisItem = newClassDefs.Where(cld => cld.Name == itemCls.Name).First();
+                        c.Add(new ItemROOTClass() { ItemType = thisItem.Name, Name = item.FullName, NotAPointer = false });
+                    }
+                }
             }
 
             return clist;
@@ -461,56 +496,67 @@ namespace TTreeParser
         }
 
         /// <summary>
-        /// This is a plane root class. Do the extraction!
+        /// Given a branch that is a template, parse it and add to the class hierarchy.
         /// </summary>
         /// <param name="branch"></param>
         /// <returns></returns>
         private IEnumerable<ROOTClassShell> ExtractROOTTemplateClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch)
         {
+            return ExtractROOTTemplateClass(container, branch.Name, branch.GetClassName());
+        }
+
+        /// <summary>
+        /// We extract the class info for a ROOT class that is a template. We properly deal with the class being templatized
+        /// being another crazy class (or just a vector of int, etc.).
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="memberName"></param>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        private IEnumerable<ROOTClassShell> ExtractROOTTemplateClass(ROOTClassShell container, string memberName, string className)
+        {
             ///
             /// Currently only setup to deal with some very specific types of vectors!
             /// 
 
-            var parsedMatch = TemplateParser.ParseForTemplates(branch.GetClassName()) as TemplateParser.TemplateInfo;
+            var parsedMatch = TemplateParser.ParseForTemplates(className) as TemplateParser.TemplateInfo;
             if (parsedMatch == null)
             {
                 throw new InvalidOperationException("Can't parse a template, but that is the only thing we can do!");
             }
 
             if (parsedMatch.TemplateName != "vector")
-                throw new NotImplementedException("We can't deal with a template other than a vector: " + branch.GetClassName() + ".");
+                throw new NotImplementedException("We can't deal with a template other than a vector: " + className + ".");
 
             if (!(parsedMatch.Arguments[0] is TemplateParser.RegularDecl))
             {
-                throw new NotImplementedException("We can't deal with nested templates: " + branch.GetClassName() + ".");
+                throw new NotImplementedException("We can't deal with nested templates: " + className + ".");
             }
 
             var templateArgClass = (parsedMatch.Arguments[0] as TemplateParser.RegularDecl).Type;
 
-            ///
-            /// Now we take a look at the class. This class must be known by ROOT - it just is not reliably possible
-            /// to re-build a class from the TTree/TLeaf structure, unforunately (except under very limited circumstances).
-            /// To that end, check to see if the class is a stub...
-            /// 
+            //
+            // Now we take a look at the class. If this class is known by root then we will have
+            // a very easy time. No new classes are created or defined and there is nothing
+            // extra to do other than making the element.
+            // 
 
             var classInfo = ROOTNET.NTClass.GetClass(templateArgClass);
-            if (classInfo.ListOfBases == null)
+            if (!classInfo.IsShellTClass())
             {
-                /// Hopefully this check isn't too fragile!!
-                throw new NotImplementedException("ROOT doesn't know about the class '" + templateArgClass + "' so it can't be parsed");
+                container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), memberName));
+                return Enumerable.Empty<ROOTClassShell>();
             }
 
-            ///
-            /// Add a new item into the container
-            /// 
+            //
+            // If the class isn't known by ROOT then we have only one hope - building it out of the
+            // streamer (at this point, where we are in the code path, it is also the case that there
+            // aren't leaf sub-branches here).
+            //
 
-            container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), branch.Name));
-
-            ///
-            /// If this is a ROOT class (like TLorentzVector) then we are done.
-            /// 
-
-            return Enumerable.Empty<ROOTClassShell>();
+            var newClassDefs = ExtractUnsplitUnknownClass(classInfo);
+            container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), memberName));
+            return newClassDefs;
         }
 
         /// <summary>
