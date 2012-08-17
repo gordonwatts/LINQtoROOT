@@ -89,7 +89,21 @@ namespace TTreeParser
 
             Console.WriteLine("Parsing the file '{0}'", inputFile.Name);
 
-            foreach (var cls in ParseTDirectory(f))
+            //
+            // Sometimes the same class is used in two different Tree's in the same file.
+            // They have to be identical when that happens.
+            //
+
+            var classesByName = from sc in ParseTDirectory(f).ToArray()
+                                   group sc by sc.Name;
+            var classesByNameCleaned = from scg in classesByName
+                             where scg.ClassesAreIdnetical()
+                             select scg.First();
+            //
+            // Go throught the classes and attach any extra info required.
+            //
+
+            foreach (var cls in classesByNameCleaned)
             {
                 if (extraInfo.ContainsKey("CINT"))
                 {

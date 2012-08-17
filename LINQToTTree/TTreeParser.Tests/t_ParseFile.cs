@@ -29,6 +29,9 @@ namespace TTreeParser.Tests
             Assert.IsTrue(f.Exists, "input file is there");
             var testit = new ParseTFile();
             var r = testit.ParseFile(f).ToArray();
+
+            // This next line will throw if the classes have the same name.
+            var classMap = r.ToDictionary(c => c.Name, c => c);
         }
     }
 }
