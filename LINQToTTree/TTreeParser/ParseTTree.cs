@@ -360,21 +360,33 @@ namespace TTreeParser
                 {
                     foreach (var leaf in branch.GetListOfLeaves().Cast<ROOTNET.Interface.NTLeaf>())
                     {
-                        try
+                        var cls = ROOTNET.NTClass.GetClass(leaf.TypeName);
+                        if (cls == null || !cls.IsShellTClass() || cls.IsSTLClass())
                         {
-                            IClassItem toAdd = ExtractSimpleItem(leaf);
-                            if (toAdd != null)
-                                container.Add(toAdd);
+                            // This is a class known to ROOT or
+                            // it is something very simple (int, etc.).
+                            try
+                            {
+                                IClassItem toAdd = ExtractUnsplitItem(leaf);
+                                if (toAdd != null)
+                                    container.Add(toAdd);
+                            }
+                            catch (Exception e)
+                            {
+                                SimpleLogging.Log("Info: Unable to transltae ntuple leaf '" + leaf.Name + "': " + e.Message);
+                            }
                         }
-                        catch (Exception e)
+                        else
                         {
-                            SimpleLogging.Log("Info: Unable to transltae ntuple leaf '" + leaf.Name + "': " + e.Message);
+                            // This is a class we will have to bulid metadata for - from the streamer (the # of leaves
+                            // is zero if we are here, so it can only be streamer defiend).
+                            //throw new NotImplementedException();
                         }
                     }
                 }
                 else
                 {
-                    var rc = ExtractROOTClass(container, branch);
+                    var rc = ExtractClass(container, branch);
                     ROOTClassShell lastOne = null;
                     foreach (var rootClass in rc)
                     {
@@ -386,11 +398,11 @@ namespace TTreeParser
         }
 
         /// <summary>
-        /// Extract info for a sub-class! The last one is the top level class we are currently parsing!
+        /// Extract info for a sub-class from a branch! The last one is the top level class we are currently parsing!
         /// </summary>
         /// <param name="branch"></param>
         /// <returns></returns>
-        private IEnumerable<ROOTClassShell> ExtractROOTClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch)
+        private IEnumerable<ROOTClassShell> ExtractClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch)
         {
             ///
             /// First, figure out what kind of class this is. For example, might it be a stl vector? If so,
@@ -478,49 +490,29 @@ namespace TTreeParser
             {
                 throw new NotImplementedException("The class '" + branch.GetClassName() + "' is not known to ROOT's type systems - and I can't proceed unless it is");
             }
-
-            //
-            // Now that we have the cls info, we have to determine what sort of class is this. Is it a known class (TLorentzVector, for example), or
-            // is it something that is declared only in the ROOT file and we don't have any info on how to use it - but we can parse it. This guy will
-            // throw if it can't deal with what we've given it.
-            //
-
-            var newClasses = ParseTTreeReferencedClass(container, branch, cls);
-
-            return newClasses;
-        }
-
-        /// <summary>
-        /// We have a ROOT class referenced in a TTree (either directly in a leaf, or perhaps burried in something else like a vector<>). Figure out, and 
-        /// act appropriately if:
-        /// 1) This is a known root class - like TLorentzVector (do nothing).
-        /// 2) A class defined only in a ROOT file (define it).
-        /// 3) Something else
-        /// </summary>
-        /// <param name="container"></param>
-        /// <param name="branch"></param>
-        /// <param name="cls"></param>
-        /// <returns></returns>
-        private IEnumerable<ROOTClassShell> ParseTTreeReferencedClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch, ROOTNET.Interface.NTClass cls)
-        {
-            //
-            // Strings are not well handled at this point.
-            //
-
             if (cls.Name == "string")
             {
                 throw new NotImplementedException("The class 'string' is not translated yet!");
             }
 
             //
+            // There are several ways this class can be encoded in the file. They broadly break down
+            // into two classes:
+            //
+            //  1) A class that is fully defined by ROOT. TLorentzVector would be such a thing.
+            //      Custom classes that ROOT has a full dictionary for are equivalent and that
+            //      we have a good wrapper for.
+            //  2) A class that is only defined by the contents of the ROOT file. This could be
+            //      as a series of leaves in the TTree (this would be the case of a split class)
+            //      or in the streamer, which is a non-split class' case.
+            //
+
+            //
             // If it has some public data members, then it is a real ROOT class, and whatever was done to define it and make it known
             // to ROOT here we assume will also be done when the full blown LINQ interface is run (i.e. some loaded C++ files).
             //
 
-            if (
-                (cls.ListOfAllPublicDataMembers != null && cls.ListOfAllPublicDataMembers.Entries > 0)
-                || (cls.ListOfAllPublicMethods != null && cls.ListOfAllPublicMethods.Entries > 0)
-                )
+            if (!cls.IsShellTClass())
             {
                 container.Add(new ItemROOTClass(branch.Name, branch.GetClassName()));
                 return Enumerable.Empty<ROOTClassShell>();
@@ -528,10 +520,11 @@ namespace TTreeParser
 
             //
             // If we are here, then we are dealing with a locally defined class. One that ROOT made up on the fly. In short, not one
-            // that we are going to have a translation for. So, we have to build the meta data for it.
+            // that we are going to have a translation for. So, we have to build the meta data for it. This
+            // meta data can come from the tree branch list or from the streamer.
             //
 
-            return BuildMetadataForTTreeClass(container, branch, cls);
+            return BuildMetadataForTTreeClassFromBranches(container, branch, cls);
         }
 
         /// <summary>
@@ -547,7 +540,7 @@ namespace TTreeParser
         /// <param name="branch"></param>
         /// <param name="cls"></param>
         /// <returns></returns>
-        private IEnumerable<ROOTClassShell> BuildMetadataForTTreeClass(ROOTClassShell container, ROOTNET.Interface.NTBranch branch, ROOTNET.Interface.NTClass cls)
+        private IEnumerable<ROOTClassShell> BuildMetadataForTTreeClassFromBranches(ROOTClassShell container, ROOTNET.Interface.NTBranch branch, ROOTNET.Interface.NTClass cls)
         {
             //
             // Get a unique classname. Attempt to do "the right thing". In particular, if this is a clones array of some
@@ -670,16 +663,23 @@ namespace TTreeParser
         }
 
         /// <summary>
-        /// Create the item info struct for an item that is simple. That is, simple arrays, or objects
-        /// that root knows how to deal with. This is actually complex, as ROOT has several ways of specifying this,
-        /// unfortunately.
+        /// Create the classes for dealing with a simple leaf. There a bunch of different things that 
+        /// could be stored in here:
+        /// 1) Simple itmes like "int" or "float"
+        /// 2) Arrays, like int[10], int[nTracks]
+        /// 3) vector[int], TLorentzVector (unsplit) - objects that ROOT both knows about and also
+        ///     are not split.
+        /// 4) unsplit, unknown objects whose structure is defined by a Streamer.
+        ///
+        /// Sorting out which situation is non-trival, unfortunate.
+
         /// 1) There is the item type (leaf.TypeName). This could be "int" or "vector-blah-blah"
         /// 2) In the title there may be a "[stuff]" whihc means if it was "int" it becomes "int[]". :-)
         ///    This is for dealing with a c-style array.
         /// </summary>
         /// <param name="leaf"></param>
         /// <returns></returns>
-        private IClassItem ExtractSimpleItem(ROOTNET.Interface.NTLeaf leaf)
+        private IClassItem ExtractUnsplitItem(ROOTNET.Interface.NTLeaf leaf)
         {
             return ExtractSimpleItem(new SimpleLeafInfo(leaf));
         }

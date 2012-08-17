@@ -35,6 +35,34 @@ namespace TTreeParser
         }
 
         /// <summary>
+        /// If this class is a shell class - that is, it has nothing defined in it, then...
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        public static bool IsShellTClass (this ROOTNET.Interface.NTClass cls)
+        {
+            var v = (cls.ListOfAllPublicDataMembers != null && cls.ListOfAllPublicDataMembers.Entries > 0)
+                || (cls.ListOfAllPublicMethods != null && cls.ListOfAllPublicMethods.Entries > 0);
+            return !v;
+        }
+
+        /// <summary>
+        /// Return true if this class is a STL class.
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        public static bool IsSTLClass(this ROOTNET.Interface.NTClass cls)
+        {
+            var name = cls.Name;
+            if (name.StartsWith("vector"))
+            {
+                if (name.Contains("<"))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Figure out what a C++ type would look like in C#. Only simple types are done.
         /// </summary>
         /// <param name="cppTypeName"></param>

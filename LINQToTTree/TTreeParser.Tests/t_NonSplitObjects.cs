@@ -21,6 +21,12 @@ namespace TTreeParser.Tests
             SimpleLogging.ResetLogging();
         }
 
+        /// <summary>
+        /// Make it easy to load a file.
+        /// </summary>
+        /// <param name="fname"></param>
+        /// <param name="treename"></param>
+        /// <returns></returns>
         ROOTNET.NTTree GetTree(string fname, string treename)
         {
             var f = new ROOTNET.NTFile(fname, "READ");
@@ -35,9 +41,10 @@ namespace TTreeParser.Tests
         public void TestSimpleParse()
         {
             var t = GetTree("short-nonsplit.root", "CollectionTree");
-            //var t = f.Get("btag") as ROOTNET.Interface.NTTree;
-            //var p = new ParseTTree();
-            //var result = p.GenerateClasses(t).ToArray();
+            var p = new ParseTTree();
+            var result = p.GenerateClasses(t).ToArray();
+            Assert.AreEqual(1, result.Where(c => c.IsTopLevelClass).Count(), "# of top level classes");
+            Assert.AreEqual(6, result.Count(), "Total number of classes");
         }
     }
 }
