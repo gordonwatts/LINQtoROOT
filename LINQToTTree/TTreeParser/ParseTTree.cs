@@ -434,6 +434,11 @@ namespace TTreeParser
             {
                 if (item == null)
                     throw new ArgumentNullException("Streamer element was null");
+                if (item.TypeName == "BASE")
+                {
+                    SimpleLogging.Log(string.Format("Item '{0}' has a subclass of type '{1}' - we can't parse inherritance yet", itemName, item.FullName));
+                    continue;
+                }
                 var itemCls = item.ClassPointer;
                 if (itemCls == null)
                 {
