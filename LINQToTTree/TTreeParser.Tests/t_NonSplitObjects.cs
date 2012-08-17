@@ -60,6 +60,19 @@ namespace TTreeParser.Tests
             var ctitems = ct.Items.ToDictionary(citem => citem.Name, citem => citem);
             Assert.IsTrue(ctitems.ContainsKey("EventInfo_p3_McEventInfo"), "EventInfo_p3_McEventInfo");
             Assert.IsTrue(ctitems.ContainsKey("McEventCollection_p5_GEN_EVENT"), "McEventCollection_p5_GEN_EVENT");
+            Assert.AreEqual("EventInfo_p3", ctitems["EventInfo_p3_McEventInfo"].ItemType, "McEventCollection_p5_GEN_EVENT type");
+            Assert.AreEqual("McEventCollection_p5", ctitems["McEventCollection_p5_GEN_EVENT"].ItemType, "McEventCollection_p5_GEN_EVENT type");
+
+            // Check the McEventCollection to make sure things work one level down.
+            var mcec = classMap["McEventCollection_p5"];
+            ctitems = mcec.Items.ToDictionary(citem => citem.Name, citem => citem);
+            Assert.AreEqual(3, ctitems.Count, "# of items in McEventCollection_p5 class");
+            Assert.IsTrue(ctitems.ContainsKey("m_genEvents"), "m_genEvents member missing from McEventCollection_p5");
+            Assert.IsTrue(ctitems.ContainsKey("m_genVertices"), "m_genVerticies member missing from McEventCollection_p5");
+            Assert.IsTrue(ctitems.ContainsKey("m_genParticles"), "m_genParticles member missing from McEventCollection_p5");
+            Assert.AreEqual("GenParticle_p5", ctitems["m_genParticles"].ItemType, "m_genParticles member type");
+            Assert.AreEqual("GenVertex_p5", ctitems["m_genVertices"].ItemType, "m_genVertices member type");
+            Assert.AreEqual("GenEvent_p5", ctitems["m_genEvents"].ItemType, "m_genEvents member type");
         }
     }
 }
