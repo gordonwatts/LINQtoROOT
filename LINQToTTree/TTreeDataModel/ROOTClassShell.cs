@@ -76,5 +76,15 @@ namespace TTreeDataModel
         /// List of classes for whome we need to generate a dictionary.
         /// </summary>
         public ClassForDictionary[] ClassesToGenerate { get; set; }
+
+        /// <summary>
+        /// The name of the class we represent.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>Mostly for debugging aid!</remarks>
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
