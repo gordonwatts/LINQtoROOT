@@ -109,6 +109,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="t_ArrayAnalyzer.cs" />
     <Compile Include="t_NonSplitObjects.cs" />
+    <Compile Include="t_ParseFile.cs" />
     <Compile Include="t_ParseTTree.cs" />
     <Compile Include="t_TemplateParser.cs" />
     <Compile Include="t_Utils.cs" />
@@ -135,6 +136,9 @@
     <None Include="btagobjs.root">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="full-mcfile.root">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="pairedarray.root">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

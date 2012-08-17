@@ -527,26 +527,41 @@ namespace TTreeParser
             var parsedMatch = TemplateParser.ParseForTemplates(className) as TemplateParser.TemplateInfo;
             if (parsedMatch == null)
             {
-                throw new InvalidOperationException("Can't parse a template, but that is the only thing we can do!");
+                SimpleLogging.Log("Type '{0}' is a template, but we can't parse it, so '{1}' will be ignored", className, memberName);
+                return Enumerable.Empty<ROOTClassShell>();
             }
 
             if (parsedMatch.TemplateName != "vector")
-                throw new NotImplementedException("We can't deal with a template other than a vector: " + className + ".");
+            {
+                SimpleLogging.Log("We can only deal with the vector type (not '{0}'), so member '{1}' will be ignored", className, memberName);
+                return Enumerable.Empty<ROOTClassShell>();
+            }
 
             if (!(parsedMatch.Arguments[0] is TemplateParser.RegularDecl))
             {
-                throw new NotImplementedException("We can't deal with nested templates: " + className + ".");
+                SimpleLogging.Log("We can't yet deal with nested templates - '{0}' - so member '{1}' will be ignored", className, memberName);
+                return Enumerable.Empty<ROOTClassShell>();
             }
 
             var templateArgClass = (parsedMatch.Arguments[0] as TemplateParser.RegularDecl).Type;
 
             //
-            // Now we take a look at the class. If this class is known by root then we will have
-            // a very easy time. No new classes are created or defined and there is nothing
-            // extra to do other than making the element.
+            // Now we take a look at the class.
+            //
+            // One case is that it is a simple class, like "Unsigned int" that
+            // isn't known to root at all. That means we hvae no dictionary for vector<unsigned int> - otherwise
+            // we never would have gotten into here. So ignore it. :-)
             // 
 
             var classInfo = ROOTNET.NTClass.GetClass(templateArgClass);
+            if (classInfo == null)
+                return Enumerable.Empty<ROOTClassShell>();
+
+            //
+            // If this class is known by root then we will have
+            // a very easy time. No new classes are created or defined and there is nothing
+            // extra to do other than making the element.
+            
             if (!classInfo.IsShellTClass())
             {
                 container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), memberName));
