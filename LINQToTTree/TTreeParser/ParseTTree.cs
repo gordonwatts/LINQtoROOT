@@ -367,7 +367,7 @@ namespace TTreeParser
                             // it is something very simple (int, etc.).
                             try
                             {
-                                IClassItem toAdd = ExtractUnsplitItem(leaf);
+                                IClassItem toAdd = ExtractUnsplitKnownClass(leaf);
                                 if (toAdd != null)
                                     container.Add(toAdd);
                             }
@@ -380,7 +380,9 @@ namespace TTreeParser
                         {
                             // This is a class we will have to bulid metadata for - from the streamer (the # of leaves
                             // is zero if we are here, so it can only be streamer defiend).
-                            //throw new NotImplementedException();
+
+                            foreach (var item in ExtractUnsplitUnknownClass(cls))
+                                yield return item;
                         }
                     }
                 }
@@ -395,6 +397,45 @@ namespace TTreeParser
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// The class has no def in a TClass. It has no def in the way the branches and leaves are layed out. So,
+        /// we, really, have only one option here. Parse the streamer!
+        /// </summary>
+        /// <param name="leaf"></param>
+        /// <returns></returns>
+        private IEnumerable<ROOTClassShell> ExtractUnsplitUnknownClass(ROOTNET.Interface.NTClass cls)
+        {
+            // Make sure that we are ok here.
+            var streamer = cls.StreamerInfo;
+            if (streamer == null)
+                return Enumerable.Empty<ROOTClassShell>();
+
+            return ExtractClassFromStreamer(cls, streamer);
+        }
+
+        /// <summary>
+        /// Extract a class from a "good" streamer.
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <param name="streamer"></param>
+        /// <returns></returns>
+        private IEnumerable<ROOTClassShell> ExtractClassFromStreamer(ROOTNET.Interface.NTClass cls, ROOTNET.Interface.NTVirtualStreamerInfo sInfo)
+        {
+            // This guy is a class with elements, so go get the elements...
+
+            var c = new ROOTClassShell(cls.Name) { IsTopLevelClass = false };
+            var clist = new List<ROOTClassShell>();
+            clist.Add(c);
+
+            foreach (var item in sInfo.Elements.Cast<ROOTNET.Interface.NTStreamerElement>())
+            {
+                if (item == null)
+                    throw new ArgumentNullException("Streamer element was null");
+            }
+
+            return clist;
         }
 
         /// <summary>
@@ -679,7 +720,7 @@ namespace TTreeParser
         /// </summary>
         /// <param name="leaf"></param>
         /// <returns></returns>
-        private IClassItem ExtractUnsplitItem(ROOTNET.Interface.NTLeaf leaf)
+        private IClassItem ExtractUnsplitKnownClass(ROOTNET.Interface.NTLeaf leaf)
         {
             return ExtractSimpleItem(new SimpleLeafInfo(leaf));
         }
