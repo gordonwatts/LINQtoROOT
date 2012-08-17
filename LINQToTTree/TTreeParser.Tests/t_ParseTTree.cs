@@ -155,6 +155,22 @@ namespace TTreeParser.Tests
             CheckSerialization(result, "GenerateClassesTestCPPName");
         }
 
+        /// <summary>
+        /// Is there some evidence that the garbage collector is getting involved?
+        /// </summary>
+        [TestMethod]
+        public void GenerateAndGC()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithConstIndexedSimpleVector(20);
+            var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
+            var result_itr = p.GenerateClasses(t);
+
+            GC.Collect(GC.MaxGeneration);
+
+            var result = result_itr.ToArray();
+            CheckSerialization(result, "GenerateClassesTestCPPName");
+        }
 #if false
         [TestMethod]
         public void TestGenerateClasses2DCStyleVector()
