@@ -240,17 +240,22 @@ namespace TTreeParser.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotImplementedException))]
         [DeploymentItem("ComplexNtupleTestInput.root")]
-        public void GenerateClassesTestNoClassInfo()
+        public void GenerateClassesWithCustomClassesAndSubClasses()
         {
-            /// There are some classes in here that ROOT dosen't know about - so we
-            /// need to detect that and "bomb".
             var f = new ROOTNET.NTFile("ComplexNtupleTestInput.root", "READ");
             Assert.IsTrue(f.IsOpen(), "Test file not found");
             var t = f.Get("btag") as ROOTNET.Interface.NTTree;
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
+
+            // Make sure the global features are right
+            Assert.AreEqual(1, result.Where(c => c.IsTopLevelClass).Count(), "# of top level classes");
+            Assert.AreEqual(3, result.Length, "# of classes");
+            var classMap = result.ToDictionary(r => r.Name, r => r);
+            Assert.IsTrue(classMap.ContainsKey("btag"), "btag class present");
+            Assert.IsTrue(classMap.ContainsKey("MuonInBJet"), "MuonInBJet class present");
+            Assert.IsTrue(classMap.ContainsKey("BTagJet"), "btag class present");
         }
 
         [TestMethod]
