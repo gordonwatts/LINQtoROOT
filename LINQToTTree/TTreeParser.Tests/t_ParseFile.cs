@@ -32,6 +32,9 @@ namespace TTreeParser.Tests
 
             // This next line will throw if the classes have the same name.
             var classMap = r.ToDictionary(c => c.Name, c => c);
+            Assert.IsFalse(r.Where(c => c.Items.Where(i => i.Name.Contains(":")).Any()).Any(), "Bad C# name in item name");
+            Assert.IsFalse(r.Where(c => c.Items.Where(i => i.ItemType.Contains(":")).Any()).Any(), "Bad C# name in item type");
+            Assert.IsFalse(r.Where(c => c.Name.Contains(":")).Any(), "Bad C# name");
         }
     }
 }

@@ -396,8 +396,8 @@ namespace TTreeParser
         {
             // This guy is a class with elements, so go get the elements...
 
-            var c = new ROOTClassShell(cls.Name) { IsTopLevelClass = false };
-            container.Add(new ItemROOTClass() { Name = itemName, ItemType = cls.Name, NotAPointer = false });
+            var c = new ROOTClassShell(cls.Name.SanitizedName()) { IsTopLevelClass = false };
+            container.Add(new ItemROOTClass() { Name = itemName, ItemType = cls.Name.SanitizedName(), NotAPointer = false });
             var clist = new List<ROOTClassShell>();
             clist.Add(c);
 
