@@ -184,7 +184,8 @@ namespace TTreeParser
                 {
                     if (!clsInfo.IsShellTClass())
                         typ = "ROOTNET.Interface.N" + typ;
-
+                    else
+                        typ = typ.SanitizedName();
                 }
                 else
                 {
