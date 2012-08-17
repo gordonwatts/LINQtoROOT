@@ -387,6 +387,16 @@ namespace TTreeParser
         }
 
         /// <summary>
+        /// Extract the unsplit unknown class by parsing the streamer.
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        private IEnumerable<ROOTClassShell> ExtractUnsplitUnknownClass(ROOTNET.Interface.NTClass cls)
+        {
+            return ExtractUnsplitUnknownClass(null, null, cls);
+        }
+
+        /// <summary>
         /// Extract a class from a "good" streamer.
         /// </summary>
         /// <param name="cls"></param>
@@ -397,7 +407,8 @@ namespace TTreeParser
             // This guy is a class with elements, so go get the elements...
 
             var c = new ROOTClassShell(cls.Name.SanitizedName()) { IsTopLevelClass = false };
-            container.Add(new ItemROOTClass() { Name = itemName, ItemType = cls.Name.SanitizedName(), NotAPointer = false });
+            if (container != null)
+                container.Add(new ItemROOTClass() { Name = itemName, ItemType = cls.Name.SanitizedName(), NotAPointer = false });
             var clist = new List<ROOTClassShell>();
             clist.Add(c);
 
@@ -545,7 +556,8 @@ namespace TTreeParser
             // aren't leaf sub-branches here).
             //
 
-            var newClassDefs = ExtractUnsplitUnknownClass(container, memberName, classInfo);
+            var newClassDefs = ExtractUnsplitUnknownClass(classInfo);
+            container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), memberName));
             return newClassDefs;
         }
 

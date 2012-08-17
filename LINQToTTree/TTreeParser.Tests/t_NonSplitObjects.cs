@@ -70,9 +70,9 @@ namespace TTreeParser.Tests
             Assert.IsTrue(ctitems.ContainsKey("m_genEvents"), "m_genEvents member missing from McEventCollection_p5");
             Assert.IsTrue(ctitems.ContainsKey("m_genVertices"), "m_genVerticies member missing from McEventCollection_p5");
             Assert.IsTrue(ctitems.ContainsKey("m_genParticles"), "m_genParticles member missing from McEventCollection_p5");
-            Assert.AreEqual("GenParticle_p5", ctitems["m_genParticles"].ItemType, "m_genParticles member type");
-            Assert.AreEqual("GenVertex_p5", ctitems["m_genVertices"].ItemType, "m_genVertices member type");
-            Assert.AreEqual("GenEvent_p5", ctitems["m_genEvents"].ItemType, "m_genEvents member type");
+            Assert.AreEqual("GenParticle_p5[]", ctitems["m_genParticles"].ItemType, "m_genParticles member type");
+            Assert.AreEqual("GenVertex_p5[]", ctitems["m_genVertices"].ItemType, "m_genVertices member type");
+            Assert.AreEqual("GenEvent_p5[]", ctitems["m_genEvents"].ItemType, "m_genEvents member type");
 
             // spot check one of the low-level objects.
             var gevts = classMap["GenEvent_p5"];
