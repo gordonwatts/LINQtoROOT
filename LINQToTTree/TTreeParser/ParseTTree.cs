@@ -381,7 +381,7 @@ namespace TTreeParser
                             // This is a class we will have to bulid metadata for - from the streamer (the # of leaves
                             // is zero if we are here, so it can only be streamer defiend).
 
-                            foreach (var item in ExtractUnsplitUnknownClass(cls))
+                            foreach (var item in ExtractUnsplitUnknownClass(container, leaf.Name, cls))
                                 yield return item;
                         }
                     }
@@ -405,14 +405,14 @@ namespace TTreeParser
         /// </summary>
         /// <param name="leaf"></param>
         /// <returns></returns>
-        private IEnumerable<ROOTClassShell> ExtractUnsplitUnknownClass(ROOTNET.Interface.NTClass cls)
+        private IEnumerable<ROOTClassShell> ExtractUnsplitUnknownClass(ROOTClassShell container, string itemName, ROOTNET.Interface.NTClass cls)
         {
             // Make sure that we are ok here.
             var streamer = cls.StreamerInfo;
             if (streamer == null)
                 return Enumerable.Empty<ROOTClassShell>();
 
-            return ExtractClassFromStreamer(cls, streamer);
+            return ExtractClassFromStreamer(container, itemName, cls, streamer);
         }
 
         /// <summary>
@@ -421,11 +421,12 @@ namespace TTreeParser
         /// <param name="cls"></param>
         /// <param name="streamer"></param>
         /// <returns></returns>
-        private IEnumerable<ROOTClassShell> ExtractClassFromStreamer(ROOTNET.Interface.NTClass cls, ROOTNET.Interface.NTVirtualStreamerInfo sInfo)
+        private IEnumerable<ROOTClassShell> ExtractClassFromStreamer(ROOTClassShell container, string itemName, ROOTNET.Interface.NTClass cls, ROOTNET.Interface.NTVirtualStreamerInfo sInfo)
         {
             // This guy is a class with elements, so go get the elements...
 
             var c = new ROOTClassShell(cls.Name) { IsTopLevelClass = false };
+            container.Add(new ItemROOTClass() { Name = itemName, ItemType = cls.Name, NotAPointer = false });
             var clist = new List<ROOTClassShell>();
             clist.Add(c);
 
@@ -463,9 +464,8 @@ namespace TTreeParser
                     }
                     else
                     {
-                        var newClassDefs = new List<ROOTClassShell>(ExtractUnsplitUnknownClass(itemCls));
-                        var thisItem = newClassDefs.Where(cld => cld.Name == itemCls.Name).First();
-                        c.Add(new ItemROOTClass() { ItemType = thisItem.Name, Name = item.FullName, NotAPointer = false });
+                        var newClassDefs = new List<ROOTClassShell>(ExtractUnsplitUnknownClass(c, item.FullName, itemCls));
+                        clist.AddRange(newClassDefs);
                     }
                 }
             }
@@ -554,8 +554,7 @@ namespace TTreeParser
             // aren't leaf sub-branches here).
             //
 
-            var newClassDefs = ExtractUnsplitUnknownClass(classInfo);
-            container.Add(new ItemVector(TemplateParser.TranslateToCSharp(parsedMatch), memberName));
+            var newClassDefs = ExtractUnsplitUnknownClass(container, memberName, classInfo);
             return newClassDefs;
         }
 

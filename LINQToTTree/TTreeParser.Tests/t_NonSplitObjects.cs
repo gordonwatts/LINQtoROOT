@@ -46,6 +46,20 @@ namespace TTreeParser.Tests
             var result = p.GenerateClasses(t.Item1).ToArray();
             Assert.AreEqual(1, result.Where(c => c.IsTopLevelClass).Count(), "# of top level classes");
             Assert.AreEqual(6, result.Count(), "Total number of classes");
+            var classMap = result.ToDictionary(i => i.Name, i => i);
+            Assert.IsTrue(classMap.ContainsKey("EventInfo_p3"), "EventInfo_p3");
+            Assert.IsTrue(classMap.ContainsKey("McEventCollection_p5"), "EventInfo_p3");
+            Assert.IsTrue(classMap.ContainsKey("GenParticle_p5"), "EventInfo_p3");
+            Assert.IsTrue(classMap.ContainsKey("GenVertex_p5"), "EventInfo_p3");
+            Assert.IsTrue(classMap.ContainsKey("GenEvent_p5"), "EventInfo_p3");
+            Assert.IsTrue(classMap.ContainsKey("CollectionTree"), "CollectionTree");
+
+            // Check collection tree has the right top level stuff
+            var ct = classMap["CollectionTree"];
+            Assert.AreEqual(2, ct.Items.Count, "# of items in collection tree");
+            var ctitems = ct.Items.ToDictionary(citem => citem.Name, citem => citem);
+            Assert.IsTrue(ctitems.ContainsKey("EventInfo_p3_McEventInfo"), "EventInfo_p3_McEventInfo");
+            Assert.IsTrue(ctitems.ContainsKey("McEventCollection_p5_GEN_EVENT"), "McEventCollection_p5_GEN_EVENT");
         }
     }
 }
