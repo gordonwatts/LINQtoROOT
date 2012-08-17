@@ -832,7 +832,7 @@ namespace TTreeParser
 
             if (toAdd == null || toAdd.ItemType == null)
             {
-                throw new InvalidOperationException("Unknown type - cant' translate '" + className + "'.");
+                throw new InvalidOperationException("Unknown type - can't translate '" + className + "'.");
             }
             return toAdd;
         }
