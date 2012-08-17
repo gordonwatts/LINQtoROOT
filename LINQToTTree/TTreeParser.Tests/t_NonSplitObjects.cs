@@ -73,6 +73,15 @@ namespace TTreeParser.Tests
             Assert.AreEqual("GenParticle_p5", ctitems["m_genParticles"].ItemType, "m_genParticles member type");
             Assert.AreEqual("GenVertex_p5", ctitems["m_genVertices"].ItemType, "m_genVertices member type");
             Assert.AreEqual("GenEvent_p5", ctitems["m_genEvents"].ItemType, "m_genEvents member type");
+
+            // spot check one of the low-level objects.
+            var gevts = classMap["GenEvent_p5"];
+            ctitems = gevts.Items.ToDictionary(citem => citem.Name, citem => citem);
+            Assert.AreEqual(20, ctitems.Count, "# of items in GenEvent_p5 class (minus # that aren't basic types)");
+            Assert.IsTrue(ctitems.ContainsKey("m_mpi"), "m_mpi member missing");
+            Assert.AreEqual("int", ctitems["m_mpi"].ItemType, "m_mpi type");
+            Assert.IsTrue(ctitems.ContainsKey("m_weights"), "m_weight smember missing");
+            Assert.AreEqual("double[]", ctitems["m_weights"].ItemType, "m_weights type");
         }
     }
 }
