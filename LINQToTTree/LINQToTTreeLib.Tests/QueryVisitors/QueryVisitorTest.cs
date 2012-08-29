@@ -1917,5 +1917,52 @@ namespace LINQToTTreeLib
 
             MakeSureNoVariable(code, "jets");
         }
+
+        class SelectionObject
+        {
+            public Expression<Func<ntupWithObjects, bool>> Selection
+            {
+                get
+                {
+                    return evt => evt.jets.Count() > 0;
+                }
+            }
+            public Expression<Func<subNtupleObjects, bool>> SelectionJet
+            {
+                get
+                {
+                    return jet => jet.var1 > 0;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestQueryUsesPropertyFunction()
+        {
+            // In the wild there is a case where a property which returns a function can't be used
+            // in a Where call. Looking for a crash.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var obj = new SelectionObject();
+            var r = q.Where(obj.Selection).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestQueryUsesPropertyFunction2()
+        {
+            // In the wild there is a case where a property which returns a function can't be used
+            // in a Where call. Looking for a crash.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var obj = new SelectionObject();
+            Expression<Func<ntupWithObjects, subNtupleObjects>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
+            var r = q.Where(evt => test.Invoke(evt).var1 > 0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
     }
 }
