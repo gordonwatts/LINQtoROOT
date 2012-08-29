@@ -73,8 +73,8 @@
     <Reference Include="libThreadWrapper">
       <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.5\lib\net40\libThreadWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Linq, Version=1.13.102.2, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>..\Libraries\Remotion\Remotion.Linq.dll</HintPath>
+    <Reference Include="Remotion.Linq">
+      <HintPath>..\packages\Remotion.Linq.1.13.164\lib\net35\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
