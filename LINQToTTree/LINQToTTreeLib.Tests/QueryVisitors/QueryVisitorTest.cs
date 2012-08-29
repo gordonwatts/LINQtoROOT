@@ -957,6 +957,12 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+            [CPPCode(Code = new[] {" Inc = a"})]
+            public static ROOTNET.Interface.NTLorentzVector Inc (ROOTNET.Interface.NTLorentzVector a, int value)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -1961,6 +1967,18 @@ namespace LINQToTTreeLib
             var obj = new SelectionObject();
             Expression<Func<ntupWithObjects, subNtupleObjects>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
             var r = q.Where(evt => test.Invoke(evt).var1 > 0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestAggragateTypeSaftey()
+        {
+            // Make sure that we can infer things from interface to object.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+            var value = q.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0) as ROOTNET.Interface.NTLorentzVector,
+                (a, v) => CPPHelperFunctions.Inc(a, v.jets[0].var1));
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
         }
