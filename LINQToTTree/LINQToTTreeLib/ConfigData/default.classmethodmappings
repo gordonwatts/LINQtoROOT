@@ -19,7 +19,7 @@ Math Tanh(System.Double) => std::tanh(double)
 Math Asin(System.Double) => std::asin(double)
 Math Acos(System.Double) => std::acos(double)
 Math Atan(System.Double) => std::atan(double)
-Math Atan2(System.Double, double) => std::atan(double, double)
+Math Atan2(System.Double, System.Double) => std::atan2(double, double)
 
 Math Sqrt(System.Double) => std::sqrt(double)
 Math Sqrt(System.Single) => std::sqrt(float)

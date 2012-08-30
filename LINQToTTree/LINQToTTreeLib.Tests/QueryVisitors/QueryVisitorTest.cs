@@ -1244,6 +1244,23 @@ namespace LINQToTTreeLib
             Assert.IsTrue(arr[0].Contains("std::abs"), "second function call not found");
         }
 
+        [TestMethod]
+        public void TestATan2Call()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = from evt in q
+                     select from j in evt.jets
+                            select Math.Atan2((double)j.var1, (double)j.var2);
+            var r2 = r1.SelectMany(evt => evt).Where(c => c > 0.1).Count();
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+                          where l.Contains("std::atan2")
+                          select l;
+            var arr = theline.ToArray();
+            Assert.AreEqual(1, arr.Length, "Expecting one reference to atan2!");
+        }
+
         /// <summary>
         /// Do the code combination we require!
         /// </summary>
