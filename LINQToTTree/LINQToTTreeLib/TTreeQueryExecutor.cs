@@ -587,6 +587,12 @@ namespace LINQToTTreeLib
             set { _exeReq.CleanupQuery = value; }
         }
 
+        public bool CompileDebug
+        {
+            get { return _exeReq.CompileDebug; }
+            set { _exeReq.CompileDebug = value; }
+        }
+
         /// <summary>
         /// Get/Set query cache control. If set true then the query cache will be ignored and all quieries will be re-run.
         /// </summary>

@@ -100,6 +100,23 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Get/Set the compile debug flag. When the generated C++ is compiled, if this flag is set, line number
+        /// symbols are included. If your query is crashing in generated code, setting this can help pin point
+        /// exeactly where the crash is occuring. This is less useful when doing remote execution (i.e. PROOF).
+        /// </summary>
+        public bool CompileDebug
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).CompileDebug = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).CompileDebug;
+            }
+        }
+
+        /// <summary>
         /// Get/Set flag telling the query processor to re-check the dates of the input file list when deciding
         /// if a cache result is valie... This can
         /// dramatically slow down a run if the files are accross the network (and there are 100's of input files).
