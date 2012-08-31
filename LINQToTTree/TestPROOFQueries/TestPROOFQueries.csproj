@@ -36,44 +36,57 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.5\lib\net40\libCoreWrapper.dll</HintPath>
+    <Reference Include="libCoreWrapper, Version=2.6.4625.13795, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.6\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libGrafWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.5\lib\net40\libGrafWrapper.dll</HintPath>
+    <Reference Include="libGrafWrapper, Version=2.6.4625.13874, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libGrafWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libHistWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.5\lib\net40\libHistWrapper.dll</HintPath>
+    <Reference Include="libHistWrapper, Version=2.6.4625.13848, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libHistWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libMathCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.5\lib\net40\libMathCoreWrapper.dll</HintPath>
+    <Reference Include="libMathCoreWrapper, Version=2.6.4625.13804, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libMathCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libNetWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.5\lib\net40\libNetWrapper.dll</HintPath>
+    <Reference Include="libNetWrapper, Version=2.6.4625.13845, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libNetWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libPhysicsWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.5\lib\net40\libPhysicsWrapper.dll</HintPath>
+    <Reference Include="libPhysicsWrapper, Version=2.6.4625.13807, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libProofDrawWrapper">
-      <HintPath>..\packages\ROOTNET-PROOF-v5.32.04.win32.vc10.2.5\lib\net40\libProofDrawWrapper.dll</HintPath>
+    <Reference Include="libProofDrawWrapper, Version=2.6.4625.13895, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-PROOF-v5.32.04.win32.vc10.2.6\lib\net40\libProofDrawWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libProofPlayerWrapper">
-      <HintPath>..\packages\ROOTNET-PROOF-v5.32.04.win32.vc10.2.5\lib\net40\libProofPlayerWrapper.dll</HintPath>
+    <Reference Include="libProofPlayerWrapper, Version=2.6.4625.13944, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-PROOF-v5.32.04.win32.vc10.2.6\lib\net40\libProofPlayerWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libProofWrapper">
-      <HintPath>..\packages\ROOTNET-PROOF-v5.32.04.win32.vc10.2.5\lib\net40\libProofWrapper.dll</HintPath>
+    <Reference Include="libProofWrapper, Version=2.6.4625.13926, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-PROOF-v5.32.04.win32.vc10.2.6\lib\net40\libProofWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libRIOWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.5\lib\net40\libRIOWrapper.dll</HintPath>
+    <Reference Include="libRIOWrapper, Version=2.6.4625.13827, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libRIOWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libThreadWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.5\lib\net40\libThreadWrapper.dll</HintPath>
+    <Reference Include="libThreadWrapper, Version=2.6.4625.13809, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libThreadWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libTreePlayerWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.5\lib\net40\libTreePlayerWrapper.dll</HintPath>
+    <Reference Include="libTreePlayerWrapper, Version=2.6.4625.13897, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libTreePlayerWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libTreeWrapper">
-      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.5\lib\net40\libTreeWrapper.dll</HintPath>
+    <Reference Include="libTreeWrapper, Version=2.6.4625.13885, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -82,8 +95,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.5\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.6.4625.13706, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.6\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

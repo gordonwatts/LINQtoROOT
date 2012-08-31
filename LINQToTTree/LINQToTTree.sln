@@ -73,8 +73,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PROOF", "PROOF", "{36F8C76C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPROOFQueries", "TestPROOFQueries\TestPROOFQueries.csproj", "{44F2211C-53E4-4298-8BCE-2C0DFE111D34}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bogus3", "bogus3", "{064E5818-F018-426C-B331-2AAEC85FD650}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = LINQToTTree.vsmdi
