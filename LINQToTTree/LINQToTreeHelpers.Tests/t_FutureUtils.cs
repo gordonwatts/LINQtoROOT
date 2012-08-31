@@ -86,5 +86,33 @@ namespace LINQToTreeHelpers.Tests
             Assert.IsTrue(t3.HasValue, "has a value");
             Assert.AreEqual(9, t3.Value, "Value");
         }
+
+        [TestMethod]
+        public void TestFuturesSubtract()
+        {
+            var t1 = new test_future<int>(6);
+            var t2 = new test_future<int>(6);
+
+            var t3 = t1.Subtract(t2);
+            Assert.IsTrue(t3.HasValue, "Has Value");
+            Assert.AreEqual(0, t3.Value, "value");
+            var t4 = t1.Subtract(6);
+            Assert.IsTrue(t4.HasValue, "t4 has value");
+            Assert.AreEqual(0, t4.Value, "value for plain subtract");
+        }
+
+        [TestMethod]
+        public void TestFuturesMultiply()
+        {
+            var t1 = new test_future<int>(6);
+            var t2 = new test_future<int>(6);
+
+            var t3 = t1.MultiplyBy(t2);
+            Assert.IsTrue(t3.HasValue, "Has Value");
+            Assert.AreEqual(36, t3.Value, "value");
+            var t4 = t1.MultiplyBy(6);
+            Assert.IsTrue(t4.HasValue, "t4 has value");
+            Assert.AreEqual(36, t4.Value, "value for plain subtract");
+        }
     }
 }
