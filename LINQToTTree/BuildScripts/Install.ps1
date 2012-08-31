@@ -41,13 +41,44 @@ function Get-RelativePath ([string] $Folder, [String] $filePath, [Switch] $Resol
 $buildProject = Get-MSBuildProject $project.Name
 
 #
-# Next, add the import statements
+# Next, add the import statement to the project file. First,
+# copy the file to the proper place.
 #
 
-$buildTargetFile = Join-Path $toolsPath "LINQTargets.targets"
-$projectFolder = ([System.IO.FileInfo] $project.FullName).DirectoryName
-$relBuildTargetFile = Get-RelativePath $projectFolder $buildTargetFile 
+$solutionTargetName = ".LINQToTTree"
+$solution = $project.DTE.Solution
 
+$buildTargetFile = Join-Path $toolsPath "LINQTargets.targets"
+$solutionFolderName = ([System.IO.FileInfo] $solution.FullName).DirectoryName
+$linqFolderName = "$solutionFolderName\$solutionTargetName"
+$linqBuildTargetFile = "$linqFolderName\LINQTargets.targets"
+if (-not (Test-Path "$linqFolderName"))
+{
+    New-Item -ItemType "Directory" $linqFolderName
+}
+Copy-Item $buildTargetFile $linqBuildTargetFile
+
+#
+# Now, add it into a folder in the solution. Make sure not to add it if it is already there!
+#
+
+$solutionFolderProject = $solution.Projects | ? { $_.ProjectName -eq $solutionTargetName }
+if (-not $solutionFolderProject)
+{
+    $solution.AddSolutionFolder($solutionTargetName)
+    $solutionFolderProject = $solution.Projects | ? { $_.ProjectName -eq $solutionTargetName }
+}
+
+$solutionFolderProject.ProjectItems.AddFromFile($linqBuildTargetFile)
+
+#
+# Finally, now that we have the location, add it into the project build instructions itself.
+# Do it with a relative path to make sure this will survive going in and out of source control
+# to differe
+#
+
+$projectFolder = ([System.IO.FileInfo] $project.FullName).DirectoryName
+$relBuildTargetFile = Get-RelativePath $projectFolder $linqBuildTargetFile 
 $buildProject.Xml.AddImport($relBuildTargetFile)
 
 #
