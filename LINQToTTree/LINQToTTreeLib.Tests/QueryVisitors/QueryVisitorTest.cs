@@ -960,11 +960,11 @@ namespace LINQToTTreeLib
 
             [CPPCode(Code = new string[] {"Reflex = v1"})]
             public static ROOTNET.NTLorentzVector Reflex (ROOTNET.NTLorentzVector v1, int v2)
-            [CPPCode(Code = new[] {" Inc = a"})]
-            public static ROOTNET.Interface.NTLorentzVector Inc (ROOTNET.Interface.NTLorentzVector a, int value)
             {
                 throw new NotImplementedException();
             }
+            [CPPCode(Code = new[] { " Inc = a" })]
+            public static ROOTNET.Interface.NTLorentzVector Inc(ROOTNET.Interface.NTLorentzVector a, int value)
             {
                 throw new NotImplementedException();
             }
