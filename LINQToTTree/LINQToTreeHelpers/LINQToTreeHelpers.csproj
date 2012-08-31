@@ -113,8 +113,9 @@
     <Reference Include="Remotion.Linq">
       <HintPath>..\packages\Remotion.Linq.1.13.164\lib\net35\Remotion.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Sprache">
-      <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
+    <Reference Include="Sprache, Version=1.10.0.11, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Sprache.1.10.0.11\lib\net40\Sprache.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

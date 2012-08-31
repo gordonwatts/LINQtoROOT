@@ -2,8 +2,6 @@
 
 namespace LINQToTreeHelpers.Tests
 {
-
-
     /// <summary>
     ///This is a test class for TestDataSetFinder and is intended
     ///to contain all TestDataSetFinder Unit Tests
