@@ -114,5 +114,16 @@ namespace LINQToTreeHelpers.Tests
             Assert.IsTrue(t4.HasValue, "t4 has value");
             Assert.AreEqual(36, t4.Value, "value for plain subtract");
         }
+
+        [TestMethod]
+        public void TestCast()
+        {
+            var t1 = new test_future<ROOTNET.NTLorentzVector>(new ROOTNET.NTLorentzVector(10, 11, 12, 13));
+            var t2 = t1.Cast().To<ROOTNET.Interface.NTLorentzVector>();
+            Assert.IsTrue(t2.HasValue, "t2 has value");
+            Assert.IsNotNull(t2.Value, "cast guy should not be null");
+            var t3 = t1.Cast().To<ROOTNET.Interface.NTNamed>();
+            Assert.IsNull(t3.Value, "value is null");
+        }
     }
 }

@@ -400,6 +400,41 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
+        /// Helper class for casting. We need this otherwise we will have to have
+        /// a two-template argument for the castto operator. :(
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        public class CastCapture<TSource>
+        {
+            private readonly IFutureValue<TSource> _value;
+            public CastCapture(IFutureValue<TSource> v)
+            {
+                _value = v;
+            }
+
+            public IFutureValue<TResult> To<TResult> ()
+                where TResult : class
+            {
+                return new DoFutureOperator<TResult>(
+                    () => _value.Value as TResult,
+                    () => _value.HasValue
+                    );
+            }
+        }
+
+        /// <summary>
+        /// Cast an IFutureValue from one class to another.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static CastCapture<TSource> Cast<TSource>(this IFutureValue<TSource> source)
+        {
+            return new CastCapture<TSource>(source);
+        }
+
+        /// <summary>
         /// Apply an operation to a future value in the future. For fluent programing's sake,
         /// return the same object.
         /// </summary>
