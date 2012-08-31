@@ -16,24 +16,6 @@ namespace TTreeParser.Tests
     [TestClass]
     public class ParseTTreeTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
         [TestInitialize]
         public void LoadItUp()
         {
@@ -173,6 +155,22 @@ namespace TTreeParser.Tests
             CheckSerialization(result, "GenerateClassesTestCPPName");
         }
 
+        /// <summary>
+        /// Is there some evidence that the garbage collector is getting involved?
+        /// </summary>
+        [TestMethod]
+        public void GenerateAndGC()
+        {
+            var t = TTreeParserCPPTests.CreateTrees.CreateTreeWithConstIndexedSimpleVector(20);
+            var p = new ParseTTree();
+            p.ProxyGenerationLocation = new DirectoryInfo(".");
+            var result_itr = p.GenerateClasses(t);
+
+            GC.Collect(GC.MaxGeneration);
+
+            var result = result_itr.ToArray();
+            CheckSerialization(result, "GenerateClassesTestCPPName");
+        }
 #if false
         [TestMethod]
         public void TestGenerateClasses2DCStyleVector()
@@ -258,17 +256,22 @@ namespace TTreeParser.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotImplementedException))]
         [DeploymentItem("ComplexNtupleTestInput.root")]
-        public void GenerateClassesTestNoClassInfo()
+        public void GenerateClassesWithCustomClassesAndSubClasses()
         {
-            /// There are some classes in here that ROOT dosen't know about - so we
-            /// need to detect that and "bomb".
             var f = new ROOTNET.NTFile("ComplexNtupleTestInput.root", "READ");
             Assert.IsTrue(f.IsOpen(), "Test file not found");
             var t = f.Get("btag") as ROOTNET.Interface.NTTree;
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
+
+            // Make sure the global features are right
+            Assert.AreEqual(1, result.Where(c => c.IsTopLevelClass).Count(), "# of top level classes");
+            Assert.AreEqual(3, result.Length, "# of classes");
+            var classMap = result.ToDictionary(r => r.Name, r => r);
+            Assert.IsTrue(classMap.ContainsKey("btag"), "btag class present");
+            Assert.IsTrue(classMap.ContainsKey("MuonInBJet"), "MuonInBJet class present");
+            Assert.IsTrue(classMap.ContainsKey("BTagJet"), "btag class present");
         }
 
         [TestMethod]

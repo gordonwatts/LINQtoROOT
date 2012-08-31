@@ -21,10 +21,9 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             var t = new TypeHandlerCache();
             MEFUtilities.Compose(t);
-            TypeHandlerReplacementCall.ClearTypeList();
         }
 
         [TestCleanup]

@@ -23,7 +23,7 @@ namespace LINQToTTreeLib
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new VSBasic());
         }
 

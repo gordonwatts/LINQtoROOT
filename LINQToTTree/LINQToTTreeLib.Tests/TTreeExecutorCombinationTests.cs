@@ -32,20 +32,12 @@ namespace LINQToTTreeLib.Tests
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
+            TestUtils.ResetLINQLibrary();
 
-            var eng = new VelocityEngine();
-            eng.Init();
-
-            QueryResultCacheTest.SetupCacheDir();
-
-            TypeUtils._variableNameCounter = 0;
-
+            ntuple.Reset();
             ntuple._gCINTLines = null;
             ntuple._gObjectFiles = null;
             ntuple._gProxyFile = null;
-
         }
 
         [TestCleanup]

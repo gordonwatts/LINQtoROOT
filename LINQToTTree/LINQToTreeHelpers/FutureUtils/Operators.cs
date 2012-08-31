@@ -24,17 +24,325 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Multipley a future value by a value.
+        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
         /// </summary>
-        /// <param name="op1"></param>
-        /// <param name="op2"></param>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
         /// <returns></returns>
-        public static IFutureValue<double> MultiplyBy(this IFutureValue<double> op1, double op2)
+        public static IFutureValue<double> DivideBy(this IFutureValue<double> numerator, IFutureValue<double> denominator)
         {
             return new DoFutureOperator<double>(
-                () => op1.Value * op2,
-                () => op1.HasValue
-                );
+                () => ((double)numerator.Value) / ((double)denominator.Value),
+                () => numerator.HasValue && denominator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> DivideBy(this IFutureValue<float> numerator, IFutureValue<float> denominator)
+        {
+            return new DoFutureOperator<float>(
+                () => ((float)numerator.Value) / ((float)denominator.Value),
+                () => numerator.HasValue && denominator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> DivideBy(this IFutureValue<int> numerator, int denominator)
+        {
+            return new DoFutureOperator<double>(
+                () => ((double)numerator.Value) / ((double)denominator),
+                () => numerator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> DivideBy(this IFutureValue<float> numerator, float denominator)
+        {
+            return new DoFutureOperator<float>(
+                () => ((float)numerator.Value) / ((float)denominator),
+                () => numerator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> DivideBy(this IFutureValue<double> numerator, double denominator)
+        {
+            return new DoFutureOperator<double>(
+                () => ((double)numerator.Value) / ((double)denominator),
+                () => numerator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Add two numbers together.
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<int> AddTo(this IFutureValue<int> v1, IFutureValue<int> v2)
+        {
+            return new DoFutureOperator<int>(
+                () => v1.Value + v2.Value,
+                () => v1.HasValue && v2.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> AddTo(this IFutureValue<double> v1, IFutureValue<double> v2)
+        {
+            return new DoFutureOperator<double>(
+                () => v1.Value + v2.Value,
+                () => v1.HasValue && v2.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> AddTo(this IFutureValue<float> v1, IFutureValue<float> v2)
+        {
+            return new DoFutureOperator<float>(
+                () => v1.Value + v2.Value,
+                () => v1.HasValue && v2.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> AddTo(this IFutureValue<float> v1, float v2)
+        {
+            return new DoFutureOperator<float>(
+                () => v1.Value + v2,
+                () => v1.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<int> AddTo(this IFutureValue<int> v1, int v2)
+        {
+            return new DoFutureOperator<int>(
+                () => v1.Value + v2,
+                () => v1.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> AddTo(this IFutureValue<double> v1, double v2)
+        {
+            return new DoFutureOperator<double>(
+                () => v1.Value + v2,
+                () => v1.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<int> MultiplyBy(this IFutureValue<int> numerator, IFutureValue<int> denominator)
+        {
+            return new DoFutureOperator<int>(
+                () => (numerator.Value) * (denominator.Value),
+                () => numerator.HasValue && denominator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> MultiplyBy(this IFutureValue<double> numerator, IFutureValue<double> denominator)
+        {
+            return new DoFutureOperator<double>(
+                () => ((double)numerator.Value) * ((double)denominator.Value),
+                () => numerator.HasValue && denominator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> MultiplyBy(this IFutureValue<float> numerator, IFutureValue<float> denominator)
+        {
+            return new DoFutureOperator<float>(
+                () => ((float)numerator.Value) * ((float)denominator.Value),
+                () => numerator.HasValue && denominator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<int> MultiplyBy(this IFutureValue<int> numerator, int denominator)
+        {
+            return new DoFutureOperator<int>(
+                () => (numerator.Value) * (denominator),
+                () => numerator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> MultiplyBy(this IFutureValue<float> numerator, float denominator)
+        {
+            return new DoFutureOperator<float>(
+                () => ((float)numerator.Value) * ((float)denominator),
+                () => numerator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> MultiplyBy(this IFutureValue<double> numerator, double denominator)
+        {
+            return new DoFutureOperator<double>(
+                () => ((double)numerator.Value) * ((double)denominator),
+                () => numerator.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Subtract two numbers together.
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<int> Subtract(this IFutureValue<int> v1, IFutureValue<int> v2)
+        {
+            return new DoFutureOperator<int>(
+                () => v1.Value - v2.Value,
+                () => v1.HasValue && v2.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> Subtract(this IFutureValue<double> v1, IFutureValue<double> v2)
+        {
+            return new DoFutureOperator<double>(
+                () => v1.Value - v2.Value,
+                () => v1.HasValue && v2.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> Subtract(this IFutureValue<float> v1, IFutureValue<float> v2)
+        {
+            return new DoFutureOperator<float>(
+                () => v1.Value - v2.Value,
+                () => v1.HasValue && v2.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<float> Subtract(this IFutureValue<float> v1, float v2)
+        {
+            return new DoFutureOperator<float>(
+                () => v1.Value - v2,
+                () => v1.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<int> Subtract(this IFutureValue<int> v1, int v2)
+        {
+            return new DoFutureOperator<int>(
+                () => v1.Value - v2,
+                () => v1.HasValue
+                    );
+        }
+
+        /// <summary>
+        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> Subtract(this IFutureValue<double> v1, double v2)
+        {
+            return new DoFutureOperator<double>(
+                () => v1.Value - v2,
+                () => v1.HasValue
+                    );
         }
 
         /// <summary>
@@ -89,6 +397,41 @@ namespace LINQToTreeHelpers.FutureUtils
                 () => extractor(source.Select(s => s.Value).ToArray()),
                 () => source.All(s => s.HasValue)
                 );
+        }
+
+        /// <summary>
+        /// Helper class for casting. We need this otherwise we will have to have
+        /// a two-template argument for the castto operator. :(
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        public class CastCapture<TSource>
+        {
+            private readonly IFutureValue<TSource> _value;
+            public CastCapture(IFutureValue<TSource> v)
+            {
+                _value = v;
+            }
+
+            public IFutureValue<TResult> To<TResult> ()
+                where TResult : class
+            {
+                return new DoFutureOperator<TResult>(
+                    () => _value.Value as TResult,
+                    () => _value.HasValue
+                    );
+            }
+        }
+
+        /// <summary>
+        /// Cast an IFutureValue from one class to another.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static CastCapture<TSource> Cast<TSource>(this IFutureValue<TSource> source)
+        {
+            return new CastCapture<TSource>(source);
         }
 
         /// <summary>

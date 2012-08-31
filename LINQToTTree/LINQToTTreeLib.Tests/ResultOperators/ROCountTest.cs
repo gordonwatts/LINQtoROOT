@@ -25,8 +25,7 @@ namespace LINQToTTreeLib
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]

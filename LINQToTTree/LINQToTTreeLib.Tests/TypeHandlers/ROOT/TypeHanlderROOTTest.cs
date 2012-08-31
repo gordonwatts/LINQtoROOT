@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.Compose(new TypeHandlerCache());
         }

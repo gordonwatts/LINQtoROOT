@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.Tests.Statements
         [TestInitialize]
         public void TestInit()
         {
-            TypeUtils._variableNameCounter = 0;
+            TestUtils.ResetLINQLibrary();
         }
 
         class dummyOpt : ICodeOptimizationService

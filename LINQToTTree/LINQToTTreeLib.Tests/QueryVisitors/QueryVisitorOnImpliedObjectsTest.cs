@@ -19,9 +19,7 @@ namespace LINQToTTreeLib.Tests
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
-            ArrayExpressionParser.ResetParser();
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]

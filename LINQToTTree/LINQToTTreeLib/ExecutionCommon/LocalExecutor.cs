@@ -255,6 +255,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             var gSystem = ROOTNET.NTSystem.gSystem;
 
+            string buildFlags = "k";
+            if (Environment.CompileDebug)
+            {
+                buildFlags += "g";
+            }
+
             var result = gSystem.CompileMacro(templateRunner.FullName, "k");
 
             /// This should never happen - but we are depending on so many different things to go right here!

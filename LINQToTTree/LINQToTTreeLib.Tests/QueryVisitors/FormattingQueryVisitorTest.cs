@@ -19,10 +19,8 @@ namespace LINQToTTreeLib.QueryVisitors
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new TypeHandlers.TypeHandlerConvert());
-            DummyQueryExectuor.GlobalInitalized = false;
-            QueryResultCacheTest.SetupCacheDir();
         }
 
         [TestCleanup]

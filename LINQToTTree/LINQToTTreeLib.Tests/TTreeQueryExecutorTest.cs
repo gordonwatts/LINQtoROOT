@@ -23,30 +23,13 @@ namespace LINQToTTreeLib
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
+            TestUtils.ResetLINQLibrary();
+
             ntuple.Reset();
-            ArrayExpressionParser.ResetParser();
-            TypeUtils._variableNameCounter = 0;
-
-            /// Get the path for the other nutple guy correct! Since Pex and tests run from different places in the directory structure we have to
-            /// do some work to find the top leve!
-
-            var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
-            while (currentDir.FindAllFiles("LINQToTTree.sln").Count() == 0)
-            {
-                currentDir = currentDir.Parent;
-            }
-            var projectDir = currentDir.Parent;
-
             ntuple._gCINTLines = null;
             ntuple._gObjectFiles = null;
             ntuple._gProxyFile = null;
 
-            var eng = new VelocityEngine();
-            eng.Init();
-
-            QueryResultCacheTest.SetupCacheDir();
         }
 
         [TestCleanup]
@@ -341,6 +324,36 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void TestSimpleResultDebugCompile()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(10);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CompileDebug = true;
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
         }
 
         [TestMethod]

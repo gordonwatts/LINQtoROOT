@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Utils
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]

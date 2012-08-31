@@ -179,14 +179,19 @@ namespace TTreeParser
                     throw new NotImplementedException("Unable to translate the C++ type of string");
                 }
 
-                if (ROOTNET.NTClass.GetClass(typ) != null)
+                var clsInfo = ROOTNET.NTClass.GetClass(typ);
+                if (clsInfo != null)
                 {
-                    typ = "ROOTNET.Interface.N" + typ;
+                    if (!clsInfo.IsShellTClass())
+                        typ = "ROOTNET.Interface.N" + typ;
+                    else
+                        typ = typ.SanitizedName();
                 }
                 else
                 {
                     typ = typ.SimpleCPPTypeToCSharpType();
                 }
+
                 if (typ == null)
                     throw new InvalidOperationException("Don't know how to deal with type '" + (r as RegularDecl).Type + "'.");
 

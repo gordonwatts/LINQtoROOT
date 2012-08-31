@@ -15,8 +15,7 @@ namespace LINQToTTreeLib.Tests.ResultOperators
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]

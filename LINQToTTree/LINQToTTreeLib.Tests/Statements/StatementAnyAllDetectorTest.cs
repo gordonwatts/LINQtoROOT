@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Tests
         [TestInitialize]
         public void TestSetup()
         {
-            TypeUtils._variableNameCounter = 0;
+            TestUtils.ResetLINQLibrary();
         }
 
         /// <summary>

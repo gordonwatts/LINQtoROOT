@@ -26,9 +26,8 @@ namespace LINQToTTreeLib.ResultOperators
         [TestInitialize]
         public void TestInit()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new TypeHandlers.TypeHandlerConvert());
-            DummyQueryExectuor.GlobalInitalized = false;
         }
 
         [TestCleanup]

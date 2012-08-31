@@ -62,35 +62,60 @@
     <Reference Include="Doddle.Reporting">
       <HintPath>..\Libraries\Doddle.Reporting.dll</HintPath>
     </Reference>
-    <Reference Include="libCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\libCoreWrapper.dll</HintPath>
+    <Reference Include="libCoreWrapper, Version=2.6.4625.13795, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.6\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libGpadWrapper">
-      <HintPath>..\packages\ROOTNET-Graphing-v5.30.01.win32.vc10.2.5\lib\net40\libGpadWrapper.dll</HintPath>
+    <Reference Include="libGpadWrapper, Version=2.6.4625.13886, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Graphing-v5.32.04.win32.vc10.2.6\lib\net40\libGpadWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libGraf3dWrapper">
-      <HintPath>..\packages\ROOTNET-Graphing-v5.30.01.win32.vc10.2.5\lib\net40\libGraf3dWrapper.dll</HintPath>
+    <Reference Include="libGraf3dWrapper, Version=2.6.4625.13911, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Graphing-v5.32.04.win32.vc10.2.6\lib\net40\libGraf3dWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libGrafWrapper">
-      <HintPath>..\packages\ROOTNET-Graphing-v5.30.01.win32.vc10.2.5\lib\net40\libGrafWrapper.dll</HintPath>
+    <Reference Include="libGrafWrapper, Version=2.6.4625.13874, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libGrafWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libHistWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libHistWrapper.dll</HintPath>
+    <Reference Include="libHistWrapper, Version=2.6.4625.13848, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libHistWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libMathCoreWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libMathCoreWrapper.dll</HintPath>
+    <Reference Include="libMathCoreWrapper, Version=2.6.4625.13804, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libMathCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libPhysicsWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libPhysicsWrapper.dll</HintPath>
+    <Reference Include="libNetWrapper, Version=2.6.4625.13845, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libNetWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libRIOWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libRIOWrapper.dll</HintPath>
+    <Reference Include="libPhysicsWrapper, Version=2.6.4625.13807, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libPhysicsWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libThreadWrapper">
-      <HintPath>..\packages\ROOTNET-Core-v5.30.01.win32.vc10.2.5\lib\net40\libThreadWrapper.dll</HintPath>
+    <Reference Include="libRIOWrapper, Version=2.6.4625.13827, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libRIOWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="Sprache">
-      <HintPath>..\packages\Sprache.1.9.1.31\lib\NET40\Sprache.dll</HintPath>
+    <Reference Include="libThreadWrapper, Version=2.6.4625.13809, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libThreadWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreePlayerWrapper, Version=2.6.4625.13897, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libTreePlayerWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="libTreeWrapper, Version=2.6.4625.13885, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Tree-v5.32.04.win32.vc10.2.6\lib\net40\libTreeWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Remotion.Linq">
+      <HintPath>..\packages\Remotion.Linq.1.13.164\lib\net35\Remotion.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Sprache, Version=1.10.0.11, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Sprache.1.10.0.11\lib\net40\Sprache.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -99,8 +124,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.30.01.win32.vc10.2.5\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.6.4625.13706, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.6\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

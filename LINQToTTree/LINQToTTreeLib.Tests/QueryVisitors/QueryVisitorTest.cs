@@ -33,9 +33,7 @@ namespace LINQToTTreeLib
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
-            DummyQueryExectuor.GlobalInitalized = false;
-            ArrayExpressionParser.ResetParser();
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]
@@ -962,6 +960,11 @@ namespace LINQToTTreeLib
 
             [CPPCode(Code = new string[] {"Reflex = v1"})]
             public static ROOTNET.NTLorentzVector Reflex (ROOTNET.NTLorentzVector v1, int v2)
+            [CPPCode(Code = new[] {" Inc = a"})]
+            public static ROOTNET.Interface.NTLorentzVector Inc (ROOTNET.Interface.NTLorentzVector a, int value)
+            {
+                throw new NotImplementedException();
+            }
             {
                 throw new NotImplementedException();
             }
@@ -1244,6 +1247,23 @@ namespace LINQToTTreeLib
             var arr = theline.ToArray();
             Assert.AreEqual(1, arr.Length, "too many lines with function reference!");
             Assert.IsTrue(arr[0].Contains("std::abs"), "second function call not found");
+        }
+
+        [TestMethod]
+        public void TestATan2Call()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var r1 = from evt in q
+                     select from j in evt.jets
+                            select Math.Atan2((double)j.var1, (double)j.var2);
+            var r2 = r1.SelectMany(evt => evt).Where(c => c > 0.1).Count();
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+                          where l.Contains("std::atan2")
+                          select l;
+            var arr = theline.ToArray();
+            Assert.AreEqual(1, arr.Length, "Expecting one reference to atan2!");
         }
 
         /// <summary>
@@ -1940,6 +1960,65 @@ namespace LINQToTTreeLib
             var code = query.QueryCode().First();
 
             MakeSureNoVariable(code, "jets");
+        }
+
+        class SelectionObject
+        {
+            public Expression<Func<ntupWithObjects, bool>> Selection
+            {
+                get
+                {
+                    return evt => evt.jets.Count() > 0;
+                }
+            }
+            public Expression<Func<subNtupleObjects, bool>> SelectionJet
+            {
+                get
+                {
+                    return jet => jet.var1 > 0;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestQueryUsesPropertyFunction()
+        {
+            // In the wild there is a case where a property which returns a function can't be used
+            // in a Where call. Looking for a crash.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var obj = new SelectionObject();
+            var r = q.Where(obj.Selection).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestQueryUsesPropertyFunction2()
+        {
+            // In the wild there is a case where a property which returns a function can't be used
+            // in a Where call. Looking for a crash.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var obj = new SelectionObject();
+            Expression<Func<ntupWithObjects, subNtupleObjects>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
+            var r = q.Where(evt => test.Invoke(evt).var1 > 0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestAggragateTypeSaftey()
+        {
+            // Make sure that we can infer things from interface to object.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+            var value = q.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0) as ROOTNET.Interface.NTLorentzVector,
+                (a, v) => CPPHelperFunctions.Inc(a, v.jets[0].var1));
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
         }
     }
 }

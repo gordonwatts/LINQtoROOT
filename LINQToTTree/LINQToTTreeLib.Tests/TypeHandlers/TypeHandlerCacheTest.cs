@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.TypeHandlers
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]

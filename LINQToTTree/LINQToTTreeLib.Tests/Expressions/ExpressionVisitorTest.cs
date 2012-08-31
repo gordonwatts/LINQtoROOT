@@ -32,7 +32,7 @@ namespace LINQToTTreeLib
         [TestInitialize]
         public void Setup()
         {
-            MEFUtilities.MyClassInit();
+            TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());

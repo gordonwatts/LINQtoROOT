@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using TTreeDataModel;
+using System;
 
 namespace TTreeParser
 {
@@ -32,6 +33,44 @@ namespace TTreeParser
                     yield return (T)item.ReadObj();
                 }
             }
+        }
+
+        /// <summary>
+        /// If this class is a shell class - that is, it has nothing defined in it, then...
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        public static bool IsShellTClass (this ROOTNET.Interface.NTClass cls)
+        {
+            var v = (cls.ListOfAllPublicDataMembers != null && cls.ListOfAllPublicDataMembers.Entries > 0)
+                || (cls.ListOfAllPublicMethods != null && cls.ListOfAllPublicMethods.Entries > 0);
+            return !v;
+        }
+
+        /// <summary>
+        /// Return true if this class is a STL class.
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        public static bool IsSTLClass(this ROOTNET.Interface.NTClass cls)
+        {
+            var name = cls.Name;
+            if (name.StartsWith("vector"))
+            {
+                if (name.Contains("<"))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Is this class a template type or not?
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        public static bool IsTemplateClass (this ROOTNET.Interface.NTClass cls)
+        {
+            return cls.Name.Contains("<");
         }
 
         /// <summary>
@@ -221,5 +260,35 @@ namespace TTreeParser
             n = n.Replace(".", "_");
             return n;
         }
+
+        /// <summary>
+        /// Given a list of ROOTClassShell's, make sure they are identical.
+        /// </summary>
+        /// <param name="scg"></param>
+        /// <returns></returns>
+        public static bool ClassesAreIdnetical(this IEnumerable<ROOTClassShell> scg)
+        {
+            var f = scg.First();
+            foreach (var o in scg.Skip(1))
+            {
+                if (f.IsTClonesArrayClass != o.IsTClonesArrayClass)
+                    throw new InvalidDataException(string.Format("IsTClonesArrayClass not the same in duplicate {0} classes.", f.Name));
+                if (f.IsTopLevelClass != o.IsTopLevelClass)
+                    throw new InvalidDataException(string.Format("IsTopLevelClass is not the same in duplicate {0} classes.", f.Name));
+                if (f.Items.Count != o.Items.Count)
+                    throw new InvalidDataException(string.Format("Number of items is not the same in duplicate {0} classes.", f.Name));
+                foreach (var item in f.Items.Zip(o.Items, (n1, n2) => Tuple.Create(n1, n2)))
+                {
+                    if (item.Item1.Name != item.Item2.Name)
+                        throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item names", f.Name));
+                    if (item.Item1.ItemType != item.Item2.ItemType)
+                        throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item types", f.Name));
+
+                }
+            }
+
+            return true;
+        }
+
     }
 }

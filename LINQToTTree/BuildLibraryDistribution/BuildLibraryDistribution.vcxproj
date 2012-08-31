@@ -37,10 +37,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>nmake all BuildConfig=Debug SolutionDir=$(SolutionDir)</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>buildnuget.bat</NMakeBuildCommandLine>
     <NMakeOutput>
     </NMakeOutput>
-    <NMakeCleanCommandLine>nmake clean BuildConfig=Debug SolutionDir=$(SolutionDir)</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>
+    </NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

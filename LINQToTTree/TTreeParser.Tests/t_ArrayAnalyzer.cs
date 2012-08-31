@@ -6,8 +6,6 @@ using TTreeParserCPPTests;
 
 namespace TTreeParser.Tests
 {
-
-
     /// <summary>
     ///This is a test class for ArrayAnalyzerTest and is intended
     ///to contain all ArrayAnalyzerTest Unit Tests
