@@ -11,6 +11,7 @@ LINQToTTree/LINQToTTree.sln.docstates.suo
 LINQToTTree/UpgradeLog.htm
 *.nupkg
 *.nuspec
+*.orig
 syntax: regexp
 .*/bin/.*
 .*/Debug/.*
