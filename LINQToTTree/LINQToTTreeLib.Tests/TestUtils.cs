@@ -54,11 +54,7 @@ namespace LINQToTTreeLib.Tests
             yield return ("Declared Variables:");
             foreach (var var in code.CodeBody.DeclaredVariables)
             {
-                string initalValue = "default()";
-                if (var.InitialValue != null && var.InitialValue != null)
-                    initalValue = var.InitialValue.RawValue;
-
-                yield return (var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";");
+                yield return DeclaredParameterToString(var);
             }
             yield return ("Code:");
 
@@ -73,8 +69,17 @@ namespace LINQToTTreeLib.Tests
             }
             else
             {
-                yield return ("Result Variable: " + code.ResultValue.ToString());
+                yield return ("Result Variable: " + DeclaredParameterToString(code.ResultValueAsVaraible));
             }
+        }
+
+        private static string DeclaredParameterToString(IDeclaredParameter var)
+        {
+            string initalValue = "default()";
+            if (var.InitialValue != null && var.InitialValue != null)
+                initalValue = var.InitialValue.RawValue;
+            var varInfo = var.Type.Name + " " + var.ParameterName + " = " + initalValue + ";";
+            return varInfo;
         }
 
         /// <summary>

@@ -2020,5 +2020,14 @@ namespace LINQToTTreeLib
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
         }
+
+        [TestMethod]
+        public void TestAggragateIncrement()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var value = q.Aggregate(5, (a, v) => a + v.jets[0].var1);
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
     }
 }
