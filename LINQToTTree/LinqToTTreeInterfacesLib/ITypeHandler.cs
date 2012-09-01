@@ -92,5 +92,14 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="container"></param>
         /// <returns></returns>
         IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container);
+
+        /// <summary>
+        /// Get an object of some sort ready to be shot over the wire to TSelector::Process or PROOF. The big job
+        /// here is that the object will need to be put into a TList, which is how ROOT moves the objects around.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="objToStore"></param>
+        /// <returns></returns>
+        ROOTNET.Interface.NTObject CreateObjectForTListTransfer(string name, object objToStore);
     }
 }

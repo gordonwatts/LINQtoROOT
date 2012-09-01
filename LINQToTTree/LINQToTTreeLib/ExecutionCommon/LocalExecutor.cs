@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LINQToTTreeLib.TypeHandlers;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -21,6 +22,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// more efficiently.
         /// </summary>
         public string[] LeafNames { get; set; }
+
+        /// <summary>
+        /// THe type handler, which we use to deal with some weird types.
+        /// </summary>
+        public TypeHandlerCache TypeCache { get; set; }
 
         /// <summary>
         /// Given a request, run it. No need to clean up afterwards as we are already there.
@@ -112,11 +118,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             ROOTNET.NTH1.AddDirectory(false);
             foreach (var item in variablesToLoad)
             {
-                var obj = item.Value as ROOTNET.Interface.NTNamed;
-                if (obj == null)
-                    throw new InvalidOperationException("Can only deal with named objects");
-                var cloned = obj.Clone(item.Key);
-                objInputList.Add(cloned);
+                objInputList.Add(TypeCache.CreateObjectForTListTransfer(item.Key, item.Value));
             }
             ROOTNET.NTH1.AddDirectory(oldHSet);
 
@@ -271,5 +273,6 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         #endregion
+
     }
 }

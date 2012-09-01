@@ -342,5 +342,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         {
             throw new NotImplementedException();
         }
+
+
+        public ROOTNET.Interface.NTObject CreateObjectForTListTransfer(string name, object objToStore)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

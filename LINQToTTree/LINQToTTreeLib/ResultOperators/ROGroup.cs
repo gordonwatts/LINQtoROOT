@@ -305,6 +305,12 @@ namespace LINQToTTreeLib.ResultOperators
 
             return groupObj.GroupLoopStatement.GroupKeyReference.PerformAllSubstitutions(cc);
         }
+
+
+        public ROOTNET.Interface.NTObject CreateObjectForTListTransfer(string name, object objToStore)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>

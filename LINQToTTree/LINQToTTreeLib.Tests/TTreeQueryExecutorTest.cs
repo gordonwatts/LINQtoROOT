@@ -498,6 +498,7 @@ namespace LINQToTTreeLib
 
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            exe.CleanupQuery = false;
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(0, result, "Number accumulated in X doesn't seem right");
         }

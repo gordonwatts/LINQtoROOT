@@ -14,6 +14,7 @@ using LINQToTTreeLib.Utils;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Linq;
+using LINQToTTreeLib.TypeHandlers;
 
 namespace LINQToTTreeLib
 {
@@ -364,6 +365,12 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Track the type cache
+        /// </summary>
+        [Import]
+        TypeHandlerCache TypeCache { get; set; }
+
+        /// <summary>
         /// Called when it is time to execut all the queries
         /// </summary>
         internal void ExecuteQueuedQueries()
@@ -407,7 +414,7 @@ namespace LINQToTTreeLib
                 throw new InvalidOperationException("Not root files or datasets to run this query on");
             if (_exeReq.RootFiles.All(t => t.Scheme == "file"))
             {
-                local = new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+                local = new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames, TypeCache = TypeCache };
             }
             else if (_exeReq.RootFiles.All(t => t.Scheme == "proof"))
             {

@@ -74,6 +74,12 @@ namespace LINQToTTreeLib.Tests
             {
                 return null;
             }
+
+
+            public ROOTNET.Interface.NTObject CreateObjectForTListTransfer(string name, object objToStore)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestCleanup]

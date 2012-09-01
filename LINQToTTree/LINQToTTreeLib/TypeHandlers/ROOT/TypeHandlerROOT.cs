@@ -8,6 +8,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
+using System.IO;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -246,6 +247,126 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         public IValue ProcessMemberReference(MemberExpression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             return null;
+        }
+
+        /// <summary>
+        /// Take this ROOT object and turn it into an object that can be properly sent along to the
+        /// TSelector::Process or PROOF correctly.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="objToStore"></param>
+        /// <returns></returns>
+        public ROOTNET.Interface.NTObject CreateObjectForTListTransfer(string name, object objToStore)
+        {
+            // If this is a named object, then we just store it, and assume that
+            // everything is taken care of for us.
+
+            var obj = objToStore as ROOTNET.Interface.NTNamed;
+            if (obj != null)
+            {
+                var cloned = obj.Clone(name);
+                return cloned;
+            }
+
+            // Ok, this is a ROOT.NET object (or we'd not be here) so we will need to wrap it in a TParameter.
+            // The thign with this is we have to make sure three operators are defined.
+
+            var cls = objToStore.GetType().GetROOTClass();
+            using (var operatorDef = new MemoryStream())
+            {
+                var output = new StreamWriter(operatorDef);
+                var objIncludeFile = CleanROOTInclude(cls.DeclFileName_GetSetProperty);
+
+                output.WriteLine("#include \"{0}\"", objIncludeFile);
+
+                // Needs and output operator
+                output.WriteLine("ostream & operator<< (ostream &os, const {0} &v) {{", cls.Name);
+                output.WriteLine("  os << \"{0}\";", cls.Name);
+                output.WriteLine("  return os;");
+                output.WriteLine("}");
+
+                // If there is no method to do +, then add that in.
+                string constArgs = string.Format("const {0} &v1, const {0} &v2", cls.Name);
+                if (!HasSelfOperator(cls, "operator+="))
+                {
+                    output.WriteLine("{0} operator += ({1}) {{", cls.Name, constArgs);
+                    output.WriteLine("  return {0}();", cls.Name);
+                    output.WriteLine("}");
+                }
+
+                // If there is no method to do *, then add one in.
+                if (!HasSelfOperator(cls, "operator*="))
+                {
+                    output.WriteLine("{0} operator *= ({1}) {{", cls.Name, constArgs);
+                    output.WriteLine("  return {0}();", cls.Name);
+                    output.WriteLine("}");
+                }
+
+                // Write out a file and generate a dictionary.
+                output.Flush();
+                operatorDef.Seek(0, SeekOrigin.Begin);
+                string operatorHeaderName = string.Format("{0}_op.h", cls.Name);
+                using (var writer = File.CreateText(operatorHeaderName))
+                {
+                    var reader = new StreamReader(operatorDef);
+                    writer.Write(reader.ReadToEnd());
+                    reader.Close();
+                    writer.Close();
+                }
+
+                var r = ROOTNET.NTInterpreter.Instance().GenerateDictionary(
+                    string.Format("TParameter<{0}>", cls.Name),
+                    string.Format("{0};TParameter.h;{1}", operatorHeaderName, objIncludeFile)
+                    );
+
+                if (r != 0)
+                    throw new InvalidOperationException(string.Format("Unable to generate a TParameter<{0}> dictionary to carry over one of your initial values!", cls.Name));
+            }
+
+            // Now, create the parameter and set it as the thing that will be written out. Clone it as well
+            // to make sure we don't... well, it doesn't die.
+
+            var objParam = objToStore;
+            if (objParam is ROOTNET.NTObject)
+                objParam = (objToStore as ROOTNET.NTObject).Clone(name);
+
+            dynamic param = ROOTNET.Utility.ROOTCreator.CreateByName(
+                string.Format("TParameter<{0}>", cls.Name),
+                name,
+                objParam
+                );
+
+            return param;
+        }
+
+        /// <summary>
+        /// If the self operator exists, return true
+        /// </summary>
+        /// <param name="cls"></param>
+        /// <returns></returns>
+        private bool HasSelfOperator(ROOTNET.Interface.NTClass cls, string opName)
+        {
+            var addMethod = cls
+                .GetListOfMethods()
+                .Cast<ROOTNET.Interface.NTMethod>()
+                .Where(m => m.Name == opName)
+                .Where(m => m.ListOfMethodArgs.Entries == 1)
+                .Where(m => m.ListOfMethodArgs.At(0).Title.Contains(cls.Name))
+                .FirstOrDefault();
+            return addMethod != null;
+        }
+
+        /// <summary>
+        /// Given a file that is in some subdir - get it back as the file only.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private string CleanROOTInclude(string p)
+        {
+            var lastSlash = p.LastIndexOf('/');
+            if (lastSlash < 0)
+                return p;
+            return p.Substring(lastSlash+1);
         }
     }
 }

@@ -149,5 +149,18 @@ namespace LINQToTTreeLib.TypeHandlers
             return h.ProcessMemberReference(expr, gc, cc, container);
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Get an obect ready to be put into a list that will be sent over the wire to either a TSelector process or perhaps
+        /// PROOF.
+        /// </summary>
+        /// <param name="name">Name that the object will be looked up with</param>
+        /// <param name="objToStore">The actual object</param>
+        /// <returns></returns>
+        internal ROOTNET.Interface.NTObject CreateObjectForTListTransfer(string name, object objToStore)
+        {
+            var h = FindHandler(objToStore.GetType(), true);
+            return h.CreateObjectForTListTransfer(name, objToStore);
+        }
     }
 }

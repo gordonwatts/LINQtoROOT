@@ -285,6 +285,18 @@ namespace LINQToTTreeLib.Variables
         }
 
         /// <summary>
+        /// Returns the class of the ROOT - null if it doesn't exist.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static ROOTNET.Interface.NTClass GetROOTClass (this Type t)
+        {
+            var n = t.Name.Substring(1);
+            var c = ROOTNET.NTClass.GetClass(n);
+            return c;
+        }
+
+        /// <summary>
         /// Returns true if this type is a ROOT class
         /// </summary>
         /// <param name="t"></param>
