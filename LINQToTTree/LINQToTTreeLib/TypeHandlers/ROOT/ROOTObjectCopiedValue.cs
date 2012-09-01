@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -27,16 +28,26 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             if (rootType == null)
                 throw new ArgumentException("Invalid type");
 
-            ///
-            /// The type and the loader string
-            /// 
+            //
+            // The type and the loader string. The format of the loader string depends on
+            // the type of the object. If the type is TNamed then we can go directly. Otherwise
+            // we are going to end up depending on a TParameter<>.
+            // 
 
             Type = rootType;
             OriginalName = name;
             OriginalTitle = title;
 
             StringBuilder loadString = new StringBuilder();
-            loadString.AppendFormat("LoadFromInputList<{0}>(\"{1}\")", CPPType, varName);
+            var cls = rootType.GetROOTClass();
+            if (cls.InheritsFrom("TNamed"))
+            {
+                loadString.AppendFormat("LoadFromInputList<{0}>(\"{1}\")", CPPType, varName);
+            }
+            else
+            {
+                loadString.AppendFormat("LoadFromInputListTP<{0}>(\"{1}\")", cls.Name, varName);
+            }
             RawValue = loadString.ToString();
         }
 

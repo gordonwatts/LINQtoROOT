@@ -487,10 +487,11 @@ namespace LINQToTTreeLib
 
             var q = new QueriableDummy<TestNtupeArr>();
             var entries = from evt in q
-                          where evt.myvectorofint.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0), (a, v) => CPPHelperFunctions.Inc(a, v)).X() > 9
+                          where evt.myvectorofint.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0), (a, v) => CPPHelperFunctions.Inc(a, v)).X() > 10
                           select evt;
             var c = entries.Count();
             var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             ///
             /// Ok, now we can actually see if we can make it "go".
@@ -501,6 +502,74 @@ namespace LINQToTTreeLib
             exe.CleanupQuery = false;
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(0, result, "Number accumulated in X doesn't seem right");
+        }
+
+        [TestMethod]
+        public void TestTLZPassing2()
+        {
+            var rootFile = TestUtils.CreateFileOfVectorInt(5);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var entries = from evt in q
+                          where evt.myvectorofint.Aggregate(new ROOTNET.NTLorentzVector(0.0, 0.0, 0.0, 0.0), (a, v) => CPPHelperFunctions.Inc(a, v)).X() > 9
+                          select evt;
+            var c = entries.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            exe.CleanupQuery = false;
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(5, result, "Number accumulated in X doesn't seem right");
+        }
+
+        [TestMethod]
+        public void TestTLZPassing3()
+        {
+            var rootFile = TestUtils.CreateFileOfVectorInt(5);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var entries = from evt in q
+                          where evt.myvectorofint.Aggregate(new ROOTNET.NTLorentzVector(1.0, 1.0, 1.0, 1.0), (a, v) => CPPHelperFunctions.Inc(a, v)).X() > 10
+                          select evt;
+            var c = entries.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            exe.CleanupQuery = false;
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(5, result, "Number accumulated in X doesn't seem right");
         }
 
         [TestMethod]

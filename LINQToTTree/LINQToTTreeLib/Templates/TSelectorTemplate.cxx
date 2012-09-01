@@ -10,6 +10,7 @@
 \#include "$f"
 #end
 \#include <TFile.h>
+\#include <TParameter.h>
 
 \#include <string>
 \#include <stdexcept>
@@ -21,7 +22,6 @@ using std::string;
 $l
 #end
 #endif
-
 
 class query$QueryIndex : public $baseClassName
 {
@@ -147,5 +147,15 @@ private:
 		}
 
 		return result;
+	}
+
+	///
+	/// When dealing with a non-TNamed, we have to wrap it in TParamter.
+	///
+	template<class T>
+	T* LoadFromInputListTP(const std::string &name)
+	{
+		TParameter<T>* result = LoadFromInputList<TParameter<T>* >(name);
+		return new T(result->GetVal());
 	}
 };
