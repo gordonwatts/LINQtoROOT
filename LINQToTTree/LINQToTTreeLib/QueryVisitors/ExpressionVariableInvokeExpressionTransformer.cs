@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Remotion.Linq.Parsing;
 using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
+using Remotion.Linq.Parsing.Structure.ExpressionTreeProcessors;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -58,7 +59,9 @@ namespace LINQToTTreeLib.QueryVisitors
             //
 
             var exprFinder = new ExpressionFunctionExpander();
-            return exprFinder.VisitExpression(expression);
+            var expanded = exprFinder.VisitExpression(expression);
+            var result = new PartialEvaluatingExpressionTreeProcessor().Process(expanded);
+            return result;
         }
 
         /// <summary>
