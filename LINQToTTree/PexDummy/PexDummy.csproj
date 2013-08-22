@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DF0A8702-D0CE-42F7-9A97-435C5F67CFE7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft</RootNamespace>
+    <AssemblyName>PexDummy</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExtendedReflection\DataAccess\TermDestructionException.cs" />
+    <Compile Include="Pex\Framework\Coverage\PexCoverageFilterAssemblyAttribute.cs" />
+    <Compile Include="Pex\Framework\Coverage\PexInstrumentAssemblyAttribute.cs" />
+    <Compile Include="Pex\Framework\Creatable\PexCreatableFactoryForDelegatesAttribute.cs" />
+    <Compile Include="Pex\Framework\Generated\PexDescriptionAttribute.cs" />
+    <Compile Include="Pex\Framework\Generated\PexDisposableContext.cs" />
+    <Compile Include="Pex\Framework\Generated\PexGeneratedByAttribute.cs" />
+    <Compile Include="Pex\Framework\Generated\PexRaisedException.cs" />
+    <Compile Include="Pex\Framework\Generated\PexSafeHelpers.cs" />
+    <Compile Include="Pex\Framework\Instrumentation\PexAssemblyUnderTestAttribute.cs" />
+    <Compile Include="Pex\Framework\Instrumentation\PexInstrumentTypeAttribute.cs" />
+    <Compile Include="Pex\Framework\Moles\Dummy.cs" />
+    <Compile Include="Pex\Framework\PexAllowedExceptionAttriute.cs" />
+    <Compile Include="Pex\Framework\PexAssumeNotNullAttribute.cs" />
+    <Compile Include="Pex\Framework\PexAssumeUnderTestAttribute.cs" />
+    <Compile Include="Pex\Framework\PexClassAttribute.cs" />
+    <Compile Include="Pex\Framework\PexFactoryMethodAttribute.cs" />
+    <Compile Include="Pex\Framework\PexGenericArgumentsAttribute.cs" />
+    <Compile Include="Pex\Framework\PexMethodAttribute.cs" />
+    <Compile Include="Pex\Framework\Settings\PexAllowedContractRequiresFailureAtTypeUnderTestSurfaceAttribute.cs" />
+    <Compile Include="Pex\Framework\Settings\PexAllowedXmlDocumentedExceptionAttribute.cs" />
+    <Compile Include="Pex\Framework\Settings\PexAssemblySettingsAttribute.cs" />
+    <Compile Include="Pex\Framework\Settings\PexAssumeContractEnsuresFailureAtBehavedSurfaceAttribute.cs" />
+    <Compile Include="Pex\Framework\Settings\PexChooseAsBehavedCurrentBehaviorAttribute.cs" />
+    <Compile Include="Pex\Framework\Suppression\PexSuppressStaticFieldStoreAttribute.cs" />
+    <Compile Include="Pex\Framework\Suppression\PexSuppressUninstrumentedMethodFromTypeAttribute.cs" />
+    <Compile Include="Pex\Framework\Using\PexUseTypeAttribute.cs" />
+    <Compile Include="Pex\Framework\Validation\PexAllowedExceptionFromTypeUnderTestAttribute.cs" />
+    <Compile Include="Pex\Linq\PexLinqPackageAttribute.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

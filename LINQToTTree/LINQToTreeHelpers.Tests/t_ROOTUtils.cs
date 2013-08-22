@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using LINQToTTreeLib;
+﻿using LINQToTTreeLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace LINQToTreeHelpers.Tests
 {
