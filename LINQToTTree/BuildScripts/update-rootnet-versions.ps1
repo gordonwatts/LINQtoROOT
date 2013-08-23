@@ -10,9 +10,11 @@ param($newVersion)
 
 $allConfigfiles = Get-ChildItem -Recurse packages.config
 
+ls
 if (-not $allConfigfiles)
 {
     Write-Host "No packages.config files found!"
+    return
 }
 
 #
