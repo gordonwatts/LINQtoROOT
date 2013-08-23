@@ -1,7 +1,3 @@
-// <copyright file="QueryResultCacheTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.IO;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
@@ -9,6 +5,9 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using ROOTNET.Interface;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -332,13 +331,13 @@ namespace LINQToTTreeLib
 
             /// Modify the file
 
-            System.Threading.Thread.Sleep(500);
             using (var w = f.CreateText())
             {
                 w.WriteLine("fork it!");
                 w.Close();
             }
             f.Refresh();
+            System.Threading.Thread.Sleep(250);
 
             /// And make sure the lookup fails now!
 
@@ -400,7 +399,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2.0, r.Item2.Y(), "y value");
             Assert.AreEqual(4.0, r.Item2.T(), "t value");
         }
-        
+
         [TestMethod]
         public void TestForTreeNameChanges()
         {
