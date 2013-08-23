@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq.Expressions;
-using LINQToTTreeLib.QueryVisitors;
+﻿using LINQToTTreeLib.QueryVisitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -25,10 +25,9 @@ namespace LINQToTTreeLib.Tests
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual(ExpressionType.Add, r.NodeType, "node type of result");
-            var ad = r as BinaryExpression;
-            Assert.AreEqual(5, (ad.Left as ConstantExpression).Value, "left value");
-            Assert.AreEqual(1, (ad.Right as ConstantExpression).Value, "right value");
+            Assert.AreEqual(ExpressionType.Constant, r.NodeType, "node type of result");
+            var ad = r as ConstantExpression;
+            Assert.AreEqual(6, (ad as ConstantExpression).Value, "value");
         }
 
         [TestMethod]
@@ -62,10 +61,9 @@ namespace LINQToTTreeLib.Tests
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual(ExpressionType.Add, r.NodeType, "node type of result");
-            var ad = r as BinaryExpression;
-            Assert.AreEqual(5, (ad.Left as ConstantExpression).Value, "left value");
-            Assert.AreEqual(1, (ad.Right as ConstantExpression).Value, "right value");
+            Assert.AreEqual(ExpressionType.Constant, r.NodeType, "node type of result");
+            var ad = r as ConstantExpression;
+            Assert.AreEqual(6, (ad as ConstantExpression).Value, "value");
         }
 
         class tempProp
@@ -90,10 +88,9 @@ namespace LINQToTTreeLib.Tests
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual(ExpressionType.Add, r.NodeType, "node type of result");
-            var ad = r as BinaryExpression;
-            Assert.AreEqual(5, (ad.Left as ConstantExpression).Value, "left value");
-            Assert.AreEqual(1, (ad.Right as ConstantExpression).Value, "right value");
+            Assert.AreEqual(ExpressionType.Constant, r.NodeType, "node type of result");
+            var ad = r as ConstantExpression;
+            Assert.AreEqual(6, (ad as ConstantExpression).Value, "value");
         }
 
         [TestMethod]
@@ -101,16 +98,16 @@ namespace LINQToTTreeLib.Tests
         {
             var t = new tempProp();
 
-            Expression<Func<int>> doit = () => t.myAdderField.Invoke(5);
+            int i = 5;
+            Expression<Func<int>> doit = () => t.myAdderField.Invoke(i);
             var expr = doit.Body;
 
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual(ExpressionType.Add, r.NodeType, "node type of result");
-            var ad = r as BinaryExpression;
-            Assert.AreEqual(5, (ad.Left as ConstantExpression).Value, "left value");
-            Assert.AreEqual(1, (ad.Right as ConstantExpression).Value, "right value");
+            Assert.AreEqual(ExpressionType.Constant, r.NodeType, "node type of result");
+            var ad = r as ConstantExpression;
+            Assert.AreEqual(6, (ad as ConstantExpression).Value, "value");
         }
 
         [TestMethod]
@@ -125,7 +122,7 @@ namespace LINQToTTreeLib.Tests
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual("((5 + 1) + 2)", r.ToString(), "Expression result");
+            Assert.AreEqual("8", r.ToString(), "Expression result");
         }
 
         [TestMethod]
@@ -170,7 +167,7 @@ namespace LINQToTTreeLib.Tests
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual("((5 + 1) + 2)", r.ToString(), "Expression result");
+            Assert.AreEqual("8", r.ToString(), "Expression result");
         }
 
         [TestMethod]
@@ -185,7 +182,7 @@ namespace LINQToTTreeLib.Tests
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual("(((5 + 3) + 1) + 2)", r.ToString(), "Expression result");
+            Assert.AreEqual("11", r.ToString(), "Expression result");
         }
 
         [TestMethod]
@@ -214,7 +211,7 @@ namespace LINQToTTreeLib.Tests
             var target = new ExpressionVariableInvokeExpressionTransformer();
             var r = target.Transform(expr as MethodCallExpression);
             Assert.IsNotNull(r);
-            Assert.AreEqual("((2 + 1) + 1)", r.ToString(), "Expression result");
+            Assert.AreEqual("4", r.ToString(), "Expression result");
         }
 
         [TestMethod]
