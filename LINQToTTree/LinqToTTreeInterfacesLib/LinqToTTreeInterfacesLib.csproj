@@ -56,29 +56,8 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper, Version=2.6.4625.13795, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.6\lib\net40\libCoreWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libHistWrapper, Version=2.6.4625.13848, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libHistWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libMathCoreWrapper, Version=2.6.4625.13804, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libMathCoreWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libPhysicsWrapper, Version=2.6.4625.13807, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libPhysicsWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libRIOWrapper, Version=2.6.4625.13827, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libRIOWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libThreadWrapper, Version=2.6.4625.13809, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Core-v5.32.04.win32.vc10.2.6\lib\net40\libThreadWrapper.dll</HintPath>
+    <Reference Include="libCoreWrapper">
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.34.07.win32.vc10.2.6\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="Remotion.Linq">
       <HintPath>..\packages\Remotion.Linq.1.13.164\lib\net35\Remotion.Linq.dll</HintPath>
@@ -91,9 +70,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.6.4625.13706, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOTNET-Dynamic-v5.32.04.win32.vc10.2.6\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary">
+      <HintPath>..\packages\ROOTNET-Dynamic-v5.34.07.win32.vc10.2.6\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
