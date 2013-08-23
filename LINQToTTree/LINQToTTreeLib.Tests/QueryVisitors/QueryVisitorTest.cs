@@ -1,9 +1,3 @@
-// <copyright file="QueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
@@ -20,6 +14,12 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Parsing.Structure;
+// <copyright file="QueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.ComponentModel.Composition;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib
 {
@@ -958,8 +958,8 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-            [CPPCode(Code = new[] {" Inc = a"})]
-            public static ROOTNET.Interface.NTLorentzVector Inc (ROOTNET.Interface.NTLorentzVector a, int value)
+            [CPPCode(Code = new[] { " Inc = a" })]
+            public static ROOTNET.Interface.NTLorentzVector Inc(ROOTNET.Interface.NTLorentzVector a, int value)
             {
                 throw new NotImplementedException();
             }
@@ -1988,6 +1988,7 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
         }
 
+#if notyet
         [TestMethod]
         public void TestAggragateTypeSaftey()
         {
@@ -1999,5 +2000,6 @@ namespace LINQToTTreeLib
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
         }
+#endif
     }
 }
