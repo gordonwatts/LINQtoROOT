@@ -29,8 +29,9 @@ $oldVersions = $allConfigfiles | Get-Content | ? {$_ -match "-(v[\.0-9]+)\.win32
 # nuget files.
 #
 
-$projectFiles = Get-ChildItem -Recurse *.csproj,*.vcxproj
-$allfiles = $allConfigfiles + $projectFiles
+$projectFilesCS = Get-ChildItem -Recurse -Filter *.csproj .
+$projectFilesVC = Get-ChildItem -Recurse -Filter *.vcxproj .
+$allfiles = $allConfigfiles + $projectFilesCS + $projectFilesVC
 
 #
 # For each old version, update the file! :-)
