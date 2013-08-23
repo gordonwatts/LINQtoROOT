@@ -8,9 +8,8 @@ param($newVersion)
 # Get a list of all packages.config files.
 #
 
-$allConfigfiles = Get-ChildItem -Recurse packages.config
+$allConfigfiles = Get-ChildItem -Recurse -Filter packages.config .
 
-ls
 if (-not $allConfigfiles)
 {
     Write-Host "No packages.config files found!"
@@ -41,8 +40,8 @@ foreach ($oldV in $oldVersions)
 {
     foreach ($f in $allfiles)
     {
-        $newFile = Get-Content $f | % {$_ -replace $oldV, $newVersion}
-        Write-Host "Updating $f"
-        $newFile | Set-Content $f
+        $newFile = Get-Content $f.FullName | % {$_ -replace $oldV, $newVersion}
+        Write-Host "Updating $($f.FullName)"
+        $newFile | Set-Content $f.FullName
     }
 }
