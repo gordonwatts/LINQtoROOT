@@ -459,7 +459,7 @@ namespace LINQToTreeHelpers.FutureUtils
             /// <summary>
             /// Future operator - will run the getResult guy when it is time to run.
             /// </summary>
-            internal DoFutureOperator(Func<T> genValue, Func<bool> hasValue)
+            public DoFutureOperator(Func<T> genValue, Func<bool> hasValue)
             {
                 _getResult = genValue;
                 _hasValue = hasValue;
