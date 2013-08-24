@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTreeHelpers.FutureUtils
 {
@@ -412,7 +412,7 @@ namespace LINQToTreeHelpers.FutureUtils
                 _value = v;
             }
 
-            public IFutureValue<TResult> To<TResult> ()
+            public IFutureValue<TResult> To<TResult>()
                 where TResult : class
             {
                 return new DoFutureOperator<TResult>(
@@ -454,7 +454,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// The future value we return for all these operations.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private class DoFutureOperator<T> : IFutureValue<T>
+        public class DoFutureOperator<T> : IFutureValue<T>
         {
             /// <summary>
             /// Future operator - will run the getResult guy when it is time to run.
