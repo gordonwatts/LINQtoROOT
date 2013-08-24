@@ -1,12 +1,12 @@
-// <copyright file="ParameterReplacementExpressionVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Linq.Expressions;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
+// <copyright file="ParameterReplacementExpressionVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -67,6 +67,20 @@ namespace LINQToTTreeLib.Expressions
             var asconst = expr as ConstantExpression;
             Assert.IsNotNull(asconst, "constant replacement");
             Assert.AreEqual(20, asconst.Value, "value of translation");
+        }
+
+        [TestMethod]
+        public void TestDeclarableParameterReplacement()
+        {
+            var e1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var e2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var cc = new CodeContext();
+            cc.Add(e1.ParameterName, e2);
+
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(e1, cc);
+
+            Assert.AreEqual(e2, expr, "value of translation");
         }
 
         [TestMethod]

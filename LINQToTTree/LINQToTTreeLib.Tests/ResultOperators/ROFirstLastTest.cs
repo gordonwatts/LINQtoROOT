@@ -1,8 +1,3 @@
-// <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
@@ -11,6 +6,11 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+// <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -68,6 +68,12 @@ namespace LINQToTTreeLib.ResultOperators
             public int[] run;
         }
 
+        public class ntup3
+        {
+            public int[] run1;
+            public int[] run2;
+        }
+
         [TestMethod]
         public void TestSimpleFirst()
         {
@@ -85,6 +91,72 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(3, query.CodeBody.Statements.Count(), "# of statements in the code body");
             Assert.IsInstanceOfType(query.CodeBody.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
             Assert.IsInstanceOfType(query.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+        }
+
+        [TestMethod]
+        public void TestFirstInLetStatement()
+        {
+            var q = new QueriableDummy<ntup2>();
+
+            var result = from evt in q
+                         let rf = evt.run.First()
+                         where rf > 10
+                         select evt;
+            var c = result.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(3, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            Assert.IsInstanceOfType(query.CodeBody.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(query.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+        }
+
+        [CPPHelperClass]
+        static class DoItClass
+        {
+            [CPPCode(Code = new string[] { "DoIt = arg*2;" }, IncludeFiles = new string[] { "TLorentzVector.h" })]
+            public static int DoIt(int arg)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void TestDualFirstWithCPPCode()
+        {
+            // This test produces somethign caught in the wild (caused a compile error).
+            // The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
+            // to cause the problem, unfortunately. So, the test is here.
+            var q = new QueriableDummy<ntup3>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              r1 = evt.run1.Where(r => r > 3).Select(r => DoItClass.DoIt(r)),
+                              r2 = evt.run2.Where(r => r > 4).Select(r => DoItClass.DoIt(r))
+                          };
+            var resultB = from e in resultA
+                          select new
+                          {
+                              joinedR = from r1 in e.r1
+                                        select (from r2 in e.r2
+                                                orderby r1 - r2 ascending
+                                                select r2).First()
+                          };
+            var result = from e in resultB
+                         from r in e.joinedR
+                         select r;
+            var c = result.Sum();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            var lm = query.DumpCode().Where(l => l.Contains("aInt32_14 = ((*(*this).run2).at(aInt32_13))*2;")).FirstOrDefault();
+            Assert.IsNotNull(lm, "Unable to find proper addition line");
         }
 
         [TestMethod]

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
-using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -113,6 +111,25 @@ namespace LINQToTTreeLib.Expressions
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// If this is our DeclarableParamter, then see if we can do a replacement at a "high" level.
+        /// Otherwise let the rest of re-linq handle the problem.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitExtensionExpression(ExtensionExpression expression)
+        {
+            if (expression is DeclarableParameter)
+            {
+                var dc = expression as DeclarableParameter;
+                var rep = _context.GetReplacement(dc.ParameterName);
+                if (rep != null)
+                    return rep;
+                return dc;
+            }
+            return base.VisitExtensionExpression(expression);
         }
 
         /// <summary>
