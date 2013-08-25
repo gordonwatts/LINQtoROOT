@@ -1,14 +1,14 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NVelocity.App;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using LinqToTTreeInterfacesLib;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Utils;
-using NVelocity.App;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -305,6 +305,17 @@ namespace LINQToTTreeLib.Tests
         {
             string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
             return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize));
+        }
+
+        /// <summary>
+        /// Create an output int file... unique so we don't have to regenerate...
+        /// </summary>
+        /// <param name="numberOfIter"></param>
+        /// <returns></returns>
+        public static Uri CreateFileOfVectorDouble(int numberOfIter, int vectorsize = 10)
+        {
+            string filename = "vectordoubleonly_" + numberOfIter.ToString() + ".root";
+            return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleDoubleVector(numberOfIter, vectorsize));
         }
 
         /// <summary>

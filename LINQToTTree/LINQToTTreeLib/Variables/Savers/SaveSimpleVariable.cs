@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -11,6 +11,21 @@ namespace LINQToTTreeLib.Variables.Savers
     [Export(typeof(IVariableSaver))]
     public class SaveSimpleVariable : IVariableSaver
     {
+        private class VTypeInfo
+        {
+            public string _htype;
+            public Func<ROOTNET.NTH1, object> _converter;
+        };
+
+        /// <summary>
+        /// A list of the types we know how to deal with.
+        /// </summary>
+        private static Dictionary<Type, VTypeInfo> _types = new Dictionary<Type, VTypeInfo>() { 
+           {typeof(int), new VTypeInfo() {_htype = "TH1I", _converter = h => (int)h.GetBinContent(1)}},
+           {typeof(double), new VTypeInfo() {_htype = "TH1D", _converter = h => (double)h.GetBinContent(1)}}
+        };
+
+
         /// <summary>
         /// We can deal with things like integers.
         /// </summary>
@@ -18,7 +33,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public bool CanHandle(IDeclaredParameter iVariable)
         {
-            if (iVariable.Type == typeof(int))
+            if (_types.ContainsKey(iVariable.Type))
                 return true;
 
             return false;
@@ -31,7 +46,9 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public IEnumerable<string> SaveToFile(IDeclaredParameter iVariable)
         {
-            yield return "TH1I *" + iVariable.RawValue + "_hist = new TH1I(\"" + iVariable.RawValue + "\", \"var transport\", 1, 0.0, 1.0);";
+            var tn = _types[iVariable.Type]._htype;
+
+            yield return string.Format("{0} *{1}_hist = new {0}(\"{1}\", \"var transport\", 1, 0.0, 1.0);", tn, iVariable.RawValue);
             yield return iVariable.RawValue + "_hist->SetDirectory(0);";
             yield return iVariable.RawValue + "_hist->SetBinContent(1, " + iVariable.RawValue + ");";
             yield return "Book(" + iVariable.RawValue + "_hist);";
@@ -44,7 +61,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
         {
-            yield return "TH1I.h";
+            yield return _types[iVariable.Type]._htype + ".h";
         }
 
         /// <summary>
@@ -56,11 +73,11 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <returns></returns>
         public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj)
         {
-            var intHist = obj as ROOTNET.NTH1I;
-            if (intHist == null)
+            var h = obj as ROOTNET.NTH1;
+            if (h == null)
                 throw new InvalidOperationException("Object of type '" + obj.ClassName() + "' is not an integer histogram, which is what we were expecting for this result!");
 
-            object result = (int)intHist.GetBinContent(1);
+            object result = _types[iVariable.Type]._converter(h);
             return (T)result;
         }
     }

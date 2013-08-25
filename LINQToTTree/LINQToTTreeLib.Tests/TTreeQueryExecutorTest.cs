@@ -1,16 +1,13 @@
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Tests;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NVelocity.App;
 
 namespace LINQToTTreeLib
 {
@@ -898,6 +895,19 @@ namespace LINQToTTreeLib
             public System.Linq.Expressions.Expression HeldExpression { get; set; }
         }
 
+        public class TestNtupeArrD : IExpressionHolder
+        {
+            public TestNtupeArrD(Expression holder)
+            {
+                HeldExpression = holder;
+            }
+#pragma warning disable 0169
+            public double[] myvectorofdouble;
+#pragma warning restore 0169
+
+            public System.Linq.Expressions.Expression HeldExpression { get; set; }
+        }
+
         public class TestNtupeArrJets
         {
             [TTreeVariableGrouping]
@@ -1438,6 +1448,46 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
+
+        }
+
+        [TestMethod]
+        public void TestAggregateCodeForSimpleDoubleVariableType()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorDouble(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArrD>();
+            var evtvalue = 9.5 + 8.5 + 7.5 + 6.5 + 5.5 + 4.5 + 3.5 + 2.5 + 1.5 + 0.5;
+            var dudeQ = from evt in q
+                        let r = evt.myvectorofdouble.Aggregate(0.0, (s, v) => s + v)
+                        where r == 9.5 + 8.5 + 7.5 + 6.5 + 5.5 + 4.5 + 3.5 + 2.5 + 1.5 + 0.5
+                        select r;
+            var dude = dudeQ.Aggregate(0.0, (acc, val) => acc + val);
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArrD));
+            var result = exe.ExecuteScalar<double>(query);
+            Assert.AreEqual(result, numberOfIter * evtvalue);
 
         }
 
