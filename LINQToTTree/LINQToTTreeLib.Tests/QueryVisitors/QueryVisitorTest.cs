@@ -1921,6 +1921,33 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestCodeCombineNested()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r1 = from f in q
+                     let rs = CPPHelperFunctions.Calc(f.run)
+                     where rs > 5 && rs < 10
+                     select f;
+            var r1c = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2 = from f in q
+                     let rs = CPPHelperFunctions.Calc(f.run)
+                     where rs > 5 && rs < 10
+                     select f;
+            var r2c = r2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
         public void TestCodeWithUniqueCombine()
         {
             var q = new QueriableDummy<ntup>();

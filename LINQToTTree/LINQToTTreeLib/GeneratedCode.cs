@@ -92,6 +92,7 @@ namespace LINQToTTreeLib
             public IBookingStatementBlock BookingScope;
             public IBookingStatementBlock PreviousBookingScope;
             public IBookingStatementBlock ResultScope;
+            public IDictionary<string, IValue> RememberedExpressions;
             public int oldDepth;
         }
 
@@ -102,7 +103,7 @@ namespace LINQToTTreeLib
         {
             get
             {
-                return new CurrentScopeInfo() { Scope = CurrentScopePointer, BookingScope = CurrentDeclarationScopePointer, PreviousBookingScope = PreviousDeclarationScopePointer, oldDepth = Depth, ResultScope = CurrentResultScope };
+                return new CurrentScopeInfo() { Scope = CurrentScopePointer, BookingScope = CurrentDeclarationScopePointer, PreviousBookingScope = PreviousDeclarationScopePointer, oldDepth = Depth, ResultScope = CurrentResultScope, RememberedExpressions = new Dictionary<string, IValue>(CurrentRememberedExpressions) };
             }
             set
             {
@@ -115,6 +116,7 @@ namespace LINQToTTreeLib
                 PreviousDeclarationScopePointer = info.PreviousBookingScope;
                 Depth = info.oldDepth;
                 CurrentResultScope = info.ResultScope;
+                CurrentRememberedExpressions = new Dictionary<string, IValue>(info.RememberedExpressions);
             }
         }
 
@@ -356,5 +358,32 @@ namespace LINQToTTreeLib
             }
         }
 
+        /// <summary>
+        /// Keep track of all the sub-expressions we are trying to remember.
+        /// </summary>
+        private Dictionary<string, IValue> CurrentRememberedExpressions = new Dictionary<string, IValue>();
+
+        /// <summary>
+        /// Remember a sub-expression. We will hide a previously made association!
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="r"></param>
+        public void RememberSubExpression(Expression expr, IValue r)
+        {
+            CurrentRememberedExpressions[expr.ToString()] = r;
+        }
+
+        /// <summary>
+        /// See if we have the sub-expression in our DB. If it isn't there, return null.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public IValue LookupSubExpression(Expression expr)
+        {
+            var s = expr.ToString();
+            if (CurrentRememberedExpressions.ContainsKey(s))
+                return CurrentRememberedExpressions[s];
+            return null;
+        }
     }
 }

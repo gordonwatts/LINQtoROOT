@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -575,6 +576,65 @@ namespace LINQToTTreeLib
             gc.Pop();
             gc.AddAtResultScope(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
 
+        }
+
+        [TestMethod]
+        public void TestRememberExprSimple()
+        {
+            var gc = new GeneratedCode();
+            var expr = Expression.Constant(10);
+            var r = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
+
+            gc.RememberSubExpression(expr, r);
+
+            Assert.AreEqual(r, gc.LookupSubExpression(expr), "Could not find expression");
+        }
+
+        [TestMethod]
+        public void TestRememberExprSimpleByVal()
+        {
+            var gc = new GeneratedCode();
+            var expr = Expression.Constant(10);
+            var r = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
+
+            gc.RememberSubExpression(expr, r);
+
+            Assert.AreEqual(r, gc.LookupSubExpression(Expression.Constant(10)), "Could not find expression");
+        }
+
+        [TestMethod]
+        public void TestRememberExprPop()
+        {
+            var gc = new GeneratedCode();
+            var initialScope = gc.CurrentScope;
+            gc.Add(new StatementInlineBlock());
+
+            var expr = Expression.Constant(10);
+            var r = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
+            gc.RememberSubExpression(expr, r);
+
+            gc.CurrentScope = initialScope;
+
+            Assert.IsNull(gc.LookupSubExpression(Expression.Constant(10)), "Expression after popping");
+        }
+
+        [TestMethod]
+        public void TestRememberExprHideAndSeek()
+        {
+            var gc = new GeneratedCode();
+            var expr = Expression.Constant(10);
+            var r1 = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
+            gc.RememberSubExpression(expr, r1);
+
+            var initialScope = gc.CurrentScope;
+            gc.Add(new StatementInlineBlock());
+
+            var r2 = new LINQToTTreeLib.Variables.ValSimple("11", typeof(int));
+            gc.RememberSubExpression(expr, r2);
+
+            Assert.AreEqual(r2, gc.LookupSubExpression(expr), "Is hidden one done right?");
+            gc.Pop();
+            Assert.AreEqual(r1, gc.LookupSubExpression(expr), "Is revealed one done right?");
         }
     }
 }

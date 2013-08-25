@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -76,7 +76,13 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private IValue GetExpression(Expression expr)
         {
-            return InternalGetExpression(expr, _codeEnv, _codeContext, MEFContainer);
+            var v = _codeEnv.LookupSubExpression(expr);
+            if (v != null)
+                return v;
+
+            var r = InternalGetExpression(expr, _codeEnv, _codeContext, MEFContainer);
+            _codeEnv.RememberSubExpression(expr, r);
+            return r;
         }
 
         /// <summary>

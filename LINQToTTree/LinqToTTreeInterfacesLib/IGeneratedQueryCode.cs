@@ -112,5 +112,19 @@ namespace LinqToTTreeInterfacesLib
         /// </remarks>
         /// <param name="popPastLoop">True if contexts should be popped off until we pop-off a IStatementLoop.</param>
         void Pop(bool popPastLoop = false);
+
+        /// <summary>
+        /// Remember how we translated this sub-expression.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="r"></param>
+        void RememberSubExpression(Expression expr, IValue r);
+
+        /// <summary>
+        /// Look up a sub-expression. Return null if it isn't there.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        IValue LookupSubExpression(Expression expr);
     }
 }
