@@ -1,7 +1,3 @@
-// <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
@@ -10,6 +6,10 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -496,6 +496,85 @@ namespace LINQToTTreeLib
             gc.Add(new Statements.StatementSimpleStatement("dir"));
 
             Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "# of statements");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestResultScopeNull()
+        {
+            var gc = new GeneratedCode();
+            var b = new StatementInlineBlock();
+            gc.Add(b);
+            gc.AddAtResultScope(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+        }
+
+        [TestMethod]
+        public void TestResultScopeSimple()
+        {
+            var gc = new GeneratedCode();
+            var b = new StatementInlineBlock();
+            gc.Add(b);
+            gc.SetCurrentScopeAsResultScope();
+            var b2 = new StatementInlineBlock();
+            gc.Add(b2);
+
+            gc.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            Assert.AreEqual(0, b.DeclaredVariables.Count(), "variables at outside loop before add");
+            Assert.AreEqual(1, b2.DeclaredVariables.Count(), "variables at inner loop after 1 add");
+
+            gc.AddAtResultScope(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            Assert.AreEqual(1, b.DeclaredVariables.Count(), "variables at outside loop after 1 add");
+            Assert.AreEqual(1, b2.DeclaredVariables.Count(), "variables at inner loop after 2 add");
+        }
+
+        [TestMethod]
+        public void TestResultScopeCurrentScope()
+        {
+            var gc = new GeneratedCode();
+            var b1 = new StatementInlineBlock();
+            gc.Add(b1);
+            gc.SetCurrentScopeAsResultScope();
+            var outterScope = gc.CurrentScope;
+
+            var b2 = new StatementInlineBlock();
+            gc.Add(b2);
+            gc.SetCurrentScopeAsResultScope();
+
+            gc.AddAtResultScope(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            Assert.AreEqual(0, b1.DeclaredVariables.Count(), "variables at outside loop after 0 add");
+            Assert.AreEqual(1, b2.DeclaredVariables.Count(), "variables at inner loop after 1 add");
+
+            gc.CurrentScope = outterScope;
+
+            gc.AddAtResultScope(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            Assert.AreEqual(1, b1.DeclaredVariables.Count(), "variables at outside loop after 1 add");
+            Assert.AreEqual(1, b2.DeclaredVariables.Count(), "variables at inner loop after 2 add");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestResultScopePop()
+        {
+            var gc = new GeneratedCode();
+            var b1 = new StatementInlineBlock();
+            gc.Add(b1);
+
+            var b2 = new StatementInlineBlock();
+            gc.Add(b2);
+            gc.SetCurrentScopeAsResultScope();
+
+            gc.AddAtResultScope(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            // This pop should remove the result scope, and it should be back to "null" now, which
+            // should cause an exception.
+
+            gc.Pop();
+            gc.AddAtResultScope(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
         }
     }
 }

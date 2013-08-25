@@ -1,13 +1,13 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -233,6 +233,7 @@ namespace LINQToTTreeLib.Expressions
                 /// 
 
                 var scope = GeneratedCode.CurrentScope;
+                GeneratedCode.SetCurrentScopeAsResultScope();
                 qv.VisitQueryModel(expression.QueryModel);
 
                 ///

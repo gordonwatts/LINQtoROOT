@@ -1,10 +1,10 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib
 {
@@ -91,6 +91,7 @@ namespace LINQToTTreeLib
             public IStatementCompound Scope;
             public IBookingStatementBlock BookingScope;
             public IBookingStatementBlock PreviousBookingScope;
+            public IBookingStatementBlock ResultScope;
             public int oldDepth;
         }
 
@@ -101,7 +102,7 @@ namespace LINQToTTreeLib
         {
             get
             {
-                return new CurrentScopeInfo() { Scope = CurrentScopePointer, BookingScope = CurrentDeclarationScopePointer, PreviousBookingScope = PreviousDeclarationScopePointer, oldDepth = Depth };
+                return new CurrentScopeInfo() { Scope = CurrentScopePointer, BookingScope = CurrentDeclarationScopePointer, PreviousBookingScope = PreviousDeclarationScopePointer, oldDepth = Depth, ResultScope = CurrentResultScope };
             }
             set
             {
@@ -113,6 +114,7 @@ namespace LINQToTTreeLib
                 CurrentDeclarationScopePointer = info.BookingScope;
                 PreviousDeclarationScopePointer = info.PreviousBookingScope;
                 Depth = info.oldDepth;
+                CurrentResultScope = info.ResultScope;
             }
         }
 
@@ -173,6 +175,32 @@ namespace LINQToTTreeLib
                 throw new InvalidOperationException("Can't declare one varaible one level up when one level up doesn't exist!");
 
             PreviousDeclarationScopePointer.Add(valSimple);
+        }
+
+        /// <summary>
+        /// Keep track of the current result scope
+        /// </summary>
+        private IBookingStatementBlock CurrentResultScope { get; set; }
+
+        /// <summary>
+        /// When we are in a result operator and the result of its work needs to be visible "outside" we need
+        /// to make sure the declaration happens at the right spot. That is what this guy does.
+        /// </summary>
+        /// <param name="p"></param>
+        public void AddAtResultScope(IDeclaredParameter p)
+        {
+            if (CurrentResultScope == null)
+                throw new InvalidOperationException("Unable to add a parameter at the result scope - none is set");
+
+            CurrentResultScope.Add(p);
+        }
+
+        /// <summary>
+        /// The current booking scope is set to be the result scope.
+        /// </summary>
+        public void SetCurrentScopeAsResultScope()
+        {
+            CurrentResultScope = CurrentDeclarationScopePointer;
         }
 
         /// <summary>
@@ -327,5 +355,6 @@ namespace LINQToTTreeLib
                     return;
             }
         }
+
     }
 }

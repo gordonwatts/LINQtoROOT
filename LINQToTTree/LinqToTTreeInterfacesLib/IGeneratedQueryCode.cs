@@ -41,6 +41,19 @@ namespace LinqToTTreeInterfacesLib
         void AddOutsideLoop(IDeclaredParameter indexSeen);
 
         /// <summary>
+        /// Add a variable declaration at the result scoping.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <exception cref="InvalidOperationException">Thrown if the result scope is undefined.</exception>
+        void AddAtResultScope(IDeclaredParameter p);
+
+        /// <summary>
+        /// The current booking scope is made to be the result scope. Any result operators that are several levels down,
+        /// but return their results as a non-sequence, will use this to declare themselves.
+        /// </summary>
+        void SetCurrentScopeAsResultScope();
+
+        /// <summary>
         /// This variable's inital value is "complex" and must be transfered over the wire in some way other than staight into the code
         /// (for example, a ROOT object that needs to be written to a TFile).
         /// </summary>

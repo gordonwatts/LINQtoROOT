@@ -160,6 +160,104 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [TestMethod]
+        public void TestDualFirstWithTestAtEnd()
+        {
+            // This test produces somethign caught in the wild (caused a compile error).
+            // The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
+            // to cause the problem, unfortunately. So, the test is here.
+            var q = new QueriableDummy<ntup3>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              r1 = evt.run1.Where(r => r > 3),
+                              r2 = evt.run2.Where(r => r > 4)
+                          };
+            var resultB = from e in resultA
+                          select new
+                          {
+                              joinedR = from r1 in e.r1
+                                        select (from r2 in e.r2
+                                                orderby r1 - r2 ascending
+                                                select new
+                                                {
+                                                    R1 = r1,
+                                                    R2 = r2
+                                                }).First()
+                          };
+            var resultC = from e in resultB
+                          select new
+                          {
+                              jR = from r in e.joinedR
+                                   where r.R1 - r.R2 < 0.3
+                                   select r
+                          };
+
+            var result = from e in resultC
+                         from r in e.jR
+                         select r.R2 - r.R1;
+
+            var c = result.Sum();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            var firstloop = query.CodeBody.Statements.First() as IBookingStatementBlock;
+            Assert.AreEqual(1, firstloop.Statements.Count(), "first loop should have only an if statement");
+            var ifstatement = firstloop.Statements.First() as IBookingStatementBlock;
+            Assert.AreEqual(2, ifstatement.AllDeclaredVariables.Count(), "# of declared variables");
+        }
+
+        [TestMethod]
+        public void TestDualFirstWithTestAtEndButNoneAtStart()
+        {
+            // This is a counter test to the one TestDualFirstWithTestAtEnd - it worked, and this is to make
+            // sure that the result doesn't get messed up with the bug fix (future or this one).
+            var q = new QueriableDummy<ntup3>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              r1 = evt.run1,
+                              r2 = evt.run2
+                          };
+            var resultB = from e in resultA
+                          select new
+                          {
+                              joinedR = from r1 in e.r1
+                                        select (from r2 in e.r2
+                                                orderby r1 - r2 ascending
+                                                select new
+                                                {
+                                                    R1 = r1,
+                                                    R2 = r2
+                                                }).First()
+                          };
+            var resultC = from e in resultB
+                          select new
+                          {
+                              jR = from r in e.joinedR
+                                   where r.R1 - r.R2 < 0.3
+                                   select r
+                          };
+
+            var result = from e in resultC
+                         from r in e.jR
+                         select r.R2 - r.R1;
+
+            var c = result.Sum();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            Assert.AreEqual(3, (query.CodeBody.Statements.First() as IBookingStatementBlock).AllDeclaredVariables.Count(), "# of declared variables");
+        }
+
+        [TestMethod]
         public void TestFirstDownOne()
         {
             var q = new QueriableDummy<ntup2>();
