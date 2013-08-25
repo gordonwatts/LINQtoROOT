@@ -1,8 +1,3 @@
-// <copyright file="ROAnyAllTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
@@ -10,6 +5,11 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+// <copyright file="ROAnyAllTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -70,6 +70,7 @@ namespace LINQToTTreeLib.ResultOperators
             res.DumpCodeToConsole();
 
             Assert.AreEqual(0, res.CodeBody.DeclaredVariables.Count(), "# declared");
+            Assert.IsFalse(res.DumpCode().Where(l => l.Contains("break")).Any(), "Contains a break statement");
         }
 
         class ntup2
@@ -102,6 +103,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
+            Assert.IsFalse(res.DumpCode().Where(l => l.Contains("break")).Any(), "Contains a break statement");
         }
     }
 }

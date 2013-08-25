@@ -1,4 +1,5 @@
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using Microsoft.Pex.Framework;
 
 namespace LINQToTTreeLib.Statements
@@ -11,7 +12,7 @@ namespace LINQToTTreeLib.Statements
         public static StatementAnyAllDetector Create(IValue predicate_iValue, IDeclaredParameter aresult_varSimple, string markedValue_s)
         {
             StatementAnyAllDetector statementAnyAllDetector = new StatementAnyAllDetector
-                                                                  (predicate_iValue, aresult_varSimple, markedValue_s);
+                                                                  (predicate_iValue, aresult_varSimple, DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool)), markedValue_s);
             return statementAnyAllDetector;
         }
     }

@@ -1,12 +1,12 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -49,18 +49,22 @@ namespace LINQToTTreeLib.ResultOperators
             ///
             /// Next, change the predicate into something that can be tested (as an if statement)
             /// For All:
-            ///   initial: val = true;
-            ///   if (!pred) { val = false; break;}
+            ///   initial: aresult = true;
+            ///   if (aresult && !pred) { aresult = false; }
             /// For Any:
-            ///   initial: val = false;
-            ///   if (pred) { val = true; break; }
+            ///   initial: aresult = false;
+            ///   if (!aresult && pred) { aresult = true; }
             /// 
 
+            var aresult = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+
             IValue predicate = null;
+            IValue predicateFastTest = null;
             string initialValue = "";
             string markedValue = "";
             if (all != null)
             {
+                predicateFastTest = ExpressionToCPP.GetExpression(aresult, gc, cc, container);
                 var notPredicate = Expression.Not(all.Predicate);
                 predicate = ExpressionToCPP.GetExpression(notPredicate, gc, cc, container);
                 initialValue = "true";
@@ -68,7 +72,8 @@ namespace LINQToTTreeLib.ResultOperators
             }
             else
             {
-                predicate = new Variables.ValSimple("true", typeof(bool));
+                predicate = null;
+                predicateFastTest = ExpressionToCPP.GetExpression(Expression.Not(aresult), gc, cc, container);
                 initialValue = "false";
                 markedValue = "true";
             }
@@ -77,7 +82,6 @@ namespace LINQToTTreeLib.ResultOperators
             /// The result is a simple bool. This is what we will be handing back.
             /// 
 
-            var aresult = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             aresult.SetInitialValue(initialValue);
 
             ///
@@ -85,7 +89,7 @@ namespace LINQToTTreeLib.ResultOperators
             /// This makes it easier to re-combine later when we collapse queires.
             /// 
 
-            var ifstatement = new Statements.StatementAnyAllDetector(predicate, aresult, markedValue);
+            var ifstatement = new Statements.StatementAnyAllDetector(predicate, aresult, predicateFastTest, markedValue);
 
             gc.Add(ifstatement);
 

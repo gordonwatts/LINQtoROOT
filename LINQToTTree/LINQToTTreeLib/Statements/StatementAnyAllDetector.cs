@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -27,16 +27,27 @@ namespace LINQToTTreeLib.Statements
         private string ResultValueToBe;
 
         /// <summary>
+        /// Should we put a break statement at the end?
+        /// </summary>
+        private IValue ResultFastTest;
+
+        /// <summary>
         /// Look at predicate. Set result to the marked value when the predicate fires, and also pop out of the
         /// current loop.
         /// </summary>
-        /// <param name="predicate"></param>
-        /// <param name="aresult"></param>
-        /// <param name="markedValue"></param>
-        public StatementAnyAllDetector(IValue predicate, IDeclaredParameter aresult, string markedValue)
+        /// <param name="predicate">The test that needs to be done. Null if it is "any" test</param>
+        /// <param name="aresult">The result that should be altered, and testsed against.</param>
+        /// <param name="aresultFastTest">A text expression we can use to short-curit the predicate if it has already gone.</param>
+        /// <param name="markedValue">How we should set the result when the if statement fires</param>
+        /// <param name="addBreak">Add a break statement to terminate loop early  - this is dangerous as when loops are combined...</param>
+        /// <remarks>
+        /// We keep the aresultFastTest seperate so that we can make sure try-combine works properly when we have two
+        /// identical guys.
+        /// </remarks>
+        public StatementAnyAllDetector(IValue predicate, IDeclaredParameter aresult, IValue aresultFastTest, string markedValue)
         {
-            if (predicate == null)
-                throw new ArgumentNullException("predicate");
+            if (aresultFastTest == null)
+                throw new ArgumentNullException("aresultFastTest");
             if (aresult == null)
                 throw new ArgumentNullException("aresult");
             if (markedValue == null)
@@ -45,6 +56,7 @@ namespace LINQToTTreeLib.Statements
             Predicate = predicate;
             Result = aresult;
             ResultValueToBe = markedValue;
+            ResultFastTest = aresultFastTest;
         }
 
         //ifstatement.Add(new Statements.StatementAssign(aresult, new Variables.ValSimple(markedValue, typeof(bool))));
@@ -56,9 +68,11 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("if ({0}) {{", Predicate.RawValue);
+            string prv = "";
+            if (Predicate != null)
+                prv = string.Format(" && {0}", Predicate.RawValue);
+            yield return string.Format("if ({0}{1}) {{", ResultFastTest.RawValue, prv);
             yield return string.Format("  {0} = {1};", Result.RawValue, ResultValueToBe);
-            yield return "  break;";
             yield return "}";
         }
 
@@ -69,8 +83,10 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            Predicate.RenameRawValue(originalName, newName);
+            if (Predicate != null)
+                Predicate.RenameRawValue(originalName, newName);
             Result.RenameRawValue(originalName, newName);
+            ResultFastTest.RenameRawValue(originalName, newName);
         }
 
         /// <summary>
@@ -88,9 +104,20 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            if (other.Predicate.RawValue != Predicate.RawValue
-                || other.ResultValueToBe != ResultValueToBe)
-                return false;
+            if (Predicate == null)
+            {
+                if (other.Predicate != null)
+                    return false;
+            }
+            else
+            {
+                if (other.Predicate == null)
+                    return false;
+
+                if (other.Predicate.RawValue != Predicate.RawValue
+                    || other.ResultValueToBe != ResultValueToBe)
+                    return false;
+            }
 
             //
             // As long as nothing crazy is going on with result, then we
