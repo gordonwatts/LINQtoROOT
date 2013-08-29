@@ -46,10 +46,22 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="cc"></param>
         /// <param name="container"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Cache and do cache lookup of expressions to try to short-circuit the expression resolution.
+        /// </remarks>
         public static IValue InternalGetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
             if (expr == null)
                 return null;
+
+            if (ce != null)
+            {
+                var v = ce.LookupSubExpression(expr);
+                if (v != null)
+                    return v;
+            }
+
+            // We have to do the visit - make sure everything is prep'd.
 
             if (cc == null)
             {
@@ -64,7 +76,15 @@ namespace LINQToTTreeLib.Expressions
                 container.SatisfyImportsOnce(visitor);
             }
 
+            // Do the visit, cache the result.
+
             visitor.VisitExpression(expr);
+
+            if (ce != null)
+            {
+                ce.RememberSubExpression(expr, visitor.Result);
+            }
+
             return visitor.Result;
         }
 
@@ -76,12 +96,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private IValue GetExpression(Expression expr)
         {
-            var v = _codeEnv.LookupSubExpression(expr);
-            if (v != null)
-                return v;
-
             var r = InternalGetExpression(expr, _codeEnv, _codeContext, MEFContainer);
-            _codeEnv.RememberSubExpression(expr, r);
             return r;
         }
 
