@@ -963,6 +963,53 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+            [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
+                Code = new string[]{
+                "TLorentzVector tlzUnique;",
+                "tlzUnique.SetPtEtaPhiE(pt, eta, phi, E);",
+                "CreateTLZ = &tlzUnique;"
+            })]
+            public static ROOTNET.NTLorentzVector CreateTLZ(double pt, double eta, double phi, double E)
+            {
+                throw new NotImplementedException("This should never get called!");
+#pragma warning disable 0162
+                var tlz = new ROOTNET.NTLorentzVector();
+                tlz.SetPtEtaPhiE(pt, eta, phi, E);
+                return tlz;
+#pragma warning disable 0162
+            }
+        }
+
+        [TestMethod]
+        public void TestCPPCodeOptimization()
+        {
+            // Caught in the wild. When you have an object that has to be calculated
+            // (i.e. TLZ), and you use two different methods, the QV and expression eval
+            // was missing that it was the same object - and thus creating two
+            // versions of it in the code where only one was needed. This fails if
+            // that happens.
+            var q = new QueriableDummy<dummyntup>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              Jets = from r in evt.valC1D
+                                     let s = CPPHelperFunctions.CreateTLZ(r, r, r, r)
+                                     where s.M() > 5 && s.Pt() < 10
+                                     select s
+                          };
+            var resultB = from evt in resultA
+                          where (evt.Jets.Count() == 2)
+                          select evt;
+            var resultC = resultB.SelectMany(evt => evt.Jets).Where(j => j.M() > 7);
+            var c = resultC.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            var lm = query.DumpCode().Where(l => l.Contains("TLorentzVector* ")).Count();
+            Assert.AreEqual(2, lm, "Number of times TLorentzVector appears in the source");
         }
 
         [TestMethod]
