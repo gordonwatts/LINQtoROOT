@@ -834,7 +834,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("var1.size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -861,7 +861,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("var1.size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -888,7 +888,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("var1.size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]

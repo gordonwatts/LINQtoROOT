@@ -580,6 +580,7 @@ namespace LINQToTTreeLib
             var firstNonArray = from member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public)
                                 let field = member as FieldInfo
                                 where field != null
+                                orderby field.Name ascending
                                 select field;
             return firstNonArray.FirstOrDefault();
         }
