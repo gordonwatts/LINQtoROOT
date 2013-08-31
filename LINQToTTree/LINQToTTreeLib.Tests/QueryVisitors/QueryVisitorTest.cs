@@ -443,6 +443,9 @@ namespace LINQToTTreeLib
             public int var1;
             [TTreeVariableGrouping]
             public double var2;
+            [TTreeVariableGrouping]
+            [RenameVariable("var3")]
+            public double v3;
         }
 
         [TranslateToClass(typeof(ntupWithObjectsDest))]
@@ -460,6 +463,7 @@ namespace LINQToTTreeLib
             }
             public int[] var1;
             public double[] var2;
+            public double[] var3;
 
             public Expression HeldExpression { get; private set; }
         }
@@ -804,6 +808,87 @@ namespace LINQToTTreeLib
             gc.DumpCodeToConsole();
 
             Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+        }
+
+        [TestMethod]
+        public void TestTranslatedUsesRightSizeIndex()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<ntupWithObjects>()
+                select q).Aggregate(0, (acc, va) => acc + va.jets.Sum(j => j.var1)));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROSum());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            var myth = new TypeHandlerCache();
+            MEFUtilities.AddPart(myth);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("var1.size()")).Any(), "A line contains the word jets");
+        }
+
+        [TestMethod]
+        public void TestTranslatedUsesRightSizeIndex2()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<ntupWithObjects>()
+                select q).Aggregate(0.0, (acc, va) => acc + va.jets.Sum(j => j.var2)));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROSum());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            var myth = new TypeHandlerCache();
+            MEFUtilities.AddPart(myth);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("var1.size()")).Any(), "A line contains the word jets");
+        }
+
+        [TestMethod]
+        public void TestTranslatedUsesRightSizeIndex3()
+        {
+            var model = GetModel(() => (
+                from q in new QueriableDummy<ntupWithObjects>()
+                select q).Aggregate(0.0, (acc, va) => acc + va.jets.Sum(j => j.v3)));
+
+            MEFUtilities.AddPart(new QVResultOperators());
+            MEFUtilities.AddPart(new ROSum());
+            MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            var myth = new TypeHandlerCache();
+            MEFUtilities.AddPart(myth);
+            MEFUtilities.AddPart(new TypeHandlerTranslationClass());
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
+            MEFUtilities.Compose(qv);
+            qv.VisitQueryModel(model);
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("var1.size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
