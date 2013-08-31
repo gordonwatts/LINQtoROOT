@@ -1,15 +1,15 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
@@ -196,7 +196,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// A single statement that deals with this special code. We do this rather than make it up otherwise
         /// as we have special combination symantics.
         /// </summary>
-        private class CPPCodeStatement : IStatement
+        private class CPPCodeStatement : IStatement, ICMStatementInfo
         {
             private System.Reflection.MethodInfo methodInfo;
             private string cppType;
@@ -213,6 +213,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 this.methodInfo = methodInfo;
                 this.cppType = typeOfResult;
                 this.resultName = resultName;
+                ResultVariables = new HashSet<string>() { resultName };
             }
 
             List<string> LinesOfCode = new List<string>();
@@ -320,6 +321,19 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             {
                 uniqueVariableTranslations.Add(varRepl, uniqueTranslated);
             }
+
+            /// <summary>
+            /// List of variables that we depend on for results
+            /// </summary>
+            public ISet<string> DependentVariables
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            /// <summary>
+            /// List of variables that we have that contain our results.
+            /// </summary>
+            public ISet<string> ResultVariables { get; private set; }
         }
 
 
