@@ -43,6 +43,38 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Remove a statement that is in our current list.
+        /// </summary>
+        /// <param name="statement"></param>
+        public void Remove(IStatement statement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+
+            if (!_statements.Remove(statement))
+                throw new ArgumentException("statement is not in this compound statement");
+        }
+
+        /// <summary>
+        /// Add a statement before another statement.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="beforeThisStatement"></param>
+        public void AddBefore(IStatement statement, IStatement beforeThisStatement)
+        {
+            if (statement == null)
+                throw new ArgumentNullException("statement");
+            if (beforeThisStatement == null)
+                throw new ArgumentNullException("beforeThisStatement");
+
+            var index = _statements.IndexOf(beforeThisStatement);
+            if (index < 0)
+                throw new ArgumentException("Statement does not exist in this compound statement");
+
+            _statements.Insert(index, statement);
+        }
+
+        /// <summary>
         /// Track the list of variables we keep for others.
         /// </summary>
         private List<IDeclaredParameter> _variables = new List<IDeclaredParameter>();

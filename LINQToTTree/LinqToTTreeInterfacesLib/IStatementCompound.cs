@@ -18,5 +18,18 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="statement"></param>
         void Add(IStatement statement);
+
+        /// <summary>
+        /// Remove a statement from our list of statements.
+        /// </summary>
+        /// <param name="statement">Statement to remove - must be an exact object match.</param>
+        void Remove(IStatement statement);
+
+        /// <summary>
+        /// Add a statement into the current set of statements, just before the given statement.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="beforeThisStatement"></param>
+        void AddBefore(IStatement statement, IStatement beforeThisStatement);
     }
 }
