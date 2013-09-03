@@ -49,13 +49,46 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestLiftTwoStatements()
         {
-            Assert.Inconclusive("Two stements with no side effects");
+            var v = new GeneratedCode();
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+            v.Add(new StatementWithSideEffects(loopP));
+            v.Add(new StatementWithNoSideEffects());
+            v.Add(new StatementWithNoSideEffects());
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithNoSideEffects), "first statement");
+            var secondStatement = v.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithNoSideEffects), "second statement");
+            var thirdstatement = v.CodeBody.Statements.Skip(2).First();
+            Assert.IsInstanceOfType(thirdstatement, typeof(StatementForLoop), "third statement");
         }
 
         [TestMethod]
         public void TestLiftTwoDependentStatements()
         {
-            Assert.Inconclusive("second depends on first, which doesn't depend on anything, both should be lifted and order preserved");
+            var v = new GeneratedCode();
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+
+            var var1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var var2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            v.Add(new StatementWithSideEffects(var1, var2));
+            v.Add(new StatementWithSideEffects(var2));
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithSideEffects), "first statement");
+            var secondStatement = v.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithSideEffects), "second statement");
+            var thirdstatement = v.CodeBody.Statements.Skip(2).First();
+            Assert.IsInstanceOfType(thirdstatement, typeof(StatementForLoop), "third statement");
         }
 
         [TestMethod]
@@ -215,10 +248,12 @@ namespace LINQToTTreeLib.Tests.Optimization
         class StatementWithSideEffects : IStatement, ICMStatementInfo
         {
             private DeclarableParameter _trackedVar;
+            private DeclarableParameter _resultVar;
 
-            public StatementWithSideEffects(DeclarableParameter loopP)
+            public StatementWithSideEffects(DeclarableParameter loopP, DeclarableParameter result = null)
             {
                 this._trackedVar = loopP;
+                this._resultVar = result;
             }
 
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
@@ -250,7 +285,13 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public System.Collections.Generic.ISet<string> ResultVariables
             {
-                get { return new HashSet<string>(); }
+                get
+                {
+                    var r = new HashSet<string>();
+                    if (_resultVar != null)
+                        r.Add(_resultVar.RawValue);
+                    return r;
+                }
             }
         }
 
@@ -276,7 +317,6 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public IStatement Parent { get; set; }
         }
-
 
         /// <summary>
         /// A very simple statement with no side effects.
