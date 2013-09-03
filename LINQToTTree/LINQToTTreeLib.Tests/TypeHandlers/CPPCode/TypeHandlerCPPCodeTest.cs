@@ -1,16 +1,17 @@
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.Utils;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 // <copyright file="TypeHandlerCPPCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Tests;
-using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
@@ -253,6 +254,34 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 Assert.IsNotNull(line, "bad statement type");
                 Assert.IsFalse(line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", line));
             }
+        }
+
+        [TestMethod]
+        public void TestCMVariables()
+        {
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var p_pt = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+            var p_eta = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+            var p_phi = p_pt;
+            var p_E = p_eta;
+            var expr = Expression.Call(typeof(TLZHelper).GetMethod("CreateTLZ"), p_pt, p_eta, p_phi, p_E);
+
+            var r = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            var ccpstatement = gc.CodeBody.Statements.First();
+            Assert.IsNotNull(ccpstatement);
+            var cmInfo = ccpstatement as ICMStatementInfo;
+            Assert.IsNotNull(cmInfo);
+            Assert.AreEqual(1, cmInfo.ResultVariables.Count, "# of result vars");
+            Assert.AreEqual(r.RawValue, cmInfo.ResultVariables.First(), "Result var name");
+            Assert.AreEqual(2, cmInfo.DependentVariables.Count, "# of dependent vars");
+            Assert.IsTrue(cmInfo.DependentVariables.Contains(p_pt.RawValue), "doesn't have pt");
+            Assert.IsTrue(cmInfo.DependentVariables.Contains(p_eta.RawValue), "Doesn't have eta");
         }
 
         [TestMethod]

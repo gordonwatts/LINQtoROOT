@@ -1,15 +1,15 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
@@ -122,6 +122,13 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                                    };
             var paramLookup = paramsTranslated.ToDictionary(v => v.Name, v => v.Translated.ApplyParensIfNeeded());
 
+            //
+            // Parse out the list of variables that are used. We will be passing these up the line as needed
+            // so that we can tell how to optimize things.
+            //
+
+            var dependents = new HashSet<string>(FindDeclarableParameters.FindAll(expr).Select(e => e.RawValue));
+
             ///
             /// We also need a return variable. Since this can be multiple lines of code and we don't
             /// know how the result will be used, we have to declare it up front... and pray they
@@ -131,7 +138,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var cppType = expr.Type.AsCPPType();
             var resultName = expr.Type.CreateUniqueVariableName();
 
-            var cppStatement = new CPPCodeStatement(expr.Method, cppType, resultName);
+            var cppStatement = new CPPCodeStatement(expr.Method, cppType, resultName, dependents);
             gc.Add(cppStatement);
 
             paramLookup.Add(expr.Method.Name, resultName);
@@ -196,7 +203,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// A single statement that deals with this special code. We do this rather than make it up otherwise
         /// as we have special combination symantics.
         /// </summary>
-        private class CPPCodeStatement : IStatement
+        private class CPPCodeStatement : IStatement, ICMStatementInfo
         {
             private System.Reflection.MethodInfo methodInfo;
             private string cppType;
@@ -208,11 +215,19 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <param name="methodInfo"></param>
             /// <param name="cppType"></param>
             /// <param name="resultName"></param>
-            public CPPCodeStatement(MethodInfo methodInfo, string typeOfResult, string resultName)
+            /// <param name="dependents">The dependent variables. Null if there are none (or an empty set)</param>
+            public CPPCodeStatement(MethodInfo methodInfo, string typeOfResult, string resultName, HashSet<string> dependents = null)
             {
                 this.methodInfo = methodInfo;
                 this.cppType = typeOfResult;
                 this.resultName = resultName;
+                ResultVariables = new HashSet<string>() { resultName };
+
+                if (dependents == null)
+                {
+                    dependents = new HashSet<string>();
+                }
+                DependentVariables = dependents;
             }
 
             List<string> LinesOfCode = new List<string>();
@@ -320,6 +335,16 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             {
                 uniqueVariableTranslations.Add(varRepl, uniqueTranslated);
             }
+
+            /// <summary>
+            /// List of variables that we depend on for results
+            /// </summary>
+            public ISet<string> DependentVariables { get; private set; }
+
+            /// <summary>
+            /// List of variables that we have that contain our results.
+            /// </summary>
+            public ISet<string> ResultVariables { get; private set; }
         }
 
 

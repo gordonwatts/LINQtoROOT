@@ -1,3 +1,8 @@
+// <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
@@ -6,11 +11,6 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-// <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -116,6 +116,17 @@ namespace LINQToTTreeLib
 
 
             public IStatement Parent { get; set; }
+
+
+            public void Remove(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void AddBefore(IStatement statement, IStatement beforeThisStatement)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock

@@ -63,6 +63,70 @@ namespace LINQToTTreeLib.Statements
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestBadRemove()
+        {
+            var s = new StatementInlineBlock();
+            var tmp = new StatementSimpleStatement("fork");
+            s.Remove(tmp);
+        }
+
+        [TestMethod]
+        public void TestRemoveSingleStatement()
+        {
+            var s = new StatementInlineBlock();
+            var s1 = new StatementSimpleStatement("one");
+            var s2 = new StatementSimpleStatement("two");
+            s.Add(s1);
+            s.Add(s2);
+
+            s.Remove(s1);
+            Assert.AreEqual(1, s.Statements.Count(), "# of statements after remove");
+            Assert.AreEqual(s2, s.Statements.First(), "First statement");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestAddBeforeBad()
+        {
+            var s = new StatementInlineBlock();
+            var s1 = new StatementSimpleStatement("one");
+            var s2 = new StatementSimpleStatement("two");
+            s.AddBefore(s1, s2);
+        }
+
+        [TestMethod]
+        public void TestAddBefore()
+        {
+            var s = new StatementInlineBlock();
+            var s1 = new StatementSimpleStatement("one");
+            var s2 = new StatementSimpleStatement("two");
+            s.Add(s2);
+            s.AddBefore(s1, s2);
+
+            Assert.AreEqual(2, s.Statements.Count(), "# of statements");
+            Assert.AreEqual(s1, s.Statements.First(), "first statement");
+            Assert.AreEqual(s2, s.Statements.Skip(1).First(), "second statement");
+        }
+
+        [TestMethod]
+        public void TestAddBeforeWithAnother()
+        {
+            var s = new StatementInlineBlock();
+            var s1 = new StatementSimpleStatement("one");
+            var s2 = new StatementSimpleStatement("two");
+            var s3 = new StatementSimpleStatement("three");
+            s.Add(s2);
+            s.Add(s3);
+            s.AddBefore(s1, s3);
+
+            Assert.AreEqual(3, s.Statements.Count(), "# of statements");
+            Assert.AreEqual(s2, s.Statements.First(), "first statement");
+            Assert.AreEqual(s1, s.Statements.Skip(1).First(), "second statement");
+            Assert.AreEqual(s3, s.Statements.Skip(2).First(), "third statement");
+        }
+
+        [TestMethod]
         public void TestCodeItUp()
         {
             StatementInlineBlock b = new StatementInlineBlock();
