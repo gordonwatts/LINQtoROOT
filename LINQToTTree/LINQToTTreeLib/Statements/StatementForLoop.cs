@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
@@ -9,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Implement the looping statements to work over some simple counter from zero up to some number.
     /// </summary>
-    public class StatementForLoop : StatementInlineBlockBase, IStatementLoop
+    public class StatementForLoop : StatementInlineBlockBase, IStatementLoop, ICMCompoundStatementInfo
     {
         public IValue ArrayLength { get; set; }
         public IValue InitialValue { get; set; }
@@ -113,6 +114,28 @@ namespace LINQToTTreeLib.Statements
             InitialValue.RenameRawValue(origName, newName);
             _loopVariable.RenameParameter(origName, newName);
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// Allow statements to automatically bubble up past us. Anything we
+        /// can get rid of is a good thing!
+        /// </summary>
+        public bool AllowNormalBubbleUp
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new ISet<string> DeclaredVariables
+        {
+            get
+            {
+                var r = new HashSet<string>(AllDeclaredVariables.Select(v => v.RawValue));
+                r.Add(_loopVariable.RawValue);
+                return r;
+            }
         }
     }
 }

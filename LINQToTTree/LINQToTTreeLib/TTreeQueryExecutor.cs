@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.ExecutionCommon;
+using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Utils;
 using NVelocity;
 using NVelocity.App;
@@ -354,9 +355,10 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// Ok, no cache hit. So queue up the run.
+            /// Ok, no cache hit. Optimize and queue up the run. So queue up the run.
             /// 
 
+            Optimizer.Optimize(result);
             TraceHelpers.TraceInfo(10, "ExecuteScalarAsFuture: Queuing scalar execution");
             var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this) };
             _queuedQueries.Add(cq);

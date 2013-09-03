@@ -350,6 +350,7 @@
       <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
     </Compile>
     <Compile Include="MEFUtilities.cs" />
+    <Compile Include="Optimization\StatementLifterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QueriableDummy.cs" />

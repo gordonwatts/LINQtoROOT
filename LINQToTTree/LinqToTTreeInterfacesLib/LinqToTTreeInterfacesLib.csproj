@@ -78,6 +78,7 @@
     <Compile Include="IArrayInfo.cs" />
     <Compile Include="IArrayInfoFactory.cs" />
     <Compile Include="IBookingStatementBlock.cs" />
+    <Compile Include="ICMCompoundStatementInfo.cs" />
     <Compile Include="ICMStatementInfo.cs" />
     <Compile Include="ICodeContext.cs" />
     <Compile Include="ICodeOptimizationService.cs" />

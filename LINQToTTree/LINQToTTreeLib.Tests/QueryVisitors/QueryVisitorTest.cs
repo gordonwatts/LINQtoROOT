@@ -2115,38 +2115,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestCodeWithDoubleIndex()
-        {
-            // Looking for two loops, and the Calc function should be moved outside
-            // the first loop for efficiency reasons (as it doesn't use anything in that
-            // first loop.
-
-            var q = new QueriableDummy<dummyntup>();
-
-            var res = from f in q
-                      from r1 in f.valC1D
-                      from r2 in f.vals
-                      let rr1 = CPPHelperFunctions.Calc(r1)
-                      let rr2 = CPPHelperFunctions.Calc(r2)
-                      where Math.Abs(rr1 - rr2) < 2
-                      select f;
-            var r = res.Count();
-
-            var query = DummyQueryExectuor.FinalResult;
-            query.DumpCodeToConsole();
-
-            var outterBlock = query.QueryCode().First() as IStatementCompound;
-            Assert.IsNotNull(outterBlock);
-            var outterLoop = outterBlock.Statements.First() as IStatementCompound;
-            Assert.IsNotNull(outterLoop);
-
-            // Here we should see one of the cpp code statements.
-
-            var ccpCode = outterLoop.Statements.First();
-            Assert.AreEqual("CPPCodeStatement", ccpCode.GetType().Name, "Expected cpp code statement");
-        }
-
-        [TestMethod]
         public void TestCodeWithUniqueCombine()
         {
             var q = new QueriableDummy<ntup>();
