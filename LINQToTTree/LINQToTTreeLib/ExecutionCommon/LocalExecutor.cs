@@ -261,7 +261,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 buildFlags += "g";
             }
 
-            var result = gSystem.CompileMacro(templateRunner.FullName, "k");
+            var result = gSystem.CompileMacro(templateRunner.FullName, buildFlags);
 
             /// This should never happen - but we are depending on so many different things to go right here!
             if (result != 1)
