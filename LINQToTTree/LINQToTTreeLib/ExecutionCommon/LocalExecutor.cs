@@ -139,6 +139,10 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
             tree.StopCacheLearningPhase();
 
+            // Always Do the async prefetching (this is off by default for some reason, but...).
+
+            ROOTNET.Globals.gEnv.Value.SetValue("TFile.AsynchPrefetching", 1);
+
             ///
             /// Finally, run the whole thing
             /// 
@@ -146,6 +150,13 @@ namespace LINQToTTreeLib.ExecutionCommon
             TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
             tree.Process(selector);
             TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
+
+            // If debug, dump some stats...
+
+            if (Environment.CompileDebug)
+            {
+                tree.PrintCacheStats();
+            }
 
             //
             // Get the results and put them into a map for safe keeping!
