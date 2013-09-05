@@ -49,6 +49,16 @@ namespace LINQToTTreeLib.ExecutionCommon
             CompileAndLoad(templateFile);
 
             //
+            // To help with possible debugging and other things, if a pdb was generated, then copy it over and rename it
+            // correctly.
+            //
+
+            if (File.Exists("vc100.pdb"))
+            {
+                File.Copy("vc100.pdb", Path.Combine(queryDirectory.FullName, Path.GetFileNameWithoutExtension(templateFile.Name) + ".pdb"));
+            }
+
+            //
             // Get the file name of the selector.
             //
 
