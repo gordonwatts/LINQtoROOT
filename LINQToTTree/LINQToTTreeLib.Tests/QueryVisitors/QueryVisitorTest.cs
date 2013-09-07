@@ -1098,6 +1098,33 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestMemberFunctionCalledTwiceOptimizedAway()
+        {
+            // This optimization came from looking at stack traces and heat maps... Found that
+            // a large amount of time was wasted calling Phi() repeatedly - often on the same object.
+            // ROOT does not cache the value, so since this involves a atan, this is quite expensive.
+            // So, what we wnat to make sure is if we need Phi() twice, we only calculate it once.
+
+            var q = new QueriableDummy<dummyntup>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              Jets = from r in evt.valC1D
+                                     let s = CPPHelperFunctions.CreateTLZ(r, r, r, r)
+                                     where s.Phi() * s.Phi() > 5.0
+                                     select s
+                          };
+            var resultC = resultA.SelectMany(evt => evt.Jets).Count();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            var lines = query.DumpCode().SelectMany(l => l.Split('(', ')', '.')).Where(s => s == "Phi").Count();
+            Assert.AreEqual(1, lines, "# of Phi occurances");
+        }
+
+        [TestMethod]
         public void TestSubQueryWithTranslationOutside()
         {
             var q = new QueriableDummy<ntupWithObjects>();
