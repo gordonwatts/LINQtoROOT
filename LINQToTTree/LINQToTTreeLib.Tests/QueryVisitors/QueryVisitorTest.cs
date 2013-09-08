@@ -1065,14 +1065,16 @@ namespace LINQToTTreeLib
             }
         }
 
+        /// <summary>
+        /// Caught in the wild. When you have an object that has to be calculated
+        /// (i.e. TLZ), and you use two different methods, the QV and expression eval
+        /// was missing that it was the same object - and thus creating two
+        /// versions of it in the code where only one was needed. This fails if
+        /// that happens.
+        /// </summary>
         [TestMethod]
         public void TestCPPCodeOptimization()
         {
-            // Caught in the wild. When you have an object that has to be calculated
-            // (i.e. TLZ), and you use two different methods, the QV and expression eval
-            // was missing that it was the same object - and thus creating two
-            // versions of it in the code where only one was needed. This fails if
-            // that happens.
             var q = new QueriableDummy<dummyntup>();
 
             var resultA = from evt in q
@@ -1405,7 +1407,7 @@ namespace LINQToTTreeLib
                           select l;
             var arr = theline.ToArray();
             Assert.AreEqual(1, arr.Length, "too many lines with function reference!");
-            Assert.IsTrue(arr[0].Contains("std::abs"), "second function call not found");
+            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("std::abs")).Count(), "second function call not found");
         }
 
         [TestMethod]
