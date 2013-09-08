@@ -641,7 +641,7 @@ namespace LINQToTTreeLib.Expressions
 
             // Cache this so that we don't have to re-call it later (if need be) if this is a simple type.
 
-            if (_result.Type.IsNumberType())
+            if (_result.Type.IsNumberType() && !_result.IsSimpleTerm())
             {
                 var cachedValue = DeclarableParameter.CreateDeclarableParameterExpression(_result.Type);
                 var assign = new Statements.StatementAssign(cachedValue, _result, declare: true);
