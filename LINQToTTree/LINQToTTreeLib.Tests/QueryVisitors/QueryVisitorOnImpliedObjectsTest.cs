@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -488,7 +487,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements");
             var scnd = query.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(scnd, "Booking block fro 2nd statement");
-            Assert.AreEqual(5, scnd.Statements.Count(), "# of statements in second for loop");
+            Assert.AreEqual(6, scnd.Statements.Count(), "# of statements in second for loop");
         }
 
         public class ParticleInfo
@@ -541,7 +540,7 @@ namespace LINQToTTreeLib.Tests
 
             var prs = particles.SelectMany(p => p).Where(p => p.vtxTerm != null).Count();
         }
-        
+
         [TestMethod]
         public void TestDuplicateDelc()
         {
@@ -604,7 +603,7 @@ namespace LINQToTTreeLib.Tests
             query.DumpCodeToConsole();
             CheckSingleDecl(query.DumpCode());
         }
-        
+
         /// <summary>
         /// Given a vertex index, return the 3D vector for the position. Null if the index is -1.
         /// </summary>
@@ -706,7 +705,7 @@ namespace LINQToTTreeLib.Tests
         /// <param name="iEnumerable"></param>
         private void CheckSingleDecl(string[] declTypes, IEnumerable<string> iEnumerable)
         {
-            var searches = declTypes.Select (d => new Regex(string.Format(@"\b{0}\b\s+\b(\w+)\b", d))).ToArray();
+            var searches = declTypes.Select(d => new Regex(string.Format(@"\b{0}\b\s+\b(\w+)\b", d))).ToArray();
             var seenDecl = new SortedSet<string>();
             foreach (var line in iEnumerable)
             {

@@ -53,10 +53,10 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(typeof(ROOTNET.NTH1F), result.Type, "incorrect result type");
             Assert.AreEqual("myhist", result.RawValue, "didn't get back the accumulator!");
 
-            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expected a statement body to do the filling!");
-            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(LINQToTTreeLib.Statements.StatementSimpleStatement), "incorrect statement saved");
-            var statement = gc.CodeBody.Statements.First() as LINQToTTreeLib.Statements.StatementSimpleStatement;
-            Assert.AreEqual("(*myhist).Fill(10.2)", statement.Line, "incorrect fill statement");
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "Expected a statement body to do the filling!");
+            Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(LINQToTTreeLib.Statements.StatementAssign), "incorrect statement saved");
+            var statement = gc.CodeBody.Statements.First() as LINQToTTreeLib.Statements.StatementAssign;
+            Assert.AreEqual("(*myhist).Fill(10.2)", statement.Expression.RawValue, "incorrect fill statement");
         }
     }
 }
