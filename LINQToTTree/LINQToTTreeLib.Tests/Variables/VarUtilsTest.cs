@@ -242,5 +242,14 @@ namespace LINQToTTreeLib.Variables
 
             Assert.AreEqual("expr1", (new ValSimple("expr1", typeof(int))).PerformAllSubstitutions(cc).RawValue, "no translation expected");
         }
+
+        [TestMethod]
+        public void TestIsSimpleTerm()
+        {
+            Assert.IsTrue(new ValSimple("a", typeof(int)).IsSimpleTerm(), "a");
+            Assert.IsTrue(new ValSimple("phi_21", typeof(int)).IsSimpleTerm(), "phi_21");
+            Assert.IsFalse(new ValSimple("a.phi()", typeof(int)).IsSimpleTerm(), "a.phi()");
+            Assert.IsFalse(new ValSimple("a[1]", typeof(int)).IsSimpleTerm(), "a[1]");
+        }
     }
 }

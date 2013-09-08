@@ -185,6 +185,21 @@ namespace LINQToTTreeLib.Variables
         }
 
         /// <summary>
+        /// Track a term search string.
+        /// </summary>
+        static Regex singleTerm = new Regex(@"^\w+$");
+
+        /// <summary>
+        /// Returns true if this is ValSimple is simple (like aInt32_1) vs complex (v.Phi()).
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        internal static bool IsSimpleTerm(this ValSimple v)
+        {
+            return singleTerm.Match(v.RawValue).Success;
+        }
+
+        /// <summary>
         /// Returns the type as a CPP type
         /// </summary>
         /// <param name="t"></param>
