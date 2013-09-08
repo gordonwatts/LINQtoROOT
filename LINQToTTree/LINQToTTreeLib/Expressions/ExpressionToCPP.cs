@@ -644,7 +644,7 @@ namespace LINQToTTreeLib.Expressions
             if (_result.Type.IsNumberType())
             {
                 var cachedValue = DeclarableParameter.CreateDeclarableParameterExpression(_result.Type);
-                var assign = new Statements.StatementAssign(cachedValue, _result);
+                var assign = new Statements.StatementAssign(cachedValue, _result, declare: true);
                 _codeEnv.Add(assign);
                 _result = cachedValue;
             }
