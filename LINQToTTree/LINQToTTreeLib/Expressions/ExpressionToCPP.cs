@@ -1,17 +1,17 @@
-﻿using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.TypeHandlers;
-using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
-using Remotion.Linq.Clauses.ExpressionTreeVisitors;
-using Remotion.Linq.Parsing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.TypeHandlers;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
+using Remotion.Linq.Clauses.ExpressionTreeVisitors;
+using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -155,7 +155,10 @@ namespace LINQToTTreeLib.Expressions
 
             var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             _codeEnv.Add(testBoolInCode);
-            _codeEnv.Add(new Statements.StatementAssign(testBoolInCode, GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer)));
+            _codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
+                GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer),
+                FindDeclarableParameters.FindAll(testExpression)
+                ));
 
             //
             // Next, do the result cache.
@@ -171,11 +174,13 @@ namespace LINQToTTreeLib.Expressions
 
             var topScope = _codeEnv.CurrentScope;
             _codeEnv.Add(new Statements.StatementFilter(testBoolInCode));
-            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer)));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer),
+                FindDeclarableParameters.FindAll(trueExpression)));
             _codeEnv.CurrentScope = topScope;
 
             _codeEnv.Add(new Statements.StatementFilter(GetExpression(Expression.Not(testBoolInCode), _codeEnv, _codeContext, MEFContainer)));
-            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer)));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer),
+                FindDeclarableParameters.FindAll(falseExpression)));
             _codeEnv.CurrentScope = topScope;
 
             //
@@ -638,6 +643,20 @@ namespace LINQToTTreeLib.Expressions
         protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
         {
             _result = TypeHandlers.CodeMethodCall(expression, _codeEnv, MEFContainer);
+
+            // Cache this so that we don't have to re-call it later (if need be) if this is a simple type.
+
+            if (_result.Type.IsNumberType() && !_result.IsSimpleTerm())
+            {
+                var cachedValue = DeclarableParameter.CreateDeclarableParameterExpression(_result.Type);
+                var assign = new Statements.StatementAssign(cachedValue, _result,
+                    FindDeclarableParameters.FindAll(expression), declare: true);
+                _codeEnv.Add(assign);
+                _result = cachedValue;
+            }
+
+            // Always return the expression
+
             return expression;
         }
 

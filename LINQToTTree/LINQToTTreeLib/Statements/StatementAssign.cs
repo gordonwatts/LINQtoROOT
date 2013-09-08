@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Emit an assignment statement
     /// </summary>
-    public class StatementAssign : IStatement
+    public class StatementAssign : IStatement, ICMStatementInfo
     {
-        public StatementAssign(IDeclaredParameter result, IValue val)
+        public StatementAssign(IDeclaredParameter result, IValue val, IEnumerable<IDeclaredParameter> dependentVariables, bool declare = false)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -18,6 +19,17 @@ namespace LINQToTTreeLib.Statements
 
             ResultVariable = result;
             Expression = val;
+            DeclareResult = declare;
+            ResultVariables = new HashSet<string>() { result.RawValue };
+            var dvars = new HashSet<string>();
+            if (dependentVariables != null)
+            {
+                foreach (var item in dependentVariables)
+                {
+                    dvars.Add(item.RawValue);
+                }
+            }
+            DependentVariables = dvars;
         }
 
         /// <summary>
@@ -40,7 +52,15 @@ namespace LINQToTTreeLib.Statements
             var setTo = Expression.RawValue;
 
             if (result != setTo)
-                yield return result + "=" + setTo + ";";
+            {
+                var line = "";
+                if (DeclareResult)
+                {
+                    line += ResultVariable.Type.AsCPPType() + " ";
+                }
+                line += result + "=" + setTo + ";";
+                yield return line;
+            }
         }
 
         public override string ToString()
@@ -80,6 +100,9 @@ namespace LINQToTTreeLib.Statements
             if (Expression.RawValue != otherAssign.Expression.RawValue)
                 return false;
 
+            if (DeclareResult != otherAssign.DeclareResult)
+                return false;
+
             return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
         }
 
@@ -87,5 +110,20 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// True if we should declare this result when we emit it the assignment.
+        /// </summary>
+        public bool DeclareResult { get; set; }
+
+        /// <summary>
+        /// List of all variables we are depending on.
+        /// </summary>
+        public ISet<string> DependentVariables { get; private set; }
+
+        /// <summary>
+        /// The list of variables that get altered as a side-effect of this statement.
+        /// </summary>
+        public ISet<string> ResultVariables { get; private set; }
     }
 }

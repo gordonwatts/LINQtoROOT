@@ -1065,14 +1065,16 @@ namespace LINQToTTreeLib
             }
         }
 
+        /// <summary>
+        /// Caught in the wild. When you have an object that has to be calculated
+        /// (i.e. TLZ), and you use two different methods, the QV and expression eval
+        /// was missing that it was the same object - and thus creating two
+        /// versions of it in the code where only one was needed. This fails if
+        /// that happens.
+        /// </summary>
         [TestMethod]
         public void TestCPPCodeOptimization()
         {
-            // Caught in the wild. When you have an object that has to be calculated
-            // (i.e. TLZ), and you use two different methods, the QV and expression eval
-            // was missing that it was the same object - and thus creating two
-            // versions of it in the code where only one was needed. This fails if
-            // that happens.
             var q = new QueriableDummy<dummyntup>();
 
             var resultA = from evt in q
@@ -1095,6 +1097,38 @@ namespace LINQToTTreeLib
 
             var lm = query.DumpCode().Where(l => l.Contains("TLorentzVector* ")).Count();
             Assert.AreEqual(2, lm, "Number of times TLorentzVector appears in the source");
+        }
+
+        /// <summary>
+        // This optimization came from looking at stack traces and heat maps... Found that
+        // a large amount of time was wasted calling Phi() repeatedly - often on the same object.
+        // ROOT does not cache the value, so since this involves a atan, this is quite expensive.
+        // So, what we wnat to make sure is if we need Phi() twice, we only calculate it once.
+        /// </summary>
+        [TestMethod]
+        public void TestMemberFunctionCalledTwiceOptimizedAway()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              Jets = from r in evt.valC1D
+                                     let s = CPPHelperFunctions.CreateTLZ(r, r, r, r)
+                                     where s.Phi() * s.Phi() > 5.0
+                                     select s
+                          };
+            var resultC = resultA.SelectMany(evt => evt.Jets).Count();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            var lines = query.DumpCode().SelectMany(l => l.Split('(', ')', '.')).Where(s => s == "Phi").Count();
+            Assert.AreEqual(1, lines, "# of Phi occurances");
+
+            var phiLine = query.DumpCode().Where(l => l.Contains("Phi()")).FirstOrDefault();
+            Assert.IsNotNull(phiLine, "no phi call line");
+            Assert.IsTrue(phiLine.Trim().StartsWith("double"), "does not start with double decl: " + phiLine.Trim());
         }
 
         [TestMethod]
@@ -1373,7 +1407,7 @@ namespace LINQToTTreeLib
                           select l;
             var arr = theline.ToArray();
             Assert.AreEqual(1, arr.Length, "too many lines with function reference!");
-            Assert.IsTrue(arr[0].Contains("std::abs"), "second function call not found");
+            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("std::abs")).Count(), "second function call not found");
         }
 
         [TestMethod]

@@ -242,6 +242,47 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual("CPPCodeStatement", ccpCode.GetType().Name, "Expected cpp code statement");
         }
 
+        [TestMethod]
+        public void TestCodeWithDoubleIndexAndFunction()
+        {
+            // Looking for two loops, and the Calc function should be moved outside
+            // the first loop for efficiency reasons (as it doesn't use anything in that
+            // first loop.
+
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+
+            var res = from f in q
+                      from r1 in f.valC1D
+                      from r2 in f.vals
+                      let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                      let rr2 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r2))
+                      where Math.Abs(rr1 - rr2) < 2
+                      select f;
+            var r = res.Count();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            StatementLifter.Optimize(query);
+            query.DumpCodeToConsole();
+
+            var outterBlock = query.QueryCode().First() as IStatementCompound;
+            Assert.IsNotNull(outterBlock);
+            var outterLoop = outterBlock.Statements.First() as IStatementCompound;
+            Assert.IsNotNull(outterLoop);
+
+            // Here we should see one of the cpp code statements.
+
+            var ccpCode = outterLoop.Statements.First();
+            Assert.AreEqual("CPPCodeStatement", ccpCode.GetType().Name, "Expected cpp code statement");
+            var assCode = outterLoop.Statements.Skip(1).First();
+            Assert.AreEqual("StatementAssign", assCode.GetType().Name, "Lifted assignment statement.");
+        }
+
         /// <summary>
         /// A simple statement that tracks a single dependent variable.
         /// </summary>

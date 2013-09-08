@@ -3,7 +3,6 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -100,7 +99,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var st = new StatementPairLoop(array, index1, index2);
             var vr = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             vr.RenameRawValue(vr.RawValue, index1.RawValue);
-            st.Add(new StatementAssign(vr, new ValSimple("ops", typeof(int))));
+            st.Add(new StatementAssign(vr, new ValSimple("ops", typeof(int)), null));
 
             st.RenameVariable(index1.RawValue, "dude1");
             Assert.AreEqual("dude1", index1.RawValue, "index1 after index1 rename");
@@ -144,7 +143,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var index3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var index4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var stp2 = new StatementPairLoop(arrayRecord, index3, index4);
-            var statAss = new StatementAssign(index3, new ValSimple("dude", typeof(int)));
+            var statAss = new StatementAssign(index3, new ValSimple("dude", typeof(int)), null);
             stp2.Add(statAss);
 
             var opt = new Factories.CodeOptimizerTest(true);
