@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -90,6 +91,55 @@ namespace LINQToTTreeLib.Tests
             }
 
             return result;
+        }
+
+        class DummyOptService : ICodeOptimizationService
+        {
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
+            {
+                return true;
+            }
+
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
+        /// <summary>
+        /// Try to combine with a statement that has no declare set.
+        /// </summary>
+        [TestMethod]
+        public void TryCombineWithNonDeclare()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var s1 = new StatementAssign(i, sv, true);
+            var s2 = new StatementAssign(i, sv, false);
+
+            Assert.IsFalse(s1.TryCombineStatement(s2, new DummyOptService()), "Combine a declare with a non-declare");
+            Assert.IsFalse(s2.TryCombineStatement(s1, new DummyOptService()), "Combine a non-declare with a declare");
+        }
+
+        [TestMethod]
+        public void TestDeclare()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var s1 = new StatementAssign(i, sv, true);
+
+            Assert.IsTrue(s1.CodeItUp().First().Trim().StartsWith("int "), "Check for decl: " + s1.CodeItUp().First());
+        }
+
+        [TestMethod]
+        public void TestNoDeclare()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var s1 = new StatementAssign(i, sv);
+
+            Assert.IsTrue(s1.CodeItUp().First().Trim().StartsWith("aInt32_"), "Check for decl: " + s1.CodeItUp().First());
         }
     }
 }

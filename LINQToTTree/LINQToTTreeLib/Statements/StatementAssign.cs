@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -9,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementAssign : IStatement
     {
-        public StatementAssign(IDeclaredParameter result, IValue val)
+        public StatementAssign(IDeclaredParameter result, IValue val, bool declare = false)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -18,6 +19,7 @@ namespace LINQToTTreeLib.Statements
 
             ResultVariable = result;
             Expression = val;
+            DeclareResult = declare;
         }
 
         /// <summary>
@@ -40,7 +42,15 @@ namespace LINQToTTreeLib.Statements
             var setTo = Expression.RawValue;
 
             if (result != setTo)
-                yield return result + "=" + setTo + ";";
+            {
+                var line = "";
+                if (DeclareResult)
+                {
+                    line += ResultVariable.Type.AsCPPType() + " ";
+                }
+                line += result + "=" + setTo + ";";
+                yield return line;
+            }
         }
 
         public override string ToString()
@@ -80,6 +90,9 @@ namespace LINQToTTreeLib.Statements
             if (Expression.RawValue != otherAssign.Expression.RawValue)
                 return false;
 
+            if (DeclareResult != otherAssign.DeclareResult)
+                return false;
+
             return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
         }
 
@@ -87,5 +100,10 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// True if we should declare this result when we emit it the assignment.
+        /// </summary>
+        public bool DeclareResult { get; set; }
     }
 }
