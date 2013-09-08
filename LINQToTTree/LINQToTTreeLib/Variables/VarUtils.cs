@@ -194,7 +194,7 @@ namespace LINQToTTreeLib.Variables
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        internal static bool IsSimpleTerm(this ValSimple v)
+        internal static bool IsSimpleTerm(this IValue v)
         {
             return singleTerm.Match(v.RawValue).Success;
         }
