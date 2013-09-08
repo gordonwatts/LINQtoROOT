@@ -123,6 +123,17 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void TryCombineWithDeclare()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var s1 = new StatementAssign(i, sv, true);
+            var s2 = new StatementAssign(i, sv, true);
+
+            Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService()), "Combine a declare with a non-declare");
+        }
+
+        [TestMethod]
         public void TestDeclare()
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
