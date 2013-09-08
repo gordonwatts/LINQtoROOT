@@ -32,7 +32,7 @@ namespace LINQToTTreeLib.Tests
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public StatementAssign StatementAssignConstructorTest(IDeclaredParameter dest, IValue source)
         {
-            StatementAssign target = new StatementAssign(dest, source);
+            StatementAssign target = new StatementAssign(dest, source, null);
             return target;
         }
 
@@ -115,8 +115,8 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, true);
-            var s2 = new StatementAssign(i, sv, false);
+            var s1 = new StatementAssign(i, sv, null, true);
+            var s2 = new StatementAssign(i, sv, null, false);
 
             Assert.IsFalse(s1.TryCombineStatement(s2, new DummyOptService()), "Combine a declare with a non-declare");
             Assert.IsFalse(s2.TryCombineStatement(s1, new DummyOptService()), "Combine a non-declare with a declare");
@@ -127,8 +127,8 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, true);
-            var s2 = new StatementAssign(i, sv, true);
+            var s1 = new StatementAssign(i, sv, null, true);
+            var s2 = new StatementAssign(i, sv, null, true);
 
             Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService()), "Combine a declare with a non-declare");
         }
@@ -138,7 +138,7 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, true);
+            var s1 = new StatementAssign(i, sv, null, true);
 
             Assert.IsTrue(s1.CodeItUp().First().Trim().StartsWith("int "), "Check for decl: " + s1.CodeItUp().First());
         }
@@ -148,9 +148,35 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv);
+            var s1 = new StatementAssign(i, sv, null);
 
             Assert.IsTrue(s1.CodeItUp().First().Trim().StartsWith("aInt32_"), "Check for decl: " + s1.CodeItUp().First());
+        }
+
+        [TestMethod]
+        public void TestBasicCMValues()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var s1 = new StatementAssign(i, sv, null);
+
+            Assert.AreEqual(1, s1.ResultVariables.Count, "# result variables");
+            Assert.AreEqual(i.RawValue, s1.ResultVariables.First(), "the name");
+            Assert.AreEqual(0, s1.DependentVariables.Count, "no dependent variables");
+        }
+
+        [TestMethod]
+        public void TestCMValuesForSimpleExpression()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var di = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+            var s1 = new StatementAssign(i, sv, dependentVariables: new IDeclaredParameter[] { di });
+            Assert.AreEqual(1, s1.ResultVariables.Count, "# result variables");
+            Assert.AreEqual(i.RawValue, s1.ResultVariables.First(), "the name");
+            Assert.AreEqual(1, s1.DependentVariables.Count, "no dependent variables");
+            Assert.AreEqual(di.RawValue, s1.DependentVariables.First(), "a dependent variable");
+
         }
     }
 }

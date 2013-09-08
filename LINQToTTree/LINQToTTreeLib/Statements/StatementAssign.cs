@@ -8,9 +8,9 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Emit an assignment statement
     /// </summary>
-    public class StatementAssign : IStatement
+    public class StatementAssign : IStatement, ICMStatementInfo
     {
-        public StatementAssign(IDeclaredParameter result, IValue val, bool declare = false)
+        public StatementAssign(IDeclaredParameter result, IValue val, IEnumerable<IDeclaredParameter> dependentVariables, bool declare = false)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -20,6 +20,16 @@ namespace LINQToTTreeLib.Statements
             ResultVariable = result;
             Expression = val;
             DeclareResult = declare;
+            ResultVariables = new HashSet<string>() { result.RawValue };
+            var dvars = new HashSet<string>();
+            if (dependentVariables != null)
+            {
+                foreach (var item in dependentVariables)
+                {
+                    dvars.Add(item.RawValue);
+                }
+            }
+            DependentVariables = dvars;
         }
 
         /// <summary>
@@ -105,5 +115,15 @@ namespace LINQToTTreeLib.Statements
         /// True if we should declare this result when we emit it the assignment.
         /// </summary>
         public bool DeclareResult { get; set; }
+
+        /// <summary>
+        /// List of all variables we are depending on.
+        /// </summary>
+        public ISet<string> DependentVariables { get; private set; }
+
+        /// <summary>
+        /// The list of variables that get altered as a side-effect of this statement.
+        /// </summary>
+        public ISet<string> ResultVariables { get; private set; }
     }
 }

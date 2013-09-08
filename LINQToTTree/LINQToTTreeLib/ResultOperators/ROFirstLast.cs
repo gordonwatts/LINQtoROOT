@@ -145,7 +145,9 @@ namespace LINQToTTreeLib.ResultOperators
 
                 gc.Add(new Statements.StatementFilter(valueWasSeen));
                 gc.Add(new Statements.StatementAssign(actualValue,
-                    ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
+                    ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container),
+                    FindDeclarableParameters.FindAll(firstlastValue)
+                    ));
                 gc.Pop();
 
                 return actualValue;

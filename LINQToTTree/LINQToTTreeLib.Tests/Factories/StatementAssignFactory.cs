@@ -11,7 +11,7 @@ namespace LINQToTTreeLib.Statements
         public static StatementAssign Create(IDeclaredParameter result_iVariable, IValue val_iValue)
         {
             StatementAssign statementAssign
-               = new StatementAssign(result_iVariable, val_iValue);
+               = new StatementAssign(result_iVariable, val_iValue, null);
             return statementAssign;
 
             // TODO: Edit factory method of StatementAssign
