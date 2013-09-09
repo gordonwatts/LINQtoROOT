@@ -1100,6 +1100,32 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// When we make a method call, we cache the result. Make sure that when two guys cache the result
+        /// they get combined properly, so the call is made only once.
+        /// </summary>
+        [TestMethod]
+        public void TestMethodCallCacheCombine()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var resultA = from evt in q
+                          from r in evt.valC1D
+                          let s = CPPHelperFunctions.CreateTLZ(r, r, r, r)
+                          where s.M() > 5
+                          select s;
+            var r1 = resultA.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var r2 = resultA.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query1, query2);
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.DumpCode().Where(l => l.Contains("M()")).Count(), "# of times M() is called");
+        }
+
+        /// <summary>
         // This optimization came from looking at stack traces and heat maps... Found that
         // a large amount of time was wasted calling Phi() repeatedly - often on the same object.
         // ROOT does not cache the value, so since this involves a atan, this is quite expensive.

@@ -95,14 +95,18 @@ namespace LINQToTTreeLib.Tests
 
         class DummyOptService : ICodeOptimizationService
         {
+            private bool ReturnWhenTry;
+            public DummyOptService(bool whatToReturnWhenTry = true)
+            {
+                this.ReturnWhenTry = whatToReturnWhenTry;
+            }
             public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
             {
-                return true;
+                return ReturnWhenTry;
             }
 
             public void ForceRenameVariable(string originalName, string newName)
             {
-                throw new NotImplementedException();
             }
         }
 
@@ -122,6 +126,40 @@ namespace LINQToTTreeLib.Tests
             Assert.IsFalse(s2.TryCombineStatement(s1, new DummyOptService()), "Combine a non-declare with a declare");
         }
 
+        /// <summary>
+        /// Try to combine two identical statements, when not doing the decl, but when we can't find where we
+        /// have declared the variable.
+        /// </summary>
+        [TestMethod]
+        public void TryCombineTwoNoneDeclaresNoDeclFound()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var s1 = new StatementAssign(i, sv, null, false);
+            var s2 = new StatementAssign(i, sv, null, false);
+
+            Assert.IsFalse(s1.TryCombineStatement(s2, new DummyOptService(false)), "Combine when no decl found");
+        }
+
+        /// <summary>
+        /// Try to combine two identical statements, when not doing the decl, but when we can't find where we
+        /// have declared the variable.
+        /// </summary>
+        [TestMethod]
+        public void TryCombineTwoNoneDeclaresDeclFound()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var sv = new ValSimple("5", typeof(int));
+            var s1 = new StatementAssign(i, sv, null, false);
+            var s2 = new StatementAssign(i, sv, null, false);
+
+            Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService(true)), "Combine when no decl found");
+        }
+
+        /// <summary>
+        /// This is a little tricky as teh combination service will return false here - becuase it can't find where
+        /// the variable is declared. But that is ok, since we are declaring this guy here. So it should go anyway.
+        /// </summary>
         [TestMethod]
         public void TryCombineWithDeclare()
         {
@@ -130,7 +168,7 @@ namespace LINQToTTreeLib.Tests
             var s1 = new StatementAssign(i, sv, null, true);
             var s2 = new StatementAssign(i, sv, null, true);
 
-            Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService()), "Combine a declare with a non-declare");
+            Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService(false)), "Combine a declare with a non-declare");
         }
 
         [TestMethod]

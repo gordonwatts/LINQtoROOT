@@ -103,7 +103,18 @@ namespace LINQToTTreeLib.Statements
             if (DeclareResult != otherAssign.DeclareResult)
                 return false;
 
-            return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
+            // If we have delcared, then we are sole owner - so we can force the change. Otherwise, we
+            // need to let the infrastructure figure out where the decl is and change it from there.
+
+            if (DeclareResult)
+            {
+                opt.ForceRenameVariable(otherAssign.ResultVariable.RawValue, ResultVariable.RawValue);
+                return true;
+            }
+            else
+            {
+                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
+            }
         }
 
         /// <summary>
