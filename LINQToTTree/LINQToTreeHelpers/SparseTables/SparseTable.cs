@@ -69,6 +69,23 @@ namespace LINQToTreeHelpers.SparseTables
         }
 
         /// <summary>
+        /// Set the value of a specific cell
+        /// </summary>
+        /// <param name="columnName">Column name of cell to set</param>
+        /// <param name="rowName">Row name of cell to set</param>
+        /// <param name="val">Value to set the cell to</param>
+        public void Add(string columnName, string rowName, float val)
+        {
+            if (columnName == null)
+                throw new ArgumentNullException("column name must be valid");
+            if (rowName == null)
+                throw new ArgumentNullException("row name must be valid");
+
+            var c = GetColumnOrCreate(columnName);
+            c._values.Add(rowName, val);
+        }
+
+        /// <summary>
         /// Add a single row of values
         /// </summary>
         /// <param name="rowName"></param>
