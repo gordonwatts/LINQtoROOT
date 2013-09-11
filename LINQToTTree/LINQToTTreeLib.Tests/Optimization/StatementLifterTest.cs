@@ -204,6 +204,61 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         [TestMethod]
+        public void TestNoLiftStatement()
+        {
+            var v = new GeneratedCode();
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+
+            v.Add(new statementNoAllowMove());
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementForLoop), "first statement");
+
+        }
+
+        /// <summary>
+        /// A statement that isn't allowed to move.
+        /// </summary>
+        class statementNoAllowMove : ICMStatementInfo, IStatement
+        {
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IStatement Parent { get; set; }
+
+            public ISet<string> DependentVariables
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public ISet<string> ResultVariables
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public bool NeverMove
+            {
+                get { return true; }
+            }
+        }
+
+        [TestMethod]
         public void TestCodeWithDoubleIndex()
         {
             // Looking for two loops, and the Calc function should be moved outside
@@ -395,6 +450,11 @@ namespace LINQToTTreeLib.Tests.Optimization
                     return r;
                 }
             }
+
+            public bool NeverMove
+            {
+                get { return false; }
+            }
         }
 
         /// <summary>
@@ -450,6 +510,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             public System.Collections.Generic.ISet<string> ResultVariables
             {
                 get { return new HashSet<string>(); }
+            }
+
+            public bool NeverMove
+            {
+                get { return false; }
             }
         }
     }

@@ -136,5 +136,13 @@ namespace LINQToTTreeLib.Statements
         /// The list of variables that get altered as a side-effect of this statement.
         /// </summary>
         public ISet<string> ResultVariables { get; private set; }
+
+        /// <summary>
+        /// REturns false: we can move this statement if we want.
+        /// </summary>
+        public bool NeverMove
+        {
+            get { return false; }
+        }
     }
 }

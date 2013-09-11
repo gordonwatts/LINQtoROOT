@@ -80,6 +80,16 @@ namespace LINQToTTreeLib.Optimization
         /// <returns></returns>
         private static IStatementCompound MoveStatement(IStatementCompound parent, IStatement s, IStatementCompound[] codeStack)
         {
+            // Never move a statement that doesn't want to move. :-)
+
+            if (s is ICMStatementInfo)
+            {
+                if ((s as ICMStatementInfo).NeverMove)
+                    return null;
+            }
+
+            // Walk the code stack and find someone that can take us.
+
             var sArr = new IStatement[] { s };
             foreach (var stack in codeStack)
             {

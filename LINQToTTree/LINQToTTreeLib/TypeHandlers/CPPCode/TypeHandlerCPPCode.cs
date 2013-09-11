@@ -1,15 +1,15 @@
-﻿using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
@@ -345,6 +345,14 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// List of variables that we have that contain our results.
             /// </summary>
             public ISet<string> ResultVariables { get; private set; }
+
+            /// <summary>
+            /// Return false - we are allowed to move.
+            /// </summary>
+            public bool NeverMove
+            {
+                get { return false; }
+            }
         }
 
 

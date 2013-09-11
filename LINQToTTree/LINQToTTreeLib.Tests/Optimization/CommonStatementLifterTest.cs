@@ -398,7 +398,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // We test for this by making sure the "abs" function is called only twice in
             // the generated code.
 
-            Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_9++")), "The second if statement was optimized away!");
+            Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_8++")), "The second if statement was optimized away!");
         }
 
         /// <summary>
