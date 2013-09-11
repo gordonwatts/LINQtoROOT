@@ -103,6 +103,75 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// A pair of the same statements, in both places. The lift should occur.
+        /// </summary>
+        [TestMethod]
+        public void TestTwoStatementOutAndInIf()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign1);
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign11 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign11);
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign22 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign22);
+            gc.Add(assign2);
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            CommonStatementLifter.Optimize(cc);
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First();
+            Assert.AreEqual(3, block1.Statements.Count(), "# of statements lifted plus the loop");
+            var firstAssignment = block1.Statements.First() as StatementAssign;
+            Assert.IsNotNull(firstAssignment, "first assignment");
+            var backIfStatement = block1.Statements.Skip(2).First() as StatementFilter;
+            Assert.IsNotNull(backIfStatement, "if statement there");
+            Assert.AreEqual(0, backIfStatement.Statements.Count(), "# of if statements inside the if");
+        }
+
+        /// <summary>
+        /// The same statement, in both places. The lift should occur.
+        /// </summary>
+        [TestMethod]
+        public void TestStatementOutAndInIfWithOtherStatements()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign1);
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign2);
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign3);
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            CommonStatementLifter.Optimize(cc);
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First();
+            var firstAssignment = block1.Statements.First() as StatementAssign;
+            Assert.IsNotNull(firstAssignment, "first assignment");
+            var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
+            Assert.IsNotNull(backIfStatement, "if statement there");
+            Assert.AreEqual(1, backIfStatement.Statements.Count(), "# of if statements inside the if");
+        }
+
+        /// <summary>
         /// Identical loops should not be lifted! That would be very bad. If they are lifted, then
         /// you will miss a 2D run on something!
         /// </summary>
@@ -183,20 +252,33 @@ namespace LINQToTTreeLib.Tests.Optimization
                 throw new NotImplementedException();
             }
 
+            /// <summary>
+            /// Allow combinations that are dummy loops. Otherwise, fail.
+            /// </summary>
+            /// <param name="statement"></param>
+            /// <param name="optimize"></param>
+            /// <returns></returns>
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
-                throw new NotImplementedException();
+                if (statement is DummyLoop)
+                    return true;
+                return false;
             }
 
             public IStatement Parent { get; set; }
 
-
-            public void Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            /// <summary>
+            /// We need to do the combine.
+            /// </summary>
+            /// <param name="statements"></param>
+            /// <param name="parent"></param>
+            /// <param name="appendIfNoCombine"></param>
+            /// <returns></returns>
+            public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
             {
-                throw new NotImplementedException();
+                return appendIfNoCombine;
             }
         }
-
 
         /// <summary>
         /// Identical if statements - the second if statement is meaningless, so it

@@ -129,7 +129,7 @@ namespace LINQToTTreeLib
             }
 
 
-            public void Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
             {
                 throw new NotImplementedException();
             }
