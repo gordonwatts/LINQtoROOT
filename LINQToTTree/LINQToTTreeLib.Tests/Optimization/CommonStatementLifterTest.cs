@@ -189,6 +189,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             }
 
             public IStatement Parent { get; set; }
+
+
+            public void Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 

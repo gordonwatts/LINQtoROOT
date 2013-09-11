@@ -352,7 +352,7 @@ namespace LINQToTTreeLib.Statements
         /// succeeds (no need for a bool return) because we just add things onto the end.
         /// </summary>
         /// <param name="statements">List of statements that we need to combine</param>
-        protected void Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent)
+        public void Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
         {
             ICodeOptimizationService myopt;
             if (parent != null)
@@ -374,7 +374,7 @@ namespace LINQToTTreeLib.Statements
                         break;
                     }
                 }
-                if (!didCombine)
+                if (!didCombine && appendIfCantCombine)
                 {
                     s.Parent = null;
                     Add(s);

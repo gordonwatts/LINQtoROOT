@@ -38,7 +38,7 @@ namespace LINQToTTreeLib.Optimization
                 else
                 {
                     // This statement, can it be combined above us?
-                    var whereDone = MoveStatement(s, codeStack);
+                    var whereDone = MoveStatement(block, s, codeStack);
                 }
             }
         }
@@ -50,15 +50,11 @@ namespace LINQToTTreeLib.Optimization
         /// <param name="s"></param>
         /// <param name="codeStack"></param>
         /// <returns></returns>
-        private static object MoveStatement(IStatement s, IStatementCompound[] codeStack)
+        private static object MoveStatement(IStatementCompound parent, IStatement s, IStatementCompound[] codeStack)
         {
             foreach (var stack in codeStack)
             {
-                foreach (var codeStackStatement in stack.Statements)
-                {
-                    if (codeStackStatement.TryCombineStatement(s, optimize))
-                        return stack;
-                }
+
             }
             return null;
         }
