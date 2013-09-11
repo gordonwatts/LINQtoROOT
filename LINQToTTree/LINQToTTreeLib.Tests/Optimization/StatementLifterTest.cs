@@ -282,7 +282,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var assCode = outterLoop.Statements.Skip(1).First();
             Assert.AreEqual("StatementAssign", assCode.GetType().Name, "Lifted assignment statement.");
         }
-
+#if false
         /// <summary>
         /// A loop contains an if statement that exists above - so they could be combined
         /// if the if statement an the loop were reversed. This optimization is tested by
@@ -326,6 +326,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             Assert.Inconclusive("Not coded yet");
         }
+#endif
 
         /// <summary>
         /// Do the code combination we require!
