@@ -284,6 +284,66 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// A loop contains an if statement that exists above - so they could be combined
+        /// if the if statement an the loop were reversed. This optimization is tested by
+        /// this code.
+        /// </summary>
+        [TestMethod]
+        public void TestLoopBuriesCommonIfStatement()
+        {
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+
+            var res1 = from f in q
+                       from r1 in f.valC1D
+                       let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                       where r1 > 2
+                       select rr1;
+            var resu1 = res1.Aggregate(0, (acc, v) => acc + v);
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var res2 = from f in q
+                       from r1 in f.valC1D
+                       from r2 in f.valC1D
+                       where r1 > 2
+                       let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                       let rr2 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r2))
+                       select rr1 + rr2;
+            var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            // Combine the queries
+
+            var query = CombineQueries(query1, query2);
+            Console.WriteLine("Unoptimized");
+            query.DumpCodeToConsole();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            StatementLifter.Optimize(query as IGeneratedQueryCode);
+            query.DumpCodeToConsole();
+
+            Assert.Inconclusive("Not coded yet");
+        }
+
+        /// <summary>
+        /// Do the code combination we require!
+        /// </summary>
+        /// <param name="gcs"></param>
+        /// <returns></returns>
+        private IExecutableCode CombineQueries(params IExecutableCode[] gcs)
+        {
+            var combinedInfo = new CombinedGeneratedCode();
+            foreach (var cq in gcs)
+            {
+                combinedInfo.AddGeneratedCode(cq);
+            }
+
+            return combinedInfo;
+        }
+
+        /// <summary>
         /// A simple statement that tracks a single dependent variable.
         /// </summary>
         class StatementWithSideEffects : IStatement, ICMStatementInfo

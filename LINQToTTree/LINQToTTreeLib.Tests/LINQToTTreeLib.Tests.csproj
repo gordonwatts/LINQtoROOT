@@ -351,6 +351,7 @@
     </Compile>
     <Compile Include="MEFUtilities.cs" />
     <Compile Include="Optimization\StatementLifterTest.cs" />
+    <Compile Include="Optimization\CommonStatementLifterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QueriableDummy.cs" />
