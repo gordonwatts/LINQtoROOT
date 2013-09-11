@@ -363,6 +363,43 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(2, query.DumpCode().Where(l => l.Contains("abs")).Count(), "# of times abs appears in the code");
         }
 
+        [TestMethod]
+        public void TestIfStatementsFromSkips()
+        {
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+
+            var res1 = from f in q
+                       where f.valC1D.First() > 0
+                       select f;
+            var resu1 = res1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            StatementLifter.Optimize(query1);
+
+            var res2 = from f in q
+                       where f.valC1D.Skip(1).First() > 0
+                       select f;
+            var resu2 = res2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+            StatementLifter.Optimize(query2);
+
+            // Combine the queries
+
+            var query = CombineQueries(query1, query2);
+            Console.WriteLine("Unoptimized");
+            query.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(query);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            query.DumpCodeToConsole();
+
+            // We test for this by making sure the "abs" function is called only twice in
+            // the generated code.
+
+            Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_9++")), "The second if statement was optimized away!");
+        }
 
         /// <summary>
         /// Do the code combination we require!
