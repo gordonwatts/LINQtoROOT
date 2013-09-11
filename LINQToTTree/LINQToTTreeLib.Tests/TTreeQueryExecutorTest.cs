@@ -1,13 +1,13 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -985,6 +985,7 @@ namespace LINQToTTreeLib
                          select evt;
             var dude1 = dudeQ1.Count();
             var query1 = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             var dudeQ2 = from evt in q
                          where (evt.myvectorofint.Skip(1).First() > 0)

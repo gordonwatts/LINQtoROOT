@@ -17,5 +17,14 @@ namespace LinqToTTreeInterfacesLib
         /// The resulting variables - things that this statement updates.
         /// </summary>
         ISet<string> ResultVariables { get; }
+
+        /// <summary>
+        /// This statement should never be optimized and moved. Ever.
+        /// </summary>
+        /// <remarks>
+        /// This is used for things that have side effects - for example, the First or Last operators,
+        /// where you want to record stuff in a loop. That should never get moved up or down.
+        /// </remarks>
+        bool NeverMove { get; }
     }
 }

@@ -204,6 +204,61 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         [TestMethod]
+        public void TestNoLiftStatement()
+        {
+            var v = new GeneratedCode();
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+
+            v.Add(new statementNoAllowMove());
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementForLoop), "first statement");
+
+        }
+
+        /// <summary>
+        /// A statement that isn't allowed to move.
+        /// </summary>
+        class statementNoAllowMove : ICMStatementInfo, IStatement
+        {
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IStatement Parent { get; set; }
+
+            public ISet<string> DependentVariables
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public ISet<string> ResultVariables
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public bool NeverMove
+            {
+                get { return true; }
+            }
+        }
+
+        [TestMethod]
         public void TestCodeWithDoubleIndex()
         {
             // Looking for two loops, and the Calc function should be moved outside
@@ -282,6 +337,67 @@ namespace LINQToTTreeLib.Tests.Optimization
             var assCode = outterLoop.Statements.Skip(1).First();
             Assert.AreEqual("StatementAssign", assCode.GetType().Name, "Lifted assignment statement.");
         }
+#if false
+        /// <summary>
+        /// A loop contains an if statement that exists above - so they could be combined
+        /// if the if statement an the loop were reversed. This optimization is tested by
+        /// this code.
+        /// </summary>
+        [TestMethod]
+        public void TestLoopBuriesCommonIfStatement()
+        {
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+
+            var res1 = from f in q
+                       from r1 in f.valC1D
+                       let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                       where r1 > 2
+                       select rr1;
+            var resu1 = res1.Aggregate(0, (acc, v) => acc + v);
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var res2 = from f in q
+                       from r1 in f.valC1D
+                       from r2 in f.valC1D
+                       where r1 > 2
+                       let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                       let rr2 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r2))
+                       select rr1 + rr2;
+            var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            // Combine the queries
+
+            var query = CombineQueries(query1, query2);
+            Console.WriteLine("Unoptimized");
+            query.DumpCodeToConsole();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            StatementLifter.Optimize(query as IGeneratedQueryCode);
+            query.DumpCodeToConsole();
+
+            Assert.Inconclusive("Not coded yet");
+        }
+#endif
+
+        /// <summary>
+        /// Do the code combination we require!
+        /// </summary>
+        /// <param name="gcs"></param>
+        /// <returns></returns>
+        private IExecutableCode CombineQueries(params IExecutableCode[] gcs)
+        {
+            var combinedInfo = new CombinedGeneratedCode();
+            foreach (var cq in gcs)
+            {
+                combinedInfo.AddGeneratedCode(cq);
+            }
+
+            return combinedInfo;
+        }
 
         /// <summary>
         /// A simple statement that tracks a single dependent variable.
@@ -333,6 +449,11 @@ namespace LINQToTTreeLib.Tests.Optimization
                         r.Add(_resultVar.RawValue);
                     return r;
                 }
+            }
+
+            public bool NeverMove
+            {
+                get { return false; }
             }
         }
 
@@ -389,6 +510,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             public System.Collections.Generic.ISet<string> ResultVariables
             {
                 get { return new HashSet<string>(); }
+            }
+
+            public bool NeverMove
+            {
+                get { return false; }
             }
         }
     }

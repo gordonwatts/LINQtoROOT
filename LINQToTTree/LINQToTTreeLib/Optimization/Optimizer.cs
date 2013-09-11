@@ -1,4 +1,5 @@
 ﻿
+using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Optimization
 {
     /// <summary>
@@ -14,6 +15,15 @@ namespace LINQToTTreeLib.Optimization
         internal static void Optimize(GeneratedCode result)
         {
             StatementLifter.Optimize(result);
+        }
+
+        /// <summary>
+        /// Optimize the common code.
+        /// </summary>
+        /// <param name="result"></param>
+        internal static void Optimize(IExecutableCode result)
+        {
+            CommonStatementLifter.Optimize(result);
         }
     }
 }

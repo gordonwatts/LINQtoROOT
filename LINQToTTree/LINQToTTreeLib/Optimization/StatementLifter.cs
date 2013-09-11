@@ -130,6 +130,11 @@ namespace LINQToTTreeLib.Optimization
         /// <returns></returns>
         private static bool MoveToFirst(IStatementCompound parent, IStatement item)
         {
+            // If we can't move, then don't.
+
+            if ((item as ICMStatementInfo).NeverMove)
+                return false;
+
             // Loop through each statement, and see if we can go past each one.
 
             var allvars = new HashSet<string>((item as ICMStatementInfo).DependentVariables.Concat((item as ICMStatementInfo).ResultVariables));

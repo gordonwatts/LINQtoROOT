@@ -381,6 +381,10 @@ namespace LINQToTTreeLib
                 combinedInfo.AddGeneratedCode(cq.Code);
             }
 
+            // Optimize the whole thing...
+
+            Optimizer.Optimize(combinedInfo);
+
             ///
             /// Keep track of how often we run. Mostly for testing reasons, actually.
             /// 

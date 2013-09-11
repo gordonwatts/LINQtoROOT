@@ -8,7 +8,7 @@ namespace LINQToTTreeLib.Statements
     /// We record a value (like an int, etc.) when it comes by. We also mark a value as true once we've seen
     /// it. Finally, if asked, we also will do a break once we've seen the value once.
     /// </summary>
-    public class StatementRecordValue : IStatement
+    public class StatementRecordValue : IStatement, ICMStatementInfo
     {
         /// <summary>
         /// The holder for the index variable.
@@ -104,6 +104,9 @@ namespace LINQToTTreeLib.Statements
             if (other._indexValue.RawValue != _indexValue.RawValue)
                 return false;
 
+            if (other._recordOnlyFirstValue != _recordOnlyFirstValue)
+                return false;
+
             if (optimize == null)
                 throw new ArgumentNullException("optimize");
 
@@ -113,6 +116,34 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
+        /// <summary>
+        /// Get/Set the compound statement this is embeded in.
+        /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// What are the varsa that we need as input.
+        /// </summary>
+        public ISet<string> DependentVariables
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        /// <summary>
+        /// What are teh variables that are a result.
+        /// </summary>
+        public ISet<string> ResultVariables
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+
+        /// <summary>
+        /// This particular statement should never be lifted. Ever.
+        /// </summary>
+        public bool NeverMove
+        {
+            get { return true; }
+        }
     }
 }
