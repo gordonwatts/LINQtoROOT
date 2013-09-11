@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -52,5 +53,43 @@ namespace LINQToTTreeLib.Tests
             var actual = target.TryCombineStatement(statement, optimize);
             return actual;
         }
+
+        [TestMethod]
+        public void TestTCIdenticalButForFirstLast()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
+            var s2 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, false);
+
+            Assert.IsFalse(s1.TryCombineStatement(s2, new dummyOpt()), "combine with different recording");
+        }
+
+        [TestMethod]
+        public void TestTCIdentical()
+        {
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index1, new ValSimple("i", typeof(int)), seen1, true);
+            var s2 = new StatementRecordValue(index2, new ValSimple("i", typeof(int)), seen2, true);
+
+            Assert.IsTrue(s1.TryCombineStatement(s2, new dummyOpt()), "combine with different recording");
+        }
+
+        class dummyOpt : ICodeOptimizationService
+        {
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
+            {
+                return true;
+            }
+
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
     }
 }

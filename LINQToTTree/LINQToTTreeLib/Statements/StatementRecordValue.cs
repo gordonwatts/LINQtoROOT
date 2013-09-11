@@ -104,6 +104,9 @@ namespace LINQToTTreeLib.Statements
             if (other._indexValue.RawValue != _indexValue.RawValue)
                 return false;
 
+            if (other._recordOnlyFirstValue != _recordOnlyFirstValue)
+                return false;
+
             if (optimize == null)
                 throw new ArgumentNullException("optimize");
 
