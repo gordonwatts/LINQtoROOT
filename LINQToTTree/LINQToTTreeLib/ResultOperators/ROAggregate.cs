@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
@@ -74,7 +75,7 @@ namespace LINQToTTreeLib.ResultOperators
             p1.Pop();
 
             if (accumulator.RawValue != funcResolved.RawValue)
-                _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved));
+                _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved, FindDeclarableParameters.FindAll(a.Func.Body).Select(p => p.RawValue)));
 
             return accumulator;
         }

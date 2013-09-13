@@ -10,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     /// StatementAggregate, we need more intelligence about it when it comes to combining statements. Hence
     /// this version.
     /// </summary>
-    public class StatementAggregate : IStatement
+    public class StatementAggregate : IStatement, ICMStatementInfo
     {
         /// <summary>
         /// The guy that will be set.
@@ -27,7 +27,8 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="accumulator"></param>
         /// <param name="funcResolved"></param>
-        public StatementAggregate(DeclarableParameter result, IValue val)
+        /// <param name="dependentVariables">List of variables that the val statement depends on</param>
+        public StatementAggregate(DeclarableParameter result, IValue val, IEnumerable<string> dependentVariables)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -36,6 +37,11 @@ namespace LINQToTTreeLib.Statements
 
             ResultVariable = result;
             Expression = val;
+
+            // Which variables we have as input and output
+
+            DependentVariables = new HashSet<string>(dependentVariables);
+            ResultVariables = new HashSet<string>() { result.RawValue };
         }
 
         public IEnumerable<string> CodeItUp()
@@ -110,5 +116,11 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        public ISet<string> DependentVariables { get; private set; }
+
+        public ISet<string> ResultVariables { get; private set; }
+
+        public bool NeverMove { get { return true; } }
     }
 }

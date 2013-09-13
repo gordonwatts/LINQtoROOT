@@ -3,7 +3,6 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Utils;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +31,7 @@ namespace LINQToTTreeLib.Tests
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public StatementAggregate StatementAggregateConstructorTest(DeclarableParameter dest, IValue source)
         {
-            StatementAggregate target = new StatementAggregate(dest, source);
+            StatementAggregate target = new StatementAggregate(dest, source, new string[0]);
             return target;
         }
 
@@ -97,11 +96,11 @@ namespace LINQToTTreeLib.Tests
 
             var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
-            var s1 = new StatementAggregate(a, ainc);
+            var s1 = new StatementAggregate(a, ainc, new string[0]);
 
             var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
-            var s2 = new StatementAggregate(c, cinc);
+            var s2 = new StatementAggregate(c, cinc, new string[0]);
 
             var opt = new Tests.Factories.CodeOptimizerTest(true);
             var result = s1.TryCombineStatement(s2, opt);
@@ -120,11 +119,11 @@ namespace LINQToTTreeLib.Tests
 
             var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
-            var s1 = new StatementAggregate(a, ainc);
+            var s1 = new StatementAggregate(a, ainc, new string[0]);
 
             var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
-            var s2 = new StatementAggregate(c, cinc);
+            var s2 = new StatementAggregate(c, cinc, new string[0]);
 
             var opt = new Factories.CodeOptimizerTest(false);
             var result = s1.TryCombineStatement(s2, opt);

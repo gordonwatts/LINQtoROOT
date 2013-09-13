@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
@@ -60,7 +61,7 @@ namespace LINQToTTreeLib.ResultOperators
             var add = Expression.Add(accumulator, Expression.Constant((int)1));
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
 
-            gc.Add(new StatementAggregate(accumulator, addResolved));
+            gc.Add(new StatementAggregate(accumulator, addResolved, FindDeclarableParameters.FindAll(add).Select(p => p.RawValue)));
             return accumulator;
         }
 

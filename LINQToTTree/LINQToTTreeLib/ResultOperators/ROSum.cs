@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
@@ -75,7 +76,7 @@ namespace LINQToTTreeLib.ResultOperators
             var add = Expression.Add(accumulator, cc.LoopVariable);
 
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
-            gc.Add(new StatementAggregate(accumulator, addResolved));
+            gc.Add(new StatementAggregate(accumulator, addResolved, FindDeclarableParameters.FindAll(add).Select(p => p.RawValue)));
 
             //
             // The sum will just be this accumulator - so return it.
@@ -94,7 +95,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddOutsideLoop(counter);
             gc.AddOutsideLoop(accumulator);
             var incbyone = Expression.Add(counter, Expression.Constant(1));
-            gc.Add(new StatementAggregate(counter, ExpressionToCPP.GetExpression(incbyone, gc, cc, container)));
+            gc.Add(new StatementAggregate(counter, ExpressionToCPP.GetExpression(incbyone, gc, cc, container), FindDeclarableParameters.FindAll(incbyone).Select(p => p.RawValue)));
 
             // Pop out and calculate the average and return it.
 
