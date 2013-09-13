@@ -121,6 +121,6 @@ namespace LINQToTTreeLib.Statements
 
         public ISet<string> ResultVariables { get; private set; }
 
-        public bool NeverMove { get { return true; } }
+        public bool NeverLift { get { return true; } }
     }
 }

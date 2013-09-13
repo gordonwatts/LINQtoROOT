@@ -141,7 +141,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// This particular statement should never be lifted. Ever.
         /// </summary>
-        public bool NeverMove
+        public bool NeverLift
         {
             get { return true; }
         }

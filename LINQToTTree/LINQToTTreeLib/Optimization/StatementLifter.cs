@@ -132,7 +132,7 @@ namespace LINQToTTreeLib.Optimization
         {
             // If we can't move, then don't.
 
-            if ((item as ICMStatementInfo).NeverMove)
+            if ((item as ICMStatementInfo).NeverLift)
                 return false;
 
             // Loop through each statement, and see if we can go past each one.

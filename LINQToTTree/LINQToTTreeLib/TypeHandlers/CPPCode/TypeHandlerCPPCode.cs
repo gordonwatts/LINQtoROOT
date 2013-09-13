@@ -349,7 +349,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <summary>
             /// Return false - we are allowed to move.
             /// </summary>
-            public bool NeverMove
+            public bool NeverLift
             {
                 get { return false; }
             }

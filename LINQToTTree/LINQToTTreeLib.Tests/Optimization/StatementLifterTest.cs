@@ -252,7 +252,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 get { throw new NotImplementedException(); }
             }
 
-            public bool NeverMove
+            public bool NeverLift
             {
                 get { return true; }
             }
@@ -451,7 +451,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 }
             }
 
-            public bool NeverMove
+            public bool NeverLift
             {
                 get { return false; }
             }
@@ -512,7 +512,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 get { return new HashSet<string>(); }
             }
 
-            public bool NeverMove
+            public bool NeverLift
             {
                 get { return false; }
             }

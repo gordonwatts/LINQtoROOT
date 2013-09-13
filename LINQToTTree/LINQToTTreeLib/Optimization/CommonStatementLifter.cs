@@ -84,7 +84,7 @@ namespace LINQToTTreeLib.Optimization
 
             if (s is ICMStatementInfo)
             {
-                if ((s as ICMStatementInfo).NeverMove)
+                if ((s as ICMStatementInfo).NeverLift)
                     return null;
             }
 

@@ -140,7 +140,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// REturns false: we can move this statement if we want.
         /// </summary>
-        public bool NeverMove
+        public bool NeverLift
         {
             get { return false; }
         }
