@@ -65,6 +65,8 @@ namespace LINQToTTreeLib
             CleanupQuery = true;
             IgnoreQueryCache = false;
             RecheckFileDatesOnEachQuery = false;
+            BreakToDebugger = false;
+            UseStatementOptimizer = true;
 
             CountCacheHits = 0;
             CountExecutionRuns = 0;
@@ -358,7 +360,8 @@ namespace LINQToTTreeLib
             /// Ok, no cache hit. Optimize and queue up the run. So queue up the run.
             /// 
 
-            Optimizer.Optimize(result);
+            if (UseStatementOptimizer)
+                Optimizer.Optimize(result);
             TraceHelpers.TraceInfo(10, "ExecuteScalarAsFuture: Queuing scalar execution");
             var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this) };
             _queuedQueries.Add(cq);
@@ -383,7 +386,8 @@ namespace LINQToTTreeLib
 
             // Optimize the whole thing...
 
-            Optimizer.Optimize(combinedInfo);
+            if (UseStatementOptimizer)
+                Optimizer.Optimize(combinedInfo);
 
             ///
             /// Keep track of how often we run. Mostly for testing reasons, actually.
@@ -603,6 +607,21 @@ namespace LINQToTTreeLib
         /// Get/Set query cache control. If set true then the query cache will be ignored and all quieries will be re-run.
         /// </summary>
         public bool IgnoreQueryCache { get; set; }
+
+        /// <summary>
+        /// Break into the debugger just before calling TTree::Process.
+        /// </summary>
+        /// <remarks>The break occurs just before the call to TTree::Process. The C++ code should be loaded at this point and this will allow you to load up the source file and set break points in the generated code.</remarks>
+        public bool BreakToDebugger
+        {
+            get { return _exeReq.BreakToDebugger; }
+            set { _exeReq.BreakToDebugger = value; }
+        }
+
+        /// <summary>
+        /// Statement optimization changes execution order. Use this for debugging, but code will run significantly longer.
+        /// </summary>
+        public bool UseStatementOptimizer { get; set; }
 
         /// <summary>
         /// Do the work of translating the code into C++

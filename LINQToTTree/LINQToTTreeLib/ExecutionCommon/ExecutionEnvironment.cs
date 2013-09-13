@@ -33,6 +33,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         public bool CompileDebug { get; set; }
 
         /// <summary>
+        /// Break into the debugger just before root's TTree::Process is invoked
+        /// </summary>
+        /// <remarks>Clearly hard to do when running remotely!</remarks>
+        public bool BreakToDebugger { get; set; }
+
+        /// <summary>
         /// Name of the tree we will be loading and processing.
         /// </summary>
         public string TreeName { get; set; }

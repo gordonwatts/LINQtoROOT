@@ -158,6 +158,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             /// 
 
             TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
+            if (Environment.BreakToDebugger)
+                System.Diagnostics.Debugger.Break();
             tree.Process(selector);
             TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
 

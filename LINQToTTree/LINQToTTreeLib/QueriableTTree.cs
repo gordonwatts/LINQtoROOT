@@ -134,6 +134,39 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Get/Set flag telling the query processor to break into the debugger just before calling TTree::Process. C++ code will be compiled
+        /// and loaded at this point so you can load up the source file and set a break point.
+        /// </summary>
+        /// <remarks>Do not forget to set the code to build with debug symbols or you will not be able to set a break point in the generated source code.</remarks>
+        public bool BreakToDebugger
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).BreakToDebugger = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).BreakToDebugger;
+            }
+        }
+
+        /// <summary>
+        /// Get/Set flag that controls statement optimization. This step is done to make the run over the ntuple execute more quickly (sometimes x2).
+        /// However, the optimizer may have bugs, and if you suspect it, try a test run with this flag set to false.
+        /// </summary>
+        public bool UseStatementOptimizer
+        {
+            set
+            {
+                ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).UseStatementOptimizer = value;
+            }
+            get
+            {
+                return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).UseStatementOptimizer;
+            }
+        }
+
+        /// <summary>
         /// Called by the LINQ infrastructure. No need to do much of anything here.
         /// </summary>
         /// <param name="provider"></param>
