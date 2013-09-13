@@ -1529,6 +1529,51 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
+        /// <summary>
+        /// This test was generated to find a bug found in teh while. A multi-level deep Any/All statement used on a select anonymous
+        /// object declared its index at a scope that wasn't useful for where the result was getting used.
+        /// </summary>
+        [TestMethod]
+        public void TestAnyAllDeepInSelectSubQuery()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r1 = from e in q
+                     select new
+                     {
+                         var1 = e.var1.Where(i => i > 1)
+                     };
+
+            var r2 = from e in r1
+                     where e.var1.Count() == 2
+                     select e;
+
+            var r3 = from e in r2
+                     select new
+                     {
+                         MatchedJets = from j in e.var1
+                                       select new
+                                       {
+                                           N1 = j,
+                                           N2 = (from j2 in e.var1
+                                                 orderby j2-j
+                                                 select j2
+                                                 ).First()
+                                       }
+                     };
+            var r4 = from e in r3
+                     select new
+                     {
+                         hasGluon = e.MatchedJets.Where(n => n.N2 > 2).Any(),
+                         hasQuark = e.MatchedJets.All(j => j.N2 < 2)
+                     };
+            var res = r4.Where(e => e.hasGluon && e.hasQuark).Count();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+            Assert.IsFalse(query.DumpCode().Where(l => l.Contains("!(((*(*this).var1).at(aInt32_13))<2)")).Any(), "Bad code in there");
+        }
+
         [TestMethod]
         public void TestAnyCombine()
         {
