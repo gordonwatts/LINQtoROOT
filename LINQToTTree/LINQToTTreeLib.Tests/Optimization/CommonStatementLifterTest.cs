@@ -363,6 +363,49 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(2, query.DumpCode().Where(l => l.Contains("abs")).Count(), "# of times abs appears in the code");
         }
 
+        /// <summary>
+        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outter loop one.
+        /// It should not be lifted since it will alter the counting!
+        /// </summary>
+        [TestMethod]
+        public void TestAggregateStatementIndependentOfInnerLoop()
+        {
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+
+            var res1 = from f in q
+                       select
+                       (from r1 in f.valC1D
+                        let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                        select rr1).Aggregate(0, (acc, v) => acc + v);
+            var resu1 = res1.Aggregate(0, (acc, v) => acc + v);
+            var query1 = DummyQueryExectuor.FinalResult;
+            StatementLifter.Optimize(query1);
+
+            var res2 = from f in q
+                       from r12 in f.valC1D
+                       select (from r1 in f.valC1D
+                               let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r12))
+                               select rr1).Aggregate(0, (acc, v) => acc + v);
+            var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
+            var query2 = DummyQueryExectuor.FinalResult;
+            StatementLifter.Optimize(query2);
+
+            // Combine the queries
+
+            var query = CombineQueries(query1, query2);
+            Console.WriteLine("Unoptimized");
+            query.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(query);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(2, query.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
+        }
+
         [TestMethod]
         public void TestIfStatementsFromSkips()
         {
