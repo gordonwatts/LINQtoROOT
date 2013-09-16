@@ -181,8 +181,12 @@ namespace LINQToTTreeLib
             var cachedResult = _codeContext.GetReplacement(queryModel);
             if (cachedResult != null)
             {
-                _codeEnv.SetResult(cachedResult);
-                return;
+                var context = _codeEnv.FirstAllInScopeFromNow(FindDeclarableParameters.FindAll(cachedResult));
+                if (context != null)
+                {
+                    _codeEnv.SetResult(cachedResult);
+                    return;
+                }
             }
 
             //
