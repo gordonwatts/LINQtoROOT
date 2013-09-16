@@ -102,7 +102,7 @@ namespace LINQToTTreeLib.ResultOperators
             // http://msdn.microsoft.com/en-us/library/bb354760.aspx (for specs on Average on this).
 
             var testForSomething = Expression.Equal(counter, Expression.Constant(0));
-            gc.AddOutsideLoop(new StatementThrowIfTrue(ExpressionToCPP.GetExpression(testForSomething, gc, cc, container), "Can't take an average of a null sequence"));
+            gc.AddAtResultScope(new StatementThrowIfTrue(ExpressionToCPP.GetExpression(testForSomething, gc, cc, container), "Can't take an average of a null sequence"));
 
             var returnType = DetermineAverageReturnType(sumType);
             var faccumulator = Expression.Convert(accumulator, returnType);

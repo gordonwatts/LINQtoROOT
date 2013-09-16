@@ -56,6 +56,13 @@ namespace LinqToTTreeInterfacesLib
         void AddAtResultScope(IDeclaredParameter p);
 
         /// <summary>
+        /// Add a statement at the result scoping.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <exception cref="InvalidOperationException">Thrown if the result scope is undefined.</exception>
+        void AddAtResultScope(IStatement p);
+
+        /// <summary>
         /// The current booking scope is made to be the result scope. Any result operators that are several levels down,
         /// but return their results as a non-sequence, will use this to declare themselves.
         /// </summary>

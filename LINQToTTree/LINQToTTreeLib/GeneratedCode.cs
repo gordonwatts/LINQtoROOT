@@ -198,6 +198,18 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Add a statement at result scoping.
+        /// </summary>
+        /// <param name="p"></param>
+        public void AddAtResultScope(IStatement p)
+        {
+            if (CurrentResultScope == null)
+                throw new InvalidOperationException("Unable to add a parameter at the result scope - none is set");
+
+            CurrentResultScope.Add(p);
+        }
+
+        /// <summary>
         /// The current booking scope is set to be the result scope.
         /// </summary>
         public void SetCurrentScopeAsResultScope()

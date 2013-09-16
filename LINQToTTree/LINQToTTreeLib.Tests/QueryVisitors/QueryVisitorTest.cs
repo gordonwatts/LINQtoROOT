@@ -1034,12 +1034,6 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(s2, typeof(Statements.StatementThrowIfTrue), "check for average not zero");
         }
 
-        [TestMethod]
-        public void TestSumWithZeroLengthSequence()
-        {
-            Assert.Fail();
-        }
-
         /// <summary>
         /// When the average is used with more than one level deep, it can generate x-check code that
         /// is invalid.
@@ -1058,6 +1052,29 @@ namespace LINQToTTreeLib
 
             var linesbetween = code.DumpCode().SkipWhile(l => !l.Contains(">1")).TakeWhile(l => !l.Contains("==0"));
             Assert.AreEqual(2, linesbetween.Where(l => l.Contains("}")).Count(), "# of lines with a closing bracket");
+        }
+
+        /// <summary>
+        /// When the average is used with more than one level deep, it can generate x-check code that
+        /// is invalid.
+        /// </summary>
+        [TestMethod]
+        public void TestAverageWithLoopFilter()
+        {
+            // Make sure we can process it!
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           select evt.jets.Where(j => j.var1 > evt.jets.Sum(p => p.var1)).Average(j => j.var1);
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            var linesbefore = code.DumpCode().TakeWhile(l => !l.Contains("==0"));
+            var closeBrace = linesbefore.Where(l => l.Contains("}")).Count();
+            var openBrace = linesbefore.Where(l => l.Contains("{")).Count();
+
+            Assert.AreEqual(openBrace - 1, closeBrace, "# of close braces");
         }
 
         [CPPHelperClass]
