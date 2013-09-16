@@ -435,7 +435,8 @@ namespace LINQToTTreeLib
 
             // If we are here, then nothing was declared the whole way up.
 
-            throw new ArgumentException("Can't find a booking block for a set of variables that are never declared.");
+            //throw new ArgumentException("Can't find a booking block for a set of variables that are never declared.");
+            return null;
         }
     }
 }

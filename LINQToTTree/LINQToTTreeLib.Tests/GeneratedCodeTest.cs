@@ -685,12 +685,11 @@ namespace LINQToTTreeLib
         /// If a variable is not declared, then we have an error.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestFirstBookingBad()
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var gc = new GeneratedCode();
-            gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i });
+            Assert.IsNull(gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i }));
         }
 
         [TestMethod]
