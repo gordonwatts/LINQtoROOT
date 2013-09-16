@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
 {
@@ -100,6 +101,14 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="scope"></param>
         /// <returns></returns>
         bool InScopeNow(IScopeInfo scope);
+
+        /// <summary>
+        /// Returns the first booking statement where all variables are in scope, starting from the
+        /// current scope position.
+        /// </summary>
+        /// <param name="variables"></param>
+        /// <returns></returns>
+        IBookingStatementBlock FirstAllInScopeFromNow(IEnumerable<IDeclaredParameter> variables);
 
         /// <summary>
         /// How far down in the hierarchy of statements are we?

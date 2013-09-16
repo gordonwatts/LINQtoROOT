@@ -680,5 +680,50 @@ namespace LINQToTTreeLib
             gc.Pop();
             Assert.IsFalse(gc.InScopeNow(sc), "current scope should be in scope now.");
         }
+
+        /// <summary>
+        /// If a variable is not declared, then we have an error.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestFirstBookingBad()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var gc = new GeneratedCode();
+            gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i });
+        }
+
+        [TestMethod]
+        public void TestFirstBookingThisLevel()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var gc = new GeneratedCode();
+            gc.Add(i);
+            var r = gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i });
+            Assert.AreEqual(r, gc.CodeBody, "Same code body.");
+        }
+
+        [TestMethod]
+        public void TestFirstBookingNextLevel()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var gc = new GeneratedCode();
+            gc.Add(i);
+            gc.Add(new StatementFilter(new ValSimple("dude", typeof(bool))));
+            var r = gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i });
+            Assert.AreEqual(r, gc.CodeBody, "Same code body.");
+        }
+
+        [TestMethod]
+        public void TestFirstBookingNextLevelIt()
+        {
+            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var gc = new GeneratedCode();
+            var ifs = new StatementFilter(new ValSimple("dude", typeof(bool)));
+            gc.Add(ifs);
+            gc.Add(i);
+            var r = gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i });
+            Assert.AreEqual(r, ifs, "Same code body.");
+        }
     }
 }

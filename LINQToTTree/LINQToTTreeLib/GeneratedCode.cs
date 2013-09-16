@@ -408,5 +408,34 @@ namespace LINQToTTreeLib
             }
             return false;
         }
+
+        /// <summary>
+        /// Find top most booking block where all the variables are declared. We assume that all are
+        /// declared at some point. Return may be invalid if these are from different scope "branches".
+        /// </summary>
+        /// <param name="variables">List of variables that must be valid in the block returned</param>
+        /// <returns>The upper most booking block where all the variables listed are declared.</returns>
+        public IBookingStatementBlock FirstAllInScopeFromNow(IEnumerable<IDeclaredParameter> variables)
+        {
+            var bb = CurrentDeclarationScopePointer;
+            while (bb != null)
+            {
+                if (bb.DeclaredVariables.Any(v => variables.Contains(v)))
+                {
+                    return bb;
+                }
+
+                var p = bb.Parent;
+                while (p != null && !(p is IBookingStatementBlock))
+                {
+                    p = p.Parent;
+                }
+                bb = p as IBookingStatementBlock;
+            }
+
+            // If we are here, then nothing was declared the whole way up.
+
+            throw new ArgumentException("Can't find a booking block for a set of variables that are never declared.");
+        }
     }
 }
