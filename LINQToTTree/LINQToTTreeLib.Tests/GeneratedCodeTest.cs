@@ -7,6 +7,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
@@ -652,6 +653,32 @@ namespace LINQToTTreeLib
             Assert.AreEqual(r2, gc.LookupSubExpression(expr), "Is hidden one done right?");
             gc.Pop();
             Assert.AreEqual(r1, gc.LookupSubExpression(expr), "Is revealed one done right?");
+        }
+
+        [TestMethod]
+        public void TestInScopeNoChangeInScope()
+        {
+            var gc = new GeneratedCode();
+            Assert.IsTrue(gc.InScopeNow(gc.CurrentScope), "current scope should be in scope now.");
+        }
+
+        [TestMethod]
+        public void TestInScopeDownOneOK()
+        {
+            var gc = new GeneratedCode();
+            var sc = gc.CurrentScope;
+            gc.Add(new StatementFilter(new ValSimple("true", typeof(bool))));
+            Assert.IsTrue(gc.InScopeNow(sc), "current scope should be in scope now.");
+        }
+
+        [TestMethod]
+        public void TestInScopeUpOneNotOK()
+        {
+            var gc = new GeneratedCode();
+            gc.Add(new StatementFilter(new ValSimple("true", typeof(bool))));
+            var sc = gc.CurrentScope;
+            gc.Pop();
+            Assert.IsFalse(gc.InScopeNow(sc), "current scope should be in scope now.");
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib
 {
@@ -384,6 +384,29 @@ namespace LINQToTTreeLib
             if (CurrentRememberedExpressions.ContainsKey(s))
                 return CurrentRememberedExpressions[s];
             return null;
+        }
+
+        /// <summary>
+        /// Is a variable declared in the given scope visible at the current level?
+        /// </summary>
+        /// <param name="scope">Scope to see if still visible</param>
+        /// <returns></returns>
+        /// <remarks>Check the booking scope - anywhere on the stack?</remarks>
+        public bool InScopeNow(IScopeInfo scope)
+        {
+            var s = scope as CurrentScopeInfo;
+            var bs = CurrentDeclarationScopePointer;
+
+            while (bs != null)
+            {
+                if (bs == s.BookingScope)
+                    return true;
+                var p = bs.Parent;
+                while (p != null && !(p is IBookingStatementBlock))
+                    p = p.Parent;
+                bs = p as IBookingStatementBlock;
+            }
+            return false;
         }
     }
 }

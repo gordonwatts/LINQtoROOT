@@ -94,6 +94,14 @@ namespace LinqToTTreeInterfacesLib
         IScopeInfo CurrentScope { get; set; }
 
         /// <summary>
+        /// Return true if things declared at the booking scope that is passed in
+        /// are visible at the current booking scope.
+        /// </summary>
+        /// <param name="scope"></param>
+        /// <returns></returns>
+        bool InScopeNow(IScopeInfo scope);
+
+        /// <summary>
         /// How far down in the hierarchy of statements are we?
         /// </summary>
         int Depth { get; }
