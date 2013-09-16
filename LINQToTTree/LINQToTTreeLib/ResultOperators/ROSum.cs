@@ -97,17 +97,20 @@ namespace LINQToTTreeLib.ResultOperators
             var incbyone = Expression.Add(counter, Expression.Constant(1));
             gc.Add(new StatementAggregate(counter, ExpressionToCPP.GetExpression(incbyone, gc, cc, container), FindDeclarableParameters.FindAll(incbyone).Select(p => p.RawValue)));
 
-            // Pop out and calculate the average and return it.
-
-            gc.Pop();
+            // It is an error to average a sequence with no elements. So we need to throw a C++ exception. We need to pop up out of the loop in order
+            // to do this.
+            // http://msdn.microsoft.com/en-us/library/bb354760.aspx (for specs on Average on this).
 
             var testForSomething = Expression.Equal(counter, Expression.Constant(0));
-            gc.Add(new StatementThrowIfTrue(ExpressionToCPP.GetExpression(testForSomething, gc, cc, container), "Can't take an average of a null sequence"));
+            gc.AddOutsideLoop(new StatementThrowIfTrue(ExpressionToCPP.GetExpression(testForSomething, gc, cc, container), "Can't take an average of a null sequence"));
 
             var returnType = DetermineAverageReturnType(sumType);
             var faccumulator = Expression.Convert(accumulator, returnType);
             var fcount = Expression.Convert(counter, returnType);
             var divide = Expression.Divide(faccumulator, fcount);
+
+            // We are done with this calculation, so pop up and out.
+            gc.Pop();
 
             return divide;
         }

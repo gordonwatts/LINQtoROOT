@@ -1016,7 +1016,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestSimpleAverage()
+        public void TestAverageSimple()
         {
             // Make sure we can process it!
             var q = new QueriableDummy<ntupWithObjects>();
@@ -1026,6 +1026,38 @@ namespace LINQToTTreeLib
 
             var code = DummyQueryExectuor.FinalResult;
             code.DumpCodeToConsole();
+
+            var s1 = code.CodeBody.Statements.First() as IStatementLoop;
+            var s2 = code.CodeBody.Statements.Skip(1).First();
+
+            Assert.IsNotNull(s1, "loop");
+            Assert.IsInstanceOfType(s2, typeof(Statements.StatementThrowIfTrue), "check for average not zero");
+        }
+
+        [TestMethod]
+        public void TestSumWithZeroLengthSequence()
+        {
+            Assert.Fail();
+        }
+
+        /// <summary>
+        /// When the average is used with more than one level deep, it can generate x-check code that
+        /// is invalid.
+        /// </summary>
+        [TestMethod]
+        public void TestAverageWithFilter()
+        {
+            // Make sure we can process it!
+            var q = new QueriableDummy<ntupWithObjects>();
+            var together = from evt in q
+                           select evt.jets.Where(j => j.var1 > 1).Average(j => j.var1);
+            var result = together.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            var linesbetween = code.DumpCode().SkipWhile(l => !l.Contains(">1")).TakeWhile(l => !l.Contains("==0"));
+            Assert.AreEqual(2, linesbetween.Where(l => l.Contains("}")).Count(), "# of lines with a closing bracket");
         }
 
         [CPPHelperClass]
@@ -1556,7 +1588,7 @@ namespace LINQToTTreeLib
                                        {
                                            N1 = j,
                                            N2 = (from j2 in e.var1
-                                                 orderby j2-j
+                                                 orderby j2 - j
                                                  select j2
                                                  ).First()
                                        }

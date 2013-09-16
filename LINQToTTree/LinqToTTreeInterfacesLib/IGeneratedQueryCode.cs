@@ -42,6 +42,13 @@ namespace LinqToTTreeInterfacesLib
         void AddOutsideLoop(IDeclaredParameter indexSeen);
 
         /// <summary>
+        /// Add outside the current loop. Walks back up the scoping until it finds a loop construct that
+        /// is active. If there is none, that causes a crash! :-)
+        /// </summary>
+        /// <param name="s">Statement to add outside the loop</param>
+        void AddOutsideLoop(IStatement s);
+
+        /// <summary>
         /// Add a variable declaration at the result scoping.
         /// </summary>
         /// <param name="p"></param>

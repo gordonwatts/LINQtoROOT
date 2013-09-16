@@ -212,6 +212,15 @@ namespace LINQToTTreeLib
         /// <param name="v"></param>
         public void AddOutsideLoop(IDeclaredParameter v)
         {
+            FindFirstBookingForSurroundingLoop().Add(v);
+        }
+
+        /// <summary>
+        /// Find a booking construct outside a loop.
+        /// </summary>
+        /// <returns></returns>
+        private IBookingStatementBlock FindFirstBookingForSurroundingLoop()
+        {
             //
             // First, look at the top level scope to see if we are sitting
             // at a loop or similar.
@@ -228,8 +237,7 @@ namespace LINQToTTreeLib
                 var sinfo = s as CurrentScopeInfo;
                 if (foundLoop)
                 {
-                    sinfo.BookingScope.Add(v);
-                    return;
+                    return sinfo.BookingScope;
                 }
 
                 if (sinfo.Scope is IStatementLoop)
@@ -238,7 +246,18 @@ namespace LINQToTTreeLib
                 }
             }
 
-            throw new InvalidOperationException("Unable to add a variable before a loop construct as there is not loop construct found!");
+            throw new InvalidOperationException("Unable to add anything before a loop construct as there is not loop construct found!");
+        }
+
+
+        /// <summary>
+        /// Add a statement up above the current scope pointer - just outside somethign that is a loop
+        /// construct.
+        /// </summary>
+        /// <param name="s"></param>
+        public void AddOutsideLoop(IStatement s)
+        {
+            FindFirstBookingForSurroundingLoop().Add(s);
         }
 
         /// <summary>
