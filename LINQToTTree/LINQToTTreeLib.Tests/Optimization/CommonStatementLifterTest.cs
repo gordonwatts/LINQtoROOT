@@ -445,6 +445,71 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// Found in the wilde, when combining two statements that have a lift of a CPPCode, the CPPcode ends up
+        /// above the declaration in some very funny and odd way. This test captures that error and makes sure it
+        /// never shows up again.
+        /// </summary>
+        [TestMethod]
+        public void TestCombinedLoopLiftReordering()
+        {
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+
+            var r1 = from f in q
+                     let l1 = f.valC1D.Where(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v) > 1).OrderByDescending(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v))
+                     select new
+                     {
+                         jets = l1,
+                         truthjets = f.valC1D
+                     };
+
+            var r2 = from f in r1
+                     select new
+                     {
+                         machedJets = (from j in f.jets
+                                       select new
+                                       {
+                                           J = j,
+                                           MJ = (from mj in f.truthjets
+                                                 let imj = LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(mj)
+                                                 let ij = LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j)
+                                                 orderby imj - ij ascending
+                                                 select mj).First()
+                                       })
+                     };
+
+            var res1 = (from f in r2
+                        from j in f.machedJets
+                        where j.MJ == 5
+                        select LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j.J)*2).Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+            StatementLifter.Optimize(query1);
+
+            var res2 = (from f in r2
+                        from j in f.machedJets
+                        select LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j.J)).Sum();
+            var query2 = DummyQueryExectuor.FinalResult;
+            StatementLifter.Optimize(query2);
+
+            // Combine the queries
+
+            var query = CombineQueries(query1, query2);
+            Console.WriteLine("Unoptimized");
+            query.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(query);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            query.DumpCodeToConsole();
+
+            // Find the first mention of aInt32_28. It should be declared.
+
+            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_28")).First();
+            Assert.AreEqual("int aInt32_28", firstMention.Trim(), "aint32_28 decl");
+        }
+
+        /// <summary>
         /// Do the code combination we require!
         /// </summary>
         /// <param name="gcs"></param>
