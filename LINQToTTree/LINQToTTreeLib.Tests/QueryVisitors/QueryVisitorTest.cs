@@ -490,6 +490,28 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestNestedSort()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    let ns = evt.var1.Where(x => x > 1).OrderBy(x => x)
+                    select ns;
+            var r1 = from lst in r
+                     from x in lst
+                     select x;
+            var res = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            var initalLines = query1.DumpCode().TakeWhile(l => !l.Contains("vector<int> aInt"));
+            var openCount = initalLines.Where(l => l.Contains("{")).Count();
+            var closeCount = initalLines.Where(l => l.Contains("}")).Count();
+
+            Assert.AreEqual(openCount - 1, closeCount, "# of close brackets before vector<int> decl");
+        }
+
+        [TestMethod]
         public void TestSortSimpleCombine()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
