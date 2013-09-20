@@ -1,13 +1,13 @@
-﻿using LinqToTTreeInterfacesLib;
+﻿using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
-using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -118,7 +118,7 @@ namespace LINQToTTreeLib.ResultOperators
             if (bombIfNothing)
             {
                 var test = ExpressionToCPP.GetExpression(Expression.Not(valueWasSeen), gc, cc, container);
-                gc.Add(new Statements.StatementThrowIfTrue(test, "First predicate executed on a null sequence"));
+                gc.Add(new Statements.StatementThrowIfTrue(test, string.Format("First/Last predicate executed on a null sequence: {0}", queryModel.ToString())));
             }
 
             //
