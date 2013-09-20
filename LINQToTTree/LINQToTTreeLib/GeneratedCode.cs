@@ -218,6 +218,17 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Pop out the stack till we hit results level.
+        /// </summary>
+        public void PopToResultsLevel()
+        {
+            while (CurrentDeclarationScopePointer != CurrentResultScope)
+            {
+                Pop();
+            }
+        }
+
+        /// <summary>
         /// Book a variable up above the current scope pointer - just outside something that
         /// is a loop construct.
         /// </summary>

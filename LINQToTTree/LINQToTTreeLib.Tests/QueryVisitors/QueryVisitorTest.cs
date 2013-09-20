@@ -490,7 +490,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestNestedSort()
+        public void TestNestedFilterSort()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
 
@@ -509,6 +509,41 @@ namespace LINQToTTreeLib
             var closeCount = initalLines.Where(l => l.Contains("}")).Count();
 
             Assert.AreEqual(openCount - 1, closeCount, "# of close brackets before vector<int> decl");
+        }
+
+        [TestMethod]
+        public void TestNestedSorts()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    let ns = evt.var1.Where(x => x > 1).OrderBy(x => x)
+                    select new
+                    {
+                        NS = ns,
+                        V = evt.var2
+                    };
+
+            var r0 = from lst in r
+                     select new
+                     {
+                         NS = lst.NS,
+                         V = lst.V.Where(v => v > 1.0).OrderBy(x => x)
+                     };
+
+            var r1 = from lst in r0
+                     from n in lst.NS
+                     from v in lst.V
+                     select n + v;
+            var res = r1.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            var initalLines = query1.DumpCode().TakeWhile(l => !l.Contains("vector<double> aDouble"));
+            var openCount = initalLines.Where(l => l.Contains("{")).Count();
+            var closeCount = initalLines.Where(l => l.Contains("}")).Count();
+
+            Assert.AreEqual(openCount - 4, closeCount, "# of close brackets before vector<int> decl");
         }
 
         [TestMethod]

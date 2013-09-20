@@ -157,5 +157,10 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="expr"></param>
         /// <returns></returns>
         IValue LookupSubExpression(Expression expr);
+
+        /// <summary>
+        /// Pop the stack up to the results level.
+        /// </summary>
+        void PopToResultsLevel();
     }
 }

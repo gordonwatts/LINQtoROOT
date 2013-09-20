@@ -277,7 +277,7 @@ namespace LINQToTTreeLib
                 ExpressionToCPP.GetExpression(_codeContext.LoopIndexVariable, _codeEnv, _codeContext, MEFContainer));
             _codeEnv.Add(savePairValues);
 
-            _codeEnv.Pop();
+            _codeEnv.PopToResultsLevel();
 
             //
             // Now, we need to sort and loop over the variables in the map. This is a bit of a messy
