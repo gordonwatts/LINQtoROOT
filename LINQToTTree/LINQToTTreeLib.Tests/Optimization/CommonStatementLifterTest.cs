@@ -222,6 +222,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             public void Add(IStatement statement)
             {
                 _statements.Add(statement);
+                statement.Parent = this;
             }
 
             public void Remove(IStatement statement)
@@ -258,11 +259,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             /// <param name="statement"></param>
             /// <param name="optimize"></param>
             /// <returns></returns>
-            public IEnumerable<IStatement> TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
                 if (statement is DummyLoop)
-                    return new List<IStatement>();
-                return null;
+                    return true;
+                return false;
             }
 
             public IStatement Parent { get; set; }
@@ -282,13 +283,12 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public IStatement CombineAndMark(IStatement statement, IBookingStatementBlock parent, bool appendIfNoCombine = true)
             {
-                throw new NotImplementedException();
-            }
-
-
-            bool IStatement.TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
-            {
-                throw new NotImplementedException();
+                foreach (var s in _statements)
+                {
+                    if (s.ToString() == statement.ToString())
+                        return s;
+                }
+                return null;
             }
 
 
@@ -421,7 +421,42 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestLift2DeepStatement()
         {
-            Assert.Fail("not written yet");
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+
+            // Add one common assign statement.
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign2);
+
+            // Go down two levels.
+            var ifstatement1 = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement1);
+            var ifstatement2 = new StatementFilter(new ValSimple("j", typeof(int)));
+            gc.Add(ifstatement2);
+
+            // Two levels down add the second common and unique statements.
+            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign4);
+            var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign5);
+
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            cc.DumpCodeToConsole();
+            Console.WriteLine("Optimized:");
+            CommonStatementLifter.Optimize(cc);
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First();
+            var firstAssignment = block1.Statements.First() as StatementAssign;
+            Assert.IsNotNull(firstAssignment, "first assignment");
+            var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
+            Assert.IsNotNull(backIfStatement, "if statement there");
+            Assert.AreEqual(1, backIfStatement.Statements.Count(), "# of if statements inside the if");
         }
 
         /// <summary>
