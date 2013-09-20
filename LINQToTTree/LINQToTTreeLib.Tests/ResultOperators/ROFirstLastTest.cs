@@ -1,3 +1,8 @@
+// <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
@@ -6,11 +11,6 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-// <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -207,7 +207,7 @@ namespace LINQToTTreeLib.ResultOperators
             var firstloop = query.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.AreEqual(1, firstloop.Statements.Count(), "first loop should have only an if statement");
             var ifstatement = firstloop.Statements.First() as IBookingStatementBlock;
-            Assert.AreEqual(2, ifstatement.AllDeclaredVariables.Count(), "# of declared variables");
+            Assert.AreEqual(3, ifstatement.AllDeclaredVariables.Count(), "# of declared variables");
         }
 
         [TestMethod]
