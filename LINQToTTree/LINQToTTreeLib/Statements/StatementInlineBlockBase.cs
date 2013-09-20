@@ -470,5 +470,20 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// Figure out which statement occurs first in our sequence.
+        /// </summary>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <returns></returns>
+        public bool IsBefore(IStatement first, IStatement second)
+        {
+            var whoIsFirst = Statements.Where(s => s == first || s == second).FirstOrDefault();
+            if (whoIsFirst == null)
+                throw new ArgumentException("Unable to find either the first or second statement in th elist");
+
+            return whoIsFirst == first;
+        }
     }
 }

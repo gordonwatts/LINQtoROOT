@@ -8,6 +8,7 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -551,6 +552,21 @@ namespace LINQToTTreeLib.Statements
             var result = inline2.TryCombineStatement(inline1, null);
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(3, inline2.Statements.Count(), "bad # of combined statements");
+        }
+
+        [TestMethod]
+        public void TestIsBefore()
+        {
+            var s = new StatementInlineBlock();
+
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new Statements.StatementAssign(vdecl1, new ValSimple("fork", typeof(int)), null);
+            var s2 = new Statements.StatementAssign(vdecl1, new ValSimple("fork", typeof(int)), null);
+            s.Add(s1);
+            s.Add(s2);
+
+            Assert.IsTrue(s.IsBefore(s1, s2), "s1 before s2");
+            Assert.IsFalse(s.IsBefore(s2, s1), "s2 is before s1");
         }
     }
 }

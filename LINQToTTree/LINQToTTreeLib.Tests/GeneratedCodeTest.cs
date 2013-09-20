@@ -145,6 +145,12 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+
+            public bool IsBefore(IStatement first, IStatement second)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public class CompoundBookingStatement : CompoundStatement, IBookingStatementBlock
