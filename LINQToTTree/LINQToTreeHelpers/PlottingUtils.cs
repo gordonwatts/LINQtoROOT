@@ -326,10 +326,15 @@ namespace LINQToTreeHelpers
         /// <param name="converter">Convert from an object of type U to a sequences of objects of type T</param>
         /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
         /// <returns>Plot spec able to run on a sequence</returns>
-        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
+        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix = null, Expression<Func<U, bool>> filter = null)
         {
-            string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
-            string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+            string newNameFormat = source.NameFormat;
+            string newTitleFormat = source.TitleFormat;
+            if (argumentPrefix != null)
+            {
+                newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
+                newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+            }
 
             // First, create the plotter that can deal with the sequence it self.
             var result = new PlotSpecSequence<T>()
