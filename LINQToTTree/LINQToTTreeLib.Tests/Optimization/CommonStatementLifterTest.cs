@@ -316,6 +316,41 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// If we lift a statement from inside, make sure it appears in the right "order" - that is, before
+        /// the place it is lifted from.
+        /// </summary>
+        [TestMethod]
+        public void TestLiftedStatmentInRightOrder()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign2);
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign3);
+            gc.Pop();
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign1);
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            CommonStatementLifter.Optimize(cc);
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First();
+            var firstAssignment = block1.Statements.First() as StatementAssign;
+            Assert.IsNotNull(firstAssignment, "first assignment");
+            var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
+            Assert.IsNotNull(backIfStatement, "if statement there");
+            Assert.AreEqual(1, backIfStatement.Statements.Count(), "# of if statements inside the if");
+        }
+
+        /// <summary>
         /// When two queries are combined, sometimes you'll get two of the same statements at different
         /// depths. They normally won't move past an "if" statement - but if one is already outside the if
         /// statement there is no need to re-calc the one inside the if statement.
@@ -506,7 +541,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Find the first mention of aInt32_28. It should be declared.
 
             var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_28")).First();
-            Assert.AreEqual("int aInt32_28", firstMention.Trim(), "aint32_28 decl");
+            Assert.AreEqual("int aInt32_28;", firstMention.Trim(), "aint32_28 decl");
         }
 
         /// <summary>
