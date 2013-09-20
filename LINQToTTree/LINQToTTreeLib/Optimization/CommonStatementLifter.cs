@@ -103,8 +103,11 @@ namespace LINQToTTreeLib.Optimization
                     // it should work in stack, just before parent.
 
                     var stackStatement = FindStatementHolder(stack, parent);
-                    stack.Remove(r);
-                    stack.AddBefore(r, parent);                        
+                    if (!stack.IsBefore(r, parent))
+                    {
+                        stack.Remove(r);
+                        stack.AddBefore(r, parent);
+                    }
 
                     return stack;
                 }

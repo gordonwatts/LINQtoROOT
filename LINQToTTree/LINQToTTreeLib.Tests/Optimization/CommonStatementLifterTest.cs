@@ -290,6 +290,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             {
                 throw new NotImplementedException();
             }
+
+
+            public bool IsBefore(IStatement first, IStatement second)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         /// <summary>
@@ -360,6 +366,62 @@ namespace LINQToTTreeLib.Tests.Optimization
             var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
             Assert.IsNotNull(backIfStatement, "if statement there");
             Assert.AreEqual(1, backIfStatement.Statements.Count(), "# of if statements inside the if");
+        }
+
+        /// <summary>
+        /// If we lift the same code from two statements, make sure the code appears at the proper spot (i.e.
+        /// before the first statement, not the second one).
+        /// </summary>
+        [TestMethod]
+        public void TestLifted2ndStatmentInRightOrder()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var ifstatement1 = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement1);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign2);
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign3);
+            gc.Pop();
+
+            var ifstatement2 = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement2);
+            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign4);
+            var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign5);
+            gc.Pop();
+
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign1);
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            CommonStatementLifter.Optimize(cc);
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First();
+            var firstAssignment = block1.Statements.First() as StatementAssign;
+            Assert.IsNotNull(firstAssignment, "first assignment");
+            var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
+            Assert.IsNotNull(backIfStatement, "if statement there");
+            Assert.AreEqual(1, backIfStatement.Statements.Count(), "# of if statements inside the if");
+        }
+
+        /// <summary>
+        /// Make sure the detection code can work properly with a lifted statement that is actually two
+        /// if statements deep.
+        /// </summary>
+        [TestMethod]
+        public void TestLift2DeepStatement()
+        {
+            Assert.Fail("not written yet");
         }
 
         /// <summary>
