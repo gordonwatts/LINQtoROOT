@@ -39,8 +39,17 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="statements"></param>
         /// <param name="parent"></param>
         /// <param name="appendIfNoCombine"></param>
-        /// <returns>True if it combined everything (only if appendIfNoCombine is false!)</returns>
+        /// <returns>The "other" statement if the combination was successful, null if it was not</returns>
         bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true);
 
+        /// <summary>
+        /// Attempt to combine statements. If we can. If we can't, return null. If we can, return the statement it
+        /// was folded into.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="parent"></param>
+        /// <param name="appendIfNoCombine"></param>
+        /// <returns></returns>
+        IStatement CombineAndMark(IStatement statement, IBookingStatementBlock parent, bool appendIfNoCombine = true);
     }
 }

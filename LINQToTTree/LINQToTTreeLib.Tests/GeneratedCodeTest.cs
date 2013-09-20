@@ -104,12 +104,6 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-
-            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
-            {
-                throw new NotImplementedException();
-            }
-
             public void RenameVariable(string originalName, string newName)
             {
                 throw new NotImplementedException();
@@ -131,6 +125,23 @@ namespace LINQToTTreeLib
 
 
             public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<IStatement> TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            public IStatement CombineAndMark(IStatement statement, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            bool IStatement.TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
                 throw new NotImplementedException();
             }

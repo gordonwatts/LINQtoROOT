@@ -352,10 +352,11 @@ namespace LINQToTTreeLib.Statements
         /// succeeds (no need for a bool return) because we just add things onto the end.
         /// </summary>
         /// <param name="statements">List of statements that we need to combine</param>
-        public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
+        private List<IStatement> CombineInternal(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
         {
             bool didAllCombine = true;
             ICodeOptimizationService myopt;
+            var mergedIntoList = new List<IStatement>();
             if (parent != null)
             {
                 myopt = new BlockRenamer(parent, this);
@@ -372,6 +373,7 @@ namespace LINQToTTreeLib.Statements
                     if (sinner.TryCombineStatement(s, myopt))
                     {
                         didCombine = true;
+                        mergedIntoList.Add(sinner);
                         break;
                     }
                 }
@@ -389,7 +391,32 @@ namespace LINQToTTreeLib.Statements
                 }
             }
 
-            return didAllCombine;
+            return didAllCombine ? mergedIntoList : null;
+        }
+
+        /// <summary>
+        /// Combine a list of statements with a common parent into the this block.
+        /// </summary>
+        /// <param name="statements">List of statements to combine</param>
+        /// <param name="parent">The common parent of the list of statements</param>
+        /// <param name="appendIfCantCombine">If true always add the statements onto the end of the block</param>
+        /// <returns>True if the statements were merged or appended onto the end of the block</returns>
+        public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
+        {
+            return CombineInternal(statements, parent, appendIfCantCombine) != null || appendIfCantCombine;
+        }
+
+        /// <summary>
+        /// Try to combine a single statement. Return the statement that it was combined with it was combined. If appendIfNoCombine
+        /// is true, then add it on, and still return null.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <param name="appendIfNoCombine">The statement will always be added on the end.</param>
+        /// <returns>The statement it was merged with, if merging took place.</returns>
+        public IStatement CombineAndMark(IStatement statement, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+        {
+            var s = CombineInternal(new IStatement[] { statement }, parent, appendIfNoCombine);
+            return s == null ? null : s[0];
         }
 
         /// <summary>

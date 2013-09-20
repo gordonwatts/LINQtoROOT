@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using LinqToTTreeInterfacesLib;
+using System;
 
 namespace LINQToTTreeLib.Optimization
 {
@@ -90,16 +91,43 @@ namespace LINQToTTreeLib.Optimization
 
             // Walk the code stack and find someone that can take us.
 
-            var sArr = new IStatement[] { s };
             foreach (var stack in codeStack)
             {
-                if (stack.Combine(sArr, s.Parent as IBookingStatementBlock, false))
+                var r = stack.CombineAndMark(s, s.Parent as IBookingStatementBlock, false);
+                if (r != null)
                 {
                     parent.Remove(s);
+
+                    // We have to be a little careful here. The statement should be added at the right
+                    // place. Since thet statement works inside parent, and it works inside stack, then
+                    // it should work in stack, just before parent.
+
+                    var stackStatement = FindStatementHolder(stack, parent);
+                    stack.Remove(r);
+                    stack.AddBefore(r, parent);                        
+
                     return stack;
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// s is in some code block in parent. Find the statement in parent that contains (or is) s.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private static IStatement FindStatementHolder(IStatementCompound parent, IStatement s)
+        {
+            var finalParent = s;
+            while (finalParent != null && finalParent != parent)
+            {
+                finalParent = finalParent.Parent;
+            }
+            if (finalParent == null)
+                throw new ArgumentException("Statement s does not seem to be contained in parent");
+            return finalParent;
         }
     }
 }

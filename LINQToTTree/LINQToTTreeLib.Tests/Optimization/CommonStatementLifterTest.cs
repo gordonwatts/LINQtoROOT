@@ -258,11 +258,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             /// <param name="statement"></param>
             /// <param name="optimize"></param>
             /// <returns></returns>
-            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            public IEnumerable<IStatement> TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
                 if (statement is DummyLoop)
-                    return true;
-                return false;
+                    return new List<IStatement>();
+                return null;
             }
 
             public IStatement Parent { get; set; }
@@ -277,6 +277,18 @@ namespace LINQToTTreeLib.Tests.Optimization
             public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
             {
                 return appendIfNoCombine;
+            }
+
+
+            public IStatement CombineAndMark(IStatement statement, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            {
+                throw new NotImplementedException();
+            }
+
+
+            bool IStatement.TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                throw new NotImplementedException();
             }
         }
 
