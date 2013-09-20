@@ -820,6 +820,35 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestSortGroupByItemsWithFilter()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var dudeQ = from evt in q
+                        select (from v in evt.var1.Where(l => l > 2)
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         select (from grp in evt
+                                 where grp.Count() >= 5
+                                 where grp.OrderBy(s => s).First() == 12
+                                 select grp);
+
+            var dudeQ2 = from evt in dudeQ1
+                         where evt.Count() > 1
+                         select evt;
+            var r = dudeQ2.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            var lines = DummyQueryExectuor.FinalResult.DumpCode().TakeWhile(l => !l.Contains("for (map"));
+            var openB = lines.Count(l => l.Contains("{"));
+            var closeB = lines.Count(l => l.Contains("}"));
+
+            Assert.AreEqual(openB - 1, closeB, "# of }");
+        }
+
+        [TestMethod]
         public void TestSortReverseSimple()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
