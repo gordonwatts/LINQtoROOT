@@ -1452,6 +1452,38 @@ namespace LINQToTTreeLib
 
         }
 
+        /// <summary>
+        /// In code in the while we saw a crash when we tried to generate code from a 2-level
+        /// deep anonymous object. This tests that situation.
+        /// </summary>
+        [TestMethod]
+        public void TestAnonymousObjectTwoLevelsDown()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var all = from evt in q
+                      select new
+                      {
+                          Jets = from v in evt.var1
+                                 select new
+                                 {
+                                     V1 = Enumerable.Range(0, 10).Select(s => s * v),
+                                     V2 = 2 * v
+                                 },
+                          Tracks = from v in evt.var2 select new { T1 = v, T2 = 2 * v }
+                      };
+
+            var combined = from evt in all
+                           from j in evt.Jets
+                           select j.V1.Where(l => l > 2).Count();
+
+            var result = combined.Where(v => v > 1.0).Count();
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+
         [TestMethod]
         public void TestAnonymousObjectWithSameIndexNames()
         {
