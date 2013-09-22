@@ -172,6 +172,35 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsInstanceOfType(firstStatement, typeof(StatementForLoop), "first statement");
         }
 
+        /// <summary>
+        /// Distilled from something we found in the wild.
+        /// 1. Non ICM statement (like an if statement)
+        /// 2. Loop
+        /// 3.   Statement that is independent of loop 1
+        /// 
+        /// It is ok to live statement 3 to be above Loop, but we can't
+        /// move it past #1.
+        /// </summary>
+        [TestMethod]
+        public void TestLiftNestedInLoopStatementWithBlockAtTopLevel()
+        {
+            var v = new GeneratedCode();
+
+            v.Add(new StatementNonOptimizing());
+
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+            v.Add(new StatementWithNoSideEffects());
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
+            var secondStatement = v.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementWithNoSideEffects), "Second statement");
+        }
+
         [TestMethod]
         public void TestNoLiftDependentStatement()
         {
@@ -382,6 +411,65 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.Inconclusive("Not coded yet");
         }
 #endif
+        /// <summary>
+        /// Found in the wild, when an expression contains multiple steps, and one of the steps can be lifted,
+        /// it isn't.
+        /// </summary>
+        [TestMethod]
+        public void TestLiftingHalfOfExpression()
+        {
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+
+            var res = from f in q
+                      select new
+                      {
+                          Jets = f.valC1D.Select(l => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.CreateTLZ(l, l, l, l)),
+                          Tracks = f.vals.Select(l => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.CreateTLZ(l, l, l, l)),
+                      };
+
+            var resAll = from f in res
+                         select new
+                         {
+                             Jets = f.Jets.Where(j => j.Pt() > 40.0 && Math.Abs(j.Eta()) < 2.5),
+                             Tracks = f.Tracks
+                         };
+
+            var resGood = from f in resAll
+                          where f.Jets.Count() == 2
+                          select f;
+
+            var resMatched = from f in resGood
+                             select new
+                             {
+                                 matchedJets = from j in f.Jets
+                                               select new
+                                               {
+                                                   J = j,
+                                                   T = f.Tracks.Where(t => Math.Abs(t.Phi() - j.Phi()) < 0.04)
+                                               }
+                             };
+
+            var resf = from f in resMatched
+                       from j in f.matchedJets
+                       select j.T.Count();
+
+            var r = resf.Sum();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            StatementLifter.Optimize(query);
+            query.DumpCodeToConsole();
+
+            var linesOfCode = query.DumpCode().TakeWhile(l => !l.Contains("aNTLorentzVector_10).Phi"));
+            var openBrackets = linesOfCode.Where(l => l.Contains("{")).Count();
+            var closeBrackets = linesOfCode.Where(l => l.Contains("}")).Count();
+            Assert.AreEqual(openBrackets - 4, closeBrackets, "#of of nesting levesl for the Phi call");
+        }
 
         /// <summary>
         /// Do the code combination we require!

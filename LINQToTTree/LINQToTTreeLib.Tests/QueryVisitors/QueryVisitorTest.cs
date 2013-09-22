@@ -1480,8 +1480,6 @@ namespace LINQToTTreeLib
             var result = combined.Where(v => v > 1.0).Count();
             var code = DummyQueryExectuor.FinalResult;
             code.DumpCodeToConsole();
-
-            Assert.Inconclusive();
         }
 
         [TestMethod]

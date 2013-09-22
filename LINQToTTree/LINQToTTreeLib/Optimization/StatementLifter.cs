@@ -58,13 +58,6 @@ namespace LINQToTTreeLib.Optimization
 
                     if (modified)
                         break;
-
-                    // Now, we can only go on if we have any hope of moving statements further down (like the next one)
-                    // up past this statement we've just looked at. So, break if we don't have any code movement
-                    // info for it.
-
-                    if (!(item is ICMStatementInfo))
-                        break;
                 }
             }
             return returnModified;
