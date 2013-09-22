@@ -624,7 +624,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var res1 = (from f in r2
                         from j in f.machedJets
                         where j.MJ == 5
-                        select LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j.J)*2).Sum();
+                        select LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j.J) * 2).Sum();
             var query1 = DummyQueryExectuor.FinalResult;
             StatementLifter.Optimize(query1);
 
@@ -649,8 +649,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Find the first mention of aInt32_28. It should be declared.
 
-            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_28")).First();
-            Assert.AreEqual("int aInt32_28;", firstMention.Trim(), "aint32_28 decl");
+            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_17")).First();
+            Assert.AreEqual("int aInt32_17=-1;", firstMention.Trim(), "aint32_17 decl");
         }
 
         /// <summary>
