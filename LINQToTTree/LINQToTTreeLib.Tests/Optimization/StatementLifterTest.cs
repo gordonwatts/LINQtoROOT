@@ -201,6 +201,88 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsInstanceOfType(secondStatement, typeof(StatementWithNoSideEffects), "Second statement");
         }
 
+        /// <summary>
+        /// Make sure no lifting occurs here:
+        /// 1. no side effect statement
+        /// 2. non ICM statement that is a compound statement
+        /// 3.   no side effect statement
+        /// Nothing shoudl be lifted in this case.
+        /// </summary>
+        [TestMethod]
+        public void TestNoLiftPastNoMoveCompound()
+        {
+            var v = new GeneratedCode();
+
+            v.Add(new StatementWithNoSideEffects());
+
+            v.Add(new DummyStatementCompoundNoCMInfo());
+            v.Add(new StatementWithNoSideEffects());
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithNoSideEffects), "first statement");
+            var secondStatement = v.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(secondStatement, typeof(DummyStatementCompoundNoCMInfo), "Second statement");
+        }
+
+        class DummyStatementCompoundNoCMInfo : IStatementCompound
+        {
+            private List<IStatement> _statements = new List<IStatement>();
+            public IEnumerable<IStatement> Statements
+            {
+                get { return _statements; }
+            }
+
+            public void Add(IStatement statement)
+            {
+                _statements.Add(statement);
+            }
+
+            public void Remove(IStatement statement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void AddBefore(IStatement statement, IStatement beforeThisStatement)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IStatement CombineAndMark(IStatement statement, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsBefore(IStatement first, IStatement second)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IStatement Parent { get; set; }
+        }
+
+
         [TestMethod]
         public void TestNoLiftDependentStatement()
         {
