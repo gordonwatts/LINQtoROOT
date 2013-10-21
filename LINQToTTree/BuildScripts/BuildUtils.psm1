@@ -236,10 +236,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$installToolFiles = "msbuild.psm1", "Install.ps1", "Uninstall.ps1", "Init.ps1", "LINQToTTreeCommands.psm1" | % { [System.IO.FileInfo] "$solutionDirectory\LINQToTTree\BuildScripts\$_" }
 
 	$toolFiles = ($cmdExeFiles + $msbuildTaskFiles + $installToolFiles) | Sort-Object -Property Name -Unique
-	if (-not $PDB)
-	{
-		$toolFiles = $toolFiles | ? { $_.Extension -ne ".pdb" }
-	}
+	$toolFiles = $toolFiles | ? { $_.Extension -ne ".pdb" }
 	$toolFiles = $toolFiles | % {$_.FullName}
 
 	#
