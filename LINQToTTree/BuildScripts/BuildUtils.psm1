@@ -116,6 +116,11 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
 		$src = $l.SourceFile
         "    <file src=`"$src`" target=`"content\$dest`" />" >> $path
 	}
+	foreach ($l in $PackageSpecification["SourceRootDirectories"])
+	{
+		$destDir = split-path -Leaf $l
+        "    <file src=`"$l\**\*.cs`" target=`"src\$destDir`" />" >> $path
+	}
 	
     #
     # Done!
@@ -128,7 +133,7 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     # Final task, run nuget on the thing to actually build it!
     #
     
-    $results = & $NuGetExe pack $path -OutputDirectory $BuildDir 2>&1
+    $results = & $NuGetExe pack $path -OutputDirectory $BuildDir -Symbols 2>&1
 	if (-not (($results | ? {$_.GetType() -eq [System.String]} | ? { $_.Contains("Successfully created") } ).Length -gt 0 ))
 	{
 		Write-Host $results
@@ -196,16 +201,22 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	$mainLibrarySolutionDir = "$solutionDirectory\LINQToTTree\LINQToTTreeLib"
 	$mainLibrary = "$mainLibrarySolutionDir\bin\$release"
 	$mainLibraryFiles = "LinqToTTreeInterfacesLib", "LINQToTTreeLib", "Remotion.Linq"
+	$mainLibrarySourceFiles = "LINQToTTree\LINQToTTreeLib"
 	check-exists $mainLibrary $mainLibraryFiles
 
 	$helperLibrarySolutionDir = "$solutionDirectory\LINQToTTree\LINQToTreeHelpers"
 	$helperLibrary = "$helperLibrarySolutionDir\bin\$release"
 	$helperLibraryFiles = "LINQToTreeHelpers", "Doddle.Reporting"
+	$helperLibrarySourceFiles = "LINQToTTree\LINQToTreeHelpers"
 	check-exists $helperLibrary $helperLibraryFiles
+
+	$interfaceLibrarySourceFiles = "LINQToTTree\LinqToTTreeInterfacesLib"
 	
 	$mainLibraries = get-files-for-library $mainLibrary $mainLibraryFiles -PDB:$PDB
 	$helperLibraries = get-files-for-library $helperLibrary $helperLibraryFiles -PDB:$PDB
 	$allLibraries = $mainLibraries + $helperLibraries
+	$allSourceDirectories = ($mainLibrarySourceFiles, $helperLibrarySourceFiles, $interfaceLibrarySourceFiles)
+	Write-Host $allSourceDirectories
 	
 	#
 	# There are some config data files that we need to add in.
@@ -270,6 +281,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 		"Libraries" = $allLibraries
 		"Tools" = $toolFiles
 		"ContentFiles" = $contentList
+		"SourceRootDirectories" = $allSourceDirectories
 	}
 	
 	$pkg = build-nuget-package -PackageSpecification $packageSpec -BuildDir $buildDir -NuGetExe "$solutionDirectory\LINQToTTree\nuget.exe"
