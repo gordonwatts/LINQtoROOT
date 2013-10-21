@@ -46,6 +46,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Load the query up
             //
 
+            if (Environment.BreakToDebugger)
+                System.Diagnostics.Debugger.Break();
             CompileAndLoad(templateFile);
 
             //
