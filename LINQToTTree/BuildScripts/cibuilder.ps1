@@ -25,6 +25,9 @@ $version = $FileVersion -join "."
 
 #-nugetDistroDirectory $nugetPackageDir 
 $currentPath = Resolve-Path "."
-get-ROOT-Version-Names ".\LINQToTTree\.nuget\nuget.exe" | %{build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release -ROOTPackage $_}
+#get-ROOT-Version-Names ".\LINQToTTree\.nuget\nuget.exe" | %{build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release -ROOTPackage $_}
+
+# For CI, only build the version that is on the server for now.
+build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release
 
 
