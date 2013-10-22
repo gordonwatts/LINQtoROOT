@@ -203,7 +203,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	
 	$mainLibrarySolutionDir = "$solutionDirectory\LINQToTTree\LINQToTTreeLib"
 	$mainLibrary = "$mainLibrarySolutionDir\bin\$release"
-	$mainLibraryFiles = "LinqToTTreeInterfacesLib", "LINQToTTreeLib", "Remotion.Linq"
+	$mainLibraryFiles = "LinqToTTreeInterfacesLib", "LINQToTTreeLib"
 	$mainLibrarySourceFiles = "LINQToTTree\LINQToTTreeLib"
 	check-exists $mainLibrary $mainLibraryFiles
 
