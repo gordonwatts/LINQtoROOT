@@ -197,6 +197,9 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	# We are going to be building for the LINQToTTree and the Helper library packages, and wrap them
 	# up in one big package. We will also be doing the C# build stuff.
 	#
+	# Note that doodle causes an error when we upload the symbols file later on as we don't have the source
+	# for it included here.
+	#
 	
 	$mainLibrarySolutionDir = "$solutionDirectory\LINQToTTree\LINQToTTreeLib"
 	$mainLibrary = "$mainLibrarySolutionDir\bin\$release"
@@ -214,7 +217,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 	
 	$mainLibraries = get-files-for-library $mainLibrary $mainLibraryFiles -PDB:$PDB
 	$helperLibraries = get-files-for-library $helperLibrary $helperLibraryFiles -PDB:$PDB
-	$allLibraries = $mainLibraries + $helperLibraries
+	$allLibraries = $mainLibraries + $helperLibraries | ? {!$_.Contains("Doddle.Reporting.pdb")}
 	$allSourceDirectories = ($mainLibrarySourceFiles, $helperLibrarySourceFiles, $interfaceLibrarySourceFiles)
 	Write-Host $allSourceDirectories
 	
