@@ -1,9 +1,3 @@
-// <copyright file="QueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
@@ -20,6 +14,13 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Parsing.Structure;
+// <copyright file="QueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib
 {
@@ -437,7 +438,7 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAggregate), "Assign statement not there");
         }
 
-        public class subNtupleObjects
+        public class subNtupleObjects1
         {
             [TTreeVariableGrouping]
             public int var1;
@@ -448,11 +449,24 @@ namespace LINQToTTreeLib
             public double v3;
         }
 
+        public class subNtupleObjects2
+        {
+            [TTreeVariableGrouping]
+            public int var4;
+            [TTreeVariableGrouping]
+            public double var5;
+            [TTreeVariableGrouping]
+            [RenameVariable("var6")]
+            public double v6;
+        }
+
         [TranslateToClass(typeof(ntupWithObjectsDest))]
         public class ntupWithObjects
         {
             [TTreeVariableGrouping]
-            public subNtupleObjects[] jets;
+            public subNtupleObjects1[] jets;
+            [TTreeVariableGrouping]
+            public subNtupleObjects2[] tracks;
         }
 
         public class ntupWithObjectsDest : IExpressionHolder
@@ -464,6 +478,10 @@ namespace LINQToTTreeLib
             public int[] var1;
             public double[] var2;
             public double[] var3;
+
+            public int[] var4;
+            public double[] var5;
+            public double[] var6;
 
             public Expression HeldExpression { get; private set; }
         }
@@ -1045,12 +1063,67 @@ namespace LINQToTTreeLib
             Assert.IsFalse(ass.Expression.RawValue.Contains("jets"), "jets should be missing from the expression - " + ass.Expression.RawValue);
         }
 
+        class TestTranslatedNestedCompareAndSortHolder
+        {
+            public subNtupleObjects1 jet { get; set; }
+            public subNtupleObjects2 track { get; set; }
+        }
+
+        class TestTranslatedNestedCompareAndSortHolderEvent
+        {
+            public IEnumerable<TestTranslatedNestedCompareAndSortHolder> matches;
+        }
+
+
+        /// <summary>
+        /// THis comes from a bug in the wild. Two objects that were "close" to each other, look for the second one to do something with it,
+        /// and it produced some bad code.
+        /// </summary>
+        [TestMethod]
+        public void TestTranslatedNestedCompareAndSort()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            // Create a dual object. Avoid anonymous objects just for the sake of it.
+            var matched = from evt in q
+                          select new TestTranslatedNestedCompareAndSortHolderEvent()
+                          {
+                              matches = from j in evt.jets
+                                        orderby j.v3 ascending
+                                        select new TestTranslatedNestedCompareAndSortHolder()
+                                        {
+                                            jet = j,
+                                            track = (from t in evt.tracks
+                                                     orderby Math.Abs(t.v6 - j.v3) ascending
+                                                     select t).First()
+                                        }
+                          };
+
+            // Filter on the first jet in the sequence.
+            var goodmatched = from evt in matched
+                              where evt.matches.First().jet.v3 > 0
+                              select evt;
+
+            // Do something with the second one now
+            var otherTrack = from evt in goodmatched
+                             where evt.matches.Skip(1).First().track.v6 > 0
+                             select evt.matches.Skip(1).First().jet.v3;
+
+            //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
+            var r = otherTrack.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            // This was crashing, but does need to be fixed up.
+        }
+
         [TestMethod]
         public void TestLambdaExpressionLookup()
         {
             var q = new QueriableDummy<ntupWithObjects>();
 
-            Expression<Func<subNtupleObjects, bool>> checker = s => s.var1 == 0;
+            Expression<Func<subNtupleObjects1, bool>> checker = s => s.var1 == 0;
 
             var result = q.SelectMany(evt => evt.jets).Where(checker).Count();
 
@@ -1297,7 +1370,7 @@ namespace LINQToTTreeLib
         {
             var q = new QueriableDummy<ntupWithObjects>();
 
-            Expression<Func<subNtupleObjects, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+            Expression<Func<subNtupleObjects1, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets.AsQueryable().Where(checker)
@@ -1384,7 +1457,7 @@ namespace LINQToTTreeLib
         {
             var q = new QueriableDummy<ntupWithObjects>();
 
-            Expression<Func<subNtupleObjects, bool>> checker = jr => CPPHelperFunctions.Calc(jr.var1) > 1;
+            Expression<Func<subNtupleObjects1, bool>> checker = jr => CPPHelperFunctions.Calc(jr.var1) > 1;
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -2452,7 +2525,7 @@ namespace LINQToTTreeLib
                     return evt => evt.jets.Count() > 0;
                 }
             }
-            public Expression<Func<subNtupleObjects, bool>> SelectionJet
+            public Expression<Func<subNtupleObjects1, bool>> SelectionJet
             {
                 get
                 {
@@ -2484,7 +2557,7 @@ namespace LINQToTTreeLib
             var q = new QueriableDummy<ntupWithObjects>();
 
             var obj = new SelectionObject();
-            Expression<Func<ntupWithObjects, subNtupleObjects>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
+            Expression<Func<ntupWithObjects, subNtupleObjects1>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
             var r = q.Where(evt => test.Invoke(evt).var1 > 0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();

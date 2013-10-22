@@ -1,8 +1,3 @@
-// <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
@@ -11,6 +6,12 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+// <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -157,6 +158,101 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
             var lm = query.DumpCode().Where(l => l.Contains("aInt32_14 = ((*(*this).run2).at(aInt32_13))*2;")).FirstOrDefault();
             Assert.IsNotNull(lm, "Unable to find proper addition line");
+        }
+
+
+        public class subNtupleObjects1
+        {
+            [TTreeVariableGrouping]
+            public int var1;
+            [TTreeVariableGrouping]
+            public double var2;
+            [TTreeVariableGrouping]
+            [RenameVariable("var3")]
+            public double v3;
+        }
+
+        public class subNtupleObjects2
+        {
+            [TTreeVariableGrouping]
+            public int var4;
+            [TTreeVariableGrouping]
+            public double var5;
+            [TTreeVariableGrouping]
+            [RenameVariable("var6")]
+            public double v6;
+        }
+
+        [TranslateToClass(typeof(ntupWithObjectsDest))]
+        public class ntupWithObjects
+        {
+            [TTreeVariableGrouping]
+            public subNtupleObjects1[] jets;
+            [TTreeVariableGrouping]
+            public subNtupleObjects2[] tracks;
+        }
+
+        public class ntupWithObjectsDest : IExpressionHolder
+        {
+            public ntupWithObjectsDest(Expression expr)
+            {
+                HeldExpression = expr;
+            }
+            public int[] var1;
+            public double[] var2;
+            public double[] var3;
+
+            public int[] var4;
+            public double[] var5;
+            public double[] var6;
+
+            public Expression HeldExpression { get; private set; }
+        }
+
+        class TestTranslatedNestedCompareAndSortHolder
+        {
+            public subNtupleObjects1 jet { get; set; }
+            public subNtupleObjects2 track { get; set; }
+        }
+
+        class TestTranslatedNestedCompareAndSortHolderEvent
+        {
+            public IEnumerable<TestTranslatedNestedCompareAndSortHolder> matches;
+        }
+
+        /// <summary>
+        /// Derivative bug found while trying to understand a bug in the wild. THe current implementation will cause the "jets"
+        /// reference to fail during translation. No reason for that.
+        /// </summary>
+        [TestMethod]
+        public void TestFirstAndTranslationWithObjects()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            // Create a dual object. Avoid anonymous objects just for the sake of it.
+            var matched = from evt in q
+                          select new TestTranslatedNestedCompareAndSortHolderEvent()
+                          {
+                              matches = from j in evt.jets
+                                        orderby j.v3 ascending
+                                        select new TestTranslatedNestedCompareAndSortHolder()
+                                        {
+                                            jet = j
+                                        }
+                          };
+
+            // Filter on the first jet in the sequence.
+            var goodmatched = from evt in matched
+                              where evt.matches.First().jet.v3 > 0
+                              select evt;
+
+            var r = goodmatched.Count();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            // The current test is: the fact that this didn't crash, means it worked. But
+            // we will do a simple test here.
         }
 
         [TestMethod]

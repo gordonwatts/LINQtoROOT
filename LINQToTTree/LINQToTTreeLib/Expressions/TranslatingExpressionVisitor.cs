@@ -1,12 +1,13 @@
-﻿using System;
+﻿using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Parsing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.Utils;
-using Remotion.Linq.Parsing;
 
 namespace LINQToTTreeLib
 {
@@ -134,6 +135,22 @@ namespace LINQToTTreeLib
                 if (expression.Expression is ParameterExpression)
                     return expression;
 
+                //
+                // If we are looking at a [subqueryexpression].[grouping-obj].[member], which below should be translating
+                // soem how, we need to wait until the subqueryexpression has been totally translated. Which will happen
+                // later on, and then come back through here.
+                //
+
+                if (expression.Expression is MemberExpression)
+                {
+                    var mbaccess = expression.Expression as MemberExpression;
+                    if (mbaccess is MemberExpression)
+                    {
+                        if (mbaccess.Expression is SubQueryExpression)
+                            return expression;
+                    }
+                }
+
                 ///
                 /// Regular array recoding - so this is at the top level and is the most
                 /// common kind
@@ -203,7 +220,8 @@ namespace LINQToTTreeLib
             ///
             /// Next job is to figure out where this index guy is pointing to. In order to
             /// do that look for the other link object. Do the check and make sure the types
-            /// are correct so we are "ready" to go.
+            /// are correct so we are "ready" to go. And also resolve the underlying object if
+            /// there is one.
             /// 
 
             var indexMemberExpression = sourceExpression as MemberExpression;
