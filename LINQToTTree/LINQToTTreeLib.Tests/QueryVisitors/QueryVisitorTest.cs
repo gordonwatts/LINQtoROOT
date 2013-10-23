@@ -1067,6 +1067,7 @@ namespace LINQToTTreeLib
         {
             public subNtupleObjects1 jet { get; set; }
             public subNtupleObjects2 track { get; set; }
+            public double delta { get; set; }
         }
 
         class TestTranslatedNestedCompareAndSortHolderEvent
@@ -1089,25 +1090,31 @@ namespace LINQToTTreeLib
                           select new TestTranslatedNestedCompareAndSortHolderEvent()
                           {
                               matches = from j in evt.jets
+                                        let mt = (from t in evt.tracks
+                                                  orderby Math.Abs(t.v6 - j.v3) ascending
+                                                  select t).First()
                                         orderby j.v3 ascending
                                         select new TestTranslatedNestedCompareAndSortHolder()
                                         {
                                             jet = j,
-                                            track = (from t in evt.tracks
-                                                     orderby Math.Abs(t.v6 - j.v3) ascending
-                                                     select t).First()
+                                            track = mt,
+                                            delta = Math.Abs(mt.v6 - j.v3)
                                         }
                           };
 
             // Filter on the first jet in the sequence.
             var goodmatched = from evt in matched
                               where evt.matches.First().jet.v3 > 0
-                              select evt;
+                              select new TestTranslatedNestedCompareAndSortHolderEvent() {
+                                  matches = evt.matches.Where(e => e.delta < 1.3)
+                              };
+
+            var goodNumberMatched = goodmatched.Where(evt => evt.matches.Count() == 2);
 
             // Do something with the second one now
-            var otherTrack = from evt in goodmatched
-                             where evt.matches.Skip(1).First().track.v6 > 0
-                             select evt.matches.Skip(1).First().jet.v3;
+            var otherTrack = from evt in goodNumberMatched
+                             where evt.matches.First().track.v6 > 0
+                             select evt.matches.Skip(1).First().track.v6;
 
             //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
             var r = otherTrack.Sum();
@@ -1116,7 +1123,11 @@ namespace LINQToTTreeLib
             code.DumpCodeToConsole();
 
             // This was crashing, but does need to be fixed up.
+
+            var lineOfCode = code.DumpCode().Where(l => l.Contains("aDouble_53=aDouble_53")).First();
+            Assert.AreEqual("aDouble_53=aDouble_53+((*(*this).var6).at(aInt32_63));", lineOfCode.Trim(), "Bad line of code");
         }
+          
 
         [TestMethod]
         public void TestLambdaExpressionLookup()
