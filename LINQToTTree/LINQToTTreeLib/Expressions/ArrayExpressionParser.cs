@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="gc"></param>
         /// <param name="cc"></param>
         /// <param name="container"></param>
-        public static void ParseArrayExpression(IQuerySource query, Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
+        public static IVariableScopeHolder ParseArrayExpression(IQuerySource query, Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             if (_parser == null)
             {
@@ -66,7 +66,7 @@ namespace LINQToTTreeLib.Expressions
             // Turn it into code - any code that we need.
             //
 
-            result.CodeLoopOverArrayInfo(query, gc, cc, container);
+            return result.CodeLoopOverArrayInfo(query, gc, cc, container);
         }
 
         /// <summary>

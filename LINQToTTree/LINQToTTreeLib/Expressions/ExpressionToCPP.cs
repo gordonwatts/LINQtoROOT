@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -27,14 +28,33 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         public static IValue GetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
-            if (expr == null)
-                return null;
-
-            if (cc == null)
+            try
             {
-                cc = new CodeContext();
+                Debug.WriteLine("ExpressionToCPP: Parsing {0}{1}", expr.ToString(), "");
+                Debug.Indent();
+                if (expr == null)
+                    return null;
+
+                if (cc == null)
+                {
+                    cc = new CodeContext();
+                }
+
+                // Cache the list of variables that need to be eliminated when CPP is done.
+                var cachedScopedVariables = cc.ResetCachedVariableList();
+
+                var r = InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container).PerformAllSubstitutions(cc);
+                Debug.WriteLine("ExpressionToCPP: Returning value {0}{1}", r.ToString(), "");
+
+                cc.PopCachedVariableList();
+
+                cc.LoadCachedVariableList(cachedScopedVariables);
+                return r;
             }
-            return InternalGetExpression(expr.Resolve(ce, cc, container), ce, cc, container).PerformAllSubstitutions(cc);
+            finally
+            {
+                Debug.Unindent();
+            }
         }
 
         /// <summary>

@@ -1,13 +1,15 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -70,7 +72,7 @@ namespace LINQToTTreeLib
                 if (result != null)
                 {
                     _codeEnv.SetResult(result);
-                    _codeContext.Add(queryModel, result);
+                    _scoping.Add(_codeContext.Add(queryModel, result));
                 }
                 return;
             }
@@ -91,9 +93,20 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Keep the list of scoping guys around.
+        /// </summary>
+        private List<IVariableScopeHolder> _scoping = new List<IVariableScopeHolder>();
+
+        /// <summary>
+        /// List of variable scope's for things that were cached while we ran.
+        /// </summary>
+        /// <remarks>Pop these off when things out out of context otherwise they can infect later parts of the query.</remarks>
+        public IEnumerable<IVariableScopeHolder> VariableScopeHolders { get { return _scoping; } }
+
+        /// <summary>
         /// Keep track of the main index variable if it should be gotten rid of!
         /// </summary>
-        private IVariableScopeHolder _mainIndex = null;
+        public IVariableScopeHolder MainIndexScope { get; private set; }
 
         /// <summary>
         /// Helper class for dealing with an outter array - which means we do no actual looping! :-)
@@ -139,7 +152,7 @@ namespace LINQToTTreeLib
 
             if (fromClause.ItemType == _codeContext.BaseNtupleObjectType)
             {
-                _mainIndex = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause, _codeEnv, _codeContext, MEFContainer);
+                MainIndexScope = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause, _codeEnv, _codeContext, MEFContainer);
             }
             else
             {
@@ -153,47 +166,57 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitQueryModel(QueryModel queryModel)
         {
-            //
-            // If the query model is something that is trivial, then
-            // perhaps there is a short-cut we can take?
-            //
-
-            if (queryModel.IsIdentityQuery() && queryModel.ResultOperators.Count == 1)
+            try
             {
-                var ro = queryModel.ResultOperators[0];
-                var processor = _operators.FindScalarROProcessor(ro.GetType());
-                if (processor != null)
+                Debug.WriteLine("VisitQueryModel: {0}{1}", queryModel.ToString(), "");
+                Debug.Indent();
+
+                //
+                // If the query model is something that is trivial, then
+                // perhaps there is a short-cut we can take?
+                //
+
+                if (queryModel.IsIdentityQuery() && queryModel.ResultOperators.Count == 1)
                 {
-                    var result = processor.ProcessIdentityQuery(ro, queryModel, _codeEnv, _codeContext, MEFContainer);
-                    if (result != null
-                        && result.Item1)
+                    var ro = queryModel.ResultOperators[0];
+                    var processor = _operators.FindScalarROProcessor(ro.GetType());
+                    if (processor != null)
                     {
-                        _codeEnv.SetResult(result.Item2);
+                        var result = processor.ProcessIdentityQuery(ro, queryModel, _codeEnv, _codeContext, MEFContainer);
+                        if (result != null
+                            && result.Item1)
+                        {
+                            _codeEnv.SetResult(result.Item2);
+                            return;
+                        }
+                    }
+                }
+
+                //
+                // Have we seen this query model before? If so, perhaps we can just short-circuit this?
+                //
+
+                var cachedResult = _codeContext.GetReplacement(queryModel);
+                if (cachedResult != null)
+                {
+                    var context = _codeEnv.FirstAllInScopeFromNow(FindDeclarableParameters.FindAll(cachedResult));
+                    if (context != null)
+                    {
+                        _codeEnv.SetResult(cachedResult);
                         return;
                     }
                 }
+
+                //
+                // If we drop through here, then let the full machinery parse the thing
+                //
+
+                base.VisitQueryModel(queryModel);
             }
-
-            //
-            // Have we seen this query model before? If so, perhaps we can just short-circuit this?
-            //
-
-            var cachedResult = _codeContext.GetReplacement(queryModel);
-            if (cachedResult != null)
+            finally
             {
-                var context = _codeEnv.FirstAllInScopeFromNow(FindDeclarableParameters.FindAll(cachedResult));
-                if (context != null)
-                {
-                    _codeEnv.SetResult(cachedResult);
-                    return;
-                }
+                Debug.Unindent();
             }
-
-            //
-            // If we drop through here, then let the full machinery parse the thing
-            //
-
-            base.VisitQueryModel(queryModel);
         }
 
         /// <summary>
@@ -220,8 +243,10 @@ namespace LINQToTTreeLib
         /// <param name="indexName"></param>
         private void CodeLoopOverExpression(IQuerySource query, Expression loopExpr, string indexName)
         {
-            Expressions.ArrayExpressionParser.ParseArrayExpression(query, loopExpr, _codeEnv, _codeContext, MEFContainer);
-            _mainIndex = _codeContext.Add(query, _codeContext.LoopVariable);
+            MainIndexScope = Expressions.ArrayExpressionParser.ParseArrayExpression(query, loopExpr, _codeEnv, _codeContext, MEFContainer);
+            if (MainIndexScope == null)
+                MainIndexScope = _codeContext.Add(query, _codeContext.LoopVariable);
+            Debug.WriteLine("CodeLoopOverExpression: LoopExpr: {0} LoopVar: {1}", loopExpr.ToString(), _codeContext.LoopVariable.ToString());
         }
 
         /// <summary>

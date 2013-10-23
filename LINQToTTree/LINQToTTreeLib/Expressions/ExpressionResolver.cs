@@ -6,6 +6,7 @@ using Remotion.Linq.Parsing;
 using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -25,7 +26,23 @@ namespace LINQToTTreeLib.Expressions
                 cc = new CodeContext();
             }
 
-            return ResolveToExpression.Translate(source, gc, cc, container);
+            // It does happen that we are asked to translate a null expression. This could be a static method call, for example.
+
+            if (source == null)
+                return null;
+
+            try
+            {
+                Debug.WriteLine("Expression Resolver: Resolving {0}{1}", source.ToString(), "");
+                Debug.Indent();
+                var r = ResolveToExpression.Translate(source, gc, cc, container);
+                Debug.WriteLine("Expression Resolver: Result: {0}{1}", r == null ? "<null>" : r.ToString(), "");
+                return r;
+            }
+            finally
+            {
+                Debug.Unindent();
+            }
         }
 
         /// <summary>
@@ -235,6 +252,22 @@ namespace LINQToTTreeLib.Expressions
                 var scope = GeneratedCode.CurrentScope;
                 GeneratedCode.SetCurrentScopeAsResultScope();
                 qv.VisitQueryModel(expression.QueryModel);
+
+                //
+                // Clear out the scoping for anything that was looked at within this parsing.
+                //
+
+                foreach (var s in qv.VariableScopeHolders.Reverse())
+                {
+                    s.Pop();
+                }
+
+                //
+                // And the main index that was looked at we need to cache ourselves.
+                //
+
+                if (qv.MainIndexScope != null)
+                    CodeContext.CacheVariableToEliminate(qv.MainIndexScope);
 
                 ///
                 /// Two possible results from the sub-expression query, and how we proceed depends

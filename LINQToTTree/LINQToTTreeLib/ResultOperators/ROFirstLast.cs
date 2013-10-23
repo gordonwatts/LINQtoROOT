@@ -8,6 +8,7 @@ using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using System.Diagnostics;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -128,6 +129,8 @@ namespace LINQToTTreeLib.ResultOperators
 
             var firstlastValue = cc.LoopVariable;
             cc.Add(indexExpr.ParameterName(), indexSeen);
+
+            Debug.WriteLine("First/Last: {0} for QM {1}", indexSeen.ToString(), queryModel.ToString());
 
             if (cacheResult)
             {

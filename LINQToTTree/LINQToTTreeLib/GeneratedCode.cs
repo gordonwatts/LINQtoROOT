@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using System.Diagnostics;
 
 namespace LINQToTTreeLib
 {
@@ -69,6 +70,7 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("Cannot set the result to be null");
 
             ResultValue = r;
+            Debug.WriteLine("SetResult: {0}{1}", r.ToString(), "");
 
             if (r is IDeclaredParameter)
                 ResultValueAsVaraible = r as IDeclaredParameter;
@@ -413,6 +415,7 @@ namespace LINQToTTreeLib
         public void RememberSubExpression(Expression expr, IValue r)
         {
             CurrentRememberedExpressions[expr.ToString()] = r;
+            Debug.WriteLine("RememberSubExpression: {0} => {1}", expr.ToString(), r.ToString());
         }
 
         /// <summary>
@@ -424,7 +427,10 @@ namespace LINQToTTreeLib
         {
             var s = expr.ToString();
             if (CurrentRememberedExpressions.ContainsKey(s))
+            {
+                Debug.WriteLine("LookupSubExpression: {0} => {1}", expr.ToString(), CurrentRememberedExpressions[s]);
                 return CurrentRememberedExpressions[s];
+            }
             return null;
         }
 

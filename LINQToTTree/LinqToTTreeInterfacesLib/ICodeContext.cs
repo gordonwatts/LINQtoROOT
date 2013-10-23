@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Remotion.Linq;
+using Remotion.Linq.Clauses;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Remotion.Linq;
-using Remotion.Linq.Clauses;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -108,5 +108,28 @@ namespace LinqToTTreeInterfacesLib
         /// just avoid making an actual loop over it. :-)
         /// </summary>
         Type BaseNtupleObjectType { get; }
+
+        /// <summary>
+        /// Add a variable to the cache that should be elminiated in the end.
+        /// </summary>
+        /// <param name="variableScopeHolder"></param>
+        void CacheVariableToEliminate(IVariableScopeHolder variableScopeHolder);
+
+        /// <summary>
+        /// Reset the cached variable list to zero - also return the current list.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<IVariableScopeHolder> ResetCachedVariableList();
+
+        /// <summary>
+        /// Pop all the variables on teh cached list out of the code context.
+        /// </summary>
+        void PopCachedVariableList();
+
+        /// <summary>
+        /// Given a list, add it to the cache.
+        /// </summary>
+        /// <param name="cachedScopedVariables"></param>
+        void LoadCachedVariableList(IEnumerable<IVariableScopeHolder> cachedScopedVariables);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using System.Diagnostics;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -39,6 +40,8 @@ namespace LINQToTTreeLib.Statements
             this._mapRecord = mapStorage;
             this._index = indexVar;
             this._indexValue = indexValue;
+
+            Debug.WriteLine("Emit StatementRecordPairValues: IndexVar {0}, indexValue {1}", indexVar.ToString(), indexValue.ToString());
         }
 
         /// <summary>

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -207,6 +208,7 @@ namespace LINQToTTreeLib
         {
             var scope = new CQReplacementExpression(this, queryModel, _queryModelCache.ContainsKey(queryModel) ? _queryModelCache[queryModel] : null);
             _queryModelCache[queryModel] = result;
+            Debug.WriteLine("Caching: QM {0} => {1}", queryModel.ToString(), result.ToString());
             return scope;
         }
 
@@ -239,6 +241,8 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public IVariableScopeHolder AddInternal(string varName, Expression replacementExpr)
         {
+            Debug.WriteLine("Cache Expression: {0} => {1}", varName, replacementExpr);
+
             ///
             /// Somethign to get us back to this state
             /// 
@@ -282,6 +286,8 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public IVariableScopeHolder AddInternal(IQuerySource query, Expression replacementExpr)
         {
+            Debug.WriteLine("Caching QS {0} => {1}", query.ToString(), replacementExpr.ToString());
+
             ///
             /// Somethign to get us back to this state
             /// 
@@ -321,6 +327,7 @@ namespace LINQToTTreeLib
         {
             if (!_expressionReplacement.ContainsKey(varname))
                 return null;
+            Debug.WriteLine("Cache Lookup {0} => {1}", varname, _expressionReplacement[varname]);
             return _expressionReplacement[varname];
         }
 
@@ -333,6 +340,7 @@ namespace LINQToTTreeLib
         {
             if (!_queryReplacement.ContainsKey(query))
                 return null;
+            Debug.WriteLine("Cache Lookup QS {0} => {1}", query.ToString(), _queryReplacement[query]);
             return _queryReplacement[query];
         }
 
@@ -345,7 +353,10 @@ namespace LINQToTTreeLib
         {
             Expression result = null;
             if (_queryModelCache.TryGetValue(queryModel, out result))
+            {
+                Debug.WriteLine("Cache Lookup QM {0} => {1}", queryModel.ToString(), result.ToString());
                 return result;
+            }
             return null;
         }
 
@@ -364,5 +375,55 @@ namespace LINQToTTreeLib
         /// The base type for the ntuple we are looping over.
         /// </summary>
         public Type BaseNtupleObjectType { get; set; }
+
+        #region Cached Varaible Scoping
+
+        private List<IVariableScopeHolder> _cachedScopeVars = new List<IVariableScopeHolder>();
+
+        /// <summary>
+        /// Add a variable that should be eliminated.
+        /// </summary>
+        /// <param name="variableScopeHolder"></param>
+        public void CacheVariableToEliminate(IVariableScopeHolder variableScopeHolder)
+        {
+            if (variableScopeHolder == null)
+                throw new ArgumentNullException("variableScopeHolder");
+
+            _cachedScopeVars.Add(variableScopeHolder);
+        }
+
+        /// <summary>
+        /// Return the current list, and elminate the current list.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IVariableScopeHolder> ResetCachedVariableList()
+        {
+            var r = _cachedScopeVars;
+            _cachedScopeVars = new List<IVariableScopeHolder>();
+            return r;
+        }
+
+        /// <summary>
+        /// Load variables from the list given.
+        /// </summary>
+        /// <param name="cachedScopedVariables"></param>
+        public void LoadCachedVariableList(IEnumerable<IVariableScopeHolder> cachedScopedVariables)
+        {
+            _cachedScopeVars.AddRange(cachedScopedVariables);
+        }
+        /// <summary>
+        /// Pop all the variables on the cached list.
+        /// </summary>
+        public void PopCachedVariableList()
+        {
+            foreach (var v in _cachedScopeVars)
+            {
+                v.Pop();
+            }
+            _cachedScopeVars.Clear();
+        }
+        #endregion
+
+
     }
 }
