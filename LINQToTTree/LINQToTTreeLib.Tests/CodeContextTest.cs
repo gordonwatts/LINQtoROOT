@@ -4,6 +4,8 @@ using System.Linq.Expressions;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Linq;
+using System.Collections.Generic;
 
 namespace LINQToTTreeLib
 {
@@ -92,6 +94,44 @@ namespace LINQToTTreeLib
             Assert.IsNull(c.GetReplacement("dude"), "incorrect dummy name");
             popper.Pop();
             Assert.AreEqual("d", (c.GetReplacement("dude") as ParameterExpression).Name, "incorrect dummy name");
+        }
+
+        [TestMethod]
+        public void TestPopQM()
+        {
+            var c = new CodeContext();
+            var qm = new QueryModel(new Remotion.Linq.Clauses.MainFromClause("dude", typeof(int), Expression.Parameter(typeof(IEnumerable<int>))),
+                new Remotion.Linq.Clauses.SelectClause(Expression.Parameter(typeof(int))));
+
+            Assert.IsNull(c.GetReplacement(qm), "should not be there yet");
+
+            var e = Expression.Parameter(typeof(int));
+            var s = c.Add(qm, e);
+            Assert.AreEqual(e, c.GetReplacement(qm), "bad lookup");
+
+            s.Pop();
+            Assert.IsNull(c.GetReplacement(qm), "should be gone now.");
+        }
+
+        /// <summary>
+        /// This will almost never happen, I suppose, but the logic is there, so we should make sure it is robust.
+        /// </summary>
+        [TestMethod]
+        public void TestPopReplaceQM()
+        {
+            var c = new CodeContext();
+            var qm = new QueryModel(new Remotion.Linq.Clauses.MainFromClause("dude", typeof(int), Expression.Parameter(typeof(IEnumerable<int>))),
+                new Remotion.Linq.Clauses.SelectClause(Expression.Parameter(typeof(int))));
+
+            var e1 = Expression.Parameter(typeof(int));
+            var s1 = c.Add(qm, e1);
+            Assert.AreEqual(e1, c.GetReplacement(qm), "bad lookup");
+            var e2 = Expression.Parameter(typeof(int));
+            var s2 = c.Add(qm, e2);
+
+            Assert.AreEqual(e2, c.GetReplacement(qm), "high level lookup");
+            s2.Pop();
+            Assert.AreEqual(e1, c.GetReplacement(qm), "second level lookup");
         }
 
         [TestMethod]

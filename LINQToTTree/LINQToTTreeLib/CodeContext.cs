@@ -85,6 +85,31 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Cache for later use a query model change.
+        /// </summary>
+        private class CQReplacementExpression : IVariableScopeHolder
+        {
+            private CodeContext _context;
+            private QueryModel _model;
+            private Expression _oldVal;
+
+            public CQReplacementExpression(CodeContext context, QueryModel model, Expression val)
+            {
+                _context = context;
+                _model = model;
+                _oldVal = val;
+            }
+
+            public void Pop()
+            {
+                if (_oldVal != null)
+                    _context.Add(_model, _oldVal);
+                else
+                    _context.DeleteValue(_model);
+            }
+        }
+
+        /// <summary>
         /// Delete a variable name if it is in there.
         /// </summary>
         /// <param name="vName"></param>
@@ -180,8 +205,19 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public IVariableScopeHolder Add(Remotion.Linq.QueryModel queryModel, Expression result)
         {
+            var scope = new CQReplacementExpression(this, queryModel, _queryModelCache.ContainsKey(queryModel) ? _queryModelCache[queryModel] : null);
             _queryModelCache[queryModel] = result;
-            return null;
+            return scope;
+        }
+
+        /// <summary>
+        /// Delete a query model cached expression.
+        /// </summary>
+        /// <param name="_model"></param>
+        public void DeleteValue(QueryModel _model)
+        {
+            if (_queryModelCache.ContainsKey(_model))
+                _queryModelCache.Remove(_model);
         }
 
         /// <summary>
