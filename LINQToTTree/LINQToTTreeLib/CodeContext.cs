@@ -157,8 +157,10 @@ namespace LINQToTTreeLib
             if (loopExpression == null)
                 throw new ArgumentNullException("can not set a null loop variable");
 
+            Debug.WriteLine("SetLoopVariable: Index changing from {0} => {1}", LoopIndexVariable == null ? "null" : LoopIndexVariable.ToString(), indexVariable == null ? "null" : indexVariable.ToString());
             LoopVariable = loopExpression;
             LoopIndexVariable = indexVariable;
+
         }
 
         private Dictionary<string, Expression> _expressionReplacement = new Dictionary<string, Expression>();
