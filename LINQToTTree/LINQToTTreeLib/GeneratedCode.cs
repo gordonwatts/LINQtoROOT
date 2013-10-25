@@ -414,7 +414,11 @@ namespace LINQToTTreeLib
         /// <param name="r"></param>
         public void RememberSubExpression(Expression expr, IValue r)
         {
-            CurrentRememberedExpressions[GetSubExpressionKey(expr)] = r;
+            var key = GetSubExpressionKey(expr);
+            if (key == null)
+                return;
+
+            CurrentRememberedExpressions[key] = r;
             Debug.WriteLine("RememberSubExpression: {0} => {1}", GetSubExpressionKey(expr), r.ToString());
         }
 
@@ -427,7 +431,10 @@ namespace LINQToTTreeLib
         {
             if (expr is ConstantExpression)
             {
-                return (expr as ConstantExpression).Value.GetHashCode().ToString();
+                var o = (expr as ConstantExpression).Value;
+                if (o == null)
+                    return null;
+                return o.GetHashCode().ToString();
             }
             else
             {
@@ -444,11 +451,14 @@ namespace LINQToTTreeLib
         /// key to doing the lookup (GetHash).</remarks>
         public IValue LookupSubExpression(Expression expr)
         {
-            string s = GetSubExpressionKey(expr);
-            if (CurrentRememberedExpressions.ContainsKey(s))
+            string key = GetSubExpressionKey(expr);
+            if (key == null)
+                return null;
+
+            if (CurrentRememberedExpressions.ContainsKey(key))
             {
-                Debug.WriteLine("LookupSubExpression: {0} => {1}", expr.ToString(), CurrentRememberedExpressions[s]);
-                return CurrentRememberedExpressions[s];
+                Debug.WriteLine("LookupSubExpression: {0} => {1}", expr.ToString(), CurrentRememberedExpressions[key]);
+                return CurrentRememberedExpressions[key];
             }
             return null;
         }
