@@ -3,7 +3,7 @@
 # when run from the continuous integration server. The result
 # of this guy will be become a build artifact.
 #
-param([int] $BuildNumber = 0, [string] $NameSuffix = "-ci", [string] $release = "x86\Release", [switch] PDB)
+param([int] $BuildNumber = 0, [string] $NameSuffix = "-ci", [string] $release = "x86\Release", [switch] $PDB)
 
 $mod = Resolve-Path .\LINQToTTree\BuildScripts\BuildUtils.psm1
 $policy = Get-ExecutionPolicy
