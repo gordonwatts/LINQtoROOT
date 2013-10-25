@@ -1,8 +1,3 @@
-// <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
@@ -12,6 +7,11 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -657,7 +657,7 @@ namespace LINQToTTreeLib
         public void TestRememberExprHideAndSeek()
         {
             var gc = new GeneratedCode();
-            var expr = Expression.Constant(10);
+            var expr = Expression.Constant(5);
             var r1 = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
             gc.RememberSubExpression(expr, r1);
 
@@ -670,6 +670,39 @@ namespace LINQToTTreeLib
             Assert.AreEqual(r2, gc.LookupSubExpression(expr), "Is hidden one done right?");
             gc.Pop();
             Assert.AreEqual(r1, gc.LookupSubExpression(expr), "Is revealed one done right?");
+        }
+
+        /// <summary>
+        /// Seen in real code. Make sure this works for a single object
+        /// </summary>
+        [TestMethod]
+        public void TestRememberConstantObject()
+        {
+            var gc = new GeneratedCode();
+            var expr = Expression.Constant(new ROOTNET.NTH1F());
+            var r1 = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
+            gc.RememberSubExpression(expr, r1);
+
+            Assert.AreEqual(r1, gc.LookupSubExpression(expr), "Constant Expressions of arbitrary objects can't be looked up");
+        }
+
+        /// <summary>
+        /// Seen in real code. Make sure two objects that are the same, but are not the same
+        /// object actually link properly.
+        /// </summary>
+        [TestMethod]
+        public void TestRememberTwoSameConstantObjects()
+        {
+            var gc = new GeneratedCode();
+            var expr1 = Expression.Constant(new ROOTNET.NTH1F());
+            var expr2 = Expression.Constant(new ROOTNET.NTH1F());
+            var r1 = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
+            var r2 = new LINQToTTreeLib.Variables.ValSimple("11", typeof(int));
+            gc.RememberSubExpression(expr1, r1);
+            gc.RememberSubExpression(expr2, r2);
+
+            Assert.AreEqual(r1, gc.LookupSubExpression(expr1), "expr1 failure");
+            Assert.AreEqual(r2, gc.LookupSubExpression(expr2), "expr2 failure");
         }
 
         [TestMethod]

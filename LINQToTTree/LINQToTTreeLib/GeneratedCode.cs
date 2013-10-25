@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -414,18 +414,37 @@ namespace LINQToTTreeLib
         /// <param name="r"></param>
         public void RememberSubExpression(Expression expr, IValue r)
         {
-            CurrentRememberedExpressions[expr.ToString()] = r;
-            Debug.WriteLine("RememberSubExpression: {0} => {1}", expr.ToString(), r.ToString());
+            CurrentRememberedExpressions[GetSubExpressionKey(expr)] = r;
+            Debug.WriteLine("RememberSubExpression: {0} => {1}", GetSubExpressionKey(expr), r.ToString());
+        }
+
+        /// <summary>
+        /// Return the key for doing sub-expression storage in a table.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        private string GetSubExpressionKey(Expression expr)
+        {
+            if (expr is ConstantExpression)
+            {
+                return (expr as ConstantExpression).Value.GetHashCode().ToString();
+            }
+            else
+            {
+                return expr.ToString();
+            }
         }
 
         /// <summary>
         /// See if we have the sub-expression in our DB. If it isn't there, return null.
         /// </summary>
-        /// <param name="expr"></param>
-        /// <returns></returns>
+        /// <param name="expr">The expression that is being searched for</param>
+        /// <returns>A value if the expression was cached, or null if not</returns>
+        /// <remarks>This gets tricky if this is a constant expression. In that case, we use the Hash as the
+        /// key to doing the lookup (GetHash).</remarks>
         public IValue LookupSubExpression(Expression expr)
         {
-            var s = expr.ToString();
+            string s = GetSubExpressionKey(expr);
             if (CurrentRememberedExpressions.ContainsKey(s))
             {
                 Debug.WriteLine("LookupSubExpression: {0} => {1}", expr.ToString(), CurrentRememberedExpressions[s]);
