@@ -254,15 +254,6 @@ namespace LINQToTTreeLib.Expressions
                 qv.VisitQueryModel(expression.QueryModel);
 
                 //
-                // Clear out the scoping for anything that was looked at within this parsing.
-                //
-
-                foreach (var s in qv.VariableScopeHolders.Reverse())
-                {
-                    s.Pop();
-                }
-
-                //
                 // And the main index that was looked at we need to cache ourselves.
                 //
 
