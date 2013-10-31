@@ -398,5 +398,24 @@ namespace LINQToTTreeLib.Tests
             eng.Init();
             QueryResultCacheTest.SetupCacheDir();
         }
+
+        /// <summary>
+        /// Return the next identifier in the string source after startpattern is found.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="startpattern"></param>
+        /// <returns></returns>
+        public static string NextIdentifier(this string source, string startpattern)
+        {
+            var sindex = source.IndexOf(startpattern);
+            if (sindex < 0)
+                throw new Exception(string.Format("Unable to find '{0}' in string '{1}' - test failure.", startpattern, source));
+
+            var matches = Regex.Match(source.Substring(sindex + startpattern.Length), @"\w+");
+            if (!matches.Success)
+                throw new Exception(string.Format("Unable to find an identifier in '{0}' after '{1}'", source, startpattern));
+
+            return matches.Value;
+        }
     }
 }

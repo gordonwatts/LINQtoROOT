@@ -1119,9 +1119,12 @@ namespace LINQToTTreeLib
 
             // This was crashing, but does need to be fixed up.
 
-            //var lineOfCode = code.DumpCode().Where(l => l.Contains("aDouble_53=aDouble_53")).First();
-            //Assert.AreEqual("aDouble_53=aDouble_53+((*(*this).var6).at(aInt32_63));", lineOfCode.Trim(), "Bad line of code");
-            Assert.Inconclusive();
+            var allcode = code.DumpCode().ToArray();
+            var iflines = allcode.Where(l => l.Contains("<10.0")).ToArray();
+            Assert.AreEqual(2, iflines.Length, "# of if 10 lines");
+            var v1 = iflines[0].NextIdentifier("var3).at(");
+            var v2 = iflines[1].NextIdentifier("var3).at(");
+            Assert.IsFalse(v1 == v2, string.Format("v1='{0}' should not be the same as v2='{1}' due to scoping", v1, v2));
         }
 
 #if false
