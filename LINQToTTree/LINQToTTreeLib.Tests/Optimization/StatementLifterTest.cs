@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Statements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests.Optimization
 {
@@ -199,6 +199,67 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
             var secondStatement = v.CodeBody.Statements.Skip(1).First();
             Assert.IsInstanceOfType(secondStatement, typeof(StatementWithNoSideEffects), "Second statement");
+        }
+
+        /// <summary>
+        /// Distilled from something we found in the wild.
+        /// 1. Statement
+        /// 2. Non ICM Loop/compound statement (like any inline block, I guess)
+        /// 3.   Loop
+        /// 4.     Statement with no side effects
+        /// 
+        /// 3 can get lifted past 2, but not above...
+        /// </summary>
+        [TestMethod]
+        public void TestLoopBelowNonLoopBlockNoSideEffects()
+        {
+            var v = new GeneratedCode();
+
+            v.Add(new StatementNonOptimizing());
+            v.Add(new StatementInlineBlock());
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+
+            v.Add(new StatementWithNoSideEffects());
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
+            var secondStatement = v.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementInlineBlock), "Second statement");
+        }
+
+        /// <summary>
+        /// Distilled from something we found in the wild.
+        /// 1. Statement
+        /// 2. Non ICM Loop/compound statement (like any inline block, I guess)
+        /// 3.   Loop
+        /// 4.     Statement with no side effects
+        /// 
+        /// 3 can get lifted past 2, but not above...
+        /// </summary>
+        [TestMethod]
+        public void TestLoopBelowNonLoopBlockSideEffectsNotImportant()
+        {
+            var v = new GeneratedCode();
+
+            v.Add(new StatementNonOptimizing());
+            v.Add(new StatementInlineBlock());
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+
+            var lnp = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            v.Add(new StatementWithSideEffects(lnp));
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
+            var secondStatement = v.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementInlineBlock), "Second statement");
         }
 
         /// <summary>
