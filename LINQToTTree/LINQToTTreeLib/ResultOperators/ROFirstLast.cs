@@ -1,14 +1,14 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -103,11 +103,16 @@ namespace LINQToTTreeLib.ResultOperators
             if (indexSeen.Type.IsNumberType())
                 indexSeen.SetInitialValue("-1");
 
-            gc.AddOutsideLoop(valueWasSeen);
+            gc.AddAtResultScope(valueWasSeen);
             gc.AddAtResultScope(indexSeen);
 
             var indexValue = ExpressionToCPP.GetExpression(indexExpr, gc, cc, container);
             gc.Add(new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
+
+            //
+            // We have to record all values between this one and the results scope. The reason is that sometimes we are
+            // looking for a dual index match (say the jet that matches the track that is closest). So we need to look
+            // at each scope going up, and also save those variables. And we need to save each one of those!
 
             //
             // Next we have to pop up a few levels. Basically, up enough that we can figure out if we are sitting
