@@ -263,6 +263,38 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// Distilled from something we found in the wild.
+        /// 1. Statement
+        /// 2. Sorted Loop statement (like any inline block, I guess)
+        /// 3.   Loop
+        /// 4.     Statement with no side effects
+        /// 
+        /// 3 can get lifted past 2, but not above...
+        /// </summary>
+        [TestMethod]
+        public void TestLoopBelowSortedLoopBlockSideEffectsNotImportant()
+        {
+            var v = new GeneratedCode();
+
+            v.Add(new StatementNonOptimizing());
+            var dict = DeclarableParameter.CreateDeclarableParameterMapExpression(typeof(int), typeof(int[]));
+            v.Add(new StatementLoopOverSortedPairValue(dict, true));
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+
+            var lnp = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            v.Add(new StatementWithSideEffects(lnp));
+
+            StatementLifter.Optimize(v);
+
+            var firstStatement = v.CodeBody.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
+            var secondStatement = v.CodeBody.Statements.Skip(1).First();
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementLoopOverSortedPairValue), "Second statement");
+        }
+
+        /// <summary>
         /// Make sure no lifting occurs here:
         /// 1. no side effect statement
         /// 2. non ICM statement that is a compound statement
