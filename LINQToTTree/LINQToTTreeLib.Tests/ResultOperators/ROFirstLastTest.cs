@@ -213,6 +213,7 @@ namespace LINQToTTreeLib.ResultOperators
         {
             public subNtupleObjects1 jet { get; set; }
             public subNtupleObjects2 track { get; set; }
+            public double delta { get; set; }
         }
 
         class TestTranslatedNestedCompareAndSortHolderEvent
@@ -479,6 +480,57 @@ namespace LINQToTTreeLib.ResultOperators
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
 
+        }
+
+        /// <summary>
+        /// THis comes from a bug in the wild. Two objects that were "close" to each other, look for the second one to do something with it,
+        /// and it produced some bad code.
+        /// </summary>
+        [TestMethod]
+        public void TestTranslatedNestedCompareAndSort()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            // Create a dual object. Avoid anonymous objects just for the sake of it.
+            var matched = from evt in q
+                          select new TestTranslatedNestedCompareAndSortHolderEvent()
+                          {
+                              matches = from j in evt.jets
+                                        let mt = (from t in evt.tracks
+                                                  where (t.v6 - j.v3) < 10
+                                                  select t).First()
+                                        select new TestTranslatedNestedCompareAndSortHolder()
+                                        {
+                                            jet = j,
+                                            track = mt
+                                        }
+                          };
+
+            // Filter on the first jet in the sequence.
+            var goodmatched = from evt in matched
+                              select new TestTranslatedNestedCompareAndSortHolderEvent()
+                              {
+                                  matches = evt.matches.Where(e => e.track.v6 < 1.3)
+                              };
+
+            // Do something with the second one now
+            var otherTrack = from evt in goodmatched
+                             select evt.matches.Skip(1).First().track.v6;
+
+            //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
+            var r = otherTrack.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            // This was crashing, but does need to be fixed up.
+
+            var allcode = code.DumpCode().ToArray();
+            var iflines = allcode.Where(l => l.Contains("<10.0")).ToArray();
+            Assert.AreEqual(2, iflines.Length, "# of if 10 lines");
+            var v1 = iflines[0].NextIdentifier("var3).at(");
+            var v2 = iflines[1].NextIdentifier("var3).at(");
+            Assert.IsFalse(v1 == v2, string.Format("v1='{0}' should not be the same as v2='{1}' due to scoping", v1, v2));
         }
     }
 }
