@@ -107,7 +107,8 @@ namespace LINQToTTreeLib
             /// lower level loop unroller code.
             /// 
 
-            if (expression.Expression is Remotion.Linq.Clauses.Expressions.SubQueryExpression)
+            if (expression.Expression is Remotion.Linq.Clauses.Expressions.SubQueryExpression
+                || expression.Expression is Remotion.Linq.Clauses.Expressions.QuerySourceReferenceExpression)
                 return expression;
 
             ///
