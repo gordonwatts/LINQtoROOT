@@ -1,12 +1,13 @@
-﻿using System;
-using System.Linq;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -78,10 +79,34 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(s1.TryCombineStatement(s2, new dummyOpt()), "combine with different recording");
         }
 
+        [TestMethod]
+        public void TestMultipleSavers()
+        {
+            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var index3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var index4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementRecordValue(index1, new ValSimple("i", typeof(int)), seen1, true);
+            s1.AddNewSaver(index3, new ValSimple("j", typeof(int)));
+            var s2 = new StatementRecordValue(index2, new ValSimple("i", typeof(int)), seen2, true);
+            s2.AddNewSaver(index4, new ValSimple("j", typeof(int)));
+
+            var dop = new dummyOpt();
+            Assert.IsTrue(s1.TryCombineStatement(s2, dop), "Combined 2 multi-saver guys");
+
+            Assert.AreEqual(3, dop._renameRequests.Count, "# of rename requests");
+            Assert.AreEqual(Tuple.Create(index2.RawValue, index1.RawValue), dop._renameRequests[0], "first rename");
+            Assert.AreEqual(Tuple.Create(index4.RawValue, index3.RawValue), dop._renameRequests[1], "second rename");
+        }
+
         class dummyOpt : ICodeOptimizationService
         {
+            public List<Tuple<string, string>> _renameRequests = new List<Tuple<string, string>>();
             public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
             {
+                _renameRequests.Add(Tuple.Create(oldName, newVariable.RawValue));
                 return true;
             }
 

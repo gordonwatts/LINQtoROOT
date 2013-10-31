@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -42,6 +42,14 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentException("startValue must be an integer");
 
             arrIndex = typeof(int).CreateUniqueVariableName();
+        }
+
+        /// <summary>
+        /// Get back the index variables.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> LoopIndexVariable
+        {
+            get { return new IDeclaredParameter[] { _loopVariable }; }
         }
 
         /// <summary>

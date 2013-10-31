@@ -1,8 +1,8 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -23,6 +23,14 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentNullException("_groupArray");
             if (_counter == null)
                 throw new ArgumentNullException("counter");
+        }
+
+        /// <summary>
+        /// Get back the index variables.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> LoopIndexVariable
+        {
+            get { return new IDeclaredParameter[] { _counter }; }
         }
 
         /// <summary>

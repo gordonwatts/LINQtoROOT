@@ -69,6 +69,11 @@ namespace LinqToTTreeInterfacesLib
         void SetCurrentScopeAsResultScope();
 
         /// <summary>
+        /// Returns the current result scope.
+        /// </summary>
+        IBookingStatementBlock CurrentResultScope { get; }
+
+        /// <summary>
         /// This variable's inital value is "complex" and must be transfered over the wire in some way other than staight into the code
         /// (for example, a ROOT object that needs to be written to a TFile).
         /// </summary>

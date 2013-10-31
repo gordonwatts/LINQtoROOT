@@ -184,7 +184,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Keep track of the current result scope
         /// </summary>
-        private IBookingStatementBlock CurrentResultScope { get; set; }
+        public IBookingStatementBlock CurrentResultScope { get; private set; }
 
         /// <summary>
         /// When we are in a result operator and the result of its work needs to be visible "outside" we need

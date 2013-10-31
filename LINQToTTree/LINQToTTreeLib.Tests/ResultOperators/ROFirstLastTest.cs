@@ -1,5 +1,6 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
@@ -457,6 +458,9 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.IsFalse(res.CodeBody.CodeItUp().Any(l => l.Contains("SourceType1")), "C++ code contains one of our SOurceType1 references - see results dump for complete C++ code");
         }
 
+        /// <summary>
+        /// Just make sure there isn't a crash.
+        /// </summary>
         [TestMethod]
         public void TestAnonymousObjectFirst()
         {
@@ -479,7 +483,35 @@ namespace LINQToTTreeLib.ResultOperators
             var cnt = testV.Count();
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
+        }
 
+        [TestMethod]
+        public void TestSaveOnlyOneIndex()
+        {
+            var q = new QueriableDummy<SourceType1>();
+
+            var objs = from evt in q
+                       select from j in evt.jets
+                              select new
+                              {
+                                  Value = j.val1
+                              };
+
+            var testVeachOne = from evt in objs
+                               select evt.First();
+
+            var testV = from evt in testVeachOne
+                        where evt.Value > 10
+                        select evt;
+
+            var cnt = testV.Count();
+            var res = DummyQueryExectuor.FinalResult;
+            res.DumpCodeToConsole();
+
+            var l = (res.CodeBody.Statements.First() as IBookingStatementBlock).Statements.First();
+            var sr = l as StatementRecordValue;
+            Assert.IsNotNull(l, "record value should not be null");
+            Assert.AreEqual(4, sr.CodeItUp().Count(), "Expecting 3 lines of code.");
         }
 
         /// <summary>

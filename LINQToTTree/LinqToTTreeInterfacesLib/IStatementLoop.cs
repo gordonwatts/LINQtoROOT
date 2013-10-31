@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -6,5 +7,9 @@ namespace LinqToTTreeInterfacesLib
     /// </summary>
     public interface IStatementLoop
     {
+        /// <summary>
+        /// Returns whatever loop index variable is being used.
+        /// </summary>
+        IEnumerable<IDeclaredParameter> LoopIndexVariable { get; }
     }
 }

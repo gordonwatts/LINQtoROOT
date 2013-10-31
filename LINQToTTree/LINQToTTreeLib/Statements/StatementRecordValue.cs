@@ -1,6 +1,7 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
-using LinqToTTreeInterfacesLib;
+using System.Linq;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -11,14 +12,9 @@ namespace LINQToTTreeLib.Statements
     public class StatementRecordValue : IStatement, ICMStatementInfo
     {
         /// <summary>
-        /// The holder for the index variable.
+        /// List of the values and parameters we should stuff them into when we fire.
         /// </summary>
-        private IDeclaredParameter _indexSeen;
-
-        /// <summary>
-        /// The value we should record above
-        /// </summary>
-        private IValue _indexValue;
+        private List<Tuple<IDeclaredParameter, IValue>> _savers = new List<Tuple<IDeclaredParameter, IValue>>();
 
         /// <summary>
         /// Set this to true when we have seen a first value.
@@ -47,11 +43,19 @@ namespace LINQToTTreeLib.Statements
             if (markWhenSeen == null)
                 throw new ArgumentNullException("markWhenSeen");
 
-            // TODO: Complete member initialization
-            this._indexSeen = indexSaveLocation;
-            this._indexValue = indexExpression;
-            this._valueWasSeen = markWhenSeen;
+            AddNewSaver(indexSaveLocation, indexExpression);
             this._recordOnlyFirstValue = recordOnlyFirstValue;
+            this._valueWasSeen = markWhenSeen;
+        }
+
+        /// <summary>
+        /// Add to the list of variables that are to be recoreded.
+        /// </summary>
+        /// <param name="saver"></param>
+        /// <param name="loopIndexVar"></param>
+        public void AddNewSaver(IDeclaredParameter saver, IValue loopIndexVar)
+        {
+            _savers.Add(Tuple.Create(saver, loopIndexVar));
         }
 
         /// <summary>
@@ -66,7 +70,10 @@ namespace LINQToTTreeLib.Statements
                 yield return string.Format("if (!{0}) {{", _valueWasSeen.RawValue);
                 indent = "  ";
             }
-            yield return string.Format("{2}{0} = {1};", _indexSeen.RawValue, _indexValue.RawValue, indent);
+            foreach (var p in _savers)
+            {
+                yield return string.Format("{2}{0} = {1};", p.Item1.RawValue, p.Item2.RawValue, indent);
+            }
             yield return string.Format("{1}{0} = true;", _valueWasSeen.RawValue, indent);
             if (_recordOnlyFirstValue)
             {
@@ -81,8 +88,11 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            _indexSeen.RenameRawValue(originalName, newName);
-            _indexValue.RenameRawValue(originalName, newName);
+            foreach (var p in _savers)
+            {
+                p.Item1.RenameRawValue(originalName, newName);
+                p.Item2.RenameRawValue(originalName, newName);
+            }
             _valueWasSeen.RenameRawValue(originalName, newName);
         }
 
@@ -101,16 +111,27 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            if (other._indexValue.RawValue != _indexValue.RawValue)
-                return false;
-
             if (other._recordOnlyFirstValue != _recordOnlyFirstValue)
                 return false;
+
+            if (other._savers.Count != _savers.Count)
+                return false;
+
+            foreach (var o in other._savers)
+            {
+                var ms = _savers.Any(s => s.Item2.RawValue == o.Item2.RawValue);
+                if (!ms)
+                    return false;
+            }
 
             if (optimize == null)
                 throw new ArgumentNullException("optimize");
 
-            optimize.TryRenameVarialbeOneLevelUp(other._indexSeen.RawValue, _indexSeen);
+            foreach (var o in other._savers)
+            {
+                var ms = _savers.Where(s => s.Item2.RawValue == o.Item2.RawValue).First();
+                optimize.TryRenameVarialbeOneLevelUp(o.Item1.RawValue, ms.Item1);
+            }
             optimize.TryRenameVarialbeOneLevelUp(other._valueWasSeen.RawValue, _valueWasSeen);
 
             return true;

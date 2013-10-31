@@ -5,6 +5,7 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
@@ -97,6 +98,11 @@ namespace LINQToTTreeLib.ResultOperators
             // result may be used much further on down. To protect against that, we set the array index to be -1,
             // and then hope there is a crash later on! :-)
             //
+            // It is possible that this is part of a dual selection. For example, if you are interested in the jet that has the closest track, and the
+            // loop is constructed over the jets first, and then the tracks. This First will likely be for a track index, but we will be looking up the
+            // track later. So we need to record both the jet and track index. To get the other indicies, we just look for all loop variables between here and
+            // the result scope.
+            //
 
             var valueWasSeen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             var indexSeen = DeclarableParameter.CreateDeclarableParameterExpression(indexExpr.Type);
@@ -107,17 +113,31 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddAtResultScope(indexSeen);
 
             var indexValue = ExpressionToCPP.GetExpression(indexExpr, gc, cc, container);
-            gc.Add(new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst));
+            var whatWeSaw = new HashSet<string>();
+            whatWeSaw.Add(indexValue.RawValue);
+            var rv = new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst);
+            gc.Add(rv);
 
-            //
-            // We have to record all values between this one and the results scope. The reason is that sometimes we are
-            // looking for a dual index match (say the jet that matches the track that is closest). So we need to look
-            // at each scope going up, and also save those variables. And we need to save each one of those!
-
-            //
-            // Next we have to pop up a few levels. Basically, up enough that we can figure out if we are sitting
-            // at something a break is going to "take care of".
-            //
+            var scope = rv as IStatement;
+            while (scope != gc.CurrentResultScope)
+            {
+                if (scope is IStatementLoop)
+                {
+                    var ls = scope as IStatementLoop;
+                    foreach (var loopIndexVar in ls.LoopIndexVariable)
+                    {
+                        if (!whatWeSaw.Contains(loopIndexVar.RawValue))
+                        {
+                            var saver = DeclarableParameter.CreateDeclarableParameterExpression(loopIndexVar.Type);
+                            gc.AddAtResultScope(saver);
+                            rv.AddNewSaver(saver, loopIndexVar);
+                            cc.Add(loopIndexVar.RawValue, saver);
+                            whatWeSaw.Add(loopIndexVar.RawValue);
+                        }
+                    }
+                }
+                scope = scope.Parent;
+            }
 
             gc.Pop(true);
 

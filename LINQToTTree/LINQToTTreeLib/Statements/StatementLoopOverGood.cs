@@ -1,6 +1,7 @@
 ﻿
-using System;
 using LinqToTTreeInterfacesLib;
+using System;
+using System.Collections.Generic;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -30,6 +31,14 @@ namespace LINQToTTreeLib.Statements
             _indiciesToCheck = indiciesToCheck;
             _indexIsGood = indexIsGood;
             _index = index;
+        }
+
+        /// <summary>
+        /// Get back the index variables.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> LoopIndexVariable
+        {
+            get { return new IDeclaredParameter[] { _index }; }
         }
 
         /// <summary>

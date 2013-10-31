@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Variables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -28,6 +28,14 @@ namespace LINQToTTreeLib.Statements
             this._mapOfGroups = mapOfGroups;
             var iteratorType = typeof(IEnumerable<int>).GetGenericTypeDefinition().MakeGenericType(new Type[] { mapOfGroups.Type });
             this._groupIndex = DeclarableParameter.CreateDeclarableParameterExpression(iteratorType);
+        }
+
+        /// <summary>
+        /// Get back the index variables.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> LoopIndexVariable
+        {
+            get { return new IDeclaredParameter[] { _groupIndex }; }
         }
 
         /// <summary>

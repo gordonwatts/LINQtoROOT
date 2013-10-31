@@ -1,10 +1,11 @@
 ﻿
-using System;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -54,6 +55,14 @@ namespace LINQToTTreeLib.Statements
             tempListingName = sortValueTypeArray.CreateUniqueVariableName();
 
             breakSeenVar = typeof(bool).CreateUniqueVariableName();
+        }
+
+        /// <summary>
+        /// Get back the index variables.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> LoopIndexVariable
+        {
+            get { return new IDeclaredParameter[] { _indexVariable }; }
         }
 
         /// <summary>

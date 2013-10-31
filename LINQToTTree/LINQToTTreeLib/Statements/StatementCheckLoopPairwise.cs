@@ -1,7 +1,7 @@
 ﻿
+using LinqToTTreeInterfacesLib;
 using System;
 using System.Collections.Generic;
-using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -46,6 +46,14 @@ namespace LINQToTTreeLib.Statements
             _index1 = index1;
             _index2 = index2;
             _whatIsGood = passedArray;
+        }
+
+        /// <summary>
+        /// Get back the index variables.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> LoopIndexVariable
+        {
+            get { return new IDeclaredParameter[] { _index1, _index2 }; }
         }
 
         /// <summary>

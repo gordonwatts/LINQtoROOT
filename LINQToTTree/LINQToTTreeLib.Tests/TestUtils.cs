@@ -42,6 +42,11 @@ namespace LINQToTTreeLib.Tests
             {
                 throw new NotImplementedException();
             }
+
+            public IEnumerable<IDeclaredParameter> LoopIndexVariable
+            {
+                get { throw new NotImplementedException(); }
+            }
         }
 
         /// <summary>

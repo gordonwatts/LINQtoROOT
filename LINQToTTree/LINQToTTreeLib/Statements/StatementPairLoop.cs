@@ -1,7 +1,8 @@
 ﻿
-using System;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace LINQToTTreeLib.Statements
 {
     public class StatementPairLoop : StatementInlineBlockBase, IStatementLoop
@@ -23,6 +24,14 @@ namespace LINQToTTreeLib.Statements
             this.arrayRecord = arrayRecord;
             this.index1 = index1;
             this.index2 = index2;
+        }
+
+        /// <summary>
+        /// Get back the index variables.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> LoopIndexVariable
+        {
+            get { return new IDeclaredParameter[] { index1, index2 }; }
         }
 
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
@@ -88,5 +97,6 @@ namespace LINQToTTreeLib.Statements
             arrayRecord.RenameRawValue(origName, newName);
             RenameBlockVariables(origName, newName);
         }
+
     }
 }
