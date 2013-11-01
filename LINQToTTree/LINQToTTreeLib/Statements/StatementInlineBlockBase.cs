@@ -1,8 +1,8 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -352,9 +352,15 @@ namespace LINQToTTreeLib.Statements
         /// succeeds (no need for a bool return) because we just add things onto the end.
         /// </summary>
         /// <param name="statements">List of statements that we need to combine</param>
+        /// <remarks>Assume that the ordering given in the statements must be obeyed.
+        ///     - This means once we can't combine a statement, we have to stop combining any other statements.
+        ///       The best would be to have full fidelity in guys were modified, however, that is a lot of work
+        ///       for anther day.
+        /// </remarks>
         private List<IStatement> CombineInternal(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
         {
             bool didAllCombine = true;
+            bool tryToCombine = true;
             ICodeOptimizationService myopt;
             var mergedIntoList = new List<IStatement>();
             if (parent != null)
@@ -368,17 +374,23 @@ namespace LINQToTTreeLib.Statements
             foreach (var s in statements)
             {
                 bool didCombine = false;
-                foreach (var sinner in Statements)
+                if (tryToCombine)
                 {
-                    if (sinner.TryCombineStatement(s, myopt))
+                    foreach (var sinner in Statements)
                     {
-                        didCombine = true;
-                        mergedIntoList.Add(sinner);
-                        break;
+                        if (sinner.TryCombineStatement(s, myopt))
+                        {
+                            didCombine = true;
+                            mergedIntoList.Add(sinner);
+                            break;
+                        }
                     }
                 }
                 if (!didCombine)
                 {
+                    // To preserve order, prevent any future guys from being combined.
+                    tryToCombine = false;
+
                     if (appendIfCantCombine)
                     {
                         s.Parent = null;
