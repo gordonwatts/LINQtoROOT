@@ -1,14 +1,14 @@
-// <copyright file="StatementInlineBlockTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Variables;
+// <copyright file="StatementInlineBlockTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -552,6 +552,113 @@ namespace LINQToTTreeLib.Statements
             var result = inline2.TryCombineStatement(inline1, null);
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(3, inline2.Statements.Count(), "bad # of combined statements");
+        }
+
+        /// <summary>
+        /// Found out in the wild. Make sure when we do the combination that we don't accidentally
+        /// move a block ahead of another block that has altered some dependent variable!
+        /// </summary>
+        [TestMethod]
+        public void TestCombineWithAlteredValue()
+        {
+            // This variable will be modified in an assignment statement.
+            var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+
+            // Next, we access this variable in an if statement.
+            var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            var checkVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var ifUsesModifiedValue = new StatementFilter(new ValSimple(checkVar.RawValue, typeof(bool)));
+            ifUsesModifiedValue.Add(assignment);
+
+            var ifNoUsesModifiedValue = new StatementFilter(new ValSimple(checkVar.RawValue, typeof(bool)));
+
+            // Ok, now create the two sets of top level statements.
+
+            var blockWithModified = new StatementInlineBlock();
+            var blockWithoutModified = new StatementInlineBlock();
+
+            blockWithModified.Add(varToBeModified);
+            blockWithModified.Add(finalVar);
+            blockWithModified.Add(statementModifier);
+
+            blockWithModified.Add(checkVar);
+            blockWithoutModified.Add(checkVar);
+
+            blockWithModified.Add(ifUsesModifiedValue);
+            blockWithoutModified.Add(ifNoUsesModifiedValue);
+
+            // Combine
+
+            var r = blockWithoutModified.TryCombineStatement(blockWithModified, null);
+            Assert.IsTrue(r, "try combine result");
+
+            foreach (var s in blockWithoutModified.CodeItUp())
+            {
+                System.Diagnostics.Trace.WriteLine(s);
+            }
+
+            // Make sure the checkVar guy comes after the modified statement.
+
+            var topLevelStatementForAssign = findStatementThatContains(blockWithoutModified, assignment);
+            var posOfUse = findStatementIndex(blockWithoutModified, topLevelStatementForAssign);
+
+            var posOfMod = findStatementIndex(blockWithoutModified, statementModifier);
+
+            Assert.IsTrue(posOfMod < posOfUse, string.Format("Modification happens after use. modification: {0} use {1}", posOfMod, posOfUse));
+        }
+
+        /// <summary>
+        /// Given a statement in an compound block, return the order it is. Or throw if we can't find it.
+        /// </summary>
+        /// <param name="blockWithoutModified"></param>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        private int findStatementIndex(IStatementCompound block, IStatement statement)
+        {
+            var r = from s in block.Statements.Zip(Enumerable.Range(1, 5000), (st, cnt) => Tuple.Create(st, cnt))
+                    where s.Item1 == statement
+                    select s;
+            var match = r.FirstOrDefault();
+            if (match == null)
+                throw new ArgumentException("Unable to find the statement in the sequence");
+
+            return match.Item2;
+        }
+
+        /// <summary>
+        /// Find a statement that may be inside a compound statement - return the top level statement that
+        /// contains it. Throw if we can't find it.
+        /// </summary>
+        /// <param name="block"></param>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        private IStatement findStatementThatContains(IStatementCompound block, IStatement statement)
+        {
+            var m = block.Statements.Where(s => ContainsStatement(s, statement)).FirstOrDefault();
+            if (m == null)
+                throw new ArgumentException("Unable to find the requested statement in the block");
+
+            return m;
+        }
+
+        /// <summary>
+        /// Returns true if the statement is inside the block.
+        /// </summary>
+        /// <param name="statementCompound"></param>
+        /// <param name="assignment"></param>
+        /// <returns></returns>
+        private bool ContainsStatement(IStatement sblock, IStatement statement)
+        {
+            if (sblock == statement)
+                return true;
+
+            var block = sblock as IStatementCompound;
+            if (block == null)
+                return false;
+
+            return block.Statements.Where(s => ContainsStatement(s, statement)).Any();
         }
 
         [TestMethod]
