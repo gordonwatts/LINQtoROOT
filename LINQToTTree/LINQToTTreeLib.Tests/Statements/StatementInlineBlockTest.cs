@@ -610,6 +610,76 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Found in the wild. Two statements that can be combined, but one has later effects, get ordered
+        /// in correctly. This assures that order never gets messed up.
+        /// 
+        /// To trigger this we have to "go deep".
+        ///   - Hid the modification in a statement that can be combined later in the inital code
+        ///   - Put the modification in a statement that can be combined earlier in the code.
+        /// 
+        /// </summary>
+        [TestMethod]
+        public void TestCombinePreserveOrder()
+        {
+            // We will have two if statements to do the combination with. They basically "hide" the modification.
+            var checkVar1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var if1s1 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+            var if1s2 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+
+            var checkVar2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var if2s1 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+            var if2s2 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+
+            var blockWithModified = new StatementInlineBlock();
+            var blockWithoutModified = new StatementInlineBlock();
+
+            blockWithModified.Add(checkVar1);
+            blockWithModified.Add(checkVar2);
+            blockWithoutModified.Add(checkVar1);
+            blockWithoutModified.Add(checkVar2);
+
+            // Not the opposite order we put them in here!
+            blockWithModified.Add(if1s1);
+            blockWithModified.Add(if2s1);
+
+            blockWithoutModified.Add(if2s2);
+            blockWithoutModified.Add(if1s2);
+
+            // Have the modified if statement contain the modification now.
+
+            var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            blockWithModified.Add(varToBeModified);
+            if1s1.Add(statementModifier);
+
+            // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
+            var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            blockWithModified.Add(finalVar);
+            if2s1.Add(assignment);
+
+            // Combine
+
+            var r = blockWithoutModified.TryCombineStatement(blockWithModified, null);
+            Assert.IsTrue(r, "try combine result");
+
+            foreach (var s in blockWithoutModified.CodeItUp())
+            {
+                System.Diagnostics.Trace.WriteLine(s);
+            }
+
+            // Make sure the checkVar guy comes after the modified statement.
+
+            var topLevelStatementForAssign = findStatementThatContains(blockWithoutModified, assignment);
+            var posOfUse = findStatementIndex(blockWithoutModified, topLevelStatementForAssign);
+
+            var topLevelStatementForModification = findStatementThatContains(blockWithoutModified, statementModifier);
+            var posOfMod = findStatementIndex(blockWithoutModified, topLevelStatementForModification);
+
+            Assert.IsTrue(posOfMod < posOfUse, string.Format("Modification happens after use. modification: {0} use {1}", posOfMod, posOfUse));
+        }
+
+        /// <summary>
         /// Given a statement in an compound block, return the order it is. Or throw if we can't find it.
         /// </summary>
         /// <param name="blockWithoutModified"></param>
