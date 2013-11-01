@@ -353,14 +353,11 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="statements">List of statements that we need to combine</param>
         /// <remarks>Assume that the ordering given in the statements must be obeyed.
-        ///     - This means once we can't combine a statement, we have to stop combining any other statements.
-        ///       The best would be to have full fidelity in guys were modified, however, that is a lot of work
-        ///       for anther day.
+        ///     - Never insert a later statement before an earlier one!
         /// </remarks>
         private List<IStatement> CombineInternal(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
         {
             bool didAllCombine = true;
-            bool tryToCombine = true;
             ICodeOptimizationService myopt;
             var mergedIntoList = new List<IStatement>();
             if (parent != null)
@@ -371,26 +368,21 @@ namespace LINQToTTreeLib.Statements
             {
                 myopt = new FailingCodeOptimizer();
             }
+
+            // when we move through this we have to be careful - the try combine has side effects!
+            var currentStatements = Statements.ToArray();
             foreach (var s in statements)
             {
-                bool didCombine = false;
-                if (tryToCombine)
-                {
-                    foreach (var sinner in Statements)
-                    {
-                        if (sinner.TryCombineStatement(s, myopt))
-                        {
-                            didCombine = true;
-                            mergedIntoList.Add(sinner);
-                            break;
-                        }
-                    }
-                }
-                if (!didCombine)
-                {
-                    // To preserve order, prevent any future guys from being combined.
-                    tryToCombine = false;
+                currentStatements = currentStatements.SkipWhile(sinner => !sinner.TryCombineStatement(s, myopt)).ToArray();
 
+                bool didCombine = currentStatements.Length > 0;
+                if (didCombine)
+                {
+                    mergedIntoList.Add(currentStatements[0]);
+                    currentStatements = currentStatements.Skip(1).ToArray();
+                }
+                else
+                {
                     if (appendIfCantCombine)
                     {
                         s.Parent = null;
