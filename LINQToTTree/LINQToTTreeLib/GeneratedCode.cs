@@ -515,5 +515,22 @@ namespace LINQToTTreeLib
             //throw new ArgumentException("Can't find a booking block for a set of variables that are never declared.");
             return null;
         }
+
+        /// <summary>
+        /// Debugging routine to dump the code to a given file. Can be called directly from within
+        /// the debugger.
+        /// </summary>
+        /// <param name="output"></param>
+        internal void DumpToFile(System.IO.FileInfo output)
+        {
+            using (var writer = output.CreateText())
+            {
+                foreach (var l in CodeBody.CodeItUp())
+                {
+                    writer.WriteLine(l);
+                }
+                writer.Close();
+            }
+        }
     }
 }
