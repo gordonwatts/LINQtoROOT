@@ -25,7 +25,9 @@ namespace LINQToTTreeLib.Expressions
         private Tuple<Expression, Expression>[] NotSameExpressions = new Tuple<Expression, Expression>[]
             {
                 Tuple.Create<Expression, Expression> (Expression.Constant(5), Expression.Constant(10)),
-                Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0)), Expression.Constant(new ROOTNET.NTH1F("hi", "there", 30, 0.0, 10.0)))
+                Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0)), Expression.Constant(new ROOTNET.NTH1F("hi", "there", 30, 0.0, 10.0))),
+                Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0)), Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0))),
+                Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0)), Expression.Constant(new ROOTNET.NTH1F("hidude", "therefork", 20, 0.0, 10.0)))
             };
 
         [TestMethod]
@@ -42,11 +44,12 @@ namespace LINQToTTreeLib.Expressions
             }
         }
 
+        private static ROOTNET.NTH1F _protoHisto = new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0);
+
         private Tuple<Expression, Expression>[] SameExpressions = new Tuple<Expression, Expression>[]
             {
                 Tuple.Create<Expression, Expression> (Expression.Constant(5), Expression.Constant(5)),
-                Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0)), Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0))),
-                Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0)), Expression.Constant(new ROOTNET.NTH1F("hidude", "therefork", 20, 0.0, 10.0)))
+                Tuple.Create<Expression, Expression> (Expression.Constant(_protoHisto), Expression.Constant(_protoHisto)),
             };
 
         [TestMethod]

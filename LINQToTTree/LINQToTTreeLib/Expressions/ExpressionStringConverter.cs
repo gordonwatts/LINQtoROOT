@@ -1,10 +1,10 @@
-﻿//
+﻿using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Parsing;
+using Remotion.Linq.Utilities;
+//
 // This file is almost completely copied, word-for-word, from the re-linq distribution. 
 using System.Linq.Expressions;
 using System.Text;
-using Remotion.Linq.Clauses.Expressions;
-using Remotion.Linq.Parsing;
-using Remotion.Linq.Utilities;
 // 
 
 namespace LINQToTTreeLib.Expressions
@@ -69,10 +69,11 @@ namespace LINQToTTreeLib.Expressions
             {
                 StringBuilder bld = new StringBuilder();
                 var h = expression.Value as ROOTNET.Interface.NTH1;
-                bld.AppendFormat("value({0} - ({1},{2},{3}) bins ({4},{5},{6})-({7},{8},{9}) range)", expression.Type.Name,
+                bld.AppendFormat("value({0} - ({1},{2},{3}) bins ({4},{5},{6})-({7},{8},{9}) range hash {10})", expression.Type.Name,
                     h.NbinsX, h.NbinsY, h.NbinsZ,
                     h.Xaxis.Xmin, h.Yaxis.Xmin, h.Zaxis.Xmin,
-                    h.Xaxis.Xmax, h.Yaxis.Xmax, h.Zaxis.Xmax
+                    h.Xaxis.Xmax, h.Yaxis.Xmax, h.Zaxis.Xmax,
+                    h.GetHashCode()
                     );
                 return Expression.Parameter(expression.Type, bld.ToString());
             }
