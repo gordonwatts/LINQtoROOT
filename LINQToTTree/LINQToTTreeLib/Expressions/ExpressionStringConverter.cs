@@ -77,6 +77,12 @@ namespace LINQToTTreeLib.Expressions
                     );
                 return Expression.Parameter(expression.Type, bld.ToString());
             }
+            else if (expression.Type.FullName.StartsWith("ROOTNET"))
+            {
+                var bld = new StringBuilder();
+                bld.AppendFormat("value({0} - {1})", expression.Type.FullName, expression.Value.GetHashCode());
+                return Expression.Parameter(expression.Type, bld.ToString());
+            }
             else
             {
                 return base.VisitConstantExpression(expression);
