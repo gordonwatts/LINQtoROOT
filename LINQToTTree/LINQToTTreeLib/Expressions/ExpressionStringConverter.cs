@@ -17,20 +17,22 @@ namespace LINQToTTreeLib.Expressions
     /// </summary>
     public class ExpressionStringConverter : ExpressionTreeVisitor
     {
+        private bool _useHashCodes;
         /// <summary>
         /// Starting from a simple expression, do the translation
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static string Format(Expression expression)
+        public static string Format(Expression expression, bool useUniqueHashCodes = false)
         {
             ArgumentUtility.CheckNotNull("expression", expression);
-            var transformedExpression = new ExpressionStringConverter().VisitExpression(expression);
+            var transformedExpression = new ExpressionStringConverter(useUniqueHashCodes).VisitExpression(expression);
             return transformedExpression.ToString();
         }
 
-        private ExpressionStringConverter()
+        private ExpressionStringConverter(bool useHashCodes)
         {
+            _useHashCodes = useHashCodes;
         }
 
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
@@ -64,23 +66,27 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitConstantExpression(ConstantExpression expression)
         {
-
             if (expression.Type.GetInterface(typeof(ROOTNET.Interface.NTH1).Name) != null)
             {
+                if (expression.Value == null)
+                {
+                    return Expression.Parameter(expression.Type, string.Format("value({0}-null)", expression.Type.FullName));
+                }
+
                 StringBuilder bld = new StringBuilder();
                 var h = expression.Value as ROOTNET.Interface.NTH1;
                 bld.AppendFormat("value({0} - ({1},{2},{3}) bins ({4},{5},{6})-({7},{8},{9}) range hash {10})", expression.Type.Name,
                     h.NbinsX, h.NbinsY, h.NbinsZ,
                     h.Xaxis.Xmin, h.Yaxis.Xmin, h.Zaxis.Xmin,
                     h.Xaxis.Xmax, h.Yaxis.Xmax, h.Zaxis.Xmax,
-                    h.GetHashCode()
+                    _useHashCodes ? h.GetHashCode() : -1
                     );
                 return Expression.Parameter(expression.Type, bld.ToString());
             }
-            else if (expression.Type.FullName.StartsWith("ROOTNET"))
+            else if (_useHashCodes && expression.Type.FullName.StartsWith("ROOTNET"))
             {
                 var bld = new StringBuilder();
-                bld.AppendFormat("value({0} - {1})", expression.Type.FullName, expression.Value.GetHashCode());
+                bld.AppendFormat("value({0} - {1})", expression.Type.FullName, expression.Value == null ? 0 : expression.Value.GetHashCode());
                 return Expression.Parameter(expression.Type, bld.ToString());
             }
             else

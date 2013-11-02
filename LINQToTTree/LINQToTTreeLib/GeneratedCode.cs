@@ -430,7 +430,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private string GetSubExpressionKey(Expression expr)
         {
-            return ExpressionStringConverter.Format(expr);
+            return ExpressionStringConverter.Format(expr, true);
         }
 
         /// <summary>

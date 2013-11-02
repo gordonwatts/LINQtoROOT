@@ -549,7 +549,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestForSameResultHistosDiffNameTitle()
         {
-            var f = MakeRootFile("TestForDiifResultHistos");
+            var f = MakeRootFile("TestForSameResultHistosDiffNameTitle");
             var query = MakeQuery(2);
 
             var inputs = new object[0];
