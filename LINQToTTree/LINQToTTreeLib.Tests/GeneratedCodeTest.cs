@@ -687,6 +687,30 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Perhaps found in the wild - a sub-expression, that includes a manip of the constant
+        /// expression.
+        /// </summary>
+        [TestMethod]
+        public void TestRememberEmbededConstExpr()
+        {
+            var gc = new GeneratedCode();
+            var c1 = Expression.Constant(new ROOTNET.NTH1F());
+            var c2 = Expression.Constant(new ROOTNET.NTH1F());
+
+            var n1 = Expression.Call(c1, typeof(ROOTNET.NTH1F).GetMethod("GetNbinsX"));
+            var n2 = Expression.Call(c2, typeof(ROOTNET.NTH1F).GetMethod("GetNbinsX"));
+
+            var r1 = new ValSimple("1", typeof(int));
+            var r2 = new ValSimple("2", typeof(int));
+
+            gc.RememberSubExpression(n1, r1);
+            gc.RememberSubExpression(n2, r2);
+
+            Assert.AreEqual(r1, gc.LookupSubExpression(n1), "lookup n1");
+            Assert.AreEqual(r2, gc.LookupSubExpression(n2), "lookup n2");
+        }
+
+        /// <summary>
         /// Seen in real code. Make sure two objects that are the same, but are not the same
         /// object actually link properly.
         /// </summary>
