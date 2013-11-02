@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using System;
@@ -419,7 +420,7 @@ namespace LINQToTTreeLib
                 return;
 
             CurrentRememberedExpressions[key] = r;
-            Debug.WriteLine("RememberSubExpression: {0} => {1}", GetSubExpressionKey(expr), r.ToString());
+            Debug.WriteLine("RememberSubExpression: {0} => {1}", key, r.ToString());
         }
 
         /// <summary>
@@ -429,17 +430,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private string GetSubExpressionKey(Expression expr)
         {
-            if (expr is ConstantExpression)
-            {
-                var o = (expr as ConstantExpression).Value;
-                if (o == null)
-                    return null;
-                return o.GetHashCode().ToString();
-            }
-            else
-            {
-                return expr.ToString();
-            }
+            return ExpressionStringConverter.Format(expr);
         }
 
         /// <summary>
@@ -457,7 +448,7 @@ namespace LINQToTTreeLib
 
             if (CurrentRememberedExpressions.ContainsKey(key))
             {
-                Debug.WriteLine("LookupSubExpression: {0} => {1}", expr.ToString(), CurrentRememberedExpressions[key]);
+                Debug.WriteLine("LookupSubExpression: {0} => {1}", key, CurrentRememberedExpressions[key]);
                 return CurrentRememberedExpressions[key];
             }
             return null;

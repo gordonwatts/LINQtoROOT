@@ -694,8 +694,8 @@ namespace LINQToTTreeLib
         public void TestRememberEmbededConstExpr()
         {
             var gc = new GeneratedCode();
-            var c1 = Expression.Constant(new ROOTNET.NTH1F());
-            var c2 = Expression.Constant(new ROOTNET.NTH1F());
+            var c1 = Expression.Constant(new ROOTNET.NTH1F("hi", "there", 100, 0.0, 10.0));
+            var c2 = Expression.Constant(new ROOTNET.NTH1F("no", "way", 100, 0.0, 10.0));
 
             var n1 = Expression.Call(c1, typeof(ROOTNET.NTH1F).GetMethod("GetNbinsX"));
             var n2 = Expression.Call(c2, typeof(ROOTNET.NTH1F).GetMethod("GetNbinsX"));
