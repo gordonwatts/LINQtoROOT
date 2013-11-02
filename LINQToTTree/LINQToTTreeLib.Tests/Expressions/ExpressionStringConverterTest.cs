@@ -1,9 +1,9 @@
-// <copyright file="ExpressionStringConverterTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Linq.Expressions;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// <copyright file="ExpressionStringConverterTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -52,7 +52,7 @@ namespace LINQToTTreeLib.Expressions
         [TestMethod]
         public void TestSame()
         {
-            /// Loop through the pairs of expressions and make sure they aren't the same when cvt to string.
+            /// Loop through the pairs of expressions and make sure they are the same when cvt to string.
             foreach (var item in SameExpressions)
             {
                 var s1 = ExpressionStringConverter.Format(item.Item1);
