@@ -16,7 +16,6 @@ using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Parsing.Structure;
 // <copyright file="QueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
@@ -2561,6 +2560,70 @@ namespace LINQToTTreeLib
             var r = q.Where(evt => test.Invoke(evt).var1 > 0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
+        }
+
+        public class ntup3
+        {
+            public int[] run1;
+            public int[] run2;
+        }
+
+        /// <summary>
+        /// Generate a query that gets referenced twice - but since it accesses no qs that have
+        /// gone out of bounds, it can be cached. Check, then, for caching.
+        /// </summary>
+        [TestMethod]
+        public void TestQuerySourceCacheHit()
+        {
+            // This test produces somethign caught in the wild (caused a compile error).
+            // The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
+            // to cause the problem, unfortunately. So, the test is here.
+            var q = new QueriableDummy<ntup3>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              r1 = evt.run1,
+                              r2 = evt.run2
+                          };
+            var resultB = from e in resultA
+                          select new
+                          {
+                              joinedR = from r1 in e.r1
+                                        select (from r2 in e.r2
+                                                orderby r1 - r2 ascending
+                                                select new
+                                                {
+                                                    R1 = r1,
+                                                    R2 = r2
+                                                }).First()
+                          };
+            var resultC = from e in resultB
+                          select new
+                          {
+                              jR = from r in e.joinedR
+                                   where r.R1 - r.R2 < 0.3
+                                   select r
+                          };
+
+            var result = from e in resultC
+                         from r in e.jR
+                         select r.R2 - r.R1;
+
+            var c = resultC.SelectMany(e => e.jR).Select(r => r.R1).Sum();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            // Look for aint32_10 - the result of the first loop, if the cache hit fails, it will never
+            // be used. Otherwise it is used twice. Some minor protection against code being restructured in the
+            // future.
+
+            var lines = query.DumpCode().ToArray();
+            Assert.AreEqual(1, lines.Where(l => l.Contains("aInt32_10=-1")).Count(), "aInt32_10 is a First/Last var");
+
+            Assert.AreEqual(3, lines.Where(l => l.Contains("aInt32_10")).Count(), "# of lines aInt32_10 is used");
         }
 
 #if notyet
