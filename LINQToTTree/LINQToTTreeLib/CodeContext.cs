@@ -356,7 +356,8 @@ namespace LINQToTTreeLib
             Expression result = null;
             if (_queryModelCache.TryGetValue(queryModel, out result))
             {
-                Debug.WriteLine("Cache Lookup QM {0} => {1}", queryModel.ToString(), result.ToString());
+                Debug.WriteLine("Cache Lookup QM Would have returned {0} => {1}", queryModel.ToString(), result.ToString());
+                return null;
                 return result;
             }
             return null;

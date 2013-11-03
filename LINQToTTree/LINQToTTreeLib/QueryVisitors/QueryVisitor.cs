@@ -72,7 +72,7 @@ namespace LINQToTTreeLib
                 if (result != null)
                 {
                     _codeEnv.SetResult(result);
-                    //_scoping.Add(_codeContext.Add(queryModel, result));
+                    _scoping.Add(_codeContext.Add(queryModel, result));
                 }
                 return;
             }
