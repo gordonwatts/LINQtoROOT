@@ -2571,13 +2571,11 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Generate a query that gets referenced twice - but since it accesses no qs that have
         /// gone out of bounds, it can be cached. Check, then, for caching.
+        /// This issue was observed in the wild.
         /// </summary>
         [TestMethod]
         public void TestQuerySourceCacheHit()
         {
-            // This test produces somethign caught in the wild (caused a compile error).
-            // The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
-            // to cause the problem, unfortunately. So, the test is here.
             var q = new QueriableDummy<ntup3>();
 
             var resultA = from evt in q
@@ -2624,6 +2622,58 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, lines.Where(l => l.Contains("aInt32_10=-1")).Count(), "aInt32_10 is a First/Last var");
 
             Assert.AreEqual(3, lines.Where(l => l.Contains("aInt32_10")).Count(), "# of lines aInt32_10 is used");
+        }
+
+        /// <summary>
+        /// This should generate a QueryModel cache lookup, where the QM is the same, but the results are different.
+        /// In short, the QM cache should miss. This issue was found in the wild.
+        /// </summary>
+        [TestMethod]
+        public void TestQuerySourceCacheMiss()
+        {
+            var q = new QueriableDummy<ntup3>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              jets = evt.run1,
+                              tracks = evt.run2,
+                              truth = evt.run1
+                          };
+            var resultB = from e in resultA
+                          select new
+                          {
+                              joinedR = from r1 in e.jets
+                                        select new
+                                        {
+                                            Jet = r1,
+                                            CloseTrack = (from r2 in e.tracks
+                                                          orderby r1 - r2 ascending
+                                                          select r2).First(),
+                                            Truth = (from t in e.truth
+                                                     orderby t - r1 descending
+                                                     select t).First() == 21
+                                        }
+                          };
+            var resultC = resultB.Where(e => e.joinedR.Count() == 2);
+            var result2j = from e in resultB
+                           select new
+                           {
+                               Jet1 = e.joinedR.First(),
+                               Jet2 = e.joinedR.Skip(1).First()
+                           };
+
+            Expression<Func<bool, double, double, double>> calc = (t, r1, r2) => t ? r1 : r2;
+
+            var resultToSum = result2j.Select(e => calc.Invoke(e.Jet1.Truth, 5, 10) * calc.Invoke(e.Jet2.Truth, 5, 10));
+            var result = resultToSum.Sum();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            var lines = query.DumpCode().ToArray();
+            Assert.AreEqual(0, lines.Where(l => l.Contains("aDouble_20*aDouble_20")).Count(), "# times aDouble20 is squared");
         }
 
 #if notyet
