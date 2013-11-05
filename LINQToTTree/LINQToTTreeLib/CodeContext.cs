@@ -498,7 +498,7 @@ namespace LINQToTTreeLib
         {
             foreach (var v in _cachedScopeVars)
             {
-                v.Pop();
+                //v.Pop();
             }
             _cachedScopeVars.Clear();
         }
