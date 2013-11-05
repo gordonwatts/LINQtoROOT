@@ -375,7 +375,7 @@ namespace LINQToTTreeLib.Statements
             {
                 currentStatements = currentStatements.SkipWhile(sinner => !sinner.TryCombineStatement(s, myopt)).ToArray();
 
-                bool didCombine = currentStatements.Length > 0;
+                bool didCombine = currentStatements.Length > 0 && currentStatements[0] != s;
                 if (didCombine)
                 {
                     mergedIntoList.Add(currentStatements[0]);

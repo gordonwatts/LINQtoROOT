@@ -389,6 +389,40 @@ namespace LINQToTTreeLib.Statements
             public IStatement Parent { get; set; }
         }
 
+        /// <summary>
+        /// Helper class to force a rename
+        /// </summary>
+        class CombineSameStatement : IStatement
+        {
+            private IDeclaredParameter vdecl2;
+
+            public CombineSameStatement(IDeclaredParameter vdecl2)
+            {
+                // TODO: Complete member initialization
+                this.vdecl2 = vdecl2;
+            }
+            public IEnumerable<string> CodeItUp()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameVariable(string originalName, string newName)
+            {
+                return;
+            }
+
+            public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
+            {
+                var other = statement as CombineSameStatement;
+                if (other == null)
+                    return false;
+                return other == this;
+            }
+
+
+            public IStatement Parent { get; set; }
+        }
+
         [TestMethod]
         public void TestCombineWithRenameSimple()
         {
@@ -438,6 +472,23 @@ namespace LINQToTTreeLib.Statements
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(2, inline1.Statements.Count(), "bad # of combined statements");
             Assert.AreEqual(string.Format("dude = {0};", vdecl1.ParameterName), inline1.Statements.Skip(1).First().CodeItUp().First(), "Line wasn't renamed");
+        }
+
+        /// <summary>
+        /// During optimization a funny situation can happen - it tries to combine a statement
+        /// it already owns! Ops!
+        /// </summary>
+        [TestMethod]
+        public void TestCombineSameStatement()
+        {
+            var inline1 = new StatementInlineBlock();
+            var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            inline1.Add(vdecl1);
+            var s1 = new CombineSameStatement(vdecl1);
+            inline1.Add(s1);
+
+            var result = inline1.CombineAndMark(s1, s1.Parent as IBookingStatementBlock, false);
+            Assert.IsNull(result, "combine should fail");
         }
 
         [TestMethod]
