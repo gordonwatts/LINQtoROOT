@@ -326,7 +326,7 @@ namespace LINQToTTreeLib
                 Debug.Indent();
                 foreach (var qm in badQM)
                 {
-                    Debug.WriteLine("Removing QM due to change in QS: {0}", qm.ToString());
+                    Debug.WriteLine("Removing QM due to change in QS {0}{1}", qm.ToString(), "");
                     _queryModelCache.Remove(qm);
                 }
                 Debug.Unindent();
