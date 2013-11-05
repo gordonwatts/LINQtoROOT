@@ -4,6 +4,7 @@ using Remotion.Linq.Clauses;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
@@ -92,9 +93,9 @@ namespace LINQToTTreeLib
         {
             private CodeContext _context;
             private QueryModel _model;
-            private Expression _oldVal;
+            private QueryModelCacheLine _oldVal;
 
-            public CQReplacementExpression(CodeContext context, QueryModel model, Expression val)
+            public CQReplacementExpression(CodeContext context, QueryModel model, QueryModelCacheLine val)
             {
                 _context = context;
                 _model = model;
@@ -104,7 +105,7 @@ namespace LINQToTTreeLib
             public void Pop()
             {
                 if (_oldVal != null)
-                    _context.Add(_model, _oldVal);
+                    _context.AddInternal(_model, _oldVal);
                 else
                     _context.DeleteValue(_model);
             }
@@ -196,9 +197,25 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Returns the query model cache
+        /// Tracks the information for a query model lookup
         /// </summary>
-        private Dictionary<QueryModel, Expression> _queryModelCache = new Dictionary<QueryModel, Expression>();
+        class QueryModelCacheLine
+        {
+            /// <summary>
+            /// The expression this QM will resolve to.
+            /// </summary>
+            public Expression _value;
+
+            /// <summary>
+            /// The Query Sources that are referenced by this guy
+            /// </summary>
+            public IQuerySource[] _referencedQS;
+        }
+
+        /// <summary>
+        /// Returns the query model cache.
+        /// </summary>
+        private Dictionary<QueryModel, QueryModelCacheLine> _queryModelCache = new Dictionary<QueryModel, QueryModelCacheLine>();
 
         /// <summary>
         /// Save a query model result for later lookup.
@@ -206,12 +223,21 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         /// <param name="result"></param>
         /// <returns></returns>
+        /// <remarks>Cache any QueryReferences that have been looked up in addtion to the result so we know when to
+        /// invalidate this.</remarks>
         public IVariableScopeHolder Add(Remotion.Linq.QueryModel queryModel, Expression result)
         {
             var scope = new CQReplacementExpression(this, queryModel, _queryModelCache.ContainsKey(queryModel) ? _queryModelCache[queryModel] : null);
-            _queryModelCache[queryModel] = result;
-            Debug.WriteLine("Caching: QM {0} => {1}", queryModel.ToString(), result.ToString());
+            var v = new QueryModelCacheLine() { _value = result, _referencedQS = _QSReferencedSet.ToArray() };
+            _QSReferencedSet.Clear();
+            AddInternal(queryModel, v);
             return scope;
+        }
+
+        private void AddInternal(Remotion.Linq.QueryModel queryModel, QueryModelCacheLine v)
+        {
+            _queryModelCache[queryModel] = v;
+            Debug.WriteLine("Caching: QM {0} => {1}", queryModel.ToString(), v._value.ToString());
         }
 
         /// <summary>
@@ -290,6 +316,22 @@ namespace LINQToTTreeLib
         {
             Debug.WriteLine("Caching QS {0} => {1}", query.ToString(), replacementExpr.ToString());
 
+            // If this QS is referenced by a QM cache line, then we need to invalidate that QM.
+
+            if (_queryReplacement.ContainsKey(query))
+            {
+                var badQM = (from q in _queryModelCache
+                             where q.Value._referencedQS.Contains(query)
+                             select q.Key).ToArray();
+                Debug.Indent();
+                foreach (var qm in badQM)
+                {
+                    Debug.WriteLine("Removing QM due to change in QS: {0}", qm.ToString());
+                    _queryModelCache.Remove(qm);
+                }
+                Debug.Unindent();
+            }
+
             ///
             /// Somethign to get us back to this state
             /// 
@@ -343,6 +385,7 @@ namespace LINQToTTreeLib
             if (!_queryReplacement.ContainsKey(query))
                 return null;
             Debug.WriteLine("Cache Lookup QS {0} => {1}", query.ToString(), _queryReplacement[query]);
+            _QSReferencedSet.Add(query);
             return _queryReplacement[query];
         }
 
@@ -353,14 +396,48 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public Expression GetReplacement(QueryModel queryModel)
         {
-            Expression result = null;
+            QueryModelCacheLine result = null;
             if (_queryModelCache.TryGetValue(queryModel, out result))
             {
                 Debug.WriteLine("Cache Lookup QM Would have returned {0} => {1}", queryModel.ToString(), result.ToString());
-                return null;
-                return result;
+                Debug.Indent();
+                foreach (var qs in _queryReplacement)
+                {
+                    Debug.WriteLine("QS {0} => {1}", qs.Key, qs.Value);
+                }
+                Debug.Unindent();
+                return result._value;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Track the list of IQuerySource's that were looked up since we got started.
+        /// </summary>
+        private HashSet<IQuerySource> _QSReferencedSet = new HashSet<IQuerySource>();
+
+        /// <summary>
+        /// Returns the list of query sources that have been referenced, and then zero's out the internal
+        /// list.
+        /// </summary>
+        /// <returns></returns>
+        public IQuerySource[] GetAndResetQuerySourceLookups()
+        {
+            var r = _QSReferencedSet.ToArray();
+            _QSReferencedSet.Clear();
+            return r;
+        }
+
+        /// <summary>
+        /// Restore the referenced list of QS with the input list.
+        /// </summary>
+        /// <param name="qsList"></param>
+        public void RestoreQuerySourceLookups(IEnumerable<IQuerySource> qsList)
+        {
+            foreach (var qs in qsList)
+            {
+                _QSReferencedSet.Add(qs);
+            }
         }
 
         private List<string> _cachedCookies = new List<string>();
@@ -421,12 +498,11 @@ namespace LINQToTTreeLib
         {
             foreach (var v in _cachedScopeVars)
             {
-                //v.Pop();
+                v.Pop();
             }
             _cachedScopeVars.Clear();
         }
         #endregion
-
 
     }
 }

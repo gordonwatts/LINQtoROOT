@@ -1,11 +1,12 @@
-// <copyright file="CodeContextTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Linq.Expressions;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
+using Remotion.Linq.Clauses;
+// <copyright file="CodeContextTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -96,6 +97,67 @@ namespace LINQToTTreeLib
             Assert.AreEqual("d", (c.GetReplacement("dude") as ParameterExpression).Name, "incorrect dummy name");
         }
 
+
+        [TestMethod]
+        public void TestAddQueryRefereceSource()
+        {
+            var c = new CodeContext();
+            var qs = new DummyQueryReference();
+            var v = Expression.Constant(10);
+            c.Add(qs, v);
+
+            Assert.AreEqual(v, c.GetReplacement(qs), "Query Source Lookup.");
+        }
+
+        [TestMethod]
+        public void TestQSRecordLookup()
+        {
+            var c = new CodeContext();
+            var qs = new DummyQueryReference();
+            var v = Expression.Constant(10);
+            c.Add(qs, v);
+
+            Assert.AreEqual(0, c.GetAndResetQuerySourceLookups().Length, "# of query source look ups isn't zero initially");
+
+            // Look up bogus and make sure it is null
+
+            var qsNotStored = new DummyQueryReference();
+            c.GetReplacement(qsNotStored);
+            Assert.AreEqual(0, c.GetAndResetQuerySourceLookups().Length, "Dummy lookup shouldn't cache reference.");
+
+            // Look up good one and make sure it worked.
+
+            c.GetReplacement(qs);
+            var qsReferenced = c.GetAndResetQuerySourceLookups();
+            Assert.AreEqual(1, qsReferenced.Length, "# of qs lookups after a real reference");
+            Assert.AreEqual(qs, qsReferenced[0], "QS recorded in lookup");
+        }
+
+        [TestMethod]
+        public void TestQSResetsRecordLookup()
+        {
+            var c = new CodeContext();
+            var qs = new DummyQueryReference();
+            var v = Expression.Constant(10);
+            c.Add(qs, v);
+
+            c.GetReplacement(qs);
+            var qsReferenced = c.GetAndResetQuerySourceLookups();
+            Assert.AreEqual(0, c.GetAndResetQuerySourceLookups().Length, "# of qs lookups after a reset");
+        }
+
+        [TestMethod]
+        public void TestQSReloadLookup()
+        {
+            var c = new CodeContext();
+            var qs1 = new DummyQueryReference();
+            var qs2 = new DummyQueryReference();
+            var qsList = new IQuerySource[] { qs1, qs2 };
+
+            c.RestoreQuerySourceLookups(qsList);
+            Assert.AreEqual(2, c.GetAndResetQuerySourceLookups().Length, "# after a restore");
+        }
+
         [TestMethod]
         public void TestPopQM()
         {
@@ -133,6 +195,59 @@ namespace LINQToTTreeLib
             s2.Pop();
             Assert.AreEqual(e1, c.GetReplacement(qm), "second level lookup");
         }
+
+        [TestMethod]
+        public void TestQMStoreResetsQSLookupList()
+        {
+            var c = new CodeContext();
+            var qm = new QueryModel(new Remotion.Linq.Clauses.MainFromClause("dude", typeof(int), Expression.Parameter(typeof(IEnumerable<int>))),
+                new Remotion.Linq.Clauses.SelectClause(Expression.Parameter(typeof(int))));
+
+            var qs = new DummyQueryReference();
+            c.Add(qs, Expression.Constant(10));
+            c.GetReplacement(qs);
+
+            var e1 = Expression.Parameter(typeof(int));
+            var s1 = c.Add(qm, e1);
+
+            Assert.AreEqual(0, c.GetAndResetQuerySourceLookups().Length, "# of qs references after a lookup");
+        }
+
+        [TestMethod]
+        public void TestQMInvalidedByQSChange()
+        {
+            var c = new CodeContext();
+            var qm = new QueryModel(new Remotion.Linq.Clauses.MainFromClause("dude", typeof(int), Expression.Parameter(typeof(IEnumerable<int>))),
+                new Remotion.Linq.Clauses.SelectClause(Expression.Parameter(typeof(int))));
+
+            var qs = new DummyQueryReference();
+            c.Add(qs, Expression.Constant(10));
+            c.GetReplacement(qs);
+
+            var e1 = Expression.Parameter(typeof(int));
+            var s1 = c.Add(qm, e1);
+
+            Assert.AreEqual(e1, c.GetReplacement(qm), "Initial lookup");
+            c.Add(qs, Expression.Constant(20));
+            Assert.IsNull(c.GetReplacement(qm), "Lookup after referenced QS has changed");
+        }
+
+        /// <summary>
+        /// Dummy QR for testing the caching.
+        /// </summary>
+        private class DummyQueryReference : IQuerySource
+        {
+            public string ItemName
+            {
+                get { return "this"; }
+            }
+
+            public Type ItemType
+            {
+                get { return typeof(int); }
+            }
+        }
+
 
         [TestMethod]
         public void TestRemoveOfNothing()

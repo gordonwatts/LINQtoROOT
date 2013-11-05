@@ -166,6 +166,12 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitQueryModel(QueryModel queryModel)
         {
+            // Cache the referenced query expressions and restore them at the end.
+
+            var cachedReferencedQS = _codeContext.GetAndResetQuerySourceLookups();
+
+            // Protect against all returns...
+
             try
             {
                 Debug.WriteLine("VisitQueryModel: {0}{1}", queryModel.ToString(), "");
@@ -215,6 +221,7 @@ namespace LINQToTTreeLib
             }
             finally
             {
+                _codeContext.RestoreQuerySourceLookups(cachedReferencedQS);
                 Debug.Unindent();
             }
         }

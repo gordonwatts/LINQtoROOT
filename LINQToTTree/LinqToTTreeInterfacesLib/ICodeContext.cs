@@ -72,6 +72,18 @@ namespace LinqToTTreeInterfacesLib
         Expression GetReplacement(QueryModel queryModel);
 
         /// <summary>
+        /// Returns a list of query expressions that have been referenced via GetReplacement (IQuerySource).
+        /// </summary>
+        /// <returns></returns>
+        IQuerySource[] GetAndResetQuerySourceLookups();
+
+        /// <summary>
+        /// Place the list of query sources back on the interna list.
+        /// </summary>
+        /// <param name="qsList"></param>
+        void RestoreQuerySourceLookups(IEnumerable<IQuerySource> qsList);
+
+        /// <summary>
         /// Remove an expression from the repository - allows restoration via the
         /// scope holder
         /// </summary>
