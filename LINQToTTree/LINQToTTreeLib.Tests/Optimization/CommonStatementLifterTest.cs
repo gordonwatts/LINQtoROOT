@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests.Optimization
 {
@@ -70,6 +70,157 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(backIfStatement, "if statement there");
             var backAssignStatement = backIfStatement.Statements.First() as StatementAssign;
             Assert.IsNotNull(backAssignStatement, "assign statement there");
+        }
+
+#if false
+        /// <summary>
+        /// Discovered in the wild: a lift put statements out of order. This happens because one
+        /// statement looks like it can be absorbed into another, when burried inside it, there is
+        /// some object reference which doesn't work.
+        /// </summary>
+        [TestMethod]
+        public void TestLifingPreservesOrderHang()
+        {
+            // We will have two if statements to do the combination with. They basically "hide" the modification.
+            var checkVar1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var if1s1 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+            var if1s2 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+
+            var checkVar2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var if2s1 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+            var if2s2 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+
+            // We will put the first if's - that we can perhaps combine with - at the top level (though we
+            // shouldn't combine with them!).
+            var gc = new GeneratedCode();
+            gc.Add(checkVar1);
+            gc.Add(checkVar2);
+            gc.Add(if2s2);
+            gc.Add(if1s2);
+
+            // Next, we want an inline block. We will push everything down into it.
+            var blockWithModified = new StatementInlineBlock();
+            gc.Add(blockWithModified);
+
+            blockWithModified.Add(if1s1);
+            blockWithModified.Add(if2s1);
+
+            // Have the modified if statement contain the modification now.
+
+            var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            blockWithModified.Add(varToBeModified);
+            if1s1.Add(statementModifier);
+
+            // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
+            var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            blockWithModified.Add(finalVar);
+            if2s1.Add(assignment);
+
+            // Optimize.
+
+            Trace.WriteLine("Before optimization:");
+            gc.DumpCodeToConsole();
+            Trace.WriteLine("");
+            CommonStatementLifter.Optimize(gc);
+            Trace.WriteLine("After optimization:");
+            gc.DumpCodeToConsole();
+
+#if false
+            var r = blockWithoutModified.TryCombineStatement(blockWithModified, null);
+            Assert.IsTrue(r, "try combine result");
+
+            foreach (var s in blockWithoutModified.CodeItUp())
+            {
+                System.Diagnostics.Trace.WriteLine(s);
+            }
+
+            // Make sure the checkVar guy comes after the modified statement.
+
+            var topLevelStatementForAssign = findStatementThatContains(blockWithoutModified, assignment);
+            var posOfUse = findStatementIndex(blockWithoutModified, topLevelStatementForAssign);
+
+            var topLevelStatementForModification = findStatementThatContains(blockWithoutModified, statementModifier);
+            var posOfMod = findStatementIndex(blockWithoutModified, topLevelStatementForModification);
+
+            Assert.IsTrue(posOfMod < posOfUse, string.Format("Modification happens after use. modification: {0} use {1}", posOfMod, posOfUse));
+#endif
+
+            Assert.Inconclusive();
+        }
+#endif
+
+        /// <summary>
+        /// Discovered in the wild: a lift put statements out of order. This happens because one
+        /// statement looks like it can be absorbed into another, when burried inside it, there is
+        /// some object reference which doesn't work.
+        /// </summary>
+        [TestMethod]
+        public void TestLifingPreservesOrder()
+        {
+            // We will have two if statements to do the combination with. They basically "hide" the modification.
+            var checkVar1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var if1s1 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+            var if1s2 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+
+            var checkVar2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var if2s1 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+            var if2s2 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+
+            var randomVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            if1s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
+            if2s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
+            if1s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
+            if2s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
+
+            // We will put the first if's - that we can perhaps combine with - at the top level (though we
+            // shouldn't combine with them!).
+            var gc = new GeneratedCode();
+            gc.Add(checkVar1);
+            gc.Add(checkVar2);
+            gc.Add(if2s2);
+            gc.Pop();
+            gc.Add(if1s2);
+            gc.Pop();
+
+            // Next, we want an inline block. We will push everything down into it.
+            //var blockWithModified = new StatementInlineBlock();
+            //gc.Add(blockWithModified);
+
+            //blockWithModified.Add(if1s1);
+            //blockWithModified.Add(if2s1);
+            gc.Add(if1s1);
+            gc.Pop();
+            gc.Add(if2s1);
+            gc.Pop();
+
+            // Have the modified if statement contain the modification now.
+
+            var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            //blockWithModified.Add(varToBeModified);
+            gc.Add(varToBeModified);
+            if1s1.Add(statementModifier);
+
+            // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
+            var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            //blockWithModified.Add(finalVar);
+            gc.Add(finalVar);
+            if2s1.Add(assignment);
+
+            // Optimize.
+
+            Console.WriteLine("Before optimization:");
+            gc.DumpCodeToConsole();
+            Console.WriteLine("");
+            CommonStatementLifter.Optimize(gc);
+            Console.WriteLine("After optimization:");
+            gc.DumpCodeToConsole();
+
+            Assert.Inconclusive();
         }
 
         /// <summary>

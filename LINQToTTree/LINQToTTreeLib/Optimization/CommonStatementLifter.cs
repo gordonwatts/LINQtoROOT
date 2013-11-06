@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using System;
+using System.Linq;
 
 namespace LINQToTTreeLib.Optimization
 {
