@@ -202,6 +202,45 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// 1. Loop 1 over array a
+        /// 2. Loop 2 over array a
+        /// 3.  something with iterator from Loop 1 and Loop 2.
+        /// 
+        /// You can't necessarily pull things out when they are nested identical loops - they may well be
+        /// there for a reason!
+        /// </summary>
+        [TestMethod]
+        public void TestNoLifeNestedIdenticalLoops()
+        {
+            var v = new GeneratedCode();
+
+            var limit = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            v.Add(loop1);
+            var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop2 = new StatementForLoop(loopP1, limit);
+            v.Add(loop2);
+            v.Add(new StatementWithNoSideEffects());
+
+            Console.WriteLine("Unoptimized:");
+            v.DumpCodeToConsole();
+            StatementLifter.Optimize(v);
+            Console.WriteLine("");
+            Console.WriteLine("Optimized:");
+            v.DumpCodeToConsole();
+
+            // Make sure it is two if statements, nested.
+            var if1 = v.CodeBody.Statements.Skip(1).First() as StatementForLoop;
+            Assert.IsNotNull(if1, "if #1");
+            var if2 = if1.Statements.First() as StatementForLoop;
+            Assert.IsNotNull(if2, "if #2");
+
+            // Make sure the two loop variables are different.
+            Assert.AreNotEqual(if1.LoopIndexVariable != if2.LoopIndexVariable, "Loop index vars");
+        }
+
+        /// <summary>
         /// Distilled from something we found in the wild.
         /// 1. Statement
         /// 2. Non ICM Loop/compound statement (like any inline block, I guess)
@@ -750,7 +789,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         {
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
             {
-                throw new NotImplementedException();
+                yield return "StatementWithNoSideEffects";
             }
 
             public void RenameVariable(string originalName, string newName)
