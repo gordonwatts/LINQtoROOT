@@ -64,6 +64,8 @@ namespace LINQToTTreeLib.Statements
         {
             if (statement == null)
                 throw new ArgumentNullException("statement");
+            if (statement.Parent != null)
+                throw new ArgumentException("Statement is already in another statement!");
             if (beforeThisStatement == null)
                 throw new ArgumentNullException("beforeThisStatement");
 
@@ -72,6 +74,7 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentException("Statement does not exist in this compound statement");
 
             _statements.Insert(index, statement);
+            statement.Parent = this;
         }
 
         /// <summary>
@@ -371,27 +374,43 @@ namespace LINQToTTreeLib.Statements
 
             // when we move through this we have to be careful - the try combine has side effects!
             var currentStatements = Statements.ToArray();
+            var firstStatement = currentStatements.Length == 0 ? null : currentStatements[0];
+
             foreach (var s in statements)
             {
-                currentStatements = currentStatements.SkipWhile(sinner => !sinner.TryCombineStatement(s, myopt)).ToArray();
+                var firstGood = currentStatements.SkipWhile(sinner => !sinner.TryCombineStatement(s, myopt)).ToArray();
 
-                bool didCombine = currentStatements.Length > 0 && currentStatements[0] != s;
-                if (didCombine)
-                {
-                    mergedIntoList.Add(currentStatements[0]);
-                    currentStatements = currentStatements.Skip(1).ToArray();
-                }
-                else
+                // If we couldn't find a way to combine this guy, then we will put it as the first statement in our list.
+                if (firstGood.Length == 0)
                 {
                     if (appendIfCantCombine)
                     {
                         s.Parent = null;
-                        Add(s);
+                        if (firstStatement != null)
+                        {
+                            AddBefore(s, firstStatement);
+                        }
+                        else
+                        {
+                            Add(s);
+                        }
                     }
                     else
                     {
                         didAllCombine = false;
                     }
+                }
+                else
+                {
+                    // Add to our list of merged statements. Ignore this guy if it is the same one.
+
+                    currentStatements = firstGood;
+                    if (currentStatements[0] != s)
+                    {
+                        mergedIntoList.Add(currentStatements[0]);
+                    }
+                    currentStatements = currentStatements.Skip(1).ToArray();
+                    firstStatement = currentStatements.Length == 0 ? null : currentStatements[0];
                 }
             }
 
@@ -420,7 +439,7 @@ namespace LINQToTTreeLib.Statements
         public IStatement CombineAndMark(IStatement statement, IBookingStatementBlock parent, bool appendIfNoCombine = true)
         {
             var s = CombineInternal(new IStatement[] { statement }, parent, appendIfNoCombine);
-            return s == null ? null : s[0];
+            return s == null ? null : s.FirstOrDefault();
         }
 
         /// <summary>
