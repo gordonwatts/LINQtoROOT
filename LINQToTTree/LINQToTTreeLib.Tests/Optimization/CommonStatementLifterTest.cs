@@ -703,6 +703,47 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// 1. Loop 1 over array a
+        /// 2. Loop 2 over array a
+        /// 3.  if statement
+        /// 4.    something with iterator from Loop 1 and Loop 2.
+        /// 
+        /// You can't necessarily pull things out when they are nested identical loops - they may well be
+        /// there for a reason!
+        /// </summary>
+        [TestMethod]
+        public void TestNoCommonLifeNestedIdenticalLoopsIf()
+        {
+            var v = new GeneratedCode();
+
+            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            v.Add(loop1);
+            var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop2 = new StatementForLoop(loopP2, limit);
+            v.Add(loop2);
+            v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
+            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+
+            Console.WriteLine("Unoptimized:");
+            v.DumpCodeToConsole();
+            CommonStatementLifter.Optimize(v);
+            Console.WriteLine("");
+            Console.WriteLine("Optimized:");
+            v.DumpCodeToConsole();
+
+            // Make sure it is two if statements, nested.
+            var if1 = v.CodeBody.Statements.First() as StatementForLoop;
+            Assert.IsNotNull(if1, "if #1");
+            var if2 = if1.Statements.First() as StatementForLoop;
+            Assert.IsNotNull(if2, "if #2");
+
+            // Make sure the two loop variables are different.
+            Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
+        }
+
+        /// <summary>
         /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outter loop one.
         /// It should not be lifted since it will alter the counting!
         /// </summary>
