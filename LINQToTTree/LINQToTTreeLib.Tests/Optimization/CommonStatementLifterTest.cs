@@ -648,6 +648,12 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             Assert.IsTrue(query1.CheckCodeBlock(), "query 1 is good format");
             Assert.IsTrue(query2.CheckCodeBlock(), "query 2 is good format");
+
+            Console.WriteLine("Query #1:");
+            query1.DumpCodeToConsole();
+            Console.WriteLine("Query #2:");
+            query2.DumpCodeToConsole();
+
             var query = CombineQueries(query1, query2);
             Console.WriteLine("Unoptimized");
             query.DumpCodeToConsole();
