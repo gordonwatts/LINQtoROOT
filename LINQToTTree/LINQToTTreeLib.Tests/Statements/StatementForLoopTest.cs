@@ -66,6 +66,29 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsTrue(r, "Should always be equal");
         }
 
+        [TestMethod]
+        public void TestCombineNestedForLoop()
+        {
+            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop2 = new StatementForLoop(loopP2, limit);
+            loop1.Add(loop2);
+
+            var limit2 = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP12 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop12 = new StatementForLoop(loopP12, limit);
+            var loopP22 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop22 = new StatementForLoop(loopP22, limit);
+            loop12.Add(loop22);
+
+            var r = loop1.TryCombineStatement(loop12, new dummyOpt());
+            Assert.IsTrue(r, "combination should work");
+            Assert.IsNull(loop1.Parent, "loop 1 parent");
+            Assert.AreEqual(loop1, loop2.Parent, "Loop 2 parent");
+        }
+
         [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
         public void TestCombineDifInitial(IDeclaredParameter loopVarName, IValue ivalSize, IValue initialValue1, IValue initialValue2)
         {
