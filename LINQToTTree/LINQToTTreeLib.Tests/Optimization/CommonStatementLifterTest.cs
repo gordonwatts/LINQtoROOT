@@ -220,7 +220,9 @@ namespace LINQToTTreeLib.Tests.Optimization
             Console.WriteLine("After optimization:");
             gc.DumpCodeToConsole();
 
-            Assert.Inconclusive();
+            var firstMention = gc.DumpCode().TakeWhile(l => !l.Contains("aInt32_4=1")).Count();
+            var secondMetnion = gc.DumpCode().SkipWhile(l => !l.Contains("aInt32_4=1")).Skip(1).Where(l => l.Contains("aInt32_4")).Count();
+            Assert.AreEqual(1, secondMetnion, "Mention of ainte32 4 after the first one");
         }
 
         /// <summary>

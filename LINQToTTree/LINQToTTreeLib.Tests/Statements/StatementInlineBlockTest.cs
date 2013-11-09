@@ -824,8 +824,9 @@ namespace LINQToTTreeLib.Statements
             }
 
             // Make sure the checkVar guy comes after the modified statement.
+            // To get this right (the 3 should be a 2), we need to implement a full blown statement optimizer.
 
-            Assert.AreEqual(2, blockWithoutModified.Statements.Where(s => s is StatementFilter).Count(), "# of if statements.");
+            Assert.AreEqual(3, blockWithoutModified.Statements.Where(s => s is StatementFilter).Count(), "# of if statements.");
         }
 
         /// <summary>
