@@ -646,11 +646,15 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Combine the queries
 
+            Assert.IsTrue(query1.CheckCodeBlock(), "query 1 is good format");
+            Assert.IsTrue(query2.CheckCodeBlock(), "query 2 is good format");
             var query = CombineQueries(query1, query2);
             Console.WriteLine("Unoptimized");
             query.DumpCodeToConsole();
+            Assert.IsTrue(query.CheckCodeBlock(), "combined query ok");
 
             CommonStatementLifter.Optimize(query);
+            Assert.IsTrue(query.CheckCodeBlock(), "optimzied combined query ok");
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("After optimization...");
@@ -724,6 +728,52 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
             v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
+            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+
+            Console.WriteLine("Unoptimized:");
+            v.DumpCodeToConsole();
+            CommonStatementLifter.Optimize(v);
+            Console.WriteLine("");
+            Console.WriteLine("Optimized:");
+            v.DumpCodeToConsole();
+
+            // Make sure it is two if statements, nested.
+            var if1 = v.CodeBody.Statements.First() as StatementForLoop;
+            Assert.IsNotNull(if1, "if #1");
+            var if2 = if1.Statements.First() as StatementForLoop;
+            Assert.IsNotNull(if2, "if #2");
+
+            // Make sure the two loop variables are different.
+            Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
+        }
+
+        /// <summary>
+        /// 1. Loop 1 over array a
+        /// 2. Loop 2 over array a
+        /// 3.  if statement
+        /// 4.    something with iterator from Loop 1 and Loop 2.
+        /// 5. More statements.
+        /// 
+        /// You can't necessarily pull things out when they are nested identical loops - they may well be
+        /// there for a reason!
+        /// </summary>
+        [TestMethod]
+        public void TestNoCommonLifeNestedIdenticalLoopsIfStatementAfter()
+        {
+            var v = new GeneratedCode();
+
+            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            v.Add(loop1);
+            var lp1Scope = v.CurrentScope;
+            var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop2 = new StatementForLoop(loopP2, limit);
+            v.Add(loop2);
+            v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
+            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+
+            v.CurrentScope = lp1Scope;
             v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
 
             Console.WriteLine("Unoptimized:");

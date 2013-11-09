@@ -106,6 +106,61 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
+        /// Look through a code block, make sure all the data structures are in order.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static bool CheckCodeBlock(this IExecutableCode code)
+        {
+            // Check parent
+            foreach (var block in code.QueryCode())
+            {
+                var r = CheckQueryCodeBlock(block, null);
+                if (!r)
+                    return r;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Check a code block for proper linkages, etc.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static bool CheckCodeBlock(this GeneratedCode code)
+        {
+            return CheckQueryCodeBlock(code.CodeBody, null);
+        }
+
+        private static bool CheckQueryCodeBlock(IStatementCompound codeBlock, IStatement parent)
+        {
+            if (parent != codeBlock.Parent)
+            {
+                Console.WriteLine("ERROR: satement {0} does not point back to proper parent {1}", codeBlock.ToString(), parent.ToString());
+                return false;
+            }
+            foreach (var s in codeBlock.Statements)
+            {
+                if (s is IStatementCompound)
+                {
+                    var r = CheckQueryCodeBlock(s as IStatementCompound, codeBlock);
+                    if (!r)
+                        return r;
+                }
+                else
+                {
+                    if (s.Parent != codeBlock)
+                    {
+                        Console.WriteLine("ERROR: statement {0} does not point back to proper parent {1}", s.ToString(), codeBlock.ToString());
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Dump out info from a executable code dude.
         /// </summary>
         /// <param name="code"></param>
