@@ -1,7 +1,3 @@
-// <copyright file="CombinedGeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using Microsoft.ExtendedReflection.DataAccess;
@@ -9,6 +5,10 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// <copyright file="CombinedGeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -148,8 +148,8 @@ namespace LINQToTTreeLib
 
             var sst1 = st1 as Statements.StatementSimpleStatement;
             var sst2 = st2 as Statements.StatementSimpleStatement;
-            Assert.AreEqual("dude1", sst1.Line, "sst1");
-            Assert.AreEqual("dude2", sst2.Line, "sst2");
+            Assert.IsTrue("dude1" == sst1.Line || "dude1" == sst2.Line, "sst1");
+            Assert.IsTrue("dude2" == sst1.Line || "dude2" == sst2.Line, "sst2");
         }
     }
 }
