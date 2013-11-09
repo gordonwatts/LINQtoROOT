@@ -53,6 +53,8 @@ namespace LINQToTTreeLib.Statements
 
             if (!_statements.Remove(statement))
                 throw new ArgumentException("statement is not in this compound statement");
+
+            statement.Parent = null;
         }
 
         /// <summary>

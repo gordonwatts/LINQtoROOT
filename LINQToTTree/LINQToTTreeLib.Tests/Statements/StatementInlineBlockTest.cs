@@ -87,6 +87,19 @@ namespace LINQToTTreeLib.Statements
         }
 
         [TestMethod]
+        public void TestRemoveSingleStatementResetsParent()
+        {
+            var s = new StatementInlineBlock();
+            var s1 = new StatementSimpleStatement("one");
+            var s2 = new StatementSimpleStatement("two");
+            s.Add(s1);
+            s.Add(s2);
+
+            s.Remove(s1);
+            Assert.IsNull(s1.Parent, "s1 parent");
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestAddBeforeBad()
         {
