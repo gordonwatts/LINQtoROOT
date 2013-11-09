@@ -400,18 +400,32 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Helper class for casting. We need this otherwise we will have to have
-        /// a two-template argument for the castto operator. :(
+        /// Helper class for casting. When created, it will hold a FV, and use the "To"
+        /// method to cast it properly.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TSource">The type of the original object</typeparam>
+        /// <remarks>Need this because otherwise you will need to specify explicity both types at </remarks>
         public class CastCapture<TSource>
         {
+            /// <summary>
+            /// The value we are holding onto.
+            /// </summary>
             private readonly IFutureValue<TSource> _value;
-            public CastCapture(IFutureValue<TSource> v)
+
+            /// <summary>
+            /// Hold onto a value.
+            /// </summary>
+            /// <param name="v"></param>
+            internal CastCapture(IFutureValue<TSource> v)
             {
                 _value = v;
             }
 
+            /// <summary>
+            /// Return a FV that contains the cast held object.
+            /// </summary>
+            /// <typeparam name="TResult">The type for the result of the cast</typeparam>
+            /// <returns>A FV that holds onto the cast version of the original value</returns>
             public IFutureValue<TResult> To<TResult>()
                 where TResult : class
             {
@@ -423,12 +437,11 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Cast an IFutureValue from one class to another.
+        /// Cast an IFutureValue from one class to another. Apply the To operator to the result of this.
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
+        /// <typeparam name="TSource">The source type for the FV that will be cast</typeparam>
+        /// <param name="source">The origial future value that is to have its value re-cast</param>
+        /// <returns>A CastCapture object that you can use the To object to recast to the type you want</returns>
         public static CastCapture<TSource> Cast<TSource>(this IFutureValue<TSource> source)
         {
             return new CastCapture<TSource>(source);

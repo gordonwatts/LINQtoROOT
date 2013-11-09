@@ -219,7 +219,9 @@ namespace LINQToTTreeLib.ResultOperators
 
         class TestTranslatedNestedCompareAndSortHolderEvent
         {
+#pragma warning disable 0649
             public IEnumerable<TestTranslatedNestedCompareAndSortHolder> matches;
+#pragma warning restore 0649
         }
 
         /// <summary>
