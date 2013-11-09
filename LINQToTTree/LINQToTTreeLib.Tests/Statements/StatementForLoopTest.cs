@@ -1,15 +1,11 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Pex.Framework;
-using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Utils;
-using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework.Validation;
-using LINQToTTreeLib.Variables;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
@@ -87,6 +83,30 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsTrue(r, "combination should work");
             Assert.IsNull(loop1.Parent, "loop 1 parent");
             Assert.AreEqual(loop1, loop2.Parent, "Loop 2 parent");
+        }
+
+        [TestMethod]
+        public void TestCombineNestedForLoopOnOneSide()
+        {
+            var base1 = new StatementInlineBlock();
+            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            base1.Add(loop1);
+
+            var base2 = new StatementInlineBlock();
+            var limit2 = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP12 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop12 = new StatementForLoop(loopP12, limit);
+            base2.Add(loop12);
+            var loopP22 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop22 = new StatementForLoop(loopP22, limit);
+            loop12.Add(loop22);
+
+            var r = base1.TryCombineStatement(base2, new dummyOpt());
+            Assert.IsTrue(r, "combination should work");
+            Assert.AreEqual(base1, loop1.Parent, "loop 1 parent");
+            Assert.AreEqual(loop1, loop22.Parent, "Loop 2 parent");
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
