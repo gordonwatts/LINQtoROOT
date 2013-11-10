@@ -1,18 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace LINQToTTreeLib.Tests
 {
-    public class ntup
-    {
-        public int run;
-    }
-
     /// <summary>
     /// Test top level queires of various sorts!
     /// </summary>

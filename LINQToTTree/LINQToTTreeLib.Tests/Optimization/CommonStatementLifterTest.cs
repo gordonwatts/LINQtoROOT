@@ -625,7 +625,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestListCommonStatementOverIfWhenAlreadyThere()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res1 = from f in q
                        from r1 in f.valC1D
@@ -808,7 +808,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestAggregateStatementIndependentOfInnerLoop()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res1 = from f in q
                        select
@@ -847,7 +847,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestIfStatementsFromSkips()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res1 = from f in q
                        where f.valC1D.First() > 0
@@ -890,7 +890,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestCombinedLoopLiftReordering()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var r1 = from f in q
                      let l1 = f.valC1D.Where(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v) > 1).OrderByDescending(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v))

@@ -48,23 +48,6 @@ namespace LINQToTTreeLib
             return parser.GetParsedQuery(expr.Body);
         }
 
-        public class dummyntup
-        {
-            public int run;
-            public int[] vals;
-            public int[][] val2D;
-
-            [ArraySizeIndex("run")]
-            public int[] valC1D;
-
-            [ArraySizeIndex("20", IsConstantExpression = true)]
-            public int[] valC1DConst;
-
-            [ArraySizeIndex("20", IsConstantExpression = true, Index = 0)]
-            [ArraySizeIndex("run", Index = 1)]
-            public int[][] valC2D;
-        }
-
         [TestMethod]
         public void TestMEFQueryPassAlong()
         {

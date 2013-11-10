@@ -508,7 +508,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res = from f in q
                       from r1 in f.valC1D
@@ -547,7 +547,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res = from f in q
                       from r1 in f.valC1D
@@ -632,7 +632,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestLiftingHalfOfExpression()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res = from f in q
                       select new
