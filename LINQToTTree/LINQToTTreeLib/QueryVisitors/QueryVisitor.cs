@@ -192,6 +192,7 @@ namespace LINQToTTreeLib
                         if (result != null
                             && result.Item1)
                         {
+                            Debug.WriteLine("Identity Query being processed");
                             _codeEnv.SetResult(result.Item2);
                             return;
                         }
