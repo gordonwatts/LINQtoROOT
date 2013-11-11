@@ -199,9 +199,7 @@ namespace LINQToTTreeLib
                     }
                 }
 
-                //
                 // Have we seen this query model before? If so, perhaps we can just short-circuit this?
-                //
 
                 var cachedResult = _codeContext.GetReplacement(queryModel);
                 if (cachedResult != null)
@@ -214,9 +212,7 @@ namespace LINQToTTreeLib
                     }
                 }
 
-                //
                 // If we drop through here, then let the full machinery parse the thing
-                //
 
                 base.VisitQueryModel(queryModel);
             }
