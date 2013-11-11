@@ -47,7 +47,7 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="queryModel"></param>
         /// <param name="result"></param>
-        IVariableScopeHolder Add(Remotion.Linq.QueryModel queryModel, Expression result);
+        IVariableScopeHolder Add(QueryModel queryModel, Expression result);
 
         /// <summary>
         /// Returns the expression that has been stored under this name.
