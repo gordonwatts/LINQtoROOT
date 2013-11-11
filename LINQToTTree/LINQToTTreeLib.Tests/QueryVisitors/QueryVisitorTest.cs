@@ -2672,5 +2672,47 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
         }
 #endif
+
+        /// <summary>
+        /// Simple queries should have no functions.
+        /// </summary>
+        [TestMethod]
+        public void TestQMFNoFunction()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r = q.Count();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(0, query.QMFunctions.Count(), "# of functions");
+        }
+
+        [TestMethod]
+        public void TestQMFSimpleFunction()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r = q.Select(evt => evt.valC1D.Sum()).Sum();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QMFunctions.Count(), "# of functions");
+
+            // Some basic tests
+            var f = query.QMFunctions.First();
+            Assert.IsNotNull(f.Name, "function name");
+            Assert.AreEqual(0, f.Arguments.Count(), "The # of arguments.");
+
+            // Look for the call in the emitted source code.
+            Assert.IsTrue(query.DumpCode().Where(l => l.Contains(string.Format("= {0} (", f.Name))).Any(), "Looking for the function call");
+
+            // Look at the statements that were emitted.
+            Assert.IsNotNull(f.StatementBlock, "Statements");
+            var sb = f.StatementBlock;
+            Assert.AreEqual(1, sb.Statements.Count(), "Expect 1 real statement");
+            var st1 = sb.Statements.First();
+            Assert.IsInstanceOfType(st1, typeof(IStatementLoop), "Loop instance check");
+        }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using LINQToTTreeLib.Expressions;
+﻿using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.CPPCode;
@@ -9,6 +8,8 @@ using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -56,6 +57,10 @@ namespace LINQToTTreeLib.Tests
             LastQueryModel = queryModel;
 
             Result = new GeneratedCode();
+            foreach (var f in LINQToTTreeLib.QMFunctions.QMFuncFinder.FindQMFunctions(queryModel))
+            {
+                Result.Add(new QMFuncSource(f));
+            }
 
             if (!GlobalInitalized)
             {

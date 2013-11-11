@@ -1,5 +1,6 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
@@ -41,6 +42,15 @@ namespace LINQToTTreeLib
         public void AddOneLevelUp([PexAssumeUnderTest] GeneratedCode target, IDeclaredParameter var)
         {
             target.AddOneLevelUp(var);
+        }
+
+        [TestMethod]
+        public void AddQMFunc()
+        {
+            var gc = new GeneratedCode();
+            Assert.AreEqual(0, gc.QMFunctions.Count(), "# of functions before add");
+            gc.Add(new QMFuncSource());
+            Assert.AreEqual(1, gc.QMFunctions.Count(), "# of functions before add");
         }
 
         /// <summary>

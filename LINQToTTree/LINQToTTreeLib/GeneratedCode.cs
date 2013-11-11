@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using System;
@@ -522,6 +523,25 @@ namespace LINQToTTreeLib
                 }
                 writer.Close();
             }
+        }
+
+        /// <summary>
+        /// Track the list of functions we know about
+        /// </summary>
+        private List<QMFuncSource> _qmFunctions = new List<QMFuncSource>();
+
+        /// <summary>
+        /// All QM Methods that are going to be written up for this code.
+        /// </summary>
+        public IEnumerable<QMFuncSource> QMFunctions { get { return _qmFunctions; } }
+
+        /// <summary>
+        /// Add a new QueryModel function.
+        /// </summary>
+        /// <param name="qMFuncSource"></param>
+        internal void Add(QMFuncSource qMFuncSource)
+        {
+            _qmFunctions.Add(qMFuncSource);
         }
     }
 }
