@@ -2602,9 +2602,9 @@ namespace LINQToTTreeLib
             // future.
 
             var lines = query.DumpCode().ToArray();
-            Assert.AreEqual(1, lines.Where(l => l.Contains("aInt32_10=-1")).Count(), "aInt32_10 is a First/Last var");
+            Assert.AreEqual(1, lines.Where(l => l.Contains("aInt32_13=-1")).Count(), "aInt32_13 is a First/Last var");
 
-            Assert.AreEqual(3, lines.Where(l => l.Contains("aInt32_10")).Count(), "# of lines aInt32_10 is used");
+            Assert.AreEqual(3, lines.Where(l => l.Contains("aInt32_13")).Count(), "# of lines aInt32_13 is used");
         }
 
         /// <summary>
