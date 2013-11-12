@@ -65,17 +65,33 @@ namespace LINQToTTreeLib
         /// <param name="index"></param>
         public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
         {
+            // Look for a single-result processor
+
             var processor = _operators.FindScalarROProcessor(resultOperator.GetType());
             if (processor != null)
             {
                 var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
                 if (result != null)
                 {
+                    // If this was a QM function, then finish off processing, and replace the result as our function call.
+                    var qmSource = _codeEnv.FindQMFunction(queryModel);
+                    if (qmSource != null)
+                    {
+                        // Finish caching the code we reference here
+
+                        // Now, replace the result by a function call.
+                    }
+
+
+                    // Take the result and mark it as a result and return it.
+
                     _codeEnv.SetResult(result);
                     _scoping.Add(_codeContext.Add(queryModel, result));
                 }
                 return;
             }
+
+            // Look for a sequence processor
 
             var collectionProcessor = _operators.FindCollectionROProcessor(resultOperator.GetType());
             if (collectionProcessor != null)

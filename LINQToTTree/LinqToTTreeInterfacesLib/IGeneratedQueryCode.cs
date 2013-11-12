@@ -1,4 +1,5 @@
 ﻿
+using Remotion.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
@@ -167,5 +168,12 @@ namespace LinqToTTreeInterfacesLib
         /// Pop the stack up to the results level.
         /// </summary>
         void PopToResultsLevel();
+
+        /// <summary>
+        /// Return the QM Function reference for a query model.
+        /// </summary>
+        /// <param name="queryModel">The query model to look up</param>
+        /// <returns>The QM function sorce, or null if it isn't represented by a function</returns>
+        IQMFunctionSource FindQMFunction(QueryModel queryModel);
     }
 }

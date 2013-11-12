@@ -1,8 +1,10 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.QMFunctions;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using Remotion.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -542,6 +544,17 @@ namespace LINQToTTreeLib
         internal void Add(QMFuncSource qMFuncSource)
         {
             _qmFunctions.Add(qMFuncSource);
+        }
+
+        /// <summary>
+        /// Return a QM function if we can find a list.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <returns></returns>
+        public IQMFunctionSource FindQMFunction(QueryModel queryModel)
+        {
+            var qmText = FormattingQueryVisitor.Format(queryModel);
+            return QMFunctions.Where(ff => ff.Matches(qmText)).FirstOrDefault();
         }
     }
 }

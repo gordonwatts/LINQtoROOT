@@ -9,7 +9,7 @@ namespace LINQToTTreeLib.QMFunctions
     /// <summary>
     /// Everything needed to reference a function for a QueryModel, as well as emit it to C++
     /// </summary>
-    public class QMFuncSource
+    public class QMFuncSource : IQMFunctionSource
     {
         private QMFuncHeader _headerInfo;
 
@@ -47,5 +47,15 @@ namespace LINQToTTreeLib.QMFunctions
         /// The list of statements that actually process this guy.
         /// </summary>
         public IStatementCompound StatementBlock { get; private set; }
+
+        /// <summary>
+        /// Return true if the QM text translation matches the QM we are holding onto here.
+        /// </summary>
+        /// <param name="qmText"></param>
+        /// <returns></returns>
+        internal bool Matches(string qmText)
+        {
+            return _headerInfo.QMText == qmText;
+        }
     }
 }
