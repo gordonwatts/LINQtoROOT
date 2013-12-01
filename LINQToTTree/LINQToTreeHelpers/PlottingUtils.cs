@@ -1,10 +1,10 @@
 ﻿
+using LINQToTreeHelpers.FutureUtils;
+using LinqToTTreeInterfacesLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using LINQToTreeHelpers.FutureUtils;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTreeHelpers
 {
@@ -326,14 +326,16 @@ namespace LINQToTreeHelpers
         /// <param name="converter">Convert from an object of type U to a sequences of objects of type T</param>
         /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
         /// <returns>Plot spec able to run on a sequence</returns>
-        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix = null, Expression<Func<U, bool>> filter = null)
+        public static IPlotSpec<U> FromManyOfType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix = null, Expression<Func<U, bool>> filter = null)
         {
             string newNameFormat = source.NameFormat;
             string newTitleFormat = source.TitleFormat;
             if (argumentPrefix != null)
             {
-                newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
-                newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+                var nf = string.IsNullOrWhiteSpace(source.NameFormat) ? "{0}" : source.NameFormat;
+                var tf = string.IsNullOrWhiteSpace(source.TitleFormat) ? "{0}" : source.TitleFormat;
+                newNameFormat = string.Format(nf, argumentPrefix + "{0}");
+                newTitleFormat = string.Format(tf, argumentPrefix + " {0}");
             }
 
             // First, create the plotter that can deal with the sequence it self.
@@ -372,7 +374,7 @@ namespace LINQToTreeHelpers
         /// <param name="argumentPrefix">Prefex to add to the name and title arguments</param>
         /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
         /// <returns></returns>
-        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
+        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix = "", Expression<Func<U, bool>> filter = null)
         {
             string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
             string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
@@ -406,7 +408,7 @@ namespace LINQToTreeHelpers
         /// <param name="filter">A filter that will remove sequence items you don't want plotted</param>
         /// <returns></returns>
         public static IPlotSpec<T> MakePlotterSpec<T>(int nXBins, double XMin, double XMax, Expression<Func<T, double>> xGetter,
-            string nFormat = null, string tFormat = null, Expression<Func<T, bool>> filter = null)
+            string nFormat = "", string tFormat = "", Expression<Func<T, bool>> filter = null)
         {
             return new PlotSpec1D<T>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = xGetter, NameFormat = nFormat, TitleFormat = tFormat, Filter = filter };
         }
@@ -431,7 +433,7 @@ namespace LINQToTreeHelpers
             string nFormat = null, string tFormat = null, Expression<Func<T, bool>> filter = null)
         {
             var basePlotter = new PlotSpec1D<double>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = x => x, NameFormat = nFormat, TitleFormat = tFormat };
-            return basePlotter.FromType(xGetter, "", filter);
+            return basePlotter.FromManyOfType(xGetter, "", filter);
         }
 
         /// <summary>

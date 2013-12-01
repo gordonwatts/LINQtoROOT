@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using LINQToTTreeLib;
+﻿using LINQToTTreeLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace LINQToTreeHelpers.Tests
 {
@@ -86,7 +86,46 @@ namespace LINQToTreeHelpers.Tests
         {
             // Create the plot.
             var pRaw = PlottingUtils.MakePlotterSpec<TTreeQueryExecutorTest.TestNtupeArrJets>(10, 0.0, 10.0, v => v.myvectorofint, "dude", "fork");
-            var pEvent = pRaw.FromType((LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents evt) => evt.jets, "more jets");
+            var pEvent = pRaw.FromManyOfType((LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents evt) => evt.jets, "more jets");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(pEvent, "fork");
+
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
+        }
+
+        [TestMethod]
+        public void TestPlotFromTemplateNullNameAndDescrip()
+        {
+            // Create the plot.
+            var pRaw = PlottingUtils.MakePlotterSpec<TTreeQueryExecutorTest.TestNtupeArrJets>(10, 0.0, 10.0, v => v.myvectorofint);
+            var pEvent = pRaw.FromManyOfType((LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents evt) => evt.jets, "more jets");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(pEvent, "fork");
+
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
+        }
+
+        [TestMethod]
+        public void TestPlotFromTemplateSingleWithFromDataTranslation()
+        {
+            // Create the plot.
+            var pRaw1 = PlottingUtils.MakePlotterSpec<double>(10, 0.0, 10.0, v => v, "dude", "fork");
+            var pRaw = pRaw1.FromType((TTreeQueryExecutorTest.TestNtupeArrJets j) => j.myvectorofint);
+            var pEvent = pRaw.FromManyOfType((LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents evt) => evt.jets, "more jets");
 
             ///
             /// Get a simple query we can "play" with
