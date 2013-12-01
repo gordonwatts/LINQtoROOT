@@ -97,7 +97,9 @@ namespace LINQToTreeHelpers
             /// <returns></returns>
             public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<IEnumerable<T>> goodEvents)
             {
-                return goodEvents.SelectMany(seq => seq).FuturePlot(nameString, titleString, Plotter);
+                return goodEvents
+                    .SelectMany(seq => seq)
+                    .FuturePlot(nameString, titleString, Plotter);
             }
 
             /// <summary>
@@ -110,7 +112,9 @@ namespace LINQToTreeHelpers
             /// <returns></returns>
             public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<IEnumerable<T>> goodEvents)
             {
-                return goodEvents.SelectMany(seq => seq).Plot(nameString, titleString, Plotter);
+                return goodEvents
+                    .SelectMany(seq => seq)
+                    .Plot(nameString, titleString, Plotter);
             }
         }
 
@@ -179,6 +183,11 @@ namespace LINQToTreeHelpers
             public Expression<Func<T, bool>> Filter { get; set; }
 
             /// <summary>
+            /// Apply the weight to the Fill for the histogram.
+            /// </summary>
+            public Expression<Func<T, double>> Weight { get; set; }
+
+            /// <summary>
             /// The format for the plot name string.
             /// </summary>
             public string NameFormat { get; set; }
@@ -189,7 +198,7 @@ namespace LINQToTreeHelpers
             public string TitleFormat { get; set; }
 
             /// <summary>
-            /// Return a future value for the plot. Use the Plot method below rather than this directly.
+            /// Return a future value for the plot over the sequence of good events.
             /// </summary>
             /// <remarks>
             /// Assume that our events have already been filtered (see below).
@@ -200,7 +209,9 @@ namespace LINQToTreeHelpers
             /// <returns></returns>
             public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents)
             {
-                return goodEvents.FuturePlot(nameString, titleString, nbins, xmin, xmax, getter).ExtractValue(p => p as ROOTNET.Interface.NTH1);
+                return goodEvents
+                    .FuturePlot(nameString, titleString, nbins, xmin, xmax, getter, Weight)
+                    .ExtractValue(p => p as ROOTNET.Interface.NTH1);
             }
 
             /// <summary>
@@ -215,7 +226,8 @@ namespace LINQToTreeHelpers
             /// <returns></returns>
             public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
             {
-                return goodEvents.Plot(nameString, titleString, nbins, xmin, xmax, getter);
+                return goodEvents
+                    .Plot(nameString, titleString, nbins, xmin, xmax, getter, Weight);
             }
         }
 
@@ -392,7 +404,7 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Creates a plotter specification for a 1D (TH1F) plotter.
+        /// Creates a plotter specification for a 1D (TH1F) plotter for a double
         /// </summary>
         /// <remarks>
         /// The # of bins, xmin, and xmax are passed directly to root. If you want to have auto limits,
@@ -406,15 +418,17 @@ namespace LINQToTreeHelpers
         /// <param name="nFormat">The format specification for the plot name string</param>
         /// <param name="tFormat">The format specification for the plot title string</param>
         /// <param name="filter">A filter that will remove sequence items you don't want plotted</param>
+        /// <param name="weight">The weight to be applied during plotting</param>
         /// <returns></returns>
         public static IPlotSpec<T> MakePlotterSpec<T>(int nXBins, double XMin, double XMax, Expression<Func<T, double>> xGetter,
-            string nFormat = "", string tFormat = "", Expression<Func<T, bool>> filter = null)
+            string nFormat = "", string tFormat = "", Expression<Func<T, bool>> filter = null,
+            Expression<Func<T, double>> weight = null)
         {
-            return new PlotSpec1D<T>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = xGetter, NameFormat = nFormat, TitleFormat = tFormat, Filter = filter };
+            return new PlotSpec1D<T>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = xGetter, NameFormat = nFormat, TitleFormat = tFormat, Filter = filter, Weight = weight };
         }
 
         /// <summary>
-        /// Creates a plotter specification for a 1D (TH1F) plotter.
+        /// Creates a plotter specification for a 1D (TH1F) plotter for a sequence of doubles
         /// </summary>
         /// <remarks>
         /// The # of bins, xmin, and xmax are passed directly to root. If you want to have auto limits,
