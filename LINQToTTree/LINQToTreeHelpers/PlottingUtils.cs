@@ -283,6 +283,11 @@ namespace LINQToTreeHelpers
             public Expression<Func<T, bool>> Filter { get; set; }
 
             /// <summary>
+            /// Weight function that is applied to each Fill
+            /// </summary>
+            public Expression<Func<T, double>> Weight { get; set; }
+
+            /// <summary>
             /// The string.Format string that represents the name of the plot.
             /// </summary>
             public string NameFormat { get; set; }
@@ -301,8 +306,9 @@ namespace LINQToTreeHelpers
             /// <returns></returns>
             public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents)
             {
-                return goodEvents.FuturePlot(nameString, titleString, nxbins, xmin, xmax, xgetter,
-                    nybins, ymin, ymax, ygetter).ExtractValue(p => p as ROOTNET.Interface.NTH1);
+                return goodEvents
+                    .FuturePlot(nameString, titleString, nxbins, xmin, xmax, xgetter, nybins, ymin, ymax, ygetter, Weight)
+                    .ExtractValue(p => p as ROOTNET.Interface.NTH1);
             }
 
             /// <summary>
@@ -314,8 +320,8 @@ namespace LINQToTreeHelpers
             /// <returns></returns>
             public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
             {
-                return goodEvents.Plot(nameString, titleString, nxbins, xmin, xmax, xgetter,
-                    nybins, ymin, ymax, ygetter);
+                return goodEvents
+                    .Plot(nameString, titleString, nxbins, xmin, xmax, xgetter, nybins, ymin, ymax, ygetter, Weight);
             }
         }
 
@@ -469,12 +475,15 @@ namespace LINQToTreeHelpers
         /// <param name="nameFormat">The format specification for the plot name string</param>
         /// <param name="titleFormat">The format specification for the title string</param>
         /// <param name="filter">A filter that will remove sequence items you don't want plotted</param>
+        /// <param name="weight">Weight function to be applied to each item filled</param>
         /// <returns></returns>
         public static IPlotSpec<T> MakePlotterSpec<T>(int nXBins, double XMin, double XMax, Expression<Func<T, double>> xGetter,
             int nYBins, double YMin, double YMax, Expression<Func<T, double>> yGetter,
-            string nameFormat = null, string titleFormat = null, Expression<Func<T, bool>> filter = null)
+            string nameFormat = null, string titleFormat = null,
+            Expression<Func<T, bool>> filter = null,
+            Expression<Func<T, double>> weight = null)
         {
-            return new PlotSpec2D<T>() { nxbins = nXBins, xmin = XMin, xmax = XMax, xgetter = xGetter, nybins = nYBins, ymin = YMin, ymax = YMax, ygetter = yGetter, NameFormat = nameFormat, TitleFormat = titleFormat, Filter = filter };
+            return new PlotSpec2D<T>() { nxbins = nXBins, xmin = XMin, xmax = XMax, xgetter = xGetter, nybins = nYBins, ymin = YMin, ymax = YMax, ygetter = yGetter, NameFormat = nameFormat, TitleFormat = titleFormat, Filter = filter, Weight = weight };
         }
 
         /// <summary>

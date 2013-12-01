@@ -82,6 +82,27 @@ namespace LINQToTreeHelpers.Tests
         }
 
         [TestMethod]
+        public void TestPlotFromTemplate2DWithWeight()
+        {
+            // Create the plot
+
+            var p = PlottingUtils.MakePlotterSpec<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupe>(10, 0.0, 10.0, evt => evt.run,
+                10, 0.0, 10.0, evt => evt.run,
+                "dude", "fork", weight: evt => 0.5);
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupe>();
+            var r = q.Plot(p, "fork");
+
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("Fill(((double)(*this).run),((double)(*this).run),0.5)")).Any(), "no line contains the proper size call!");
+        }
+
+        [TestMethod]
         public void TestPlotFromTemplateForTranslated()
         {
             // Create the plot
