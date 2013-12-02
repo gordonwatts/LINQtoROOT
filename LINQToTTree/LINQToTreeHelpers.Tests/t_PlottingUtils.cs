@@ -59,7 +59,7 @@ namespace LINQToTreeHelpers.Tests
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("Fill(((double)(*this).run),1.0)")).Any(), "no line contains the proper size call!");
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("Fill(((double)(*this).run),1.0*1.0)")).Any(), "no line contains the proper size call!");
         }
 
         [TestMethod]
@@ -78,7 +78,7 @@ namespace LINQToTreeHelpers.Tests
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("Fill(((double)(*this).run),0.5)")).Any(), "no line contains the proper size call!");
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("Fill(((double)(*this).run),0.5*1.0)")).Any(), "no line contains the proper size call!");
         }
 
         [TestMethod]
@@ -99,7 +99,7 @@ namespace LINQToTreeHelpers.Tests
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("Fill(((double)(*this).run),((double)(*this).run),0.5)")).Any(), "no line contains the proper size call!");
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("Fill(((double)(*this).run),((double)(*this).run),0.5*1.0)")).Any(), "no line contains the proper size call!");
         }
 
         [TestMethod]
@@ -177,6 +177,26 @@ namespace LINQToTreeHelpers.Tests
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
+        }
+
+        [TestMethod]
+        public void TestPlotFromTemplateFromTypeWithWeight()
+        {
+            // Create the plot.
+            var pRaw1 = PlottingUtils.MakePlotterSpec<double>(10, 0.0, 10.0, v => v, "dude", "fork");
+            var pRaw = pRaw1.FromType((TTreeQueryExecutorTest.TestNtupeArrJets j) => j.myvectorofint, weight: j => 0.5);
+            var pEvent = pRaw.FromManyOfType((LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents evt) => evt.jets, "more jets");
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(pEvent, "fork");
+
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("0.5")).Any(), "no line contains the proper size call!");
         }
 
         [TestMethod]
