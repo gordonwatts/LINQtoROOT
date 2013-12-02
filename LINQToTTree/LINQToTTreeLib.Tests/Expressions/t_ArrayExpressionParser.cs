@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
@@ -9,6 +6,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Parsing.Structure;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -108,6 +109,18 @@ namespace LINQToTTreeLib.Tests
             var cc = new CodeContext();
             IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
             ArrayExpressionParser.ParseArrayExpression(s, Expression.Variable(typeof(int[]), "d"), gc, cc, MEFUtilities.MEFContainer);
+            Assert.IsNotNull(cc.LoopVariable, "loop variable");
+        }
+
+        [TestMethod]
+        public void TestRunForConvertedArray()
+        {
+            var gc = new GeneratedCode();
+            var cc = new CodeContext();
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
+            var arr = Expression.Variable(typeof(int[]), "d");
+            var cvt = Expression.Convert(arr, typeof(IEnumerable<int>));
+            ArrayExpressionParser.ParseArrayExpression(s, cvt, gc, cc, MEFUtilities.MEFContainer);
             Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }
 
