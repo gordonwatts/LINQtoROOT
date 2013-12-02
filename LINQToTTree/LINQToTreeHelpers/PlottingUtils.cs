@@ -442,6 +442,34 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
+        /// Modify a plot by adding a weight or a filter
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="argumentPrefix"></param>
+        /// <param name="filter"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static IPlotSpec<T> FromType<T>(this IPlotSpec<T> source, string argumentPrefix = "",
+            Expression<Func<T, bool>> filter = null, Expression<Func<T, double>> weight = null)
+        {
+            string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
+            string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+
+            var result = new PlotSpecConverter<T, T>
+            {
+                NameFormat = newNameFormat,
+                TitleFormat = newTitleFormat,
+                Plotter = source,
+                Converter = e => e,
+                Filter = filter,
+                Weight = weight == null ? e => 1.0 : weight
+            };
+
+            return result;
+        }
+
+        /// <summary>
         /// Creates a plotter specification for a 1D (TH1F) plotter for a double
         /// </summary>
         /// <remarks>
