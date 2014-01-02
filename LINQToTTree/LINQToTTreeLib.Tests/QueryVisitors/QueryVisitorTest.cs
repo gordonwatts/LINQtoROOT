@@ -1168,8 +1168,12 @@ namespace LINQToTTreeLib
             var code = DummyQueryExectuor.FinalResult;
             code.DumpCodeToConsole();
 
-            var s1 = code.CodeBody.Statements.First() as IStatementLoop;
-            var s2 = code.CodeBody.Statements.Skip(1).First();
+            Assert.AreEqual(1, code.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, code.QMFunctions.Count(), "# of functions");
+            var ff = code.QMFunctions.First();
+            var s1 = ff.StatementBlock.Statements.First() as IStatementLoop;
+            Assert.IsNotNull(s1, "firs tstatement in the block");
+            var s2 = ff.StatementBlock.Statements.Skip(1).First();
 
             Assert.IsNotNull(s1, "loop");
             Assert.IsInstanceOfType(s2, typeof(Statements.StatementThrowIfTrue), "check for average not zero");
