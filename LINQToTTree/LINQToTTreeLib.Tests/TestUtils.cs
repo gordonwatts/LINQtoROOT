@@ -81,7 +81,7 @@ namespace LINQToTTreeLib.Tests
                 {
                     yield return string.Format("  {0}", line);
                 }
-                yield return "";
+                yield return string.Format("  return {0}", f.Result.ToString());
             }
 
             if (code.ResultValue == null)

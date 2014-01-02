@@ -66,12 +66,12 @@ namespace LINQToTTreeLib.QMFunctions
         /// The expression that gathers up the result after the statemenet body code has
         /// been run.
         /// </summary>
-        private Expression _result;
+        public Expression Result { get; private set; }
 
         /// <summary>
         /// Get the type of this function's return.
         /// </summary>
-        public Type ResultType { get { return _result.Type; } }
+        public Type ResultType { get { return Result.Type; } }
 
         /// <summary>
         /// The function call that will invoke us.
@@ -87,7 +87,7 @@ namespace LINQToTTreeLib.QMFunctions
         public void SetCodeBody(IStatementCompound statements, Expression resultExpression)
         {
             StatementBlock = statements;
-            _result = resultExpression;
+            Result = resultExpression;
         }
 
         /// <summary>
