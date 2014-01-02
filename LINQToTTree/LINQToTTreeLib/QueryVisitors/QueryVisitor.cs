@@ -173,6 +173,9 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitQueryModel(QueryModel queryModel)
         {
+            Debug.WriteLine("VisitQueryModel: {0}{1}", queryModel.ToString(), "");
+            Debug.Indent();
+
             // If this is a QM function we are referencing, then process it as such.
             var qmSource = _codeEnv.FindQMFunction(queryModel);
             if (qmSource == null)
@@ -183,6 +186,7 @@ namespace LINQToTTreeLib
             {
                 VisitQueryModelCache(queryModel, qmSource);
             }
+            Debug.Unindent();
         }
 
         /// <summary>
@@ -195,9 +199,12 @@ namespace LINQToTTreeLib
             // If we already have the answer for this cache, then we should just re-call the routine.
             if (qmSource.StatementBlock != null)
             {
-                throw new NotImplementedException();
-                //_codeEnv.Add(qmFunctionCall(qmSource)); // Protected to make sure we test correctly.
+                Debug.WriteLine("Using previously cached QM result");
+                _codeEnv.SetResult(qmFunctionCall(qmSource));
+                return;
             }
+            Debug.WriteLine("Cache: Gathering Data");
+            Debug.Indent();
 
             // Since we don't have it cached, we need to re-run things, and carefully watch for
             // everything new that shows up. What shows up will be what we declare as the function
@@ -216,6 +223,8 @@ namespace LINQToTTreeLib
             qmSource.SetCodeBody(topLevelStatement, _codeEnv.ResultValue);
             _codeEnv.Remove(topLevelStatement);
             _codeEnv.SetResult(qmFunctionCall(qmSource));
+
+            Debug.Unindent();
         }
 
         /// <summary>
@@ -246,9 +255,6 @@ namespace LINQToTTreeLib
 
             try
             {
-                Debug.WriteLine("VisitQueryModel: {0}{1}", queryModel.ToString(), "");
-                Debug.Indent();
-
                 //
                 // If the query model is something that is trivial, then
                 // perhaps there is a short-cut we can take?
@@ -291,7 +297,6 @@ namespace LINQToTTreeLib
             finally
             {
                 _codeContext.RestoreQuerySourceLookups(cachedReferencedQS);
-                Debug.Unindent();
             }
         }
 
