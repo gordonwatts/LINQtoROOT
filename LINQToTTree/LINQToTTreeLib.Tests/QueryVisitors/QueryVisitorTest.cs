@@ -579,7 +579,8 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             var st = query.QueryCode().First();
             Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
-            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 2);
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            //CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 2);
         }
 
         /// <summary>
@@ -1729,13 +1730,16 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
-            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
-            Assert.IsNotNull(statement, "statement isn't a compound");
-            Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
-            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IStatementCompound;
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var ifstatement = query.QueryCode().First().Statements.First() as IStatementCompound;
             Assert.IsNotNull(ifstatement, "if statement not right");
             Assert.AreEqual(2, ifstatement.Statements.Count(), "# of counts inside the if statement");
+
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            var statement = query.Functions.First().StatementBlock.Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
+
         }
 
         [TestMethod]
@@ -1752,7 +1756,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         /// <summary>
@@ -1814,7 +1819,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1831,7 +1837,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1865,7 +1872,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements (just a straight if)");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            Assert.AreEqual(1, query.DumpCode().Where(l => l.Contains(">5")).Count(), "# of > 5 if statements");
         }
 
         [TestMethod]
@@ -1882,7 +1891,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1899,7 +1909,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1921,7 +1932,8 @@ namespace LINQToTTreeLib
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1943,7 +1955,8 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             var st = query.QueryCode().First();
-            Assert.AreEqual(4, st.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, st.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1959,7 +1972,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query Blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1976,7 +1990,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -2001,7 +2016,8 @@ namespace LINQToTTreeLib
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of guys");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of guys");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -2027,7 +2043,8 @@ namespace LINQToTTreeLib
             // Check that the combine actually worked well!!
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             // First for loop to crord, 2 to test, and then the two aggregates
-            Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -2120,15 +2137,16 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
 
             var forstatement = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
-            Assert.IsNotNull(forstatement, "for statement isn't a block!");
-            Assert.AreEqual(1, forstatement.Statements.Count(), "# of statements in the for loop");
+            Assert.IsNotNull(forstatement, "if statement isn't a block!");
+            Assert.AreEqual(2, forstatement.Statements.Count(), "# of statements in the for loop");
 
-            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            var ifstatement = query.Functions.First().StatementBlock.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(ifstatement, "if statement pointer");
-            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
+            Assert.AreEqual(1, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
         }
 
         [TestMethod]
@@ -2164,15 +2182,17 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
 
-            var forstatement = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
+            var ifstatement = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(ifstatement, "if statement pointer");
+            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
+
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            var forstatement = query.Functions.First().StatementBlock.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forstatement, "for statement isn't a block!");
             Assert.AreEqual(1, forstatement.Statements.Count(), "# of statements in the for loop");
 
-            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
-            Assert.IsNotNull(ifstatement, "if statement pointer");
-            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
         }
 
         [TestMethod]
@@ -2442,7 +2462,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
