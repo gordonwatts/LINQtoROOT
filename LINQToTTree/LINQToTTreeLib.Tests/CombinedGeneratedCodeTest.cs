@@ -189,6 +189,42 @@ namespace LINQToTTreeLib
             Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2.Name)).Any(), "The new function was still in there");
         }
 
+        [TestMethod]
+        public void CombineTwoTwoLevelFunctions()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var f1 = GenerateFunction2();
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var f2 = GenerateFunction2();
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+
+            q1.Add(f1[0]);
+            q1.Add(f1[1]);
+            q1.Add(s1);
+            q1.SetResult(r1);
+
+            q2.Add(f2[0]);
+            q2.Add(f2[1]);
+            q2.Add(s2);
+            q2.SetResult(r2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            target.DumpCodeToConsole();
+
+            Assert.AreEqual(2, target.Functions.Count(), "# of functions should be combined to 2");
+            Assert.AreEqual(1, target.QueryCode().Count(), "# of query code blocks");
+            Assert.AreEqual(2, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2[0].Name)).Any(), "The new function was still in there");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2[1].Name)).Any(), "The new function was still in there");
+        }
+
         /// <summary>
         /// Generate a function with no arguments that returns an int given that name. The
         /// actual statement is a very simple constant.
@@ -207,6 +243,22 @@ namespace LINQToTTreeLib
             f.SetCodeBody(inlineblock, p);
 
             return f;
+        }
+
+        private QMFuncSource[] GenerateFunction2()
+        {
+            var fsub = GenerateFunction();
+
+            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = null, QMText = "this is an expressoin with a subfunc" };
+            var f = new QMFuncSource(h);
+
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var st = new StatementAssign(p, new ValSimple(fsub.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var inlineblock = new StatementInlineBlock();
+            inlineblock.Add(st);
+            f.SetCodeBody(inlineblock, p);
+
+            return new QMFuncSource[] { fsub, f };
         }
     }
 }

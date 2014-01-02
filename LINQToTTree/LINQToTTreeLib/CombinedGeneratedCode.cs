@@ -49,11 +49,10 @@ namespace LINQToTTreeLib
             }
             else
             {
-
                 var matchedFunctions =
-                    from oldFunc in _functions
                     from newFunc in code.Functions
-                    group Tuple.Create(oldFunc, newFunc) by oldFunc.Matches(newFunc);
+                    let oldFunc = _functions.Where(f => f.Matches(newFunc)).FirstOrDefault()
+                    group Tuple.Create(oldFunc, newFunc) by oldFunc != null;
 
                 // No match means we add it to our list of functions directly.
                 // Those that don't have to have the renaming propagated through out!
