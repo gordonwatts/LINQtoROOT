@@ -97,5 +97,10 @@ namespace LINQToTTreeLib.QMFunctions
         {
             get { return _header.Arguments; }
         }
+
+        /// <summary>
+        /// Return the QM text
+        /// </summary>
+        public string QueryModelText { get { return _header.QMText; } }
     }
 }
