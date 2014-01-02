@@ -226,7 +226,7 @@ namespace LINQToTTreeLib
         private Expression qmFunctionCall(IQMFunctionSource qmSource)
         {
             if (qmSource.Arguments.Any())
-                throw new NotImplementedException();
+                throw new NotImplementedException("Can only deal with internal functions with no arguments.");
 
             var call = string.Format("{0} ()", qmSource.Name);
             return Expression.Parameter(qmSource.ResultType, call);

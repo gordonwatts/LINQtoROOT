@@ -89,5 +89,13 @@ namespace LINQToTTreeLib.QMFunctions
             StatementBlock = statements;
             _result = resultExpression;
         }
+
+        /// <summary>
+        /// Get the list of arguments for this function
+        /// </summary>
+        IEnumerable<object> IQMFunctionSource.Arguments
+        {
+            get { return _header.Arguments; }
+        }
     }
 }
