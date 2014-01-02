@@ -566,10 +566,12 @@ namespace LINQToTTreeLib
             return QMFunctions.Where(ff => ff.Matches(qmText)).FirstOrDefault();
         }
 
-
+        /// <summary>
+        /// Get the list of functions, as exectuable sources.
+        /// </summary>
         public IEnumerable<IQMFuncExecutable> Functions
         {
-            get { throw new NotImplementedException(); }
+            get { return QMFunctions; }
         }
     }
 }

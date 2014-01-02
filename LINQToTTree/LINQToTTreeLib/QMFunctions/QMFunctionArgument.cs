@@ -1,7 +1,8 @@
 ﻿
+using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib.QMFunctions
 {
-    public class QMFunctionArgument
+    public class QMFunctionArgument : IQMArgument
     {
         private object a;
 

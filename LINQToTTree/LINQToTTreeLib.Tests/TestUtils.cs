@@ -201,6 +201,28 @@ namespace LINQToTTreeLib.Tests
                 };
             }
 
+            foreach (var f in code.Functions)
+            {
+                yield return (string.Format("Function: {0}", f.Name));
+                string rtype = "<not set!>";
+                if (f.Result != null)
+                    rtype = f.ResultType.Name;
+                yield return (string.Format("  {0} {1} ()", rtype, f.Name));
+                if (f.StatementBlock != null)
+                {
+                    foreach (var line in f.StatementBlock.DumpCode())
+                    {
+                        yield return string.Format("  {0}", line);
+                    }
+                }
+                else
+                {
+                    yield return "  ** No statements ever set";
+                }
+                if (f.Result != null)
+                    yield return string.Format("  return {0}", f.Result.ToString());
+            }
+
             if (code.ResultValues == null)
             {
                 yield return ("Result Variable: <not set (null)>");

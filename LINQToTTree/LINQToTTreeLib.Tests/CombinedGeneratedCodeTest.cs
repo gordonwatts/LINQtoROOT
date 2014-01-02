@@ -2,6 +2,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
 using Microsoft.ExtendedReflection.DataAccess;
 using Microsoft.Pex.Framework;
@@ -161,12 +162,12 @@ namespace LINQToTTreeLib
             var q1 = new GeneratedCode();
             var q2 = new GeneratedCode();
 
-            var f1 = GenerateFunction("f1");
+            var f1 = GenerateFunction();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple("f1()", typeof(int)), new IDeclaredParameter[] { });
-            var f2 = GenerateFunction("f3");
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var f2 = GenerateFunction();
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple("f3()", typeof(int)), new IDeclaredParameter[] { });
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)), new IDeclaredParameter[] { });
 
             q1.Add(f1);
             q1.Add(s1);
@@ -180,9 +181,12 @@ namespace LINQToTTreeLib
             target.AddGeneratedCode(q1);
             target.AddGeneratedCode(q2);
 
+            target.DumpCodeToConsole();
+
             Assert.AreEqual(1, target.Functions.Count(), "# of functions should be combined to 1");
             Assert.AreEqual(1, target.QueryCode().Count(), "# of query code blocks");
-            Assert.AreEqual(1, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+            Assert.AreEqual(2, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2.Name)).Any(), "The new function was still in there");
         }
 
         /// <summary>
@@ -191,7 +195,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="fname"></param>
         /// <returns></returns>
-        private QMFuncSource GenerateFunction(string fname)
+        private QMFuncSource GenerateFunction()
         {
             var h = new QMFuncHeader() { Arguments = new object[] { }, QM = null, QMText = "this is an expressoin" };
             var f = new QMFuncSource(h);

@@ -87,6 +87,7 @@
     <Compile Include="IExpressionHolder.cs" />
     <Compile Include="IFutureValue.cs" />
     <Compile Include="IGeneratedQueryCode.cs" />
+    <Compile Include="IQMArgument.cs" />
     <Compile Include="IQMFuncExecutable.cs" />
     <Compile Include="IQMFunctionSource.cs" />
     <Compile Include="IQueryResultCache.cs" />

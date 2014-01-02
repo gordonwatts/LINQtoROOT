@@ -45,7 +45,7 @@ namespace LINQToTTreeLib.QMFunctions
         /// <summary>
         /// Returns an in-order list of arguments used by this function.
         /// </summary>
-        public IEnumerable<QMFunctionArgument> Arguments { get; private set; }
+        public IEnumerable<IQMArgument> Arguments { get; private set; }
 
         /// <summary>
         /// The list of statements that actually process this guy.
@@ -91,16 +91,28 @@ namespace LINQToTTreeLib.QMFunctions
         }
 
         /// <summary>
-        /// Get the list of arguments for this function
-        /// </summary>
-        IEnumerable<object> IQMFunctionSource.Arguments
-        {
-            get { return _header.Arguments; }
-        }
-
-        /// <summary>
         /// Return the QM text
         /// </summary>
         public string QueryModelText { get { return _header.QMText; } }
+
+        /// <summary>
+        /// See if this executable function matches another one.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool Matches(IQMFuncExecutable other)
+        {
+            return QueryModelText == other.QueryModelText;
+        }
+
+        /// <summary>
+        /// Rename all references to this function in our block.
+        /// </summary>
+        /// <param name="oldfname"></param>
+        /// <param name="newfname"></param>
+        public void RenameFunctionReference(string oldfname, string newfname)
+        {
+            StatementBlock.RenameVariable(oldfname, newfname);
+        }
     }
 }
