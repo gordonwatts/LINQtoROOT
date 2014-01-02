@@ -10,6 +10,7 @@ using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -60,7 +61,8 @@ namespace LINQToTTreeLib.Tests
             Result = new GeneratedCode();
             foreach (var f in LINQToTTreeLib.QMFunctions.QMFuncFinder.FindQMFunctions(queryModel))
             {
-                Result.Add(new QMFuncSource(f));
+                if (!f.Arguments.Any())
+                    Result.Add(new QMFuncSource(f));
             }
 
             if (!_doExecution)
