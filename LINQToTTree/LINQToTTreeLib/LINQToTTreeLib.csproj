@@ -171,6 +171,7 @@
     <Compile Include="Optimization\Optimizer.cs" />
     <Compile Include="Optimization\StatementLifter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QMFunctions\CodeUpHelpers.cs" />
     <Compile Include="QMFunctions\QMFuncFinder.cs" />
     <Compile Include="QMFunctions\QMFuncHeader.cs" />
     <Compile Include="QMFunctions\QMFuncSource.cs" />

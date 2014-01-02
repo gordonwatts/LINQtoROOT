@@ -109,11 +109,21 @@ namespace LINQToTTreeLib.Tests
         /// <param name="code"></param>
         public static void DumpCodeToConsole(this GeneratedCode code)
         {
-            foreach (var line in code.DumpCode())
+            code.DumpCode().DumpToConsole();
+        }
+
+        /// <summary>
+        /// Dump lines to the console.
+        /// </summary>
+        /// <param name="lines"></param>
+        public static void DumpToConsole(this IEnumerable<string> lines)
+        {
+            foreach (var item in lines)
             {
-                Console.WriteLine(line);
+                Console.WriteLine(item);
             }
         }
+
         /// <summary>
         /// Dump the code to the console - for debugging a test...
         /// </summary>

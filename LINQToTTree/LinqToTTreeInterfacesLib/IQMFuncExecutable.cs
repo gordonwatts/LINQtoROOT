@@ -47,6 +47,5 @@ namespace LinqToTTreeInterfacesLib
         /// Null until defined.
         /// </summary>
         IStatementCompound StatementBlock { get; }
-
     }
 }

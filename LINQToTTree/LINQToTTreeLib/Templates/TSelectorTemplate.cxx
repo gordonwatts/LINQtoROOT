@@ -101,6 +101,15 @@ private:
 
 #set ( $blockIndex = $blockIndex + 1 )
 #end
+
+	///
+	/// The member functions that the query blocks will be calling
+	///
+
+#foreach(line in $QueryMemberFunctions)
+	$s
+#end
+
 	/// Here are the variables that hold things we need to keep around
 	/// between entries of the ntuple. So things like the result that has
 	/// to be filled on each entry.

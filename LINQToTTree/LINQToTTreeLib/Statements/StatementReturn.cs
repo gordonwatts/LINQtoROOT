@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Statements
 
         public IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("return {0}", _rtnValue);
+            yield return string.Format("return {0};", _rtnValue);
         }
 
         public void RenameVariable(string originalName, string newName)

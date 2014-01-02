@@ -3,6 +3,7 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.Tests.QMFunctions;
 using LINQToTTreeLib.Variables;
 using Microsoft.ExtendedReflection.DataAccess;
 using Microsoft.Pex.Framework;
@@ -165,10 +166,10 @@ namespace LINQToTTreeLib
             var q1 = new GeneratedCode();
             var q2 = new GeneratedCode();
 
-            var f1 = GenerateFunction();
+            var f1 = QMFuncUtils.GenerateFunction();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)), new IDeclaredParameter[] { });
-            var f2 = GenerateFunction();
+            var f2 = QMFuncUtils.GenerateFunction();
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)), new IDeclaredParameter[] { });
 
@@ -237,7 +238,7 @@ namespace LINQToTTreeLib
             var f1 = GenerateFunction2();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
-            var f2 = GenerateFunction();
+            var f2 = QMFuncUtils.GenerateFunction();
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)), new IDeclaredParameter[] { });
 
@@ -268,7 +269,7 @@ namespace LINQToTTreeLib
             var q1 = new GeneratedCode();
             var q2 = new GeneratedCode();
 
-            var f1 = GenerateFunction();
+            var f1 = QMFuncUtils.GenerateFunction();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)), new IDeclaredParameter[] { });
             var f2 = GenerateFunction2();
@@ -296,32 +297,9 @@ namespace LINQToTTreeLib
             Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2[0].Name)).Any(), "The new function was still in there");
         }
 
-        /// <summary>
-        /// Generate a function with no arguments that returns an int given that name. The
-        /// actual statement is a very simple constant.
-        /// </summary>
-        /// <param name="fname"></param>
-        /// <returns></returns>
-        private QMFuncSource GenerateFunction()
-        {
-            int[] ints = new int[10];
-            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = new QueryModel(new MainFromClause("i", typeof(int), Expression.Constant(ints)), new SelectClause(Expression.Constant(1))) };
-            h.QMText = h.QM.ToString();
-            var f = new QMFuncSource(h);
-
-            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var st = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { });
-            var inlineblock = new StatementInlineBlock();
-            inlineblock.Add(st);
-            inlineblock.Add(new StatementReturn(p));
-            f.SetCodeBody(inlineblock);
-
-            return f;
-        }
-
         private QMFuncSource[] GenerateFunction2()
         {
-            var fsub = GenerateFunction();
+            var fsub = QMFuncUtils.GenerateFunction();
 
             int[] ints = new int[10];
             var h = new QMFuncHeader() { Arguments = new object[] { }, QM = new QueryModel(new MainFromClause("i", typeof(int), Expression.Constant(ints)), new SelectClause(Expression.Constant(10))) };

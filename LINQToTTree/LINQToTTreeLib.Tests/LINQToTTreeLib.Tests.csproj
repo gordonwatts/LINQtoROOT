@@ -355,6 +355,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QMFunctions\QMFuncFinderTest.cs" />
+    <Compile Include="QMFunctions\CodeItUpHelpersTest.cs" />
+    <Compile Include="QMFunctions\QMFuncUtils.cs" />
     <Compile Include="QueriableDummy.cs" />
     <Compile Include="QueriableDummyNoExe.cs" />
     <Compile Include="QueryResultCacheTest.CacheItem.g.cs">
