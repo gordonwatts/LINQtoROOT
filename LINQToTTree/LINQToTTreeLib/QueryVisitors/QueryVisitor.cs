@@ -246,7 +246,7 @@ namespace LINQToTTreeLib
         /// Turn a query model into code.
         /// </summary>
         /// <param name="queryModel"></param>
-        public void VisitQueryModelNoCache(QueryModel queryModel)
+        private void VisitQueryModelNoCache(QueryModel queryModel)
         {
             // Cache the referenced query expressions and restore them at the end.
 
