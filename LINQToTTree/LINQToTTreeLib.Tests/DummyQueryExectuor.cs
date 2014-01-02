@@ -24,8 +24,9 @@ namespace LINQToTTreeLib.Tests
         /// Create the dummy query executor.
         /// </summary>
         /// <param name="baseType">The base type we are looping over</param>
-        public DummyQueryExectuor(Type baseType)
+        public DummyQueryExectuor(Type baseType, bool doExecution = true)
         {
+            _doExecution = doExecution;
             _baseType = baseType;
         }
 
@@ -61,6 +62,9 @@ namespace LINQToTTreeLib.Tests
             {
                 Result.Add(new QMFuncSource(f));
             }
+
+            if (!_doExecution)
+                return;
 
             if (!GlobalInitalized)
             {
@@ -125,5 +129,6 @@ namespace LINQToTTreeLib.Tests
         /// The type of the master ntuple object.
         /// </summary>
         private Type _baseType;
+        private bool _doExecution;
     }
 }

@@ -1430,8 +1430,6 @@ namespace LINQToTTreeLib
             var cnt = allcombos.Where(evt => evt.Count() > 5).Count();
             var code = DummyQueryExectuor.FinalResult;
             code.DumpCodeToConsole();
-
-            Assert.Inconclusive();
         }
 
         [TestMethod]

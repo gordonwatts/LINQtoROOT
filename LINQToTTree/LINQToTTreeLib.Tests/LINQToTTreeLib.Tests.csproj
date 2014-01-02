@@ -356,6 +356,7 @@
     <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QMFunctions\QMFuncFinderTest.cs" />
     <Compile Include="QueriableDummy.cs" />
+    <Compile Include="QueriableDummyNoExe.cs" />
     <Compile Include="QueryResultCacheTest.CacheItem.g.cs">
       <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
     </Compile>

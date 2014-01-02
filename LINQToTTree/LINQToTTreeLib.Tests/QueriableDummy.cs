@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using Remotion.Linq;
+using System.Linq;
 using System.Linq.Expressions;
-using Remotion.Linq;
 
 namespace LINQToTTreeLib.Tests
 {

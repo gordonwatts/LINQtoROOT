@@ -119,19 +119,25 @@ namespace LINQToTTreeLib.QMFunctions
                 // And if the QM result type is something we can reasonably cache, then we should do it.
                 // Do not cache the outter most QM. This guy has the best place to start combining things.
 
-                if (_qmContextStack.Count > 1 && !queryModel.GetResultType().IsArray)
+                if (_qmContextStack.Count > 1
+                    && !queryModel.GetResultType().IsArray)
                 {
-                    var qmText = FormattingQueryVisitor.Format(queryModel);
-                    if (!FoundFunctions.Where(ff => ff.QMText == qmText).Any())
+                    // If this has a result operator, then we will return somethign we can process.
+                    // Otherwise, this is a vector that turns into loop indicies or something similar.
+                    if (queryModel.ResultOperators.Any())
                     {
-                        var sref = _qmContextStack.Peek();
-                        var f = new QMFuncHeader()
+                        var qmText = FormattingQueryVisitor.Format(queryModel);
+                        if (!FoundFunctions.Where(ff => ff.QMText == qmText).Any())
                         {
-                            QM = queryModel,
-                            QMText = qmText,
-                            Arguments = sref._arguments.Cast<object>()
-                        };
-                        FoundFunctions.Add(f);
+                            var sref = _qmContextStack.Peek();
+                            var f = new QMFuncHeader()
+                            {
+                                QM = queryModel,
+                                QMText = qmText,
+                                Arguments = sref._arguments.Cast<object>()
+                            };
+                            FoundFunctions.Add(f);
+                        }
                     }
                 }
 

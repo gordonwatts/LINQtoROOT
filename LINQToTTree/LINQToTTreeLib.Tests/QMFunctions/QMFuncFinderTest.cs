@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestNoneQMFunc()
         {
-            var q = new QueriableDummy<ntup>();
+            var q = new QueriableDummyNoExe<ntup>();
             var r1 = q.Count();
             var qm = DummyQueryExectuor.LastQueryModel;
 
@@ -38,7 +38,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestSingleQMFuncInWhere()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     where evt.valC1D.Where(i => i > 5).Count() > 5
                     select evt;
@@ -60,7 +60,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestAnonymousObjectSingleResult()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     select new
                     {
@@ -91,13 +91,41 @@ namespace LINQToTTreeLib.Tests.QMFunctions
 
             var sf = QMFuncFinder.FindQMFunctions(qm);
             Assert.IsNotNull(sf);
-            Assert.AreEqual(4, sf.Count(), "# of qm functions");
+            Assert.AreEqual(3, sf.Count(), "# of qm functions");
+        }
+
+        /// <summary>
+        /// Make sure no functions that return a list of things that
+        /// are to be selected are found!
+        /// </summary>
+        [TestMethod]
+        public void TestQMNoFunctionWithSelect()
+        {
+            var q = new QueriableDummyNoExe<dummyntup>();
+            var evt = from e in q
+                      select new
+                      {
+                          Jets = e.valC1D.Where(i => i > 1),
+                          Tracks = e.valC1D.Where(i => i > 1)
+                      };
+            var r = from e in evt
+                    from t in e.Tracks
+                    from j in e.Jets
+                    where t != j
+                    select t;
+
+            var result = r.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            var sf = QMFuncFinder.FindQMFunctions(query);
+
+            Assert.AreEqual(0, sf.Count(), "# of functions");
         }
 
         [TestMethod]
         public void TestSingleQMFuncInSelect()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     select evt.valC1D.Where(i => i > 5).Count();
             var r1 = a.Sum();
@@ -113,7 +141,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestDoubleFrom()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     from i in evt.valC1D
                     select i;
@@ -128,7 +156,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestDoubleFromWithFuncWithArg()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     from i in evt.valC1D
                     where evt.valC1D.Where(j => i > j).Count() > 5
@@ -146,7 +174,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestDoubleFromWithFuncWithSameArgTwice()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     from i in evt.valC1D
                     where evt.valC1D.Where(j => i > j).Count() > 5
@@ -169,7 +197,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestDoubleFromWithFuncWithArgDoubleRef()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     from i in evt.valC1D
                     where evt.valC1D.Where(j => i > j && j >= i).Count() > 5
@@ -187,7 +215,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestAdditonalFromClause()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     select new
                     {
@@ -216,7 +244,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
 
             var sf = QMFuncFinder.FindQMFunctions(qm);
             Assert.IsNotNull(sf);
-            Assert.AreEqual(3, sf.Count(), "# of qm functions");
+            Assert.AreEqual(2, sf.Count(), "# of qm functions");
         }
 
         /// <summary>
@@ -225,7 +253,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestDuplicateQM()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q.Where(e => e.valC1D.First() > 0)
                     select evt.valC1D.First();
             var r1 = a.Sum();
@@ -241,7 +269,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestBogus()
         {
-            var q = new QueriableDummy<dummyntup>();
+            var q = new QueriableDummyNoExe<dummyntup>();
             var a = from evt in q
                     select new
                     {
@@ -266,7 +294,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
 
             var sf = QMFuncFinder.FindQMFunctions(qm);
             Assert.IsNotNull(sf);
-            Assert.AreEqual(1, sf.Count(), "# of qm functions");
+            Assert.AreEqual(3, sf.Count(), "# of qm functions");
             var f = sf.First();
             Assert.AreEqual(1, f.Arguments.Count(), "# of arguments");
         }
