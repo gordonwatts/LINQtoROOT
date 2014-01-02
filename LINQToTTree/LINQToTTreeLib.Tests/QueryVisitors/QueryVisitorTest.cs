@@ -185,7 +185,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(12, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(13, query1.CodeBody.CodeItUp().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         /// <summary>
@@ -1654,12 +1654,12 @@ namespace LINQToTTreeLib
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+            var theline = from l in DummyQueryExectuor.FinalResult.DumpCode()
                           where l.Contains("Phi_0_2pi")
                           select l;
             var arr = theline.ToArray();
             Assert.AreEqual(1, arr.Length, "too many lines with function reference!");
-            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("std::abs")).Count(), "second function call not found");
+            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.DumpCode().Where(l => l.Contains("std::abs")).Count(), "second function call found");
         }
 
         [TestMethod]
