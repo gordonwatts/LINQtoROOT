@@ -139,6 +139,27 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         }
 
         [TestMethod]
+        public void TestGroupByFunction()
+        {
+            var q = new QueriableDummyNoExe<LINQToTTreeLib.QueryVisitorTest.ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    select from v in evt.var1 group v by v;
+
+            var cnt = from evt in r
+                      from grp in evt
+                      where grp.Key == 2 && grp.Count() > 5
+                      select grp.Key;
+
+            var final = cnt.Count();
+
+            var qm = DummyQueryExectuor.LastQueryModel;
+
+            var sf = QMFuncFinder.FindQMFunctions(qm);
+            Assert.AreEqual(1, sf.Count(), "# of qm functions");
+        }
+
+        [TestMethod]
         public void TestDoubleFrom()
         {
             var q = new QueriableDummyNoExe<dummyntup>();

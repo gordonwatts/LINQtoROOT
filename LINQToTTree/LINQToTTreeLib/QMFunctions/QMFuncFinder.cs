@@ -4,6 +4,7 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 namespace LINQToTTreeLib.QMFunctions
@@ -120,7 +121,7 @@ namespace LINQToTTreeLib.QMFunctions
                 // Do not cache the outter most QM. This guy has the best place to start combining things.
 
                 if (_qmContextStack.Count > 1
-                    && !queryModel.GetResultType().IsArray)
+                    && !typeof(IEnumerable).IsAssignableFrom(queryModel.GetResultType()))
                 {
                     // If this has a result operator, then we will return somethign we can process.
                     // Otherwise, this is a vector that turns into loop indicies or something similar.
