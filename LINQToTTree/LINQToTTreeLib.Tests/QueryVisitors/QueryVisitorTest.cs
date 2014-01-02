@@ -153,7 +153,7 @@ namespace LINQToTTreeLib
 
             query1.DumpCodeToConsole();
 
-            Assert.AreEqual(3, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(9, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         [TestMethod]
@@ -169,7 +169,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(3, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(9, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         [TestMethod]
@@ -185,7 +185,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(13, query1.CodeBody.CodeItUp().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(35, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         /// <summary>
@@ -300,7 +300,7 @@ namespace LINQToTTreeLib
             qv.VisitQueryModel(model);
             gc.DumpCodeToConsole();
 
-            var goodlines = gc.CodeBody.CodeItUp().Where(s => s.Contains("+((*this).run)")).Count();
+            var goodlines = gc.DumpCode().Where(s => s.Contains("+((*this).run)")).Count();
             Assert.AreEqual(1, goodlines, "# of times the .run appears");
         }
 
@@ -897,7 +897,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+            Assert.IsFalse(gc.DumpCode().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -924,7 +924,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.DumpCode().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -951,7 +951,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.DumpCode().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -978,7 +978,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.DumpCode().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -1004,7 +1004,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+            Assert.IsFalse(gc.DumpCode().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -1672,7 +1672,7 @@ namespace LINQToTTreeLib
             var r2 = r1.SelectMany(evt => evt).Where(c => c > 0.1).Count();
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+            var theline = from l in DummyQueryExectuor.FinalResult.DumpCode()
                           where l.Contains("std::atan2")
                           select l;
             var arr = theline.ToArray();
@@ -2062,7 +2062,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "missing size() call");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".size()")).Any(), "missing size() call");
         }
 
         [TestMethod]
@@ -2076,7 +2076,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".run")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2090,7 +2090,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 20")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2104,8 +2104,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".run")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2121,7 +2121,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 20")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2165,7 +2165,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2209,8 +2209,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
         }
 
         [TestMethod]
@@ -2243,8 +2243,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=0; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=0; a")).Any(), "missing lower limit reference");
         }
 
         [TestMethod]
@@ -2260,8 +2260,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 8")).Any(), "missing upper limit reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 8")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
         }
 
         [TestMethod]
@@ -2278,8 +2278,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
         }
 
         /// <summary>
@@ -2304,8 +2304,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsFalse(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "size() should not be used");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".nSize")).Any(), "missing reference to the variale with the size");
+            Assert.IsFalse(query1.DumpCode().Where(s => s.Contains(".size()")).Any(), "size() should not be used");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".nSize")).Any(), "missing reference to the variale with the size");
         }
 
         [TestMethod]
