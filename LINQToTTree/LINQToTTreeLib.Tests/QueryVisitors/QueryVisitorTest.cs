@@ -485,7 +485,9 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // Look for the sorting somewhere in here...
-            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
+            Assert.AreEqual(1, query1.QMFunctions.Count(), "#subs");
+            var code = query1.QMFunctions.First().StatementBlock;
+            bool sortThere = code.CodeItUp().Where(s => s.Contains("sort")).Any();
             Assert.IsTrue(sortThere, "No sort call in the code");
         }
 
@@ -865,7 +867,9 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // Look for the sorting somewhere in here...
-            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
+            Assert.AreEqual(1, query1.QMFunctions.Count(), "# of functions");
+            var code = query1.QMFunctions.First().StatementBlock;
+            bool sortThere = code.CodeItUp().Where(s => s.Contains("sort")).Any();
             Assert.IsTrue(sortThere, "No sort call in the code");
         }
 
