@@ -58,7 +58,8 @@ namespace LINQToTTreeLib
 #pragma warning restore 649
 
         /// <summary>
-        /// We need to process a result operator.
+        /// Process a result operator. If this result is amenable to be made into a function, then
+        /// do so.
         /// </summary>
         /// <param name="resultOperator"></param>
         /// <param name="queryModel"></param>
@@ -73,18 +74,6 @@ namespace LINQToTTreeLib
                 var result = processor.ProcessResultOperator(resultOperator, queryModel, _codeEnv, _codeContext, MEFContainer);
                 if (result != null)
                 {
-                    // If this was a QM function, then finish off processing, and replace the result as our function call.
-                    var qmSource = _codeEnv.FindQMFunction(queryModel);
-                    if (qmSource != null)
-                    {
-                        // Finish caching the code we reference here
-
-                        // Now, replace the result by a function call.
-                    }
-
-
-                    // Take the result and mark it as a result and return it.
-
                     _codeEnv.SetResult(result);
                     _scoping.Add(_codeContext.Add(queryModel, result));
                 }
@@ -177,10 +166,73 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Main driver. Parse the query model.
+        /// The main driver to parse the query model. We will cache the result into a function
+        /// if it is something we know how to cache.
         /// </summary>
         /// <param name="queryModel"></param>
         public override void VisitQueryModel(QueryModel queryModel)
+        {
+            // If this is a QM function we are referencing, then process it as such.
+            var qmSource = _codeEnv.FindQMFunction(queryModel);
+            if (qmSource == null)
+            {
+                VisitQueryModelNoCache(queryModel);
+            }
+            else
+            {
+                VisitQueryModelCache(queryModel, qmSource);
+            }
+        }
+
+        /// <summary>
+        /// Cache the result of a query model into a function.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <param name="qmSource"></param>
+        private void VisitQueryModelCache(QueryModel queryModel, IQMFunctionSource qmSource)
+        {
+            // If we already have the answer for this cache, then we should just re-call the routine.
+            if (qmSource.StatementBlock != null)
+            {
+                throw new NotImplementedException();
+                //_codeEnv.Add(qmFunctionCall(qmSource)); // Protected to make sure we test correctly.
+            }
+
+            // Since we don't have it cached, we need to re-run things, and carefully watch for
+            // everything new that shows up. What shows up will be what we declare as the function
+            // body.
+            var currentScope = _codeEnv.CurrentScope;
+            var topLevelStatement = new StatementInlineBlock();
+            _codeEnv.Add(topLevelStatement);
+
+            VisitQueryModelNoCache(queryModel);
+
+            // Extract those statements and shove them into the definition. Replace everything with a
+            // function call. The function call is what we will use in the future when we need to reference
+            // this.
+
+            _codeEnv.CurrentScope = currentScope;
+            qmSource.SetCodeBody(topLevelStatement, _codeEnv.ResultValue);
+            _codeEnv.Remove(topLevelStatement);
+            _codeEnv.SetResult(qmFunctionCall(qmSource));
+        }
+
+        /// <summary>
+        /// Generate a function call statement for the cached function we are going to emit.
+        /// </summary>
+        /// <param name="qmSource"></param>
+        /// <returns></returns>
+        private Expression qmFunctionCall(IQMFunctionSource qmSource)
+        {
+            var call = string.Format("{0} ()", qmSource.Name);
+            return Expression.Parameter(qmSource.ResultType, call);
+        }
+
+        /// <summary>
+        /// Turn a query model into code.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        public void VisitQueryModelNoCache(QueryModel queryModel)
         {
             // Cache the referenced query expressions and restore them at the end.
 

@@ -71,6 +71,18 @@ namespace LINQToTTreeLib.Tests
             {
                 yield return line;
             }
+            yield return ("");
+
+            foreach (var f in code.QMFunctions)
+            {
+                yield return (string.Format("Function: {0}", f.Name));
+                yield return (string.Format("  {0} {1} ()", f.ResultType.Name, f.Name));
+                foreach (var line in f.StatementBlock.DumpCode())
+                {
+                    yield return string.Format("  {0}", line);
+                }
+                yield return "";
+            }
 
             if (code.ResultValue == null)
             {

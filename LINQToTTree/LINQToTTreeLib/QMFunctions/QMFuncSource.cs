@@ -1,8 +1,9 @@
 ﻿using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.QMFunctions
 {
@@ -11,7 +12,10 @@ namespace LINQToTTreeLib.QMFunctions
     /// </summary>
     public class QMFuncSource : IQMFunctionSource
     {
-        private QMFuncHeader _headerInfo;
+        /// <summary>
+        /// Get the header info for this function.
+        /// </summary>
+        private QMFuncHeader _header;
 
         /// <summary>
         /// Create the QM Func Source starting from a pre-parsed bunch of header info.
@@ -19,10 +23,10 @@ namespace LINQToTTreeLib.QMFunctions
         /// <param name="f"></param>
         public QMFuncSource(QMFuncHeader f)
         {
-            this._headerInfo = f;
+            this._header = f;
             Name = "QMFunction".CreateUniqueVariableName();
             Arguments = f.Arguments.Select(a => new QMFunctionArgument(a));
-            StatementBlock = new StatementInlineBlock();
+            StatementBlock = null;
         }
 
         /// <summary>
@@ -30,7 +34,7 @@ namespace LINQToTTreeLib.QMFunctions
         /// </summary>
         public QMFuncSource()
         {
-            this._headerInfo = null;
+            this._header = null;
         }
 
         /// <summary>
@@ -55,7 +59,35 @@ namespace LINQToTTreeLib.QMFunctions
         /// <returns></returns>
         internal bool Matches(string qmText)
         {
-            return _headerInfo.QMText == qmText;
+            return _header.QMText == qmText;
+        }
+
+        /// <summary>
+        /// The expression that gathers up the result after the statemenet body code has
+        /// been run.
+        /// </summary>
+        private Expression _result;
+
+        /// <summary>
+        /// Get the type of this function's return.
+        /// </summary>
+        public Type ResultType { get { return _result.Type; } }
+
+        /// <summary>
+        /// The function call that will invoke us.
+        /// </summary>
+        private IValue _functionCall;
+
+        /// <summary>
+        /// Remember the code body for later use, along with the result that we will be
+        /// returning.
+        /// </summary>
+        /// <param name="statements"></param>
+        /// <param name="resultExpression"></param>
+        public void SetCodeBody(IStatementCompound statements, Expression resultExpression)
+        {
+            StatementBlock = statements;
+            _result = resultExpression;
         }
     }
 }

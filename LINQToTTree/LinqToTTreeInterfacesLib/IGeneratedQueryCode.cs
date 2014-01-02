@@ -24,6 +24,12 @@ namespace LinqToTTreeInterfacesLib
         void Add(IStatement s);
 
         /// <summary>
+        /// Remove a statement from the current statement block where we are adding statements.
+        /// </summary>
+        /// <param name="s">The statement to remove. Throw if we can't find it in the current block.</param>
+        void Remove(IStatement s);
+
+        /// <summary>
         /// Book a variable at the inner most scope
         /// </summary>
         /// <param name="v"></param>

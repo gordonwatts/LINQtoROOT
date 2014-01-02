@@ -808,5 +808,28 @@ namespace LINQToTTreeLib
             var r = gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i });
             Assert.AreEqual(r, ifs, "Same code body.");
         }
+
+        [TestMethod]
+        public void RemoveStatement()
+        {
+            var fixture = new GeneratedCode();
+            fixture.Add(new StatementInlineBlock());
+            var s1 = new SimpleStatement();
+            fixture.Add(s1);
+
+            Assert.AreEqual(1, (fixture.CodeBody.Statements.First() as IBookingStatementBlock).Statements.Count(), "before removal");
+            fixture.Remove(s1);
+            Assert.AreEqual(0, (fixture.CodeBody.Statements.First() as IBookingStatementBlock).Statements.Count(), "after removal");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void RemoveMissingStatement()
+        {
+            var fixture = new GeneratedCode();
+            fixture.Add(new StatementInlineBlock());
+            var s1 = new SimpleStatement();
+            fixture.Remove(s1);
+        }
     }
 }

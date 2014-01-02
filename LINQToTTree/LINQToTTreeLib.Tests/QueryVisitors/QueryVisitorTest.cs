@@ -2705,7 +2705,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(0, f.Arguments.Count(), "The # of arguments.");
 
             // Look for the call in the emitted source code.
-            Assert.IsTrue(query.DumpCode().Where(l => l.Contains(string.Format("= {0} (", f.Name))).Any(), "Looking for the function call");
+            Assert.IsTrue(query.DumpCode().Where(l => l.Contains(string.Format("{0} (", f.Name))).Any(), "Looking for the function call");
 
             // Look at the statements that were emitted.
             Assert.IsNotNull(f.StatementBlock, "Statements");

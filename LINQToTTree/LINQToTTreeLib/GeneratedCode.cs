@@ -159,6 +159,15 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Remove a statement from the current statement block where we are adding statements.
+        /// </summary>
+        /// <param name="s">The statement to remove. Throw if we can't find it in the current block.</param>
+        public void Remove(IStatement s)
+        {
+            CurrentScopePointer.Remove(s);
+        }
+
+        /// <summary>
         /// Book a variable at the inner most scoping that is accepting variable
         /// declarations.
         /// </summary>
