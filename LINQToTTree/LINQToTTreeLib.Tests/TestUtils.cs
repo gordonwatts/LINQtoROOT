@@ -54,7 +54,7 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public static IEnumerable<string> DumpCode(this GeneratedCode code)
+        public static IEnumerable<string> DumpCode(this GeneratedCode code, bool dumpQM = true)
         {
             yield return ("Declared Variables:");
             foreach (var var in code.CodeBody.DeclaredVariables)
@@ -76,7 +76,8 @@ namespace LINQToTTreeLib.Tests
             foreach (var f in code.QMFunctions)
             {
                 yield return (string.Format("Function: {0}", f.Name));
-                yield return (string.Format("  -> QM: {0}", f.QueryModelText));
+                if (dumpQM)
+                    yield return (string.Format("  -> QM: {0}", f.QueryModelText));
                 string rtype = "<not set!>";
                 if (f.Result != null)
                     rtype = f.ResultType.Name;

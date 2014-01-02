@@ -118,13 +118,15 @@ namespace LINQToTTreeLib.QMFunctions
                 base.VisitQueryModel(queryModel);
 
                 // And if the QM result type is something we can reasonably cache, then we should do it.
-                // Do not cache the outter most QM. This guy has the best place to start combining things.
+                //  - Do not cache the outter most QM. This guy has the best place to start combining things.
+                //  - Do not cache anything that is enumerable. We'll have to deal with that later.
+                //  - Do not cache any anonymous types
+                //  - Deal with later somethign that is an iterator (used in a later loop).
 
                 if (_qmContextStack.Count > 1
-                    && !typeof(IEnumerable).IsAssignableFrom(queryModel.GetResultType()))
+                    && !typeof(IEnumerable).IsAssignableFrom(queryModel.GetResultType())
+                    && !queryModel.GetResultType().Name.Contains("Anon"))
                 {
-                    // If this has a result operator, then we will return somethign we can process.
-                    // Otherwise, this is a vector that turns into loop indicies or something similar.
                     if (queryModel.ResultOperators.Any())
                     {
                         var qmText = FormattingQueryVisitor.Format(queryModel);

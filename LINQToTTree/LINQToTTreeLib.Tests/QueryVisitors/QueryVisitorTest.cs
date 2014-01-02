@@ -1654,7 +1654,7 @@ namespace LINQToTTreeLib
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            var theline = from l in DummyQueryExectuor.FinalResult.DumpCode()
+            var theline = from l in DummyQueryExectuor.FinalResult.DumpCode(dumpQM: false)
                           where l.Contains("Phi_0_2pi")
                           select l;
             var arr = theline.ToArray();
