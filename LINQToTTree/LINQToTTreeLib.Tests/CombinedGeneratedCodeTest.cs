@@ -1,5 +1,8 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
 using Microsoft.ExtendedReflection.DataAccess;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
@@ -150,6 +153,56 @@ namespace LINQToTTreeLib
             var sst2 = st2 as Statements.StatementSimpleStatement;
             Assert.IsTrue("dude1" == sst1.Line || "dude1" == sst2.Line, "sst1");
             Assert.IsTrue("dude2" == sst1.Line || "dude2" == sst2.Line, "sst2");
+        }
+
+        [TestMethod]
+        public void CombineTwoTopLevelFunctions()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var f1 = GenerateFunction("f1");
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple("f1()", typeof(int)), new IDeclaredParameter[] { });
+            var f2 = GenerateFunction("f3");
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple("f3()", typeof(int)), new IDeclaredParameter[] { });
+
+            q1.Add(f1);
+            q1.Add(s1);
+            q1.SetResult(r1);
+
+            q2.Add(f2);
+            q2.Add(s2);
+            q2.SetResult(r2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            Assert.AreEqual(1, target.Functions.Count(), "# of functions should be combined to 1");
+            Assert.AreEqual(1, target.QueryCode().Count(), "# of query code blocks");
+            Assert.AreEqual(1, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+        }
+
+        /// <summary>
+        /// Generate a function with no arguments that returns an int given that name. The
+        /// actual statement is a very simple constant.
+        /// </summary>
+        /// <param name="fname"></param>
+        /// <returns></returns>
+        private QMFuncSource GenerateFunction(string fname)
+        {
+            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = null, QMText = "this is an expressoin" };
+            var f = new QMFuncSource(h);
+
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var st = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { });
+            var inlineblock = new StatementInlineBlock();
+            inlineblock.Add(st);
+            f.SetCodeBody(inlineblock, p);
+
+            return f;
         }
     }
 }

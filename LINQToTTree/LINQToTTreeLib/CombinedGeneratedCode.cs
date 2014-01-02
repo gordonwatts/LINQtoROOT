@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib
 {
@@ -224,6 +224,12 @@ namespace LINQToTTreeLib
         public IEnumerable<string> ReferencedLeafNames
         {
             get { return _leavesReferenced; }
+        }
+
+
+        public IEnumerable<IQMFuncExecutable> Functions
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 }

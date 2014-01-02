@@ -565,5 +565,11 @@ namespace LINQToTTreeLib
             var qmText = FormattingQueryVisitor.Format(queryModel);
             return QMFunctions.Where(ff => ff.Matches(qmText)).FirstOrDefault();
         }
+
+
+        public IEnumerable<IQMFuncExecutable> Functions
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

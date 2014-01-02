@@ -39,5 +39,10 @@ namespace LinqToTTreeInterfacesLib
         /// Returns the list of TTree leaves referenced by this query
         /// </summary>
         IEnumerable<string> ReferencedLeafNames { get; }
+
+        /// <summary>
+        /// Returns the list of functions that can be executed.
+        /// </summary>
+        IEnumerable<IQMFuncExecutable> Functions { get; }
     }
 }

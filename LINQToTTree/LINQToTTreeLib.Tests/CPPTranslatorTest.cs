@@ -1,7 +1,3 @@
-// <copyright file="CPPTranslatorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
@@ -10,6 +6,10 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// <copyright file="CPPTranslatorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -139,6 +139,12 @@ namespace LINQToTTreeLib
 
 
             public IEnumerable<string> ReferencedLeafNames
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+
+            public IEnumerable<IQMFuncExecutable> Functions
             {
                 get { throw new NotImplementedException(); }
             }
