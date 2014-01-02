@@ -169,7 +169,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(9, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(15, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         [TestMethod]
@@ -1944,27 +1944,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             var st = query.QueryCode().First();
             Assert.AreEqual(4, st.Statements.Count(), "# of statements");
-        }
-
-        /// <summary>
-        /// Make sure we pop out to the right level here!
-        /// </summary>
-        [TestMethod]
-        public void TestSumWithFilter()
-        {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
-            var r = from evt in q
-                    let ns = evt.var1.Where(j => j > 1)
-                    select ns.Sum();
-            var r2 = r.Where(z => z > 10).Sum();
-            var query2 = DummyQueryExectuor.FinalResult;
-            query2.DumpCodeToConsole();
-
-            var lines = query2.DumpCode().TakeWhile(l => !l.Contains("if (aInt"));
-            var openCount = lines.Where(l => l.Contains("{")).Count();
-            var closeCount = lines.Where(l => l.Contains("}")).Count();
-
-            Assert.AreEqual(openCount - 1, closeCount, "# of close }");
         }
 
         [TestMethod]
