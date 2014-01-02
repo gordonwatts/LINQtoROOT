@@ -1,5 +1,4 @@
 ﻿
-using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -12,6 +11,6 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="statements">The statements that make up the body of the function.</param>
         /// <param name="expression">The result expression - what should be returned from the body.</param>
-        void SetCodeBody(IStatementCompound statements, Expression resultExpression);
+        void SetCodeBody(IStatementCompound statements);
     }
 }

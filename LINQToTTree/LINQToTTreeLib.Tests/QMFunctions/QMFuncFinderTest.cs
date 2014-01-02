@@ -201,7 +201,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var result = resultToSum.Sum();
 
             var qm = DummyQueryExectuor.FinalResult;
-            Assert.IsTrue(qm.QMFunctions.Where(f => f.Result != null).All(f => !f.ResultType.Name.Contains("Anon")), "contains anon");
+            Assert.IsTrue(qm.QMFunctions.Where(f => f.StatementBlock != null).All(f => !f.ResultType.Name.Contains("Anon")), "contains anon");
         }
 
         [TestMethod]

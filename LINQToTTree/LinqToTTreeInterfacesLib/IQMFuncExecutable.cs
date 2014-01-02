@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -37,11 +36,6 @@ namespace LinqToTTreeInterfacesLib
         /// The return type of this function.
         /// </summary>
         Type ResultType { get; }
-
-        /// <summary>
-        /// The result expression.
-        /// </summary>
-        Expression Result { get; }
 
         /// <summary>
         /// The function arguments.

@@ -169,7 +169,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(15, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(17, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         [TestMethod]
@@ -185,7 +185,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(35, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(36, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         /// <summary>
@@ -580,6 +580,7 @@ namespace LINQToTTreeLib
             var st = query.QueryCode().First();
             Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
             //CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 2);
         }
 
@@ -1739,7 +1740,7 @@ namespace LINQToTTreeLib
             var statement = query.Functions.First().StatementBlock.Statements.First() as IStatementCompound;
             Assert.IsNotNull(statement, "statement isn't a compound");
             Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
-
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1758,6 +1759,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         /// <summary>
@@ -1821,6 +1823,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1839,6 +1842,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1874,6 +1878,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements (just a straight if)");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
             Assert.AreEqual(1, query.DumpCode().Where(l => l.Contains(">5")).Count(), "# of > 5 if statements");
         }
 
@@ -1911,6 +1916,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1934,6 +1940,7 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1974,6 +1981,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query Blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1992,6 +2000,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2018,6 +2027,7 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of guys");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2045,6 +2055,7 @@ namespace LINQToTTreeLib
             // First for loop to crord, 2 to test, and then the two aggregates
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2144,6 +2155,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, forstatement.Statements.Count(), "# of statements in the for loop");
 
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
             var ifstatement = query.Functions.First().StatementBlock.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(ifstatement, "if statement pointer");
             Assert.AreEqual(1, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
@@ -2189,6 +2201,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
 
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
             var forstatement = query.Functions.First().StatementBlock.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forstatement, "for statement isn't a block!");
             Assert.AreEqual(1, forstatement.Statements.Count(), "# of statements in the for loop");
@@ -2464,6 +2477,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2716,7 +2730,7 @@ namespace LINQToTTreeLib
             // Look at the statements that were emitted.
             Assert.IsNotNull(f.StatementBlock, "Statements");
             var sb = f.StatementBlock;
-            Assert.AreEqual(1, sb.Statements.Count(), "Expect 1 real statement");
+            Assert.AreEqual(2, sb.Statements.Count(), "Expect 1 real statement + 1 return");
             var st1 = sb.Statements.First();
             Assert.IsInstanceOfType(st1, typeof(IStatementLoop), "Loop instance check");
         }

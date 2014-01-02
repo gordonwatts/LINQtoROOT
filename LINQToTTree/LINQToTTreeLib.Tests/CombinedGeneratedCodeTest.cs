@@ -9,10 +9,13 @@ using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 // <copyright file="CombinedGeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -301,14 +304,17 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private QMFuncSource GenerateFunction()
         {
-            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = null, QMText = "this is an expressoin" };
+            int[] ints = new int[10];
+            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = new QueryModel(new MainFromClause("i", typeof(int), Expression.Constant(ints)), new SelectClause(Expression.Constant(1))) };
+            h.QMText = h.QM.ToString();
             var f = new QMFuncSource(h);
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var st = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { });
             var inlineblock = new StatementInlineBlock();
             inlineblock.Add(st);
-            f.SetCodeBody(inlineblock, p);
+            inlineblock.Add(new StatementReturn(p));
+            f.SetCodeBody(inlineblock);
 
             return f;
         }
@@ -317,14 +323,17 @@ namespace LINQToTTreeLib
         {
             var fsub = GenerateFunction();
 
-            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = null, QMText = "this is an expressoin with a subfunc" };
+            int[] ints = new int[10];
+            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = new QueryModel(new MainFromClause("i", typeof(int), Expression.Constant(ints)), new SelectClause(Expression.Constant(10))) };
+            h.QMText = h.QM.ToString();
             var f = new QMFuncSource(h);
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var st = new StatementAssign(p, new ValSimple(fsub.Name + "()", typeof(int)), new IDeclaredParameter[] { });
             var inlineblock = new StatementInlineBlock();
             inlineblock.Add(st);
-            f.SetCodeBody(inlineblock, p);
+            inlineblock.Add(new StatementReturn(p));
+            f.SetCodeBody(inlineblock);
 
             return new QMFuncSource[] { fsub, f };
         }

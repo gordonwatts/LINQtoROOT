@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
@@ -78,10 +79,7 @@ namespace LINQToTTreeLib.Tests
                 yield return (string.Format("Function: {0}", f.Name));
                 if (dumpQM)
                     yield return (string.Format("  -> QM: {0}", f.QueryModelText));
-                string rtype = "<not set!>";
-                if (f.Result != null)
-                    rtype = f.ResultType.Name;
-                yield return (string.Format("  {0} {1} ()", rtype, f.Name));
+                yield return (string.Format("  {0} {1} ()", f.ResultType, f.Name));
                 if (f.StatementBlock != null)
                 {
                     foreach (var line in f.StatementBlock.DumpCode())
@@ -93,8 +91,6 @@ namespace LINQToTTreeLib.Tests
                 {
                     yield return "  ** No statements ever set";
                 }
-                if (f.Result != null)
-                    yield return string.Format("  return {0}", f.Result.ToString());
             }
 
             if (code.ResultValue == null)
@@ -204,10 +200,7 @@ namespace LINQToTTreeLib.Tests
             foreach (var f in code.Functions)
             {
                 yield return (string.Format("Function: {0}", f.Name));
-                string rtype = "<not set!>";
-                if (f.Result != null)
-                    rtype = f.ResultType.Name;
-                yield return (string.Format("  {0} {1} ()", rtype, f.Name));
+                yield return (string.Format("  {0} {1} ()", f.ResultType.Name, f.Name));
                 if (f.StatementBlock != null)
                 {
                     foreach (var line in f.StatementBlock.DumpCode())
@@ -219,8 +212,6 @@ namespace LINQToTTreeLib.Tests
                 {
                     yield return "  ** No statements ever set";
                 }
-                if (f.Result != null)
-                    yield return string.Format("  return {0}", f.Result.ToString());
             }
 
             if (code.ResultValues == null)
@@ -523,6 +514,17 @@ namespace LINQToTTreeLib.Tests
                 throw new Exception(string.Format("Unable to find an identifier in '{0}' after '{1}'", source, startpattern));
 
             return matches.Value;
+        }
+
+        /// <summary>
+        /// Make sure each function has a return statement on it.
+        /// </summary>
+        /// <param name="funcs"></param>
+        public static void CheckForReturnStatement(this IEnumerable<IQMFuncExecutable> funcs)
+        {
+            bool allgood = funcs
+                .All(f => f.StatementBlock.Statements.LastOrDefault() is StatementReturn);
+            Assert.IsTrue(allgood, "One function has no top level return!");
         }
     }
 }

@@ -3,7 +3,6 @@ using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.QMFunctions
 {
@@ -63,20 +62,9 @@ namespace LINQToTTreeLib.QMFunctions
         }
 
         /// <summary>
-        /// The expression that gathers up the result after the statemenet body code has
-        /// been run.
-        /// </summary>
-        public Expression Result { get; private set; }
-
-        /// <summary>
         /// Get the type of this function's return.
         /// </summary>
-        public Type ResultType { get { return Result.Type; } }
-
-        /// <summary>
-        /// The function call that will invoke us.
-        /// </summary>
-        private IValue _functionCall;
+        public Type ResultType { get { return _header.QM.GetResultType(); } }
 
         /// <summary>
         /// Remember the code body for later use, along with the result that we will be
@@ -84,10 +72,9 @@ namespace LINQToTTreeLib.QMFunctions
         /// </summary>
         /// <param name="statements"></param>
         /// <param name="resultExpression"></param>
-        public void SetCodeBody(IStatementCompound statements, Expression resultExpression)
+        public void SetCodeBody(IStatementCompound statements)
         {
             StatementBlock = statements;
-            Result = resultExpression;
         }
 
         /// <summary>

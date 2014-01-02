@@ -216,12 +216,15 @@ namespace LINQToTTreeLib
 
             VisitQueryModelNoCache(queryModel);
 
-            // Extract those statements and shove them into the definition. Replace everything with a
-            // function call. The function call is what we will use in the future when we need to reference
-            // this.
+            // Grab the result and stick it on as a return statement in the proper spot.
+            var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
+            topLevelStatement.Add(new StatementReturn(rtnExpr));
 
+            // Now extract the block of code and put it in the function block.
             _codeEnv.CurrentScope = currentScope;
-            qmSource.SetCodeBody(topLevelStatement, _codeEnv.ResultValue);
+            qmSource.SetCodeBody(topLevelStatement);
+
+            // Reset our state and remove the function code. And put in the function call in its place.
             _codeEnv.Remove(topLevelStatement);
             _codeEnv.SetResult(qmFunctionCall(qmSource));
 
