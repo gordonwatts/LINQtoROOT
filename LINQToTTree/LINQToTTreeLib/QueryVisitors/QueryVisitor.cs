@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
@@ -224,6 +225,9 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private Expression qmFunctionCall(IQMFunctionSource qmSource)
         {
+            if (qmSource.Arguments.Any())
+                throw new NotImplementedException();
+
             var call = string.Format("{0} ()", qmSource.Name);
             return Expression.Parameter(qmSource.ResultType, call);
         }
