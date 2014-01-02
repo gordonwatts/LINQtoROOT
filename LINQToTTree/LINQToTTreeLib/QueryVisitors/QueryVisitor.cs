@@ -212,6 +212,7 @@ namespace LINQToTTreeLib
             var currentScope = _codeEnv.CurrentScope;
             var topLevelStatement = new StatementInlineBlock();
             _codeEnv.Add(topLevelStatement);
+            _codeEnv.SetCurrentScopeAsResultScope();
 
             VisitQueryModelNoCache(queryModel);
 
