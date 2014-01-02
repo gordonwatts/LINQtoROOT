@@ -76,12 +76,24 @@ namespace LINQToTTreeLib.Tests
             foreach (var f in code.QMFunctions)
             {
                 yield return (string.Format("Function: {0}", f.Name));
-                yield return (string.Format("  {0} {1} ()", f.ResultType.Name, f.Name));
-                foreach (var line in f.StatementBlock.DumpCode())
+                yield return (string.Format("  -> QM: {0}", f.QueryModelText));
+                string rtype = "<not set!>";
+                if (f.Result != null)
+                    rtype = f.ResultType.Name;
+                yield return (string.Format("  {0} {1} ()", rtype, f.Name));
+                if (f.StatementBlock != null)
                 {
-                    yield return string.Format("  {0}", line);
+                    foreach (var line in f.StatementBlock.DumpCode())
+                    {
+                        yield return string.Format("  {0}", line);
+                    }
                 }
-                yield return string.Format("  return {0}", f.Result.ToString());
+                else
+                {
+                    yield return "  ** No statements ever set";
+                }
+                if (f.Result != null)
+                    yield return string.Format("  return {0}", f.Result.ToString());
             }
 
             if (code.ResultValue == null)
