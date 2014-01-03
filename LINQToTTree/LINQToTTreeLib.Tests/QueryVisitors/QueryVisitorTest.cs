@@ -185,7 +185,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(36, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(39, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         /// <summary>

@@ -437,7 +437,7 @@ namespace LINQToTTreeLib.ResultOperators
             var q = new QueriableDummy<SourceType1>();
 
             var result = from evt in q
-                         where evt.jets.First() != null
+                         where evt.jets.FirstOrDefault() != null
                          select evt;
             var c = result.Count();
 
@@ -445,7 +445,7 @@ namespace LINQToTTreeLib.ResultOperators
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
             var cnt = res.DumpCode().Where(l => l.Contains("-1")).Count();
-            Assert.AreEqual(2, cnt, "Improer # of -1's in the code");
+            Assert.AreEqual(4, cnt, "Improer # of -1's in the code");
         }
 
         [TestMethod]
