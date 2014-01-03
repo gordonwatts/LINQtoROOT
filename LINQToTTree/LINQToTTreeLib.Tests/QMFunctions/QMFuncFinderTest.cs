@@ -398,5 +398,38 @@ namespace LINQToTTreeLib.Tests.QMFunctions
 
             Assert.AreEqual(0, sf.Count(), "# of functions");
         }
+
+        [TestMethod]
+        public void CatchArgsInOrderBy()
+        {
+            // This test produces somethign caught in the wild (caused a compile error).
+            // The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
+            // to cause the problem, unfortunately. So, the test is here.
+            var q = new QueriableDummyNoExe<LINQToTTreeLib.ResultOperators.ROFirstLastTest.ntup3>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              r1 = evt.run1.Where(r => r > 3).Select(r => LINQToTTreeLib.ResultOperators.ROFirstLastTest.DoItClass.DoIt(r)),
+                              r2 = evt.run2.Where(r => r > 4).Select(r => LINQToTTreeLib.ResultOperators.ROFirstLastTest.DoItClass.DoIt(r))
+                          };
+            var resultB = from e in resultA
+                          select new
+                          {
+                              joinedR = from r1 in e.r1
+                                        select (from r2 in e.r2
+                                                orderby r1 - r2 ascending
+                                                select r2).First()
+                          };
+            var result = from e in resultB
+                         from r in e.joinedR
+                         select r;
+            var c = result.Sum();
+
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var sf = QMFuncFinder.FindQMFunctions(qm);
+
+            Assert.AreEqual(1, sf.Count(), "# of functions");
+        }
     }
 }

@@ -120,7 +120,7 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [CPPHelperClass]
-        static class DoItClass
+        public static class DoItClass
         {
             [CPPCode(Code = new string[] { "DoIt = arg*2;" }, IncludeFiles = new string[] { "TLorentzVector.h" })]
             public static int DoIt(int arg)
@@ -161,7 +161,7 @@ namespace LINQToTTreeLib.ResultOperators
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
-            var lm = query.DumpCode().Where(l => l.Contains(" = ((*(*this).run2).at(aInt32_5))*2;")).FirstOrDefault();
+            var lm = query.DumpCode().Where(l => l.Contains(" = ((*(*this).run2).at(aInt32_4))*2;")).FirstOrDefault();
             Assert.IsNotNull(lm, "Unable to find proper addition line");
         }
 

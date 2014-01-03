@@ -191,6 +191,21 @@ namespace LINQToTTreeLib.QMFunctions
             }
 
             /// <summary>
+            /// Doing ordering of the clause, are we?
+            /// </summary>
+            /// <param name="orderByClause"></param>
+            /// <param name="queryModel"></param>
+            /// <param name="index"></param>
+            public override void VisitOrderByClause(OrderByClause orderByClause, QueryModel queryModel, int index)
+            {
+                base.VisitOrderByClause(orderByClause, queryModel, index);
+                foreach (var expr in orderByClause.Orderings.Select(o => o.Expression))
+                {
+                    _exprVisitor.VisitExpression(expr);
+                }
+            }
+
+            /// <summary>
             /// Look for the expression associated with a Where clause, and run the parser on that.
             /// </summary>
             /// <param name="whereClause"></param>
