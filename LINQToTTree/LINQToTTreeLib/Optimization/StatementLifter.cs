@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.Optimization
             var statements = result.CodeBody as IStatementCompound;
             VisitOptimizableStatements(statements);
 
-            foreach (var f in result.Functions)
+            foreach (var f in result.Functions.Where(f => f.StatementBlock != null))
             {
                 VisitOptimizableStatements(f.StatementBlock);
             }
