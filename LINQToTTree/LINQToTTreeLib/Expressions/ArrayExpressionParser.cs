@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -79,6 +79,8 @@ namespace LINQToTTreeLib.Expressions
         /// <returns>null, if no further setup is required to run the loop, and an IArrayInfo if further work is required.</returns>
         private IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
+            expr = NormalizeExpression(expr);
+
             //
             // See if we can find something that will handle the array.
             //
@@ -89,6 +91,21 @@ namespace LINQToTTreeLib.Expressions
                           select r).FirstOrDefault();
 
             return arInfo;
+        }
+
+        /// <summary>
+        /// Look at the expression and see if we can strip off some extra things around the edges which shouldn't really affect things.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        /// <remarks>Currently only strip away convert statements</remarks>
+        private static Expression NormalizeExpression(Expression expr)
+        {
+            if (expr.NodeType != ExpressionType.Convert)
+                return expr;
+
+            var u = expr as UnaryExpression;
+            return u.Operand;
         }
     }
 

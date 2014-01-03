@@ -1,6 +1,6 @@
 ﻿
-using System;
 using LINQToTTreeLib.CodeAttributes;
+using System;
 namespace LINQToTreeHelpers
 {
     /// <summary>
@@ -131,7 +131,7 @@ namespace LINQToTreeHelpers
         [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
             Code = new string[]{
                 "TLorentzVector tlzUnique;",
-                "tlzUnique.SetPtEtaPhiE(px, py, pz, E);",
+                "tlzUnique.SetPxPyPzE(px, py, pz, E);",
                 "CreateTLZPxPyPzE = &tlzUnique;"
             })]
         public static ROOTNET.NTLorentzVector CreateTLZPxPyPzE(double px, double py, double pz, double E)

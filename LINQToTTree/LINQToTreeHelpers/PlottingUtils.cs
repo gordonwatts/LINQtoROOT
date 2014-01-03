@@ -1,10 +1,11 @@
 ﻿
+using LINQToTreeHelpers.FutureUtils;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using LINQToTreeHelpers.FutureUtils;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTreeHelpers
 {
@@ -41,6 +42,12 @@ namespace LINQToTreeHelpers
             Expression<Func<T, bool>> Filter { get; }
 
             /// <summary>
+            /// Get the weighting function. This is applied to each item before it is plotted, as the
+            /// weight in the Fill call to a TH histogram.
+            /// </summary>
+            Expression<Func<T, double>> Weight { get; }
+
+            /// <summary>
             /// Return a future value for the plot, with a full name and title as specified, from
             /// a sequence of events. Don't call this yourself, rather use the plot methods below
             /// to do the work.
@@ -49,16 +56,16 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">Fully formatted and replaced string to represent the plot title</param>
             /// <param name="goodEvents">The LINQToTTree sequence of events to plot (prefiltered)</param>
             /// <returns>A future value representing the plot</returns>
-            IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents);
+            IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<Tuple<T, double>> goodEvents);
 
             /// <summary>
             /// Return an immediate plot. Really, not very useful for most people.
             /// </summary>
             /// <param name="nameString"></param>
             /// <param name="titleString"></param>
-            /// <param name="goodEvents"></param>
+            /// <param name="goodEvents">A list of the events along with any additional weights to apply</param>
             /// <returns></returns>
-            ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents);
+            ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<Tuple<T, double>> goodEvents);
         }
 
         /// <summary>
@@ -83,6 +90,11 @@ namespace LINQToTreeHelpers
             public Expression<Func<IEnumerable<T>, bool>> Filter { get; set; }
 
             /// <summary>
+            /// The weighting function for this sequence.
+            /// </summary>
+            public Expression<Func<IEnumerable<T>, double>> Weight { get; set; }
+
+            /// <summary>
             /// Make a future plot from the sequence.
             /// </summary>
             public IPlotSpec<T> Plotter { get; set; }
@@ -95,9 +107,11 @@ namespace LINQToTreeHelpers
             /// <param name="titleString"></param>
             /// <param name="goodEvents"></param>
             /// <returns></returns>
-            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<IEnumerable<T>> goodEvents)
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<Tuple<IEnumerable<T>, double>> goodEvents)
             {
-                return goodEvents.SelectMany(seq => seq).FuturePlot(nameString, titleString, Plotter);
+                return goodEvents
+                    .SelectMany(seq => seq.Item1.Select(e => new Tuple<T, double>(e, seq.Item2)))
+                    .FuturePlot(nameString, titleString, Plotter);
             }
 
             /// <summary>
@@ -108,9 +122,11 @@ namespace LINQToTreeHelpers
             /// <param name="titleString"></param>
             /// <param name="goodEvents"></param>
             /// <returns></returns>
-            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<IEnumerable<T>> goodEvents)
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<Tuple<IEnumerable<T>, double>> goodEvents)
             {
-                return goodEvents.SelectMany(seq => seq).Plot(nameString, titleString, Plotter);
+                return goodEvents
+                    .SelectMany(seq => seq.Item1.Select(e => new Tuple<T, double>(e, seq.Item2)))
+                    .Plot(nameString, titleString, Plotter);
             }
         }
 
@@ -131,15 +147,31 @@ namespace LINQToTreeHelpers
 
             public Expression<Func<U, T>> Converter { get; set; }
 
-            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<U> goodEvents)
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<Tuple<U, double>> goodEvents)
             {
-                return goodEvents.Select(Converter).FuturePlot(nameString, titleString, Plotter);
+                return ConvertEvents(goodEvents)
+                    .FuturePlot(nameString, titleString, Plotter);
             }
 
-            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<U> goodEvents)
+            /// <summary>
+            /// Convert the events and add in a weight.
+            /// </summary>
+            /// <param name="goodEvents"></param>
+            /// <returns></returns>
+            private IQueryable<Tuple<T, double>> ConvertEvents(IQueryable<Tuple<U, double>> goodEvents)
             {
-                return goodEvents.Select(Converter).Plot(nameString, titleString, Plotter);
+                return goodEvents.Select(e => new Tuple<T, double>(Converter.Invoke(e.Item1), Weight.Invoke(e.Item1) * e.Item2));
             }
+
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<Tuple<U, double>> goodEvents)
+            {
+                return ConvertEvents(goodEvents).Plot(nameString, titleString, Plotter);
+            }
+
+            /// <summary>
+            /// An additional weight function to add in.
+            /// </summary>
+            public Expression<Func<U, double>> Weight { get; set; }
         }
 
         /// <summary>
@@ -179,6 +211,11 @@ namespace LINQToTreeHelpers
             public Expression<Func<T, bool>> Filter { get; set; }
 
             /// <summary>
+            /// Apply the weight to the Fill for the histogram.
+            /// </summary>
+            public Expression<Func<T, double>> Weight { get; set; }
+
+            /// <summary>
             /// The format for the plot name string.
             /// </summary>
             public string NameFormat { get; set; }
@@ -189,7 +226,7 @@ namespace LINQToTreeHelpers
             public string TitleFormat { get; set; }
 
             /// <summary>
-            /// Return a future value for the plot. Use the Plot method below rather than this directly.
+            /// Return a future value for the plot over the sequence of good events.
             /// </summary>
             /// <remarks>
             /// Assume that our events have already been filtered (see below).
@@ -198,9 +235,11 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">Fully formatted title to use for the plot</param>
             /// <param name="goodEvents">The sequence of good (prefiltered) events to use for this plot</param>
             /// <returns></returns>
-            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<Tuple<T, double>> goodEvents)
             {
-                return goodEvents.FuturePlot(nameString, titleString, nbins, xmin, xmax, getter).ExtractValue(p => p as ROOTNET.Interface.NTH1);
+                return goodEvents.Select(e => new Tuple<T, double>(e.Item1, e.Item2 * Weight.Invoke(e.Item1)))
+                    .FuturePlot(nameString, titleString, nbins, xmin, xmax, xValue: e => getter.Invoke(e.Item1), weight: e => Weight.Invoke(e.Item1) * e.Item2)
+                    .ExtractValue(p => p as ROOTNET.Interface.NTH1);
             }
 
             /// <summary>
@@ -213,9 +252,10 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">Fully formatted title to use for the plot</param>
             /// <param name="goodEvents">The sequence of good (prefiltered) events to use for this plot</param>
             /// <returns></returns>
-            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<Tuple<T, double>> goodEvents)
             {
-                return goodEvents.Plot(nameString, titleString, nbins, xmin, xmax, getter);
+                return goodEvents
+                    .Plot(nameString, titleString, nbins, xmin, xmax, e => getter.Invoke(e.Item1), weight: e => Weight.Invoke(e.Item1) * e.Item2);
             }
         }
 
@@ -271,6 +311,11 @@ namespace LINQToTreeHelpers
             public Expression<Func<T, bool>> Filter { get; set; }
 
             /// <summary>
+            /// Weight function that is applied to each Fill
+            /// </summary>
+            public Expression<Func<T, double>> Weight { get; set; }
+
+            /// <summary>
             /// The string.Format string that represents the name of the plot.
             /// </summary>
             public string NameFormat { get; set; }
@@ -287,10 +332,12 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">The formatted title of the plot</param>
             /// <param name="goodEvents">The sequence of items we should be plotting</param>
             /// <returns></returns>
-            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<Tuple<T, double>> goodEvents)
             {
-                return goodEvents.FuturePlot(nameString, titleString, nxbins, xmin, xmax, xgetter,
-                    nybins, ymin, ymax, ygetter).ExtractValue(p => p as ROOTNET.Interface.NTH1);
+                return goodEvents
+                    .FuturePlot(nameString, titleString, nxbins, xmin, xmax, e => xgetter.Invoke(e.Item1),
+                        nybins, ymin, ymax, e => ygetter.Invoke(e.Item1), weight: e => Weight.Invoke(e.Item1) * e.Item2)
+                    .ExtractValue(p => p as ROOTNET.Interface.NTH1);
             }
 
             /// <summary>
@@ -300,10 +347,10 @@ namespace LINQToTreeHelpers
             /// <param name="titleString">The formatted title of the plot</param>
             /// <param name="goodEvents">The sequence of items we should be plotting</param>
             /// <returns></returns>
-            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<T> goodEvents)
+            public ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<Tuple<T, double>> goodEvents)
             {
-                return goodEvents.Plot(nameString, titleString, nxbins, xmin, xmax, xgetter,
-                    nybins, ymin, ymax, ygetter);
+                return goodEvents
+                    .Plot(nameString, titleString, nxbins, xmin, xmax, e => xgetter.Invoke(e.Item1), nybins, ymin, ymax, e => ygetter.Invoke(e.Item1), weight: e => Weight.Invoke(e.Item1) * e.Item2);
             }
         }
 
@@ -326,14 +373,16 @@ namespace LINQToTreeHelpers
         /// <param name="converter">Convert from an object of type U to a sequences of objects of type T</param>
         /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
         /// <returns>Plot spec able to run on a sequence</returns>
-        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix = null, Expression<Func<U, bool>> filter = null)
+        public static IPlotSpec<U> FromManyOfType<T, U>(this IPlotSpec<T> source, Expression<Func<U, IEnumerable<T>>> converter, string argumentPrefix = null, Expression<Func<U, bool>> filter = null)
         {
             string newNameFormat = source.NameFormat;
             string newTitleFormat = source.TitleFormat;
             if (argumentPrefix != null)
             {
-                newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
-                newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+                var nf = string.IsNullOrWhiteSpace(source.NameFormat) ? "{0}" : source.NameFormat;
+                var tf = string.IsNullOrWhiteSpace(source.TitleFormat) ? "{0}" : source.TitleFormat;
+                newNameFormat = string.Format(nf, argumentPrefix + "{0}");
+                newTitleFormat = string.Format(tf, argumentPrefix + " {0}");
             }
 
             // First, create the plotter that can deal with the sequence it self.
@@ -371,8 +420,10 @@ namespace LINQToTreeHelpers
         /// <param name="converter">Convert from objects of type U to objects of type T</param>
         /// <param name="argumentPrefix">Prefex to add to the name and title arguments</param>
         /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
+        /// <param name="weight">Additional weight to be applied multiplicitavely to any other weights already set</param>
         /// <returns></returns>
-        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix, Expression<Func<U, bool>> filter = null)
+        public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix = "",
+            Expression<Func<U, bool>> filter = null, Expression<Func<U, double>> weight = null)
         {
             string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
             string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
@@ -383,14 +434,43 @@ namespace LINQToTreeHelpers
                 TitleFormat = newTitleFormat,
                 Plotter = source,
                 Converter = converter,
-                Filter = filter
+                Filter = filter,
+                Weight = weight == null ? e => 1.0 : weight
             };
 
             return result;
         }
 
         /// <summary>
-        /// Creates a plotter specification for a 1D (TH1F) plotter.
+        /// Modify a plot by adding a weight or a filter
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="argumentPrefix"></param>
+        /// <param name="filter"></param>
+        /// <param name="weight"></param>
+        /// <returns></returns>
+        public static IPlotSpec<T> FromType<T>(this IPlotSpec<T> source, string argumentPrefix = "",
+            Expression<Func<T, bool>> filter = null, Expression<Func<T, double>> weight = null)
+        {
+            string newNameFormat = string.Format(source.NameFormat, argumentPrefix + "{0}");
+            string newTitleFormat = string.Format(source.TitleFormat, argumentPrefix + " {0}");
+
+            var result = new PlotSpecConverter<T, T>
+            {
+                NameFormat = newNameFormat,
+                TitleFormat = newTitleFormat,
+                Plotter = source,
+                Converter = e => e,
+                Filter = filter,
+                Weight = weight == null ? e => 1.0 : weight
+            };
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates a plotter specification for a 1D (TH1F) plotter for a double
         /// </summary>
         /// <remarks>
         /// The # of bins, xmin, and xmax are passed directly to root. If you want to have auto limits,
@@ -404,15 +484,27 @@ namespace LINQToTreeHelpers
         /// <param name="nFormat">The format specification for the plot name string</param>
         /// <param name="tFormat">The format specification for the plot title string</param>
         /// <param name="filter">A filter that will remove sequence items you don't want plotted</param>
+        /// <param name="weight">The weight to be applied during plotting</param>
         /// <returns></returns>
         public static IPlotSpec<T> MakePlotterSpec<T>(int nXBins, double XMin, double XMax, Expression<Func<T, double>> xGetter,
-            string nFormat = null, string tFormat = null, Expression<Func<T, bool>> filter = null)
+            string nFormat = "", string tFormat = "", Expression<Func<T, bool>> filter = null,
+            Expression<Func<T, double>> weight = null)
         {
-            return new PlotSpec1D<T>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = xGetter, NameFormat = nFormat, TitleFormat = tFormat, Filter = filter };
+            return new PlotSpec1D<T>()
+            {
+                nbins = nXBins,
+                xmin = XMin,
+                xmax = XMax,
+                getter = xGetter,
+                NameFormat = nFormat,
+                TitleFormat = tFormat,
+                Filter = filter,
+                Weight = weight == null ? e => 1.0 : weight
+            };
         }
 
         /// <summary>
-        /// Creates a plotter specification for a 1D (TH1F) plotter.
+        /// Creates a plotter specification for a 1D (TH1F) plotter for a sequence of doubles
         /// </summary>
         /// <remarks>
         /// The # of bins, xmin, and xmax are passed directly to root. If you want to have auto limits,
@@ -430,8 +522,8 @@ namespace LINQToTreeHelpers
         public static IPlotSpec<T> MakePlotterSpec<T>(int nXBins, double XMin, double XMax, Expression<Func<T, IEnumerable<double>>> xGetter,
             string nFormat = null, string tFormat = null, Expression<Func<T, bool>> filter = null)
         {
-            var basePlotter = new PlotSpec1D<double>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = x => x, NameFormat = nFormat, TitleFormat = tFormat };
-            return basePlotter.FromType(xGetter, "", filter);
+            var basePlotter = new PlotSpec1D<double>() { nbins = nXBins, xmin = XMin, xmax = XMax, getter = x => x, NameFormat = nFormat, TitleFormat = tFormat, Weight = e => 1.0 };
+            return basePlotter.FromManyOfType(xGetter, "", filter);
         }
 
         /// <summary>
@@ -453,12 +545,29 @@ namespace LINQToTreeHelpers
         /// <param name="nameFormat">The format specification for the plot name string</param>
         /// <param name="titleFormat">The format specification for the title string</param>
         /// <param name="filter">A filter that will remove sequence items you don't want plotted</param>
+        /// <param name="weight">Weight function to be applied to each item filled</param>
         /// <returns></returns>
         public static IPlotSpec<T> MakePlotterSpec<T>(int nXBins, double XMin, double XMax, Expression<Func<T, double>> xGetter,
             int nYBins, double YMin, double YMax, Expression<Func<T, double>> yGetter,
-            string nameFormat = null, string titleFormat = null, Expression<Func<T, bool>> filter = null)
+            string nameFormat = null, string titleFormat = null,
+            Expression<Func<T, bool>> filter = null,
+            Expression<Func<T, double>> weight = null)
         {
-            return new PlotSpec2D<T>() { nxbins = nXBins, xmin = XMin, xmax = XMax, xgetter = xGetter, nybins = nYBins, ymin = YMin, ymax = YMax, ygetter = yGetter, NameFormat = nameFormat, TitleFormat = titleFormat, Filter = filter };
+            return new PlotSpec2D<T>()
+            {
+                nxbins = nXBins,
+                xmin = XMin,
+                xmax = XMax,
+                xgetter = xGetter,
+                nybins = nYBins,
+                ymin = YMin,
+                ymax = YMax,
+                ygetter = yGetter,
+                NameFormat = nameFormat,
+                TitleFormat = titleFormat,
+                Filter = filter,
+                Weight = weight == null ? e => 1.0 : weight
+            };
         }
 
         /// <summary>
@@ -502,6 +611,33 @@ namespace LINQToTreeHelpers
             var goodEvents = source;
             if (plotSpecification.Filter != null)
                 goodEvents = source.Where(plotSpecification.Filter);
+
+            return plotSpecification.MakeFuturePlot(nameString, titleString, goodEvents.Select(e => new Tuple<T, double>(e, 1.0)));
+        }
+
+        /// <summary>
+        /// Make a future for a plot that is a sequence of items along with partner weights.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sourceWithWeights"></param>
+        /// <param name="name"></param>
+        /// <param name="title"></param>
+        /// <param name="plotSpecification"></param>
+        /// <param name="nameAndTitleFormatArgs"></param>
+        /// <returns></returns>
+        public static IFutureValue<ROOTNET.Interface.NTH1> FuturePlot<T>(this IQueryable<Tuple<T, double>> sourceWithWeights, string name, string title, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("Name is null");
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException("Title is null");
+
+            var titleString = string.Format(title, nameAndTitleFormatArgs);
+            var nameString = string.Format(name, nameAndTitleFormatArgs).FixupForROOTName();
+
+            var goodEvents = sourceWithWeights;
+            if (plotSpecification.Filter != null)
+                goodEvents = sourceWithWeights.Where(e => plotSpecification.Filter.Invoke(e.Item1));
 
             return plotSpecification.MakeFuturePlot(nameString, titleString, goodEvents);
         }
@@ -547,6 +683,34 @@ namespace LINQToTreeHelpers
             var goodEvents = source;
             if (plotSpecification.Filter != null)
                 goodEvents = source.Where(plotSpecification.Filter);
+
+            return plotSpecification.MakePlot(nameString, titleString, goodEvents.Select(e => new Tuple<T, double>(e, 1.0)));
+        }
+
+        /// <summary>
+        /// Use a plot specification to generate a plot from a given sequence. THe sequence consists of the object to be plotted, plus an
+        /// extra additional weight to be applied.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sourceWithWeights"></param>
+        /// <param name="name"></param>
+        /// <param name="title"></param>
+        /// <param name="plotSpecification"></param>
+        /// <param name="nameAndTitleFormatArgs"></param>
+        /// <returns></returns>
+        public static ROOTNET.Interface.NTH1 Plot<T>(this IQueryable<Tuple<T, double>> sourceWithWeights, string name, string title, IPlotSpec<T> plotSpecification, params string[] nameAndTitleFormatArgs)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("Name is null");
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException("Title is null");
+
+            var titleString = string.Format(title, nameAndTitleFormatArgs);
+            var nameString = string.Format(name, nameAndTitleFormatArgs).FixupForROOTName();
+
+            var goodEvents = sourceWithWeights;
+            if (plotSpecification.Filter != null)
+                goodEvents = sourceWithWeights.Where(e => plotSpecification.Filter.Invoke(e.Item1));
 
             return plotSpecification.MakePlot(nameString, titleString, goodEvents);
         }
