@@ -1,15 +1,16 @@
-// <copyright file="ROMinMaxTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+// <copyright file="ROMinMaxTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -76,9 +77,8 @@ namespace LINQToTTreeLib.ResultOperators
         {
             public int[] run;
         }
-
         [TestMethod]
-        public void TestMaxInsideOtherExpression()
+        public void TestMaxVariableDeclaredCorrectly()
         {
             var q = new QueriableDummy<ntup2>();
 
@@ -96,8 +96,15 @@ namespace LINQToTTreeLib.ResultOperators
             // if statement that tests for > 10.
             // 
 
-            Assert.AreEqual(2, res.CodeBody.Statements.Count(), "# of statements at top level");
-            var ifStatement = res.CodeBody.Statements.Skip(1).First() as Statements.StatementFilter;
+            Assert.AreEqual(1, res.Functions.Count(), "# of functions");
+            var code = res.Functions.First().StatementBlock;
+            var minmax = code.FindStatement<StatementMinMaxTest>();
+            Assert.IsNotNull(minmax, "Unable to find the minmax statements");
+            var mmaxVar = minmax.MaxMinVariable;
+            var declstatement = code.FindDeclarationStatement(mmaxVar);
+            Assert.IsNotNull(declstatement, string.Format("Unable to find where {0} for minmax was declared!", mmaxVar.ToString()));
+#if false
+            var ifStatement = code.Statements.Skip(1).First() as Statements.StatementFilter;
             Assert.IsNotNull(ifStatement, "If statement wasn' of proper type!");
 
             var varname = ifStatement.TestExpression.RawValue.Split('>').First();
@@ -108,6 +115,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             var asBooked = res.CodeBody.DeclaredVariables.Where(v => v.ParameterName == varname).FirstOrDefault();
             Assert.IsNotNull(asBooked, string.Format("Unable to find variable '{0}' in the top level list of booked variables.", varname));
+#endif
         }
     }
 }

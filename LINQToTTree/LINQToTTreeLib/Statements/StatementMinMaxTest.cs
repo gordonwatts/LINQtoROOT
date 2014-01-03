@@ -1,7 +1,7 @@
-﻿using System;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Variables;
+using System;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -11,7 +11,7 @@ namespace LINQToTTreeLib.Statements
     public class StatementMinMaxTest : IStatement
     {
         private IDeclaredParameter vIsFilled;
-        private IDeclaredParameter vMaxMin;
+        public IDeclaredParameter MaxMinVariable { get; set; }
         private IValue exprToMinOrMaximize;
         private string CompareOperator;
         private IDeclaredParameter TempVariable;
@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.Statements
         {
             // TODO: Complete member initialization
             this.vIsFilled = vIsFilled;
-            this.vMaxMin = vMaxMin;
+            this.MaxMinVariable = vMaxMin;
             this.exprToMinOrMaximize = exprToMinOrMaximize;
 
             if (doMax)
@@ -48,9 +48,9 @@ namespace LINQToTTreeLib.Statements
         public System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
             yield return string.Format("{0} {1} = {2};", TempVariable.Type.AsCPPType(), TempVariable.ParameterName, exprToMinOrMaximize.RawValue);
-            yield return string.Format("if (!{0} || ({1} {2} {3})) {{", vIsFilled.ParameterName, TempVariable.ParameterName, CompareOperator, vMaxMin.ParameterName);
+            yield return string.Format("if (!{0} || ({1} {2} {3})) {{", vIsFilled.ParameterName, TempVariable.ParameterName, CompareOperator, MaxMinVariable.ParameterName);
             yield return string.Format("  {0} = true;", vIsFilled.ParameterName);
-            yield return string.Format("  {0} = {1};", vMaxMin.ParameterName, TempVariable.ParameterName);
+            yield return string.Format("  {0} = {1};", MaxMinVariable.ParameterName, TempVariable.ParameterName);
             yield return "}";
         }
 
@@ -63,7 +63,7 @@ namespace LINQToTTreeLib.Statements
         {
             exprToMinOrMaximize.RenameRawValue(originalName, newName);
             vIsFilled.RenameParameter(originalName, newName);
-            vMaxMin.RenameParameter(originalName, newName);
+            MaxMinVariable.RenameParameter(originalName, newName);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace LINQToTTreeLib.Statements
             // Everything else is dependent - so we can just rename it.
             //
 
-            var cando = opt.TryRenameVarialbeOneLevelUp(other.vMaxMin.ParameterName, vMaxMin);
+            var cando = opt.TryRenameVarialbeOneLevelUp(other.MaxMinVariable.ParameterName, MaxMinVariable);
             if (!cando)
                 return false;
             cando = opt.TryRenameVarialbeOneLevelUp(other.vIsFilled.ParameterName, vIsFilled);

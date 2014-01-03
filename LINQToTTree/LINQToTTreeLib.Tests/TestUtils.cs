@@ -293,6 +293,52 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
+        /// Find the statement of a particular type, or return null.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="statementType"></param>
+        /// <returns></returns>
+        public static T FindStatement<T>(this IStatementCompound source)
+            where T : class
+        {
+            var here = source.Statements.Where(s => s.GetType() == typeof(T)).FirstOrDefault();
+            if (here != null)
+                return (T)here;
+
+            return source.Statements
+                .Where(sc => sc is IStatementCompound)
+                .Cast<IStatementCompound>()
+                .Select(s => s.FindStatement<T>())
+                .Where(found => found != null)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the statement where the parameter was declared, or null.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static IBookingStatementBlock FindDeclarationStatement(this IStatementCompound source, IDeclaredParameter param)
+        {
+            if (source is IBookingStatementBlock)
+            {
+                var book = source as IBookingStatementBlock;
+                var found = book.DeclaredVariables.Where(v => v.ParameterName == param.ParameterName).Any();
+                if (found)
+                    return book;
+            }
+
+            return source.Statements
+                .Where(s => s is IStatementCompound)
+                .Cast<IStatementCompound>()
+                .Select(s => s.FindDeclarationStatement(param))
+                .Where(v => v != null)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
         /// Returns all files below the base directory whose name (including extension) match the regex pattern.
         /// </summary>
         /// <param name="baseDir"></param>

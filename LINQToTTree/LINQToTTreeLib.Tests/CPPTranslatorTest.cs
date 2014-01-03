@@ -146,7 +146,7 @@ namespace LINQToTTreeLib
 
             public IEnumerable<IQMFuncExecutable> Functions
             {
-                get { throw new NotImplementedException(); }
+                get { return new IQMFuncExecutable[] { }; }
             }
         }
 

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -325,6 +325,8 @@ namespace LINQToTTreeLib.Tests
             var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
             Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
+
+            Assert.Inconclusive("It seems the result of the function is never used");
         }
 
         [TestMethod]
@@ -353,6 +355,9 @@ namespace LINQToTTreeLib.Tests
             var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
             Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
+            Assert.Inconclusive("It isn't correctly grabbing the item for reuse?");
+
+            Assert.Inconclusive("The result of the funciton call doesn't seem to be used.");
         }
 
         [TestMethod]
