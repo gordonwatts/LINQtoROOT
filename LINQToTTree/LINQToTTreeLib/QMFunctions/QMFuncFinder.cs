@@ -6,6 +6,7 @@ using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 namespace LINQToTTreeLib.QMFunctions
 {
@@ -24,7 +25,18 @@ namespace LINQToTTreeLib.QMFunctions
         {
             var qmf = new QMFuncVisitor();
             qmf.VisitQueryModel(model);
-            return qmf.FoundFunctions;
+            var funcs = qmf.FoundFunctions;
+            DumpFuncs(funcs);
+            return funcs;
+        }
+
+        [Conditional("DEBUG")]
+        private static void DumpFuncs(List<QMFuncHeader> funcs)
+        {
+            foreach (var f in funcs)
+            {
+                Trace.WriteLine(string.Format("Searching for QM function {0}", f.QM.ToString()));
+            }
         }
 
         /// <summary>
@@ -249,6 +261,8 @@ namespace LINQToTTreeLib.QMFunctions
                 return base.VisitQuerySourceReferenceExpression(expression);
             }
         }
+
+        public static object funcs { get; set; }
     }
 
 }

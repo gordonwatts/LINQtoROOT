@@ -43,14 +43,16 @@ namespace LINQToTTreeLib
             // about this is that the query text is basically all that is required for doing
             // matching: no code analysis. Further, no messing with the code.
 
+            // Only take functions that were actually populated by us!
+            var goodFunctions = code.Functions.Where(f => f.StatementBlock != null);
             if (_functions.Count == 0)
             {
-                _functions.AddRange(code.Functions);
+                _functions.AddRange(goodFunctions);
             }
             else
             {
                 var matchedFunctions =
-                    from newFunc in code.Functions
+                    from newFunc in goodFunctions
                     let oldFunc = _functions.Where(f => f.Matches(newFunc)).FirstOrDefault()
                     group Tuple.Create(oldFunc, newFunc) by oldFunc != null;
 

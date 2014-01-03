@@ -2734,5 +2734,52 @@ namespace LINQToTTreeLib
             var st1 = sb.Statements.First();
             Assert.IsInstanceOfType(st1, typeof(IStatementLoop), "Loop instance check");
         }
+
+        /// <summary>
+        /// Isolating a test from another bit of code. Discovered what seems like a case where a function is discovered,
+        /// but never actually filled with statements. The reason is, as can be spotted below, that the function
+        /// (which evaluates from Int32 mj in [f].valC1D orderby (Calc([mj]) - Calc([j])) asc select [mj] => First())
+        /// is used in the definition of MJ. However, looking at res2 you'll note that it is never needed.
+        /// This must be a case of re-linq not quite managing to get the full simlification through. However,
+        /// it also means that we need to be a little careful when we generate and evaluate code as we will
+        /// have cases when something that looks like a good function, isn't.
+        /// </summary>
+        [TestMethod]
+        public void QMFuncNotNull()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var r1 = from f in q
+                     let l1 = f.valC1D.Where(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v) > 1).OrderByDescending(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v))
+                     select new
+                     {
+                         jets = l1,
+                         truthjets = f.valC1D
+                     };
+
+            var r2 = from f in r1
+                     select new
+                     {
+                         machedJets = (from j in f.jets
+                                       select new
+                                       {
+                                           J = j,
+                                           MJ = (from mj in f.truthjets
+                                                 let imj = LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(mj)
+                                                 let ij = LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j)
+                                                 orderby imj - ij ascending
+                                                 select mj).First()
+                                       })
+                     };
+
+            var res2 = (from f in r2
+                        from j in f.machedJets
+                        select LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j.J)).Sum();
+            var query2 = DummyQueryExectuor.FinalResult;
+            query2.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query2.Functions.Count(), "# of functions");
+            Assert.IsTrue(query2.Functions.All(f => f.StatementBlock == null), "not all blocks have statements.");
+        }
     }
 }
