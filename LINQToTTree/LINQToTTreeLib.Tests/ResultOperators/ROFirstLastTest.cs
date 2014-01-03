@@ -214,14 +214,14 @@ namespace LINQToTTreeLib.ResultOperators
             public Expression HeldExpression { get; private set; }
         }
 
-        class TestTranslatedNestedCompareAndSortHolder
+        public class TestTranslatedNestedCompareAndSortHolder
         {
             public subNtupleObjects1 jet { get; set; }
             public subNtupleObjects2 track { get; set; }
             public double delta { get; set; }
         }
 
-        class TestTranslatedNestedCompareAndSortHolderEvent
+        public class TestTranslatedNestedCompareAndSortHolderEvent
         {
 #pragma warning disable 0649
             public IEnumerable<TestTranslatedNestedCompareAndSortHolder> matches;

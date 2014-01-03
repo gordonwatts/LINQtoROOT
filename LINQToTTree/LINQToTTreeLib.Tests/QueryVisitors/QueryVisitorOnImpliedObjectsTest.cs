@@ -358,13 +358,10 @@ namespace LINQToTTreeLib.Tests
             CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
-            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# statements in the code body");
             var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
-            Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
-            Assert.Inconclusive("It isn't correctly grabbing the item for reuse?");
-
-            Assert.Inconclusive("The result of the funciton call doesn't seem to be used.");
+            Assert.AreEqual(1, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
 
         [TestMethod]

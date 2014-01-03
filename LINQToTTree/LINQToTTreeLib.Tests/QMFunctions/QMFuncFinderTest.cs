@@ -364,5 +364,39 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var f = sf.First();
             Assert.AreEqual(1, f.Arguments.Count(), "# of arguments");
         }
+
+        /// <summary>
+        /// We can't transfer an temp object accross the boundary, much the same way we can't
+        /// do an anonymous function.
+        /// </summary>
+        [TestMethod]
+        public void NoObjectFunctionReturns()
+        {
+            var q = new QueriableDummyNoExe<LINQToTTreeLib.ResultOperators.ROFirstLastTest.ntupWithObjects>();
+
+            // Create a dual object. Avoid anonymous objects just for the sake of it.
+            var matched = from evt in q
+                          select new LINQToTTreeLib.ResultOperators.ROFirstLastTest.TestTranslatedNestedCompareAndSortHolderEvent()
+                          {
+                              matches = from j in evt.jets
+                                        orderby j.v3 ascending
+                                        select new LINQToTTreeLib.ResultOperators.ROFirstLastTest.TestTranslatedNestedCompareAndSortHolder()
+                                        {
+                                            jet = j
+                                        }
+                          };
+
+            // Filter on the first jet in the sequence.
+            var goodmatched = from evt in matched
+                              where evt.matches.First().jet.v3 > 0
+                              select evt;
+
+            var r = goodmatched.Count();
+
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var sf = QMFuncFinder.FindQMFunctions(qm);
+
+            Assert.AreEqual(0, sf.Count(), "# of functions");
+        }
     }
 }

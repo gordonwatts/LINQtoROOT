@@ -137,6 +137,7 @@ namespace LINQToTTreeLib.QMFunctions
 
                 if (_qmContextStack.Count > 1
                     && !typeof(IEnumerable).IsAssignableFrom(queryModel.GetResultType())
+                    && !queryModel.GetResultType().IsClass
                     && !queryModel.GetResultType().Name.Contains("Anon"))
                 {
                     if (queryModel.ResultOperators.Any())
