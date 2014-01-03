@@ -181,5 +181,10 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="queryModel">The query model to look up</param>
         /// <returns>The QM function sorce, or null if it isn't represented by a function</returns>
         IQMFunctionSource FindQMFunction(QueryModel queryModel);
+
+        /// <summary>
+        /// Return any functions needed by this set of code.
+        /// </summary>
+        IEnumerable<IQMFuncExecutable> Functions { get; }
     }
 }

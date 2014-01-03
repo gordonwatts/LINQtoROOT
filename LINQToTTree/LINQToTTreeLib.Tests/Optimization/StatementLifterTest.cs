@@ -47,6 +47,29 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         [TestMethod]
+        public void TestLiftSimpleStatementInFunction()
+        {
+            var v = new StatementInlineBlock();
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+            loop.Add(new StatementWithNoSideEffects());
+
+            var f = QMFunctions.QMFuncUtils.GenerateFunction();
+            f.SetCodeBody(v);
+
+            var gc = new GeneratedCode();
+            gc.Add(new StatementSimpleStatement("int i = 10;"));
+            gc.Add(f);
+            StatementLifter.Optimize(gc);
+
+            Assert.AreEqual(1, gc.Functions.Count(), "# of functions after lifting");
+            var firstStatement = gc.Functions.First().StatementBlock.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithNoSideEffects), "first statement");
+
+        }
+
+        [TestMethod]
         public void TestLiftTwoStatements()
         {
             var v = new GeneratedCode();
