@@ -135,30 +135,46 @@ namespace LINQToTTreeLib.QMFunctions
                 //  - Do not cache any anonymous types
                 //  - Deal with later somethign that is an iterator (used in a later loop).
 
+                var isEnumerable = typeof(IEnumerable).IsAssignableFrom(queryModel.GetResultType());
+                var selectSequence = !queryModel.ResultOperators.Any();
                 if (_qmContextStack.Count > 1
-                    && !typeof(IEnumerable).IsAssignableFrom(queryModel.GetResultType())
+                    && ((selectSequence && isGoodSelectSequenceType(queryModel.GetResultType())) || !isEnumerable)
                     && !queryModel.GetResultType().IsClass
-                    && !queryModel.GetResultType().Name.Contains("Anon"))
+                    )
                 {
-                    if (queryModel.ResultOperators.Any())
+                    var qmText = FormattingQueryVisitor.Format(queryModel);
+                    if (!FoundFunctions.Where(ff => ff.QMText == qmText).Any())
                     {
-                        var qmText = FormattingQueryVisitor.Format(queryModel);
-                        if (!FoundFunctions.Where(ff => ff.QMText == qmText).Any())
+                        var sref = _qmContextStack.Peek();
+                        var f = new QMFuncHeader()
                         {
-                            var sref = _qmContextStack.Peek();
-                            var f = new QMFuncHeader()
-                            {
-                                QM = queryModel,
-                                QMText = qmText,
-                                Arguments = sref._arguments.Cast<object>()
-                            };
-                            FoundFunctions.Add(f);
-                        }
+                            QM = queryModel,
+                            QMText = qmText,
+                            Arguments = sref._arguments.Cast<object>(),
+                            IsSequence = selectSequence
+                        };
+                        FoundFunctions.Add(f);
                     }
                 }
 
                 // Go back to working on the previous qm.
                 _qmContextStack.Pop();
+            }
+
+            /// <summary>
+            /// Check that the select sequence has the right type. For example,
+            /// we can't return a class in a function.
+            /// </summary>
+            /// <param name="type"></param>
+            /// <returns></returns>
+            private bool isGoodSelectSequenceType(System.Type type)
+            {
+                var arg = type.GetGenericArguments();
+                if (arg.Length != 1)
+                    return false;
+
+                var cls = arg[0];
+                return !cls.IsClass;
             }
 
             /// <summary>
