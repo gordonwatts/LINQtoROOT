@@ -90,9 +90,11 @@ namespace LINQToTTreeLib.ResultOperators
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(3, query.CodeBody.Statements.Count(), "# of statements in the code body");
-            Assert.IsInstanceOfType(query.CodeBody.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
-            Assert.IsInstanceOfType(query.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            var code = query.Functions.First().StatementBlock;
+            Assert.IsInstanceOfType(code.Statements.Skip(2).First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(code.Statements.Skip(3).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
         }
 
         [TestMethod]
@@ -110,13 +112,15 @@ namespace LINQToTTreeLib.ResultOperators
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(3, query.CodeBody.Statements.Count(), "# of statements in the code body");
-            Assert.IsInstanceOfType(query.CodeBody.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
-            Assert.IsInstanceOfType(query.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            var code = query.Functions.First().StatementBlock;
+            Assert.IsInstanceOfType(code.Statements.Skip(2).First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(code.Statements.Skip(3).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
         }
 
         [CPPHelperClass]
-        static class DoItClass
+        public static class DoItClass
         {
             [CPPCode(Code = new string[] { "DoIt = arg*2;" }, IncludeFiles = new string[] { "TLorentzVector.h" })]
             public static int DoIt(int arg)
@@ -157,7 +161,7 @@ namespace LINQToTTreeLib.ResultOperators
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
-            var lm = query.DumpCode().Where(l => l.Contains("aInt32_14 = ((*(*this).run2).at(aInt32_13))*2;")).FirstOrDefault();
+            var lm = query.DumpCode().Where(l => l.Contains(" = ((*(*this).run2).at(aInt32_4))*2;")).FirstOrDefault();
             Assert.IsNotNull(lm, "Unable to find proper addition line");
         }
 
@@ -210,14 +214,14 @@ namespace LINQToTTreeLib.ResultOperators
             public Expression HeldExpression { get; private set; }
         }
 
-        class TestTranslatedNestedCompareAndSortHolder
+        public class TestTranslatedNestedCompareAndSortHolder
         {
             public subNtupleObjects1 jet { get; set; }
             public subNtupleObjects2 track { get; set; }
             public double delta { get; set; }
         }
 
-        class TestTranslatedNestedCompareAndSortHolderEvent
+        public class TestTranslatedNestedCompareAndSortHolderEvent
         {
 #pragma warning disable 0649
             public IEnumerable<TestTranslatedNestedCompareAndSortHolder> matches;
@@ -371,9 +375,11 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
-            Assert.AreEqual(3, query.CodeBody.Statements.Count(), "# of statements in the code body");
-            Assert.IsInstanceOfType(query.CodeBody.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
-            Assert.IsInstanceOfType(query.CodeBody.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            var code = query.Functions.First().StatementBlock.Statements.Skip(2).First() as IStatementCompound;
+            Assert.IsInstanceOfType(code, typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(query.Functions.First().StatementBlock.Statements.Skip(3).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
         }
 
         [TranslateToClass(typeof(ResultType1))]
@@ -431,15 +437,15 @@ namespace LINQToTTreeLib.ResultOperators
             var q = new QueriableDummy<SourceType1>();
 
             var result = from evt in q
-                         where evt.jets.First() != null
+                         where evt.jets.FirstOrDefault() != null
                          select evt;
             var c = result.Count();
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
-            var cnt = res.CodeBody.CodeItUp().Where(l => l.Contains("-1")).Count();
-            Assert.AreEqual(2, cnt, "Improer # of -1's in the code");
+            var cnt = res.DumpCode().Where(l => l.Contains("-1")).Count();
+            Assert.AreEqual(4, cnt, "Improer # of -1's in the code");
         }
 
         [TestMethod]

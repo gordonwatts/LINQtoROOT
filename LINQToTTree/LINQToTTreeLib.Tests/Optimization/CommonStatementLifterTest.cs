@@ -625,7 +625,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestListCommonStatementOverIfWhenAlreadyThere()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res1 = from f in q
                        from r1 in f.valC1D
@@ -808,7 +808,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestAggregateStatementIndependentOfInnerLoop()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res1 = from f in q
                        select
@@ -841,13 +841,14 @@ namespace LINQToTTreeLib.Tests.Optimization
             Console.WriteLine();
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
+            // We can't totally combine because some gets extract into a function.
+            Assert.AreEqual(3, query.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
         }
 
         [TestMethod]
         public void TestIfStatementsFromSkips()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res1 = from f in q
                        where f.valC1D.First() > 0
@@ -879,7 +880,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // We test for this by making sure the "abs" function is called only twice in
             // the generated code.
 
-            Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_8++")), "The second if statement was optimized away!");
+            Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_14++")), "The second if statement was optimized away!");
         }
 
         /// <summary>
@@ -890,7 +891,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestCombinedLoopLiftReordering()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var r1 = from f in q
                      let l1 = f.valC1D.Where(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v) > 1).OrderByDescending(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v))
@@ -943,7 +944,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Find the first mention of aInt32_28. It should be declared.
 
-            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_17")).First();
+            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_17")).Skip(0).First();
             Assert.AreEqual("int aInt32_17=-1;", firstMention.Trim(), "aint32_17 decl");
         }
 

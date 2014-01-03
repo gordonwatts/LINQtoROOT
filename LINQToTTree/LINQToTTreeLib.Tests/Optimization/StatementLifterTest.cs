@@ -47,6 +47,29 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         [TestMethod]
+        public void TestLiftSimpleStatementInFunction()
+        {
+            var v = new StatementInlineBlock();
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            v.Add(loop);
+            loop.Add(new StatementWithNoSideEffects());
+
+            var f = QMFunctions.QMFuncUtils.GenerateFunction();
+            f.SetCodeBody(v);
+
+            var gc = new GeneratedCode();
+            gc.Add(new StatementSimpleStatement("int i = 10;"));
+            gc.Add(f);
+            StatementLifter.Optimize(gc);
+
+            Assert.AreEqual(1, gc.Functions.Count(), "# of functions after lifting");
+            var firstStatement = gc.Functions.First().StatementBlock.Statements.First();
+            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithNoSideEffects), "first statement");
+
+        }
+
+        [TestMethod]
         public void TestLiftTwoStatements()
         {
             var v = new GeneratedCode();
@@ -508,7 +531,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res = from f in q
                       from r1 in f.valC1D
@@ -547,7 +570,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res = from f in q
                       from r1 in f.valC1D
@@ -632,7 +655,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestLiftingHalfOfExpression()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.dummyntup>();
+            var q = new QueriableDummy<dummyntup>();
 
             var res = from f in q
                       select new
@@ -679,10 +702,10 @@ namespace LINQToTTreeLib.Tests.Optimization
             StatementLifter.Optimize(query);
             query.DumpCodeToConsole();
 
-            var linesOfCode = query.DumpCode().TakeWhile(l => !l.Contains("aNTLorentzVector_10).Phi"));
+            var linesOfCode = query.DumpCode().TakeWhile(l => !l.Contains("aNTLorentzVector_11).Phi"));
             var openBrackets = linesOfCode.Where(l => l.Contains("{")).Count();
             var closeBrackets = linesOfCode.Where(l => l.Contains("}")).Count();
-            Assert.AreEqual(openBrackets - 4, closeBrackets, "#of of nesting levesl for the Phi call");
+            Assert.AreEqual(openBrackets, closeBrackets, "#of of nesting levesl for the Phi call");
         }
 
         /// <summary>

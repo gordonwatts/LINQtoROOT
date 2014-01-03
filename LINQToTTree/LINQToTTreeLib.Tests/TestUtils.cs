@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
@@ -54,7 +55,7 @@ namespace LINQToTTreeLib.Tests
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public static IEnumerable<string> DumpCode(this GeneratedCode code)
+        public static IEnumerable<string> DumpCode(this GeneratedCode code, bool dumpQM = true)
         {
             yield return ("Declared Variables:");
             foreach (var var in code.CodeBody.DeclaredVariables)
@@ -70,6 +71,26 @@ namespace LINQToTTreeLib.Tests
             foreach (var line in code.CodeBody.DumpCode())
             {
                 yield return line;
+            }
+            yield return ("");
+
+            foreach (var f in code.QMFunctions)
+            {
+                yield return (string.Format("Function: {0}", f.Name));
+                if (dumpQM)
+                    yield return (string.Format("  -> QM: {0}", f.QueryModelText));
+                yield return (string.Format("  {0} {1} ()", f.ResultType, f.Name));
+                if (f.StatementBlock != null)
+                {
+                    foreach (var line in f.StatementBlock.DumpCode())
+                    {
+                        yield return string.Format("  {0}", line);
+                    }
+                }
+                else
+                {
+                    yield return "  ** No statements ever set";
+                }
             }
 
             if (code.ResultValue == null)
@@ -88,11 +109,21 @@ namespace LINQToTTreeLib.Tests
         /// <param name="code"></param>
         public static void DumpCodeToConsole(this GeneratedCode code)
         {
-            foreach (var line in code.DumpCode())
+            code.DumpCode().DumpToConsole();
+        }
+
+        /// <summary>
+        /// Dump lines to the console.
+        /// </summary>
+        /// <param name="lines"></param>
+        public static void DumpToConsole(this IEnumerable<string> lines)
+        {
+            foreach (var item in lines)
             {
-                Console.WriteLine(line);
+                Console.WriteLine(item);
             }
         }
+
         /// <summary>
         /// Dump the code to the console - for debugging a test...
         /// </summary>
@@ -176,6 +207,23 @@ namespace LINQToTTreeLib.Tests
                 };
             }
 
+            foreach (var f in code.Functions)
+            {
+                yield return (string.Format("Function: {0}", f.Name));
+                yield return (string.Format("  {0} {1} ()", f.ResultType.Name, f.Name));
+                if (f.StatementBlock != null)
+                {
+                    foreach (var line in f.StatementBlock.DumpCode())
+                    {
+                        yield return string.Format("  {0}", line);
+                    }
+                }
+                else
+                {
+                    yield return "  ** No statements ever set";
+                }
+            }
+
             if (code.ResultValues == null)
             {
                 yield return ("Result Variable: <not set (null)>");
@@ -242,6 +290,52 @@ namespace LINQToTTreeLib.Tests
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Find the statement of a particular type, or return null.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="statementType"></param>
+        /// <returns></returns>
+        public static T FindStatement<T>(this IStatementCompound source)
+            where T : class
+        {
+            var here = source.Statements.Where(s => s.GetType() == typeof(T)).FirstOrDefault();
+            if (here != null)
+                return (T)here;
+
+            return source.Statements
+                .Where(sc => sc is IStatementCompound)
+                .Cast<IStatementCompound>()
+                .Select(s => s.FindStatement<T>())
+                .Where(found => found != null)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the statement where the parameter was declared, or null.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static IBookingStatementBlock FindDeclarationStatement(this IStatementCompound source, IDeclaredParameter param)
+        {
+            if (source is IBookingStatementBlock)
+            {
+                var book = source as IBookingStatementBlock;
+                var found = book.DeclaredVariables.Where(v => v.ParameterName == param.ParameterName).Any();
+                if (found)
+                    return book;
+            }
+
+            return source.Statements
+                .Where(s => s is IStatementCompound)
+                .Cast<IStatementCompound>()
+                .Select(s => s.FindDeclarationStatement(param))
+                .Where(v => v != null)
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -476,6 +570,17 @@ namespace LINQToTTreeLib.Tests
                 throw new Exception(string.Format("Unable to find an identifier in '{0}' after '{1}'", source, startpattern));
 
             return matches.Value;
+        }
+
+        /// <summary>
+        /// Make sure each function has a return statement on it.
+        /// </summary>
+        /// <param name="funcs"></param>
+        public static void CheckForReturnStatement(this IEnumerable<IQMFuncExecutable> funcs)
+        {
+            bool allgood = funcs
+                .All(f => f.StatementBlock.Statements.LastOrDefault() is StatementReturn);
+            Assert.IsTrue(allgood, "One function has no top level return!");
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using LINQToTTreeLib.Expressions;
+﻿using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.CPPCode;
@@ -9,6 +8,9 @@ using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -23,8 +25,9 @@ namespace LINQToTTreeLib.Tests
         /// Create the dummy query executor.
         /// </summary>
         /// <param name="baseType">The base type we are looping over</param>
-        public DummyQueryExectuor(Type baseType)
+        public DummyQueryExectuor(Type baseType, bool doExecution = true)
         {
+            _doExecution = doExecution;
             _baseType = baseType;
         }
 
@@ -56,6 +59,14 @@ namespace LINQToTTreeLib.Tests
             LastQueryModel = queryModel;
 
             Result = new GeneratedCode();
+            foreach (var f in LINQToTTreeLib.QMFunctions.QMFuncFinder.FindQMFunctions(queryModel))
+            {
+                if (!f.Arguments.Any())
+                    Result.Add(new QMFuncSource(f));
+            }
+
+            if (!_doExecution)
+                return;
 
             if (!GlobalInitalized)
             {
@@ -120,5 +131,6 @@ namespace LINQToTTreeLib.Tests
         /// The type of the master ntuple object.
         /// </summary>
         private Type _baseType;
+        private bool _doExecution;
     }
 }

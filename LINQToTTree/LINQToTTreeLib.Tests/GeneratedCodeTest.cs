@@ -1,5 +1,6 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
@@ -41,6 +42,15 @@ namespace LINQToTTreeLib
         public void AddOneLevelUp([PexAssumeUnderTest] GeneratedCode target, IDeclaredParameter var)
         {
             target.AddOneLevelUp(var);
+        }
+
+        [TestMethod]
+        public void AddQMFunc()
+        {
+            var gc = new GeneratedCode();
+            Assert.AreEqual(0, gc.QMFunctions.Count(), "# of functions before add");
+            gc.Add(new QMFuncSource());
+            Assert.AreEqual(1, gc.QMFunctions.Count(), "# of functions before add");
         }
 
         /// <summary>
@@ -797,6 +807,29 @@ namespace LINQToTTreeLib
             gc.Add(i);
             var r = gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { i });
             Assert.AreEqual(r, ifs, "Same code body.");
+        }
+
+        [TestMethod]
+        public void RemoveStatement()
+        {
+            var fixture = new GeneratedCode();
+            fixture.Add(new StatementInlineBlock());
+            var s1 = new SimpleStatement();
+            fixture.Add(s1);
+
+            Assert.AreEqual(1, (fixture.CodeBody.Statements.First() as IBookingStatementBlock).Statements.Count(), "before removal");
+            fixture.Remove(s1);
+            Assert.AreEqual(0, (fixture.CodeBody.Statements.First() as IBookingStatementBlock).Statements.Count(), "after removal");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void RemoveMissingStatement()
+        {
+            var fixture = new GeneratedCode();
+            fixture.Add(new StatementInlineBlock());
+            var s1 = new SimpleStatement();
+            fixture.Remove(s1);
         }
     }
 }

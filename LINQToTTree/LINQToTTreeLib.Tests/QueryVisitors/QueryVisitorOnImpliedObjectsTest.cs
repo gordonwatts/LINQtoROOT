@@ -1,11 +1,11 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -299,6 +299,10 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
 
+#if false
+        // Now that we do function extraction, this doesn't relaly make sense any more. The first
+        // one comes out as a query expression. The second doesn't. Thus the sub-function parser
+        // doesn't recognize it.
         [TestMethod]
         public void TestQueryOnTClonesObjectWithEnumerableAndLenghtCombine()
         {
@@ -309,12 +313,14 @@ namespace LINQToTTreeLib.Tests
                      select pindex;
             var r = r1.Count();
             var query1 = DummyQueryExectuor.FinalResult;
+            Console.WriteLine("The QM for the first query is  {0}.", DummyQueryExectuor.LastQueryModel.ToString());
 
             var r2 = from evt in q
                      from p in evt.McEventCollection_p4_GEN_EVENT.m_genParticles.m_px
                      select p;
             r = r2.Count();
             var query2 = DummyQueryExectuor.FinalResult;
+            Console.WriteLine("The QM for the second query is  {0}.", DummyQueryExectuor.LastQueryModel.ToString());
 
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
@@ -325,7 +331,10 @@ namespace LINQToTTreeLib.Tests
             var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
             Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
+
+            Assert.Inconclusive("It seems the result of the function is never used");
         }
+#endif
 
         [TestMethod]
         public void TestQueryOnTClonesObjectWithEnumerableAndLenghtCombineR()
@@ -349,10 +358,10 @@ namespace LINQToTTreeLib.Tests
             CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# fo code blocks");
-            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# statements in the code body");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# statements in the code body");
             var forblock2 = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forblock2, "2nd for block");
-            Assert.AreEqual(2, forblock2.Statements.Count(), "# of for #2 statement statements");
+            Assert.AreEqual(1, forblock2.Statements.Count(), "# of for #2 statement statements");
         }
 
         [TestMethod]

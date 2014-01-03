@@ -48,23 +48,6 @@ namespace LINQToTTreeLib
             return parser.GetParsedQuery(expr.Body);
         }
 
-        public class dummyntup
-        {
-            public int run;
-            public int[] vals;
-            public int[][] val2D;
-
-            [ArraySizeIndex("run")]
-            public int[] valC1D;
-
-            [ArraySizeIndex("20", IsConstantExpression = true)]
-            public int[] valC1DConst;
-
-            [ArraySizeIndex("20", IsConstantExpression = true, Index = 0)]
-            [ArraySizeIndex("run", Index = 1)]
-            public int[][] valC2D;
-        }
-
         [TestMethod]
         public void TestMEFQueryPassAlong()
         {
@@ -170,7 +153,7 @@ namespace LINQToTTreeLib
 
             query1.DumpCodeToConsole();
 
-            Assert.AreEqual(3, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(9, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         [TestMethod]
@@ -186,7 +169,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(3, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(23, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         [TestMethod]
@@ -202,7 +185,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(12, query1.CodeBody.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(51, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         /// <summary>
@@ -317,7 +300,7 @@ namespace LINQToTTreeLib
             qv.VisitQueryModel(model);
             gc.DumpCodeToConsole();
 
-            var goodlines = gc.CodeBody.CodeItUp().Where(s => s.Contains("+((*this).run)")).Count();
+            var goodlines = gc.DumpCode().Where(s => s.Contains("+((*this).run)")).Count();
             Assert.AreEqual(1, goodlines, "# of times the .run appears");
         }
 
@@ -502,7 +485,9 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // Look for the sorting somewhere in here...
-            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
+            Assert.AreEqual(1, query1.QMFunctions.Count(), "#subs");
+            var code = query1.QMFunctions.First().StatementBlock;
+            bool sortThere = code.CodeItUp().Where(s => s.Contains("sort")).Any();
             Assert.IsTrue(sortThere, "No sort call in the code");
         }
 
@@ -594,7 +579,9 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             var st = query.QueryCode().First();
             Assert.AreEqual(query1.CodeBody.Statements.Count(), st.Statements.Count(), "# of statements");
-            CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 2);
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
+            //CompareNumbersOfStatements(query1.CodeBody.Statements, st.Statements, 2);
         }
 
         /// <summary>
@@ -882,7 +869,9 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // Look for the sorting somewhere in here...
-            bool sortThere = query1.CodeBody.CodeItUp().Where(s => s.Contains("sort")).Any();
+            Assert.AreEqual(1, query1.QMFunctions.Count(), "# of functions");
+            var code = query1.QMFunctions.First().StatementBlock;
+            bool sortThere = code.CodeItUp().Where(s => s.Contains("sort")).Any();
             Assert.IsTrue(sortThere, "No sort call in the code");
         }
 
@@ -910,7 +899,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+            Assert.IsFalse(gc.DumpCode().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -937,7 +926,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.DumpCode().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -964,7 +953,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.DumpCode().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -991,7 +980,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsTrue(gc.CodeBody.CodeItUp().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
+            Assert.IsTrue(gc.DumpCode().Where(s => s.Contains("var3).size()")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -1017,7 +1006,7 @@ namespace LINQToTTreeLib
 
             gc.DumpCodeToConsole();
 
-            Assert.IsFalse(gc.CodeBody.CodeItUp().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
+            Assert.IsFalse(gc.DumpCode().Where(s => s.Contains("jets")).Any(), "A line contains the word jets");
         }
 
         [TestMethod]
@@ -1185,8 +1174,12 @@ namespace LINQToTTreeLib
             var code = DummyQueryExectuor.FinalResult;
             code.DumpCodeToConsole();
 
-            var s1 = code.CodeBody.Statements.First() as IStatementLoop;
-            var s2 = code.CodeBody.Statements.Skip(1).First();
+            Assert.AreEqual(1, code.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, code.QMFunctions.Count(), "# of functions");
+            var ff = code.QMFunctions.First();
+            var s1 = ff.StatementBlock.Statements.Skip(2).First() as IStatementLoop;
+            Assert.IsNotNull(s1, "firs tstatement in the block");
+            var s2 = ff.StatementBlock.Statements.Skip(3).First();
 
             Assert.IsNotNull(s1, "loop");
             Assert.IsInstanceOfType(s2, typeof(Statements.StatementThrowIfTrue), "check for average not zero");
@@ -1447,8 +1440,6 @@ namespace LINQToTTreeLib
             var cnt = allcombos.Where(evt => evt.Count() > 5).Count();
             var code = DummyQueryExectuor.FinalResult;
             code.DumpCodeToConsole();
-
-            Assert.Inconclusive();
         }
 
         [TestMethod]
@@ -1665,12 +1656,12 @@ namespace LINQToTTreeLib
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+            var theline = from l in DummyQueryExectuor.FinalResult.DumpCode(dumpQM: false)
                           where l.Contains("Phi_0_2pi")
                           select l;
             var arr = theline.ToArray();
             Assert.AreEqual(1, arr.Length, "too many lines with function reference!");
-            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("std::abs")).Count(), "second function call not found");
+            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.DumpCode().Where(l => l.Contains("std::abs")).Count(), "second function call found");
         }
 
         [TestMethod]
@@ -1683,7 +1674,7 @@ namespace LINQToTTreeLib
             var r2 = r1.SelectMany(evt => evt).Where(c => c > 0.1).Count();
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            var theline = from l in DummyQueryExectuor.FinalResult.CodeBody.CodeItUp()
+            var theline = from l in DummyQueryExectuor.FinalResult.DumpCode()
                           where l.Contains("std::atan2")
                           select l;
             var arr = theline.ToArray();
@@ -1740,13 +1731,16 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
-            var statement = query.QueryCode().First().Statements.First() as IStatementCompound;
-            Assert.IsNotNull(statement, "statement isn't a compound");
-            Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
-            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IStatementCompound;
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            var ifstatement = query.QueryCode().First().Statements.First() as IStatementCompound;
             Assert.IsNotNull(ifstatement, "if statement not right");
             Assert.AreEqual(2, ifstatement.Statements.Count(), "# of counts inside the if statement");
+
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            var statement = query.Functions.First().StatementBlock.Statements.First() as IStatementCompound;
+            Assert.IsNotNull(statement, "statement isn't a compound");
+            Assert.AreEqual(1, statement.Statements.Count(), "# of inner statements");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1763,7 +1757,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         /// <summary>
@@ -1825,7 +1821,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1842,7 +1840,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1876,7 +1876,10 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements (just a straight if)");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
+            Assert.AreEqual(1, query.DumpCode().Where(l => l.Contains(">5")).Count(), "# of > 5 if statements");
         }
 
         [TestMethod]
@@ -1893,7 +1896,8 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1910,7 +1914,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1932,7 +1938,9 @@ namespace LINQToTTreeLib
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -1954,28 +1962,8 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             var st = query.QueryCode().First();
-            Assert.AreEqual(4, st.Statements.Count(), "# of statements");
-        }
-
-        /// <summary>
-        /// Make sure we pop out to the right level here!
-        /// </summary>
-        [TestMethod]
-        public void TestSumWithFilter()
-        {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
-            var r = from evt in q
-                    let ns = evt.var1.Where(j => j > 1)
-                    select ns.Sum();
-            var r2 = r.Where(z => z > 10).Sum();
-            var query2 = DummyQueryExectuor.FinalResult;
-            query2.DumpCodeToConsole();
-
-            var lines = query2.DumpCode().TakeWhile(l => !l.Contains("if (aInt"));
-            var openCount = lines.Where(l => l.Contains("{")).Count();
-            var closeCount = lines.Where(l => l.Contains("}")).Count();
-
-            Assert.AreEqual(openCount - 1, closeCount, "# of close }");
+            Assert.AreEqual(1, st.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
         }
 
         [TestMethod]
@@ -1991,7 +1979,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query Blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2008,7 +1998,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(3, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2033,7 +2025,9 @@ namespace LINQToTTreeLib
             var query = CombineQueries(query1, query2);
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of guys");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of guys");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2059,7 +2053,9 @@ namespace LINQToTTreeLib
             // Check that the combine actually worked well!!
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             // First for loop to crord, 2 to test, and then the two aggregates
-            Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements incorrect");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2073,7 +2069,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "missing size() call");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".size()")).Any(), "missing size() call");
         }
 
         [TestMethod]
@@ -2087,7 +2083,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".run")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2101,7 +2097,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 20")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2115,8 +2111,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".run")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2132,7 +2128,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 20")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 20")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2152,15 +2148,17 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
 
             var forstatement = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
-            Assert.IsNotNull(forstatement, "for statement isn't a block!");
-            Assert.AreEqual(1, forstatement.Statements.Count(), "# of statements in the for loop");
+            Assert.IsNotNull(forstatement, "if statement isn't a block!");
+            Assert.AreEqual(2, forstatement.Statements.Count(), "# of statements in the for loop");
 
-            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
+            var ifstatement = query.Functions.First().StatementBlock.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(ifstatement, "if statement pointer");
-            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
+            Assert.AreEqual(1, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
         }
 
         [TestMethod]
@@ -2176,7 +2174,7 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
         }
 
         [TestMethod]
@@ -2196,15 +2194,18 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "Number of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
 
-            var forstatement = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
+            var ifstatement = query.QueryCode().First().Statements.First() as IBookingStatementBlock;
+            Assert.IsNotNull(ifstatement, "if statement pointer");
+            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
+
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
+            var forstatement = query.Functions.First().StatementBlock.Statements.First() as IBookingStatementBlock;
             Assert.IsNotNull(forstatement, "for statement isn't a block!");
             Assert.AreEqual(1, forstatement.Statements.Count(), "# of statements in the for loop");
 
-            var ifstatement = query.QueryCode().First().Statements.Skip(1).First() as IBookingStatementBlock;
-            Assert.IsNotNull(ifstatement, "if statement pointer");
-            Assert.AreEqual(2, ifstatement.Statements.Count(), "# of statements inside the if statememt"); // One for each fo the query results!
         }
 
         [TestMethod]
@@ -2220,8 +2221,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= (*this).run")).Any(), "missing run reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
         }
 
         [TestMethod]
@@ -2254,8 +2255,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=0; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=0; a")).Any(), "missing lower limit reference");
         }
 
         [TestMethod]
@@ -2271,8 +2272,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 8")).Any(), "missing upper limit reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 8")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
         }
 
         [TestMethod]
@@ -2289,8 +2290,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("= 6")).Any(), "missing upper limit reference");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains("=2; a")).Any(), "missing lower limit reference");
         }
 
         /// <summary>
@@ -2315,8 +2316,8 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            Assert.IsFalse(query1.CodeBody.CodeItUp().Where(s => s.Contains(".size()")).Any(), "size() should not be used");
-            Assert.IsTrue(query1.CodeBody.CodeItUp().Where(s => s.Contains(".nSize")).Any(), "missing reference to the variale with the size");
+            Assert.IsFalse(query1.DumpCode().Where(s => s.Contains(".size()")).Any(), "size() should not be used");
+            Assert.IsTrue(query1.DumpCode().Where(s => s.Contains(".nSize")).Any(), "missing reference to the variale with the size");
         }
 
         [TestMethod]
@@ -2474,7 +2475,9 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            query.Functions.CheckForReturnStatement();
         }
 
         [TestMethod]
@@ -2619,9 +2622,9 @@ namespace LINQToTTreeLib
             // future.
 
             var lines = query.DumpCode().ToArray();
-            Assert.AreEqual(1, lines.Where(l => l.Contains("aInt32_10=-1")).Count(), "aInt32_10 is a First/Last var");
+            Assert.AreEqual(1, lines.Where(l => l.Contains("aInt32_10=-1")).Count(), "aInt32_13 is a First/Last var");
 
-            Assert.AreEqual(3, lines.Where(l => l.Contains("aInt32_10")).Count(), "# of lines aInt32_10 is used");
+            Assert.AreEqual(3, lines.Where(l => l.Contains("aInt32_10")).Count(), "# of lines aInt32_13 is used");
         }
 
         /// <summary>
@@ -2689,5 +2692,95 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
         }
 #endif
+
+        /// <summary>
+        /// Simple queries should have no functions.
+        /// </summary>
+        [TestMethod]
+        public void TestQMFNoFunction()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r = q.Count();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(0, query.QMFunctions.Count(), "# of functions");
+        }
+
+        [TestMethod]
+        public void TestQMFSimpleFunction()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var r = q.Select(evt => evt.valC1D.Sum()).Sum();
+
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query.QMFunctions.Count(), "# of functions");
+
+            // Some basic tests
+            var f = query.QMFunctions.First();
+            Assert.IsNotNull(f.Name, "function name");
+            Assert.AreEqual(0, f.Arguments.Count(), "The # of arguments.");
+
+            // Look for the call in the emitted source code.
+            Assert.IsTrue(query.DumpCode().Where(l => l.Contains(string.Format("{0} (", f.Name))).Any(), "Looking for the function call");
+
+            // Look at the statements that were emitted.
+            Assert.IsNotNull(f.StatementBlock, "Statements");
+            var sb = f.StatementBlock;
+            Assert.AreEqual(5, sb.Statements.Count(), "Expect 1 real statement + 4 return");
+            var st1 = sb.Statements.Skip(2).First();
+            Assert.IsInstanceOfType(st1, typeof(IStatementLoop), "Loop instance check");
+        }
+
+        /// <summary>
+        /// Isolating a test from another bit of code. Discovered what seems like a case where a function is discovered,
+        /// but never actually filled with statements. The reason is, as can be spotted below, that the function
+        /// (which evaluates from Int32 mj in [f].valC1D orderby (Calc([mj]) - Calc([j])) asc select [mj] => First())
+        /// is used in the definition of MJ. However, looking at res2 you'll note that it is never needed.
+        /// This must be a case of re-linq not quite managing to get the full simlification through. However,
+        /// it also means that we need to be a little careful when we generate and evaluate code as we will
+        /// have cases when something that looks like a good function, isn't.
+        /// </summary>
+        [TestMethod]
+        public void QMFuncNotNull()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var r1 = from f in q
+                     let l1 = f.valC1D.Where(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v) > 1).OrderByDescending(v => LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(v))
+                     select new
+                     {
+                         jets = l1,
+                         truthjets = f.valC1D
+                     };
+
+            var r2 = from f in r1
+                     select new
+                     {
+                         machedJets = (from j in f.jets
+                                       select new
+                                       {
+                                           J = j,
+                                           MJ = (from mj in f.truthjets
+                                                 let imj = LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(mj)
+                                                 let ij = LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j)
+                                                 orderby imj - ij ascending
+                                                 select mj).First()
+                                       })
+                     };
+
+            var res2 = (from f in r2
+                        from j in f.machedJets
+                        select LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(j.J)).Sum();
+            var query2 = DummyQueryExectuor.FinalResult;
+            query2.DumpCodeToConsole();
+
+            // This will have to be turned back on when we can deal with arguments.
+            Assert.AreEqual(0, query2.Functions.Count(), "# of functions");
+            // Assert.IsTrue(query2.Functions.All(f => f.StatementBlock == null), "not all blocks have statements.");
+        }
     }
 }

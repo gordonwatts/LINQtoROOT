@@ -1,10 +1,11 @@
 ﻿
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.QMFunctions;
+using LINQToTTreeLib.Variables;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib
 {
@@ -47,6 +48,10 @@ namespace LINQToTTreeLib
             result["NumberOfQueryFunctions"] = numberOfBlocks;
             result["QueryFunctionBlocks"] = TranslateQueryBlocks(queryBlocks, queriesPerFunction, numberOfBlocks);
             result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValues, code);
+
+            // Functions have to be written out too.
+            result["QueryMemberFunctions"] = code.Functions.SelectMany(f => f.CodeItUp());
+            result["QueryCacheBools"] = code.Functions.Select(f => f.CacheVariableGood.RawValue);
 
             ///
             /// Next, go through everything and extract the include files

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
@@ -10,6 +7,9 @@ using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests.ResultOperators
 {
@@ -78,13 +78,16 @@ namespace LINQToTTreeLib.Tests.ResultOperators
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             var code = DummyQueryExectuor.FinalResult.CodeBody as IBookingStatementBlock;
-            Assert.AreEqual(3, code.Statements.Count(), "# fo statements");
-            var innerloop = code.Statements.Skip(0).First() as IBookingStatementBlock;
+            Assert.AreEqual(1, code.Statements.Count(), "# fo statements");
+
+            Assert.AreEqual(1, DummyQueryExectuor.FinalResult.Functions.Count(), "# of functiosn");
+            code = DummyQueryExectuor.FinalResult.Functions.First().StatementBlock as IBookingStatementBlock;
+            var innerloop = code.Statements.Skip(2).First() as IBookingStatementBlock;
             Assert.IsNotNull(innerloop, "inner loop");
 
             Assert.AreEqual(1, innerloop.Statements.Count(), "# of statements in the inner loop - the push statement");
 
-            var last = code.Statements.Skip(1).First();
+            var last = code.Statements.Skip(3).First();
             Assert.IsInstanceOfType(last, typeof(LINQToTTreeLib.Statements.StatementPairLoop), "last statement incorrect");
 
             var res = DummyQueryExectuor.FinalResult.ResultValue;

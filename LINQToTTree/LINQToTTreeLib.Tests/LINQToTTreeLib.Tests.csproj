@@ -354,7 +354,11 @@
     <Compile Include="Optimization\CommonStatementLifterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\PexAssemblyInfo.cs" />
+    <Compile Include="QMFunctions\QMFuncFinderTest.cs" />
+    <Compile Include="QMFunctions\CodeItUpHelpersTest.cs" />
+    <Compile Include="QMFunctions\QMFuncUtils.cs" />
     <Compile Include="QueriableDummy.cs" />
+    <Compile Include="QueriableDummyNoExe.cs" />
     <Compile Include="QueryResultCacheTest.CacheItem.g.cs">
       <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
     </Compile>
@@ -663,6 +667,7 @@
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
     <Compile Include="TestUtils.cs" />
+    <Compile Include="TestUtilsCommonNtupDefinitions.cs" />
     <Compile Include="TTreeExecutorCombinationTests.cs" />
     <Compile Include="TTreeQueryExecutorTest.Constructor.g.cs">
       <DependentUpon>TTreeQueryExecutorTest.cs</DependentUpon>

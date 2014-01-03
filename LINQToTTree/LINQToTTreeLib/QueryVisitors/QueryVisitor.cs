@@ -2,6 +2,7 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using System;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
@@ -58,13 +60,16 @@ namespace LINQToTTreeLib
 #pragma warning restore 649
 
         /// <summary>
-        /// We need to process a result operator.
+        /// Process a result operator. If this result is amenable to be made into a function, then
+        /// do so.
         /// </summary>
         /// <param name="resultOperator"></param>
         /// <param name="queryModel"></param>
         /// <param name="index"></param>
         public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
         {
+            // Look for a single-result processor
+
             var processor = _operators.FindScalarROProcessor(resultOperator.GetType());
             if (processor != null)
             {
@@ -76,6 +81,8 @@ namespace LINQToTTreeLib
                 }
                 return;
             }
+
+            // Look for a sequence processor
 
             var collectionProcessor = _operators.FindCollectionROProcessor(resultOperator.GetType());
             if (collectionProcessor != null)
@@ -161,10 +168,103 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Main driver. Parse the query model.
+        /// The main driver to parse the query model. We will cache the result into a function
+        /// if it is something we know how to cache.
         /// </summary>
         /// <param name="queryModel"></param>
         public override void VisitQueryModel(QueryModel queryModel)
+        {
+            Debug.WriteLine("VisitQueryModel: {0}{1}", queryModel.ToString(), "");
+            Debug.Indent();
+
+            // If this is a QM function we are referencing, then process it as such.
+            var qmSource = _codeEnv.FindQMFunction(queryModel);
+            if (qmSource == null)
+            {
+                VisitQueryModelNoCache(queryModel);
+            }
+            else
+            {
+                VisitQueryModelCache(queryModel, qmSource);
+            }
+            Debug.Unindent();
+        }
+
+        /// <summary>
+        /// Cache the result of a query model into a function.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <param name="qmSource"></param>
+        private void VisitQueryModelCache(QueryModel queryModel, IQMFunctionSource qmSource)
+        {
+            // If we already have the answer for this cache, then we should just re-call the routine.
+            if (qmSource.StatementBlock != null)
+            {
+                Debug.WriteLine("Using previously cached QM result");
+                _codeEnv.SetResult(qmFunctionCall(qmSource));
+                return;
+            }
+            Debug.WriteLine("Cache: Gathering Data");
+            Debug.Indent();
+
+            // Since we don't have it cached, we need to re-run things, and carefully watch for
+            // everything new that shows up. What shows up will be what we declare as the function
+            // body.
+            var currentScope = _codeEnv.CurrentScope;
+            var topLevelStatement = new StatementInlineBlock();
+            _codeEnv.Add(topLevelStatement);
+            _codeEnv.SetCurrentScopeAsResultScope();
+
+            // If this variable has been cached, then return it. Otherwise, mark the cache as filled.
+            _codeEnv.Add(new StatementFilter(qmSource.CacheVariableGood));
+            _codeEnv.Add(new StatementReturn(qmSource.CacheVariable));
+            _codeEnv.Pop();
+            _codeEnv.Add(new StatementAssign(qmSource.CacheVariableGood, new ValSimple("true", typeof(bool)), new IDeclaredParameter[] { }));
+
+            // Now, run the code to process the query model!
+
+            VisitQueryModelNoCache(queryModel);
+
+            // Grab the result, cache it, and return it.
+            var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
+            topLevelStatement.Add(new StatementAssign(qmSource.CacheVariable, rtnExpr, FindDeclarableParameters.FindAll(_codeEnv.ResultValue)));
+            topLevelStatement.Add(new StatementReturn(qmSource.CacheVariable));
+
+            // If the return is a declared parameter, then it must be actually defined somewhere (we normally don't).
+            var declParam = _codeEnv.ResultValue as IDeclaredParameter;
+            if (declParam != null)
+                topLevelStatement.Add(declParam, false);
+
+            // Now extract the block of code and put it in the function block.
+            _codeEnv.CurrentScope = currentScope;
+            qmSource.SetCodeBody(topLevelStatement);
+
+            // Reset our state and remove the function code. And put in the function call in its place.
+            _codeEnv.Remove(topLevelStatement);
+            _codeEnv.SetResult(qmFunctionCall(qmSource));
+
+            Debug.Unindent();
+        }
+
+        /// <summary>
+        /// Generate a function call statement for the cached function we are going to emit.
+        /// </summary>
+        /// <param name="qmSource"></param>
+        /// <returns></returns>
+        private Expression qmFunctionCall(IQMFunctionSource qmSource)
+        {
+            if (qmSource.Arguments.Any())
+                throw new NotImplementedException("Can only deal with internal functions with no arguments.");
+
+            var call = string.Format("{0} ()", qmSource.Name);
+            return Expression.Parameter(qmSource.ResultType, call);
+        }
+
+        /// <summary>
+        /// Turn a query model into code.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        private void VisitQueryModelNoCache(QueryModel queryModel)
         {
             // Cache the referenced query expressions and restore them at the end.
 
@@ -174,9 +274,6 @@ namespace LINQToTTreeLib
 
             try
             {
-                Debug.WriteLine("VisitQueryModel: {0}{1}", queryModel.ToString(), "");
-                Debug.Indent();
-
                 //
                 // If the query model is something that is trivial, then
                 // perhaps there is a short-cut we can take?
@@ -192,15 +289,14 @@ namespace LINQToTTreeLib
                         if (result != null
                             && result.Item1)
                         {
+                            Debug.WriteLine("Identity Query being processed");
                             _codeEnv.SetResult(result.Item2);
                             return;
                         }
                     }
                 }
 
-                //
                 // Have we seen this query model before? If so, perhaps we can just short-circuit this?
-                //
 
                 var cachedResult = _codeContext.GetReplacement(queryModel);
                 if (cachedResult != null)
@@ -213,16 +309,13 @@ namespace LINQToTTreeLib
                     }
                 }
 
-                //
                 // If we drop through here, then let the full machinery parse the thing
-                //
 
                 base.VisitQueryModel(queryModel);
             }
             finally
             {
                 _codeContext.RestoreQuerySourceLookups(cachedReferencedQS);
-                Debug.Unindent();
             }
         }
 

@@ -63,10 +63,11 @@ public:
 	bool Process(Long64_t entry)
 	{
 		///
-		/// Get to the proper entry
+		/// Get to the proper entry, reset internal cache
 		///
 
 		fDirector.SetReadEntry(entry);
+		ResetCache();
 
 		///
 		/// Run the processing code
@@ -101,6 +102,26 @@ private:
 
 #set ( $blockIndex = $blockIndex + 1 )
 #end
+
+	///
+	/// The member functions that the query blocks will be calling
+	///
+
+#foreach($s in $QueryMemberFunctions)
+	$s
+#end
+
+	///
+	/// Reset all cached items before we get going
+	///
+
+	void ResetCache()
+	{
+#foreach($s in $QueryCacheBools)
+		$s = false;
+#end
+	}
+
 	/// Here are the variables that hold things we need to keep around
 	/// between entries of the ntuple. So things like the result that has
 	/// to be filled on each entry.

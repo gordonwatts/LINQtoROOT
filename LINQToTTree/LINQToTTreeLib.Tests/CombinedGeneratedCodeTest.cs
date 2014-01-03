@@ -1,14 +1,22 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
+using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Tests;
+using LINQToTTreeLib.Tests.QMFunctions;
+using LINQToTTreeLib.Variables;
 using Microsoft.ExtendedReflection.DataAccess;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Using;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
 // <copyright file="CombinedGeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -150,6 +158,162 @@ namespace LINQToTTreeLib
             var sst2 = st2 as Statements.StatementSimpleStatement;
             Assert.IsTrue("dude1" == sst1.Line || "dude1" == sst2.Line, "sst1");
             Assert.IsTrue("dude2" == sst1.Line || "dude2" == sst2.Line, "sst2");
+        }
+
+        [TestMethod]
+        public void CombineTwoTopLevelFunctions()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var f1 = QMFuncUtils.GenerateFunction();
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var f2 = QMFuncUtils.GenerateFunction();
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+
+            q1.Add(f1);
+            q1.Add(s1);
+            q1.SetResult(r1);
+
+            q2.Add(f2);
+            q2.Add(s2);
+            q2.SetResult(r2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            target.DumpCodeToConsole();
+
+            Assert.AreEqual(1, target.Functions.Count(), "# of functions should be combined to 1");
+            Assert.AreEqual(1, target.QueryCode().Count(), "# of query code blocks");
+            Assert.AreEqual(2, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2.Name)).Any(), "The new function was still in there");
+        }
+
+        [TestMethod]
+        public void CombineTwoTwoLevelFunctions()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var f1 = GenerateFunction2();
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var f2 = GenerateFunction2();
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+
+            q1.Add(f1[0]);
+            q1.Add(f1[1]);
+            q1.Add(s1);
+            q1.SetResult(r1);
+
+            q2.Add(f2[0]);
+            q2.Add(f2[1]);
+            q2.Add(s2);
+            q2.SetResult(r2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            target.DumpCodeToConsole();
+
+            Assert.AreEqual(2, target.Functions.Count(), "# of functions should be combined to 2");
+            Assert.AreEqual(1, target.QueryCode().Count(), "# of query code blocks");
+            Assert.AreEqual(2, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2[0].Name)).Any(), "The new function was still in there");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2[1].Name)).Any(), "The new function was still in there");
+        }
+
+        [TestMethod]
+        public void CombineOneTwoLevelAndOneOneLevelFunctions1()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var f1 = GenerateFunction2();
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var f2 = QMFuncUtils.GenerateFunction();
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+
+            q1.Add(f1[0]);
+            q1.Add(f1[1]);
+            q1.Add(s1);
+            q1.SetResult(r1);
+
+            q2.Add(f2);
+            q2.Add(s2);
+            q2.SetResult(r2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            target.DumpCodeToConsole();
+
+            Assert.AreEqual(2, target.Functions.Count(), "# of functions should be combined to 2");
+            Assert.AreEqual(1, target.QueryCode().Count(), "# of query code blocks");
+            Assert.AreEqual(2, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2.Name)).Any(), "The new function was still in there");
+        }
+
+        [TestMethod]
+        public void CombineOneTwoLevelAndOneOneLevelFunctions2()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var f1 = QMFuncUtils.GenerateFunction();
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var f2 = GenerateFunction2();
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+
+            q1.Add(f1);
+            q1.Add(s1);
+            q1.SetResult(r1);
+
+            q2.Add(f2[0]);
+            q2.Add(f2[1]);
+            q2.Add(s2);
+            q2.SetResult(r2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            target.DumpCodeToConsole();
+
+            Assert.AreEqual(2, target.Functions.Count(), "# of functions should be combined to 2");
+            Assert.AreEqual(1, target.QueryCode().Count(), "# of query code blocks");
+            Assert.AreEqual(2, target.QueryCode().First().Statements.Count(), "# of statements in the combined block.");
+            Assert.IsFalse(target.DumpCode().Where(l => l.Contains(f2[0].Name)).Any(), "The new function was still in there");
+        }
+
+        private QMFuncSource[] GenerateFunction2()
+        {
+            var fsub = QMFuncUtils.GenerateFunction();
+
+            int[] ints = new int[10];
+            var h = new QMFuncHeader() { Arguments = new object[] { }, QM = new QueryModel(new MainFromClause("i", typeof(int), Expression.Constant(ints)), new SelectClause(Expression.Constant(10))) };
+            h.QMText = h.QM.ToString();
+            var f = new QMFuncSource(h);
+
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var st = new StatementAssign(p, new ValSimple(fsub.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var inlineblock = new StatementInlineBlock();
+            inlineblock.Add(st);
+            inlineblock.Add(new StatementReturn(p));
+            f.SetCodeBody(inlineblock);
+
+            return new QMFuncSource[] { fsub, f };
         }
     }
 }

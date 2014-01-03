@@ -1,4 +1,5 @@
 ﻿
+using Remotion.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
@@ -21,6 +22,12 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="s"></param>
         void Add(IStatement s);
+
+        /// <summary>
+        /// Remove a statement from the current statement block where we are adding statements.
+        /// </summary>
+        /// <param name="s">The statement to remove. Throw if we can't find it in the current block.</param>
+        void Remove(IStatement s);
 
         /// <summary>
         /// Book a variable at the inner most scope
@@ -167,5 +174,17 @@ namespace LinqToTTreeInterfacesLib
         /// Pop the stack up to the results level.
         /// </summary>
         void PopToResultsLevel();
+
+        /// <summary>
+        /// Return the QM Function reference for a query model.
+        /// </summary>
+        /// <param name="queryModel">The query model to look up</param>
+        /// <returns>The QM function sorce, or null if it isn't represented by a function</returns>
+        IQMFunctionSource FindQMFunction(QueryModel queryModel);
+
+        /// <summary>
+        /// Return any functions needed by this set of code.
+        /// </summary>
+        IEnumerable<IQMFuncExecutable> Functions { get; }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System.Text;
-using LINQToTTreeLib.Expressions;
+﻿using LINQToTTreeLib.Expressions;
 using Remotion.Linq;
+using System.Text;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -37,6 +37,11 @@ namespace LINQToTTreeLib.QueryVisitors
         public override void VisitMainFromClause(Remotion.Linq.Clauses.MainFromClause fromClause, QueryModel queryModel)
         {
             _queryAsString.AppendFormat("from {0} {1} in {2}", fromClause.ItemType.Name, fromClause.ItemName, ExpressionStringConverter.Format(fromClause.FromExpression));
+        }
+
+        public override void VisitOrdering(Remotion.Linq.Clauses.Ordering ordering, QueryModel queryModel, Remotion.Linq.Clauses.OrderByClause orderByClause, int index)
+        {
+            _queryAsString.AppendFormat("orderby {0} {1}", ordering.Expression.ToString(), ordering.OrderingDirection == Remotion.Linq.Clauses.OrderingDirection.Asc ? "asc" : "desc");
         }
 
         protected override void VisitResultOperators(Remotion.Linq.Collections.ObservableCollection<Remotion.Linq.Clauses.ResultOperatorBase> resultOperators, QueryModel queryModel)

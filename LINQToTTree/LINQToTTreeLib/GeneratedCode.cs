@@ -1,7 +1,10 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QMFunctions;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using Remotion.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -153,6 +156,15 @@ namespace LINQToTTreeLib
                 CurrentDeclarationScopePointer = s as IBookingStatementBlock;
                 Depth++;
             }
+        }
+
+        /// <summary>
+        /// Remove a statement from the current statement block where we are adding statements.
+        /// </summary>
+        /// <param name="s">The statement to remove. Throw if we can't find it in the current block.</param>
+        public void Remove(IStatement s)
+        {
+            CurrentScopePointer.Remove(s);
         }
 
         /// <summary>
@@ -522,6 +534,44 @@ namespace LINQToTTreeLib
                 }
                 writer.Close();
             }
+        }
+
+        /// <summary>
+        /// Track the list of functions we know about
+        /// </summary>
+        private List<QMFuncSource> _qmFunctions = new List<QMFuncSource>();
+
+        /// <summary>
+        /// All QM Methods that are going to be written up for this code.
+        /// </summary>
+        public IEnumerable<QMFuncSource> QMFunctions { get { return _qmFunctions; } }
+
+        /// <summary>
+        /// Add a new QueryModel function.
+        /// </summary>
+        /// <param name="qMFuncSource"></param>
+        internal void Add(QMFuncSource qMFuncSource)
+        {
+            _qmFunctions.Add(qMFuncSource);
+        }
+
+        /// <summary>
+        /// Return a QM function if we can find a list.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <returns></returns>
+        public IQMFunctionSource FindQMFunction(QueryModel queryModel)
+        {
+            var qmText = FormattingQueryVisitor.Format(queryModel);
+            return QMFunctions.Where(ff => ff.Matches(qmText)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get the list of functions, as exectuable sources.
+        /// </summary>
+        public IEnumerable<IQMFuncExecutable> Functions
+        {
+            get { return QMFunctions; }
         }
     }
 }

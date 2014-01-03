@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib
 {
@@ -38,6 +38,47 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("Generated code Result Values can't be null");
 
             var codeItems = code.QueryCode().ToArray();
+
+            // Functions can be combined, as long as we rewrite their names. A very nice thing
+            // about this is that the query text is basically all that is required for doing
+            // matching: no code analysis. Further, no messing with the code.
+
+            // Only take functions that were actually populated by us!
+            var goodFunctions = code.Functions.Where(f => f.StatementBlock != null);
+            if (_functions.Count == 0)
+            {
+                _functions.AddRange(goodFunctions);
+            }
+            else
+            {
+                var matchedFunctions =
+                    from newFunc in goodFunctions
+                    let oldFunc = _functions.Where(f => f.Matches(newFunc)).FirstOrDefault()
+                    group Tuple.Create(oldFunc, newFunc) by oldFunc != null;
+
+                // No match means we add it to our list of functions directly.
+                // Those that don't have to have the renaming propagated through out!
+                foreach (var fgroup in matchedFunctions)
+                {
+                    if (fgroup.Key)
+                    {
+                        // Match. Rename, don't add.
+                        foreach (var fpair in fgroup)
+                        {
+                            // Note, this is the new code and we want it to look like the old code.
+                            RenameFunction(code, fpair.Item2.Name, fpair.Item1.Name);
+                        }
+                    }
+                    else
+                    {
+                        // Not matched. So add it.
+                        foreach (var fpair in fgroup)
+                        {
+                            _functions.Add(fpair.Item2);
+                        }
+                    }
+                }
+            }
 
             ///
             /// Variables that we need to queue for transfer
@@ -84,6 +125,25 @@ namespace LINQToTTreeLib
             /// 
 
             AddQueryBlocks(codeItems);
+        }
+
+        /// <summary>
+        /// Wherever the oldfname is referenced we need to rename it to be the new one.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="oldfname"></param>
+        /// <param name="newfname"></param>
+        private void RenameFunction(IExecutableCode code, string oldfname, string newfname)
+        {
+            foreach (var qb in code.QueryCode())
+            {
+                qb.RenameVariable(oldfname, newfname);
+            }
+
+            foreach (var f in code.Functions)
+            {
+                f.RenameFunctionReference(oldfname, newfname);
+            }
         }
 
         /// <summary>
@@ -224,6 +284,16 @@ namespace LINQToTTreeLib
         public IEnumerable<string> ReferencedLeafNames
         {
             get { return _leavesReferenced; }
+        }
+
+        private List<IQMFuncExecutable> _functions = new List<IQMFuncExecutable>();
+
+        /// <summary>
+        /// Gets the list of functions that are associated with this combined query.
+        /// </summary>
+        public IEnumerable<IQMFuncExecutable> Functions
+        {
+            get { return _functions; }
         }
     }
 }

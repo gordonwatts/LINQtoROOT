@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Optimization
 {
@@ -25,6 +25,11 @@ namespace LINQToTTreeLib.Optimization
         {
             var statements = result.CodeBody as IStatementCompound;
             VisitOptimizableStatements(statements);
+
+            foreach (var f in result.Functions.Where(f => f.StatementBlock != null))
+            {
+                VisitOptimizableStatements(f.StatementBlock);
+            }
         }
 
         /// <summary>
