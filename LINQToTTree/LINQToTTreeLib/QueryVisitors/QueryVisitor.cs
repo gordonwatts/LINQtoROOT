@@ -220,6 +220,11 @@ namespace LINQToTTreeLib
             var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
             topLevelStatement.Add(new StatementReturn(rtnExpr));
 
+            // If the return is a declared parameter, then it must be actually defined somewhere (we normally don't).
+            var declParam = _codeEnv.ResultValue as IDeclaredParameter;
+            if (declParam != null)
+                topLevelStatement.Add(declParam, false);
+
             // Now extract the block of code and put it in the function block.
             _codeEnv.CurrentScope = currentScope;
             qmSource.SetCodeBody(topLevelStatement);

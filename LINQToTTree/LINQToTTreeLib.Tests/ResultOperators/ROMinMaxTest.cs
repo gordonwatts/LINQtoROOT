@@ -103,19 +103,6 @@ namespace LINQToTTreeLib.ResultOperators
             var mmaxVar = minmax.MaxMinVariable;
             var declstatement = code.FindDeclarationStatement(mmaxVar);
             Assert.IsNotNull(declstatement, string.Format("Unable to find where {0} for minmax was declared!", mmaxVar.ToString()));
-#if false
-            var ifStatement = code.Statements.Skip(1).First() as Statements.StatementFilter;
-            Assert.IsNotNull(ifStatement, "If statement wasn' of proper type!");
-
-            var varname = ifStatement.TestExpression.RawValue.Split('>').First();
-            varname = varname.Replace("(", "");
-            varname = varname.Replace(")", "");
-
-            // And that var name should also exist in the list of booked variables at this top level.
-
-            var asBooked = res.CodeBody.DeclaredVariables.Where(v => v.ParameterName == varname).FirstOrDefault();
-            Assert.IsNotNull(asBooked, string.Format("Unable to find variable '{0}' in the top level list of booked variables.", varname));
-#endif
         }
     }
 }
