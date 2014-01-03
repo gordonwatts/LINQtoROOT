@@ -93,8 +93,8 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
             var code = query.Functions.First().StatementBlock;
-            Assert.IsInstanceOfType(code.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
-            Assert.IsInstanceOfType(code.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+            Assert.IsInstanceOfType(code.Statements.Skip(2).First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(code.Statements.Skip(3).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
         }
 
         [TestMethod]
@@ -115,8 +115,8 @@ namespace LINQToTTreeLib.ResultOperators
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
             var code = query.Functions.First().StatementBlock;
-            Assert.IsInstanceOfType(code.Statements.First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
-            Assert.IsInstanceOfType(code.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+            Assert.IsInstanceOfType(code.Statements.Skip(2).First(), typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
+            Assert.IsInstanceOfType(code.Statements.Skip(3).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
         }
 
         [CPPHelperClass]
@@ -377,9 +377,9 @@ namespace LINQToTTreeLib.ResultOperators
             query.DumpCodeToConsole();
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
             Assert.AreEqual(1, query.Functions.Count(), "# of functions");
-            var code = query.Functions.First().StatementBlock.Statements.First() as IStatementCompound;
+            var code = query.Functions.First().StatementBlock.Statements.Skip(2).First() as IStatementCompound;
             Assert.IsInstanceOfType(code, typeof(Statements.StatementForLoop), "Expecting a for loop as the first statement");
-            Assert.IsInstanceOfType(query.Functions.First().StatementBlock.Statements.Skip(1).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
+            Assert.IsInstanceOfType(query.Functions.First().StatementBlock.Statements.Skip(3).First(), typeof(Statements.StatementThrowIfTrue), "Expecting a filter statement next from the First statement");
         }
 
         [TranslateToClass(typeof(ResultType1))]

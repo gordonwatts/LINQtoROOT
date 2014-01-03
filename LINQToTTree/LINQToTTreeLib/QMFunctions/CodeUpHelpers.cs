@@ -18,6 +18,8 @@ namespace LINQToTTreeLib.QMFunctions
         {
             // The header and decl.
             yield return string.Format("// {0} - {1}", func.Name, func.QueryModelText);
+            yield return string.Format("{0} {1};", func.CacheVariable.Type.AsCPPType(), func.CacheVariable.RawValue);
+            yield return string.Format("{0} {1};", func.CacheVariableGood.Type.AsCPPType(), func.CacheVariableGood.RawValue);
             yield return string.Format("{0} {1} ()", func.ResultType.AsCPPType(), func.Name);
             foreach (var l in func.StatementBlock.CodeItUp())
             {

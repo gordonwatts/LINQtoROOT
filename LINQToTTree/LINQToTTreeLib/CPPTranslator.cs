@@ -51,6 +51,7 @@ namespace LINQToTTreeLib
 
             // Functions have to be written out too.
             result["QueryMemberFunctions"] = code.Functions.SelectMany(f => f.CodeItUp());
+            result["QueryCacheBools"] = code.Functions.Select(f => f.CacheVariableGood.RawValue);
 
             ///
             /// Next, go through everything and extract the include files

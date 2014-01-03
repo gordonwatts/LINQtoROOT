@@ -82,12 +82,12 @@ namespace LINQToTTreeLib.Tests.ResultOperators
 
             Assert.AreEqual(1, DummyQueryExectuor.FinalResult.Functions.Count(), "# of functiosn");
             code = DummyQueryExectuor.FinalResult.Functions.First().StatementBlock as IBookingStatementBlock;
-            var innerloop = code.Statements.Skip(0).First() as IBookingStatementBlock;
+            var innerloop = code.Statements.Skip(2).First() as IBookingStatementBlock;
             Assert.IsNotNull(innerloop, "inner loop");
 
             Assert.AreEqual(1, innerloop.Statements.Count(), "# of statements in the inner loop - the push statement");
 
-            var last = code.Statements.Skip(1).First();
+            var last = code.Statements.Skip(3).First();
             Assert.IsInstanceOfType(last, typeof(LINQToTTreeLib.Statements.StatementPairLoop), "last statement incorrect");
 
             var res = DummyQueryExectuor.FinalResult.ResultValue;

@@ -2,6 +2,7 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using System;
@@ -214,11 +215,20 @@ namespace LINQToTTreeLib
             _codeEnv.Add(topLevelStatement);
             _codeEnv.SetCurrentScopeAsResultScope();
 
+            // If this variable has been cached, then return it. Otherwise, mark the cache as filled.
+            _codeEnv.Add(new StatementFilter(qmSource.CacheVariableGood));
+            _codeEnv.Add(new StatementReturn(qmSource.CacheVariable));
+            _codeEnv.Pop();
+            _codeEnv.Add(new StatementAssign(qmSource.CacheVariableGood, new ValSimple("true", typeof(bool)), new IDeclaredParameter[] { }));
+
+            // Now, run the code to process the query model!
+
             VisitQueryModelNoCache(queryModel);
 
-            // Grab the result and stick it on as a return statement in the proper spot.
+            // Grab the result, cache it, and return it.
             var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
-            topLevelStatement.Add(new StatementReturn(rtnExpr));
+            topLevelStatement.Add(new StatementAssign(qmSource.CacheVariable, rtnExpr, FindDeclarableParameters.FindAll(_codeEnv.ResultValue)));
+            topLevelStatement.Add(new StatementReturn(qmSource.CacheVariable));
 
             // If the return is a declared parameter, then it must be actually defined somewhere (we normally don't).
             var declParam = _codeEnv.ResultValue as IDeclaredParameter;

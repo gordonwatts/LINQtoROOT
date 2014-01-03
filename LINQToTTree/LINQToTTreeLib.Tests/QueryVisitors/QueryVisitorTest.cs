@@ -169,7 +169,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(17, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(23, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         [TestMethod]
@@ -185,7 +185,7 @@ namespace LINQToTTreeLib
             query1.DumpCodeToConsole();
 
             // With the .Count() on an identity query, this is optimized to just 3 lines of code.
-            Assert.AreEqual(39, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+            Assert.AreEqual(51, query1.DumpCode().Count() + query1.QMFunctions.First().StatementBlock.CodeItUp().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
         /// <summary>
@@ -1177,9 +1177,9 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, code.CodeBody.Statements.Count(), "# of statements");
             Assert.AreEqual(1, code.QMFunctions.Count(), "# of functions");
             var ff = code.QMFunctions.First();
-            var s1 = ff.StatementBlock.Statements.First() as IStatementLoop;
+            var s1 = ff.StatementBlock.Statements.Skip(2).First() as IStatementLoop;
             Assert.IsNotNull(s1, "firs tstatement in the block");
-            var s2 = ff.StatementBlock.Statements.Skip(1).First();
+            var s2 = ff.StatementBlock.Statements.Skip(3).First();
 
             Assert.IsNotNull(s1, "loop");
             Assert.IsInstanceOfType(s2, typeof(Statements.StatementThrowIfTrue), "check for average not zero");
@@ -2730,8 +2730,8 @@ namespace LINQToTTreeLib
             // Look at the statements that were emitted.
             Assert.IsNotNull(f.StatementBlock, "Statements");
             var sb = f.StatementBlock;
-            Assert.AreEqual(2, sb.Statements.Count(), "Expect 1 real statement + 1 return");
-            var st1 = sb.Statements.First();
+            Assert.AreEqual(5, sb.Statements.Count(), "Expect 1 real statement + 4 return");
+            var st1 = sb.Statements.Skip(2).First();
             Assert.IsInstanceOfType(st1, typeof(IStatementLoop), "Loop instance check");
         }
 

@@ -880,7 +880,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // We test for this by making sure the "abs" function is called only twice in
             // the generated code.
 
-            Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_8++")), "The second if statement was optimized away!");
+            Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_14++")), "The second if statement was optimized away!");
         }
 
         /// <summary>
@@ -944,8 +944,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Find the first mention of aInt32_28. It should be declared.
 
-            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_18")).Skip(1).First();
-            Assert.AreEqual("int aInt32_18=-1;", firstMention.Trim(), "aint32_18 decl");
+            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_20")).Skip(1).First();
+            Assert.AreEqual("int aInt32_20=-1;", firstMention.Trim(), "aint32_20 decl");
         }
 
         /// <summary>

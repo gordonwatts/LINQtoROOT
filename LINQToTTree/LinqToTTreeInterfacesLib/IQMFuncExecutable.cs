@@ -47,5 +47,15 @@ namespace LinqToTTreeInterfacesLib
         /// Null until defined.
         /// </summary>
         IStatementCompound StatementBlock { get; }
+
+        /// <summary>
+        /// Get the cache variable used by this fellow.
+        /// </summary>
+        IDeclaredParameter CacheVariable { get; }
+
+        /// <summary>
+        /// Get the cache variable good used by this fellow.
+        /// </summary>
+        IDeclaredParameter CacheVariableGood { get; }
     }
 }

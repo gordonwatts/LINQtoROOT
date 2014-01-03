@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,20 @@ namespace LINQToTTreeLib.QMFunctions
             Name = "QMFunction".CreateUniqueVariableName();
             Arguments = f.Arguments.Select(a => new QMFunctionArgument(a));
             StatementBlock = null;
+
+            CacheVariable = DeclarableParameter.CreateDeclarableParameterExpression(ResultType);
+            CacheVariableGood = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
         }
+
+        /// <summary>
+        /// Get the cache variable used by this fellow.
+        /// </summary>
+        public IDeclaredParameter CacheVariable { get; private set; }
+
+        /// <summary>
+        /// Get the cache variable good used by this fellow.
+        /// </summary>
+        public IDeclaredParameter CacheVariableGood { get; private set; }
 
         /// <summary>
         /// Empty ctor.

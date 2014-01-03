@@ -705,7 +705,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var linesOfCode = query.DumpCode().TakeWhile(l => !l.Contains("aNTLorentzVector_11).Phi"));
             var openBrackets = linesOfCode.Where(l => l.Contains("{")).Count();
             var closeBrackets = linesOfCode.Where(l => l.Contains("}")).Count();
-            Assert.AreEqual(openBrackets - 4, closeBrackets, "#of of nesting levesl for the Phi call");
+            Assert.AreEqual(openBrackets, closeBrackets, "#of of nesting levesl for the Phi call");
         }
 
         /// <summary>
