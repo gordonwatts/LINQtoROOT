@@ -944,8 +944,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Find the first mention of aInt32_28. It should be declared.
 
-            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_20")).Skip(1).First();
-            Assert.AreEqual("int aInt32_20=-1;", firstMention.Trim(), "aint32_20 decl");
+            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_17")).Skip(0).First();
+            Assert.AreEqual("int aInt32_17=-1;", firstMention.Trim(), "aint32_17 decl");
         }
 
         /// <summary>
