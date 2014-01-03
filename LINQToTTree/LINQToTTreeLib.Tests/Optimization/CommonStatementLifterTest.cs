@@ -841,7 +841,8 @@ namespace LINQToTTreeLib.Tests.Optimization
             Console.WriteLine();
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(2, query.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
+            // We can't totally combine because some gets extract into a function.
+            Assert.AreEqual(3, query.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
         }
 
         [TestMethod]
