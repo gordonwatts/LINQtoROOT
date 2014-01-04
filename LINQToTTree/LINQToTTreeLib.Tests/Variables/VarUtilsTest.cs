@@ -1,12 +1,12 @@
+using LinqToTTreeInterfacesLib;
+using Microsoft.Pex.Framework;
+using Microsoft.Pex.Framework.Validation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 // <copyright file="VarUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -109,12 +109,6 @@ namespace LINQToTTreeLib.Variables
             /// as clean as possible.
             Assert.AreEqual("10.2", new ValSimple("10.2", typeof(float)).CastToType(Expression.Constant((double)1.0)), "switch to double");
             Assert.AreEqual("((float)10.2)", new ValSimple("10.2", typeof(double)).CastToType(Expression.Constant((float)1.0)), "switch to float");
-        }
-
-        [TestMethod]
-        public void TestCastTo1DArray()
-        {
-            Assert.AreEqual("(*d)", new ValSimple("d", typeof(int[])).CastToType(Expression.Variable(typeof(int[]), "d")), "array reference");
         }
 
         class mainObject
@@ -250,6 +244,26 @@ namespace LINQToTTreeLib.Variables
             Assert.IsTrue(new ValSimple("phi_21", typeof(int)).IsSimpleTerm(), "phi_21");
             Assert.IsFalse(new ValSimple("a.phi()", typeof(int)).IsSimpleTerm(), "a.phi()");
             Assert.IsFalse(new ValSimple("a[1]", typeof(int)).IsSimpleTerm(), "a[1]");
+        }
+
+        [TestMethod]
+        public void TestParameterArray()
+        {
+            var sv = new ValSimple("main", typeof(int[]));
+            var p = Expression.Parameter(typeof(int[]), "main");
+            var r = Expression.Constant(1);
+            var arr = Expression.ArrayIndex(p, r);
+            Assert.AreEqual("main", sv.CastToType(p), "Expression cast of parameter");
+        }
+
+        [TestMethod]
+        public void TestParameterArrayObj()
+        {
+            var sv = new ValSimple("main", typeof(int[]));
+            var p = Expression.Parameter(typeof(int[]), "main");
+            var r = Expression.Constant(1);
+            var arr = Expression.ArrayIndex(p, r);
+            Assert.AreEqual("main", sv.AsObjectReference(arr), "deref param");
         }
     }
 }

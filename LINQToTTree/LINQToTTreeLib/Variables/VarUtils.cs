@@ -1,11 +1,11 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.CodeAttributes;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -66,28 +66,32 @@ namespace LINQToTTreeLib.Variables
 
                     isObject = false;
                 }
-                else if (val.Type.IsArray && destExpression.NodeType == ExpressionType.ArrayIndex)
+                else if (val.Type.IsArray)
                 {
-                    //
-                    // Dealing with the proper array acces is complex:
-                    //   vector<vector<int>> stuff; -> stuff[0] -> object should be false.
-                    //   vector<vector<TLorentzVector>> stuff; -> stuff[0] -> object should be false.
-                    //   TClonesArray vector<int> stuff[] -> stuff[0] -> object should be true!
-                    //
-
-                    var rootMember = destExpression.RemoveArrayReferences();
-                    bool isTClonesMember = false;
-                    if (rootMember.NodeType == ExpressionType.MemberAccess)
+                    if (destExpression.NodeType == ExpressionType.ArrayIndex)
                     {
-                        var rootType = (rootMember as MemberExpression).Expression.Type;
-                        isTClonesMember = rootType.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null;
+                        //
+                        // Dealing with the proper array acces is complex:
+                        //   vector<vector<int>> stuff; -> stuff[0] -> object should be false.
+                        //   vector<vector<TLorentzVector>> stuff; -> stuff[0] -> object should be false.
+                        //   TClonesArray vector<int> stuff[] -> stuff[0] -> object should be true!
+                        //   int[] parameter -> not object!
+                        //
+
+                        var rootMember = destExpression.RemoveArrayReferences();
+                        isObject = false;
+                        bool isTClonesMember = false;
+                        if (rootMember.NodeType == ExpressionType.MemberAccess)
+                        {
+                            var rootType = (rootMember as MemberExpression).Expression.Type;
+                            isObject = rootType.TypeHasAttribute<TClonesArrayImpliedClassAttribute>() != null;
+                        }
                     }
-
-                    //
-                    // This is a normal array if it isn't size a tclones array.
-                    //
-
-                    isObject = isTClonesMember;
+                    else if (destExpression.NodeType == ExpressionType.Parameter)
+                    {
+                        // A parameter inserted by our own code.
+                        isObject = false;
+                    }
                 }
             }
 

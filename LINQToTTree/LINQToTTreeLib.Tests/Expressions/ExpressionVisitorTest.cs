@@ -1,9 +1,3 @@
-// <copyright file="ExpressionVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
@@ -20,6 +14,12 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing.Structure;
+// <copyright file="ExpressionVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib
 {
@@ -892,39 +892,47 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
-            Assert.AreEqual("(*d).at(1)", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("d.at(1)", result.RawValue, "C++ incorrectly translated");
+        }
+
+        class TestJigRef
+        {
+            public int[][] d;
         }
 
         [TestMethod]
         public void Test2DArrayAccess()
         {
-            var myvar = Expression.Variable(typeof(int[][]), "d");
+            var myobj = Expression.Variable(typeof(TestJigRef), "o");
+            var myvar = Expression.Field(myobj, "d");
             var myaccess1 = Expression.ArrayIndex(myvar, Expression.Constant(1));
             var myaccess = Expression.ArrayIndex(myaccess1, Expression.Constant(2));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
-            Assert.AreEqual("((*d).at(1)).at(2)", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("((*(*o).d).at(1)).at(2)", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
         public void Test2DArrayLength()
         {
-            var myvar = Expression.Variable(typeof(int[][]), "d");
+            var myobj = Expression.Variable(typeof(TestJigRef), "o");
+            var myvar = Expression.Field(myobj, "d");
             var myaccess1 = Expression.ArrayIndex(myvar, Expression.Constant(1));
             var myArrayLength = Expression.ArrayLength(myaccess1);
 
             var result = RunArrayLengthOnExpression(myArrayLength, typeof(int));
-            Assert.AreEqual("(*d).at(1).size()", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*(*o).d).at(1).size()", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
         public void Test2DArrayLength1DLevel()
         {
-            var myvar = Expression.Variable(typeof(int[][]), "d");
+            var myobj = Expression.Variable(typeof(TestJigRef), "o");
+            var myvar = Expression.Field(myobj, "d");
             var myArrayLength = Expression.ArrayLength(myvar);
 
             var result = RunArrayLengthOnExpression(myArrayLength, typeof(int));
-            Assert.AreEqual("(*d).size()", result.RawValue, "C++ incorrectly translated");
+            Assert.AreEqual("(*(*o).d).size()", result.RawValue, "C++ incorrectly translated");
         }
 
         [TestMethod]
@@ -934,7 +942,7 @@ namespace LINQToTTreeLib
             var myaccess = Expression.ArrayIndex(myarray, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(ROOTNET.NTH1F));
-            Assert.AreEqual("(*harr).at(1)", result.RawValue, "C++ th1f not translated correctly");
+            Assert.AreEqual("harr.at(1)", result.RawValue, "C++ th1f not translated correctly");
         }
 
         class ObjectArrayTest
@@ -1068,6 +1076,22 @@ namespace LINQToTTreeLib
             Console.WriteLine("result: " + result.RawValue);
 
             Assert.IsFalse(result.RawValue.Contains("muons"), "Result should not reference muons: " + result.RawValue);
+        }
+
+        /// <summary>
+        /// If we do an array index that is just an array - indicies on anything, then
+        /// we should make sure that it isn't done as a pointer.
+        /// </summary>
+        [TestMethod]
+        public void TestArrayIndexForParameter()
+        {
+            Expression<Func<int[], int>> accessor = index => index[1];
+
+            var sourceVar = Expression.Parameter(typeof(int[]), "main");
+            var invoke = Expression.Invoke(accessor, sourceVar);
+            var r = CallBasicGetExpression(invoke);
+            Console.WriteLine(r.RawValue);
+            Assert.AreEqual("main.at(1)", r.RawValue, "Lookup");
         }
     }
 }
