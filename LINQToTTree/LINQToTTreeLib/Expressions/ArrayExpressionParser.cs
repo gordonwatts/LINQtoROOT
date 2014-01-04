@@ -259,14 +259,14 @@ namespace LINQToTTreeLib.Expressions
             /// <param name="context"></param>
             /// <param name="container"></param>
             /// <returns></returns>
-            public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+            public Tuple<Expression, IDeclaredParameter> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
             {
                 // Create the index variable!
                 var loopVariable = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
                 var floop = new Statements.StatementForLoop(loopVariable, _maxValue, _minValue);
                 env.Add(floop);
 
-                return Tuple.Create(loopVariable as Expression, loopVariable as Expression);
+                return Tuple.Create(loopVariable as Expression, loopVariable as IDeclaredParameter);
             }
         }
 
@@ -357,7 +357,7 @@ namespace LINQToTTreeLib.Expressions
     /// </summary>
     class DummyArrayInfo : IArrayInfo
     {
-        public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+        public Tuple<Expression, IDeclaredParameter> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
         {
             return null;
         }

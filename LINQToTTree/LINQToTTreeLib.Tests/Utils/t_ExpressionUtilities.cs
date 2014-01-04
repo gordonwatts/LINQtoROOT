@@ -1,9 +1,11 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests
@@ -62,5 +64,62 @@ namespace LINQToTTreeLib.Tests
             var r = t1.Body.RemoveArrayReferences();
             Assert.AreEqual("a", r.ToString(), "Didn't return the same thing");
         }
+
+        [TestMethod]
+        public void AsExpressionNonExpression()
+        {
+            var p = new dummyDecl();
+            var expr = p.AsExpression();
+            Assert.IsNotNull(expr, "expr should not b enull");
+            Assert.AreNotEqual(p, expr, "Should be something new");
+            Assert.AreEqual(p.RawValue, expr.ToString(), "content");
+            Assert.AreEqual(typeof(int), p.Type, "type");
+        }
+
+        [TestMethod]
+        public void AsExpressionWithExpr()
+        {
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var expr = p.AsExpression();
+            Assert.AreEqual(p, expr, "translation was not transparent");
+        }
+
+        /// <summary>
+        /// Dummy param for testing.
+        /// </summary>
+        class dummyDecl : IDeclaredParameter
+        {
+            public string ParameterName { get { return "dude"; } }
+
+            public IValue InitialValue
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public Type Type { get { return typeof(int); } }
+
+            public void RenameParameter(string oldname, string newname)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string RawValue
+            {
+                get { return "dude"; }
+            }
+
+            public void RenameRawValue(string oldname, string newname)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
     }
 }

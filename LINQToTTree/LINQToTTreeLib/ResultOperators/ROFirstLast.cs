@@ -112,10 +112,9 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddAtResultScope(valueWasSeen);
             gc.AddAtResultScope(indexSeen);
 
-            var indexValue = ExpressionToCPP.GetExpression(indexExpr, gc, cc, container);
             var whatWeSaw = new HashSet<string>();
-            whatWeSaw.Add(indexValue.RawValue);
-            var rv = new Statements.StatementRecordValue(indexSeen, indexValue, valueWasSeen, isFirst);
+            whatWeSaw.Add(indexExpr.RawValue);
+            var rv = new Statements.StatementRecordValue(indexSeen, indexExpr, valueWasSeen, isFirst);
             gc.Add(rv);
 
             var scope = rv as IStatement;
@@ -153,7 +152,7 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             var firstlastValue = cc.LoopVariable;
-            cc.Add(indexExpr.ParameterName(), indexSeen);
+            cc.Add(indexExpr.RawValue, indexSeen);
 
             Debug.WriteLine("First/Last: {0} for QM {1}", indexSeen.ToString(), queryModel.ToString());
 
@@ -183,7 +182,7 @@ namespace LINQToTTreeLib.ResultOperators
             else
             {
                 // No need to cache the result - so no need to add extra code.
-                return firstlastValue.ReplaceSubExpression(indexExpr, indexSeen);
+                return firstlastValue.ReplaceSubExpression(indexExpr.AsExpression(), indexSeen);
             }
         }
 

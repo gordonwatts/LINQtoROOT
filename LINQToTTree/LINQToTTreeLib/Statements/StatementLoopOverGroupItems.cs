@@ -106,6 +106,6 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return the counter that we use to walk over the group items.
         /// </summary>
-        public System.Linq.Expressions.Expression Counter { get { return _counter; } }
+        public IDeclaredParameter Counter { get { return _counter; } }
     }
 }

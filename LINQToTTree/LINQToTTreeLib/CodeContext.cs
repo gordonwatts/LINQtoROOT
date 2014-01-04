@@ -146,14 +146,14 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Returns the current loop index - the integer thing we are walking over.
         /// </summary>
-        public Expression LoopIndexVariable { get; private set; }
+        public IDeclaredParameter LoopIndexVariable { get; private set; }
 
         /// <summary>
         /// Set the loop variable to a new value
         /// </summary>
         /// <param name="loopExpression">Evaluate to the current value, looping over whatever we are looping over</param>
         /// <param name="indexVariable">The current index - this is what we are walking through right now. Null if this index variable makes no sense.</param>
-        public void SetLoopVariable(Expression loopExpression, Expression indexVariable)
+        public void SetLoopVariable(Expression loopExpression, IDeclaredParameter indexVariable)
         {
             if (loopExpression == null)
                 throw new ArgumentNullException("can not set a null loop variable");

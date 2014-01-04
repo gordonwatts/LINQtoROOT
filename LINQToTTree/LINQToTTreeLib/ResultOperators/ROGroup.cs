@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
@@ -12,6 +6,12 @@ using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -68,7 +68,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             var savePairValues = new StatementRecordPairValues(mapRecord,
                 ExpressionToCPP.GetExpression(groupOp.KeySelector, gc, cc, container),
-                ExpressionToCPP.GetExpression(cc.LoopIndexVariable, gc, cc, container));
+                cc.LoopIndexVariable);
             gc.Add(savePairValues);
 
             gc.Pop();
@@ -167,7 +167,7 @@ namespace LINQToTTreeLib.ResultOperators
         /// <summary>
         /// The expression that is used in the target to select it out.
         /// </summary>
-        public Expression TargetExpressionLoopVariable { get; set; }
+        public IDeclaredParameter TargetExpressionLoopVariable { get; set; }
     }
 
     /// <summary>
@@ -232,16 +232,16 @@ namespace LINQToTTreeLib.ResultOperators
     class SimpleLoopVarSetting : IArrayInfo
     {
         private Expression _loopVariable;
-        private Expression _loopIndex;
+        private IDeclaredParameter _loopIndex;
 
-        public SimpleLoopVarSetting(Expression o, Expression groupIndex)
+        public SimpleLoopVarSetting(Expression o, IDeclaredParameter groupIndex)
         {
             this._loopVariable = o;
             this._loopIndex = groupIndex;
         }
-        public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+        public Tuple<Expression, IDeclaredParameter> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
         {
-            return new Tuple<Expression, Expression>(_loopVariable, _loopIndex);
+            return new Tuple<Expression, IDeclaredParameter>(_loopVariable, _loopIndex);
         }
     }
 
@@ -370,7 +370,7 @@ namespace LINQToTTreeLib.ResultOperators
             //
 
             var loopExpression = groupObj.TargetExpression;
-            cc.Add(groupObj.TargetExpressionLoopVariable.ParameterName(), Expression.Parameter(typeof(int), s.LoopItemIndex));
+            cc.Add(groupObj.TargetExpressionLoopVariable.RawValue, Expression.Parameter(typeof(int), s.LoopItemIndex));
 
             return new SimpleLoopVarSetting(loopExpression, s.Counter);
         }
