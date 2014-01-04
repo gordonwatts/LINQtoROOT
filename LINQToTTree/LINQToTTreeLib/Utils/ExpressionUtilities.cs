@@ -1,14 +1,14 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -228,6 +228,21 @@ namespace LINQToTTreeLib.Utils
             //
 
             return false;
+        }
+
+        /// <summary>
+        /// Return a parameter as an expression.
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static Expression AsExpression(this IDeclaredParameter param)
+        {
+            // Some of the expressions are already parameters, so...
+            var e = param as Expression;
+            if (e != null)
+                return e;
+
+            return Expression.Parameter(param.Type, param.RawValue);
         }
 
     }

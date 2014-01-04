@@ -100,14 +100,14 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Returns the index variable that we are using to run the current loop variable.
         /// </summary>
-        Expression LoopIndexVariable { get; }
+        IDeclaredParameter LoopIndexVariable { get; }
 
         /// <summary>
         /// Set the current loop variable to be something new
         /// </summary>
         /// <param name="loopVariable">The current value of the expression we are using in the loop</param>
         /// <param name="indexVariable">The integer expression that is running the above loop variable</param>
-        void SetLoopVariable(Expression loopVariable, Expression indexVariable);
+        void SetLoopVariable(Expression loopVariable, IDeclaredParameter indexVariable);
 
         /// <summary>
         /// Keep track of cookies that should be taken into account when

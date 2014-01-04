@@ -17,6 +17,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="indexName">The name of the index that is being used by the expression we are calling.</param>
         /// <param name="popVariableContext">So things can be popped off the parameter list when not required (scoping)</param>
         /// <returns>An expression that references this item of the loop (item1) and the loop variable that is indexing (item2)</returns>
-        Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container);
+        Tuple<Expression, IDeclaredParameter> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container);
     }
 }

@@ -1,13 +1,14 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using System;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -48,7 +49,7 @@ namespace LINQToTTreeLib.ResultOperators
             var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             gc.AddOutsideLoop(arrayRecord);
 
-            var recordIndexStatement = new StatementRecordIndicies(ExpressionToCPP.GetExpression(cc.LoopIndexVariable, gc, cc, container), arrayRecord);
+            var recordIndexStatement = new StatementRecordIndicies(cc.LoopIndexVariable, arrayRecord);
             gc.Add(recordIndexStatement);
 
             gc.Pop();
@@ -66,8 +67,8 @@ namespace LINQToTTreeLib.ResultOperators
             var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var index1Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index1); //Expression.ArrayIndex(array, index1);
-            var index2Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index2);//Expression.ArrayIndex(array, index2);
+            var index1Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable.AsExpression(), index1); //Expression.ArrayIndex(array, index1);
+            var index2Lookup = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable.AsExpression(), index2);//Expression.ArrayIndex(array, index2);
 
             var callLambda = Expression.Invoke(ro.Test,
                 index1Lookup,
@@ -94,8 +95,7 @@ namespace LINQToTTreeLib.ResultOperators
             var loopOverGood = new Statements.StatementLoopOverGood(arrayRecord, passAll, goodIndex);
             gc.Add(loopOverGood);
 
-            var pindex = Expression.Parameter(typeof(int), goodIndex.RawValue);
-            cc.SetLoopVariable(cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, pindex), pindex);
+            cc.SetLoopVariable(cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable.AsExpression(), goodIndex), goodIndex);
         }
     }
 }

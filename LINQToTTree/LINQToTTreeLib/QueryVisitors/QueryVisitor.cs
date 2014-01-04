@@ -138,9 +138,9 @@ namespace LINQToTTreeLib
             /// <param name="env"></param>
             /// <param name="context"></param>
             /// <returns></returns>
-            public Tuple<Expression, Expression> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
+            public Tuple<Expression, IDeclaredParameter> AddLoop(IGeneratedQueryCode env, ICodeContext context, CompositionContainer container)
             {
-                return Tuple.Create<Expression, Expression>(Expression.Variable(thisType, "this"), null);
+                return Tuple.Create<Expression, IDeclaredParameter>(Expression.Variable(thisType, "this"), null);
             }
         }
 
@@ -399,7 +399,7 @@ namespace LINQToTTreeLib
 
             var savePairValues = new StatementRecordPairValues(mapRecord,
                 ExpressionToCPP.GetExpression(ordering.Expression, _codeEnv, _codeContext, MEFContainer),
-                ExpressionToCPP.GetExpression(_codeContext.LoopIndexVariable, _codeEnv, _codeContext, MEFContainer));
+                _codeContext.LoopIndexVariable);
             _codeEnv.Add(savePairValues);
 
             _codeEnv.PopToResultsLevel();
@@ -413,9 +413,9 @@ namespace LINQToTTreeLib
             _codeEnv.Add(sortAndRunLoop);
 
             var pindex = sortAndRunLoop.IndexVariable;
-            var lv = _codeContext.LoopIndexVariable.ParameterName();
+            var lv = _codeContext.LoopIndexVariable.RawValue;
             _codeContext.Add(lv, pindex);
-            _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable, pindex), pindex);
+            _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable.AsExpression(), pindex), pindex);
         }
 
         /// <summary>

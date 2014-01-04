@@ -1,12 +1,13 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.relinq;
+using LINQToTTreeLib.Utils;
+using Remotion.Linq;
+using Remotion.Linq.Clauses;
+using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Expressions;
-using LINQToTTreeLib.relinq;
-using Remotion.Linq;
-using Remotion.Linq.Clauses;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -57,7 +58,7 @@ namespace LINQToTTreeLib.ResultOperators
             var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             gc.AddOutsideLoop(arrayRecord);
 
-            var recordIndexStatement = new Statements.StatementRecordIndicies(ExpressionToCPP.GetExpression(cc.LoopIndexVariable, gc, cc, container), arrayRecord);
+            var recordIndexStatement = new Statements.StatementRecordIndicies(cc.LoopIndexVariable, arrayRecord);
             gc.Add(recordIndexStatement);
 
             gc.Pop();
@@ -76,8 +77,8 @@ namespace LINQToTTreeLib.ResultOperators
             // but with the other index properties. Other bits will have to do the translation for us. :-)
             //
 
-            var item1 = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index1);
-            var item2 = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable, index2);
+            var item1 = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable.AsExpression(), index1);
+            var item2 = cc.LoopVariable.ReplaceSubExpression(cc.LoopIndexVariable.AsExpression(), index2);
 
             var tupleType = typeof(Tuple<,>).MakeGenericType(cc.LoopVariable.Type, cc.LoopVariable.Type);
             var newTuple = Expression.New(tupleType.GetConstructor(new Type[] { cc.LoopVariable.Type, cc.LoopVariable.Type }), item1, item2);
