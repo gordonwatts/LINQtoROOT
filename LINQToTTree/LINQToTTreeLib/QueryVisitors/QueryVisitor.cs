@@ -438,7 +438,7 @@ namespace LINQToTTreeLib
 
             var savePairValues = new StatementRecordPairValues(mapRecord,
                 ExpressionToCPP.GetExpression(ordering.Expression, _codeEnv, _codeContext, MEFContainer),
-                _codeContext.LoopIndexVariable);
+                ExpressionToCPP.GetExpression(_codeContext.LoopIndexVariable.AsExpression(), _codeEnv, _codeContext, MEFContainer));
             _codeEnv.Add(savePairValues);
 
             _codeEnv.PopToResultsLevel();

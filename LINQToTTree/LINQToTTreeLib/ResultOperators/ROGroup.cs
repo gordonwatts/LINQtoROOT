@@ -68,7 +68,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             var savePairValues = new StatementRecordPairValues(mapRecord,
                 ExpressionToCPP.GetExpression(groupOp.KeySelector, gc, cc, container),
-                cc.LoopIndexVariable);
+                ExpressionToCPP.GetExpression(cc.LoopIndexVariable.AsExpression(), gc, cc, container));
             gc.Add(savePairValues);
 
             gc.Pop();
