@@ -669,5 +669,36 @@ namespace LINQToTTreeLib.Tests
             while (next.MoveNext())
                 yield return next.Current;
         }
+
+        /// <summary>
+        /// Look through the given source code for a particular search string. Somewhere in the search string should be
+        /// $$ twice. That is the variable name. We will return the first match with that as the variable name.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
+        public static string FindVariableIn(this IEnumerable<string> source, string searchString)
+        {
+            var sStr = searchString
+                .Replace("\\", @"\\")
+                .Replace("(", @"\(")
+                .Replace(")", @"\)")
+                .Replace("[", @"\[")
+                .Replace("]", @"\]")
+                .Replace("?", @"\?")
+                .Replace(".", @"\.")
+                .Replace("^", @"\^");
+
+            sStr = sStr.Replace("$$", @"(?<var>\w+)");
+            var finder = new Regex(sStr);
+            foreach (var l in source)
+            {
+                var m = finder.Match(l);
+                if (m.Success)
+                    return m.Groups["var"].Value;
+            }
+            Assert.Fail(string.Format("Unable to find '{0}' in the source stream!", sStr));
+            throw new InvalidOperationException();
+        }
     }
 }
