@@ -14,16 +14,14 @@ namespace LINQToTTreeLib.Expressions
     internal class ParameterReplacementExpressionVisitor : ExpressionTreeVisitor
     {
         private ICodeContext _context;
-        private IGeneratedQueryCode _gc;
 
         /// <summary>
         /// Creat the object and cahce the context for later parameter lookup.
         /// </summary>
         /// <param name="context"></param>
-        protected ParameterReplacementExpressionVisitor(ICodeContext context, IGeneratedQueryCode gc)
+        protected ParameterReplacementExpressionVisitor(ICodeContext context)
         {
             _context = context;
-            _gc = gc;
         }
 
         /// <summary>
@@ -32,9 +30,9 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="expr"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Expression ReplaceParameters(Expression expr, ICodeContext context, IGeneratedQueryCode gc)
+        public static Expression ReplaceParameters(Expression expr, ICodeContext context)
         {
-            var prep = new ParameterReplacementExpressionVisitor(context, gc);
+            var prep = new ParameterReplacementExpressionVisitor(context);
             return prep.VisitExpression(expr);
         }
 
@@ -88,12 +86,6 @@ namespace LINQToTTreeLib.Expressions
         private Expression ResolveExpressionReplacement(IQuerySource exprName)
         {
             var replaceit = _context.GetReplacement(exprName);
-            if (replaceit != null)
-            {
-                var parameters = FindDeclarableParameters.FindAll(replaceit).ToArray();
-                if (_gc.FirstAllInScopeFromNow(parameters) == null)
-                    replaceit = null;
-            }
             return VisitExpression(replaceit);
         }
 

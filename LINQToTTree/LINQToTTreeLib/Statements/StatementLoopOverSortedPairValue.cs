@@ -53,6 +53,8 @@ namespace LINQToTTreeLib.Statements
 
             sortValueTypeArray = _mapRecord.Type.GetGenericArguments()[0].MakeArrayType();
             tempListingName = sortValueTypeArray.CreateUniqueVariableName();
+
+            breakSeenVar = typeof(bool).CreateUniqueVariableName();
         }
 
         /// <summary>
@@ -80,6 +82,11 @@ namespace LINQToTTreeLib.Statements
         /// Make sure that the array type is stored.
         /// </summary>
         private Type sortValueTypeArray;
+
+        /// <summary>
+        /// Mark if the bool variable has been seen yet or not.
+        /// </summary>
+        private string breakSeenVar;
 
         /// <summary>
         /// Generate the code required.
@@ -115,6 +122,7 @@ namespace LINQToTTreeLib.Statements
                 // Protect ourselves from break's that occur in the inner loop.
                 //
 
+                yield return string.Format("  bool {0}breakSeen = true;", breakSeenVar);
                 yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist.size(); i_sindex++) {{", _indexVariable.RawValue);
 
                 //
@@ -136,7 +144,10 @@ namespace LINQToTTreeLib.Statements
                 // And clean up!
                 //
 
+                yield return string.Format("    {0}breakSeen = false;", breakSeenVar);
+
                 yield return "  }";
+                yield return string.Format("  if ({0}breakSeen) break;", breakSeenVar);
                 yield return "}";
             }
         }

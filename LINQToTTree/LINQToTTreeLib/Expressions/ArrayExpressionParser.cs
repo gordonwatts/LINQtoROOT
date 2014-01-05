@@ -120,7 +120,7 @@ namespace LINQToTTreeLib.Expressions
             if (!(expr is QuerySourceReferenceExpression))
                 return null;
 
-            var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc, gc);
+            var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
             var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e => e);
 
             //
@@ -146,7 +146,7 @@ namespace LINQToTTreeLib.Expressions
             if (expr is SubQueryExpression)
                 return null;
 
-            var translated = AttemptTranslationToArray(expr, cc, gc);
+            var translated = AttemptTranslationToArray(expr, cc);
             if (translated != null)
             {
                 return ReGetIArrayInfo(translated);
@@ -160,9 +160,9 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        private static Expression AttemptTranslationToArray(Expression expr, ICodeContext cc, IGeneratedQueryCode gc)
+        private static Expression AttemptTranslationToArray(Expression expr, ICodeContext cc)
         {
-            var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc, gc);
+            var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
             var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e => e);
             return r as SubQueryExpression;
         }

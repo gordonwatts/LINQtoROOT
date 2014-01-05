@@ -777,13 +777,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestNullListAlwaysInScope()
-        {
-            var gc = new GeneratedCode();
-            Assert.IsNotNull(gc.FirstAllInScopeFromNow(new IDeclaredParameter[] { }));
-        }
-
-        [TestMethod]
         public void TestFirstBookingThisLevel()
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
