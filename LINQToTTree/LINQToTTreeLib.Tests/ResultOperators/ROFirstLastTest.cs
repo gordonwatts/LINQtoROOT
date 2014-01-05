@@ -577,5 +577,63 @@ namespace LINQToTTreeLib.ResultOperators
             var v2 = iflines[1].NextIdentifier("var3).at(");
             Assert.IsFalse(v1 == v2, string.Format("v1='{0}' should not be the same as v2='{1}' due to scoping", v1, v2));
         }
+
+        /// <summary>
+        /// A bug in the wild had an index var being "forgotten" and then reused. Which caused a scoping error.
+        /// Turns out the code in TestTranslatedNestedCompareAndSort had the same error. So this test looks for
+        /// that specific failure.
+        /// </summary>
+        [TestMethod]
+        public void TranslatedNestedForgetsIndexVarSub()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            // Create a dual object. Avoid anonymous objects just for the sake of it.
+            var matched = from evt in q
+                          select new TestTranslatedNestedCompareAndSortHolderEvent()
+                          {
+                              matches = from j in evt.jets
+                                        let mt = (from t in evt.tracks
+                                                  where (t.v6 - j.v3) < 10
+                                                  select t).First()
+                                        select new TestTranslatedNestedCompareAndSortHolder()
+                                        {
+                                            jet = j,
+                                            track = mt
+                                        }
+                          };
+
+            // Filter on the first jet in the sequence.
+            var goodmatched = from evt in matched
+                              select new TestTranslatedNestedCompareAndSortHolderEvent()
+                              {
+                                  matches = evt.matches.Where(e => e.track.v6 < 1.3)
+                              };
+
+            // Do something with the second one now
+            var otherTrack = from evt in goodmatched
+                             select evt.matches.Skip(1).First().track.v6;
+
+            //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
+            var r = otherTrack.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            // Look for where aInt32_4 goes out of scope, and then see if it ever gets reused.
+
+            var afterScope = code
+                .DumpCode()
+                .WhereScopeCloses("int aInt32_4", true)
+                .Where(l => l.Contains("aInt32_4"))
+                .ToArray();
+
+            foreach (var baduse in afterScope)
+            {
+                Console.WriteLine("Used after it goes out of scope: {0}", baduse);
+            }
+
+            Assert.IsFalse(afterScope.Any(), "use of loop var after out of scope.");
+        }
     }
 }
