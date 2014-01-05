@@ -899,7 +899,7 @@ namespace LINQToTTreeLib
         {
 #pragma warning disable 0649
             public int[][] d;
-#pragma warning pop 0649
+#pragma warning restore 0649
         }
 
         [TestMethod]

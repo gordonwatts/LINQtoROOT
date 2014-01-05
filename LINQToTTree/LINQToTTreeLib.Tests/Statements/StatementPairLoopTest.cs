@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
@@ -58,21 +58,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var t = new StatementPairLoop(array, index1, index2);
             t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
-            Assert.AreEqual(13, t.CodeItUp().Count(), "# of lines incorrect");
-        }
-
-        [TestMethod]
-        public void TestForBreakPlacement()
-        {
-            var array = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
-            var index1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t = new StatementPairLoop(array, index1, index2);
-            t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
-            var statements = t.CodeItUp().ToArray();
-            Assert.AreEqual(13, statements.Count(), "# of statements");
-            var postdir = statements.SkipWhile(l => !l.Contains("dir;")).Skip(2).ToArray();
-            Assert.IsTrue(postdir[0].Contains("breakSeen = false"), "seen break line not reset '" + postdir[0] + "'.");
+            Assert.AreEqual(9, t.CodeItUp().Count(), "# of lines incorrect");
         }
 
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]

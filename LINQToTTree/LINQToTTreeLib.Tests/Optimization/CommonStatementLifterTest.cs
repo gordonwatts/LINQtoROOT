@@ -940,12 +940,14 @@ namespace LINQToTTreeLib.Tests.Optimization
             Console.WriteLine();
             Console.WriteLine("After optimization...");
             Console.WriteLine();
-            query.DumpCodeToConsole();
+            var lines = query.DumpCode().ToArray();
+            lines.DumpToConsole();
 
             // Find the first mention of aInt32_28. It should be declared.
 
-            var firstMention = query.DumpCode().Where(l => l.Contains("aInt32_23")).Skip(0).First();
-            Assert.AreEqual("int aInt32_23=-1;", firstMention.Trim(), "aint32_23 decl");
+            var varname = lines.FindVariableIn("int $$=-1;");
+            var firstMention = query.DumpCode().Where(l => l.Contains(varname)).Skip(0).First();
+            Assert.AreEqual(string.Format("int {0}=-1;", varname), firstMention.Trim(), "aint32_23 decl");
         }
 
         /// <summary>
