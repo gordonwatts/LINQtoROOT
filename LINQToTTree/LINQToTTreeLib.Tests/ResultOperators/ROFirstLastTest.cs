@@ -160,8 +160,8 @@ namespace LINQToTTreeLib.ResultOperators
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
-            var lm = query.DumpCode().Where(l => l.Contains(" = ((*(*this).run2).at(aInt32_4))*2;")).FirstOrDefault();
+            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements in the code body");
+            var lm = query.DumpCode().Where(l => l.Contains(" = ((*(*this).run2).at(aInt32_16))*2;")).FirstOrDefault();
             Assert.IsNotNull(lm, "Unable to find proper addition line");
         }
 
@@ -263,12 +263,14 @@ namespace LINQToTTreeLib.ResultOperators
             // we will do a simple test here.
         }
 
+        /// <summary>
+        /// This test produces somethign caught in the wild (caused a compile error).
+        /// The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
+        /// to cause the problem, unfortunately. So, the test is here.
+        /// </summary>
         [TestMethod]
         public void TestDualFirstWithTestAtEnd()
         {
-            // This test produces somethign caught in the wild (caused a compile error).
-            // The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
-            // to cause the problem, unfortunately. So, the test is here.
             var q = new QueriableDummy<ntup3>();
 
             var resultA = from evt in q
@@ -307,11 +309,14 @@ namespace LINQToTTreeLib.ResultOperators
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
 
-            Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
+#if false
+            // Now that we do function calls, this code doesn't really makes sense any longer.
+            Assert.AreEqual(2, query.CodeBody.Statements.Count(), "# of statements in the code body");
             var firstloop = query.CodeBody.Statements.First() as IBookingStatementBlock;
             Assert.AreEqual(1, firstloop.Statements.Count(), "first loop should have only an if statement");
             var ifstatement = firstloop.Statements.First() as IBookingStatementBlock;
             Assert.AreEqual(3, ifstatement.AllDeclaredVariables.Count(), "# of declared variables");
+#endif
         }
 
         [TestMethod]

@@ -4,11 +4,15 @@ using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.QMFunctions
 {
     /// <summary>
     /// Everything needed to reference a function for a QueryModel, as well as emit it to C++
+    /// We deal with both single value and sequence QM functions. There is some overlap in functionality
+    /// and also some not. It would probably be good to split this up at some point, perhaps make it into
+    /// a subclass.
     /// </summary>
     public class QMFuncSource : IQMFunctionSource
     {
@@ -16,6 +20,11 @@ namespace LINQToTTreeLib.QMFunctions
         /// Get the header info for this function.
         /// </summary>
         private QMFuncHeader _header;
+
+        /// <summary>
+        /// If this is a sequence type, then we need to mess with the cache type.
+        /// </summary>
+        private Type _sequenceType;
 
         /// <summary>
         /// Create the QM Func Source starting from a pre-parsed bunch of header info.
@@ -28,8 +37,17 @@ namespace LINQToTTreeLib.QMFunctions
             Arguments = f.Arguments.Select(a => new QMFunctionArgument(a));
             StatementBlock = null;
 
+            // If this is a sequence, then we need to get a non-normal type.
+            if (_header.IsSequence)
+            {
+                _sequenceType = _header.QM.GetResultType().GetGenericArguments().First();
+                _sequenceType = _sequenceType.MakeArrayType();
+            }
+
+            // Now we can create the cached variables, etc.
             CacheVariable = DeclarableParameter.CreateDeclarableParameterExpression(ResultType);
             CacheVariableGood = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+
         }
 
         /// <summary>
@@ -76,9 +94,22 @@ namespace LINQToTTreeLib.QMFunctions
         }
 
         /// <summary>
-        /// Get the type of this function's return.
+        /// Get the type of this function's return. Sequence type isn't quite the same...
         /// </summary>
-        public Type ResultType { get { return _header.QM.GetResultType(); } }
+        public Type ResultType
+        {
+            get
+            {
+                if (IsSequence)
+                {
+                    return _sequenceType;
+                }
+                else
+                {
+                    return _header.QM.GetResultType();
+                }
+            }
+        }
 
         /// <summary>
         /// Remember the code body for later use, along with the result that we will be
@@ -115,5 +146,34 @@ namespace LINQToTTreeLib.QMFunctions
         {
             StatementBlock.RenameVariable(oldfname, newfname);
         }
+
+        /// <summary>
+        /// Is this a QM that represents a sequence?
+        /// </summary>
+        public bool IsSequence { get { return _header.IsSequence; } }
+
+        /// <summary>
+        /// Save sequence variables. Only valid if this guy is a sequence.
+        /// </summary>
+        /// <param name="loopIndexVariable"></param>
+        /// <param name="loopExpression"></param>
+        public void SequenceVariable(IDeclaredParameter loopIndexVariable, Expression loopExpression)
+        {
+            if (!IsSequence)
+                throw new InvalidOperationException("Can't stash sequence info in a non-sequence QM!");
+
+            OldLoopExpression = loopExpression;
+            OldLoopIndexVariable = loopIndexVariable;
+        }
+
+        /// <summary>
+        /// Return the index var that was used to capture this sequence.
+        /// </summary>
+        public IDeclaredParameter OldLoopIndexVariable { get; private set; }
+
+        /// <summary>
+        /// Return the loop expression that was setup when this guy was captured.
+        /// </summary>
+        public System.Linq.Expressions.Expression OldLoopExpression { get; private set; }
     }
 }

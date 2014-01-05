@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,11 @@ namespace LINQToTTreeLib.Variables
                     else if (destExpression.NodeType == ExpressionType.Parameter)
                     {
                         // A parameter inserted by our own code.
+                        isObject = false;
+                    }
+                    else if (destExpression is DeclarableParameter)
+                    {
+                        // Same wiht a declarable parameter - don't defreference it.
                         isObject = false;
                     }
                 }

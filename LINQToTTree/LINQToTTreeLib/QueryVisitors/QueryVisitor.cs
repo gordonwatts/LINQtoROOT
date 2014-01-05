@@ -201,7 +201,7 @@ namespace LINQToTTreeLib
             if (qmSource.StatementBlock != null)
             {
                 Debug.WriteLine("Using previously cached QM result");
-                _codeEnv.SetResult(qmFunctionCall(qmSource));
+                GenerateQMFunctionCall(qmSource);
                 return;
             }
             Debug.WriteLine("Cache: Gathering Data");
@@ -225,15 +225,32 @@ namespace LINQToTTreeLib
 
             VisitQueryModelNoCache(queryModel);
 
-            // Grab the result, cache it, and return it.
-            var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
-            topLevelStatement.Add(new StatementAssign(qmSource.CacheVariable, rtnExpr, FindDeclarableParameters.FindAll(_codeEnv.ResultValue)));
-            topLevelStatement.Add(new StatementReturn(qmSource.CacheVariable));
+            // The result is treated differently depending on it being a sequence or a single value.
+            if (qmSource.IsSequence)
+            {
+                // Push the good values into our cache object.
+                if (!(_codeContext.LoopIndexVariable is IDeclaredParameter))
+                    throw new InvalidOperationException("Can't deal with anythign that isn't a loop var");
+                _codeEnv.Add(new StatementRecordIndicies(ExpressionToCPP.GetExpression(_codeContext.LoopVariable, _codeEnv, _codeContext, MEFContainer), qmSource.CacheVariable));
 
-            // If the return is a declared parameter, then it must be actually defined somewhere (we normally don't).
-            var declParam = _codeEnv.ResultValue as IDeclaredParameter;
-            if (declParam != null)
-                topLevelStatement.Add(declParam, false);
+                // Remember what the loop index variable is, as we are going to need it when we generate the return function!
+                qmSource.SequenceVariable(_codeContext.LoopIndexVariable, _codeContext.LoopVariable);
+            }
+            else
+            {
+                // This is a specific result. Save just the result and return it.
+                // Grab the result, cache it, and return it.
+                var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
+                topLevelStatement.Add(new StatementAssign(qmSource.CacheVariable, rtnExpr, FindDeclarableParameters.FindAll(_codeEnv.ResultValue)));
+
+                // If the return is a declared parameter, then it must be actually defined somewhere (we normally don't).
+                var declParam = _codeEnv.ResultValue as IDeclaredParameter;
+                if (declParam != null)
+                    topLevelStatement.Add(declParam, false);
+            }
+
+            // Always return the proper value...
+            topLevelStatement.Add(new StatementReturn(qmSource.CacheVariable));
 
             // Now extract the block of code and put it in the function block.
             _codeEnv.CurrentScope = currentScope;
@@ -241,7 +258,7 @@ namespace LINQToTTreeLib
 
             // Reset our state and remove the function code. And put in the function call in its place.
             _codeEnv.Remove(topLevelStatement);
-            _codeEnv.SetResult(qmFunctionCall(qmSource));
+            GenerateQMFunctionCall(qmSource);
 
             Debug.Unindent();
         }
@@ -251,13 +268,35 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="qmSource"></param>
         /// <returns></returns>
-        private Expression qmFunctionCall(IQMFunctionSource qmSource)
+        private void GenerateQMFunctionCall(IQMFunctionSource qmSource)
         {
+            // Assemble what we need for the sequence call.
             if (qmSource.Arguments.Any())
                 throw new NotImplementedException("Can only deal with internal functions with no arguments.");
-
             var call = string.Format("{0} ()", qmSource.Name);
-            return Expression.Parameter(qmSource.ResultType, call);
+
+            if (qmSource.IsSequence)
+            {
+                // For the sequence we get the resulting vector array.
+                var cvar = DeclarableParameter.CreateDeclarableParameterExpression(qmSource.ResultType);
+                _codeEnv.Add(new StatementAssign(cvar, new ValSimple(call, qmSource.ResultType), new IDeclaredParameter[] { }, true));
+
+                // Now, do a loop over it.
+                var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                _codeEnv.Add(new StatementForLoop(loopVar, new ValSimple(string.Format("{0}.size()", cvar.RawValue), typeof(int))));
+
+                // Finally, we setup the loop index variables to match what they did when we ran the functoin.
+                var oldLoopIndex = qmSource.OldLoopIndexVariable;
+                Expression oldLoopVariable = qmSource.OldLoopExpression;
+
+                var arrayLookup = Expression.ArrayIndex(cvar, loopVar);
+                _codeContext.SetLoopVariable(arrayLookup, loopVar);
+            }
+            else
+            {
+                // For the non-sequence this just returns a value that we need.
+                _codeEnv.SetResult(Expression.Parameter(qmSource.ResultType, call));
+            }
         }
 
         /// <summary>

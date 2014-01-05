@@ -120,7 +120,8 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var query = DummyQueryExectuor.LastQueryModel;
             var sf = QMFuncFinder.FindQMFunctions(query);
 
-            Assert.AreEqual(0, sf.Count(), "# of functions");
+            Assert.AreEqual(1, sf.Count(), "# of functions");
+            Assert.IsTrue(sf.First().IsSequence, "is sequence");
         }
 
         [TestMethod]
@@ -137,6 +138,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             Assert.AreEqual(1, sf.Count(), "# of qm functions");
             var f = sf.First();
             Assert.AreEqual(0, f.Arguments.Count(), "# of arguments");
+            Assert.IsFalse(f.IsSequence, "IsSequence");
         }
 
         [TestMethod]
@@ -396,7 +398,8 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var qm = DummyQueryExectuor.LastQueryModel;
             var sf = QMFuncFinder.FindQMFunctions(qm);
 
-            Assert.AreEqual(0, sf.Count(), "# of functions");
+            Assert.AreEqual(0, sf.Where(f => !f.IsSequence).Count(), "# of functions");
+            Assert.AreEqual(0, sf.Where(f => f.IsSequence).Count(), "# of functions"); // it returns an object...
         }
 
         [TestMethod]
@@ -429,7 +432,8 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var qm = DummyQueryExectuor.LastQueryModel;
             var sf = QMFuncFinder.FindQMFunctions(qm);
 
-            Assert.AreEqual(1, sf.Count(), "# of functions");
+            Assert.AreEqual(1, sf.Where(f => !f.IsSequence).Count(), "# of non-functions");
+            Assert.AreEqual(3, sf.Where(f => f.IsSequence).Count(), "# of sequence functions");
         }
     }
 }

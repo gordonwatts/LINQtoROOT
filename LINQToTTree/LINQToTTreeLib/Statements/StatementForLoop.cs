@@ -20,8 +20,8 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Create a for loop statement.
         /// </summary>
-        /// <param name="loopVariable"></param>
-        /// <param name="arraySizeVar"></param>
+        /// <param name="loopVariable">The variable that will be running in the loop</param>
+        /// <param name="arraySizeVar">The size of the array. Evaluated just once before the loop is run.</param>
         /// <param name="startValue">Inital spot in array, defaults to zero</param>
         public StatementForLoop(IDeclaredParameter loopVariable, IValue arraySizeVar, IValue startValue = null)
         {

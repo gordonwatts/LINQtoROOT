@@ -14,7 +14,6 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Parsing.Structure;
-// <copyright file="QueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -541,11 +540,23 @@ namespace LINQToTTreeLib
             var query1 = DummyQueryExectuor.FinalResult;
             query1.DumpCodeToConsole();
 
-            var initalLines = query1.DumpCode().TakeWhile(l => !l.Contains("vector<double> aDouble"));
-            var openCount = initalLines.Where(l => l.Contains("{")).Count();
-            var closeCount = initalLines.Where(l => l.Contains("}")).Count();
+            // Find the vectors that are coming back from the QMFunctions.
+            var vecNames = query1.DumpCode()
+                .Where(l => l.Contains("=QMFunction"))
+                .Select(l => l.Substring(l.IndexOf(">") + 1).Trim())
+                .Select(l => l.Substring(0, l.IndexOf("=")).Trim())
+                .ToArray();
 
-            Assert.AreEqual(openCount - 4, closeCount, "# of close brackets before vector<int> decl");
+            Assert.AreEqual(2, vecNames.Count(), "# of QM function calls");
+
+            // Now, each of the names needs to be used in an expression, like aInt__22[indexvar]. So,
+            // we need to look for the "["  guy.
+
+            var linesOfUse = query1
+                .DumpCode()
+                .Aggregate(0, (a, l) => a += vecNames.Where(v => l.Contains(string.Format("{0}.at(", v))).Count());
+
+            Assert.AreEqual(2, linesOfUse, "How often the array appears in our lines of use");
         }
 
         [TestMethod]
@@ -2476,7 +2487,7 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
             Assert.AreEqual(1, query.QueryCode().First().Statements.Count(), "# of statements");
-            Assert.AreEqual(1, query.Functions.Count(), "# of functions");
+            Assert.AreEqual(2, query.Functions.Count(), "# of functions");
             query.Functions.CheckForReturnStatement();
         }
 
@@ -2778,9 +2789,8 @@ namespace LINQToTTreeLib
             var query2 = DummyQueryExectuor.FinalResult;
             query2.DumpCodeToConsole();
 
-            // This will have to be turned back on when we can deal with arguments.
-            Assert.AreEqual(0, query2.Functions.Count(), "# of functions");
-            // Assert.IsTrue(query2.Functions.All(f => f.StatementBlock == null), "not all blocks have statements.");
+            Assert.AreEqual(1, query2.Functions.Count(), "# of functions");
+            Assert.IsTrue(query2.Functions.All(f => f.StatementBlock != null), "not all blocks have statements.");
         }
     }
 }

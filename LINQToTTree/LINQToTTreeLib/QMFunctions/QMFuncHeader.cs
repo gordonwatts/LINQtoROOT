@@ -22,6 +22,15 @@ namespace LINQToTTreeLib.QMFunctions
         /// </summary>
         public IEnumerable<object> Arguments { get; set; }
 
+        /// <summary>
+        /// The text QM translated. Cache it since it is fairly expensive to do.
+        /// </summary>
         public string QMText { get; set; }
+
+        /// <summary>
+        /// This QM represents a sequence (e.g. it ends with a "select" rather than a First()
+        /// or similar.
+        /// </summary>
+        public bool IsSequence { get; set; }
     }
 }
