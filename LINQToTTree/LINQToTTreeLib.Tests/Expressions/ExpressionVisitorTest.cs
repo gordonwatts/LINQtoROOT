@@ -897,7 +897,9 @@ namespace LINQToTTreeLib
 
         class TestJigRef
         {
+#pragma warning disable 0649
             public int[][] d;
+#pragma warning pop 0649
         }
 
         [TestMethod]
