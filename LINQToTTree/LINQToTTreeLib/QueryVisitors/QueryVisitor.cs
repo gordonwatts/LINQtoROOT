@@ -289,8 +289,8 @@ namespace LINQToTTreeLib
                 var oldLoopIndex = qmSource.OldLoopIndexVariable;
                 Expression oldLoopVariable = qmSource.OldLoopExpression;
 
-                var newLoopVariable = oldLoopVariable.ReplaceSubExpression(oldLoopIndex.AsExpression(), loopVar);
-                _codeContext.SetLoopVariable(newLoopVariable, loopVar);
+                var arrayLookup = Expression.ArrayIndex(cvar, loopVar);
+                _codeContext.SetLoopVariable(arrayLookup, loopVar);
             }
             else
             {
