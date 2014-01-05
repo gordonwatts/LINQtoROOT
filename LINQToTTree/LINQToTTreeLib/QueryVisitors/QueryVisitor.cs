@@ -231,7 +231,7 @@ namespace LINQToTTreeLib
                 // Push the good values into our cache object.
                 if (!(_codeContext.LoopIndexVariable is IDeclaredParameter))
                     throw new InvalidOperationException("Can't deal with anythign that isn't a loop var");
-                _codeEnv.Add(new StatementRecordIndicies(_codeContext.LoopIndexVariable as IDeclaredParameter, qmSource.CacheVariable));
+                _codeEnv.Add(new StatementRecordIndicies(ExpressionToCPP.GetExpression(_codeContext.LoopVariable, _codeEnv, _codeContext, MEFContainer), qmSource.CacheVariable));
 
                 // Remember what the loop index variable is, as we are going to need it when we generate the return function!
                 qmSource.SequenceVariable(_codeContext.LoopIndexVariable, _codeContext.LoopVariable);

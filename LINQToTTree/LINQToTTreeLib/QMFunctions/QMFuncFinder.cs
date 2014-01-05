@@ -174,7 +174,7 @@ namespace LINQToTTreeLib.QMFunctions
                     return false;
 
                 var cls = arg[0];
-                return !cls.IsClass;
+                return !cls.IsClass && !cls.IsInterface;
             }
 
             /// <summary>
