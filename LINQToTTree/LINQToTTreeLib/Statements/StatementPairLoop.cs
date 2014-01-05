@@ -40,17 +40,13 @@ namespace LINQToTTreeLib.Statements
             {
                 yield return string.Format("for(int {0} = 0; {0} < {1}.size(); {0}++)", index1.RawValue, arrayRecord.RawValue);
                 yield return "{";
-                yield return "  bool breakSeen = true;";
                 yield return string.Format("  for(int {0} = {1}+1; {0} < {2}.size(); {0}++)", index2.RawValue, index1.RawValue, arrayRecord.RawValue);
                 yield return "  {";
-                yield return "    breakSeen = true;";
                 foreach (var l in RenderInternalCode())
                 {
                     yield return "    " + l;
                 }
-                yield return "    breakSeen = false;";
                 yield return "  }";
-                yield return "  if (breakSeen) break;";
                 yield return "}";
             }
         }

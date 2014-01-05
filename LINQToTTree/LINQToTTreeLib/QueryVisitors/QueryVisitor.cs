@@ -408,7 +408,7 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(selectClause.Selector, _codeContext);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(selectClause.Selector, _codeContext, _codeEnv);
             _codeContext.SetLoopVariable(expr, _codeContext.LoopIndexVariable);
         }
 

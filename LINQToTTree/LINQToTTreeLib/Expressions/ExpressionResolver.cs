@@ -86,7 +86,7 @@ namespace LINQToTTreeLib.Expressions
                 /// See if there are any parameter replacements that can be done out-of-band
                 /// 
 
-                var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expression, CodeContext);
+                var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(expression, CodeContext, GeneratedCode);
 
                 //
                 // Next, attempt to translate the expr (if needed). This deals with moving from

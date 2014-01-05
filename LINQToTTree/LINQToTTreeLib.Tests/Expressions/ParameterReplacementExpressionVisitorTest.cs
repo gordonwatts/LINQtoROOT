@@ -33,8 +33,9 @@ namespace LINQToTTreeLib.Expressions
         public void TestNoReplacement()
         {
             var cc = new CodeContext();
+            var gc = new GeneratedCode();
             var myvar = Expression.Variable(typeof(int), "d");
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(myvar, cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(myvar, cc, gc);
 
             var asp = expr as ParameterExpression;
             Assert.IsNotNull(asp, "expected the returned expression to be correct");
@@ -47,8 +48,9 @@ namespace LINQToTTreeLib.Expressions
         {
             var cc = new CodeContext();
             cc.Add("d", Expression.Constant(20));
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc, gc);
 
             var asconst = expr as ConstantExpression;
             Assert.IsNotNull(asconst, "constant replacement");
@@ -61,8 +63,9 @@ namespace LINQToTTreeLib.Expressions
             var cc = new CodeContext();
             cc.Add("d", Expression.Variable(typeof(int), "f"));
             cc.Add("f", Expression.Constant(20));
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc, gc);
 
             var asconst = expr as ConstantExpression;
             Assert.IsNotNull(asconst, "constant replacement");
@@ -77,8 +80,9 @@ namespace LINQToTTreeLib.Expressions
 
             var cc = new CodeContext();
             cc.Add(e1.ParameterName, e2);
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(e1, cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(e1, cc, gc);
 
             Assert.AreEqual(e2, expr, "value of translation");
         }
@@ -90,8 +94,9 @@ namespace LINQToTTreeLib.Expressions
             var cc = new CodeContext();
             cc.Add("d", Expression.Variable(typeof(int), "f"));
             cc.Add("f", Expression.Constant(20.0));
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(Expression.Variable(typeof(int), "d"), cc, gc);
         }
 
         [TestMethod]
@@ -102,8 +107,9 @@ namespace LINQToTTreeLib.Expressions
 
             var cc = new CodeContext();
             cc.Add("d", Expression.Variable(typeof(int[]), "dude"));
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(myref, cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(myref, cc, gc);
 
             var be = expr as BinaryExpression;
             Assert.AreEqual(ExpressionType.ArrayIndex, be.NodeType, "index bad");
@@ -121,8 +127,9 @@ namespace LINQToTTreeLib.Expressions
 
             var cc = new CodeContext();
             cc.Add("d", Expression.Constant(10));
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(myref, cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(myref, cc, gc);
 
             var be = expr as BinaryExpression;
             Assert.AreEqual(ExpressionType.ArrayIndex, be.NodeType, "index bad");
@@ -152,8 +159,9 @@ namespace LINQToTTreeLib.Expressions
             CodeContext cc = new CodeContext();
             cc.Add("d", Expression.Variable(typeof(int), "f"));
             cc.Add(qexpr.ReferencedQuerySource, Expression.Parameter(typeof(int), "d"));
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(qexpr, cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(qexpr, cc, gc);
 
             var asp = expr as ParameterExpression;
             Assert.IsNotNull(asp, "expected the returned expression to be of type ParameterExpression");
@@ -170,8 +178,9 @@ namespace LINQToTTreeLib.Expressions
             cc.Add("d", Expression.Variable(typeof(int), "f"));
             cc.Add("f", Expression.Variable(typeof(int), "fork"));
             cc.Add(qexpr.ReferencedQuerySource, Expression.Parameter(typeof(int), "d"));
+            var gc = new GeneratedCode();
 
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(qexpr, cc);
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(qexpr, cc, gc);
 
             var asp = expr as ParameterExpression;
             Assert.IsNotNull(asp, "expected the returned expression to be of type ParameterExpression");
@@ -235,7 +244,8 @@ namespace LINQToTTreeLib.Expressions
             Expression<Func<testLambdaSimple, float>> lambdaExpr = t => t.pt / ((float)100.0);
 
             CodeContext cc = new CodeContext();
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc);
+            var gc = new GeneratedCode();
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc, gc);
 
             Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
         }
@@ -248,7 +258,8 @@ namespace LINQToTTreeLib.Expressions
 
             CodeContext cc = new CodeContext();
             cc.Add("t", Expression.Variable(typeof(testLambdaSimple), "fook"));
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc);
+            var gc = new GeneratedCode();
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc, gc);
 
             Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
             Assert.AreEqual("fook", (cc.GetReplacement("t") as ParameterExpression).Name, "code context was altered");
@@ -262,7 +273,8 @@ namespace LINQToTTreeLib.Expressions
 
             CodeContext cc = new CodeContext();
             cc.Add("t", Expression.Parameter(typeof(testLambdaSimple), "fook"));
-            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc);
+            var gc = new GeneratedCode();
+            var expr = ParameterReplacementExpressionVisitor.ReplaceParameters(lambdaExpr, cc, gc);
 
             Assert.AreEqual(lambdaExpr.ToString(), expr.ToString(), "lambda changed");
             Assert.AreEqual("fook", (cc.GetReplacement("t") as ParameterExpression).Name, "code context was altered");
