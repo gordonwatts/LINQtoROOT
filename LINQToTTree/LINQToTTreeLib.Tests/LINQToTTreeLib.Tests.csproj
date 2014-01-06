@@ -383,6 +383,7 @@
     </Compile>
     <Compile Include="QueryVisitors\CreateTupleExpressionTransformerTest.cs" />
     <Compile Include="QueryVisitors\QueryVisitorTest.cs" />
+    <Compile Include="QueryVisitors\ReferencedQueryExpressionReplacementTests.cs" />
     <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
       <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
     </Compile>
