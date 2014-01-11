@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.Tests.ResultOperators
             var rep = Expression.Parameter(typeof(int), "fork");
             var result = expr.ReplaceSubExpression(param, rep);
 
-            Trace.WriteLine("Expression: " + result.ToString());
+            Debg.WriteLine("Expression: " + result.ToString());
             Assert.IsFalse(result.ToString().Contains("dude"), "Contains the dude variable");
         }
     }
