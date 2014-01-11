@@ -14,8 +14,6 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementLoopOverSortedPairValue : StatementInlineBlockBase, IStatementLoop
     {
-        private IValue _mapRecord;
-        private DeclarableParameter _indexVariable;
         private bool _sortAscending;
 
         /// <summary>
@@ -30,29 +28,10 @@ namespace LINQToTTreeLib.Statements
             if (mapRecord == null)
                 throw new ArgumentNullException("mapRecord");
 
-            this._mapRecord = mapRecord;
             this._sortAscending = sortAscending;
 
-            //
-            // We will need an index to go through the sorted items that are
-            // stored in the array.
-            //
-
-            var indexVariableType = mapRecord.Type.GetGenericArguments()[1];
-            if (!indexVariableType.IsArray)
-                throw new ArgumentException(string.Format("Unable to loop over a map that isn't a map of arrays ({0}).", mapRecord.Type.FullName));
-            indexVariableType = indexVariableType.GetElementType();
-
-            this._indexVariable = DeclarableParameter.CreateDeclarableParameterExpression(indexVariableType);
-
-            //
-            // Some internal variable names and types. Store for later use. We mostly have them here so we
-            // can keep the names stable accross CodeItUp() calls - which makes our testing of things
-            // a bit nicer!
-            //
-
-            sortValueTypeArray = _mapRecord.Type.GetGenericArguments()[0].MakeArrayType();
-            tempListingName = sortValueTypeArray.CreateUniqueVariableName();
+            // Add this saver
+            RestoreOtherSaver(mapRecord);
         }
 
         /// <summary>
@@ -60,68 +39,99 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         public IEnumerable<IDeclaredParameter> LoopIndexVariable
         {
-            get { return new IDeclaredParameter[] { _indexVariable }; }
+            get { return _mapRecords.Select(p => p.indexVariable).Cast<IDeclaredParameter>(); }
         }
 
         /// <summary>
         /// Returns the indexing variable that loops over the items we are looking at.
+        /// It returns the index variable associated with the first saver given.
         /// </summary>
         public DeclarableParameter IndexVariable
         {
-            get { return _indexVariable; }
+            get { return _mapRecords.First().indexVariable; }
+        }
+
+        private struct mapPlaybackInfo
+        {
+            /// <summary>
+            /// Keep track of what name we will use for listing. Mostly so if CodeItUp is called more than once we get back the same answer!
+            /// </summary>
+            public string tempListingName;
+
+            /// <summary>
+            /// Make sure that the array type is stored.
+            /// </summary>
+            public Type sortValueTypeArray;
+
+            /// <summary>
+            /// The actual map we will play back
+            /// </summary>
+            public IValue mapRecords;
+
+            /// <summary>
+            /// The sequence number for the item (1, 2, 3, etc.) so that we
+            /// can keep temp variables isolated.
+            /// </summary>
+            public int sequence;
+
+            public DeclarableParameter indexVariable;
         }
 
         /// <summary>
-        /// Keep track of what name we will use for listing. Mostly so if CodeItUp is called more than once we get back the same answer!
+        /// Track the savers we are restoring and indexing through.
         /// </summary>
-        private string tempListingName;
+        private List<mapPlaybackInfo> _mapRecords = new List<mapPlaybackInfo>();
+
 
         /// <summary>
-        /// Make sure that the array type is stored.
-        /// </summary>
-        private Type sortValueTypeArray;
-
-        /// <summary>
-        /// Generate the code required.
+        /// Generate the code to sort and play back.
         /// </summary>
         /// <returns></returns>
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
             if (Statements.Any())
             {
-                yield return string.Format("{0} {1};", sortValueTypeArray.AsCPPType(), tempListingName);
-                yield return string.Format("for({0}::const_iterator i_itr = {1}.begin(); i_itr != {1}.end(); i_itr++) {{", _mapRecord.Type.AsCPPType(), _mapRecord.RawValue);
-                yield return string.Format("  {0}.push_back(i_itr->first);", tempListingName);
+                // Use the first map index guy to run the sort - though it really doesn't matter which
+                // one we use.
+                var first = _mapRecords.First();
+
+                yield return string.Format("{0} {1};", first.sortValueTypeArray.AsCPPType(), first.tempListingName);
+                yield return string.Format("for({0}::const_iterator i_itr = {1}.begin(); i_itr != {1}.end(); i_itr++) {{", first.mapRecords.Type.AsCPPType(), first.mapRecords.RawValue);
+                yield return string.Format("  {0}.push_back(i_itr->first);", first.tempListingName);
                 yield return string.Format("}}");
-                yield return string.Format("sort({0}.begin(), {0}.end());", tempListingName);
+                yield return string.Format("sort({0}.begin(), {0}.end());", first.tempListingName);
                 if (_sortAscending)
                 {
-                    yield return string.Format("for (int i_index = 0; i_index < {0}.size(); i_index++) {{", tempListingName);
+                    yield return string.Format("for (int i_index = 0; i_index < {0}.size(); i_index++) {{", first.tempListingName);
                 }
                 else
                 {
-                    yield return string.Format("for (int i_index = {0}.size()-1; i_index >= 0; i_index--) {{", tempListingName);
+                    yield return string.Format("for (int i_index = {0}.size()-1; i_index >= 0; i_index--) {{", first.tempListingName);
+                }
+
+                // Next, for each of the arrays we are moving through, we need to generate a temp variable. Create a temp
+                // var to make access below simpler.
+                foreach (var saver in _mapRecords)
+                {
+                    var subListType = saver.mapRecords.Type.GetGenericArguments()[1];
+                    yield return string.Format("  const {0} &sublist{3}({1}[{2}[i_index]]);", subListType.AsCPPType(), saver.mapRecords.RawValue, saver.tempListingName, saver.sequence);
+
                 }
 
                 //
-                // To make life simple, create an alias to the list so we can write the code more
-                // cleanly below (and some hints to the compiler??).
+                // Now, loop over the sublist...
                 //
 
-                var subListType = _mapRecord.Type.GetGenericArguments()[1];
-                yield return string.Format("  const {0} &sublist({1}[{2}[i_index]]);", subListType.AsCPPType(), _mapRecord.RawValue, tempListingName);
+                yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist{0}.size(); i_sindex++) {{", first.sequence);
 
                 //
-                // Protect ourselves from break's that occur in the inner loop.
+                // The value of the sequence is used by everyone, so we need to pop it out here.
                 //
 
-                yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist.size(); i_sindex++) {{", _indexVariable.RawValue);
-
-                //
-                // The index variable is what will be used by everyone - so we will just set it here.
-                //
-
-                yield return string.Format("    const {0} {1} = sublist[i_sindex];", _indexVariable.Type.AsCPPType(), _indexVariable.RawValue);
+                foreach (var saver in _mapRecords)
+                {
+                    yield return string.Format("    const {0} {1} = sublist{2}[i_sindex];", saver.indexVariable.Type.AsCPPType(), saver.indexVariable.RawValue, saver.sequence);
+                }
 
                 //
                 // Render the code in the inner loop
@@ -156,8 +166,10 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
+            throw new NotImplementedException();
+#if false
             bool candoIt =
-                _mapRecord.RawValue == other._mapRecord.RawValue
+                _mapRecords.RawValue == other._mapRecords.RawValue
                 && _sortAscending == other._sortAscending;
 
             if (candoIt)
@@ -172,6 +184,7 @@ namespace LINQToTTreeLib.Statements
             }
 
             return candoIt;
+#endif
         }
 
         /// <summary>
@@ -181,9 +194,41 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
+#if false
             _indexVariable.RenameRawValue(origName, newName);
-            _mapRecord.RenameRawValue(origName, newName);
+            _mapRecords.RenameRawValue(origName, newName);
             RenameBlockVariables(origName, newName);
+#endif
+        }
+
+        /// <summary>
+        /// Add other savers to restore.
+        /// </summary>
+        /// <param name="mapParameter"></param>
+        /// <returns></returns>
+        internal DeclarableParameter RestoreOtherSaver(IValue mapParameter)
+        {
+            // Get the array type that we will use to accumulate items for sorting. This is the "key"
+            var arrtype = mapParameter.Type.GetGenericArguments()[0].MakeArrayType();
+
+            // Get an index variable - this is the variable that the contents of the map are set to and are used in
+            // the rest of the expression.
+            var indexVariableType = mapParameter.Type.GetGenericArguments()[1];
+            if (!indexVariableType.IsArray)
+                throw new ArgumentException(string.Format("Unable to loop over a map that isn't a map of arrays ({0}).", mapParameter.Type.FullName));
+            indexVariableType = indexVariableType.GetElementType();
+
+            // Create the saver which we will index over.
+            var saver = new mapPlaybackInfo()
+            {
+                sequence = _mapRecords.Count(),
+                mapRecords = mapParameter,
+                sortValueTypeArray = arrtype,
+                tempListingName = arrtype.CreateUniqueVariableName(),
+                indexVariable = DeclarableParameter.CreateDeclarableParameterExpression(indexVariableType)
+            };
+            _mapRecords.Add(saver);
+            return saver.indexVariable;
         }
     }
 }

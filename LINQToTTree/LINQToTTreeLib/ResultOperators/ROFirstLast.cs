@@ -5,7 +5,6 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
@@ -112,30 +111,15 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddAtResultScope(valueWasSeen);
             gc.AddAtResultScope(indexSeen);
 
-            var whatWeSaw = new HashSet<string>();
-            whatWeSaw.Add(indexExpr.RawValue);
             var rv = new Statements.StatementRecordValue(indexSeen, ExpressionToCPP.GetExpression(indexExpr.AsExpression(), gc, cc, container), valueWasSeen, isFirst);
             gc.Add(rv);
 
-            var scope = rv as IStatement;
-            while (scope != gc.CurrentResultScope)
+            foreach (var v in gc.GetUsedQuerySourceVariables(rv, indexExpr))
             {
-                if (scope is IStatementLoop)
-                {
-                    var ls = scope as IStatementLoop;
-                    foreach (var loopIndexVar in ls.LoopIndexVariable)
-                    {
-                        if (!whatWeSaw.Contains(loopIndexVar.RawValue))
-                        {
-                            var saver = DeclarableParameter.CreateDeclarableParameterExpression(loopIndexVar.Type);
-                            gc.AddAtResultScope(saver);
-                            rv.AddNewSaver(saver, loopIndexVar);
-                            cc.Add(loopIndexVar.RawValue, saver);
-                            whatWeSaw.Add(loopIndexVar.RawValue);
-                        }
-                    }
-                }
-                scope = scope.Parent;
+                var saver = DeclarableParameter.CreateDeclarableParameterExpression(v.Type);
+                gc.AddAtResultScope(saver);
+                rv.AddNewSaver(saver, v);
+                cc.Add(v.RawValue, saver);
             }
 
             gc.Pop(true);

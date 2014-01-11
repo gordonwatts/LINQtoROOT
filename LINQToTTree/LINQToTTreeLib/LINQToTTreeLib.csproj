@@ -241,8 +241,10 @@
     <Compile Include="TypeHandlers\TypeHandlerCache.cs" />
     <Compile Include="TypeHandlers\TypeHandlerConvert.cs" />
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
+    <Compile Include="Utils\EnumerableUtils.cs" />
     <Compile Include="Utils\ExpressionUtilities.cs" />
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\GeneratedCodeHelpers.cs" />
     <Compile Include="Utils\ObjectHashCalculator.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
     <Compile Include="Utils\StringUtils.cs" />

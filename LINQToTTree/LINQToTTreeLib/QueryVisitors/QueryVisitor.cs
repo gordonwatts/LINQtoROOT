@@ -441,6 +441,17 @@ namespace LINQToTTreeLib
                 ExpressionToCPP.GetExpression(_codeContext.LoopIndexVariable.AsExpression(), _codeEnv, _codeContext, MEFContainer));
             _codeEnv.Add(savePairValues);
 
+            var otherSavers = _codeEnv.GetUsedQuerySourceVariables(savePairValues, _codeContext.LoopIndexVariable)
+                .Select(v =>
+                {
+                    var mr = DeclarableParameter.CreateDeclarableParameterMapExpression(ordering.Expression.Type, v.Type.MakeArrayType());
+                    savePairValues.AddSaver(mr, v);
+                    return Tuple.Create(v, mr);
+                })
+                .ToArray();
+
+            // Get back to the results level now, where we do the sorting!
+
             _codeEnv.PopToResultsLevel();
 
             //
@@ -454,6 +465,14 @@ namespace LINQToTTreeLib
             var pindex = sortAndRunLoop.IndexVariable;
             var lv = _codeContext.LoopIndexVariable.RawValue;
             _codeContext.Add(lv, pindex);
+
+            foreach (var savers in otherSavers)
+            {
+                var newVarName = sortAndRunLoop.RestoreOtherSaver(savers.Item2);
+                _codeContext.Add(savers.Item1.RawValue, newVarName);
+
+            }
+
             _codeContext.SetLoopVariable(_codeContext.LoopVariable.ReplaceSubExpression(_codeContext.LoopIndexVariable.AsExpression(), pindex), pindex);
         }
 
