@@ -166,25 +166,23 @@ namespace LINQToTTreeLib.Statements
             if (other == null)
                 return false;
 
-            throw new NotImplementedException();
-#if false
-            bool candoIt =
-                _mapRecords.RawValue == other._mapRecords.RawValue
-                && _sortAscending == other._sortAscending;
+            // Now inspect that the map records are the same
 
-            if (candoIt)
+            var combinedInfo = _mapRecords.Zip(other._mapRecords, (f, s) => Tuple.Create(f, s));
+
+            var candoIt = combinedInfo
+                .Select(i => i.Item1.mapRecords.RawValue == i.Item2.mapRecords.RawValue)
+                .All(b => b);
+
+            if (!candoIt || _sortAscending != other._sortAscending)
+                return false;
+
+            foreach (var item in combinedInfo)
             {
-                // Normally we would use the optimzation service to do this. However, the variable is declared
-                // explicitly in this block - hard coded, you might say. As a result, we just do a rename here - because
-                // the opt.TryRenameVariableOneLevelUp can't find the decl and so will fail!
-                other.RenameVariable(other._indexVariable.ParameterName, _indexVariable.RawValue);
-
-                // And combine the inline block part of the statement
-                Combine(other, opt);
+                other.RenameVariable(item.Item2.indexVariable.ParameterName, item.Item1.indexVariable.RawValue);
             }
 
-            return candoIt;
-#endif
+            return true;
         }
 
         /// <summary>
@@ -194,11 +192,13 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public override void RenameVariable(string origName, string newName)
         {
-#if false
-            _indexVariable.RenameRawValue(origName, newName);
-            _mapRecords.RenameRawValue(origName, newName);
+            foreach (var item in _mapRecords)
+            {
+                item.indexVariable.RenameRawValue(origName, newName);
+                item.mapRecords.RenameRawValue(origName, newName);
+            }
+
             RenameBlockVariables(origName, newName);
-#endif
         }
 
         /// <summary>
