@@ -445,6 +445,7 @@ namespace LINQToTTreeLib
                 .Select(v =>
                 {
                     var mr = DeclarableParameter.CreateDeclarableParameterMapExpression(ordering.Expression.Type, v.Type.MakeArrayType());
+                    _codeEnv.AddOutsideLoop(mr);
                     savePairValues.AddSaver(mr, v);
                     return Tuple.Create(v, mr);
                 })

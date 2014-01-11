@@ -15,6 +15,7 @@ using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using Remotion.Linq.Parsing.Structure;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
@@ -2791,6 +2792,147 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(1, query2.Functions.Count(), "# of functions");
             Assert.IsTrue(query2.Functions.All(f => f.StatementBlock != null), "not all blocks have statements.");
+        }
+
+        public class TestTranslatedNestedCompareAndSortHolder
+        {
+            public subNtupleObjects1 jet { get; set; }
+            public subNtupleObjects2 track { get; set; }
+            public double delta { get; set; }
+        }
+
+        public class TestTranslatedNestedCompareAndSortHolderEvent
+        {
+#pragma warning disable 0649
+            public IEnumerable<TestTranslatedNestedCompareAndSortHolder> matches;
+#pragma warning restore 0649
+        }
+
+        /// <summary>
+        /// Found in the wild, if we don't cache all the IQueryRefernece related variables, something two
+        /// deep will get into trouble.
+        /// </summary>
+        [TestMethod]
+        public void TranslateNestedDuplicateOrderings()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            // Create a dual object. Avoid anonymous objects just for the sake of it.
+            var matched = from evt in q
+                          select new TestTranslatedNestedCompareAndSortHolderEvent()
+                          {
+                              matches = from j in evt.jets.OrderByDescending(j => j.v3)
+                                        let mt = (from t in evt.tracks
+                                                  select t).First()
+                                        select new TestTranslatedNestedCompareAndSortHolder()
+                                        {
+                                            jet = j,
+                                            track = mt
+                                        }
+                          };
+
+            var trackOrdered = from m in matched //.Where(mm => mm.matches.Count() == 2)
+                               select new TestTranslatedNestedCompareAndSortHolderEvent()
+                               {
+                                   matches = from mj in m.matches
+                                             orderby mj.track.v6
+                                             select mj
+                               };
+
+            var evtgood = trackOrdered.Where(m => m.matches.Where(mj => mj.jet.v3 > 60.0).Any());
+
+            // Do something with the second one now
+            var otherTrack = from evt in evtgood
+                             select evt.matches.Sum(m => m.track.v6);
+
+            //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
+            var r = otherTrack.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            var codetext = code.DumpCode().ToArray();
+            codetext.DumpToConsole();
+
+            // Find the name of the variable that is causing us trouble here. It is used to look to see if var3 is > 60.0
+
+            var badVar = codetext
+                .FindVariableIn("at($$))>60.0");
+            Console.WriteLine("Problematic variable is {0}", badVar);
+
+            // Look for where aInt32_20 goes out of scope, and then see if it ever gets reused.
+            var afterScope = codetext
+                .WhereScopeCloses(string.Format("const int {0} =", badVar), false)
+                .Where(l => l.Contains(badVar))
+                .ToArray();
+
+            foreach (var baduse in afterScope)
+            {
+                Console.WriteLine("Used after it goes out of scope: {0}", baduse);
+            }
+
+            Assert.IsFalse(afterScope.Any(), "use of loop var after out of scope.");
+        }
+
+        [TestMethod]
+        public void LookForExtraDictDefsInOrdering()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            // Create a dual object. Avoid anonymous objects just for the sake of it.
+            var matched = from evt in q
+                          select new TestTranslatedNestedCompareAndSortHolderEvent()
+                          {
+                              matches = from j in evt.jets.OrderByDescending(j => j.v3)
+                                        let mt = (from t in evt.tracks
+                                                  select t).First()
+                                        select new TestTranslatedNestedCompareAndSortHolder()
+                                        {
+                                            jet = j,
+                                            track = mt
+                                        }
+                          };
+
+            var trackOrdered = from m in matched //.Where(mm => mm.matches.Count() == 2)
+                               select new TestTranslatedNestedCompareAndSortHolderEvent()
+                               {
+                                   matches = from mj in m.matches
+                                             orderby mj.track.v6
+                                             select mj
+                               };
+
+            var evtgood = trackOrdered.Where(m => m.matches.Where(mj => mj.jet.v3 > 60.0).Any());
+
+            // Do something with the second one now
+            var otherTrack = from evt in evtgood
+                             select evt.matches.Sum(m => m.track.v6);
+
+            //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
+            var r = otherTrack.Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            var codetext = code.DumpCode().ToArray();
+            codetext.DumpToConsole();
+
+            // Find the name of the variable that is causing us trouble here. It is used to look to see if var3 is > 60.0
+
+            var badVar = codetext
+                .FindVariablesIn("aDictionary_$$Map[")
+                .Select(f => string.Format("aDictionary_{0}Map", f))
+                .Distinct()
+                .ToArray();
+
+            foreach (var item in badVar)
+            {
+                Console.WriteLine("Problematic variable is {0}", item);
+                // Look for the first use of each one. Should start with a map!!
+
+                var good = codetext
+                    .Where(l => l.Contains(item))
+                    .Select(l => l.Trim())
+                    .Where(l => l.StartsWith("map"))
+                    .FirstOrDefault();
+
+                Assert.IsNotNull(good, string.Format("The variable {0} doesn't seem to be declared.", item));
+            }
         }
     }
 }

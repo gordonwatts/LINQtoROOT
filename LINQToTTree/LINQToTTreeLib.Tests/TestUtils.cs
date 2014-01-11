@@ -679,6 +679,14 @@ namespace LINQToTTreeLib.Tests
         /// <returns></returns>
         public static string FindVariableIn(this IEnumerable<string> source, string searchString)
         {
+            var r = FindVariablesIn(source, searchString).FirstOrDefault();
+            if (r == null)
+                Assert.Fail(string.Format("Unable to find '{0}' in the source stream!", searchString));
+            return r;
+        }
+
+        public static IEnumerable<string> FindVariablesIn(this IEnumerable<string> source, string searchString)
+        {
             var sStr = searchString
                 .Replace("\\", @"\\")
                 .Replace("(", @"\(")
@@ -689,16 +697,14 @@ namespace LINQToTTreeLib.Tests
                 .Replace(".", @"\.")
                 .Replace("^", @"\^");
 
-            sStr = sStr.Replace("$$", @"(?<var>\w+)");
+            sStr = sStr.Replace("$$", @"(?<var>[\w]+)");
             var finder = new Regex(sStr);
             foreach (var l in source)
             {
                 var m = finder.Match(l);
                 if (m.Success)
-                    return m.Groups["var"].Value;
+                    yield return m.Groups["var"].Value;
             }
-            Assert.Fail(string.Format("Unable to find '{0}' in the source stream!", sStr));
-            throw new InvalidOperationException();
         }
     }
 }
