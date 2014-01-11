@@ -1,6 +1,6 @@
 ﻿using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
-using Remotion.Linq.Utilities;
+using System;
 //
 // This file is almost completely copied, word-for-word, from the re-linq distribution. 
 using System.Linq.Expressions;
@@ -25,7 +25,8 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         public static string Format(Expression expression, bool useUniqueHashCodes = false)
         {
-            ArgumentUtility.CheckNotNull("expression", expression);
+            if (expression == null)
+                throw new ArgumentNullException("expression");
             var transformedExpression = new ExpressionStringConverter(useUniqueHashCodes).VisitExpression(expression);
             return transformedExpression.ToString();
         }
@@ -37,25 +38,29 @@ namespace LINQToTTreeLib.Expressions
 
         protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
         {
-            ArgumentUtility.CheckNotNull("expression", expression);
+            if (expression == null)
+                throw new ArgumentNullException("expression");
             return Expression.Parameter(expression.Type, "[" + expression.ReferencedQuerySource.ItemName + "]");
         }
 
         protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
         {
-            ArgumentUtility.CheckNotNull("expression", expression);
+            if (expression == null)
+                throw new ArgumentNullException("expression");
             return Expression.Parameter(expression.Type, "{" + expression.QueryModel + "}");
         }
 
         protected override Expression VisitUnknownNonExtensionExpression(Expression expression)
         {
-            ArgumentUtility.CheckNotNull("expression", expression);
+            if (expression == null)
+                throw new ArgumentNullException("expression");
             return Expression.Parameter(expression.Type, expression.ToString());
         }
 
         protected override Expression VisitExtensionExpression(ExtensionExpression expression)
         {
-            ArgumentUtility.CheckNotNull("expression", expression);
+            if (expression == null)
+                throw new ArgumentNullException("expression");
             return Expression.Parameter(expression.Type, expression.ToString());
         }
 

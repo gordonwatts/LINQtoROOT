@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq.Expressions;
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses.Expressions;
-using Remotion.Linq.Utilities;
+using System;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -64,7 +63,8 @@ namespace LINQToTTreeLib.Expressions
         private DeclarableParameter(Type varType, string varName)
             : base(varType, ExpressionType)
         {
-            ArgumentUtility.CheckNotNullOrEmpty("varName", varName);
+            if (varName == null)
+                throw new ArgumentNullException("varName");
             ParameterName = varName;
         }
 
