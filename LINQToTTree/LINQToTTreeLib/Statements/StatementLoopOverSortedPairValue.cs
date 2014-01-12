@@ -114,7 +114,7 @@ namespace LINQToTTreeLib.Statements
                 foreach (var saver in _mapRecords)
                 {
                     var subListType = saver.mapRecords.Type.GetGenericArguments()[1];
-                    yield return string.Format("  const {0} &sublist{3}({1}[{2}[i_index]]);", subListType.AsCPPType(), saver.mapRecords.RawValue, first.tempListingName, saver.sequence);
+                    yield return string.Format("  const {0} &sublist{3}({1}[{2}.at(i_index)]);", subListType.AsCPPType(), saver.mapRecords.RawValue, first.tempListingName, saver.sequence);
 
                 }
 
@@ -130,7 +130,7 @@ namespace LINQToTTreeLib.Statements
 
                 foreach (var saver in _mapRecords)
                 {
-                    yield return string.Format("    const {0} {1} = sublist{2}[i_sindex];", saver.indexVariable.Type.AsCPPType(), saver.indexVariable.RawValue, saver.sequence);
+                    yield return string.Format("    const {0} {1} = sublist{2}.at(i_sindex);", saver.indexVariable.Type.AsCPPType(), saver.indexVariable.RawValue, saver.sequence);
                 }
 
                 //
