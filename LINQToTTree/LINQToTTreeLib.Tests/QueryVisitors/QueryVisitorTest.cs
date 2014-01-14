@@ -2691,6 +2691,74 @@ namespace LINQToTTreeLib
             Assert.AreEqual(0, lines.Where(l => l.Contains("aDouble_20*aDouble_20")).Count(), "# times aDouble20 is squared");
         }
 
+        /// <summary>
+        /// Found in the wild. When two statements were combined they were not being properly renamed.
+        /// </summary>
+        [TestMethod]
+        public void TestSortCombineNoFunctionMissRename()
+        {
+            var q = new QueriableDummy<ntup3>();
+
+            var resultA = from evt in q
+                          select new
+                          {
+                              jets = evt.run1,
+                              tracks = evt.run2,
+                              truth = evt.run1
+                          };
+            var resultB = from e in resultA
+                          select new
+                          {
+                              joinedR = from r1 in e.jets
+                                        select new
+                                        {
+                                            Jet = r1,
+                                            CloseTrack = (from r2 in e.tracks
+                                                          orderby r1 - r2 ascending
+                                                          select r2).First(),
+                                            Truth = (from t in e.truth
+                                                     orderby t - r1 descending
+                                                     select t).First() == 21
+                                        }
+                          };
+            var resultC = resultB.Where(e => e.joinedR.Count() == 2);
+            var result2j = from e in resultB
+                           select new
+                           {
+                               Jet1 = e.joinedR.First(),
+                               Jet2 = e.joinedR.Skip(1).First()
+                           };
+
+            Expression<Func<bool, double, double, double>> calc = (t, r1, r2) => t ? r1 : r2;
+
+            var resultToSum = result2j.Select(e => calc.Invoke(e.Jet1.Truth, 5, 10) * calc.Invoke(e.Jet2.Truth, 5, 10));
+            var result = resultToSum.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            var result2 = resultToSum.Sum();
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            var query = CombineQueries(query2, query1);
+            var lines = query.DumpCode().ToArray();
+            lines.DumpToConsole();
+
+            // Find all the variables that are used to do an if(!aBoolean_xx). Those are the guys that we have to make sure are set somewhere.
+            var firstLastVars = lines.FindVariablesIn("(!$$)").Distinct().ToArray();
+
+            // Each one of those should be found with an "=" of some sort.
+            bool good = true;
+            foreach (var v in firstLastVars)
+            {
+                if (!lines.Where(l => l.Contains(string.Format("{0} = true", v)) || (l.Contains(v) && l.Contains("==21"))).Any())
+                {
+                    good = false;
+                    Console.WriteLine("Variable {0} doesn't seem to ever be set to true.", v);
+                }
+            }
+
+            Assert.IsTrue(good);
+        }
+
 #if notyet
         [TestMethod]
         public void TestAggragateTypeSaftey()

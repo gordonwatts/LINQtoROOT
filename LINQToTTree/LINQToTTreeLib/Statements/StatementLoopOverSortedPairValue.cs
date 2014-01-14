@@ -177,10 +177,14 @@ namespace LINQToTTreeLib.Statements
             if (!candoIt || _sortAscending != other._sortAscending)
                 return false;
 
+            // Ok, we are going to do it. First, rename all the variables we can, and then
+            // combine the code as best we can.
+
             foreach (var item in combinedInfo)
             {
                 other.RenameVariable(item.Item2.indexVariable.ParameterName, item.Item1.indexVariable.RawValue);
             }
+            Combine(other, opt);
 
             return true;
         }
