@@ -1,8 +1,8 @@
-﻿using System;
+﻿using LINQToTTreeLib.QueryVisitors;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
-using LINQToTTreeLib.QueryVisitors;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTreeHelpers.Tests
 {
@@ -16,17 +16,29 @@ namespace LINQToTreeHelpers.Tests
     public class TestCreateTupleExpressionTransformer
     {
         [TestMethod]
-        public void TestSimpleCreator()
+        public void TestSimpleCreator2()
         {
+            MakeTupleWithNArgs(2);
+        }
+
+        [TestMethod]
+        public void TestSimpleCreator4()
+        {
+            MakeTupleWithNArgs(4);
+        }
+
+        private static void MakeTupleWithNArgs(int n)
+        {
+            var createGeneric = typeof(Tuple).GetMethods().Where(m => m.Name == "Create" && m.GetGenericArguments().Length == n).First();
+            Assert.IsNotNull(createGeneric);
+            var createMethod = createGeneric.MakeGenericMethod(Enumerable.Range(0, n).Select(i => typeof(int)).ToArray());
+            Assert.IsNotNull(createMethod);
+
             var i1 = Expression.Constant(10);
             var i2 = Expression.Constant(20);
 
-            var createGeneric = typeof(Tuple).GetMethods().Where(m => m.Name == "Create" && m.GetGenericArguments().Length == 2).First();
-            Assert.IsNotNull(createGeneric);
-            var createMethod = createGeneric.MakeGenericMethod(new Type[] { typeof(int), typeof(int) });
-            Assert.IsNotNull(createMethod);
-
-            var methodExpr = Expression.Call(null, createMethod, i1, i2);
+            var args = Enumerable.Range(0, n).Select(i => Expression.Constant(i * 10)).ToArray();
+            var methodExpr = Expression.Call(null, createMethod, args);
             Assert.IsNotNull(methodExpr);
 
             var t = new CreateTupleExpressionTransformer();
@@ -34,15 +46,13 @@ namespace LINQToTreeHelpers.Tests
 
             Assert.IsInstanceOfType(r, typeof(NewExpression), "expression type");
             var ne = r as NewExpression;
-            Assert.AreEqual(2, ne.Arguments.Count, "# of arguments to the new expression");
-            Assert.AreEqual(i1, ne.Arguments[0], "arg 1 value");
-            Assert.AreEqual(i2, ne.Arguments[1], "arg 2 value");
+            Assert.AreEqual(n, ne.Arguments.Count, "# of arguments to the new expression");
+            Assert.IsTrue(args.Zip(ne.Arguments, (f, s) => f == s).All(ty => true), "args are the same");
 
-            Assert.AreEqual("Tuple`2", ne.Type.Name);
+            Assert.AreEqual(string.Format("Tuple`{0}", n), ne.Type.Name);
             var ga = ne.Type.GetGenericArguments();
-            Assert.AreEqual(2, ga.Length, "# of generic arguments to the type");
-            Assert.AreEqual(typeof(int), ga[0], "type 0");
-            Assert.AreEqual(typeof(int), ga[1], "type 1");
+            Assert.AreEqual(n, ga.Length, "# of generic arguments to the type");
+            Assert.IsTrue(ga.All(ty => ty == typeof(int)), "all type ");
         }
     }
 }

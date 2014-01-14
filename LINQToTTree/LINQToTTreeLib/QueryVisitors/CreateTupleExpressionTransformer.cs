@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
+﻿using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -30,7 +30,7 @@ namespace LINQToTTreeLib.QueryVisitors
 
             // Make sure the type is a tuple type
             var t = expression.Type;
-            if (!t.IsGenericType || t.Name != "Tuple`2")
+            if (!t.IsGenericType || !t.Name.StartsWith("Tuple`"))
                 return expression;
 
             // Ok, just move it over into a new object expression.
