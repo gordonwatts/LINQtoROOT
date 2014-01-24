@@ -238,6 +238,13 @@ namespace LINQToTTreeLib
             }
             else
             {
+                // Get a list of all the variables that we need to return
+                var sv = FindDeclarableParameters.FindAll(_codeEnv.ResultValue).ToArray();
+
+                // Cache them all
+
+                // How many of them should be declared?
+
                 // This is a specific result. Save just the result and return it.
                 // Grab the result, cache it, and return it.
                 var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
