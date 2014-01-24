@@ -8,6 +8,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// We record a value (like an int, etc.) when it comes by. We also mark a value as true once we've seen
     /// it. Finally, if asked, we also will do a break once we've seen the value once.
+    /// We can deal with saving multiple values, not just a single one.
     /// </summary>
     public class StatementRecordValue : IStatement, ICMStatementInfo
     {

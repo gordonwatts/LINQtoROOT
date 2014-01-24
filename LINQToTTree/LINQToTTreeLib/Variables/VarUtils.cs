@@ -81,7 +81,6 @@ namespace LINQToTTreeLib.Variables
 
                         var rootMember = destExpression.RemoveArrayReferences();
                         isObject = false;
-                        bool isTClonesMember = false;
                         if (rootMember.NodeType == ExpressionType.MemberAccess)
                         {
                             var rootType = (rootMember as MemberExpression).Expression.Type;

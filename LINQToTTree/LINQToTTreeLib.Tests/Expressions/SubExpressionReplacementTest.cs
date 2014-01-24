@@ -1,10 +1,10 @@
-using System;
-using System.Diagnostics;
-using System.Linq.Expressions;
 using LINQToTTreeLib.Expressions;
 using Microsoft.Pex.Framework;
 using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests.ResultOperators
 {
@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.Tests.ResultOperators
             var rep = Expression.Parameter(typeof(int), "fork");
             var result = expr.ReplaceSubExpression(param, rep);
 
-            Trace.WriteLine("Expression: " + result.ToString());
+            Debug.WriteLine("Expression: " + result.ToString());
             Assert.IsFalse(result.ToString().Contains("dude"), "Contains the dude variable");
         }
     }

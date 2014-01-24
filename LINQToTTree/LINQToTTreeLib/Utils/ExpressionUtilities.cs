@@ -17,8 +17,9 @@ namespace LINQToTTreeLib.Utils
         /// <summary>
         /// Given array info, code a loop over it.
         /// </summary>
-        /// <param name="indexName"></param>
-        /// <param name="arrayRef"></param>
+        /// <param name="query">The query this loop is associated with</param>
+        /// <param name="arrayRef">The reference to the array</param>
+        /// <remarks>Will add the query to the code context to forward to the variable that is being dealt with here.</remarks>
         public static IVariableScopeHolder CodeLoopOverArrayInfo(this IArrayInfo arrayRef, IQuerySource query, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             var indexVar = arrayRef.AddLoop(gc, cc, container);

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
-using LinqToTTreeInterfacesLib;
 using System.Diagnostics;
+using System.Linq;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -10,9 +11,15 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementRecordPairValues : IStatement
     {
-        private IDeclaredParameter _mapRecord;
         private IValue _index;
-        private IValue _indexValue;
+
+        struct saverInfo
+        {
+            public IDeclaredParameter mapRecord;
+            public IValue indexValue;
+        }
+
+        private List<saverInfo> _savers = new List<saverInfo>();
 
         /// <summary>
         /// Save how we are going to go after the statement and generate it.
@@ -37,9 +44,9 @@ namespace LINQToTTreeLib.Statements
             // Save for later
             //
 
-            this._mapRecord = mapStorage;
             this._index = indexVar;
-            this._indexValue = indexValue;
+
+            AddSaver(mapStorage, indexValue);
 
             Debug.WriteLine("Emit StatementRecordPairValues: IndexVar {0}, indexValue {1}", indexVar.ToString(), indexValue.ToString());
         }
@@ -50,7 +57,10 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("{0}[{1}].push_back({2});", _mapRecord.RawValue, _index.RawValue, _indexValue.RawValue);
+            foreach (var saver in _savers)
+            {
+                yield return string.Format("{0}[{1}].push_back({2});", saver.mapRecord.RawValue, _index.RawValue, saver.indexValue.RawValue);
+            }
         }
 
         /// <summary>
@@ -61,8 +71,12 @@ namespace LINQToTTreeLib.Statements
         public void RenameVariable(string originalName, string newName)
         {
             _index.RenameRawValue(originalName, newName);
-            _indexValue.RenameRawValue(originalName, newName);
-            _mapRecord.RenameRawValue(originalName, newName);
+
+            foreach (var saver in _savers)
+            {
+                saver.mapRecord.RenameRawValue(originalName, newName);
+                saver.indexValue.RenameRawValue(originalName, newName);
+            }
         }
 
         /// <summary>
@@ -78,12 +92,14 @@ namespace LINQToTTreeLib.Statements
             var other = statement as StatementRecordPairValues;
             if (other._index.RawValue != _index.RawValue)
                 return false;
-            if (other._indexValue.RawValue != _indexValue.RawValue)
-                return false;
-            if (other._mapRecord.Type != _mapRecord.Type)
-                return false;
 
-            optimize.TryRenameVarialbeOneLevelUp(other._mapRecord.ParameterName, _mapRecord);
+            var isTheSame = _savers.Zip(other._savers, (f, s) => f.indexValue.RawValue == s.indexValue.RawValue && f.mapRecord.Type == s.mapRecord.Type).All(b => b);
+
+            // Now we can do them all.
+            foreach (var saver in _savers.Zip(other._savers, (f, s) => Tuple.Create(f, s)))
+            {
+                optimize.TryRenameVarialbeOneLevelUp(saver.Item2.mapRecord.RawValue, saver.Item1.mapRecord);
+            }
 
             return true;
         }
@@ -92,5 +108,15 @@ namespace LINQToTTreeLib.Statements
         /// Get/Set the statement we are sitting in.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// Add a new saver to the list of things we are saving.
+        /// </summary>
+        /// <param name="val">The value that we should be caching</param>
+        /// <param name="mr">The map we should cache it into</param>
+        internal void AddSaver(IDeclaredParameter mr, IValue val)
+        {
+            _savers.Add(new saverInfo() { mapRecord = mr, indexValue = val });
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace LINQToTTreeLib.QMFunctions
         {
             foreach (var f in funcs)
             {
-                Trace.WriteLine(string.Format("Searching for QM function {0}", f.QM.ToString()));
+                Debug.WriteLine(string.Format("Searching for QM function {0}", f.QM.ToString()));
             }
         }
 

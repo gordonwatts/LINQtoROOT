@@ -44,8 +44,8 @@ namespace LINQToTTreeLib.Expressions
         /// <summary>
         /// Parse an array expression, and turn it into a loop. Use indexName as the loop variable. Bomb if we can't do it. If you hand in null we will make up our own.
         /// </summary>
-        /// <param name="indexName"></param>
-        /// <param name="expr"></param>
+        /// <param name="query">The query that this loop is associated with.</param>
+        /// <param name="expr">The expression that evaluates to an array.</param>
         /// <param name="gc"></param>
         /// <param name="cc"></param>
         /// <param name="container"></param>

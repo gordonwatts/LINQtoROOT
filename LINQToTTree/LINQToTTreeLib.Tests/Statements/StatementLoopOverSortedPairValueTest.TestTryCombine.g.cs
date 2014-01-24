@@ -31,7 +31,7 @@ public void TestTryCombine577()
     Assert.IsNotNull((object)statementLoopOverSortedPairValue);
     Assert.IsNotNull(statementLoopOverSortedPairValue.IndexVariable);
     Assert.AreEqual<string>
-        ("aInt32_2", statementLoopOverSortedPairValue.IndexVariable.ParameterName);
+        ("aInt32_3", statementLoopOverSortedPairValue.IndexVariable.ParameterName);
     Assert.IsNull(statementLoopOverSortedPairValue.IndexVariable.InitialValue);
     Assert.IsNotNull
         (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Statements);
@@ -67,7 +67,7 @@ public void TestTryCombine57702()
     Assert.IsNotNull((object)statementLoopOverSortedPairValue);
     Assert.IsNotNull(statementLoopOverSortedPairValue.IndexVariable);
     Assert.AreEqual<string>
-        ("aInt32_2", statementLoopOverSortedPairValue.IndexVariable.ParameterName);
+        ("aInt32_3", statementLoopOverSortedPairValue.IndexVariable.ParameterName);
     Assert.IsNull(statementLoopOverSortedPairValue.IndexVariable.InitialValue);
     Assert.IsNotNull
         (((StatementInlineBlockBase)statementLoopOverSortedPairValue).Statements);

@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.ResultOperators
             var arrayRecord = DeclarableParameter.CreateDeclarableParameterArrayExpression(typeof(int));
             gc.AddOutsideLoop(arrayRecord);
 
-            var recordIndexStatement = new StatementRecordIndicies(cc.LoopIndexVariable, arrayRecord);
+            var recordIndexStatement = new StatementRecordIndicies(ExpressionToCPP.GetExpression(cc.LoopIndexVariable.AsExpression(), gc, cc, container), arrayRecord);
             gc.Add(recordIndexStatement);
 
             gc.Pop();

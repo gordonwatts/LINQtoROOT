@@ -582,5 +582,129 @@ namespace LINQToTTreeLib.Tests
                 .All(f => f.StatementBlock.Statements.LastOrDefault() is StatementReturn);
             Assert.IsTrue(allgood, "One function has no top level return!");
         }
+
+        /// <summary>
+        /// Find the declaration, then follow scope until it goes out. Then pass every single line of code on.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="decl">The string that tells us we've hit the delcaration</param>
+        /// <param name="atScopeDeclared">If true, then this is declared in a for loop or similar, otherwise it is declared on a seperate line.</param>
+        /// <returns></returns>
+        public static IEnumerable<string> WhereScopeCloses(this IEnumerable<string> source, string decl, bool atScopeDeclared)
+        {
+            // First thing is to find the declration.
+            var next = source.GetEnumerator();
+            bool found = false;
+            string line = null;
+            while (!found)
+            {
+                Assert.IsTrue(next.MoveNext(), string.Format("Never found {0} in the code!", decl));
+                line = next.Current;
+                var ptr = line.IndexOf(decl);
+                if (ptr >= 0)
+                {
+                    found = true;
+                    line = line.Substring(ptr);
+                }
+            }
+
+            // We found it. Now we start counting brackets to see when we go out of scope.
+
+            int depth = 1;
+            while (depth != 0)
+            {
+                while (line.Length > 0)
+                {
+                    var openb = line.IndexOf('{');
+                    var closeb = line.IndexOf('}');
+
+                    // If they are both here, process the first one.
+                    if (openb > 0 && closeb > 0)
+                    {
+                        if (openb < closeb)
+                        {
+                            closeb = -1;
+                        }
+                        else
+                        {
+                            openb = -1;
+                        }
+                    }
+
+                    // If neither went, then we are done with this line.
+                    if (openb < 0 && closeb < 0)
+                        line = "";
+
+                    int newStart = 0;
+                    if (openb > 0)
+                    {
+                        newStart = openb + 1;
+                        depth++;
+                        if (atScopeDeclared)
+                        {
+                            depth--;
+                            atScopeDeclared = false;
+                        }
+                    }
+
+                    if (closeb > 0)
+                    {
+                        newStart = closeb + 1;
+                        depth--;
+                        Assert.IsFalse(atScopeDeclared, "Can't start out with a close bracket on the decl without an open bracket");
+                    }
+
+                    if (newStart > 0)
+                    {
+                        line = line.Substring(newStart);
+                    }
+                }
+
+                Assert.IsTrue(next.MoveNext(), "Ran out of input while waiting for a close bracket");
+                line = next.Current;
+            }
+
+            // Out of scope, now return all the code!
+
+            while (next.MoveNext())
+                yield return next.Current;
+        }
+
+        /// <summary>
+        /// Look through the given source code for a particular search string. Somewhere in the search string should be
+        /// $$ twice. That is the variable name. We will return the first match with that as the variable name.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
+        public static string FindVariableIn(this IEnumerable<string> source, string searchString)
+        {
+            var r = FindVariablesIn(source, searchString).FirstOrDefault();
+            if (r == null)
+                Assert.Fail(string.Format("Unable to find '{0}' in the source stream!", searchString));
+            return r;
+        }
+
+        public static IEnumerable<string> FindVariablesIn(this IEnumerable<string> source, string searchString)
+        {
+            var sStr = searchString
+                .Replace("\\", @"\\")
+                .Replace("(", @"\(")
+                .Replace(")", @"\)")
+                .Replace("[", @"\[")
+                .Replace("]", @"\]")
+                .Replace("?", @"\?")
+                .Replace(".", @"\.")
+                .Replace("^", @"\^");
+
+            sStr = sStr.Replace("$$", @"(?<var>[\w]+)");
+            var finder = new Regex(sStr);
+            foreach (var l in source)
+            {
+                var m = finder.Match(l);
+                if (m.Success)
+                    yield return m.Groups["var"].Value;
+            }
+        }
     }
 }
