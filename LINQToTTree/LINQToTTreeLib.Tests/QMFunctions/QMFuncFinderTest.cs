@@ -57,6 +57,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         /// Make sure that we will do a QM function when the First isn't a number, or simple type, but also
         /// something like a single object. In the rest of the code that will translate to being
         /// an index or similar.
+        /// --> We now allow for results that are objects.
         /// </summary>
         [TestMethod]
         public void TestAnonymousObjectSingleResult()
@@ -92,7 +93,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
 
             var sf = QMFuncFinder.FindQMFunctions(qm);
             Assert.IsNotNull(sf);
-            Assert.AreEqual(2, sf.Count(), "# of qm functions");
+            Assert.AreEqual(3, sf.Count(), "# of qm functions");
         }
 
         /// <summary>
@@ -165,7 +166,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestAnonymousFunctionResults()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.ntup3>();
+            var q = new QueriableDummyNoExe<LINQToTTreeLib.QueryVisitorTest.ntup3>();
 
             var resultA = from evt in q
                           select new
@@ -202,8 +203,9 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var resultToSum = result2j.Select(e => calc.Invoke(e.Jet1.Truth, 5, 10) * calc.Invoke(e.Jet2.Truth, 5, 10));
             var result = resultToSum.Sum();
 
-            var qm = DummyQueryExectuor.FinalResult;
-            Assert.IsTrue(qm.QMFunctions.Where(f => f.StatementBlock != null).All(f => !f.ResultType.Name.Contains("Anon")), "contains anon");
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var sf = QMFuncFinder.FindQMFunctions(qm);
+            Assert.IsTrue(sf.Any(f => f.QM.GetResultType().Name.Contains("Anon")), "contains anon");
         }
 
         [TestMethod]
@@ -370,6 +372,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         /// <summary>
         /// We can't transfer an temp object accross the boundary, much the same way we can't
         /// do an anonymous function.
+        /// --> We now allow for single objects to be passed in and out.
         /// </summary>
         [TestMethod]
         public void NoObjectFunctionReturns()
@@ -398,8 +401,8 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var qm = DummyQueryExectuor.LastQueryModel;
             var sf = QMFuncFinder.FindQMFunctions(qm);
 
-            Assert.AreEqual(0, sf.Where(f => !f.IsSequence).Count(), "# of functions");
-            Assert.AreEqual(0, sf.Where(f => f.IsSequence).Count(), "# of functions"); // it returns an object...
+            Assert.AreEqual(1, sf.Where(f => !f.IsSequence).Count(), "# of functions that aren't a sequence");
+            Assert.AreEqual(0, sf.Where(f => f.IsSequence).Count(), "# of functions that are a sequence"); // it returns an object...
         }
 
         [TestMethod]

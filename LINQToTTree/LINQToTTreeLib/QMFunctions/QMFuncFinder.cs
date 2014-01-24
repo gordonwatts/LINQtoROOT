@@ -139,7 +139,6 @@ namespace LINQToTTreeLib.QMFunctions
                 var selectSequence = !queryModel.ResultOperators.Any();
                 if (_qmContextStack.Count > 1
                     && ((selectSequence && isGoodSelectSequenceType(queryModel.GetResultType())) || !isEnumerable)
-                    && !queryModel.GetResultType().IsClass
                     )
                 {
                     var qmText = FormattingQueryVisitor.Format(queryModel);
