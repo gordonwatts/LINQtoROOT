@@ -215,49 +215,69 @@ namespace LINQToTTreeLib
             _codeEnv.Add(topLevelStatement);
             _codeEnv.SetCurrentScopeAsResultScope();
 
-            // If this variable has been cached, then return it. Otherwise, mark the cache as filled.
-            _codeEnv.Add(new StatementFilter(qmSource.CacheVariableGood));
-            _codeEnv.Add(new StatementReturn(qmSource.CacheVariable));
+            // If this routine has been run already, then we will want to return the
+            // cache right away. Create an if statement to hold that (will be dealt with later).
+            var cacheGood = new StatementFilter(qmSource.CacheVariableGood);
+            _codeEnv.Add(cacheGood);
             _codeEnv.Pop();
             _codeEnv.Add(new StatementAssign(qmSource.CacheVariableGood, new ValSimple("true", typeof(bool)), new IDeclaredParameter[] { }));
 
-            // Now, run the code to process the query model!
+            // Now, run the code to process the query model! All statements for this function will be stored as they normally
+            // are.
 
             VisitQueryModelNoCache(queryModel);
 
-            // The result is treated differently depending on it being a sequence or a single value.
+            // We have to carefully cache things having to do with the result. We do behave differently if it is a
+            // sequence or not.
             if (qmSource.IsSequence)
             {
                 // Push the good values into our cache object.
                 if (!(_codeContext.LoopIndexVariable is IDeclaredParameter))
                     throw new InvalidOperationException("Can't deal with anythign that isn't a loop var");
-                _codeEnv.Add(new StatementRecordIndicies(ExpressionToCPP.GetExpression(_codeContext.LoopVariable, _codeEnv, _codeContext, MEFContainer), qmSource.CacheVariable));
+
+                var s = qmSource.CacheExpression(_codeContext.LoopVariable, _codeContext.LoopIndexVariable);
+                foreach (var st in s)
+                {
+                    _codeEnv.Add(st);
+                }
+
+                //var cv = qmSource.AddCacheVaribleForSequenceLike(_codeContext.LoopIndexVariable);
+                //_codeEnv.Add(new StatementRecordIndicies(ExpressionToCPP.GetExpression(_codeContext.LoopVariable, _codeEnv, _codeContext, MEFContainer), cv));
 
                 // Remember what the loop index variable is, as we are going to need it when we generate the return function!
-                qmSource.SequenceVariable(_codeContext.LoopIndexVariable, _codeContext.LoopVariable);
+                //qmSource.SequenceVariable(_codeContext.LoopIndexVariable, _codeContext.LoopVariable);
             }
             else
             {
-                // Get a list of all the variables that we need to return
-                var sv = FindDeclarableParameters.FindAll(_codeEnv.ResultValue).ToArray();
+                var s = qmSource.CacheExpression(_codeEnv.ResultValue);
+                foreach (var st in s)
+                {
+                    _codeEnv.Add(st);
+                }
+#if false
+                // Get a list of all the variables that we need to return from the expression
+                var cvars = FindDeclarableParameters.FindAll(_codeEnv.ResultValue).ToArray();
 
-                // Cache them all
+                // Setup each of the variables in that expression to make sure they are cached
+                foreach (var rtnv in cvars)
+                {
+                    // Set it up for caching
+                    var cv = qmSource.AddCacheVariableLike(rtnv);
 
-                // How many of them should be declared?
+                    // Make sure that variable is properly declared
+                    topLevelStatement.Add(rtnv, false);
+                    topLevelStatement.Add(new StatementAssign(cv, rtnv, new IDeclaredParameter[] { rtnv }));
+                }
 
                 // This is a specific result. Save just the result and return it.
-                // Grab the result, cache it, and return it.
-                var rtnExpr = ExpressionToCPP.GetExpression(_codeEnv.ResultValue, _codeEnv, _codeContext, MEFContainer);
-                topLevelStatement.Add(new StatementAssign(qmSource.CacheVariable, rtnExpr, FindDeclarableParameters.FindAll(_codeEnv.ResultValue)));
-
-                // If the return is a declared parameter, then it must be actually defined somewhere (we normally don't).
-                var declParam = _codeEnv.ResultValue as IDeclaredParameter;
-                if (declParam != null)
-                    topLevelStatement.Add(declParam, false);
+                qmSource.SetResultValue(_codeEnv.ResultValue, cvars);
+#endif
             }
 
-            // Always return the proper value...
-            topLevelStatement.Add(new StatementReturn(qmSource.CacheVariable));
+            // We have to return the cached items both in the initial if statement and also
+            // at the end of this.
+            AddCachedReturn(qmSource, topLevelStatement);
+            AddCachedReturn(qmSource, cacheGood);
 
             // Now extract the block of code and put it in the function block.
             _codeEnv.CurrentScope = currentScope;
@@ -268,6 +288,19 @@ namespace LINQToTTreeLib
             GenerateQMFunctionCall(qmSource);
 
             Debug.Unindent();
+        }
+
+        /// <summary>
+        /// We have a statement that needs a return statement to return all the cached variables
+        /// </summary>
+        /// <param name="qmSource"></param>
+        /// <param name="cacheGood"></param>
+        private void AddCachedReturn(IQMFunctionSource qmSource, IStatementCompound cacheGood)
+        {
+            throw new NotImplementedException();
+            // Always return the proper value...
+            //topLevelStatement.Add(new StatementReturn(qmSource.CacheVariable));
+
         }
 
         /// <summary>

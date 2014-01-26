@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Linq.Expressions;
 namespace LinqToTTreeInterfacesLib
 {
@@ -21,14 +22,6 @@ namespace LinqToTTreeInterfacesLib
         bool IsSequence { get; }
 
         /// <summary>
-        /// Cache the variables that are at the center of the loop. In short, the data
-        /// that is collected to run the sequence.
-        /// </summary>
-        /// <param name="loopIndexVariable">The variable that is counting (loop parameter)</param>
-        /// <param name="loopExpression">The "selected" item - what appears in the select statement, and is dependent on the index variable.</param>
-        void SequenceVariable(IDeclaredParameter loopIndexVariable, Expression loopExpression);
-
-        /// <summary>
         /// Returns the index variable that was used when this sequence was collected.
         /// </summary>
         IDeclaredParameter OldLoopIndexVariable { get; }
@@ -38,5 +31,15 @@ namespace LinqToTTreeInterfacesLib
         /// index variable.
         /// </summary>
         Expression OldLoopExpression { get; }
+
+        /// <summary>
+        /// Called to cache an expression. Returns a set of statements that can be used to record
+        /// the values for the expression. If this is a sequence expression, then the loop index variable
+        /// needs to be provided as well.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="loopIndexVariable"></param>
+        /// <returns></returns>
+        IEnumerable<IStatement> CacheExpression(Expression expression, IDeclaredParameter loopIndexVariable = null);
     }
 }
