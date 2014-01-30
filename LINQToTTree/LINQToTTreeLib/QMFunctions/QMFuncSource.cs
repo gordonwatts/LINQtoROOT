@@ -175,5 +175,11 @@ namespace LINQToTTreeLib.QMFunctions
         /// Return the loop expression that was setup when this guy was captured.
         /// </summary>
         public System.Linq.Expressions.Expression OldLoopExpression { get; private set; }
+
+
+        public IEnumerable<IStatement> CacheExpression(Expression expression, IDeclaredParameter loopIndexVariable = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
