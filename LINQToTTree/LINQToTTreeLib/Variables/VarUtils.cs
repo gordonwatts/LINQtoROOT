@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -237,6 +238,23 @@ namespace LINQToTTreeLib.Variables
                 else if (genericDef == typeof(IEnumerable<int>).GetGenericTypeDefinition())
                 {
                     return string.Format("{0}::const_iterator", t.GetGenericArguments()[0].AsCPPType());
+                }
+                else if (genericDef.Name.StartsWith("Tuple`"))
+                {
+                    var subtypes = t.GetGenericArguments().Select(itemty => itemty.AsCPPType()).ToArray();
+                    StringBuilder bld = new StringBuilder();
+                    int depth = 0;
+                    foreach (var st in subtypes.Take(subtypes.Length-1))
+                    {
+                        bld.AppendFormat("pair<{0},", st);
+                        depth++;
+                    }
+                    bld.AppendFormat("{0}>", subtypes.Last());
+                    foreach (var item in Enumerable.Range(0, depth-1))
+                    {
+                        bld.Append(" >");
+                    }
+                    return bld.ToString();
                 }
                 else
                 {

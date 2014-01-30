@@ -131,6 +131,24 @@ namespace LINQToTTreeLib.Variables
             Assert.AreEqual("(*obj)", new ValSimple("obj", typeof(int[][])).CastToType(directJ), "0D access failed");
         }
 
+        [TestMethod]
+        public void TestTuple2()
+        {
+            Assert.AreEqual("pair<int,int>", AsCPPType(typeof(Tuple<int, int>)));
+        }
+
+        [TestMethod]
+        public void TestTuple2D()
+        {
+            Assert.AreEqual("pair<int,double>", AsCPPType(typeof(Tuple<int, double>)));
+        }
+
+        [TestMethod]
+        public void TestTuple3D()
+        {
+            Assert.AreEqual("pair<int,pair<int,int> >", AsCPPType(typeof(Tuple<int, int, int>)));
+        }
+
         /// <summary>Test stub for CastToType(IValue, Type)</summary>
         [PexMethod]
         public string CastToType(int sourceTypeSpec, int destTypeSpec)
