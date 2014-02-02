@@ -196,14 +196,29 @@ namespace LINQToTTreeLib.QMFunctions
             // Find all declared variables in this expression - that we will want to cache.
             var vars = FindDeclarableParameters.FindAll(expression);
 
-            // For each of those variables, create a cache variable.
-            CacheVariables = vars.Select(v => DeclarableParameter.CreateDeclarableParameterExpression(v.Type)).ToArray();
+            // What and how we cache depends on what this is
+            if (IsSequence)
+            {
+                // For each of those variables, create a cache variable.
+                CacheVariables = vars.Select(v => DeclarableParameter.CreateDeclarableParameterArrayExpression(v.Type)).ToArray();
 
-            // For each of the variables and the savers, create a "saver" statement that will store it
-            var savers = vars.Zip(CacheVariables, (v, s) => Tuple.Create(v, s))
-                .Select(pair => new Statements.StatementAssign(pair.Item2, pair.Item1, new IDeclaredParameter[] { pair.Item1 }));
+                // For each of the variables and the savers, create a "saver" statement that will store it
+                var savers = vars.Zip(CacheVariables, (v, s) => Tuple.Create(v, s))
+                    .Select(pair => new Statements.StatementRecordIndicies(pair.Item1, pair.Item2));
 
-            return savers.ToArray();
+                return savers.ToArray();
+            }
+            else
+            {
+                // For each of those variables, create a cache variable.
+                CacheVariables = vars.Select(v => DeclarableParameter.CreateDeclarableParameterExpression(v.Type)).ToArray();
+
+                // For each of the variables and the savers, create a "saver" statement that will store it
+                var savers = vars.Zip(CacheVariables, (v, s) => Tuple.Create(v, s))
+                    .Select(pair => new Statements.StatementAssign(pair.Item2, pair.Item1, new IDeclaredParameter[] { pair.Item1 }));
+
+                return savers.ToArray();
+            }
         }
     }
 }

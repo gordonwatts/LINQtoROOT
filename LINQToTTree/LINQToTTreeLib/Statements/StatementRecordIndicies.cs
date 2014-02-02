@@ -95,5 +95,14 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// Give others something to look at...
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("{0}.push_back({1});", _storageArray.ParameterName, _intToRecord.RawValue);
+        }
     }
 }
