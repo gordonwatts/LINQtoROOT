@@ -190,8 +190,15 @@ namespace LINQToTTreeLib.QMFunctions
         /// <returns></returns>
         public IEnumerable<IStatement> CacheExpression(Expression expression, IDeclaredParameter loopIndexVariable = null)
         {
+            // Check checks to see if this is valid or not.
             if (CacheVariables != null)
                 throw new InvalidOperationException("Attempt to cache variables for a QueryModel function twice.");
+
+            if (IsSequence && loopIndexVariable == null)
+                throw new InvalidOperationException("Attempt to cache a single item for a sequence query.");
+
+            if (!IsSequence && loopIndexVariable != null)
+                throw new InvalidOperationException("Attempt to cache a sequence item for a single item query.");
 
             // Find all declared variables in this expression - that we will want to cache.
             var vars = FindDeclarableParameters.FindAll(expression);
