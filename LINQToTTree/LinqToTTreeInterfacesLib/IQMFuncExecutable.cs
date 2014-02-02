@@ -51,7 +51,7 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Get the cache variable used by this fellow.
         /// </summary>
-        IDeclaredParameter CacheVariable { get; }
+        IDeclaredParameter[] CacheVariables { get; }
 
         /// <summary>
         /// Get the cache variable good used by this fellow.

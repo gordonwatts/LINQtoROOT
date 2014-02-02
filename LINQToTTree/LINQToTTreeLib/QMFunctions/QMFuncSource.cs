@@ -45,15 +45,15 @@ namespace LINQToTTreeLib.QMFunctions
             }
 
             // Now we can create the cached variables, etc.
-            CacheVariable = DeclarableParameter.CreateDeclarableParameterExpression(ResultType);
+            //CacheVariable = DeclarableParameter.CreateDeclarableParameterExpression(ResultType);
             CacheVariableGood = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
 
         }
 
         /// <summary>
-        /// Get the cache variable used by this fellow.
+        /// Get the cache variables that are returned by this function.
         /// </summary>
-        public IDeclaredParameter CacheVariable { get; private set; }
+        public IDeclaredParameter[] CacheVariables { get; private set; }
 
         /// <summary>
         /// Get the cache variable good used by this fellow.
@@ -176,10 +176,34 @@ namespace LINQToTTreeLib.QMFunctions
         /// </summary>
         public System.Linq.Expressions.Expression OldLoopExpression { get; private set; }
 
-
+        /// <summary>
+        /// Given an expression that is to evaluated at the center of a loop (or a value),
+        /// make sure to save it. How we do this depends on if we are in a loop, or extracting
+        /// a single value.
+        /// 
+        /// This should be called during the parsing of the query, when we are actually getting
+        /// the final answer (or sequence of answers). The returned list of statements can be added
+        /// to the current code context to put everything in cached variables.
+        /// </summary>
+        /// <param name="expression">The expression to be evaluated</param>
+        /// <param name="loopIndexVariable">If this is in the middle of a loop, this is the loop expression.</param>
+        /// <returns></returns>
         public IEnumerable<IStatement> CacheExpression(Expression expression, IDeclaredParameter loopIndexVariable = null)
         {
-            throw new NotImplementedException();
+            if (CacheVariables != null)
+                throw new InvalidOperationException("Attempt to cache variables for a QueryModel function twice.");
+
+            // Find all declared variables in this expression - that we will want to cache.
+            var vars = FindDeclarableParameters.FindAll(expression);
+
+            // For each of those variables, create a cache variable.
+            CacheVariables = vars.Select(v => DeclarableParameter.CreateDeclarableParameterExpression(v.Type)).ToArray();
+
+            // For each of the variables and the savers, create a "saver" statement that will store it
+            var savers = vars.Zip(CacheVariables, (v, s) => Tuple.Create(v, s))
+                .Select(pair => new Statements.StatementAssign(pair.Item2, pair.Item1, new IDeclaredParameter[] { pair.Item1 }));
+
+            return savers.ToArray();
         }
     }
 }
