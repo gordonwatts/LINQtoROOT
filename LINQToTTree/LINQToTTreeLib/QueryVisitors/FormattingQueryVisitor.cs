@@ -44,7 +44,7 @@ namespace LINQToTTreeLib.QueryVisitors
             _queryAsString.AppendFormat("orderby {0} {1}", ordering.Expression.ToString(), ordering.OrderingDirection == Remotion.Linq.Clauses.OrderingDirection.Asc ? "asc" : "desc");
         }
 
-        protected override void VisitResultOperators(Remotion.Linq.Collections.ObservableCollection<Remotion.Linq.Clauses.ResultOperatorBase> resultOperators, QueryModel queryModel)
+        protected override void VisitResultOperators(System.Collections.ObjectModel.ObservableCollection<Remotion.Linq.Clauses.ResultOperatorBase> resultOperators, QueryModel queryModel)
         {
             int index = 0;
             foreach (var item in resultOperators)

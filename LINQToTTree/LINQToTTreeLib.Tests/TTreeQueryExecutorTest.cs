@@ -478,7 +478,7 @@ namespace LINQToTTreeLib
 
             var q = new QueriableDummy<TestNtupe>();
             var letResult = from evt in q
-                            let temp = new ROOTNET.NTLorentzVector(evt.run, evt.run, evt.run)
+                            let temp = new ROOTNET.NTLorentzVector(evt.run, evt.run, evt.run, evt.run)
                             where temp.Pt() > 0.0
                             select temp;
             var cnt = letResult.Count();

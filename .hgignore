@@ -12,6 +12,8 @@ LINQToTTree/UpgradeLog.htm
 *.nupkg
 *.nuspec
 *.suo
+LINQToTTree/root/*
+LINQToTTree/start_LINQToTTree.bat
 syntax: regexp
 .*/bin/.*
 .*/Debug/.*

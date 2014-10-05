@@ -102,7 +102,7 @@ namespace LINQToTTreeLib
         {
             var model = GetModel(() => (
                 from q in new QueriableDummy<dummyntup>()
-                let qtest = new ROOTNET.NTLorentzVector(q.run, q.run, q.run)
+                let qtest = new ROOTNET.NTLorentzVector(q.run, q.run, q.run, q.run)
                 from qvlist in q.vals
                 select qvlist + qtest.Pt()).Aggregate(0, (acc, va) => acc + (int)va));
 
