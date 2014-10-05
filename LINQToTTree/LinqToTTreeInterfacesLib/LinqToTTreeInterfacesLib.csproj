@@ -16,7 +16,7 @@
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <NuGetPackageImportStamp>38f0ee3d</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>b4a46f39</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,9 +62,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper, Version=3.3.5388.1175, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="libCoreWrapper, Version=4.4.5391.2887, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.21.3\lib\net40\libCoreWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="Remotion.Linq, Version=1.15.15.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -78,9 +78,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.6.5388.1008, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="WrapperPlumbingLibrary, Version=2.6.5391.2722, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.21.3\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -116,12 +116,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.21.3\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.21.3\build\net40\ROOT.NET.Dynamic.targets')" />
+  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\ROOT.NET.Dynamic.5.34.21.3\build\net40\ROOT.NET.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ROOT.NET.Dynamic.5.34.21.3\build\net40\ROOT.NET.Dynamic.targets'))" />
+    <Error Condition="!Exists('..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
