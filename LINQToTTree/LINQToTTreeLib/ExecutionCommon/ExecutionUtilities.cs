@@ -243,15 +243,15 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Get the install directory
 
-            var vcInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VC7", "10.0");
+            var vcInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VC7", "11.0");
             if (vcInstallDir == null)
-                throw new NotSupportedException("Visual Studio C++ v10.0 must be installed or already setup otherwise we cannot run!");
+                throw new NotSupportedException("Visual Studio C++ v11.0 (VS2012) must be installed or already setup otherwise we cannot run!");
 
-            var vsInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VS7", "10.0");
+            var vsInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VS7", "11.0");
             if (vsInstallDir == null)
-                throw new NotSupportedException("Visual Studio IDE v10.0 must be installed already otherwise setup cannot run!");
+                throw new NotSupportedException("Visual Studio IDE v11.0 (VS2012) must be installed already otherwise setup cannot run!");
 
-            var winSDKDir = GetVCRegistryEntry(@"Microsoft\Microsoft SDKs\Windows\v7.0A", "InstallationFolder");
+            var winSDKDir = GetVCRegistryEntry(@"Microsoft\Microsoft SDKs\Windows\v7.1A", "InstallationFolder");
             if (winSDKDir == null)
                 throw new NotSupportedException("Unable to locate the windows SDK directory to link against! Cannot run!");
 
