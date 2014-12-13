@@ -1409,7 +1409,7 @@ namespace LINQToTTreeLib
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
             var result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(result, numberOfIter);
+            Assert.AreEqual(numberOfIter, result);
 
         }
 

@@ -444,6 +444,7 @@ namespace LINQToTTreeLib.Tests
                 return u;
 
             var f = new ROOTNET.NTFile(filename, "RECREATE");
+            f.cd();
             var tree = maker();
             f.Write();
             f.Close();
@@ -457,7 +458,7 @@ namespace LINQToTTreeLib.Tests
         /// <returns></returns>
         public static Uri CreateFileOfVectorInt(int numberOfIter, int vectorsize = 10)
         {
-            string filename = "vectorintonly_" + numberOfIter.ToString() + ".root";
+            string filename = string.Format("vectorintonly_{0}_{1}.root", numberOfIter, vectorsize);
             return CreateFileOf(filename, () => TTreeParserCPPTests.CreateTrees.CreateTreeWithSimpleSingleVector(numberOfIter, vectorsize));
         }
 
