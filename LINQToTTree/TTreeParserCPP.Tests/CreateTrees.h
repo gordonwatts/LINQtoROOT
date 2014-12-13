@@ -163,7 +163,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -185,8 +184,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddrEnt);
-			t->ResetBranchAddress(brAddrArr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -206,7 +203,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddrArr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -228,7 +224,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddrArr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -250,7 +245,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddrArr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -271,11 +265,11 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddrArr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
 
+		// Create a simple vector. DO NOT CALL Fill after this guy is done, or all hell will break loose!
 		static ROOTNET::NTTree ^CreateTreeWithSimpleSingleVector(int entries, int vectorsize)
 		{
 			vector<int> bogus;
@@ -290,7 +284,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -309,7 +302,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -335,8 +327,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddr);
-			t->ResetBranchAddress(brAddr1);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -350,9 +340,6 @@ namespace TTreeParserCPPTests {
 			TTree *t = new TTree("dude", "left field");
 			auto brAddrL = t->Branch("lenUsed", &lenUsed);
 			auto brAddr = t->Branch ("myarr", &myarr, "myarr[lenUsed]/I");
-
-			t->ResetBranchAddress(brAddr);
-			t->ResetBranchAddress(brAddrL);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -372,8 +359,6 @@ namespace TTreeParserCPPTests {
 			}
 
 			t->Fill();
-
-			t->ResetBranchAddress(brAddr);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
@@ -396,8 +381,6 @@ namespace TTreeParserCPPTests {
 				}
 				t->Fill();
 			}
-			t->ResetBranchAddress(brAddr);
-			t->ResetBranchAddress(brAddr1);
 
 			return gcnew ROOTNET::NTTree(t);
 		}
