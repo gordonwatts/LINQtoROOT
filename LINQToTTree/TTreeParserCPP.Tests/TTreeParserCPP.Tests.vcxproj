@@ -83,17 +83,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.21.3\lib\net40\libCoreWrapper.dll</HintPath>
+      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
-    <Reference Include="libTreeWrapper, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Packages\ROOT.NET.Tree.5.34.21.3\lib\net40\libTreeWrapper.dll</HintPath>
+    <Reference Include="libTreeWrapper">
+      <HintPath>..\Packages\ROOT.NET.Tree.5.34.21.4\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.21.3\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary">
+      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
