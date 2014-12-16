@@ -9,6 +9,7 @@ using NVelocity.App;
 namespace LINQToTreeHelpers.Tests
 {
     [TestClass]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public class t_ROOTUtils
     {
         [TestInitialize]

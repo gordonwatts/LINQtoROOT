@@ -15,6 +15,7 @@ namespace LINQToTTreeLib
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public partial class FutureResultOperatorsTest
     {
         [TestInitialize]

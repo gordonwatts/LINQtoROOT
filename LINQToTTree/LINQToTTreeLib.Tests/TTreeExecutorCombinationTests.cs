@@ -27,6 +27,7 @@ namespace LINQToTTreeLib.Tests
     /// queries is correct.
     /// </summary>
     [TestClass]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public class TTreeExecutorCombinationTests
     {
         [TestInitialize]

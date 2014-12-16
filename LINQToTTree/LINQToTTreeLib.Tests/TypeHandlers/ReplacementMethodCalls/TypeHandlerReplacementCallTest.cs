@@ -16,6 +16,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
     [PexClass(typeof(TypeHandlerReplacementCall))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
+    [DeploymentItem(@"ConfigData\default.classmethodmappings")]
     public partial class TypeHandlerReplacementCallTest
     {
         [TestInitialize]

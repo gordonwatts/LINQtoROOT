@@ -28,6 +28,7 @@ namespace LINQToTTreeLib
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
+    [DeploymentItem(@"ConfigData\default.classmethodmappings")]
     public partial class QueryVisitorTest
     {
         [TestInitialize]

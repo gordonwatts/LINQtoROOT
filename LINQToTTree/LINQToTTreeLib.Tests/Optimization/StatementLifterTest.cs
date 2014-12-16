@@ -10,6 +10,7 @@ using System.Linq;
 namespace LINQToTTreeLib.Tests.Optimization
 {
     [TestClass]
+    [DeploymentItem(@"ConfigData\default.classmethodmappings")]
     public class StatementLifterTest
     {
         [TestInitialize]

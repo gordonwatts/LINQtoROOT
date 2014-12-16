@@ -22,6 +22,12 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+        [TestCleanup]
+        public void Cleanup()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         /// <summary>
         ///Gets or sets the test context which provides
         ///information about and functionality for the current test run.
@@ -48,16 +54,22 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("unsigned int", TypeDefTranslator.ResolveTypedef("size_t"), "Should have found it");
         }
 
+        /// <summary>
+        /// We have to do a test here, as if the dll's are still loaded from last time we ran, then this guy
+        /// won't work correctly. A shame, but...
+        /// </summary>
         [TestMethod]
         public void DefineNewTypedef()
         {
-            Assert.AreEqual("fork", TypeDefTranslator.ResolveTypedef("fork"), "the fork typdef should not have been defined");
+            var original = TypeDefTranslator.ResolveTypedef("myfork");
+            if (original != "myfork")
+            {
+                ROOTNET.NTROOT.gROOT.ProcessLine("typedef int myfork;");
+                /// Force a re-load - normally someone else behind our backs does this - like after a copmile or similar.
+                ROOTNET.NTROOT.gROOT.GetListOfTypes(true);
 
-            ROOTNET.NTROOT.gROOT.ProcessLine("typedef int fork;");
-            /// Force a re-load - normally someone else behind our backs does this - like after a copmile or similar.
-            ROOTNET.NTROOT.gROOT.GetListOfTypes(true);
-
-            Assert.AreEqual("int", TypeDefTranslator.ResolveTypedef("fork"), "the fork typdef should now be defined");
+                Assert.AreEqual("int", TypeDefTranslator.ResolveTypedef("myfork"), "the myfork typdef should now be defined");
+            }
         }
     }
 }

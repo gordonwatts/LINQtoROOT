@@ -15,6 +15,7 @@ namespace LINQToTTreeLib
     [PexClass(typeof(TTreeQueryExecutor))]
     [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public partial class TTreeQueryExecutorTest
     {
         [TestInitialize]

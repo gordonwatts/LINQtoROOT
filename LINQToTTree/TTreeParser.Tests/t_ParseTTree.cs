@@ -588,7 +588,7 @@ namespace TTreeParser.Tests
         }
 
         /// <summary>
-        /// WARNING - you must start devenv in a vs 2010 command line window so that "cl" is availible.
+        /// WARNING - you must start devenv in a vs 2012 command line window so that "cl" is availible.
         /// </summary>
         [TestMethod]
         public void TestProxyBuild()
