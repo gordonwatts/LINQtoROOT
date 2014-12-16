@@ -86,6 +86,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libCore.lib;libTree.lib;libPhysics.lib;libCint.lib;libRIO.lib</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>powershell.exe -Version 2 -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
+      <Message>Kill off a potential reference when this dll gets copied.</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
