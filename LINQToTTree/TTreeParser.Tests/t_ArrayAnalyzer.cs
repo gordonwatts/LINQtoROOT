@@ -65,10 +65,10 @@ namespace TTreeParser.Tests
                 f.Close();
             }
 
-            var aa = new ArrayAnalyzer();
             var f1 = ROOTNET.NTFile.Open("TestWithOneArray.root", "READ");
             var tree1 = f1.Get("dude") as ROOTNET.NTTree;
 
+            var aa = new ArrayAnalyzer();
             ROOTClassShell sh = new ROOTClassShell();
             sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
             var result = aa.DetermineAllArrayLengths(sh, tree1, 10);
@@ -83,14 +83,26 @@ namespace TTreeParser.Tests
         public void TestArrayAndNormalItem()
         {
             var aa = new ArrayAnalyzer();
-            var tree = CreateTrees.CreateTreeWithSimpleSingleVectorAndItem(20);
+            // We get memory corruption if we create the tree and use it, rather
+            // than writing it out to a file first. Not sure why... GC and other
+            // things looked at, but they don't seem to be variables.
+            {
+                var f = ROOTNET.NTFile.Open("TestArrayAndNormalItem.root", "RECREATE");
+                var tree = CreateTrees.CreateTreeWithSimpleSingleVectorAndItem(20);
+                f.Write();
+                f.Close();
+            }
+
+            var f1 = ROOTNET.NTFile.Open("TestArrayAndNormalItem.root", "READ");
+            var tree1 = f1.Get("dude") as ROOTNET.NTTree;
 
             ROOTClassShell sh = new ROOTClassShell();
             sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
-            var result = aa.DetermineAllArrayLengths(sh, tree, 10);
+            var result = aa.DetermineAllArrayLengths(sh, tree1, 10);
             Assert.AreEqual(10, result.Length, "# of events");
             Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
             Assert.IsTrue(result.All(x => x[0].Item2 == 10), "incorrect individual variable list length list");
+            f1.Close();
         }
 
         [TestMethod]
@@ -141,16 +153,24 @@ namespace TTreeParser.Tests
         [TestMethod]
         public void TestWithTwoArrays()
         {
-            string filename = "TestWithTwoArrays.root";
-            var f = new ROOTNET.NTFile(filename, "RECREATE");
-            var tree = CreateTrees.CreateTreeWithSimpleDoubleVector(20);
-            f.Write();
+            // We get memory corruption if we create the tree and use it, rather
+            // than writing it out to a file first. Not sure why... GC and other
+            // things looked at, but they don't seem to be variables.
+            {
+                var f = ROOTNET.NTFile.Open("TestWithTwoArrays.root", "RECREATE");
+                var tree = CreateTrees.CreateTreeWithSimpleDoubleVector(20);
+                f.Write();
+                f.Close();
+            }
+
+            var f1 = ROOTNET.NTFile.Open("TestWithTwoArrays.root", "READ");
+            var tree1 = f1.Get("dude") as ROOTNET.NTTree;
 
             var aa = new ArrayAnalyzer();
             ROOTClassShell sh = new ROOTClassShell();
             sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
             sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint1" });
-            var result = aa.DetermineAllArrayLengths(sh, tree, 10);
+            var result = aa.DetermineAllArrayLengths(sh, tree1, 10);
             Assert.AreEqual(10, result.Length, "# of events");
             Assert.IsTrue(result.All(x => x.Length == 2), "incorrect individual variable list length list");
             foreach (var evt in result)
@@ -162,7 +182,7 @@ namespace TTreeParser.Tests
                 }
             }
 
-            f.Close();
+            f1.Close();
         }
 
         [TestMethod]
