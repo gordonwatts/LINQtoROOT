@@ -55,9 +55,35 @@ namespace TTreeParser.Tests
         [TestMethod]
         public void TestWithOneArray()
         {
+            // We get memory corruption if we create the tree and use it, rather
+            // than writing it out to a file first. Not sure why... GC and other
+            // things looked at, but they don't seem to be variables.
+            {
+                var f = ROOTNET.NTFile.Open("TestWithOneArray.root", "RECREATE");
+                var tree = CreateTrees.CreateTreeWithSimpleSingleVector(50);
+                f.Write();
+                f.Close();
+            }
 
             var aa = new ArrayAnalyzer();
-            var tree = CreateTrees.CreateTreeWithSimpleSingleVector(20);
+            var f1 = ROOTNET.NTFile.Open("TestWithOneArray.root", "READ");
+            var tree1 = f1.Get("dude") as ROOTNET.NTTree;
+
+            ROOTClassShell sh = new ROOTClassShell();
+            sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
+            var result = aa.DetermineAllArrayLengths(sh, tree1, 10);
+            Assert.AreEqual(10, result.Length, "# of events");
+            Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
+            Assert.IsTrue(result.All(x => x[0].Item2 == 10), "incorrect individual variable list length list");
+            Assert.IsTrue(result.All(x => x[0].Item1 == "myvectorofint"), "incorrect individual variable list length list");
+            f1.Close();
+        }
+
+        [TestMethod]
+        public void TestArrayAndNormalItem()
+        {
+            var aa = new ArrayAnalyzer();
+            var tree = CreateTrees.CreateTreeWithSimpleSingleVectorAndItem(20);
 
             ROOTClassShell sh = new ROOTClassShell();
             sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
@@ -65,7 +91,6 @@ namespace TTreeParser.Tests
             Assert.AreEqual(10, result.Length, "# of events");
             Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
             Assert.IsTrue(result.All(x => x[0].Item2 == 10), "incorrect individual variable list length list");
-            Assert.IsTrue(result.All(x => x[0].Item1 == "myvectorofint"), "incorrect individual variable list length list");
         }
 
         [TestMethod]
@@ -116,9 +141,12 @@ namespace TTreeParser.Tests
         [TestMethod]
         public void TestWithTwoArrays()
         {
-            var aa = new ArrayAnalyzer();
+            string filename = "TestWithTwoArrays.root";
+            var f = new ROOTNET.NTFile(filename, "RECREATE");
             var tree = CreateTrees.CreateTreeWithSimpleDoubleVector(20);
+            f.Write();
 
+            var aa = new ArrayAnalyzer();
             ROOTClassShell sh = new ROOTClassShell();
             sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
             sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint1" });
@@ -133,20 +161,8 @@ namespace TTreeParser.Tests
                     Assert.IsTrue(item.Item2 == 10 || item.Item2 == 20, "# of items");
                 }
             }
-        }
 
-        [TestMethod]
-        public void TestArrayAndNormalItem()
-        {
-            var aa = new ArrayAnalyzer();
-            var tree = CreateTrees.CreateTreeWithSimpleSingleVectorAndItem(20);
-
-            ROOTClassShell sh = new ROOTClassShell();
-            sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
-            var result = aa.DetermineAllArrayLengths(sh, tree, 10);
-            Assert.AreEqual(10, result.Length, "# of events");
-            Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
-            Assert.IsTrue(result.All(x => x[0].Item2 == 10), "incorrect individual variable list length list");
+            f.Close();
         }
 
         [TestMethod]
