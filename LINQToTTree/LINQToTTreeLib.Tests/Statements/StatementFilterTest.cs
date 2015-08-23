@@ -4,19 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>This class contains parameterized unit tests for StatementFilter</summary>
-    [PexClass(typeof(StatementFilter))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class StatementFilterTest
     {
+#if false
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementFilter target)
@@ -34,6 +30,7 @@ namespace LINQToTTreeLib.Statements
             return target;
             // TODO: add assertions to method StatementFilterTest.Constructor(IValue)
         }
+#endif
 
         [TestMethod]
         public void TestExprNoStatements()
@@ -85,6 +82,7 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(0, result.Length, "Expect no statements for a false if statement");
         }
 
+#if false
         [PexMethod]
         public void TestTryCombine(IStatement s)
         {
@@ -95,6 +93,7 @@ namespace LINQToTTreeLib.Statements
 
             Assert.IsFalse(statement.TryCombineStatement(s, null), "unable to do any combines for Filter");
         }
+#endif
 
         [TestMethod]
         public void TestSimpleCombine()
@@ -140,6 +139,7 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(2, deep.Statements.Count(), "Number of statements isn't right here");
         }
 
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public IStatement TestRename([PexAssumeUnderTest] StatementFilter statement, [PexAssumeNotNull] string oldname, [PexAssumeNotNull]string newname)
         {
@@ -161,5 +161,6 @@ namespace LINQToTTreeLib.Statements
 
             return statement;
         }
+#endif
     }
 }

@@ -2,12 +2,9 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-// <copyright file="ROFirstLastTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
@@ -17,9 +14,6 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib.ResultOperators
 {
     /// <summary>This class contains parameterized unit tests for ROFirstLast</summary>
-    [PexClass(typeof(ROFirstLast))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ROFirstLastTest
     {
@@ -39,6 +33,7 @@ namespace LINQToTTreeLib.ResultOperators
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         public bool CanHandle([PexAssumeUnderTest]ROFirstLast target, Type resultOperatorType)
@@ -64,6 +59,7 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
             // TODO: add assertions to method ROFirstLastTest.ProcessResultOperator(ROFirstLast, ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)
         }
+#endif
 
         public class ntup2
         {
@@ -132,7 +128,7 @@ namespace LINQToTTreeLib.ResultOperators
         [TestMethod]
         public void TestDualFirstWithCPPCode()
         {
-            // This test produces somethign caught in the wild (caused a compile error).
+            // This test produces something caught in the wild (caused a compile error).
             // The bug has to do with a combination of the First predicate and the CPPCode statement conspiring
             // to cause the problem, unfortunately. So, the test is here.
             var q = new QueriableDummy<ntup3>();

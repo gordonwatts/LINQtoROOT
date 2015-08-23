@@ -3,20 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TTreeDataModel;
 
 namespace TTreeClassGenerator
 {
     /// <summary>This class contains parameterized unit tests for ClassGenerator</summary>
-    [PexClass(typeof(ClassGenerator))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ClassGeneratorTest
     {
+#if false
         /// <summary>Test stub for GenerateClasss(FileInfo, FileInfo, String)</summary>
         [PexMethod(MaxBranches = 20000)]
         public void GenerateClasss(
@@ -50,10 +46,9 @@ namespace TTreeClassGenerator
 
             Assert.IsTrue(outputCSFile.Exists, "Output file should exist if we ran GenerateClass ok!");
         }
-
-        [PexMethod]
+#endif
         public void GenerateClassFromClasses(
-            [PexAssumeUnderTest]ClassGenerator target,
+            ClassGenerator target,
             int outputChoice,
             int numExtraFiles,
             int numExtraFilesToCreate,

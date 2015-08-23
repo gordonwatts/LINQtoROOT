@@ -3,8 +3,6 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -16,7 +14,6 @@ namespace LINQToTTreeLib.Tests
     ///to contain all StatementRecordIndiciesTest Unit Tests
     ///</summary>
     [TestClass]
-    [PexClass(typeof(StatementRecordIndicies))]
     public partial class StatementRecordIndiciesTest
     {
         [TestInitialize]
@@ -25,6 +22,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>
         ///A test for StatementRecordIndicies Constructor
         ///</summary>
@@ -73,5 +71,6 @@ namespace LINQToTTreeLib.Tests
 
             return result;
         }
+#endif
     }
 }

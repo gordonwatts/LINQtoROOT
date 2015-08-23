@@ -1,5 +1,3 @@
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -11,21 +9,9 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for CodeContext</summary>
-    [PexClass(typeof(CodeContext))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class CodeContextTest
     {
-        /// <summary>Test stub for .ctor()</summary>
-        [PexMethod]
-        public CodeContext Constructor()
-        {
-            CodeContext target = new CodeContext();
-            return target;
-            // TODO: add assertions to method CodeContextTest.Constructor()
-        }
-
         [TestMethod]
         public void TestLoopVarCTor()
         {

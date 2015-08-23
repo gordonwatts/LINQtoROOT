@@ -6,16 +6,11 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Utils
 {
     [TestClass]
-    [PexClass(typeof(QVResultOperators))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     public partial class QVResultOperatorsTest
     {
         [TestInitialize]
@@ -30,6 +25,7 @@ namespace LINQToTTreeLib.Utils
             MEFUtilities.MyClassDone();
         }
 
+#if false
         [PexMethod]
         internal QVResultOperators Constructor()
         {
@@ -37,6 +33,7 @@ namespace LINQToTTreeLib.Utils
             return target;
             // TODO: add assertions to method QVResultOperatorsTest.Constructor()
         }
+#endif
 
         [Export(typeof(IQVScalarResultOperator))]
         class DummyRO : IQVScalarResultOperator
@@ -58,6 +55,7 @@ namespace LINQToTTreeLib.Utils
             }
         }
 
+#if false
         [PexMethod]
         internal void TestLookupNothing(int tindex)
         {
@@ -115,6 +113,8 @@ namespace LINQToTTreeLib.Utils
 
             Assert.AreEqual(result1, result2, "Expected the same result when called with the same inputs!");
         }
+#endif
+
         [TestMethod]
         public void Constructor360()
         {
@@ -122,6 +122,7 @@ namespace LINQToTTreeLib.Utils
             qVResultOperators = this.Constructor();
             Assert.IsNotNull((object)qVResultOperators);
         }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestLookupThrowsArgumentNullException437()

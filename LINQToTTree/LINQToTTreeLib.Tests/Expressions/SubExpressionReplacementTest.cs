@@ -1,6 +1,4 @@
 using LINQToTTreeLib.Expressions;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
@@ -9,7 +7,6 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib.Tests.ResultOperators
 {
     [TestClass]
-    [PexClass(typeof(SubExpressionReplacement))]
     public partial class SubExpressionReplacementTest
     {
         [TestInitialize]
@@ -24,11 +21,13 @@ namespace LINQToTTreeLib.Tests.ResultOperators
             MEFUtilities.MyClassDone();
         }
 
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public Expression TestReplacement(Expression source, Expression pattern, Expression replacement)
         {
             return source.ReplaceSubExpression(pattern, replacement);
         }
+#endif
 
         [TestMethod]
         public void TestSimpleReplacement()

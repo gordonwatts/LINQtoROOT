@@ -2,16 +2,14 @@ using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     [TestClass]
-    [PexClass(typeof(StatementLoopOverGood))]
     public partial class StatementLoopOverGoodTest
     {
+#if false
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementLoopOverGood target)
@@ -35,6 +33,6 @@ namespace LINQToTTreeLib.Tests.Statements
 
             return loop.TryCombineStatement(s, null);
         }
-
+#endif
     }
 }

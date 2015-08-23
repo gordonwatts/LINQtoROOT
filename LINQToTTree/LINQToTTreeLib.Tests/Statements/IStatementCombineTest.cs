@@ -3,9 +3,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests.Statements
@@ -13,9 +10,10 @@ namespace LINQToTTreeLib.Tests.Statements
     /// <summary>
     /// Some generic tests for equivalence and also for variable renaming
     /// </summary>
-    [TestClass, PexClass]
+    [TestClass]
     public partial class IStatementCombineTest
     {
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         [PexUseType(typeof(StatementAssign))]
         [PexUseType(typeof(StatementCheckLoopPairwise))]
@@ -48,5 +46,6 @@ namespace LINQToTTreeLib.Tests.Statements
 
             return statement;
         }
+#endif
     }
 }

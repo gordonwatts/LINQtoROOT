@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
-    [TestClass, PexClass(typeof(StatementForLoop))]
+    [TestClass]
     public partial class StatementVectorLoopTest
     {
         [TestInitialize]
@@ -62,6 +60,7 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.AreEqual(2, booking.Statements.Count(), "# of statements in inside loop");
         }
 
+#if false
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementForLoop target)
@@ -110,5 +109,6 @@ namespace LINQToTTreeLib.Tests.Statements
 
             return statement;
         }
+#endif
     }
 }

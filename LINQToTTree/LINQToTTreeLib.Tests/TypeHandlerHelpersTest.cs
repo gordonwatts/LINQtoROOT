@@ -1,20 +1,14 @@
-// <copyright file="TypeHandlerHelpersTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-
 using System;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
     [TestClass]
-    [PexClass(typeof(TypeHandlerHelpers))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     public partial class TypeHandlerHelpersTest
     {
+#if false
         [PexMethod, PexAllowedException(typeof(NotImplementedException))]
         internal Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerHelpers target,
@@ -38,5 +32,6 @@ namespace LINQToTTreeLib.TypeHandlers
             return result;
             // TODO: add assertions to method TypeHandlerHelpersTest.ProcessConstantReference(TypeHandlerHelpers, ConstantExpression, IGeneratedCode)
         }
+#endif
     }
 }

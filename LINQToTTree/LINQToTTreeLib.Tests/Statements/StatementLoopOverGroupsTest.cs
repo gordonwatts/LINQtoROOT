@@ -4,14 +4,11 @@ using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
     [TestClass]
-    [PexClass(typeof(StatementLoopOverGroups))]
     public partial class StatementLoopOverGroupsTest
     {
         [TestInitialize]
@@ -20,6 +17,7 @@ namespace LINQToTTreeLib.Tests.Statements
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public StatementLoopOverGroups Constructor(IValue va)
         {
@@ -59,5 +57,6 @@ namespace LINQToTTreeLib.Tests.Statements
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
             Assert.AreEqual(allSame, canComb, "not expected combination!");
         }
+#endif
     }
 }

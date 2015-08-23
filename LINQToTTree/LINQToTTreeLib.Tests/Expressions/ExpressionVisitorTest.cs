@@ -7,14 +7,11 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing.Structure;
-// <copyright file="ExpressionVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +21,6 @@ using System.Text.RegularExpressions;
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for ExpressionVisitor</summary>
-    [PexClass(typeof(ExpressionToCPP))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ExpressionVisitorTest
     {
@@ -46,6 +41,7 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for GetExpression(Expression, IGeneratedCode)</summary>
         [PexMethod]
         internal IValue GetExpression([PexAssumeNotNull]Expression expr, IGeneratedQueryCode ce)
@@ -53,6 +49,7 @@ namespace LINQToTTreeLib
             IValue result = ExpressionToCPP.GetExpression(expr, ce, null, MEFUtilities.MEFContainer);
             return result;
         }
+#endif
 
         public class ConstantTestTemplate
         {

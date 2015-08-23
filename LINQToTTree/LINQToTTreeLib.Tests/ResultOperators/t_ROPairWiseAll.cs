@@ -4,8 +4,6 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -19,7 +17,6 @@ namespace LINQToTTreeLib.Tests
     ///to contain all ROPairWiseAllTest Unit Tests
     ///</summary>
     [TestClass]
-    [PexClass(typeof(ROUniqueCombinations))]
     public partial class ROPairWiseAllTest
     {
         [TestInitialize]
@@ -43,6 +40,7 @@ namespace LINQToTTreeLib.Tests
             ROPairWiseAll target = new ROPairWiseAll();
         }
 
+#if false
         /// <summary>
         ///A test for CanHandle
         ///</summary>
@@ -73,6 +71,7 @@ namespace LINQToTTreeLib.Tests
         {
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, cc, null);
         }
+#endif
 
         class ntupArray
         {

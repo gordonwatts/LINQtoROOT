@@ -2,11 +2,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-// <copyright file="CPPTranslatorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +10,6 @@ using System.Linq;
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for CPPTranslator</summary>
-    [PexClass(typeof(CPPTranslator))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class CPPTranslatorTest
     {
@@ -33,6 +26,7 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for .ctor()</summary>
         [PexMethod]
         public CPPTranslator Constructor()
@@ -53,6 +47,7 @@ namespace LINQToTTreeLib
             return result;
             // TODO: add assertions to method CPPTranslatorTest.TranslateGeneratedCode(CPPTranslator, GeneratedCode)
         }
+#endif
 
         [TestMethod]
         public void TestTranslateWithInitialValue()

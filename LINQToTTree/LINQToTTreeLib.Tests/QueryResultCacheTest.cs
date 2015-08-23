@@ -1,7 +1,5 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using ROOTNET.Interface;
@@ -12,9 +10,6 @@ using System.Linq;
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for QueryResultCache</summary>
-    [PexClass(typeof(QueryResultCache))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class QueryResultCacheTest
     {
@@ -38,6 +33,7 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for CacheItem(FileInfo, QueryModel, NTObject)</summary>
         [PexMethod]
         internal void CacheItem(
@@ -72,6 +68,7 @@ namespace LINQToTTreeLib
             return result;
             // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
         }
+#endif
 
         /// <summary>
         /// Dummy saver and loader for a variable.
@@ -138,8 +135,6 @@ namespace LINQToTTreeLib
                 return (T)h;
             }
         }
-
-
 
         [TestMethod]
         public void TestNoHit()

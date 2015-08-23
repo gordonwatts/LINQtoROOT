@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using LINQToTTreeLib.ExecutionCommon;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -13,7 +12,6 @@ namespace LINQToTTreeLib.Tests
     ///to contain all TestProofExecutor Unit Tests
     ///</summary>
     [TestClass()]
-    [PexClass(typeof(ProofExecutor))]
     public partial class TestProofExecutor
     {
         /// <summary>
@@ -103,7 +101,7 @@ namespace LINQToTTreeLib.Tests
 
         /// <summary>
         /// Move everything to a temp dir... mostly to make sure that we are in a directory
-        /// with no spaces int he path b/c ROOT dosen't know how to deal with them!
+        /// with no spaces int he path b/c ROOT doesn't know how to deal with them!
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
@@ -115,11 +113,14 @@ namespace LINQToTTreeLib.Tests
             return dest;
         }
 
+#if false
+
         [PexMethod]
         public void TestForSaveExeEnvironment([PexAssumeNotNull]ExecutionEnvironment env)
         {
             var target = new ProofExecutor();
             target.Environment = env;
         }
+#endif
     }
 }

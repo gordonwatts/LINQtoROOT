@@ -1,19 +1,13 @@
-// <copyright file="StatementIncrementIntegerTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Tests;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>This class contains parameterized unit tests for StatementIncrementInteger</summary>
-    [PexClass(typeof(StatementIncrementInteger))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class StatementIncrementIntegerTest
     {
@@ -23,6 +17,7 @@ namespace LINQToTTreeLib.Statements
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         [PexMethod]
         public StatementIncrementInteger Constructor(IDeclaredParameter i)
         {
@@ -48,5 +43,6 @@ namespace LINQToTTreeLib.Statements
             }
             return result;
         }
+#endif
     }
 }

@@ -4,12 +4,11 @@ using System.Linq.Expressions;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
-    [TestClass, PexClass]
+    [TestClass]
     public partial class ExpressionVisitorMethodCallTests
     {
         [TestInitialize]

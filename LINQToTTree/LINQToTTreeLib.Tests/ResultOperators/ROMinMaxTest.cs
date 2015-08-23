@@ -1,12 +1,9 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-// <copyright file="ROMinMaxTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
@@ -15,9 +12,6 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib.ResultOperators
 {
     /// <summary>This class contains parameterized unit tests for ROMinMax</summary>
-    [PexClass(typeof(ROMinMax))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ROMinMaxTest
     {
@@ -33,6 +27,7 @@ namespace LINQToTTreeLib.ResultOperators
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         internal bool CanHandle([PexAssumeUnderTest]ROMinMax target, Type resultOperatorType)
@@ -58,6 +53,7 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
             // TODO: add assertions to method ROMinMaxTest.ProcessResultOperator(ROMinMax, ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
+#endif
 
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]

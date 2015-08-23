@@ -1,24 +1,18 @@
-// <copyright file="SaveVarObjectTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
     /// <summary>This class contains parameterized unit tests for SaveVarObject</summary>
-    [PexClass(typeof(SaveVarObject))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class SaveVarObjectTest
     {
         /// <summary>Test stub for CanHandle(IVariable)</summary>
         ///[PexMethod]
-        internal bool CanHandle([PexAssumeUnderTest]SaveVarObject target, IDeclaredParameter iVariable)
+        internal bool CanHandle(SaveVarObject target, IDeclaredParameter iVariable)
         {
             bool result = target.CanHandle(iVariable);
             return result;
@@ -46,6 +40,7 @@ namespace LINQToTTreeLib.Variables.Savers
             Assert.IsTrue(CanHandle(new SaveVarObject(), v), "TH1F");
         }
 
+#if false
         /// <summary>Test stub for IncludeFiles(IVariable)</summary>
         [PexMethod]
         internal IEnumerable<string> IncludeFiles([PexAssumeUnderTest]SaveVarObject target, IDeclaredParameter iVariable)
@@ -55,7 +50,6 @@ namespace LINQToTTreeLib.Variables.Savers
             // TODO: add assertions to method SaveVarObjectTest.IncludeFiles(SaveVarObject, IVariable)
         }
 
-#if false
         /// <summary>Test stub for LoadResult(IVariable, NTObject)</summary>
         [PexGenericArguments(typeof(int))]
         [PexMethod]
@@ -69,7 +63,6 @@ namespace LINQToTTreeLib.Variables.Savers
             return result;
             // TODO: add assertions to method SaveVarObjectTest.LoadResult(SaveVarObject, IVariable, NTObject)
         }
-#endif
 
         /// <summary>Test stub for SaveToFile(IVariable)</summary>
         [PexMethod]
@@ -79,5 +72,6 @@ namespace LINQToTTreeLib.Variables.Savers
             return result;
             // TODO: add assertions to method SaveVarObjectTest.SaveToFile(SaveVarObject, IVariable)
         }
+#endif
     }
 }

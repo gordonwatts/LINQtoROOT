@@ -5,9 +5,6 @@ using System.Linq.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.TypeHandlers;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -16,12 +13,10 @@ using Remotion.Linq.Clauses.ResultOperators;
 namespace LINQToTTreeLib.ResultOperators
 {
     /// <summary>This class contains parameterized unit tests for TakeSkipOperators</summary>
-    [PexClass(typeof(ROTakeSkipOperators))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class TakeSkipOperatorsTest
     {
+#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         internal bool CanHandle(
@@ -72,7 +67,6 @@ namespace LINQToTTreeLib.ResultOperators
 
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, MEFUtilities.MEFContainer);
 
-#if false
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will
             /// be the outter one for this test
@@ -98,7 +92,6 @@ namespace LINQToTTreeLib.ResultOperators
                 count = (resultOperator as TakeResultOperator).Count.ToString();
             }
             Assert.AreEqual(count, s.Limit.RawValue, "bad count made it through");
-#endif
 
             ///
             /// Finally, the current loop variable should be identical, and there should be no result set.
@@ -120,6 +113,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             return codeEnv;
         }
+#endif
 
         [TestMethod]
         public void TestBasicTakeSkip()

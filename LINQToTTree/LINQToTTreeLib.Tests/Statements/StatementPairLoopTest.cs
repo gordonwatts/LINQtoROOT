@@ -2,16 +2,12 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
 namespace LINQToTTreeLib.Tests.Statements
 {
-    [PexClass(typeof(StatementPairLoop))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class StatementPairLoopTest
     {
@@ -27,6 +23,7 @@ namespace LINQToTTreeLib.Tests.Statements
             MEFUtilities.MyClassDone();
         }
 
+#if false
         [PexMethod]
         internal StatementPairLoop StatementPairLoopCtor(IDeclaredParameter varArray, IDeclaredParameter index1, IDeclaredParameter index2)
         {
@@ -39,6 +36,21 @@ namespace LINQToTTreeLib.Tests.Statements
         {
             return target.CodeItUp().ToArray();
         }
+
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
+        public bool TestTryCombine([PexAssumeUnderTest] StatementPairLoop pairloop, IStatement statement, ICodeOptimizationService codeOpt)
+        {
+            var result = pairloop.TryCombineStatement(statement, codeOpt);
+            return result;
+        }
+
+        [PexMethod]
+        public StatementPairLoop TestRename([PexAssumeUnderTest] StatementPairLoop pairLoop, string oldName, string newName)
+        {
+            pairLoop.RenameVariable(oldName, newName);
+            return pairLoop;
+        }
+#endif
 
         [TestMethod]
         public void TestForEmittingNoStatements()
@@ -59,20 +71,6 @@ namespace LINQToTTreeLib.Tests.Statements
             var t = new StatementPairLoop(array, index1, index2);
             t.Add(new LINQToTTreeLib.Statements.StatementSimpleStatement("dir"));
             Assert.AreEqual(9, t.CodeItUp().Count(), "# of lines incorrect");
-        }
-
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public bool TestTryCombine([PexAssumeUnderTest] StatementPairLoop pairloop, IStatement statement, ICodeOptimizationService codeOpt)
-        {
-            var result = pairloop.TryCombineStatement(statement, codeOpt);
-            return result;
-        }
-
-        [PexMethod]
-        public StatementPairLoop TestRename([PexAssumeUnderTest] StatementPairLoop pairLoop, string oldName, string newName)
-        {
-            pairLoop.RenameVariable(oldName, newName);
-            return pairLoop;
         }
 
         [TestMethod]

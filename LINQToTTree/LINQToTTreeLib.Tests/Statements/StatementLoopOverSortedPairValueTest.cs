@@ -4,8 +4,6 @@ using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -15,7 +13,6 @@ namespace LINQToTTreeLib.Tests
     ///to contain all StatementLoopOverSortedPairValueTest Unit Tests
     ///</summary>
     [TestClass]
-    [PexClass(typeof(StatementLoopOverSortedPairValue))]
     public partial class StatementLoopOverSortedPairValueTest
     {
         [TestInitialize]
@@ -24,6 +21,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>
         ///A test for CodeItUp
         ///</summary>
@@ -55,6 +53,7 @@ namespace LINQToTTreeLib.Tests
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
             Assert.IsTrue(allSame == canComb || target.Statements.Count() == 0, "not expected combination!");
         }
+#endif
 
         [TestMethod]
         public void TestStatementCreation()

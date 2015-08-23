@@ -1,5 +1,3 @@
-// <copyright file="ROCountTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,9 +5,6 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -17,9 +12,6 @@ using Remotion.Linq.Clauses.ResultOperators;
 namespace LINQToTTreeLib
 {
     [TestClass]
-    [PexClass(typeof(ROCount))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     public partial class ROCountTest
     {
         [TestInitialize]
@@ -34,6 +26,7 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
+#if false
         [PexMethod]
         [PexUseType(typeof(GeneratedCode)), PexAllowedException(typeof(InvalidOperationException))]
         internal Expression ProcessResultOperator(
@@ -61,6 +54,7 @@ namespace LINQToTTreeLib
             Assert.IsTrue(result || resultOperatorType != typeof(CountResultOperator), "Bad response!");
             return result;
         }
+#endif
 
         public class ntup2
         {

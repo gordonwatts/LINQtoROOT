@@ -1,20 +1,13 @@
-// <copyright file="FileUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-
 using System;
 using System.IO;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Generated;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Utils
 {
     [TestClass]
-    [PexClass(typeof(FileUtils))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     public partial class FileUtilsTest
     {
+#if false
         [PexMethod]
         public TextWriter WriteTextIfNotDuplicate(FileInfo outputFile)
         {
@@ -116,6 +109,7 @@ namespace LINQToTTreeLib.Utils
             }
 
         }
+#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]

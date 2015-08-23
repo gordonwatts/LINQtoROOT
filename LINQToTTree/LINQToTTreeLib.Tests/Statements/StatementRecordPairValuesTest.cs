@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -15,7 +14,6 @@ namespace LINQToTTreeLib.Tests
     ///to contain all StatementRecordPairValuesTest Unit Tests
     ///</summary>
     [TestClass]
-    [PexClass(typeof(StatementRecordPairValues))]
     public partial class StatementRecordPairValuesTest
     {
         [TestInitialize]
@@ -24,6 +22,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>
         ///A test for CodeItUp
         ///</summary>
@@ -56,5 +55,6 @@ namespace LINQToTTreeLib.Tests
             var allSame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
             Assert.AreEqual(allSame, canComb, "not expected combination!");
         }
+#endif
     }
 }

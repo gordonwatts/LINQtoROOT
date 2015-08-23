@@ -1,7 +1,5 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -14,9 +12,6 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib.ResultOperators
 {
     /// <summary>This class contains parameterized unit tests for ROAnyAll</summary>
-    [PexClass(typeof(ROAnyAll))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ROAnyAllTest
     {
@@ -32,6 +27,7 @@ namespace LINQToTTreeLib.ResultOperators
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         internal bool CanHandle([PexAssumeUnderTest]ROAnyAll target, Type resultOperatorType)
@@ -57,6 +53,7 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
             // TODO: add assertions to method ROAnyAllTest.ProcessResultOperator(ROAnyAll, ResultOperatorBase, QueryModel, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
+#endif
 
         [TestMethod]
         public void TestSimpleAny()

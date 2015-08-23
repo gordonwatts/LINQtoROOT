@@ -1,18 +1,13 @@
-// <copyright file="FutureValueTTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for FutureValue`1</summary>
-    [PexClass(typeof(FutureValue<>))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class FutureValueTTest
     {
+#if false
         /// <summary>Test stub for .ctor(!0)</summary>
         [PexGenericArguments(typeof(int))]
         [PexMethod]
@@ -53,5 +48,6 @@ namespace LINQToTTreeLib
             Assert.IsTrue(target.HasValue, "Value must be set in order to get the value here");
             return result;
         }
+#endif
     }
 }

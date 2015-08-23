@@ -20,7 +20,7 @@
     <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>c4c9e2ed</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>fdd1f18c</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -98,57 +98,47 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper, Version=4.4.5391.2887, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\libCoreWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libGrafWrapper, Version=4.4.5391.3030, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.21.4\lib\net40\libGrafWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libHistWrapper, Version=4.4.5391.2969, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Core.5.34.21.4\lib\net40\libHistWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libMathCoreWrapper, Version=4.4.5391.2897, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Core.5.34.21.4\lib\net40\libMathCoreWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libNetWrapper, Version=4.4.5391.3029, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.21.4\lib\net40\libNetWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libPhysicsWrapper, Version=4.4.5391.3129, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Core.5.34.21.4\lib\net40\libPhysicsWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libRIOWrapper, Version=4.4.5391.2999, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Core.5.34.21.4\lib\net40\libRIOWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libThreadWrapper, Version=4.4.5391.2967, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Core.5.34.21.4\lib\net40\libThreadWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libTreePlayerWrapper, Version=4.4.5391.3141, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.21.4\lib\net40\libTreePlayerWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="libTreeWrapper, Version=4.4.5391.3080, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.21.4\lib\net40\libTreeWrapper.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.ExtendedReflection, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Moles.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Microsoft.Pex.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="Microsoft.Pex.Linq, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="libCoreWrapper, Version=7.7.5709.38843, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.32.7\lib\net40\libCoreWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="libGrafWrapper, Version=7.7.5709.38955, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.32.7\lib\net40\libGrafWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libHistWrapper, Version=7.7.5709.38909, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.32.7\lib\net40\libHistWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libMathCoreWrapper, Version=7.7.5709.38852, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.32.7\lib\net40\libMathCoreWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libNetWrapper, Version=7.7.5709.38954, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.32.7\lib\net40\libNetWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libPhysicsWrapper, Version=7.7.5709.39039, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.32.7\lib\net40\libPhysicsWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRIOWrapper, Version=7.7.5709.38931, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.32.7\lib\net40\libRIOWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libThreadWrapper, Version=7.7.5709.38907, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.32.7\lib\net40\libThreadWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libTreePlayerWrapper, Version=7.7.5709.39049, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.32.7\lib\net40\libTreePlayerWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libTreeWrapper, Version=7.7.5709.38998, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.32.7\lib\net40\libTreeWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualC" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NVelocity, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -166,9 +156,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.6.5391.2722, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.6.5709.38711, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.32.7\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -199,544 +189,75 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeContextTest.Add.g.cs">
-      <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CodeContextTest.Constructor.g.cs">
-      <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="CodeContextTest.cs" />
-    <Compile Include="CodeContextTest.GetReplacement.g.cs">
-      <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CodeContextTest.TestRoundTrip.g.cs">
-      <DependentUpon>CodeContextTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CombinedGeneratedCodeTest.AddGeneratedCode.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CombinedGeneratedCodeTest.AddIncludeFile.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CombinedGeneratedCodeTest.CheckAddIncludeFiles.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CombinedGeneratedCodeTest.CheckAddSameVariableNamesToTransfer.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CombinedGeneratedCodeTest.Constructor.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="CombinedGeneratedCodeTest.cs" />
-    <Compile Include="CombinedGeneratedCodeTest.IncludeFilesGet.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CombinedGeneratedCodeTest.ResultValuesGet.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CombinedGeneratedCodeTest.VariablesToTransferGet.g.cs">
-      <DependentUpon>CombinedGeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CPPTranslatorTest.Constructor.g.cs">
-      <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="CPPTranslatorTest.cs" />
-    <Compile Include="CPPTranslatorTest.IncludeFilesGet.g.cs">
-      <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CPPTranslatorTest.TranslateGeneratedCode.g.cs">
-      <DependentUpon>CPPTranslatorTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="DummyQueryExectuor.cs" />
-    <Compile Include="ExecutionCommon\TestProofExecutor.TestForSaveExeEnvironment.g.cs">
-      <DependentUpon>ProofExecutorTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Expressions\ExpressionStringConverterTest.cs" />
-    <Compile Include="Expressions\ExpressionStringConverterTest.Format.g.cs">
-      <DependentUpon>ExpressionStringConverterTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
     <Compile Include="Expressions\ExpressionVisitorMethodCallTests.cs" />
     <Compile Include="Expressions\ExpressionVisitorTest.cs" />
-    <Compile Include="Expressions\ExpressionVisitorTest.GetExpression.g.cs">
-      <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expressions\ExpressionVisitorTest.TestConstantExpression.g.cs">
-      <DependentUpon>ExpressionVisitorTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expressions\SubExpressionReplacementTest.TestReplacement.g.cs">
-      <DependentUpon>SubExpressionReplacementTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expressions\TestExpressionResolver.RunResolve.g.cs">
-      <DependentUpon>t_ExpressionResolver.cs</DependentUpon>
-    </Compile>
     <Compile Include="Expressions\t_ExpressionsOnImpliedObjects.cs" />
     <Compile Include="Expressions\t_MultiLevelArrays.cs" />
     <Compile Include="Expressions\FindDeclarableParametersTest.cs" />
-    <Compile Include="Factories\ArrayInfoVectorFactory.cs" />
-    <Compile Include="Factories\CodeOptimizerTestFactory.cs" />
-    <Compile Include="Factories\CombinedGeneratedCodeFactory.cs" />
-    <Compile Include="Factories\ConstantExpressionFactory.cs" />
-    <Compile Include="Factories\CPPTranslatorFactory.cs" />
-    <Compile Include="Factories\DeclarableParameterFactory.cs" />
-    <Compile Include="Factories\GeneratedCodeFactory.cs" />
-    <Compile Include="Factories\ICodeOptimizerFactory.cs" />
-    <Compile Include="Factories\MethodCallExpressionFactory.cs" />
-    <Compile Include="Factories\NTObjectFactory.cs" />
-    <Compile Include="Factories\SkipResultOperatorFactory.cs" />
-    <Compile Include="Factories\StatementAnyAllDetectorFactory.cs" />
-    <Compile Include="Factories\StatementAssignFactory.cs" />
-    <Compile Include="Factories\StatementCheckLoopPairwiseFactory.cs" />
-    <Compile Include="Factories\StatementFilterFactory.cs" />
-    <Compile Include="Factories\StatementIfOnCountFactory.cs" />
-    <Compile Include="Factories\StatementIncrementIntegerFactory.cs" />
-    <Compile Include="Factories\StatementInlineBlockFactory.cs" />
-    <Compile Include="Factories\StatementLoopOverGoodFactory.cs" />
-    <Compile Include="Factories\StatementLoopOverGroupItemsFactory.cs" />
-    <Compile Include="Factories\StatementLoopOverSortedPairValueFactory.cs" />
-    <Compile Include="Factories\StatementMinMaxTestFactory.cs" />
-    <Compile Include="Factories\StatementPairLoopFactory.cs" />
-    <Compile Include="Factories\StatementRecordIndiciesFactory.cs" />
-    <Compile Include="Factories\StatementRecordPairValuesFactory.cs" />
-    <Compile Include="Factories\StatementRecordValueFactory.cs" />
-    <Compile Include="Factories\StatementSimpleStatementFactory.cs" />
-    <Compile Include="Factories\TakeResultOperatorFactory.cs" />
-    <Compile Include="Factories\TypeHandlerReplacementCallFactory.cs" />
-    <Compile Include="Factories\UnaryExpressionFactory.cs" />
     <Compile Include="FileUtilsTest.cs" />
-    <Compile Include="FileUtilsTest.MakeSureFileIsRight.g.cs">
-      <DependentUpon>FileUtilsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FileUtilsTest.MakeSureFileNotUpdated.g.cs">
-      <DependentUpon>FileUtilsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FileUtilsTest.WriteTextIfNotDuplicate.g.cs">
-      <DependentUpon>FileUtilsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="FutureResultOperatorsTest.cs" />
-    <Compile Include="FutureResultOperatorsTest.FutureCount.g.cs">
-      <DependentUpon>FutureResultOperatorsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FutureValueTTest.Constructor01.g.cs">
-      <DependentUpon>FutureValueTTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="FutureValueTTest.cs" />
-    <Compile Include="FutureValueTTest.SetValue.g.cs">
-      <DependentUpon>FutureValueTTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FutureValueTTest.ValueGet.g.cs">
-      <DependentUpon>FutureValueTTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.Add.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.AddCompound.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.AddCompoundStatementTest.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.Constructor.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="GeneratedCodeTest.cs" />
-    <Compile Include="GeneratedCodeTest.LookAtStatements.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.Pop.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.SetResult.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.TestAddTransfer.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GeneratedCodeTest.TestChangeScope.g.cs">
-      <DependentUpon>GeneratedCodeTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="MEFUtilities.cs" />
     <Compile Include="Optimization\StatementLifterTest.cs" />
     <Compile Include="Optimization\CommonStatementLifterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\PexAssemblyInfo.cs" />
     <Compile Include="QMFunctions\QMFuncFinderTest.cs" />
     <Compile Include="QMFunctions\CodeItUpHelpersTest.cs" />
     <Compile Include="QMFunctions\QMFuncUtils.cs" />
     <Compile Include="QMFunctions\QMFuncSourceTest.cs" />
     <Compile Include="QueriableDummy.cs" />
     <Compile Include="QueriableDummyNoExe.cs" />
-    <Compile Include="QueryResultCacheTest.CacheItem.g.cs">
-      <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="QueryResultCacheTest.cs" />
-    <Compile Include="QueryResultCacheTest.Lookup.g.cs">
-      <DependentUpon>QueryResultCacheTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="QueryVisitors\QueryVisitorOnImpliedObjectsTest.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitorTest.cs" />
-    <Compile Include="QueryVisitors\FormattingQueryVisitorTest.Format.g.cs">
-      <DependentUpon>FormattingQueryVisitorTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="QueryVisitors\FormattingQueryVisitorTest.TestQueryDoesntCrash.g.cs">
-      <DependentUpon>FormattingQueryVisitorTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="QueryVisitors\CreateTupleExpressionTransformerTest.cs" />
     <Compile Include="QueryVisitors\QueryVisitorTest.cs" />
-    <Compile Include="QVResultOperatorsTest.Constructor.g.cs">
-      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="QVResultOperatorsTest.cs" />
-    <Compile Include="QVResultOperatorsTest.TestForGoodReturn.g.cs">
-      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="QVResultOperatorsTest.TestLookupNothing.g.cs">
-      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="QVResultOperatorsTest.TestLookupTwice.g.cs">
-      <DependentUpon>QVResultOperatorsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ResultOperators\ROAggregateTest.CanHandle.g.cs">
-      <DependentUpon>ROAggregateTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\ROAggregateTest.cs" />
-    <Compile Include="ResultOperators\ROAnyAllTest.CanHandle.g.cs">
-      <DependentUpon>ROAnyAllTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\ROAnyAllTest.cs" />
-    <Compile Include="ResultOperators\ROAnyAllTest.ProcessResultOperator.g.cs">
-      <DependentUpon>ROAnyAllTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ResultOperators\ROFirstLastTest.CanHandle.g.cs">
-      <DependentUpon>ROFirstLastTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\ROFirstLastTest.cs" />
-    <Compile Include="ResultOperators\ROFirstLastTest.ProcessResultOperator.g.cs">
-      <DependentUpon>ROFirstLastTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ResultOperators\ROMinMaxTest.CanHandle.g.cs">
-      <DependentUpon>ROMinMaxTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\ROMinMaxTest.cs" />
-    <Compile Include="ResultOperators\ROMinMaxTest.ProcessResultOperator.g.cs">
-      <DependentUpon>ROMinMaxTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ResultOperators\ROPairWiseAllTest.CanHandle.g.cs">
-      <DependentUpon>t_ROPairWiseAll.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ResultOperators\ROPairWiseAllTest.ProcessResultOperator.g.cs">
-      <DependentUpon>t_ROPairWiseAll.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ResultOperators\ROUniqueCombinationsTest.CanHandle.g.cs">
-      <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\ROUniqueCombinationsTest.cs" />
-    <Compile Include="ResultOperators\ROUniqueCombinationsTest.ProcessResultOperator.g.cs">
-      <DependentUpon>ROUniqueCombinationsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Expressions\SubExpressionReplacementTest.cs" />
-    <Compile Include="ResultOperators\TakeSkipOperatorsTest.CanHandle.g.cs">
-      <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\TakeSkipOperatorsTest.cs" />
-    <Compile Include="ResultOperators\TakeSkipOperatorsTest.ProcessResultOperator.g.cs">
-      <DependentUpon>TakeSkipOperatorsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\TestCount.cs" />
-    <Compile Include="ResultOperators\ROCountTest.CanHandle.g.cs">
-      <DependentUpon>ROCountTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\ROCountTest.cs" />
-    <Compile Include="ResultOperators\ROCountTest.ProcessResultOperator.g.cs">
-      <DependentUpon>ROCountTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAggregateTest.CodeItUpTest.g.cs">
-      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementAggregateTest.cs" />
     <Compile Include="Statements\IStatementCombineTest.cs" />
-    <Compile Include="Statements\IStatementCombineTest.TestEquiv.g.cs">
-      <DependentUpon>IStatementCombineTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\IStatementCombineTest.TestRename.g.cs">
-      <DependentUpon>IStatementCombineTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAggregateTest.IsSameStatementTest.g.cs">
-      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAggregateTest.RenameVariableTest.g.cs">
-      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAggregateTest.StatementAggregateConstructorTest.g.cs">
-      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAggregateTest.TryCombineStatementTest.g.cs">
-      <DependentUpon>StatementAggregateTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAssignTest.CodeItUpTest.g.cs">
-      <DependentUpon>StatementAssignTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAssignTest.IsSameStatementTest.g.cs">
-      <DependentUpon>StatementAssignTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAssignTest.RenameVariableTest.g.cs">
-      <DependentUpon>StatementAssignTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAssignTest.StatementAssignConstructorTest.g.cs">
-      <DependentUpon>StatementAssignTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementAssignTest.TryCombineStatementTest.g.cs">
-      <DependentUpon>StatementAssignTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementFilterTest.CodeItUp.g.cs">
-      <DependentUpon>StatementFilterTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementFilterTest.Constructor.g.cs">
-      <DependentUpon>StatementFilterTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementFilterTest.cs" />
-    <Compile Include="Statements\StatementFilterTest.TestEquiv.g.cs">
-      <DependentUpon>StatementFilterTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementFilterTest.TestRename.g.cs">
-      <DependentUpon>StatementFilterTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementFilterTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementFilterTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementForLoopTest.cs" />
-    <Compile Include="Statements\StatementForLoopTest.TestCombineDifInitial.g.cs">
-      <DependentUpon>StatementForLoopTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementForLoopTest.TestCombineIdentical.g.cs">
-      <DependentUpon>StatementForLoopTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementForLoopTest.TestCTor.g.cs">
-      <DependentUpon>StatementForLoopTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementIfOnCountTest.CodeItUp.g.cs">
-      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementIfOnCountTest.Constructor.g.cs">
-      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementIfOnCountTest.cs" />
-    <Compile Include="Statements\StatementIfOnCountTest.TestEquiv.g.cs">
-      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementIfOnCountTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementIfOnCountTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementIncrementIntegerTest.Constructor.g.cs">
-      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementIncrementIntegerTest.cs" />
-    <Compile Include="Statements\StatementIncrementIntegerTest.TestEquiv.g.cs">
-      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementIncrementIntegerTest.TestRename.g.cs">
-      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementIncrementIntegerTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementIncrementIntegerTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementInlineBlockTest.Add.g.cs">
-      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementInlineBlockTest.Constructor.g.cs">
-      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementInlineBlockTest.cs" />
-    <Compile Include="Statements\StatementInlineBlockTest.StatementsGet.g.cs">
-      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementInlineBlockTest.TestAddSingleStatement.g.cs">
-      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementInlineBlockTest.TestSimpleVariableDoubleInsert.g.cs">
-      <DependentUpon>StatementInlineBlockTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGoodTest.CodeItUp.g.cs">
-      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGoodTest.Constructor.g.cs">
-      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementLoopOverGoodTest.cs" />
-    <Compile Include="Statements\StatementLoopOverGoodTest.TestEquiv.g.cs">
-      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGoodTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementLoopOverGoodTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGroupItemsTest.CodeItUpTest.g.cs">
-      <DependentUpon>StatementLoopOverGroupItemsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementLoopOverGroupItemsTest.cs" />
-    <Compile Include="Statements\StatementLoopOverGroupItemsTest.RenameVariableTest.g.cs">
-      <DependentUpon>StatementLoopOverGroupItemsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGroupItemsTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementLoopOverGroupItemsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGroupsTest.CodeItUpTest.g.cs">
-      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGroupsTest.Constructor.g.cs">
-      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementLoopOverGroupsTest.cs" />
-    <Compile Include="Statements\StatementLoopOverGroupsTest.RenameVariableTest.g.cs">
-      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverGroupsTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementLoopOverGroupsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverSortedPairValueTest.CodeItUpTest.g.cs">
-      <DependentUpon>StatementLoopOverSortedPairValueTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverSortedPairValueTest.RenameVariableTest.g.cs">
-      <DependentUpon>StatementLoopOverSortedPairValueTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementLoopOverSortedPairValueTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementLoopOverSortedPairValueTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementPairLoopTest.cs" />
-    <Compile Include="Statements\StatementPairLoopTest.StatementPairLoopCtor.g.cs">
-      <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementPairLoopTest.TestRename.g.cs">
-      <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementPairLoopTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementPairLoopTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordIndiciesTest.CodeItUpTest.g.cs">
-      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordIndiciesTest.IsSameStatementTest.g.cs">
-      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordIndiciesTest.RenameVariableTest.g.cs">
-      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordIndiciesTest.StatementRecordIndiciesConstructorTest.g.cs">
-      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordIndiciesTest.TryCombineStatementTest.g.cs">
-      <DependentUpon>StatementRecordIndiciesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordPairValuesTest.CodeItUpTest.g.cs">
-      <DependentUpon>StatementRecordPairValuesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordPairValuesTest.RenameVariableTest.g.cs">
-      <DependentUpon>StatementRecordPairValuesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementRecordPairValuesTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementRecordPairValuesTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementSimpleStatementTest.CodeItUp.g.cs">
-      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementSimpleStatementTest.Constructor.g.cs">
-      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementSimpleStatementTest.cs" />
-    <Compile Include="Statements\StatementSimpleStatementTest.TestRename.g.cs">
-      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\StatementSimpleStatementTest.TestTryCombine.g.cs">
-      <DependentUpon>StatementSimpleStatementTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\StatementVectorLoopTest.cs" />
-    <Compile Include="Statements\TestStatementAnyAllDetector.TestCodeItUp.g.cs">
-      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\TestStatementAnyAllDetector.TestRenameVariable.g.cs">
-      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\TestStatementAnyAllDetector.TestTryCombineStatement.g.cs">
-      <DependentUpon>StatementAnyAllDetectorTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\TestStatementCheckLoopPairwise.TestStatementCheckLoopPairwiseConstructor.g.cs">
-      <DependentUpon>StatementCheckLoopPairwiseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\TestStatementRecordValue.TestCodeItUp.g.cs">
-      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\TestStatementRecordValue.TestRenameVariable.g.cs">
-      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statements\TestStatementRecordValue.TestTryCombineStatement.g.cs">
-      <DependentUpon>StatementRecordValueTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Statements\Utils.cs" />
     <Compile Include="TestQueriesGreaterLevels.cs" />
     <Compile Include="TestQueriesTopLevel.cs" />
     <Compile Include="TestUtils.cs" />
     <Compile Include="TestUtilsCommonNtupDefinitions.cs" />
     <Compile Include="TTreeExecutorCombinationTests.cs" />
-    <Compile Include="TTreeQueryExecutorTest.Constructor.g.cs">
-      <DependentUpon>TTreeQueryExecutorTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="TTreeQueryExecutorTest.cs" />
     <Compile Include="TypeHandlerHelpersTest.cs" />
-    <Compile Include="TypeHandlerHelpersTest.ProcessConstantReference.g.cs">
-      <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlerHelpersTest.ProcessMethodCall.g.cs">
-      <DependentUpon>TypeHandlerHelpersTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.CanHandle.g.cs">
-      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.CodeMethodCall.g.cs">
-      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.cs" />
-    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessConstantReference.g.cs">
-      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessMethodCall.g.cs">
-      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCodeTest.ProcessNew.g.cs">
-      <DependentUpon>TypeHandlerCPPCodeTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.CanHandle.g.cs">
-      <DependentUpon>TypeHandlerReplacementCallTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.cs" />
-    <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCallTest.ProcessConstantReference.g.cs">
-      <DependentUpon>TypeHandlerReplacementCallTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="TypeHandlers\ROOT\ROOTObjectCopiedValueTest.cs" />
-    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.CanHandle.g.cs">
-      <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.cs" />
-    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessConstantReference.g.cs">
-      <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\ROOT\TypeHanlderROOTTest.ProcessNew.g.cs">
-      <DependentUpon>TypeHanlderROOTTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\TypeHandlerCacheTest.CodeMethodCall.g.cs">
-      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="TypeHandlers\TypeHandlerCacheTest.cs" />
-    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessConstantReference.g.cs">
-      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessMethodCall.g.cs">
-      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Expressions\t_ArrayExpressionParser.cs" />
     <Compile Include="Expressions\t_ArrayInfoVector.cs" />
     <Compile Include="Expressions\t_TranslatingExpressionVisitor.cs" />
-    <Compile Include="TypeHandlers\TypeHandlerCacheTest.ProcessNew.g.cs">
-      <DependentUpon>TypeHandlerCacheTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="ResultOperators\t_ROPairWiseAll.cs" />
     <Compile Include="Statements\StatementRecordIndiciesTest.cs" />
     <Compile Include="Statements\StatementAssignTest.cs" />
@@ -750,45 +271,12 @@
     <Compile Include="Statements\StatementLoopOverSortedPairValueTest.cs" />
     <Compile Include="QueryVisitors\ExpressionVariableInvokeExpressionTransformerTest.cs" />
     <Compile Include="Utils\t_TypeUtils.cs" />
-    <Compile Include="Utils\ExpressionUtilitiesTest.TestApply.g.cs">
-      <DependentUpon>t_ExpressionUtilities.cs</DependentUpon>
-    </Compile>
     <Compile Include="Utils\t_ExpressionUtilities.cs" />
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
-    <Compile Include="Variables\Savers\SaveVarObjectTest.IncludeFiles.g.cs">
-      <DependentUpon>SaveVarObjectTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\Savers\SaveVarObjectTest.LoadResult.g.cs">
-      <DependentUpon>SaveVarObjectTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\Savers\SaveVarObjectTest.SaveToFile.g.cs">
-      <DependentUpon>SaveVarObjectTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\ValSimpleTest.Constructor.g.cs">
-      <DependentUpon>ValSimpleTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\ValSimpleTest.Constructor2.g.cs">
-      <DependentUpon>ValSimpleTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Variables\ValSimpleTest.cs" />
-    <Compile Include="Variables\ValSimpleTest.TestCTorWithType.g.cs">
-      <DependentUpon>ValSimpleTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\VarUtilsTest.AsCastString.g.cs">
-      <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\VarUtilsTest.AsCPPType.g.cs">
-      <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Variables\VarUtilsTest.CastToType.g.cs">
-      <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Variables\VarUtilsTest.cs" />
-    <Compile Include="Variables\VarUtilsTest.IsPointerType.g.cs">
-      <DependentUpon>VarUtilsTest.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -806,12 +294,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets')" />
+  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.32.7\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.32.7\build\net40\ROOT.NET.Dynamic.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ROOT.NET.Dynamic.5.34.21.4\build\net40\ROOT.NET.Dynamic.targets'))" />
+    <Error Condition="!Exists('..\packages\ROOT.NET.Dynamic.5.34.32.7\build\net40\ROOT.NET.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ROOT.NET.Dynamic.5.34.32.7\build\net40\ROOT.NET.Dynamic.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,11 +1,7 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-// <copyright file="StatementInlineBlockTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +9,10 @@ using System.Linq;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>This class contains parameterized unit tests for StatementInlineBlock</summary>
-    [PexClass(typeof(StatementInlineBlock))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class StatementInlineBlockTest
     {
+#if false
         /// <summary>Test stub for Add(IStatement)</summary>
         [PexMethod]
         [PexUseType(typeof(StatementIncrementInteger))]
@@ -62,6 +56,7 @@ namespace LINQToTTreeLib.Statements
             IEnumerable<IStatement> result = target.Statements;
             return result;
         }
+#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -265,6 +260,7 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentException))]
         public void TestSimpleVariableDoubleInsert([PexAssumeNotNull] string name1, [PexAssumeNotNull] string name2)
         {
@@ -280,7 +276,7 @@ namespace LINQToTTreeLib.Statements
 
             Assert.AreEqual(2, b.DeclaredVariables.Count(), "incorrect number of variables");
         }
-
+#endif
         class DummyOptimizer : ICodeOptimizationService
         {
             public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
@@ -310,6 +306,7 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
         }
 
+#if false
         /// <summary>
         /// Make sure to test adding statements with inline blocks both the type that we can do and can't, and also
         /// simple single line statements.
@@ -346,6 +343,7 @@ namespace LINQToTTreeLib.Statements
                 Assert.AreEqual(0, b.DeclaredVariables.Count(), "# of declared variables");
             }
         }
+#endif
 
         /// <summary>
         /// Recurisvely count the # of good statements.

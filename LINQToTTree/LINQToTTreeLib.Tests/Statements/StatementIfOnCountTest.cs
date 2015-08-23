@@ -1,22 +1,15 @@
-// <copyright file="StatementIfOnCountTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Tests;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>This class contains parameterized unit tests for StatementIfOnCount</summary>
-    [PexClass(typeof(StatementIfOnCount))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class StatementIfOnCountTest
     {
@@ -26,6 +19,7 @@ namespace LINQToTTreeLib.Statements
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementIfOnCount target)
@@ -47,6 +41,7 @@ namespace LINQToTTreeLib.Statements
             return target;
             // TODO: add assertions to method StatementIfOnCountTest.Constructor(IValue, IValue, ComparisonOperator)
         }
+#endif
 
         [TestMethod]
         public void TestEmptyStatements()
@@ -93,6 +88,7 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+#if false
         [PexMethod]
         [PexUseType(typeof(StatementInlineBlock))]
         [PexUseType(typeof(StatementIncrementInteger))]
@@ -106,5 +102,6 @@ namespace LINQToTTreeLib.Statements
 
             Assert.IsFalse(statement.TryCombineStatement(s, null), "unable to do any combines for Filter");
         }
+#endif
     }
 }

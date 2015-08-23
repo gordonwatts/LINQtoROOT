@@ -4,19 +4,14 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
 {
-
-
     /// <summary>
     ///This is a test class for StatementAssignTest and is intended
     ///to contain all StatementAssignTest Unit Tests
     ///</summary>
-    [PexClass(typeof(StatementAssign))]
     [TestClass]
     public partial class StatementAssignTest
     {
@@ -26,6 +21,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>
         ///A test for StatementAssign Constructor
         ///</summary>
@@ -92,6 +88,7 @@ namespace LINQToTTreeLib.Tests
 
             return result;
         }
+#endif
 
         class DummyOptService : ICodeOptimizationService
         {

@@ -1,6 +1,5 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace LINQToTTreeLib.Tests
     /// <summary>
     /// Test top level queires of various sorts!
     /// </summary>
-    [TestClass, PexClass]
+    [TestClass]
     public partial class TestQueriesTopLevel
     {
         [TestInitialize]

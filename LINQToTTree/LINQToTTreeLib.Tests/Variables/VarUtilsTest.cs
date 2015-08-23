@@ -1,6 +1,4 @@
 using LinqToTTreeInterfacesLib;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 // <copyright file="VarUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
@@ -11,9 +9,6 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib.Variables
 {
     /// <summary>This class contains parameterized unit tests for VarUtils</summary>
-    [PexClass(typeof(VarUtils))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class VarUtilsTest
     {
@@ -84,6 +79,7 @@ namespace LINQToTTreeLib.Variables
             Assert.AreEqual("TString*", AsCPPType(typeof(ROOTNET.Interface.NTString)), "root tstring interface incorrect");
         }
 
+#if false
         /// <summary>Test stub for AsCastString(IValue)</summary>
         [PexMethod]
         [PexAllowedException(typeof(ArgumentException))]
@@ -95,6 +91,7 @@ namespace LINQToTTreeLib.Variables
             Assert.IsTrue(result.Contains("(("), "Result doesn't seem to contains the cast operator!");
             return result;
         }
+#endif
 
         [TestMethod]
         public void TestActualConversion()
@@ -131,6 +128,7 @@ namespace LINQToTTreeLib.Variables
             Assert.AreEqual("(*obj)", new ValSimple("obj", typeof(int[][])).CastToType(directJ), "0D access failed");
         }
 
+#if false
         /// <summary>Test stub for CastToType(IValue, Type)</summary>
         [PexMethod]
         public string CastToType(int sourceTypeSpec, int destTypeSpec)
@@ -177,7 +175,7 @@ namespace LINQToTTreeLib.Variables
             }
             return result;
         }
-
+#endif
         ///[PexMethod]
         public bool IsPointerType(Type t)
         {

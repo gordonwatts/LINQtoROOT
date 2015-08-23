@@ -3,10 +3,7 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-// <copyright file="TypeHandlerCPPCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
@@ -16,9 +13,6 @@ using System.Text;
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
     /// <summary>This class contains parameterized unit tests for TypeHandlerCPPCode</summary>
-    [PexClass(typeof(TypeHandlerCPPCode))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class TypeHandlerCPPCodeTest
     {
@@ -36,6 +30,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         internal bool CanHandle([PexAssumeUnderTest]TypeHandlerCPPCode target, Type t)
@@ -47,6 +42,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             return result;
         }
+#endif
 
         static class FreeClass
         {
@@ -77,6 +73,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             CanHandle(new TypeHandlerCPPCode(), typeof(DoItClass));
         }
 
+#if false
         /// <summary>Test stub for ProcessConstantReference(ConstantExpression, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod, PexAllowedException(typeof(NotImplementedException))]
         internal IValue ProcessConstantReference(
@@ -90,6 +87,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             return result;
             // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessConstantReference(TypeHandlerCPPCode, ConstantExpression, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
+#endif
 
         [TestMethod]
         public void TestSimpleCodeAddon()
@@ -143,6 +141,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.AreEqual(expected.ToString(), st2, "statement line incorrect");
         }
 
+#if false
         /// <summary>Test stub for ProcessMethodCall(MethodCallExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod]
         internal Expression ProcessMethodCall(
@@ -185,6 +184,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             return result01;
             // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessNew(TypeHandlerCPPCode, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
+#endif
 
         [TestMethod]
         public void TestForUniqueReplacement()

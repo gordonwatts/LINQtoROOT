@@ -5,16 +5,11 @@ using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib
 {
     [TestClass]
-    [PexClass(typeof(TTreeQueryExecutor))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
     [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public partial class TTreeQueryExecutorTest
     {
@@ -36,6 +31,7 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
+#if false
         [PexMethod, PexAllowedException(typeof(FileNotFoundException))]
         public TTreeQueryExecutor Constructor(Uri rootFile, string proxyLocation, string[] extraLocations, string treeName)
         {
@@ -131,6 +127,7 @@ namespace LINQToTTreeLib
 
             return target;
         }
+#endif
 
         /// <summary>
         /// Dirt simply test ntuple. Actually matches one that exists on disk.

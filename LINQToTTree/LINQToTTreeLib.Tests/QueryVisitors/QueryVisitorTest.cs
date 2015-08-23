@@ -7,8 +7,6 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -24,9 +22,6 @@ using System.Text.RegularExpressions;
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for QueryVisitor</summary>
-    [PexClass(typeof(QueryVisitor))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     [DeploymentItem(@"ConfigData\default.classmethodmappings")]
     public partial class QueryVisitorTest

@@ -1,5 +1,3 @@
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 // <copyright file="ExpressionStringConverterTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
@@ -8,19 +6,18 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib.Expressions
 {
     /// <summary>This class contains parameterized unit tests for ExpressionStringConverter</summary>
-    [PexClass(typeof(ExpressionStringConverter))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ExpressionStringConverterTest
     {
         /// <summary>Test stub for Format(Expression)</summary>
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public string Format(Expression expression)
         {
             string result = ExpressionStringConverter.Format(expression);
             return result;
         }
+#endif
 
         private Tuple<Expression, Expression>[] NotSameExpressions = new Tuple<Expression, Expression>[]
             {
@@ -36,7 +33,6 @@ namespace LINQToTTreeLib.Expressions
                 Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTH1F("hi", "there", 20, 0.0, 10.0)), Expression.Constant(new ROOTNET.NTH1F("hidude", "therefork", 20, 0.0, 10.0))),
                 Tuple.Create<Expression, Expression> (Expression.Constant(new ROOTNET.NTLorentzVector(1.0, 1.0, 1.0, 10.0)), Expression.Constant(new ROOTNET.NTLorentzVector(1.0, 1.0, 1.0, 10.0))),
             };
-
         [TestMethod]
         public void TestNotSame()
         {

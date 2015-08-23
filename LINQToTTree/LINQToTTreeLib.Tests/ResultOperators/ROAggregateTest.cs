@@ -8,8 +8,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -17,9 +15,6 @@ using Remotion.Linq.Clauses.ResultOperators;
 namespace LINQToTTreeLib.ResultOperators
 {
     /// <summary>This class contains parameterized unit tests for ROAggregate</summary>
-    [PexClass(typeof(ROAggregate))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ROAggregateTest
     {
@@ -36,6 +31,7 @@ namespace LINQToTTreeLib.ResultOperators
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         public bool CanHandle([PexAssumeUnderTest]ROAggregate target, Type resultOperatorType)
@@ -44,11 +40,12 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
             // TODO: add assertions to method ROAggregateTest.CanHandle(ROAggregate, Type)
         }
+#endif
 
         /// Pex seems to hang when it tries to explore this one.
         ///[PexMethod]
         public Expression ProcessResultOperator(
-            [PexAssumeUnderTest]ROAggregate target,
+            ROAggregate target,
             AggregateFromSeedResultOperator resultOperator,
             QueryModel queryModel,
             IGeneratedQueryCode _codeEnv

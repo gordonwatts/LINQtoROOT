@@ -2,8 +2,6 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
@@ -13,7 +11,6 @@ namespace LINQToTTreeLib.Tests.Statements
     /// Some tests for the for loop
     /// </summary>
     [TestClass]
-    [PexClass(typeof(StatementForLoop))]
     public partial class StatementForLoopTest
     {
         [TestInitialize]
@@ -52,6 +49,7 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsFalse(r, "different initial conditions, should be null");
         }
 
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
         public void TestCombineIdentical(IDeclaredParameter loopVarName, IValue ivalSize, IValue initialValue)
         {
@@ -61,6 +59,30 @@ namespace LINQToTTreeLib.Tests.Statements
             var r = p1.TryCombineStatement(p2, new dummyOpt());
             Assert.IsTrue(r, "Should always be equal");
         }
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
+        public void TestCombineDifInitial(IDeclaredParameter loopVarName, IValue ivalSize, IValue initialValue1, IValue initialValue2)
+        {
+            var p1 = new StatementForLoop(loopVarName, ivalSize, initialValue1);
+            var p2 = new StatementForLoop(loopVarName, ivalSize, initialValue2);
+
+            var r = p1.TryCombineStatement(p2, new dummyOpt());
+            Assert.IsFalse(r, "Should always be equal");
+        }
+
+        [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
+        public StatementForLoop TestCTor(IDeclaredParameter loopVarName, IValue ivalSize, IValue initialValue)
+        {
+            var p = new StatementForLoop(loopVarName, ivalSize, initialValue);
+            Assert.AreEqual(typeof(int), ivalSize.Type, "size value");
+            if (initialValue != null)
+                Assert.AreEqual(typeof(int), initialValue.Type, "inital value type");
+
+            Assert.AreEqual(p.ArrayLength.RawValue, ivalSize.RawValue, "Initial value must be set");
+
+            return p;
+        }
+
+#endif
 
         [TestMethod]
         public void TestCombineNestedForLoop()
@@ -108,29 +130,5 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.AreEqual(base1, loop1.Parent, "loop 1 parent");
             Assert.AreEqual(loop1, loop22.Parent, "Loop 2 parent");
         }
-
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
-        public void TestCombineDifInitial(IDeclaredParameter loopVarName, IValue ivalSize, IValue initialValue1, IValue initialValue2)
-        {
-            var p1 = new StatementForLoop(loopVarName, ivalSize, initialValue1);
-            var p2 = new StatementForLoop(loopVarName, ivalSize, initialValue2);
-
-            var r = p1.TryCombineStatement(p2, new dummyOpt());
-            Assert.IsFalse(r, "Should always be equal");
-        }
-
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException)), PexAllowedException(typeof(ArgumentException))]
-        public StatementForLoop TestCTor(IDeclaredParameter loopVarName, IValue ivalSize, IValue initialValue)
-        {
-            var p = new StatementForLoop(loopVarName, ivalSize, initialValue);
-            Assert.AreEqual(typeof(int), ivalSize.Type, "size value");
-            if (initialValue != null)
-                Assert.AreEqual(typeof(int), initialValue.Type, "inital value type");
-
-            Assert.AreEqual(p.ArrayLength.RawValue, ivalSize.RawValue, "Initial value must be set");
-
-            return p;
-        }
-
     }
 }

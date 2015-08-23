@@ -4,11 +4,7 @@ using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-// <copyright file="GeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +13,10 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for GeneratedCode</summary>
-    [PexClass(typeof(GeneratedCode))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class GeneratedCodeTest
     {
+#if false
         /// <summary>Test stub for Add(IStatement)</summary>
         [PexMethod]
         [PexUseType(typeof(StatementIncrementInteger)), PexAllowedException(typeof(ArgumentException))]
@@ -43,6 +38,152 @@ namespace LINQToTTreeLib
         {
             target.AddOneLevelUp(var);
         }
+
+                /// <summary>
+        /// No matter what, there should always be one statement in there!
+        /// </summary>
+        /// <param name="s"></param>
+        [PexMethod]
+        public void LookAtStatements([PexAssumeUnderTest] GeneratedCode target)
+        {
+            Assert.IsNotNull(target.QueryCode(), "always a good statement for jokes!");
+            Assert.AreEqual(1, target.QueryCode().Count(), "Single query should have a single statement at all times");
+            Assert.AreEqual(target.CodeBody, target.QueryCode().First(), "The code body is what we should be seeing here!");
+        }
+
+        [PexMethod]
+        [PexUseType(typeof(CompoundBookingStatement))]
+        [PexUseType(typeof(CompoundStatement))]
+        [PexUseType(typeof(SimpleStatement)), PexAllowedException(typeof(ArgumentException))]
+        public void AddCompoundStatementTest(IStatement s)
+        {
+            var target = new GeneratedCode();
+            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var boringStatement = new StatementIncrementInteger(v);
+
+            target.Add(s);
+            target.Add(v);
+            target.Add(boringStatement);
+
+            int expectedTopLevelStatements = 2;
+            if (s is IStatementCompound)
+                expectedTopLevelStatements = 1;
+
+            int expectedTopLevelVariables = 1;
+            if (s is IBookingStatementBlock)
+                expectedTopLevelVariables = 0;
+
+            Assert.AreEqual(expectedTopLevelStatements, target.CodeBody.Statements.Count(), "Incorrect # of statements");
+            Assert.AreEqual(expectedTopLevelVariables, target.CodeBody.DeclaredVariables.Count(), "Incorrect # of variables");
+        }
+
+        [PexMethod]
+        public void AddCompound()
+        {
+            var s = new StatementInlineBlock();
+            var target = new GeneratedCode();
+            target.Add(s);
+            Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
+
+            ///
+            /// Adding a second statement should not alter the top level statement.
+            /// 
+
+            target.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+            Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
+        }
+
+        /// <summary>Test stub for .ctor()</summary>
+        [PexMethod]
+        public GeneratedCode Constructor()
+        {
+            GeneratedCode target = new GeneratedCode();
+            Assert.IsNull(target.ResultValue, "Expected no result");
+            Assert.IsNotNull(target.CodeBody, "Expected a code body object to exist");
+            return target;
+        }
+
+        /// <summary>Test stub for SetResult(IVariable)</summary>
+        [PexMethod]
+        internal void SetResult([PexAssumeUnderTest]GeneratedCode target, DeclarableParameter r)
+        {
+            target.SetResult(r);
+            Assert.AreEqual(r, target.ResultValue, "The result value wasn't changed");
+        }
+
+        [PexMethod]
+        [PexUseType(typeof(StatementInlineBlock))]
+        [PexUseType(typeof(StatementIncrementInteger)), PexAllowedException(typeof(ArgumentException))]
+        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s1, [PexAssumeNotNull] IStatement s2)
+        {
+            ///
+            /// Check that scoping correctly moves back tot he right place and inserts the stements and
+            /// the variables.
+            /// 
+
+
+            ///
+            /// Initial setup - we need to do this to prevent some sort of funny insertion that Pex finds that
+            /// invalidates this test.
+            /// 
+
+            GeneratedCode target = new GeneratedCode();
+            foreach (var stat in initialStatements)
+            {
+                target.Add(stat);
+            }
+
+            ///
+            /// Now, mark where we are and count initial conditions
+            /// 
+
+            var currentScope = target.CurrentScope;
+
+            ///
+            /// Now insert the statement twice and the variables too.
+            /// 
+
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            target.Add(v1);
+            target.Add(s1);
+            target.CurrentScope = currentScope;
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            target.Add(v2);
+            target.Add(s2);
+        }
+
+        [PexMethod]
+        public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, object val)
+        {
+            int count = target.VariablesToTransfer.Count();
+            HashSet<string> names = new HashSet<string>(target.VariablesToTransfer.Select(v => v.Key));
+            var name = target.QueueForTransfer(val);
+            names.Add(name);
+            Assert.IsNotNull(target.VariablesToTransfer.Last());
+            Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
+        }
+
+        [PexMethod]
+        public void Pop([PexAssumeNotNull]IStatement s, bool popPastLoop)
+        {
+            var gc = new GeneratedCode();
+            int depth = gc.Depth;
+            gc.Add(s);
+
+            bool good = s is IBookingStatementBlock;
+            try
+            {
+                gc.Pop(popPastLoop);
+                Assert.AreEqual(depth, gc.Depth, "Depth isn't set correctly");
+                Assert.IsTrue(good, "booking statement");
+            }
+            catch (InvalidOperationException)
+            {
+                Assert.IsFalse(good, "a booking statement");
+            }
+        }
+
+#endif
 
         [TestMethod]
         public void AddQMFunc()
@@ -181,118 +322,6 @@ namespace LINQToTTreeLib
             }
         }
 
-        /// <summary>
-        /// No matter what, there should always be one statement in there!
-        /// </summary>
-        /// <param name="s"></param>
-        [PexMethod]
-        public void LookAtStatements([PexAssumeUnderTest] GeneratedCode target)
-        {
-            Assert.IsNotNull(target.QueryCode(), "always a good statement for jokes!");
-            Assert.AreEqual(1, target.QueryCode().Count(), "Single query should have a single statement at all times");
-            Assert.AreEqual(target.CodeBody, target.QueryCode().First(), "The code body is what we should be seeing here!");
-        }
-
-        [PexMethod]
-        [PexUseType(typeof(CompoundBookingStatement))]
-        [PexUseType(typeof(CompoundStatement))]
-        [PexUseType(typeof(SimpleStatement)), PexAllowedException(typeof(ArgumentException))]
-        public void AddCompoundStatementTest(IStatement s)
-        {
-            var target = new GeneratedCode();
-            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var boringStatement = new StatementIncrementInteger(v);
-
-            target.Add(s);
-            target.Add(v);
-            target.Add(boringStatement);
-
-            int expectedTopLevelStatements = 2;
-            if (s is IStatementCompound)
-                expectedTopLevelStatements = 1;
-
-            int expectedTopLevelVariables = 1;
-            if (s is IBookingStatementBlock)
-                expectedTopLevelVariables = 0;
-
-            Assert.AreEqual(expectedTopLevelStatements, target.CodeBody.Statements.Count(), "Incorrect # of statements");
-            Assert.AreEqual(expectedTopLevelVariables, target.CodeBody.DeclaredVariables.Count(), "Incorrect # of variables");
-        }
-
-        [PexMethod]
-        public void AddCompound()
-        {
-            var s = new StatementInlineBlock();
-            var target = new GeneratedCode();
-            target.Add(s);
-            Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
-
-            ///
-            /// Adding a second statement should not alter the top level statement.
-            /// 
-
-            target.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
-            Assert.AreEqual(1, target.CodeBody.Statements.Count(), "Expected a single statement to have been added");
-        }
-
-        /// <summary>Test stub for .ctor()</summary>
-        [PexMethod]
-        public GeneratedCode Constructor()
-        {
-            GeneratedCode target = new GeneratedCode();
-            Assert.IsNull(target.ResultValue, "Expected no result");
-            Assert.IsNotNull(target.CodeBody, "Expected a code body object to exist");
-            return target;
-        }
-
-        /// <summary>Test stub for SetResult(IVariable)</summary>
-        [PexMethod]
-        internal void SetResult([PexAssumeUnderTest]GeneratedCode target, DeclarableParameter r)
-        {
-            target.SetResult(r);
-            Assert.AreEqual(r, target.ResultValue, "The result value wasn't changed");
-        }
-
-        [PexMethod]
-        [PexUseType(typeof(StatementInlineBlock))]
-        [PexUseType(typeof(StatementIncrementInteger)), PexAllowedException(typeof(ArgumentException))]
-        public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s1, [PexAssumeNotNull] IStatement s2)
-        {
-            ///
-            /// Check that scoping correctly moves back tot he right place and inserts the stements and
-            /// the variables.
-            /// 
-
-
-            ///
-            /// Initial setup - we need to do this to prevent some sort of funny insertion that Pex finds that
-            /// invalidates this test.
-            /// 
-
-            GeneratedCode target = new GeneratedCode();
-            foreach (var stat in initialStatements)
-            {
-                target.Add(stat);
-            }
-
-            ///
-            /// Now, mark where we are and count initial conditions
-            /// 
-
-            var currentScope = target.CurrentScope;
-
-            ///
-            /// Now insert the statement twice and the variables too.
-            /// 
-
-            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            target.Add(v1);
-            target.Add(s1);
-            target.CurrentScope = currentScope;
-            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            target.Add(v2);
-            target.Add(s2);
-        }
 
         [TestMethod]
         public void TestChangeScopeSpecificTopLevel()
@@ -347,17 +376,6 @@ namespace LINQToTTreeLib
             target.Add(s);
             Assert.AreEqual(curStatements + 2, deepestStatementLevel.Statements.Count(), "Scope reset, should always be two extra statements here!");
             Assert.AreEqual(curVars + 2, deepestDeclarLevel.DeclaredVariables.Count(), "Scope reset should have also reset where the variable was pointing");
-        }
-
-        [PexMethod]
-        public void TestAddTransfer([PexAssumeUnderTest] GeneratedCode target, object val)
-        {
-            int count = target.VariablesToTransfer.Count();
-            HashSet<string> names = new HashSet<string>(target.VariablesToTransfer.Select(v => v.Key));
-            var name = target.QueueForTransfer(val);
-            names.Add(name);
-            Assert.IsNotNull(target.VariablesToTransfer.Last());
-            Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
         }
 
         [TestMethod]
@@ -501,26 +519,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements present now");
             gc.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new Variables.ValSimple("ih", typeof(int)), null));
             Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements present now");
-        }
-
-        [PexMethod]
-        public void Pop([PexAssumeNotNull]IStatement s, bool popPastLoop)
-        {
-            var gc = new GeneratedCode();
-            int depth = gc.Depth;
-            gc.Add(s);
-
-            bool good = s is IBookingStatementBlock;
-            try
-            {
-                gc.Pop(popPastLoop);
-                Assert.AreEqual(depth, gc.Depth, "Depth isn't set correctly");
-                Assert.IsTrue(good, "booking statement");
-            }
-            catch (InvalidOperationException)
-            {
-                Assert.IsFalse(good, "a booking statement");
-            }
         }
 
         [TestMethod]

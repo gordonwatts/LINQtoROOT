@@ -2,8 +2,6 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -16,7 +14,6 @@ namespace LINQToTTreeLib.Tests
     ///to contain all TestStatementRecordValue Unit Tests
     ///</summary>
     [TestClass]
-    [PexClass(typeof(StatementRecordValue))]
     public partial class TestStatementRecordValue
     {
         [TestInitialize]
@@ -25,6 +22,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>
         ///A test for CodeItUp
         ///</summary>
@@ -54,6 +52,7 @@ namespace LINQToTTreeLib.Tests
             var actual = target.TryCombineStatement(statement, optimize);
             return actual;
         }
+#endif
 
         [TestMethod]
         public void TestTCIdenticalButForFirstLast()

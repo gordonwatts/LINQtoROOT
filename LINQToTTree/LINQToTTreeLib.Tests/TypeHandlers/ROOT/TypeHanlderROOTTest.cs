@@ -1,21 +1,15 @@
-// <copyright file="TypeHanlderROOTTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
     /// <summary>This class contains parameterized unit tests for TypeHanlderROOT</summary>
-    [PexClass(typeof(TypeHandlerROOT))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class TypeHanlderROOTTest
     {
@@ -33,6 +27,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
         [PexMethod]
         public bool CanHandle([PexAssumeUnderTest]TypeHandlerROOT target, Type t)
@@ -54,6 +49,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             Assert.IsNotNull(result);
             return result;
         }
+#endif
 
         [TestMethod]
         public void TestQueueForTransferNoNameChange()
@@ -145,6 +141,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             Assert.IsTrue(s2s.Line.Contains("TLorentzVector *"), "second line is not that good");
         }
 
+#if false
         /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
         [PexMethod]
         public Expression ProcessNew(
@@ -159,5 +156,6 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
             return result01;
         }
+#endif
     }
 }

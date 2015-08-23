@@ -3,7 +3,6 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.TypeHandlers;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace LINQToTTreeLib.Tests
     ///This is a test class for TestExpressionResolver and is intended
     ///to contain all TestExpressionResolver Unit Tests
     ///</summary>
-    [TestClass, PexClass(typeof(ExpressionResolver))]
+    [TestClass]
     public partial class TestExpressionResolver
     {
         [TestInitialize]
@@ -32,13 +31,14 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.MyClassDone();
         }
 
-
+#if false
         [PexMethod]
         public Expression RunResolve(Expression source, IGeneratedQueryCode gc, ICodeContext cc)
         {
             MEFUtilities.Compose(new TypeHandlerCache());
             return ExpressionResolver.Resolve(source, gc, cc, MEFUtilities.MEFContainer);
         }
+#endif
 
         /// <summary>
         /// Test that when we have a sub-expression it only gets emitted into the code once.

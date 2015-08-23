@@ -24,14 +24,14 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -45,8 +45,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>c:\root\include;$(IncludePath)</IncludePath>
-    <LibraryPath>c:\root\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ROOTSYS)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ROOTSYS)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,17 +93,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\libCoreWrapper.dll</HintPath>
+      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.32.7\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper">
-      <HintPath>..\Packages\ROOT.NET.Tree.5.34.21.4\lib\net40\libTreeWrapper.dll</HintPath>
+      <HintPath>..\Packages\ROOT.NET.Tree.5.34.32.7\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.21.4\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.32.7\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

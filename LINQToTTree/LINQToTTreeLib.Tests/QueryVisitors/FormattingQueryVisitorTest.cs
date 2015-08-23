@@ -1,6 +1,4 @@
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 // <copyright file="FormattingQueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
@@ -10,9 +8,6 @@ using System.Linq;
 namespace LINQToTTreeLib.QueryVisitors
 {
     /// <summary>This class contains parameterized unit tests for FormattingQueryVisitor</summary>
-    [PexClass(typeof(FormattingQueryVisitor))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class FormattingQueryVisitorTest
     {
@@ -29,6 +24,7 @@ namespace LINQToTTreeLib.QueryVisitors
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>Test stub for Format(QueryModel)</summary>
         [PexMethod]
         internal string Format(QueryModel query)
@@ -39,6 +35,7 @@ namespace LINQToTTreeLib.QueryVisitors
             return result;
             // TODO: add assertions to method FormattingQueryVisitorTest.Format(QueryModel)
         }
+#endif
 
         public class arrayntup
         {

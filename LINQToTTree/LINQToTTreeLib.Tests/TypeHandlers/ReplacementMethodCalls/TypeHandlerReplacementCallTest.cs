@@ -1,4 +1,3 @@
-// <copyright file="TypeHandlerReplacementCallTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.IO;
 using System.Linq;
@@ -6,15 +5,11 @@ using System.Linq.Expressions;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 {
     /// <summary>This class contains parameterized unit tests for TypeHandlerReplacementCall</summary>
-    [PexClass(typeof(TypeHandlerReplacementCall))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     [DeploymentItem(@"ConfigData\default.classmethodmappings")]
     public partial class TypeHandlerReplacementCallTest
@@ -35,7 +30,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
 
         /// <summary>Test stub for CanHandle(Type)</summary>
         //[PexMethod]
-        public bool CanHandle([PexAssumeUnderTest]TypeHandlerReplacementCall target, Type t)
+        public bool CanHandle(TypeHandlerReplacementCall target, Type t)
         {
             bool result = target.CanHandle(t);
             return result;
@@ -45,7 +40,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         /// <summary>Test stub for ProcessMethodCall(MethodCallExpression, IValue&amp;, IGeneratedCode, ICodeContext)</summary>
         ///[PexMethod]
         public Expression ProcessMethodCall(
-            [PexAssumeUnderTest]TypeHandlerReplacementCall target,
+            TypeHandlerReplacementCall target,
             MethodCallExpression expr,
             IGeneratedQueryCode gc,
             ICodeContext context
@@ -56,6 +51,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             // TODO: add assertions to method TypeHandlerReplacementCallTest.ProcessMethodCall(TypeHandlerReplacementCall, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
         }
 
+#if false
         [PexMethod]
         public IValue CodeMethodCall(
             [PexAssumeUnderTest]TypeHandlerReplacementCall target,
@@ -66,6 +62,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var result01 = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
             return result01;
         }
+#endif
 
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]

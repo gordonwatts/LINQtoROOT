@@ -2,8 +2,6 @@
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.relinq;
 using LINQToTTreeLib.ResultOperators;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -13,8 +11,6 @@ using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests.ResultOperators
 {
-    [PexClass(typeof(ROUniqueCombinations))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ROUniqueCombinationsTest
     {
@@ -30,6 +26,7 @@ namespace LINQToTTreeLib.Tests.ResultOperators
             MEFUtilities.MyClassDone();
         }
 
+#if false
         [PexMethod]
         internal bool CanHandle(
             [PexAssumeUnderTest]ROUniqueCombinations target,
@@ -57,6 +54,7 @@ namespace LINQToTTreeLib.Tests.ResultOperators
         {
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, cc, null);
         }
+#endif
 
         class ntupArray
         {

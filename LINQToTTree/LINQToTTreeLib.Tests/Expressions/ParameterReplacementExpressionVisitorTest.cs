@@ -1,6 +1,4 @@
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
@@ -11,9 +9,6 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib.Expressions
 {
     /// <summary>This class contains parameterized unit tests for ParameterReplacementExpressionVisitor</summary>
-    [PexClass(typeof(ParameterReplacementExpressionVisitor))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class ParameterReplacementExpressionVisitorTest
     {

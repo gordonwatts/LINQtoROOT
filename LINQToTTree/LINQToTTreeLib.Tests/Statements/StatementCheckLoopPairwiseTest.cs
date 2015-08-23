@@ -4,8 +4,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -17,7 +15,6 @@ namespace LINQToTTreeLib.Tests
     ///to contain all TestStatementCheckLoopPairwise Unit Tests
     ///</summary>
     [TestClass]
-    [PexClass(typeof(StatementCheckLoopPairwise))]
     public partial class TestStatementCheckLoopPairwise
     {
         [TestInitialize]
@@ -26,6 +23,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>
         ///A test for StatementCheckLoopPairwise Constructor
         ///</summary>
@@ -65,6 +63,7 @@ namespace LINQToTTreeLib.Tests
 
             return actual;
         }
+#endif
 
         [TestMethod]
         public void TestTryCombinedFail()
@@ -140,7 +139,7 @@ namespace LINQToTTreeLib.Tests
             s1.Add(new StatementSimpleStatement(string.Format("{0} = fork", index2.RawValue)));
 
             s1.RenameVariable(indiciesToInspect.RawValue, "dude1");
-            Assert.AreEqual("dude1", indiciesToInspect.RawValue, "indicies 1");
+            Assert.AreEqual("dude1", indiciesToInspect.RawValue, "indices 1");
 
             s1.RenameVariable(index1.RawValue, "dude2");
             Assert.AreEqual(index1.RawValue, "dude2", "index1 didn't get set");

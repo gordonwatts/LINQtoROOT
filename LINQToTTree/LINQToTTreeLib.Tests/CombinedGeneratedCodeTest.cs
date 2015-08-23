@@ -5,14 +5,9 @@ using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Tests.QMFunctions;
 using LINQToTTreeLib.Variables;
-using Microsoft.ExtendedReflection.DataAccess;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Using;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-// <copyright file="CombinedGeneratedCodeTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +16,10 @@ using System.Linq.Expressions;
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for CombinedGeneratedCode</summary>
-    [PexClass(typeof(CombinedGeneratedCode))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class CombinedGeneratedCodeTest
     {
+#if false
         /// <summary>Test stub for AddGeneratedCode(IGeneratedQueryCode)</summary>
         [PexMethod]
         [PexUseType(typeof(GeneratedCode)), PexAllowedException(typeof(ArgumentException)), PexAllowedException(typeof(TermDestructionException)), PexAllowedException(typeof(ArgumentNullException))]
@@ -121,6 +114,7 @@ namespace LINQToTTreeLib
             return result;
             // TODO: add assertions to method CombinedGeneratedCodeTest.VariablesToTransferGet(CombinedGeneratedCode)
         }
+#endif
 
         /// <summary>
         /// Explicit test to see if the combining works correctly.

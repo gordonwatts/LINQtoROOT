@@ -6,19 +6,15 @@ using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.TypeHandlers
 {
     /// <summary>This class contains parameterized unit tests for TypeHandlerCache</summary>
-    [PexClass(typeof(TypeHandlerCache))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class TypeHandlerCacheTest
     {
+#if false
         [PexMethod]
         public IValue ProcessConstantReference(
             [PexAssumeUnderTest]TypeHandlerCache target,
@@ -30,6 +26,8 @@ namespace LINQToTTreeLib.TypeHandlers
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessConstantReference(TypeHandlerCache, ConstantExpression, IGeneratedCode)
         }
+#endif
+
         [TestInitialize]
         public void Setup()
         {
@@ -120,6 +118,7 @@ namespace LINQToTTreeLib.TypeHandlers
             Assert.AreEqual(result.Type, typeof(int), "result type");
         }
 
+#if false
         [PexMethod]
         public Expression ProcessMethodCall(
             [PexAssumeUnderTest]TypeHandlerCache target,
@@ -156,5 +155,6 @@ namespace LINQToTTreeLib.TypeHandlers
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessNew(TypeHandlerCache, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
         }
+#endif
     }
 }

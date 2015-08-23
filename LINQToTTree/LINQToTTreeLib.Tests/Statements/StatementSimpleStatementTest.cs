@@ -5,17 +5,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Tests;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>This class contains parameterized unit tests for StatementSimpleStatement</summary>
-    [PexClass(typeof(StatementSimpleStatement))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     public partial class StatementSimpleStatementTest
     {
@@ -25,6 +20,7 @@ namespace LINQToTTreeLib.Statements
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>Test stub for CodeItUp()</summary>
         [PexMethod]
         public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementSimpleStatement target)
@@ -53,6 +49,7 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(line, target.Line, "bad line set");
             return target;
         }
+#endif
 
         [TestMethod]
         public void CTorTest()
@@ -89,6 +86,7 @@ namespace LINQToTTreeLib.Statements
             Assert.IsFalse(st1.TryCombineStatement(st3, null), "diff statements should not combine");
         }
 
+#if false
         [PexMethod]
         public bool TestTryCombine([PexAssumeUnderTest] StatementSimpleStatement target, IStatement st)
         {
@@ -114,5 +112,6 @@ namespace LINQToTTreeLib.Statements
                 Assert.IsFalse(Regex.Match(target.Line, string.Format(@"\b{0}\b", oldvar)).Success, "old guy should not be in there!");
             return target;
         }
+#endif
     }
 }

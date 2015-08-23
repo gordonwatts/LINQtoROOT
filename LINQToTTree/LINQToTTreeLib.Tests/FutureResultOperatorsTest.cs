@@ -1,19 +1,13 @@
-// <copyright file="FutureResultOperatorsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
 
 namespace LINQToTTreeLib
 {
     /// <summary>This class contains parameterized unit tests for FutureResultOperators</summary>
-    [PexClass(typeof(FutureResultOperators))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(InvalidOperationException))]
-    [PexAllowedExceptionFromTypeUnderTest(typeof(ArgumentException), AcceptExceptionSubtypes = true)]
     [TestClass]
     [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public partial class FutureResultOperatorsTest
@@ -56,6 +50,7 @@ namespace LINQToTTreeLib
             }
         }
 
+#if false
         /// <summary>Test stub for FutureCount(IQueryable`1&lt;!!0&gt;)</summary>
         [PexGenericArguments(typeof(int))]
         [PexMethod]
@@ -65,6 +60,7 @@ namespace LINQToTTreeLib
             return result;
             // TODO: add assertions to method FutureResultOperatorsTest.FutureCount(IQueryable`1<!!0>)
         }
+#endif
 
         class SimpleEventNtup
         {

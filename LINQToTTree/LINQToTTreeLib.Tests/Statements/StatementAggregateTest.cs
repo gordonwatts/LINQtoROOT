@@ -3,8 +3,6 @@ using System.Linq;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib.Tests
@@ -15,7 +13,6 @@ namespace LINQToTTreeLib.Tests
     ///This is a test class for StatementAggregateTest and is intended
     ///to contain all StatementAggregateTest Unit Tests
     ///</summary>
-    [PexClass(typeof(StatementAggregate))]
     [TestClass]
     public partial class StatementAggregateTest
     {
@@ -25,6 +22,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
+#if false
         /// <summary>
         ///A test for StatementAggregate Constructor
         ///</summary>
@@ -86,6 +84,7 @@ namespace LINQToTTreeLib.Tests
 
             return result;
         }
+#endif
 
         [TestMethod]
         public void TestCombineWithRename()

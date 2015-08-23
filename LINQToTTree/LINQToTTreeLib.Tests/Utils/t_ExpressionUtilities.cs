@@ -2,8 +2,6 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using Microsoft.Pex.Framework;
-using Microsoft.Pex.Framework.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq.Expressions;
@@ -35,11 +33,13 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("((a)-(b))", new ValSimple("(a)-(b)", typeof(int)).ApplyParensIfNeeded(), "single term");
         }
 
+#if false
         [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
         public string TestApply(string value)
         {
             return value.ApplyParensIfNeeded();
         }
+#endif
 
         [TestMethod]
         public void TestArrayRemovalNull()
