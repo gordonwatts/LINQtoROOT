@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         public static FileInfo CopyToDirectory(FileInfo sourceFile, DirectoryInfo destDirectory)
         {
             ///
-            /// See if the dest file is already there. If so, don't copy over
+            /// See if the destination file is already there. If so, don't copy over
             /// 
 
             FileInfo destFile = new FileInfo(destDirectory.FullName + "\\" + sourceFile.Name);
@@ -223,6 +223,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Version of VC we are using.
+        /// </summary>
+        /// <remarks>Note this is tied closely to the version of the ROOT packages we are
+        /// built against. There is no, currently, way to auto-discover that.
+        /// </remarks>
+        const string vcVersion = "12.0";
+
+        /// <summary>
         /// Make sure the environment is setup to run the C++ compiler. If it isn't adjust it.
         /// </summary>
         /// <remarks>
@@ -243,13 +251,13 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Get the install directory
 
-            var vcInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VC7", "11.0");
+            var vcInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VC7", vcVersion);
             if (vcInstallDir == null)
-                throw new NotSupportedException("Visual Studio C++ v11.0 (VS2012) must be installed or already setup otherwise we cannot run!");
+                throw new NotSupportedException(string.Format("Visual Studio C++ v{0} (VisualStudio) must be installed or already setup otherwise we cannot run!", vcVersion));
 
-            var vsInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VS7", "11.0");
+            var vsInstallDir = GetVCRegistryEntry(@"Microsoft\VisualStudio\SxS\VS7", vcVersion);
             if (vsInstallDir == null)
-                throw new NotSupportedException("Visual Studio IDE v11.0 (VS2012) must be installed already otherwise setup cannot run!");
+                throw new NotSupportedException(string.Format("Visual Studio IDE v{0} (VisualStudio) must be installed already otherwise setup cannot run!", vcVersion));
 
             var winSDKDir = GetVCRegistryEntry(@"Microsoft\Microsoft SDKs\Windows\v7.1A", "InstallationFolder");
             if (winSDKDir == null)
@@ -264,11 +272,11 @@ namespace LINQToTTreeLib.ExecutionCommon
             AddToPathEnv("LIBPATH", string.Format(@"{0}\lib", vcInstallDir));
 
             if (!FindFileInEnv("PATH", "cl.exe"))
-                throw new InvalidOperationException("Despite defining PATH variabels to the compiler, we can't find cl.exe!");
+                throw new InvalidOperationException("Despite defining PATH variables to the compiler, we can't find cl.exe!");
         }
 
         /// <summary>
-        /// Add to a semi-colon seperated environment variable
+        /// Add to a semi-colon separated environment variable
         /// </summary>
         /// <param name="p"></param>
         /// <param name="p_2"></param>
@@ -321,7 +329,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Search the environment for a file.
         /// </summary>
-        /// <param name="envVariable">Name of the environment variable, with paths, seperated by semi-colons.</param>
+        /// <param name="envVariable">Name of the environment variable, with paths, separated by semi-colons.</param>
         /// <param name="filename"></param>
         /// <returns></returns>
         private static bool FindFileInEnv(string envVariable, string filename)
@@ -364,7 +372,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             ///
             /// Now that we have them, unload them. Since repeated unloading
-            /// cases erorr messages to the concole, clear the list so we don't
+            /// cases error messages to the console, clear the list so we don't
             /// make a mistake later.
             /// 
 
