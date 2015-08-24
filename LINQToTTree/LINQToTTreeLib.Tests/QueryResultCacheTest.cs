@@ -199,11 +199,16 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Create a pretend root file.
         /// </summary>
-        /// <param name="subDirName"></param>
-        /// <returns></returns>
+        /// <param name="subDirName">A name we can use to write this in - to keep tests separate</param>
+        /// <returns>URI to the root file</returns>
+        /// <remarks>
+        /// This creates the file in the temp area. It turns out to be important that this file and the query cache
+        /// files be created on the same disk. Otherwise subtle timing issues can come into play. Yeah. Surprised the
+        /// heck out of me too.
+        /// </remarks>
         private Uri MakeRootFile(string subDirName)
         {
-            DirectoryInfo inf = new DirectoryInfo(".\\" + subDirName);
+            var inf = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTreeTests\\" + subDirName);
             if (inf.Exists)
                 inf.Delete(true);
             inf.Create();
