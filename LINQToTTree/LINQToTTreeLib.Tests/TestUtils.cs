@@ -539,6 +539,17 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
+        /// Delete everything that is in the query cache directory
+        /// </summary>
+        public static void ResetCacheDir()
+        {
+            var cdir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\LINQToTTree\\QueryCacheForTesting");
+            if (cdir.Exists)
+                cdir.Delete(true);
+            QueryResultCache.CacheDirectory = cdir;
+        }
+
+        /// <summary>
         /// Reset all the counters, etc., in the LINQ library
         /// </summary>
         public static void ResetLINQLibrary()
@@ -551,7 +562,7 @@ namespace LINQToTTreeLib.Tests
             LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls.TypeHandlerReplacementCall.ClearTypeList();
             var eng = new VelocityEngine();
             eng.Init();
-            QueryResultCacheTest.SetupCacheDir();
+            ResetCacheDir();
         }
 
         /// <summary>

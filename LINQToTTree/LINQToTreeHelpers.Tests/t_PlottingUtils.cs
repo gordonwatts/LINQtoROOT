@@ -34,7 +34,7 @@ namespace LINQToTreeHelpers.Tests
             var eng = new VelocityEngine();
             eng.Init();
 
-            QueryResultCacheTest.SetupCacheDir();
+            TestUtils.ResetLINQLibrary();
         }
 
         [TestCleanup]
