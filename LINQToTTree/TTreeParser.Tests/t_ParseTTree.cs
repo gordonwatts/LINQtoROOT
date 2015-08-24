@@ -621,6 +621,7 @@ namespace TTreeParser.Tests
         {
             /// Make sure the header file that gets generated is basically "ok" for use. These are simple tests.
             var t = TTreeParserCPPTests.CreateTrees.CreateWithIntOnly(5);
+            Assert.IsNotNull(t);
             var p = new ParseTTree();
             var result = p.GenerateClasses(t).ToArray();
             FileInfo fhpp = new FileInfo("ntuple_dude.h");
