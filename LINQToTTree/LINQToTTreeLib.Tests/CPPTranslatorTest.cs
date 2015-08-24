@@ -37,17 +37,15 @@ namespace LINQToTTreeLib
             // TODO: add assertions to method CPPTranslatorTest.Constructor()
         }
 
+#endif
+
         /// <summary>Test stub for TranslateGeneratedCode(GeneratedCode)</summary>
-        [PexMethod]
-        [PexUseType(typeof(StatementInlineBlock)), PexAllowedException(typeof(ArgumentNullException))]
-        public Dictionary<string, object> TranslateGeneratedCode([PexAssumeUnderTest]CPPTranslator target, GeneratedCode code)
+        public Dictionary<string, object> TranslateGeneratedCode(CPPTranslator target, GeneratedCode code)
         {
             MEFUtilities.Compose(target);
             Dictionary<string, object> result = target.TranslateGeneratedCode(code);
             return result;
-            // TODO: add assertions to method CPPTranslatorTest.TranslateGeneratedCode(CPPTranslator, GeneratedCode)
         }
-#endif
 
         [TestMethod]
         public void TestTranslateWithInitialValue()
@@ -86,7 +84,7 @@ namespace LINQToTTreeLib
             var r = TranslateGeneratedCode(target, code);
 
             Assert.IsTrue(r.ContainsKey("NumberOfQueryFunctions"), "Number of functions isn't here");
-            Assert.IsInstanceOfType(r["NumberOfQueryFunctions"], typeof(int), "# fucntsion type");
+            Assert.IsInstanceOfType(r["NumberOfQueryFunctions"], typeof(int), "# function type");
             Assert.AreEqual(1, r["NumberOfQueryFunctions"], "# of functions");
 
             Assert.IsTrue(r.ContainsKey("QueryFunctionBlocks"), "Missing query function blocks");
@@ -146,7 +144,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Make sure we get the "proper" number of code blocks when we have somethign WAY too bid.
+        /// Make sure we get the "proper" number of code blocks when we have something WAY too bid.
         /// </summary>
         [TestMethod]
         public void TestForTooManyCodeBlocks()
@@ -183,7 +181,7 @@ namespace LINQToTTreeLib
 
             var st = (r["QueryFunctionBlocks"] as IEnumerable<IEnumerable<string>>).First().ToArray();
             Assert.AreEqual(6, st.Length, "incorrect number of statements");
-            Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initalization");
+            Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initialization");
         }
 
         [TestMethod]

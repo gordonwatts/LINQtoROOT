@@ -25,15 +25,11 @@ namespace LINQToTTreeLib.Utils
             MEFUtilities.MyClassDone();
         }
 
-#if false
-        [PexMethod]
         internal QVResultOperators Constructor()
         {
             QVResultOperators target = new QVResultOperators();
             return target;
-            // TODO: add assertions to method QVResultOperatorsTest.Constructor()
         }
-#endif
 
         [Export(typeof(IQVScalarResultOperator))]
         class DummyRO : IQVScalarResultOperator
@@ -55,8 +51,19 @@ namespace LINQToTTreeLib.Utils
             }
         }
 
-#if false
-        [PexMethod]
+        internal void TestLookupTwice(int tindex)
+        {
+            var t = GenerateAType(tindex);
+            MEFUtilities.AddPart(new DummyRO());
+            var target = new QVResultOperators();
+            MEFUtilities.Compose(target);
+
+            var result1 = target.FindScalarROProcessor(t);
+            var result2 = target.FindScalarROProcessor(t);
+
+            Assert.AreEqual(result1, result2, "Expected the same result when called with the same inputs!");
+        }
+
         internal void TestLookupNothing(int tindex)
         {
             var t = GenerateAType(tindex);
@@ -79,7 +86,6 @@ namespace LINQToTTreeLib.Utils
                 return null;
         }
 
-        [PexMethod]
         internal void TestLookup(int tindex)
         {
             var t = GenerateAType(tindex);
@@ -99,21 +105,6 @@ namespace LINQToTTreeLib.Utils
                 Assert.IsNull(result, "Expected no found guy to come back!");
             }
         }
-
-        [PexMethod]
-        internal void TestLookupTwice(int tindex)
-        {
-            var t = GenerateAType(tindex);
-            MEFUtilities.AddPart(new DummyRO());
-            var target = new QVResultOperators();
-            MEFUtilities.Compose(target);
-
-            var result1 = target.FindScalarROProcessor(t);
-            var result2 = target.FindScalarROProcessor(t);
-
-            Assert.AreEqual(result1, result2, "Expected the same result when called with the same inputs!");
-        }
-#endif
 
         [TestMethod]
         public void Constructor360()

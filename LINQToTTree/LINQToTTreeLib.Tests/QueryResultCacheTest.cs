@@ -49,11 +49,10 @@ namespace LINQToTTreeLib
             // TODO: add assertions to method QueryResultCacheTest.CacheItem(QueryResultCache, FileInfo, QueryModel, NTObject)
         }
 
-        /// <summary>Test stub for Lookup(FileInfo, QueryModel, IVariable)</summary>
-        [PexGenericArguments(typeof(int))]
-        [PexMethod]
+#endif
+
         internal Tuple<bool, T> Lookup<T>(
-            [PexAssumeUnderTest]QueryResultCache target,
+            QueryResultCache target,
             Uri _rootFile,
             string treeName,
             object[] inputObjects,
@@ -66,9 +65,7 @@ namespace LINQToTTreeLib
             var result = target.Lookup<T>(target.GetKey(new Uri[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates), varSaver, null);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
-            // TODO: add assertions to method QueryResultCacheTest.Lookup(QueryResultCache, FileInfo, QueryModel, IVariable)
         }
-#endif
 
         /// <summary>
         /// Dummy saver and loader for a variable.
@@ -101,7 +98,7 @@ namespace LINQToTTreeLib
             {
                 var h = obj as ROOTNET.Interface.NTH1F;
                 if (h == null)
-                    throw new InvalidOperationException("must be a histo that is passed");
+                    throw new InvalidOperationException("must be a histogram that is passed");
 
                 int result = (int)h.GetBinContent(1);
                 object i = result;
@@ -110,7 +107,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Histo return
+        /// Histogram return
         /// </summary>
         class DummyHistoSaver : IVariableSaver
         {
@@ -146,7 +143,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Create a query model that we cna use for tests. We have several possible ones we can create that should be different.
+        /// Create a query model that we can use for tests. We have several possible ones we can create that should be different.
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
@@ -194,7 +191,7 @@ namespace LINQToTTreeLib
                 var q = new QueriableDummy<ntup>();
                 var result = from d in q
                              select d.run;
-                var r = result.Plot("hi1", "there is no sppon", 20, 0.0, 10.0);
+                var r = result.Plot("hi1", "there is no spoon", 20, 0.0, 10.0);
                 return DummyQueryExectuor.LastQueryModel;
             }
 
@@ -570,7 +567,7 @@ namespace LINQToTTreeLib
         public void TestNoStuckInOpenFile()
         {
             ///
-            /// When we load up and return a cache, we are storing a histo in the file - make sure it comes back w/out errors.
+            /// When we load up and return a cache, we are storing a histogram in the file - make sure it comes back w/out errors.
             ///
 
             var f = MakeRootFile("TestHitDriver");
@@ -586,7 +583,7 @@ namespace LINQToTTreeLib
 
             var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "expected hit");
-            Assert.AreEqual("hi", r.Item2.Name, "inproper histo came back");
+            Assert.AreEqual("hi", r.Item2.Name, "improper histogram came back");
 
         }
     }

@@ -20,10 +20,8 @@ namespace LINQToTTreeLib.Statements
             TestUtils.ResetLINQLibrary();
         }
 
-#if false
         /// <summary>Test stub for CodeItUp()</summary>
-        [PexMethod]
-        public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementSimpleStatement target)
+        public IEnumerable<string> CodeItUp(StatementSimpleStatement target)
         {
             IEnumerable<string> result = target.CodeItUp();
             var lines = result.ToArray();
@@ -34,7 +32,6 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>Test stub for .ctor(String)</summary>
-        [PexMethod]
         public StatementSimpleStatement Constructor(string line)
         {
             StatementSimpleStatement target = new StatementSimpleStatement(line);
@@ -49,7 +46,6 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(line, target.Line, "bad line set");
             return target;
         }
-#endif
 
         [TestMethod]
         public void CTorTest()
@@ -102,9 +98,9 @@ namespace LINQToTTreeLib.Statements
 
             var goodVar = new Regex(string.Format(@"w+"));
             if (!goodVar.Match(oldvar).Success)
-                throw new ArgumentException("The old var is not a proper variable name");
+                throw new ArgumentException("The old variable is not a proper variable name");
             if (!goodVar.Match(newvar).Success)
-                throw new ArgumentException("THe new var is not a proper variable name");
+                throw new ArgumentException("THe new variable is not a proper variable name");
 
             target.RenameVariable(oldvar, newvar);
 

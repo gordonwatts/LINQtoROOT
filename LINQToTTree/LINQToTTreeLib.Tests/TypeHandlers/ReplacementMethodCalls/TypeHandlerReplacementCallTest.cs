@@ -51,10 +51,8 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             // TODO: add assertions to method TypeHandlerReplacementCallTest.ProcessMethodCall(TypeHandlerReplacementCall, MethodCallExpression, IValue&, IGeneratedCode, ICodeContext)
         }
 
-#if false
-        [PexMethod]
         public IValue CodeMethodCall(
-            [PexAssumeUnderTest]TypeHandlerReplacementCall target,
+            TypeHandlerReplacementCall target,
             MethodCallExpression expr,
             IGeneratedQueryCode gc
         )
@@ -62,7 +60,6 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var result01 = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
             return result01;
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(NotImplementedException))]
@@ -103,7 +100,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var context = new CodeContext();
             var result = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
 
-            Assert.AreEqual(typeof(double), result.Type, "the type that came back ins't right");
+            Assert.AreEqual(typeof(double), result.Type, "the type that came back isn't right");
             Assert.AreEqual("noArg()", result.RawValue, "raw translation incorrect");
         }
 
@@ -153,7 +150,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             var context = new CodeContext();
             var r = CodeMethodCall(new TypeHandlerReplacementCall(), e, gc);
 
-            Assert.AreEqual("oneArg((int)10)", r.RawValue, "incorrected coded method argument");
+            Assert.AreEqual("oneArg((int)10)", r.RawValue, "uncorrected coded method argument");
         }
 
         [TestMethod]

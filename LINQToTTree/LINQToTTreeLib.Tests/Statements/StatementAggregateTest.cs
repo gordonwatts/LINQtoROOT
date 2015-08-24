@@ -70,7 +70,7 @@ namespace LINQToTTreeLib.Tests
                 Assert.Fail("Statement was null");
 
             if (statement.GetType() != typeof(StatementAggregate))
-                Assert.IsFalse(result, "statements aren't the rigth type");
+                Assert.IsFalse(result, "statements aren't the right type");
 
             if (statement.CodeItUp().Count() != target.CodeItUp().Count())
             {
@@ -84,7 +84,6 @@ namespace LINQToTTreeLib.Tests
 
             return result;
         }
-#endif
 
         [TestMethod]
         public void TestCombineWithRename()
@@ -128,5 +127,6 @@ namespace LINQToTTreeLib.Tests
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsFalse(result, "Expected combination would work");
         }
+#endif
     }
 }

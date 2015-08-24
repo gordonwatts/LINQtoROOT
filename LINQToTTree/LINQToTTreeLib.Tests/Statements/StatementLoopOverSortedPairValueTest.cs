@@ -54,11 +54,5 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(allSame == canComb || target.Statements.Count() == 0, "not expected combination!");
         }
 #endif
-
-        [TestMethod]
-        public void TestStatementCreation()
-        {
-            var v = StatementLoopOverSortedPairValueFactory.Create(true);
-        }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -35,19 +36,18 @@ namespace LINQToTTreeLib.ResultOperators
             return result;
         }
 
+#endif
+
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode)</summary>
-        [PexMethod]
-        [PexUseType(typeof(TakeResultOperator))]
-        [PexUseType(typeof(SkipResultOperator)), PexAllowedException(typeof(ArgumentException))]
         internal GeneratedCode ProcessResultOperator(
-            [PexAssumeUnderTest]ROTakeSkipOperators target,
+            ROTakeSkipOperators target,
             ResultOperatorBase resultOperator,
             QueryModel queryModel,
-            [PexAssumeNotNull]GeneratedCode codeEnv
+            GeneratedCode codeEnv
         )
         {
             if (codeEnv.ResultValue != null)
-                throw new ArgumentException("this should not b enull for this test");
+                throw new ArgumentException("this should not be null for this test");
             if (codeEnv.CodeBody.DeclaredVariables == null)
                 throw new ArgumentException("Need this declare variables to be defined");
 
@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.ResultOperators
                 codeEnv.Add(new StatementInlineBlock());
 
             ///
-            /// Get the env setup and run it
+            /// Get the environment setup and run it
             /// 
 
             CodeContext c = new CodeContext();
@@ -69,7 +69,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will
-            /// be the outter one for this test
+            /// be the outer one for this test
             /// 
 
             Assert.AreEqual(1, codeEnv.CodeBody.DeclaredVariables.Count(), "Expected only 1 variable to be declared");
@@ -113,7 +113,6 @@ namespace LINQToTTreeLib.ResultOperators
 
             return codeEnv;
         }
-#endif
 
         [TestMethod]
         public void TestBasicTakeSkip()
@@ -144,7 +143,7 @@ namespace LINQToTTreeLib.ResultOperators
         public void TestTakeSkipInLINQ()
         {
             ///
-            /// The below is invalid because the "Take" is at the top level - we are taking only a certian
+            /// The below is invalid because the "Take" is at the top level - we are taking only a certain
             /// number of events. That is not legal! So we need to throw when that happens!
             /// 
 

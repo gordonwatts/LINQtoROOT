@@ -30,10 +30,8 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             MEFUtilities.MyClassDone();
         }
 
-#if false
         /// <summary>Test stub for CanHandle(Type)</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        internal bool CanHandle([PexAssumeUnderTest]TypeHandlerCPPCode target, Type t)
+        internal bool CanHandle(TypeHandlerCPPCode target, Type t)
         {
             bool result = target.CanHandle(t);
 
@@ -42,7 +40,6 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             return result;
         }
-#endif
 
         static class FreeClass
         {
@@ -206,8 +203,8 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var declStatement = gc.CodeBody.Statements.First().CodeItUp().Skip(1).First();
             var setStatement = gc.CodeBody.Statements.First().CodeItUp().Skip(2).First();
 
-            Assert.IsFalse(declStatement.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", declStatement));
-            Assert.IsFalse(setStatement.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", setStatement));
+            Assert.IsFalse(declStatement.Contains("Unique"), string.Format("Line '{0}' contains a reference to a unique variable", declStatement));
+            Assert.IsFalse(setStatement.Contains("Unique"), string.Format("Line '{0}' contains a reference to a unique variable", setStatement));
         }
 
         [TestMethod]
@@ -229,7 +226,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             var declStatement = gc.CodeBody.Statements.First();
 
-            Assert.IsTrue(declStatement.CodeItUp().First().StartsWith("TLorentzVector* aNTLorentzVector"), "return variable decl in correct");
+            Assert.IsTrue(declStatement.CodeItUp().First().StartsWith("TLorentzVector* aNTLorentzVector"), "return variable declaration in correct");
         }
 
         [TestMethod]
@@ -252,7 +249,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             foreach (var line in gc.CodeBody.Statements.First().CodeItUp())
             {
                 Assert.IsNotNull(line, "bad statement type");
-                Assert.IsFalse(line.Contains("Unique"), string.Format("Line '{0}' contains a referecen to a unique variable", line));
+                Assert.IsFalse(line.Contains("Unique"), string.Format("Line '{0}' contains a reference to a unique variable", line));
             }
         }
 
@@ -277,9 +274,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.IsNotNull(ccpstatement);
             var cmInfo = ccpstatement as ICMStatementInfo;
             Assert.IsNotNull(cmInfo);
-            Assert.AreEqual(1, cmInfo.ResultVariables.Count, "# of result vars");
-            Assert.AreEqual(r.RawValue, cmInfo.ResultVariables.First(), "Result var name");
-            Assert.AreEqual(2, cmInfo.DependentVariables.Count, "# of dependent vars");
+            Assert.AreEqual(1, cmInfo.ResultVariables.Count, "# of result variables");
+            Assert.AreEqual(r.RawValue, cmInfo.ResultVariables.First(), "Result variable name");
+            Assert.AreEqual(2, cmInfo.DependentVariables.Count, "# of dependent variables");
             Assert.IsTrue(cmInfo.DependentVariables.Contains(p_pt.RawValue), "doesn't have pt");
             Assert.IsTrue(cmInfo.DependentVariables.Contains(p_eta.RawValue), "Doesn't have eta");
         }
@@ -438,8 +435,8 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var atEnding = gc.CodeBody.Statements.First().CodeItUp().Skip(2).FirstOrDefault();
             Assert.IsNotNull(atBeginning, "Bad type for 3rd statement");
             Assert.IsNotNull(atEnding, "Bad type for 3rd statement");
-            Assert.IsTrue(atBeginning.StartsWith("EParam"), string.Format("Line '{0}' doesn't start with param replacement", atBeginning));
-            Assert.IsTrue(atEnding.EndsWith("ptParam"), string.Format("Line '{0}' doesn't ends with param replacement", atBeginning));
+            Assert.IsTrue(atBeginning.StartsWith("EParam"), string.Format("Line '{0}' doesn't start with parameter replacement", atBeginning));
+            Assert.IsTrue(atEnding.EndsWith("ptParam"), string.Format("Line '{0}' doesn't ends with parameter replacement", atBeginning));
         }
     }
 }

@@ -14,10 +14,9 @@ namespace LINQToTTreeLib.TypeHandlers
     [TestClass]
     public partial class TypeHandlerCacheTest
     {
-#if false
-        [PexMethod]
+
         public IValue ProcessConstantReference(
-            [PexAssumeUnderTest]TypeHandlerCache target,
+            TypeHandlerCache target,
             ConstantExpression expr,
             IGeneratedQueryCode codeEnv
         )
@@ -26,7 +25,6 @@ namespace LINQToTTreeLib.TypeHandlers
             return result;
             // TODO: add assertions to method TypeHandlerCacheTest.ProcessConstantReference(TypeHandlerCache, ConstantExpression, IGeneratedCode)
         }
-#endif
 
         [TestInitialize]
         public void Setup()
@@ -118,6 +116,15 @@ namespace LINQToTTreeLib.TypeHandlers
             Assert.AreEqual(result.Type, typeof(int), "result type");
         }
 
+        public IValue CodeMethodCall(
+            TypeHandlerCache target,
+            MethodCallExpression expr,
+            IGeneratedQueryCode gc
+        )
+        {
+            return target.CodeMethodCall(expr, gc, null);
+        }
+
 #if false
         [PexMethod]
         public Expression ProcessMethodCall(
@@ -128,16 +135,6 @@ namespace LINQToTTreeLib.TypeHandlers
         )
         {
             return target.ProcessMethodCall(expr, gc, cc, null);
-        }
-
-        [PexMethod]
-        public IValue CodeMethodCall(
-            [PexAssumeUnderTest]TypeHandlerCache target,
-            MethodCallExpression expr,
-            IGeneratedQueryCode gc
-        )
-        {
-            return target.CodeMethodCall(expr, gc, null);
         }
 
         /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>

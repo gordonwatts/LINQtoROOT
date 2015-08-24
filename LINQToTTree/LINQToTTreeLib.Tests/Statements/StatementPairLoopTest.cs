@@ -115,6 +115,7 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsFalse(stp1.TryCombineStatement(stp2, null), "should not have combined");
         }
 
+#if false
         [TestMethod]
         public void TestCombineWithSameArray()
         {
@@ -138,6 +139,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var sa = s1 as StatementAssign;
             Assert.AreEqual(index1.RawValue, sa.ResultVariable.RawValue, "rename of variables didn't occur correctly");
         }
+#endif
 
         class ntupArray
         {

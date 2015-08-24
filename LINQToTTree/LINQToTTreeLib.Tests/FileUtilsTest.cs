@@ -7,16 +7,12 @@ namespace LINQToTTreeLib.Utils
     [TestClass]
     public partial class FileUtilsTest
     {
-#if false
-        [PexMethod]
         public TextWriter WriteTextIfNotDuplicate(FileInfo outputFile)
         {
             TextWriter result = FileUtils.WriteTextIfNotDuplicate(outputFile);
             return result;
-            // TODO: add assertions to method FileUtilsTest.WriteTextIfNotDuplicate(FileInfo)
         }
 
-        [PexMethod(MaxConditions = 2000, MaxRunsWithoutNewTests = 400)]
         public void MakeSureFileIsRight(string textToWrite)
         {
             FileInfo f = new FileInfo("MakeSureFileIsRight.txt");
@@ -44,7 +40,6 @@ namespace LINQToTTreeLib.Utils
             }
         }
 
-        [PexMethod]
         public void MakeSureFileNotUpdated(string s1, string s2)
         {
             string compareS1 = s1;
@@ -109,19 +104,14 @@ namespace LINQToTTreeLib.Utils
             }
 
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void WriteTextIfNotDuplicateThrowsArgumentNullException466()
         {
-            using (PexDisposableContext disposables = PexDisposableContext.Create())
-            {
-                TextWriter textWriter;
-                textWriter = this.WriteTextIfNotDuplicate((FileInfo)null);
-                disposables.Add((IDisposable)textWriter);
-                disposables.Dispose();
-            }
+            TextWriter textWriter;
+            textWriter = this.WriteTextIfNotDuplicate((FileInfo)null);
+            textWriter.Dispose();
         }
     }
 }

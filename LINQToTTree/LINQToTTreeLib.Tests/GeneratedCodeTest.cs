@@ -117,7 +117,7 @@ namespace LINQToTTreeLib
         public void TestChangeScope([PexAssumeNotNull]IStatement[] initialStatements, [PexAssumeNotNull] IStatement s1, [PexAssumeNotNull] IStatement s2)
         {
             ///
-            /// Check that scoping correctly moves back tot he right place and inserts the stements and
+            /// Check that scoping correctly moves back tot he right place and inserts the statements and
             /// the variables.
             /// 
 
@@ -162,9 +162,9 @@ namespace LINQToTTreeLib
             Assert.IsNotNull(target.VariablesToTransfer.Last());
             Assert.AreEqual(names.Count, target.VariablesToTransfer.Count());
         }
+#endif
 
-        [PexMethod]
-        public void Pop([PexAssumeNotNull]IStatement s, bool popPastLoop)
+        public void Pop(IStatement s, bool popPastLoop)
         {
             var gc = new GeneratedCode();
             int depth = gc.Depth;
@@ -182,8 +182,6 @@ namespace LINQToTTreeLib
                 Assert.IsFalse(good, "a booking statement");
             }
         }
-
-#endif
 
         [TestMethod]
         public void AddQMFunc()
@@ -404,7 +402,7 @@ namespace LINQToTTreeLib
             GeneratedCode gc = new GeneratedCode();
             gc.Add(new Statements.StatementInlineBlock());
             gc.AddOneLevelUp(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
-            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level decl");
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "Expected top level declaration");
         }
 
         [TestMethod]
@@ -695,7 +693,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Perhaps found in the wild - a sub-expression, that includes a manip of the constant
+        /// Perhaps found in the wild - a sub-expression, that includes a manipulation of the constant
         /// expression.
         /// </summary>
         [TestMethod]
