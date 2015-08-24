@@ -17,8 +17,8 @@ namespace LINQToTreeHelpers.Tests
             MEFUtilities.MyClassInit();
             DummyQueryExectuor.GlobalInitalized = false;
 
-            /// Get the path for the other nutple guy correct! Since Pex and tests run from different places in the directory structure we have to
-            /// do some work to find the top leve!
+            /// Get the path for the other ntuple guy correct! Since Pex and tests run from different places in the directory structure we have to
+            /// do some work to find the top level!
 
             var currentDir = new DirectoryInfo(Environment.CurrentDirectory);
             while (currentDir.FindAllFiles("LINQToTTree.sln").Count() == 0)
