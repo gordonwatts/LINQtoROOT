@@ -10,6 +10,7 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 using LINQToTTreeLib.Expressions;
+using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.ResultOperators
 {
@@ -55,8 +56,8 @@ namespace LINQToTTreeLib.ResultOperators
             /// We always expect to be inside a loop - and depend on it for doing our declares, so add something...
             /// 
 
-            if (codeEnv != null)
-                codeEnv.Add(new StatementInlineBlock());
+            var inlineBlock = new StatementInlineBlock();
+            codeEnv.Add(inlineBlock);
 
             ///
             /// Get the environment setup and run it
@@ -72,15 +73,15 @@ namespace LINQToTTreeLib.ResultOperators
             /// be the outer one for this test
             /// 
 
-            Assert.AreEqual(1, codeEnv.CodeBody.DeclaredVariables.Count(), "Expected only 1 variable to be declared");
-            Assert.IsInstanceOfType(codeEnv.CodeBody.DeclaredVariables.First(), typeof(DeclarableParameter), "Expected it to be a counter");
+            var declBlock = inlineBlock.Parent.Parent as IBookingStatementBlock;
+            Assert.IsNotNull(declBlock, "Expecting a declaration block above!");
+            Assert.AreEqual(1, declBlock.DeclaredVariables.Count(), "Expected only 1 variable to be declared");
+            Assert.IsInstanceOfType(declBlock.DeclaredVariables.First(), typeof(DeclarableParameter), "Expected it to be a counter");
 
-            var statements = codeEnv.CodeBody.Statements.First() as StatementInlineBlock;
+            Assert.AreEqual(1, inlineBlock.Statements.Count(), "Expected an if block/increment!");
+            Assert.IsInstanceOfType(inlineBlock.Statements.First(), typeof(StatementIfOnCount), "if statement not found!");
 
-            Assert.AreEqual(1, statements.Statements.Count(), "Expected an if block/increment!");
-            Assert.IsInstanceOfType(statements.Statements.First(), typeof(StatementIfOnCount), "if statement not found!");
-
-            var s = statements.Statements.First() as StatementIfOnCount;
+            var s = inlineBlock.Statements.First() as StatementIfOnCount;
 
             string count = "";
             if (resultOperator is SkipResultOperator)
