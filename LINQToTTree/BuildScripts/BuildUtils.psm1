@@ -103,7 +103,7 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     
     foreach ($l in $PackageSpecification["Libraries"])
     {
-        "    <file src=`"$l`" target=`"lib\net40`" />" >> $path
+        "    <file src=`"$l`" target=`"lib\net45`" />" >> $path
     }
     foreach ($l in $PackageSpecification["Tools"])
     {
