@@ -7,7 +7,7 @@
 
 #
 # Check that all the files exist as dll's in the
-# dest directory. Fail badly if not.
+# destination directory. Fail badly if not.
 #
 function check-exists ($dir, $flist)
 {
@@ -41,7 +41,7 @@ function get-files-for-library ($dir, $flist, [Switch]$PDB)
 }
 
 #
-# Loads in the list of packages from package config directory as
+# Loads in the list of packages from package configuration directory as
 # a PSObject.
 #
 function get-solution-nuget-dependencies ($solDir, $packageFile = "packages.config")
@@ -62,7 +62,7 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     #
 
     $version = $PackageSpecification["version"]
-    $packageName = $PackageSpecification["Name"] + "-" + $PackageSpecification["ROOTVersion"]
+    $packageName = $PackageSpecification["Name"]
     $path = "$BuildDir\$packageName.$version.nuspec"
     
     #
@@ -73,13 +73,12 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     '<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">' >> $path
     '  <metadata>' >> $path
     "    <id>$packageName</id>" >> $path
-    #"    <title>ROOT.NET $packageSinglename for ROOT version $rootVersion</title>" >> $path
+    "    <title>ROOT.NET $packageSinglename</title>" >> $path
     "    <version>$version</version>" >> $path
     "    <authors>Gordon Watts</authors>" >> $path
     "    <owners>Gordon Watts</owners>" >> $path
     "    <licenseUrl>http://linqtoroot.codeplex.com/license</licenseUrl>" >> $path
     "    <projectUrl>http://linqtoroot.codeplex.com/</projectUrl>" >> $path
-    #"    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>" >> $path
     "    <requireLicenseAcceptance>false</requireLicenseAcceptance>" >> $path
     "    <description>Use LINQ to query TTree's</description>" >> $path
     "    <tags>ROOT Data Analysis Science</tags>" >> $path
@@ -144,51 +143,12 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
 }
 
 #
-# Given the name of a root package, extract the version number.
-#
-function get-root-version
-{
-    process
-    {
-        $l = $_ -split "-"
-        $vstr = $l[2] -split "\."
-        #return $vstr[0..2] -join "."
-        return $vstr -join "."
-    }
-}
-
-#
-# Replace the root package (like v5.30.00.win32.vc10) in a ROOT package name
-# with the one passed in.
-#
-function replace-ROOT-Package ($NewROOTPackage)
-{
-    process
-    {
-        if (-not $_.Id.StartsWith("ROOT"))
-        {
-            return $_
-        }
-        
-        # Assume the name follows the following format:
-        #  ROOTNET-Tree-v5.28.00f.win32.vc10.debug
-        #  So - the "-vNumber" is where the package version number
-        #  starts.
-
-        
-        $v = $_.Id -replace "-v[0-9].+$", "-$NewROOTPackage"
-        $_.Id = $v
-        return $_
-    }
-}
-
-#
 # Build a nuget packages for this library. We assume the build has already been done
 # at this point - so we fail if we can't find what we are looking for!
 #
 function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Version, $Release = "Debug", $nugetDistroDirectory = "", [Switch]$PDB, $NameSuffix = "", $ROOTPackage = "")
 {
-    if (-not (Test-Path $solutionDirectory))
+    if (-not (Test-Path $SolutionDirectory))
     {
         throw "Unable to find solution at $solutionDirectory"
     }
@@ -222,7 +182,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
     Write-Host $allSourceDirectories
     
     #
-    # There are some config data files that we need to add in.
+    # There are some configuration data files that we need to add in.
     #
     
     $methodConfigFile = New-Object PSObject -Property @{DestDir = "ConfigData"; SourceFile = "$mainLibrary\ConfigData\default.classmethodmappings" }
@@ -267,7 +227,6 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
     #
     
     $ROOTNames = $allPackageDependencies | ? {$_.Id.Contains("ROOT")} | % {$_.Id}
-    $ROOTVersion = $ROOTNames[0] | get-root-version
         
     #
     # We have gathered all the basic information we need to build the main nuget package.
@@ -276,7 +235,6 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
     $packageSpec = @{
         "Name" = "LINQToTTree" + $NameSuffix
         "Version" = $Version
-        "ROOTVersion" = $ROOTVersion
         "Dependencies" = $allPackageDependencies
         "Libraries" = $allLibraries
         "Tools" = $toolFiles
@@ -303,7 +261,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
 #
 function get-ROOT-versions ($NuGetExe)
 {
-    # Get the RSS list of everything that is availible
+    # Get the RSS list of everything that is available
     #$pkgInfo = [Xml] (new-object net.webclient).downloadstring($URL)
     $pkgList = & $NuGetExe list ROOTNET-Core
     # List of all the core package names.
@@ -405,7 +363,7 @@ function check-build ($dir)
 }
 
 #
-# Update teh build number file.
+# Update the build number file.
 function update-build ($dir)
 {
     get-revision $dir > "$dir\build.txt"
@@ -437,7 +395,7 @@ function build-LINQToTTree ($BuildPath, $Release = "x86", $Tag = "HEAD", $nugetP
         $version = (Get-Item "$BuildPath\LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib.dll").VersionInfo.ProductVersion
 
         #
-        # Next, make the nuget pacakge
+        # Next, make the nuget package
         #
         
         $nugetCreateLog = build-LINQToTTree-nuget-packages $BuildPath $BuildPath $version -nugetDistroDirectory $nugetPackageDir -PDB:$PDB -NameSuffix $NameSuffix -Release $Release

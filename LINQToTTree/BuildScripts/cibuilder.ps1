@@ -2,6 +2,7 @@
 # Simple script to build the nuget package
 # when run from the continuous integration server. The result
 # of this guy will be become a build artifact.
+# This should be run from the check-out directory of the package
 #
 param([int] $BuildNumber = 0, [string] $NameSuffix = "-ci", [string] $release = "x86\Release", [switch] $PDB)
 
@@ -22,12 +23,4 @@ $FileVersion[3] = $BuildNumber
 $version = $FileVersion -join "."
 
 # Next, do the nuget build, one for each ROOT package.
-
-#-nugetDistroDirectory $nugetPackageDir 
-$currentPath = Resolve-Path "."
-#get-ROOT-Version-Names ".\LINQToTTree\.nuget\nuget.exe" | %{build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release -ROOTPackage $_}
-
-# For CI, only build the version that is on the server for now.
-build-LINQToTTree-nuget-packages $currentPath $currentPath $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release
-
-
+build-LINQToTTree-nuget-packages $PWD $PWD $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release
