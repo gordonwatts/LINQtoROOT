@@ -28,7 +28,7 @@ function Get-RelativePath ($Folder, $filePath)
 }
 
 #
-# A string of fileinfo's, insert them in the project with the time type!
+# A string of FileInfo's, insert them in the project with the time type!
 #
 function add-to-project ($itemType, $project, $namespace = "")
 {
@@ -61,7 +61,7 @@ function Write-TTree-MetaData
 .PARAMETER SubDirName
    If you wish the output files to be stored in a different sub-directory than the default. Defaults to the Namespace.
 .PARAMETER Namespace
-   The namespcae where the query objects should exist. Defaults to ROOTLINQ. You are strongly encouraged to use this!
+   The namespace where the query objects should exist. Defaults to ROOTLINQ. You are strongly encouraged to use this!
 .Example
    Write-TTree-MetaData EVNT-short.root -Namespace HVDATA
 
@@ -80,7 +80,7 @@ function Write-TTree-MetaData
 	   [string]$Namespace="ROOTLINQ"
 	)
 
-	# Config
+	# Configuration
 	if (-not (Test-Path $Path))
 	{
 		Write-Host "The path '$Path' was not found."
@@ -137,6 +137,6 @@ function Write-TTree-MetaData
 }
 
 #
-# Make availible in the nuget command prompt.
+# Make available in the nuget command prompt.
 #
 Export-ModuleMember Write-TTree-MetaData

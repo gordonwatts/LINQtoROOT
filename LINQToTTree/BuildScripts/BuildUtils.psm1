@@ -73,15 +73,15 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
     '<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">' >> $path
     '  <metadata>' >> $path
     "    <id>$packageName</id>" >> $path
-    "    <title>ROOT.NET $packageSinglename</title>" >> $path
+    "    <title>LINQToROOT Analysis Utilities</title>" >> $path
     "    <version>$version</version>" >> $path
     "    <authors>Gordon Watts</authors>" >> $path
     "    <owners>Gordon Watts</owners>" >> $path
-    "    <licenseUrl>http://linqtoroot.codeplex.com/license</licenseUrl>" >> $path
-    "    <projectUrl>http://linqtoroot.codeplex.com/</projectUrl>" >> $path
+    "    <licenseUrl>https://github.com/gordonwatts/LINQtoROOT/blob/master/LICENSE</licenseUrl>" >> $path
+    "    <projectUrl>https://github.com/gordonwatts/LINQtoROOT</projectUrl>" >> $path
     "    <requireLicenseAcceptance>false</requireLicenseAcceptance>" >> $path
-    "    <description>Use LINQ to query TTree's</description>" >> $path
-    "    <tags>ROOT Data Analysis Science</tags>" >> $path
+    "    <description>Use LINQ to query TTree's. LINQ queries are converted to C++ code. VS2013 C++ tools must be installed.</description>" >> $path
+    "    <tags>ROOT Data Analysis Science TTree LINQ</tags>" >> $path
     if ($PackageSpecification["Dependencies"])
     {
         "    <dependencies>" >> $path
@@ -120,6 +120,14 @@ function build-nuget-package ($PackageSpecification, $BuildDir, $NuGetExe)
         $destDir = split-path -Leaf $l
         "    <file src=`"$l\**\*.cs`" target=`"src\$destDir`" />" >> $path
     }
+	foreach ($l in $PackageSpecification["TargetFile"])
+	{
+		"    <file src=`"$l`" target=`"build\$packageName.targets`" />" >> $path
+	}
+	foreach ($l in $PackageSpecification["BuildFiles"])
+	{
+		"    <file src=`"$l`" target=`"build`" />" >> $path
+	}
     
     #
     # Done!
@@ -195,12 +203,14 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
     #
     
     $cmdExeFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\CmdTFileParser\bin\$release"
-    $msbuildTaskFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\MSBuildTasks\bin\$release"
-    $installToolFiles = "msbuild.psm1", "Install.ps1", "Uninstall.ps1", "Init.ps1", "LINQToTTreeCommands.psm1" | % { [System.IO.FileInfo] "$solutionDirectory\LINQToTTree\BuildScripts\$_" }
+    $msbuildTaskFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\MSBuildTasks\bin\$release" | ? { $_.Extension -ne ".targets" }
+    $targetFiles = Get-ChildItem "$solutionDirectory\LINQToTTree\MSBuildTasks\bin\$release" | ? { $_.Extension -eq ".targets" } | % {$_.FullName}
+    $installToolFiles = "msbuild.psm1", "Install.ps1", "Init.ps1", "LINQToTTreeCommands.psm1" | % { [System.IO.FileInfo] "$solutionDirectory\LINQToTTree\BuildScripts\$_" }
 
-    $toolFiles = ($cmdExeFiles + $msbuildTaskFiles + $installToolFiles) | Sort-Object -Property Name -Unique
+    $toolFiles = ($cmdExeFiles + $installToolFiles) | Sort-Object -Property Name -Unique
     $toolFiles = $toolFiles | ? { $_.Extension -ne ".pdb" }
     $toolFiles = $toolFiles | % {$_.FullName}
+	$msbuildTaskFiles = $msbuildTaskFiles | ? { $_.Extension -ne ".pdb"} | % {$_.FullName}
 
     #
     # Next, figure out what the dependent libraries are for nuget. These are things that nuget will
@@ -238,6 +248,8 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
         "Dependencies" = $allPackageDependencies
         "Libraries" = $allLibraries
         "Tools" = $toolFiles
+		"TargetFile" = $targetFiles
+		"BuildFiles" = $msbuildTaskFiles
         "ContentFiles" = $contentList
         "SourceRootDirectories" = $allSourceDirectories
     }

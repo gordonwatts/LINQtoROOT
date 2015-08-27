@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NtupleTreeInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Classes>
+    <ROOTClassShell>
+      <Name>CollectionTree</Name>
+      <Items>
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="RunNumber" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="EventNumber" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="sbyte" Name="StreamESD_ref" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="sbyte" Name="Stream1_ref" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="sbyte" Name="Token" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="CalRatio_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="CalRatio_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="CalRatio_erat" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="CalRatio_ET" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="RoICluster_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="RoICluster_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="RoICluster_nRoI" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Trackless_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Trackless_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Trackless_ET" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AllEvents_nRoI" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="MBTSTimeFilter" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="mubcid" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="LVL1MuonRoIeta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="LVL1MuonRoIphi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_station" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_doublr" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_doublz" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_doublphi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_gasgap" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_measphi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="rpc_prd_strip" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="rpc_prd_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="rpc_prd_stripx" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="rpc_prd_stripy" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="rpc_prd_stripz" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="rpc_prd_triggerInfo" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="rpc_prd_ambigFlag" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="IP_x" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="IP_y" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="IP_z" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_pt" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_a0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_z0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_chi2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_nPixel" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_nSCT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="L2Track_nTRT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="PassedRoICluster" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="PassedCalRatio" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="PassedTracklessJet" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="PassedMultiMuon" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="PassGammaMuon" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="PassedCollisionVertex" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="isGood" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="isUgly" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="isBad" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_pt" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_E" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_chi2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_nDoF" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_d0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_z0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_nPixel" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_nSCT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="Track_nTRT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="float" Name="MET_final" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="float" Name="MET_final_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="float" Name="MET_base" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="float" Name="MET_base_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="float" Name="MET_topo" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="float" Name="MET_topo_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="uint" Name="AntiKt4TopoJets_nJets" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_E" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_p" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_Et" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_pt" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_m" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_y" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_tanth" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_Eh" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_Eem" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_px" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_py" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_pz" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="AntiKt4TopoJets_Ncon" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="AntiKt4TopoJets_ptcon" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="AntiKt4TopoJets_econ" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="AntiKt4TopoJets_etacon" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="AntiKt4TopoJets_phicon" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="AntiKt4TopoJets_weightcon" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_emfrac" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="AntiKt4TopoJets_moments" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_PreSamplerB" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_EMB1" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_EMB2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_EMB3" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_PreSamplerE" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_EME1" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_EME2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_EME3" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_HEC0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_HEC1" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_HEC2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_HEC3" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileBar0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileBar1" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileBar2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileGap1" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileGap2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileGap3" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileExt0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileExt1" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_TileExt2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_FCAL0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_FCAL1" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_e_FCAL2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_time_calo" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_fbadQ" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_hecF" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="AntiKt4TopoJets_TileGap3F" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="trig_prescales" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="uint[]" Name="trig_bits" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="trig_mbts_times" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="trig_mbts_energy" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="trig_mbts_quality" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="trig_mbts_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="trig_mbts_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="trig_mbts_channel" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="trig_calo_ncellA" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="trig_calo_ncellC" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="trig_calo_timeA" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="trig_calo_timeC" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="trig_calo_energyA" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="trig_calo_energyC" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emB0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emB1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emB2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emB3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emE0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emE1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emE2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emE3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emF0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emF1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_emF2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadE0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadE1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadE2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadE3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadB0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadB1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadB2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadGap1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadGap2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadGap3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadExB0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadExB1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="caloCluster_hadExB2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emB0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emB1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emB2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emB3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emE0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emE1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emE2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emE3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emF0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emF1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_emF2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadE0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadE1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadE2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadE3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadB0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadB1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadB2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadGap1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadGap2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadGap3_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadExB0_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadExB1_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_hadExB2_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="cell_number" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[][]" Name="cell_sampling" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_time" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="cell_energy" NotAPointer="false" />
+        <IClassItem xsi:type="ItemSimpleType" ItemType="int" Name="Mu_N" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_E" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_p" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_p_T" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_p_x" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_p_y" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_p_z" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_m" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_charge" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_cone20" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_cone30" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_cone40" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_trk10" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_trk20" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_trk30" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_trk40" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_matchchi2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_matchchi2DoverF" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_chi2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_chi2DoverF" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_energyDeposit" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_energySigma" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_x" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_y" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_z" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_d0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_z0sinTh" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_a0" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_d0err" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_isCombined" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_isStandAlone" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_isLowPt" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_isLoose" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_isMedium" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_isTight" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_isMuonLikelihood" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_author" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="ushort[]" Name="Mu_allAuthors" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_p_T" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_InDet_trk_Index" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_pixelhits" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_scthits" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_blayerhits" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_trthits" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_InDet_trththits" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonSpec_p_T" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonSpec_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonSpec_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonExtr_p_T" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonExtr_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonExtr_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonExtr_p" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_MuonExtr_charge" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_Combined_p_T" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_Combined_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_Combined_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_beta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="float[]" Name="Mu_beta_L2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_mdthits_N" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_cscetahits_N" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_cschits_N" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_rpchits_N" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="int[]" Name="Mu_tgchits_N" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_px" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_py" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_pz" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_eta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_e" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_charge" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_chi2" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="muMSonly_ndof" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_R" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_z" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_theta" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_phi" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_nTrks" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_chi2prob" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="MSvx_trk_px" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="MSvx_trk_py" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="MSvx_trk_pz" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[][]" Name="MSvx_trk_charge" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_nMDT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_nIMDT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_nMMDT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_nOMDT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_nRPC" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="MSvx_nTGC" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="HVtrk_x" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="HVtrk_y" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="HVtrk_z" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="HVtrk_pT" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="HVtrk_pz" NotAPointer="false" />
+        <IClassItem xsi:type="ItemVector" ItemType="double[]" Name="HVtrk_charge" NotAPointer="false" />
+      </Items>
+      <IsTClonesArrayClass>false</IsTClonesArrayClass>
+      <IsTopLevelClass>true</IsTopLevelClass>
+      <NtupleProxyPath>D:\Code\ROOT\LINQtoROOT\DemosAndTests\SimpleNugetPackageDependencyTest\ROOTLINQ\ntuple_CollectionTree.h</NtupleProxyPath>
+      <UserInfoPath>D:\Code\ROOT\LINQtoROOT\DemosAndTests\SimpleNugetPackageDependencyTest\ROOTLINQ\CollectionTreeConfig-000.ntup</UserInfoPath>
+      <ClassesToGenerate>
+        <ClassForDictionary>
+          <classSpec>vector&lt;float&gt;</classSpec>
+          <includeFiles>vector</includeFiles>
+        </ClassForDictionary>
+        <ClassForDictionary>
+          <classSpec>vector&lt;long&gt;</classSpec>
+          <includeFiles>vector</includeFiles>
+        </ClassForDictionary>
+        <ClassForDictionary>
+          <classSpec>vector&lt;unsigned short&gt;</classSpec>
+          <includeFiles>vector</includeFiles>
+        </ClassForDictionary>
+        <ClassForDictionary>
+          <classSpec>vector&lt;vector&lt;int&gt; &gt;</classSpec>
+          <includeFiles>vector</includeFiles>
+        </ClassForDictionary>
+      </ClassesToGenerate>
+    </ROOTClassShell>
+  </Classes>
+  <ClassImplimintationFiles />
+</NtupleTreeInfo>

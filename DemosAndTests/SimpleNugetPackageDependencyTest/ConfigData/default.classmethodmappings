@@ -1,0 +1,49 @@
+﻿#
+# Contains default mappings for various .NET method calls to something
+# perhaps more workable in the C++ world.
+#
+
+#
+# Generic functions
+#
+
+include: cmath
+Math Sin(System.Double) => std::sin(double)
+Math Cos(System.Double) => std::cos(double)
+Math Tan(System.Double) => std::tan(double)
+
+Math Sinh(System.Double) => std::sinh(double)
+Math Cosh(System.Double) => std::cosh(double)
+Math Tanh(System.Double) => std::tanh(double)
+
+Math Asin(System.Double) => std::asin(double)
+Math Acos(System.Double) => std::acos(double)
+Math Atan(System.Double) => std::atan(double)
+Math Atan2(System.Double, System.Double) => std::atan2(double, double)
+
+Math Sqrt(System.Double) => std::sqrt(double)
+Math Sqrt(System.Single) => std::sqrt(float)
+
+Math Abs(System.Double) => std::abs(double)
+Math Abs(System.Single) => std::abs(float)
+Math Abs(System.Int32) => std::abs(int)
+
+Math Exp(System.Double) => std::exp(double)
+
+Math Floor(System.Double) => std::floor(double)
+
+Math Log(System.Double) => std::log(double)
+Math Log10(System.Double) => std::log10(double)
+
+Math Pow(System.Double, System.Double) => std::pow(double,double)
+
+# min/max are in a different header
+
+include: algorithm
+Math Max(System.Double, System.Double) => std::max(double, double)
+Math Max(System.Single, System.Single) => std::max(float, float)
+Math Max(System.Int32, System.Int32) => std::max(int, int)
+
+Math Min(System.Double, System.Double) => std::min(double, double)
+Math Min(System.Single, System.Single) => std::min(float, float)
+Math Min(System.Int32, System.Int32) => std::min(int, int)
