@@ -10,6 +10,82 @@ namespace LINQToTreeHelpers.FutureUtils
     public static class Operators
     {
         /// <summary>
+        /// Select pattern - so that one can access the monad in situ.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public static IFutureValue<T> Select<T>(this IFutureValue<T> self, Func<T, T> map)
+        {
+            return new DoFutureOperator<T>(
+                () => map(self.Value),
+                () => self.HasValue
+                );
+        }
+
+        /// <summary>
+        /// Cache a call to Value to make sure it is only called once.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class FutureValueCache<T>
+        {
+            private T _cache;
+            private bool _called = false;
+            private IFutureValue<T> _fvalue;
+
+            public FutureValueCache(IFutureValue<T> mfv)
+            {
+                _fvalue = mfv;
+            }
+
+            public T GetValue()
+            {
+                if (!_called)
+                {
+                    _cache = _fvalue.Value;
+                    _called = true;
+                }
+                return _cache;
+            }
+        }
+
+        /// <summary>
+        /// Implement the select many pattern to allow monadic calculations
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="select"></param>
+        /// <param name="project"></param>
+        /// <returns>A future value that applies the projection operator</returns>
+        /// <remarks>
+        /// The projection is straight forward SelectMany (not that it is straight forward in any way).
+        /// Doing the HasValue guy, however, is not, as we want to be a little careful not to call Value
+        /// on anything that doesn't have a value yet. So we are relying on the fact that self.Value won't
+        /// get calculated until after the self.HasValue has been "ok"d.
+        /// </remarks>
+        public static IFutureValue<V> SelectMany<T, U, V>(
+            this IFutureValue<T> self,
+            Func<T, IFutureValue<U>> select,
+            Func<T, U, V> project)
+        {
+            var fvcache = new FutureValueCache<T>(self);
+            return new DoFutureOperator<V>(
+                () =>
+                {
+                    var resT = fvcache.GetValue();
+                    var resUOpt = select(resT);
+                    var resU = resUOpt.Value;
+                    var resV = project(resT, resU);
+                    return resV;
+                },
+                () => self.HasValue && select(fvcache.GetValue()).HasValue
+                );
+        }
+
+        /// <summary>
         /// Divide to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
