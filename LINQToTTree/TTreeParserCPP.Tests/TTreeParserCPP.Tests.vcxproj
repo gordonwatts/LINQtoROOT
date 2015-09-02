@@ -50,8 +50,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>c:\root\include;$(IncludePath)</IncludePath>
-    <LibraryPath>c:\root\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ROOTSYS)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ROOTSYS)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
