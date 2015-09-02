@@ -10,7 +10,7 @@ namespace LINQToTreeHelpers.FutureUtils
     public static class Operators
     {
         /// <summary>
-        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// Divide to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -24,7 +24,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// Divide to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -38,7 +38,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// Divide to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -52,7 +52,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// Divide to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -66,7 +66,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// Divide to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -80,7 +80,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Divide to fture values that are integers. Return a dobule (as we should be!!).
+        /// Divide to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -108,7 +108,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// Add to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -122,7 +122,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// Add to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -136,7 +136,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// Add to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -150,7 +150,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// Add to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -164,7 +164,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Add to fture values that are integers. Return a dobule (as we should be!!).
+        /// Add to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -178,7 +178,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// Multiply to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -192,7 +192,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// Multiply to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -206,7 +206,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// Multiply to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -220,7 +220,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// Multiply to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -234,7 +234,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// Multiply to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -248,7 +248,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Multiply to fture values that are integers. Return a dobule (as we should be!!).
+        /// Multiply to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="numerator"></param>
         /// <param name="denominator"></param>
@@ -276,7 +276,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// Subtract to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -290,7 +290,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// Subtract to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -304,7 +304,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// Subtract to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -318,7 +318,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// Subtract to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -332,7 +332,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Subtract to fture values that are integers. Return a dobule (as we should be!!).
+        /// Subtract to future values that are integers. Return a double (as we should be!!).
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
@@ -404,7 +404,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// method to cast it properly.
         /// </summary>
         /// <typeparam name="TSource">The type of the original object</typeparam>
-        /// <remarks>Need this because otherwise you will need to specify explicity both types at </remarks>
+        /// <remarks>Need this because otherwise you will need to specify explicitly both types at </remarks>
         public class CastCapture<TSource>
         {
             /// <summary>
@@ -440,7 +440,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// Cast an IFutureValue from one class to another. Apply the To operator to the result of this.
         /// </summary>
         /// <typeparam name="TSource">The source type for the FV that will be cast</typeparam>
-        /// <param name="source">The origial future value that is to have its value re-cast</param>
+        /// <param name="source">The original future value that is to have its value re-cast</param>
         /// <returns>A CastCapture object that you can use the To object to recast to the type you want</returns>
         public static CastCapture<TSource> Cast<TSource>(this IFutureValue<TSource> source)
         {
@@ -448,7 +448,7 @@ namespace LINQToTreeHelpers.FutureUtils
         }
 
         /// <summary>
-        /// Apply an operation to a future value in the future. For fluent programing's sake,
+        /// Apply an operation to a future value in the future. For fluent programming's sake,
         /// return the same object.
         /// </summary>
         /// <typeparam name="T"></typeparam>
