@@ -215,6 +215,7 @@
     <Compile Include="QueriableDummy.cs" />
     <Compile Include="QueriableDummyNoExe.cs" />
     <Compile Include="QueryResultCacheTest.cs" />
+    <Compile Include="QueryVisitors\PropertyExpressionTransformerTest.cs" />
     <Compile Include="QueryVisitors\QueryVisitorOnImpliedObjectsTest.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitorTest.cs" />
     <Compile Include="QueryVisitors\CreateTupleExpressionTransformerTest.cs" />
