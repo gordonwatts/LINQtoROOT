@@ -9,14 +9,14 @@ using TTreeDataModel;
 namespace TTreeClassGenerator
 {
     /// <summary>
-    /// Starting from the class interface, generate a class that can be used in LINQ queires.
+    /// Starting from the class interface, generate a class that can be used in LINQ queries.
     /// All classes are generated in a single output file.
     /// </summary>
     public class ClassGenerator
     {
         /// <summary>
         /// GIven an existing file that contains the XML class spec, generate a CS file
-        /// that conatins all the definitions needed. Everything will be burried insize
+        /// that contains all the definitions needed. Everything will be buried inside
         /// the namespaceName.
         /// </summary>
         /// <param name="inputXMLFile"></param>
@@ -57,7 +57,7 @@ namespace TTreeClassGenerator
                 }
                 else
                 {
-                    Console.WriteLine("INFO: Loading gropuing file '" + xmlFile.FullName + "' for class '" + c.Name + "'.");
+                    Console.WriteLine("INFO: Loading grouping file '" + xmlFile.FullName + "' for class '" + c.Name + "'.");
                     userInfoMap[c.Name] = LoadUserInfoFromXMLFile(xmlFile);
                 }
             }
@@ -283,7 +283,7 @@ namespace TTreeClassGenerator
                     {
                         ///
                         /// Write out the info class that contains everything needed to process this.
-                        /// We could use attribute programing here, but that takes more code at the other
+                        /// We could use attribute programming here, but that takes more code at the other
                         /// end, so until there is a real reason, we'll do it this way.
                         /// 
                         /// This is a kludge until we do more work to fix things with attributes, etc.
@@ -366,12 +366,12 @@ namespace TTreeClassGenerator
 
                         if (!cls.IsTopLevelClass)
                         {
-                            output.WriteLine("  public class {0}", rawClassName);
+                            output.WriteLine("  public partial class {0}", rawClassName);
                             output.WriteLine("  {");
                         }
                         else
                         {
-                            output.WriteLine("  public class {0} : IExpressionHolder", rawClassName);
+                            output.WriteLine("  public partial class {0} : IExpressionHolder", rawClassName);
                             output.WriteLine("  {");
                             output.WriteLine("    public Expression HeldExpression {get; private set;}");
                             output.WriteLine("    public {0} (Expression expr) {{ HeldExpression = expr; }}", rawClassName);
@@ -399,7 +399,7 @@ namespace TTreeClassGenerator
                         output.WriteLine();
 
                         ///
-                        /// Next, write out the queriable classes so we can actually do the queires
+                        /// Next, write out the queriable classes so we can actually do the queries
                         /// against the trees!
                         /// 
 
@@ -418,7 +418,7 @@ namespace TTreeClassGenerator
                             output.WriteLine("    {");
                             output.WriteLine("      return new QueriableTTree<{0}>(rootFiles, treeName);", cls.Name.FixupClassName());
                             output.WriteLine("    }");
-                            output.WriteLine("    /// Create a LINQ to TTree interface for a list of urls and optional tree name");
+                            output.WriteLine("    /// Create a LINQ to TTree interface for a list of URLs and optional tree name");
                             output.WriteLine("    public static QueriableTTree<{0}> CreateQueriable (this System.Uri[] rootURLs, string treeName = \"{1}\")", cls.Name.FixupClassName(), cls.Name);
                             output.WriteLine("    {");
                             output.WriteLine("      return new QueriableTTree<{0}>(rootURLs, treeName);", cls.Name.FixupClassName());
@@ -494,7 +494,7 @@ namespace TTreeClassGenerator
             /// 
 
             output.WriteLine("  [TranslateToClass(typeof({0}))]", translateToName);
-            output.WriteLine("  public class {0}", className);
+            output.WriteLine("  public partial class {0}", className);
             output.WriteLine("  {");
 
             ///
@@ -546,7 +546,7 @@ namespace TTreeClassGenerator
 
             foreach (var grp in tTreeUserInfo.Groups.Where(g => g.Name != "ungrouped"))
             {
-                output.WriteLine("  public class {0}", grp.ClassName);
+                output.WriteLine("  public partial class {0}", grp.ClassName);
                 output.WriteLine("  {");
 
                 output.WriteLine("#pragma warning disable 0649");
