@@ -5,7 +5,7 @@ namespace LINQToTTreeLib.QueryVisitors
 {
     /// <summary>
     /// Watch the parsing for a Enumerable.Range. When it is spotted, convert it to a particular
-    /// special expression that won't be looked at by re-linq. The reason is that the huristics
+    /// special expression that won't be looked at by re-linq. The reason is that the heuristics
     /// that re-linq uses means it will dig inside the expression when we really don't want it
     /// to.
     /// </summary>
