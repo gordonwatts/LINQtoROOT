@@ -18,6 +18,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using LINQToTTreeLib.Tests.QueryVisitors;
 
 namespace LINQToTTreeLib
 {
@@ -425,6 +426,10 @@ namespace LINQToTTreeLib
             [TTreeVariableGrouping]
             [RenameVariable("var3")]
             public double v3;
+
+            public double v4;
+            public static Expression<Func<subNtupleObjects1, double>> v4Expression = n => n.var1 * 5.0; 
+
         }
 
         public class subNtupleObjects2
@@ -2569,6 +2574,19 @@ namespace LINQToTTreeLib
             var obj = new SelectionObject();
             Expression<Func<ntupWithObjects, subNtupleObjects1>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
             var r = q.Where(evt => test.Invoke(evt).var1 > 0).Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void TestQueryUsesPropertyAsExpression()
+        {
+            // Look for a property translation. v4 below can only be translated if
+            // the expression is one that is mapped to something that actually exists.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var r = q.Where(evt => evt.jets.Any(j => j.v4 > 10.0)).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
         }

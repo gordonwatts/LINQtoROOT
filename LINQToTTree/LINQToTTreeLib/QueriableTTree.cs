@@ -201,6 +201,7 @@ namespace LINQToTTreeLib
             //
 
             var transformerRegistry = ExpressionTransformerRegistry.CreateDefault();
+            transformerRegistry.Register(new PropertyExpressionTransformer());
             transformerRegistry.Register(new EnumerableRangeExpressionTransformer());
             transformerRegistry.Register(new CreateTupleExpressionTransformer());
             transformerRegistry.Register<MethodCallExpression>(new ExpressionVariableInvokeExpressionTransformer(new ExpressionType[] { ExpressionType.Call }));

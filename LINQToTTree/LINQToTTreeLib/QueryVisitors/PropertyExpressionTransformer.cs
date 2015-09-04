@@ -39,9 +39,14 @@ namespace LINQToTTreeLib.QueryVisitors
 
             var pnameExpression = pname + "Expression";
             var minfo = expression.Expression.Type.GetField(pnameExpression);
-            if (minfo == null || (minfo.Attributes | System.Reflection.FieldAttributes.Static) == 0)
+            if (minfo == null)
             {
                 return expression;
+            }
+
+            // If it isn't static, then that is bad. However, the name is too close, so we bomb.
+            if (!minfo.IsStatic) {
+                throw new InvalidOperationException(string.Format("Expression field named '{0}' on type '{1}' is not declared static. It must be.", pnameExpression, expression.Expression.Type.FullName));
             }
             
             // Check to see if the signature is correct
@@ -49,7 +54,7 @@ namespace LINQToTTreeLib.QueryVisitors
             var exprType = typeof(Expression<>).MakeGenericType(funcType);
             if (exprType != minfo.FieldType)
             {
-                return expression;
+                throw new InvalidOperationException(string.Format("Expression field named '{0}' on type '{1}' does not have the proper type. It must be of type 'public static Expression<Func<{2},{3}>'", pnameExpression, expression.Expression.Type.FullName, expression.Expression.Type.Name, expression.Type.Name));
             }
 
             // Get the expression that we will use in the replacement.

@@ -48,6 +48,30 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             public int thePropertyRaw { get; set; }
             public int theProperty { get; set; }
             public static Expression<Func<PETest, int>> thePropertyExpression = f => f.thePropertyRaw;
+
+            /// <summary>
+            /// Used for a bad return type - int and double don't match.
+            /// </summary>
+#pragma warning disable 0649
+            public int theFieldBadReturn;
+#pragma warning restore 0649
+            public static Expression<Func<PETest, double>> theFieldBadReturnExpression = f => f.thePropertyRaw;
+
+            /// <summary>
+            /// Just a bad signature all together!
+            /// </summary>
+#pragma warning disable 0649
+            public int theFieldBadSignature;
+#pragma warning restore 0649
+            public static int theFieldBadSignatureExpression = 2;
+
+            /// <summary>
+            /// Forgot the static type!
+            /// </summary>
+#pragma warning disable 0649
+            public int theFieldBadStatic;
+#pragma warning restore 0649
+            public Expression<Func<PETest, int>> theFieldBadStaticExpression = f => f.thePropertyRaw;
         }
 
         [TestMethod]
@@ -94,17 +118,39 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
-        public void PropertyExpressionForgetStatic()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void PropertyExpressionWrongReturnType()
         {
-            // Forgets to mark the item as static
-            Assert.Inconclusive();
+            // everything right but return type wrong.
+            var c = new PropertyExpressionTransformer();
+            var f = new PETest();
+            var paccess = Expression.Field(Expression.Constant(f), "theFieldBadReturn");
+
+            var pnew = c.Transform(paccess);
         }
 
         [TestMethod]
-        public void PropertyExpressionWrongReturnType()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void PropertyExpressionWrongSignature()
         {
-            // Puts in double instead of int as return type
-            Assert.Inconclusive();
+            // Totally wrong signature
+            var c = new PropertyExpressionTransformer();
+            var f = new PETest();
+            var paccess = Expression.Field(Expression.Constant(f), "theFieldBadSignature");
+
+            var pnew = c.Transform(paccess);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void PropertyExpressionForgetStatic()
+        {
+            // Forgets to mark the item as static
+            var c = new PropertyExpressionTransformer();
+            var f = new PETest();
+            var paccess = Expression.Field(Expression.Constant(f), "theFieldBadStatic");
+
+            var pnew = c.Transform(paccess);
         }
     }
 }
