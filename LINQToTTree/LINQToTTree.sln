@@ -18,6 +18,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTreeDataModel", "TTreeDataModel\TTreeDataModel.csproj", "{3F0367B8-C970-4134-8FC6-944400C00F71}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TTreeParserCPP.Tests", "TTreeParserCPP.Tests\TTreeParserCPP.Tests.vcxproj", "{967E302F-C718-44B4-A6C5-93B87C786E57}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A1A955AD-BC56-4413-92BC-581C35A78522} = {A1A955AD-BC56-4413-92BC-581C35A78522}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdTFileParser", "CmdTFileParser\CmdTFileParser.csproj", "{4E957E9D-BEE2-48CB-AC19-02F89A896725}"
 EndProject
