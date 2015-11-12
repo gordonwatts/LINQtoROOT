@@ -68,7 +68,7 @@
       <AdditionalDependencies>libCore.lib;libTree.lib;libPhysics.lib;libCint.lib;libRIO.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -Version 2 -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
+      <Command>powershell.exe -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Kill off a potential reference when this dll gets copied.</Message>
@@ -87,23 +87,23 @@
       <AdditionalDependencies>libCore.lib;libTree.lib;libPhysics.lib;libCint.lib;libRIO.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -Version 2 -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
+      <Command>powershell.exe -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
       <Message>Kill off a potential reference when this dll gets copied.</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="libCoreWrapper">
-      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.32.7\lib\net40\libCoreWrapper.dll</HintPath>
+      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.34.8\lib\net40\libCoreWrapper.dll</HintPath>
     </Reference>
     <Reference Include="libTreeWrapper">
-      <HintPath>..\Packages\ROOT.NET.Tree.5.34.32.7\lib\net40\libTreeWrapper.dll</HintPath>
+      <HintPath>..\Packages\ROOT.NET.Tree.5.34.34.8\lib\net40\libTreeWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WrapperPlumbingLibrary">
-      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.32.7\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+      <HintPath>..\Packages\ROOT.NET.Dynamic.5.34.34.8\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
