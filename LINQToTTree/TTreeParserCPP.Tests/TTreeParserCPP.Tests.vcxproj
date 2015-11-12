@@ -68,7 +68,7 @@
       <AdditionalDependencies>libCore.lib;libTree.lib;libPhysics.lib;libCint.lib;libRIO.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
+      <Command>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Kill off a potential reference when this dll gets copied.</Message>
@@ -87,7 +87,7 @@
       <AdditionalDependencies>libCore.lib;libTree.lib;libPhysics.lib;libCint.lib;libRIO.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>powershell.exe -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
+      <Command>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Command "&amp; {get-process vstest.executionengine.* | stop-process}"</Command>
       <Message>Kill off a potential reference when this dll gets copied.</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
