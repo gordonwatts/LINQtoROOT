@@ -106,7 +106,7 @@ namespace TTreeParser.Tests
             f1.Close();
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void TestWithOneIndexedArray()
         {
             var aa = new ArrayAnalyzer();
