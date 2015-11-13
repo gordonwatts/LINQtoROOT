@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TTreeDataModel;
 using TTreeParserCPPTests;
+using System.Diagnostics;
 
 namespace TTreeParser.Tests
 {
@@ -114,6 +115,8 @@ namespace TTreeParser.Tests
             var f = new ROOTNET.NTFile(filename, "RECREATE");
             var tree = CreateTrees.CreateTreeWithIndexedSimpleVector(20);
             f.Write();
+
+            Trace.WriteLine("The size is: " + tree.Entries.ToString());
 
             ROOTClassShell sh = new ROOTClassShell();
             sh.Add(new classitem() { ItemType = "int[]", Name = "arr" });
