@@ -6,7 +6,7 @@ namespace LINQToTreeHelpers.FutureUtils
     /// <summary>
     /// Future TFile - really just a normal TFile, but gets written out in the future...
     /// </summary>
-    public class FutureTFile : FutureTDirectory
+    public class FutureTFile : FutureTDirectory, IDisposable
     {
         private static ROOTNET.Interface.NTFile CreateOpenFile(string name)
         {
@@ -54,6 +54,33 @@ namespace LINQToTreeHelpers.FutureUtils
 
             Write();
             Directory.Close();
+
+            // No longer need to do the dispose here.
+        }
+
+        /// <summary>
+        /// Finalizer that makes sure the class has been closed.
+        /// </summary>
+        ~FutureTFile()
+        {
+            Dispose();
+        }
+
+        /// <summary>
+        /// Have we done a dispose yet?
+        /// </summary>
+        private bool _disposed = false;
+
+        /// <summary>
+        /// Release the file resouce (and write it out).
+        /// </summary>
+        public void Dispose()
+        {
+            if (!_disposed) {
+                Close();
+                _disposed = true;
+            }
+            GC.SuppressFinalize(this);
         }
     }
 }

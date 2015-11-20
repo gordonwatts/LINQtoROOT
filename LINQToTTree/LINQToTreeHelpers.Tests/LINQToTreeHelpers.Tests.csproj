@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="t_DataSetFinder.cs" />
+    <Compile Include="t_FutureTFile.cs" />
     <Compile Include="t_FutureUtils.cs" />
     <Compile Include="t_PlottingUtils.cs" />
     <Compile Include="t_ROOTUtils.cs" />
