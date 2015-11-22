@@ -153,6 +153,30 @@ namespace LINQToTreeHelpers.Tests
         }
 
         [TestMethod]
+        public void FutureMonadSelectWithLet()
+        {
+            var tf1 = new test_future_notready<int>(1);
+
+            var tf4 = from t1 in tf1
+                      let r1 = t1 * 2
+                      select r1;
+            Assert.AreEqual(2, tf4.Value);
+        }
+
+        [TestMethod]
+        public void FutureMonadSelectManyWithLet()
+        {
+            var tf1 = new test_future_notready<int>(1);
+            var tf2 = new test_future_notready<int>(2);
+
+            var tf4 = from t1 in tf1
+                      let r1 = t1 * 2
+                      from t2 in tf2
+                      select r1 + t2;
+            Assert.AreEqual(4, tf4.Value);
+        }
+
+        [TestMethod]
         public void TestDivideByTwoFutures2()
         {
             var t1 = new test_future<double>(6);

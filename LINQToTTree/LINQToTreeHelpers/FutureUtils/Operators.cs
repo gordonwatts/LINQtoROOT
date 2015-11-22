@@ -13,10 +13,11 @@ namespace LINQToTreeHelpers.FutureUtils
         /// Select pattern - so that one can access the monad in situ.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <typeparam name="M"></typeparam>
         /// <param name="self"></param>
         /// <param name="map"></param>
         /// <returns></returns>
-        public static IFutureValue<T> Select<T>(this IFutureValue<T> self, Func<T, T> map)
+        public static IFutureValue<T> Select<T, M>(this IFutureValue<M> self, Func<M, T> map)
         {
             return new DoFutureOperator<T>(
                 () => map(self.Value),
