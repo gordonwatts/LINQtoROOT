@@ -647,6 +647,19 @@ namespace LINQToTTreeLib
             if (classToTranslateTo == null)
                 throw new NotImplementedException("Unable to translate '" + memberExpr + "' for an array length because the translation base type '" + attr.BaseType.Name + "' doesn't have a translate class attribute");
 
+            // Get the array we are being redirected to - this is what we have to take the length of.
+            var indexTargetMember = attr.BaseType.GetMember(attr.ArrayName).FirstOrDefault();
+            if (indexTargetMember == null)
+            {
+                throw new InvalidOperationException(string.Format("Can't find array '{0}' on {1}.", attr.ArrayName, attr.BaseType));
+            }
+
+            // Now, build the array up
+            var root = FindObjectOfType(memberExpr, attr.BaseType);
+            var indexTargetAccess = Expression.MakeMemberAccess(root, indexTargetMember);
+            return VisitExpressionImplemented(Expression.ArrayLength(indexTargetAccess));
+
+#if false
             ///
             /// Now, find, with renames, what the "muonindex" points to, and build access to it from
             /// a translated root.
@@ -660,6 +673,7 @@ namespace LINQToTTreeLib
 
             // That is the target - so return the length of it.
             return Expression.ArrayLength(memberAccess);
+#endif
         }
 
         /// <summary>

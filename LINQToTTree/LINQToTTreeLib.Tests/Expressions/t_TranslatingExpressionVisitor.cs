@@ -644,7 +644,9 @@ namespace LINQToTTreeLib.Tests
             var caches = new List<string>();
             var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Console.WriteLine(result);
-            Assert.IsTrue(result.ToString().EndsWith("ResultType3).specialIndex[0]]"), result.ToString().Trim());
+            Assert.IsTrue(result.ToString().Contains("specialIndex[0] >= 0"), result.ToString().Trim());
+            Assert.IsTrue(result.ToString().Contains("specialIndex[0] < ArrayLength"), result.ToString().Trim());
+            Assert.IsTrue(result.ToString().Contains("val))"), result.ToString().Trim());
         }
 
         [TestMethod]
