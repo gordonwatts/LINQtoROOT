@@ -185,6 +185,88 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Info form parsing a array pointer expression.
+        /// </summary>
+        class ArrayPointerInfo
+        {
+            /// <summary>
+            /// The index expression that you would use to look up in teh TargetMemberExpression.
+            /// It is in the translated world.
+            /// </summary>
+            public Expression TargetIndexExpression { get; internal set; }
+
+            /// <summary>
+            /// The member pointer for the object that is the array we are pointing to.
+            /// </summary>
+            public MemberInfo TargetMember { get; internal set; }
+
+            /// <summary>
+            /// The target array that we wnat to index into. Add the array index onto this, and then
+            /// resolve it to get what you actually want. This is still in the translated world.
+            /// </summary>
+            public MemberExpression TargetMemberExpression { get; internal set; }
+        }
+
+        /// <summary>
+        /// Given an expression that looks like "arr.jets[0].muonIndex" or "arr.jets[0].muons[0]" it will
+        /// parse the expression. Note that you need to strip off the member reference that usually comes first.
+        /// </summary>
+        /// <param name="expression">Expression that refers to the ItemArray pointer</param>
+        /// <returns>Null if this doesn't boil down to a member expression, a throw if it is a malformed one, or all the info you need to reconstruct the expression.</returns>
+        private ArrayPointerInfo DecodeArrayPointerExpression(Expression expression)
+        {
+            // First, get expression down to a member expression. The only things that
+            // we are allowed to strip off are array references.
+            var arrayLookups = new List<Expression>();
+            while (expression.NodeType == ExpressionType.ArrayIndex)
+            {
+                var aind = expression as BinaryExpression;
+                arrayLookups.Add(aind.Right);
+                expression = aind.Left;
+            }
+
+            // We should be left with a member access that has the correct attributes attached to it!
+            var indexMemberExpression = expression as MemberExpression;
+            if (indexMemberExpression == null)
+                return null;
+
+            var indexMember = indexMemberExpression.Member;
+            var attrIndexReferences = TypeUtils.TypeHasAttribute<IndexToOtherObjectArrayAttribute>(indexMember);
+            if (attrIndexReferences == null)
+                throw new NotImplementedException("Index variable '" + indexMember.Name + "' was not marked with the IndexToOtherObjectArray attribute");
+
+            var indexTargetMember = attrIndexReferences.BaseType.GetMember(attrIndexReferences.ArrayName).FirstOrDefault();
+            if (indexTargetMember == null)
+                throw new NotImplementedException("Could nto find member '" + attrIndexReferences.ArrayName + "' in type " + attrIndexReferences.BaseType.Name);
+
+            // Get the array that we are going to reference in our translated world.
+            var rootObject = FindObjectOfType(expression, attrIndexReferences.BaseType);
+
+            // Next, the source expression should be an index, so make sure it translates to
+            // an integer... And if there were multiple array references then we need to unwind them here.
+            var sourceIndex = VisitExpressionImplemented(expression);
+            if (sourceIndex == null)
+                throw new NotImplementedException("Failed to translate expression '" + expression.ToString() + "' of '" + expression.ToString() + "'");
+
+            foreach (var arrayExpression in arrayLookups)
+            {
+                sourceIndex = Expression.ArrayIndex(sourceIndex, arrayExpression);
+            }
+
+            if (sourceIndex.Type != typeof(int))
+                throw new NotImplementedException("Array index expression is not an integer (it is a '" + sourceIndex.Type.Name + "') - failed with '" + expression.ToString() + "'");
+
+            // Now we are ready to build up our results.
+
+            return new ArrayPointerInfo()
+            {
+                TargetMemberExpression = Expression.MakeMemberAccess(rootObject, indexTargetMember),
+                TargetIndexExpression = sourceIndex,
+                TargetMember = indexTargetMember
+            };
+        }
+
+        /// <summary>
         /// See if this is of the form something.index.value - where index we can track back to a pointer to an actualy item.
         /// </summary>
         /// <param name="expression"></param>
@@ -203,80 +285,14 @@ namespace LINQToTTreeLib
             if (targetMember == null)
                 return null;
 
-            ///
-            /// Now, it is possible that this special index is actually a 2D index. In short, if this is muons, there
-            /// could be multiple muons associated with this jet. In that case, there will be an array index sitting
-            /// right here which we need to strip off. NOTE - we can't deal with a 3D parameterization here!
-            ///
-
-            List<Expression> arrayLooksups = new List<Expression>();
-            while (sourceExpression.NodeType == ExpressionType.ArrayIndex)
-            {
-                var aind = sourceExpression as BinaryExpression;
-                arrayLooksups.Add(aind.Right);
-                sourceExpression = aind.Left;
-            }
-
-            ///
-            /// Next job is to figure out where this index guy is pointing to. In order to
-            /// do that look for the other link object. Do the check and make sure the types
-            /// are correct so we are "ready" to go. And also resolve the underlying object if
-            /// there is one.
-            /// 
-
-            var indexMemberExpression = sourceExpression as MemberExpression;
-            if (indexMemberExpression == null)
+            // Do basic parsing
+            var arrayInfo = DecodeArrayPointerExpression(sourceExpression);
+            if (arrayInfo == null)
                 return null;
 
-            var indexMember = indexMemberExpression.Member;
-            var attrIndexReferences = TypeUtils.TypeHasAttribute<IndexToOtherObjectArrayAttribute>(indexMember);
-            if (attrIndexReferences == null)
-                throw new NotImplementedException("Index variable '" + indexMember.Name + "' was not marked with the IndexToOtherObjectArray attribute");
-
-            var indexTargetMember = attrIndexReferences.BaseType.GetMember(attrIndexReferences.ArrayName).FirstOrDefault();
-            if (indexTargetMember == null)
-                throw new NotImplementedException("Could nto find member '" + attrIndexReferences.ArrayName + "' in type " + attrIndexReferences.BaseType.Name);
-
-            ///
-            /// Get the source of the expression. It has to be somewhere up our line, so we will dig deep to find it.
-            /// 
-
-            var rootObject = FindObjectOfType(sourceExpression, attrIndexReferences.BaseType);
-
-            ///
-            /// Next, the source expression should be an index, so make sure it translates to
-            /// an integer... And if there were multiple array references then we need to unwind them here.
-            /// 
-
-            var sourceIndex = VisitExpressionImplemented(sourceExpression);
-            if (sourceIndex == null)
-                throw new NotImplementedException("Failed to translate expression '" + sourceExpression.ToString() + "' of '" + expression.ToString() + "'");
-
-            foreach (var arrayExpression in arrayLooksups)
-            {
-                sourceIndex = Expression.ArrayIndex(sourceIndex, arrayExpression);
-            }
-
-            if (sourceIndex.Type != typeof(int))
-                throw new NotImplementedException("Array index expression is not an integer (it is a '" + sourceIndex.Type.Name + "') - failed with '" + expression.ToString() + "'");
-
-            ///
-            /// Now, build an array index expression!
-            /// 
-
-            var accessTargetMemberExpression = Expression.MakeMemberAccess(rootObject, indexTargetMember);
-            var targetIndexedAccessExpression = Expression.ArrayIndex(accessTargetMemberExpression, sourceIndex);
-
-            ///
-            /// And finally the resulting member access
-            /// 
-
+            // Build up the final expression, and bail.
+            var targetIndexedAccessExpression = Expression.ArrayIndex(arrayInfo.TargetMemberExpression, arrayInfo.TargetIndexExpression);
             var targetValueIndexedAccessExpression = Expression.MakeMemberAccess(targetIndexedAccessExpression, targetMember);
-
-            ///
-            /// Ok! Got it! Now, we need to translate this one and we are off to the races! :-)
-            /// 
-
             return VisitExpressionImplemented(targetValueIndexedAccessExpression);
         }
 
@@ -602,32 +618,29 @@ namespace LINQToTTreeLib
             {
                 // Make sure we are pointing to something that is an index into another object.
                 // Arg 0 (the only arg) is the proper argument here.
-                var memberExpr = expression.Arguments[0] as MemberExpression;
-                if (memberExpr == null)
+                ArrayPointerInfo arrayInfo = null;
+                try {
+                    arrayInfo = DecodeArrayPointerExpression(expression.Arguments[0]);
+                    if (arrayInfo == null)
+                    {
+                        throw new InvalidOperationException(string.Format("The Helpers.IsGoodIndex function can be applied only to members that are makred as an IndexToGroup in the data."));
+                    }
+                } catch (NotImplementedException e)
                 {
-                    throw new InvalidOperationException(string.Format("The Helpers.IsGoodIndex function can be applied only to members that are makred as an IndexToGroup in the data."));
-                }
-                var attrMemberIsIndex = TypeUtils.TypeHasAttribute<IndexToOtherObjectArrayAttribute>(memberExpr.Member);
-
-                if (attrMemberIsIndex == null)
-                {
-                    throw new InvalidOperationException(string.Format("The Helpers.IsGoodIndex function can be applied only to members that are makred as an IndexToGroup in the data."));
+                    throw new InvalidOperationException(e.Message, e);
                 }
 
                 // There should be no errors below now, we just have to lift out the size of the array we are pointing to and
                 // go from there.
-                var lengthExpr = TotalLengthOfTargetArray(memberExpr, attrMemberIsIndex);
+                var lengthExpr = VisitExpressionImplemented(Expression.ArrayLength(arrayInfo.TargetMemberExpression));
                 var zeroExpr = Expression.Constant(0, typeof(int));
 
-                // translate the index expression.
-                var indexExpr = VisitExpressionImplemented(memberExpr);
+                var indexExpr = VisitExpressionImplemented(arrayInfo.TargetIndexExpression);
 
-                // Build the test statement.
-                var testExpr = Expression.AndAlso(
+                return Expression.AndAlso(
                     Expression.GreaterThanOrEqual(indexExpr, zeroExpr),
                     Expression.LessThan(indexExpr, lengthExpr)
                     );
-                return testExpr;
             }
 
             return base.VisitMethodCallExpression(expression);

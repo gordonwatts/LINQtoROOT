@@ -652,7 +652,15 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void ArrayIndexIsGood2D()
         {
-            Assert.Inconclusive();
+            Expression<Func<SourceType3, bool>> lambdaExpr = arr => arr.jets[0].specialIndicies[1].IsGoodIndex();
+
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+
+            Console.WriteLine(result);
+            Assert.IsTrue(result.ToString().Contains("specialIndicies[0][1] >= 0"), result.ToString().Trim());
+            Assert.IsTrue(result.ToString().Contains("specialIndicies[0][1] < ArrayLength"), result.ToString().Trim());
+            Assert.IsTrue(result.ToString().Contains("val))"), result.ToString().Trim());
         }
 
         [TestMethod]
