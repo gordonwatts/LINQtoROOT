@@ -51,7 +51,7 @@ namespace LINQToTreeHelpers.Tests
         [TestMethod]
         public void FutureFileWriteWithClose()
         {
-            var f = new FileInfo("FutureFileWriteHisto.root");
+            var f = new FileInfo("FutureFileWriteWithClose.root");
             if (f.Exists)
             {
                 f.Delete();

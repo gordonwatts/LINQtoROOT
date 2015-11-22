@@ -354,6 +354,11 @@ namespace LINQToTTreeLib
         {
             throw new NotSupportedException("No direct call allowed");
         }
+
+        public static bool IsGoodIndex<T>(this T arg)
+        {
+            throw new NotSupportedException("No direct call allowed - this is a marker for the translation process in LINQToROOT");
+        }
         #endregion
     }
 }

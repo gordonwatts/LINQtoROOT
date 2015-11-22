@@ -542,6 +542,9 @@ namespace LINQToTTreeLib.Tests
             [TTreeVariableGrouping]
             [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
             public SourceType3Container2[] specialIndicies;
+
+            [TTreeVariableGrouping]
+            public int val;
         }
 
         public class SourceType3Container2
@@ -622,6 +625,50 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsTrue(result.ToString().Contains(".specialIndex[0]]"), "missign the special index reference");
             Assert.IsTrue(result.ToString().Contains(".val[value"), "missign the .val reference");
+        }
+
+        [TestMethod]
+        public void ArrayIndexAccessExpression()
+        {
+            Expression<Func<SourceType3, int>> lambdaExpr = arr => arr.jets[0].specialIndex.val;
+            var caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+            Console.WriteLine(result);
+            Assert.IsTrue(result.ToString().EndsWith("ResultType3).specialIndex[0]]"), result.ToString().Trim());
+        }
+
+        [TestMethod]
+        public void ArrayIndexIsGood()
+        {
+            Expression<Func<SourceType3, bool>> lambdaExpr = arr => Helpers.IsGoodIndex(arr.jets[0].specialIndex);
+            var caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+            Console.WriteLine(result);
+            Assert.IsTrue(result.ToString().EndsWith("ResultType3).specialIndex[0]]"), result.ToString().Trim());
+        }
+
+        [TestMethod]
+        public void ArrayIndexIsGood2D()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void ArrayIndexIsGoodBadNonMemberReference()
+        {
+            Expression<Func<SourceType3, bool>> lambdaExpr = arr => Helpers.IsGoodIndex(arr.jets[0]);
+            var caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void ArrayIndexIsGoodBadMemberReference()
+        {
+            Expression<Func<SourceType3, bool>> lambdaExpr = arr => Helpers.IsGoodIndex(arr.jets[0].val);
+            var caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
         }
 
         [TestMethod]

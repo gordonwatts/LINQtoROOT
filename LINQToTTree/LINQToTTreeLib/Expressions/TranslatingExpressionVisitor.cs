@@ -560,7 +560,7 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException("Unable to translate '" + memberExpr + "' for an array length because the translation base type '" + attr.BaseType.Name + "' doesn't have a translate class attribute");
 
             ///
-            /// Now, find, with renames, what the "muonindex" points to, and build acces to it from
+            /// Now, find, with renames, what the "muonindex" points to, and build access to it from
             /// a translated root.
             /// 
 
@@ -586,6 +586,80 @@ namespace LINQToTTreeLib
 
             arrayLength = Expression.ArrayLength(arrayLength);
             return arrayLength;
+        }
+
+        /// <summary>
+        /// Look at a function that is a place holder for some code connected with this
+        /// variable translation.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+        {
+            // IsGoodIndex: make sure that the indexed parameter points to something interesting.
+            var method = expression.Method;
+            if (method.Name == "IsGoodIndex" && method.DeclaringType == typeof(Helpers))
+            {
+                // Make sure we are pointing to something that is an index into another object.
+                // Arg 0 (the only arg) is the proper argument here.
+                var memberExpr = expression.Arguments[0] as MemberExpression;
+                if (memberExpr == null)
+                {
+                    throw new InvalidOperationException(string.Format("The Helpers.IsGoodIndex function can be applied only to members that are makred as an IndexToGroup in the data."));
+                }
+                var attrMemberIsIndex = TypeUtils.TypeHasAttribute<IndexToOtherObjectArrayAttribute>(memberExpr.Member);
+
+                if (attrMemberIsIndex == null)
+                {
+                    throw new InvalidOperationException(string.Format("The Helpers.IsGoodIndex function can be applied only to members that are makred as an IndexToGroup in the data."));
+                }
+
+                // There should be no errors below now, we just have to lift out the size of the array we are pointing to and
+                // go from there.
+                var lengthExpr = TotalLengthOfTargetArray(memberExpr, attrMemberIsIndex);
+                var zeroExpr = Expression.Constant(0, typeof(int));
+
+                // translate the index expression.
+                var indexExpr = VisitExpressionImplemented(memberExpr);
+
+                // Build the test statement.
+                var testExpr = Expression.AndAlso(
+                    Expression.GreaterThanOrEqual(indexExpr, zeroExpr),
+                    Expression.LessThan(indexExpr, lengthExpr)
+                    );
+                return testExpr;
+            }
+
+            return base.VisitMethodCallExpression(expression);
+        }
+
+        /// <summary>
+        /// Given an expression like arr.jet[0].muonindex, which is pointing to obj.muons[obj.jet[0].muonindex], return
+        /// an expression which is obj.muons.Length.
+        /// </summary>
+        /// <param name="memberExpr"></param>
+        /// <param name="attrMemberIsIndex"></param>
+        /// <returns></returns>
+        private Expression TotalLengthOfTargetArray(MemberExpression memberExpr, IndexToOtherObjectArrayAttribute attr)
+        {
+            // Get where we are going, as this will be the basis of what we want here.
+            var classToTranslateTo = TypeUtils.TypeHasAttribute<TranslateToClassAttribute>(attr.BaseType);
+            if (classToTranslateTo == null)
+                throw new NotImplementedException("Unable to translate '" + memberExpr + "' for an array length because the translation base type '" + attr.BaseType.Name + "' doesn't have a translate class attribute");
+
+            ///
+            /// Now, find, with renames, what the "muonindex" points to, and build access to it from
+            /// a translated root.
+            /// 
+
+            var targetMember = ResolveMemberName(classToTranslateTo.TargetClassType, memberExpr.Member);
+
+            var root = FindObjectOfType(memberExpr, attr.BaseType);
+            var transRoot = TranslateRootObject(root, classToTranslateTo.TargetClassType);
+            var memberAccess = Expression.MakeMemberAccess(transRoot, targetMember);
+
+            // That is the target - so return the length of it.
+            return Expression.ArrayLength(memberAccess);
         }
 
         /// <summary>
