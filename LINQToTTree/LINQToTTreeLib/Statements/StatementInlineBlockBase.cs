@@ -107,6 +107,15 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Remove a variable. No failure if it isn't in there.
+        /// </summary>
+        /// <param name="var"></param>
+        public void Remove(IDeclaredParameter var)
+        {
+            _variables.Remove(var);
+        }
+
+        /// <summary>
         /// Return the variables in the block
         /// </summary>
         public IEnumerable<IDeclaredParameter> DeclaredVariables

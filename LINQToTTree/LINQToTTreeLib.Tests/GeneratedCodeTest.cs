@@ -310,6 +310,11 @@ namespace LINQToTTreeLib
                 _vlist.Add(variableToDeclare);
             }
 
+            public void Remove(IDeclaredParameter var)
+            {
+                _vlist.Remove(var);
+            }
+
             public IEnumerable<IDeclaredParameter> DeclaredVariables
             {
                 get { return _vlist; }

@@ -16,6 +16,12 @@ namespace LinqToTTreeInterfacesLib
         void Add(IDeclaredParameter variableToDeclare, bool failIfAlreadyPresent = true);
 
         /// <summary>
+        /// Remove a delcared variable from teh list.
+        /// </summary>
+        /// <param name="var"></param>
+        void Remove(IDeclaredParameter var);
+
+        /// <summary>
         /// Returns the list of variables that are declared in this compound block
         /// </summary>
         IEnumerable<IDeclaredParameter> DeclaredVariables { get; }

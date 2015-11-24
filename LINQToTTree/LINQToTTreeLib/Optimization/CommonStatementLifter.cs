@@ -98,6 +98,24 @@ namespace LINQToTTreeLib.Optimization
                 {
                     parent.Remove(s);
 
+                    // During the CombineAndMark there is a chance that a declaration has been orphaned.
+                    // If aBoolean_23 was declared in parent, it may also be declared up where it was moved to.
+                    // If that is the case, we need to remove it.
+                    if (parent is IBookingStatementBlock && r.Parent is IBookingStatementBlock)
+                    {
+                        var newParent = r.Parent as IBookingStatementBlock;
+                        var oldParent = parent as IBookingStatementBlock;
+
+                        var varsToRemove = from declVar in oldParent.DeclaredVariables
+                                           from parVars in newParent.DeclaredVariables
+                                           where declVar.ParameterName == parVars.ParameterName
+                                           select declVar;
+                        foreach (var declVar in varsToRemove.ToArray())
+                        {
+                            oldParent.Remove(declVar);
+                        }
+                    }
+
                     // We have to be a little careful here. The statement should be added at the right
                     // place. Since the statement works inside parent, and it works inside stack, then
                     // it should work in stack, just before parent.

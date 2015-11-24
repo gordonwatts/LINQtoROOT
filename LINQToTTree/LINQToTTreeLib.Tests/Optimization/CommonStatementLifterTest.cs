@@ -216,7 +216,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
             gc.Add(assign3);
 
-
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
@@ -242,7 +241,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(p1.ParameterName, redoneAssign.Expression.ToString());
         }
 
-#if false
         /// <summary>
         /// Slightly different statement, but same value, in both places. Lift should occur, and rename
         /// of variables should also happen correctly.
@@ -255,7 +253,8 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(p1);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, false);
             gc.Add(assign1);
 
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
@@ -269,7 +268,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
             gc.Add(assign3);
-
 
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
@@ -290,7 +288,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(backIfStatement, "if statement there");
             Assert.AreEqual(0, backIfStatement.DeclaredVariables.Count(), "lifted variables should no longer be declared here");
         }
-#endif
 
         /// <summary>
         /// A pair of the same statements, in both places. The lift should occur.
