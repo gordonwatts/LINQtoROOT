@@ -44,6 +44,7 @@ namespace LINQToTreeHelpers.Tests
             MEFUtilities.MyClassDone();
         }
 
+#if false
         /// <summary>
         /// Make sure DeltaR2 compiles!
         /// </summary>
@@ -79,6 +80,6 @@ namespace LINQToTreeHelpers.Tests
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }
-
+#endif
     }
 }
