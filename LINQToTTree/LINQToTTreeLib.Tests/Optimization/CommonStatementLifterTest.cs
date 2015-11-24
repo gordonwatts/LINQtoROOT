@@ -242,10 +242,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(p1.ParameterName, redoneAssign.Expression.ToString());
         }
 
+#if false
         /// <summary>
         /// Slightly different statement, but same value, in both places. Lift should occur, and rename
         /// of variables should also happen correctly.
         /// </summary>
+        /// <remarks>This was found in the wild, because of a funny way that the "?" statement was coded up.</remarks>
         [TestMethod]
         public void TestStatementOutAndInIfWithSeperateDecl()
         {
@@ -261,7 +263,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(p2);
-            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, false);
             gc.Add(assign2);
 
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
@@ -288,6 +290,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(backIfStatement, "if statement there");
             Assert.AreEqual(0, backIfStatement.DeclaredVariables.Count(), "lifted variables should no longer be declared here");
         }
+#endif
 
         /// <summary>
         /// A pair of the same statements, in both places. The lift should occur.
@@ -789,6 +792,33 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
         }
 
+#if false
+        // We don't detect loop invarients correctly yet - so these will remain inside a loop for now.
+        [TestMethod]
+        public void LiftLoopInvarient()
+        {
+            var v = new GeneratedCode();
+
+            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            v.Add(loop1);
+
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            loop1.Add(assign1);
+
+            Console.WriteLine("Unoptimized:");
+            v.DumpCodeToConsole();
+            CommonStatementLifter.Optimize(v);
+            Console.WriteLine("");
+            Console.WriteLine("Optimized:");
+            v.DumpCodeToConsole();
+
+            Assert.Inconclusive();
+        }
+#endif
+
         /// <summary>
         /// 1. Loop 1 over array a
         /// 2. Loop 2 over array a
@@ -918,7 +948,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
-        /// Found in the wilde, when combining two statements that have a lift of a CPPCode, the CPPcode ends up
+        /// Found in the wild, when combining two statements that have a lift of a CPPCode, the CPPcode ends up
         /// above the declaration in some very funny and odd way. This test captures that error and makes sure it
         /// never shows up again.
         /// </summary>
