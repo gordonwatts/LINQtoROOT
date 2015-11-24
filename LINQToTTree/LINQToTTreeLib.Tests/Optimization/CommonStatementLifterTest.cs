@@ -241,6 +241,54 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(p3.ParameterName, redoneAssign.ResultVariable.ParameterName);
             Assert.AreEqual(p1.ParameterName, redoneAssign.Expression.ToString());
         }
+
+        /// <summary>
+        /// Slightly different statement, but same value, in both places. Lift should occur, and rename
+        /// of variables should also happen correctly.
+        /// </summary>
+        [TestMethod]
+        public void TestStatementOutAndInIfWithSeperateDecl()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign1);
+
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(p2);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign2);
+
+            var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
+            gc.Add(assign3);
+
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            Console.WriteLine("Before optimization:");
+            cc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(cc);
+
+            Console.WriteLine();
+            Console.WriteLine("After optimization:");
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First();
+            var firstAssignment = block1.Statements.First() as StatementAssign;
+            Assert.IsNotNull(firstAssignment, "first assignment");
+            var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
+            Assert.IsNotNull(backIfStatement, "if statement there");
+            Assert.AreEqual(0, backIfStatement.DeclaredVariables.Count(), "lifted variables should no longer be declared here");
+        }
+
         /// <summary>
         /// A pair of the same statements, in both places. The lift should occur.
         /// </summary>
