@@ -174,10 +174,10 @@ namespace LINQToTTreeLib.Expressions
             //
 
             var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            _codeEnv.Add(testBoolInCode);
             _codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
                 GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer),
-                FindDeclarableParameters.FindAll(testExpression)
+                FindDeclarableParameters.FindAll(testExpression),
+                true
                 ));
 
             //
