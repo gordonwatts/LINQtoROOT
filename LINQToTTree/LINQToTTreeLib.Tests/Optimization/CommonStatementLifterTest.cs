@@ -14,12 +14,18 @@ namespace LINQToTTreeLib.Tests.Optimization
     [DeploymentItem(@"ConfigData\default.classmethodmappings")]
     public class CommonStatementLifterTest
     {
+        /// <summary>
+        /// Setup the code
+        /// </summary>
         [TestInitialize]
         public void Setup()
         {
             TestUtils.ResetLINQLibrary();
         }
 
+        /// <summary>
+        /// Make sure MEF is closed out and read.
+        /// </summary>
         [TestCleanup]
         public void Cleanup()
         {
@@ -31,6 +37,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         {
             var cc = new CombinedGeneratedCode();
             CommonStatementLifter.Optimize(cc);
+            Assert.AreEqual(0, cc.QueryCode().Count());
         }
 
         [TestMethod]
@@ -72,85 +79,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             var backAssignStatement = backIfStatement.Statements.First() as StatementAssign;
             Assert.IsNotNull(backAssignStatement, "assign statement there");
         }
-
-#if false
-        /// <summary>
-        /// Discovered in the wild: a lift put statements out of order. This happens because one
-        /// statement looks like it can be absorbed into another, when burried inside it, there is
-        /// some object reference which doesn't work.
-        /// </summary>
-        [TestMethod]
-        public void TestLifingPreservesOrderHang()
-        {
-            // We will have two if statements to do the combination with. They basically "hide" the modification.
-            var checkVar1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var if1s1 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
-            var if1s2 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
-
-            var checkVar2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var if2s1 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
-            var if2s2 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
-
-            // We will put the first if's - that we can perhaps combine with - at the top level (though we
-            // shouldn't combine with them!).
-            var gc = new GeneratedCode();
-            gc.Add(checkVar1);
-            gc.Add(checkVar2);
-            gc.Add(if2s2);
-            gc.Add(if1s2);
-
-            // Next, we want an inline block. We will push everything down into it.
-            var blockWithModified = new StatementInlineBlock();
-            gc.Add(blockWithModified);
-
-            blockWithModified.Add(if1s1);
-            blockWithModified.Add(if2s1);
-
-            // Have the modified if statement contain the modification now.
-
-            var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
-            blockWithModified.Add(varToBeModified);
-            if1s1.Add(statementModifier);
-
-            // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
-            var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
-            blockWithModified.Add(finalVar);
-            if2s1.Add(assignment);
-
-            // Optimize.
-
-            Trace.WriteLine("Before optimization:");
-            gc.DumpCodeToConsole();
-            Trace.WriteLine("");
-            CommonStatementLifter.Optimize(gc);
-            Trace.WriteLine("After optimization:");
-            gc.DumpCodeToConsole();
-
-#if false
-            var r = blockWithoutModified.TryCombineStatement(blockWithModified, null);
-            Assert.IsTrue(r, "try combine result");
-
-            foreach (var s in blockWithoutModified.CodeItUp())
-            {
-                System.Diagnostics.Trace.WriteLine(s);
-            }
-
-            // Make sure the checkVar guy comes after the modified statement.
-
-            var topLevelStatementForAssign = findStatementThatContains(blockWithoutModified, assignment);
-            var posOfUse = findStatementIndex(blockWithoutModified, topLevelStatementForAssign);
-
-            var topLevelStatementForModification = findStatementThatContains(blockWithoutModified, statementModifier);
-            var posOfMod = findStatementIndex(blockWithoutModified, topLevelStatementForModification);
-
-            Assert.IsTrue(posOfMod < posOfUse, string.Format("Modification happens after use. modification: {0} use {1}", posOfMod, posOfUse));
-#endif
-
-            Assert.Inconclusive();
-        }
-#endif
 
         /// <summary>
         /// Discovered in the wild: a lift put statements out of order. This happens because one
@@ -242,10 +170,17 @@ namespace LINQToTTreeLib.Tests.Optimization
             var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
             gc.Add(assign2);
 
+
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
+            Console.WriteLine("Before optimization:");
+            cc.DumpCodeToConsole();
+
             CommonStatementLifter.Optimize(cc);
+
+            Console.WriteLine();
+            Console.WriteLine("After optimization:");
             cc.DumpCodeToConsole();
 
             var block1 = cc.QueryCode().First();
@@ -256,6 +191,56 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(0, backIfStatement.Statements.Count(), "# of if statements inside the if");
         }
 
+        /// <summary>
+        /// Slightly different statement, but same value, in both places. Lift should occur, and rename
+        /// of variables should also happen correctly.
+        /// </summary>
+        [TestMethod]
+        public void TestStatementOutAndInIfWithDifferentTargets()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign1);
+
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            gc.Add(assign2);
+
+            var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
+            gc.Add(assign3);
+
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            Console.WriteLine("Before optimization:");
+            cc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(cc);
+
+            Console.WriteLine();
+            Console.WriteLine("After optimization:");
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First();
+            var firstAssignment = block1.Statements.First() as StatementAssign;
+            Assert.IsNotNull(firstAssignment, "first assignment");
+            var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
+            Assert.IsNotNull(backIfStatement, "if statement there");
+            Assert.AreEqual(1, backIfStatement.Statements.Count(), "# of if statements inside the if");
+
+            var redoneAssign = backIfStatement.Statements.First() as StatementAssign;
+            Assert.IsNotNull(redoneAssign, "the if block statement isn't an assign");
+            Assert.AreEqual(p3.ParameterName, redoneAssign.ResultVariable.ParameterName);
+            Assert.AreEqual(p1.ParameterName, redoneAssign.Expression.ToString());
+        }
         /// <summary>
         /// A pair of the same statements, in both places. The lift should occur.
         /// </summary>

@@ -99,7 +99,7 @@ namespace LINQToTTreeLib.Optimization
                     parent.Remove(s);
 
                     // We have to be a little careful here. The statement should be added at the right
-                    // place. Since thet statement works inside parent, and it works inside stack, then
+                    // place. Since the statement works inside parent, and it works inside stack, then
                     // it should work in stack, just before parent.
 
                     var stackStatement = FindStatementHolder(stack, parent);
