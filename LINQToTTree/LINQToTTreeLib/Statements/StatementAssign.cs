@@ -103,6 +103,12 @@ namespace LINQToTTreeLib.Statements
             if (DeclareResult != otherAssign.DeclareResult)
                 return false;
 
+            // If the statements are identical, then we can combine by default without having to do any
+            // further work.
+
+            if (otherAssign.ResultVariable.RawValue == ResultVariable.RawValue)
+                return true;
+
             // If we have delcared, then we are sole owner - so we can force the change. Otherwise, we
             // need to let the infrastructure figure out where the decl is and change it from there.
 

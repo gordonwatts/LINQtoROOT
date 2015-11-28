@@ -1012,6 +1012,65 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// Seen in the wild. A lift leaves behind multiple assignment statements that look identical.
+        /// </summary>
+        [TestMethod]
+        public void LiftGeneratesDuplicateStatements()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+
+            var toplevel = gc.CurrentScope;
+
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+
+            AddConditionalExpr(gc);
+
+            gc.Pop();
+            AddConditionalExpr(gc);
+            
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            Console.WriteLine("Before optimization:");
+            cc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(cc);
+
+            Console.WriteLine();
+            Console.WriteLine("After optimization:");
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First().Statements.Skip(2).FirstOrDefault();
+            Assert.IsInstanceOfType(block1, typeof(StatementFilter));
+            var filter = block1 as StatementFilter;
+            Assert.AreEqual(1, filter.Statements.Count());
+        }
+
+        /// <summary>
+        /// Helper function to add a conditional statement.
+        /// </summary>
+        /// <param name="gc"></param>
+        private void AddConditionalExpr(GeneratedCode gc)
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+            gc.Add(p1);
+
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), new IDeclaredParameter[] { }, true);
+            gc.Add(assignp2);
+            var ifstatement = new StatementFilter(p2);
+            gc.Add(ifstatement);
+            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), new IDeclaredParameter[] { }, false);
+            gc.Add(assign3);
+            gc.Pop();
+            gc.Add(new StatementFilter(new ValSimple($"!{p2.ParameterName}", typeof(bool))));
+            gc.Add(new StatementAssign(p1, new ValSimple("f2", typeof(double)), new IDeclaredParameter[] { }, false));
+            gc.Pop();
+        }
+
+        /// <summary>
         /// Do the code combination we require!
         /// </summary>
         /// <param name="gcs"></param>

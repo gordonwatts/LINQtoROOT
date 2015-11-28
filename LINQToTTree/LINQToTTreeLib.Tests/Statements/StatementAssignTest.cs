@@ -130,10 +130,11 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void TryCombineTwoNoneDeclaresNoDeclFound()
         {
-            var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var i1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var i2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, null, false);
-            var s2 = new StatementAssign(i, sv, null, false);
+            var s1 = new StatementAssign(i1, sv, null, false);
+            var s2 = new StatementAssign(i2, sv, null, false);
 
             Assert.IsFalse(s1.TryCombineStatement(s2, new DummyOptService(false)), "Combine when no decl found");
         }
