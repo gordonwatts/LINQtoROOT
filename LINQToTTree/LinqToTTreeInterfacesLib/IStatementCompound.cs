@@ -36,11 +36,12 @@ namespace LinqToTTreeInterfacesLib
         /// Given a set of statements, it will attempt to add each one to this block. However, it will first
         /// check to see if there is an "identical" statement. If so, it will just merge them.
         /// </summary>
-        /// <param name="statements"></param>
-        /// <param name="parent"></param>
-        /// <param name="appendIfNoCombine"></param>
+        /// <param name="statements">The list of statements to try to combine into the current statement</param>
+        /// <param name="parent">Who owns the statements</param>
+        /// <param name="appendIfNoCombine">If the same statement isn't found, and we can, just append the statement onto the list</param>
+        /// <param name="moveIfIdentical">If we can move a statement, then remove it from the list we moved it from (not at the top level, obviously)</param>
         /// <returns>The "other" statement if the combination was successful, null if it was not</returns>
-        bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true);
+        bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true, bool moveIfIdentical = false);
 
         /// <summary>
         /// Attempt to combine statements. If we can. If we can't, return null. If we can, return the statement it

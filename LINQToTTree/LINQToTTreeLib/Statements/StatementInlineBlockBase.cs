@@ -369,7 +369,7 @@ namespace LINQToTTreeLib.Statements
         /// <remarks>Assume that the ordering given in the statements must be obeyed.
         ///     - Never insert a later statement before an earlier one!
         /// </remarks>
-        private List<IStatement> CombineInternal(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
+        private List<IStatement> CombineInternal(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true, bool moveIfIdentical = false)
         {
             bool didAllCombine = true;
             ICodeOptimizationService myopt;
@@ -387,6 +387,7 @@ namespace LINQToTTreeLib.Statements
             var currentStatements = Statements.ToArray();
             var firstStatement = currentStatements.Length == 0 ? null : currentStatements[0];
 
+            var statementsToRemove = new List<IStatement>();
             foreach (var s in statements)
             {
                 // TODO: If TryCombineStatement is going to move things accross if statements, and there are not
@@ -419,15 +420,25 @@ namespace LINQToTTreeLib.Statements
                 else
                 {
                     // Add to our list of merged statements. Ignore this guy if it is the same one.
-
+                    // Remove this guy from its old parent.
                     currentStatements = firstGood;
                     if (currentStatements[0] != s)
                     {
                         mergedIntoList.Add(currentStatements[0]);
+                        if (moveIfIdentical)
+                        {
+                            statementsToRemove.Add(s);
+                        }
                     }
                     currentStatements = currentStatements.Skip(1).ToArray();
                     firstStatement = currentStatements.Length == 0 ? null : currentStatements[0];
                 }
+            }
+
+            // Remove any statements that were combined
+            foreach (var s in statementsToRemove)
+            {
+                (s.Parent as IBookingStatementBlock).Remove(s);
             }
 
             return didAllCombine ? mergedIntoList : null;
@@ -440,9 +451,9 @@ namespace LINQToTTreeLib.Statements
         /// <param name="parent">The common parent of the list of statements</param>
         /// <param name="appendIfCantCombine">If true always add the statements onto the end of the block</param>
         /// <returns>True if the statements were merged or appended onto the end of the block</returns>
-        public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true)
+        public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfCantCombine = true, bool moveIfIdentical = false)
         {
-            return CombineInternal(statements, parent, appendIfCantCombine) != null || appendIfCantCombine;
+            return CombineInternal(statements, parent, appendIfCantCombine, moveIfIdentical) != null || appendIfCantCombine;
         }
 
         /// <summary>
@@ -462,10 +473,11 @@ namespace LINQToTTreeLib.Statements
         /// Absorbe all the info from this combined block into this one.
         /// </summary>
         /// <param name="block"></param>
-        protected void Combine(StatementInlineBlockBase block, ICodeOptimizationService opt)
+        protected bool Combine(StatementInlineBlockBase block, ICodeOptimizationService opt, bool appendIfCantCombine = true, bool moveIfIdentical = false)
         {
-            Combine(block.Statements, block);
+            var r = Combine(block.Statements, block, appendIfCantCombine: appendIfCantCombine, moveIfIdentical: moveIfIdentical);
             Combine(block.DeclaredVariables);
+            return r;
         }
 
         /// <summary>

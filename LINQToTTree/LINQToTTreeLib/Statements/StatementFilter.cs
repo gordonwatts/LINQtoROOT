@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -74,12 +75,23 @@ namespace LINQToTTreeLib.Statements
                 return false;
             }
 
-            //
-            // Since the if statements are the same, we can combine the interiors!
-            //
+            // The combine is going to go (on some level). Exactly how it goes depends on the context
+            // that the statement and this guy sit in. Specifically - if they are burried in different
+            // if statements then we can't move non-idential things.
+            // -> This is not a general optimization. For example, if .Fill is called, that has side effects.
+            //    But our code is such that we don't have to worry about that - .Fill is only going to get
+            //    called once, and so those statements will never be identical.
+            var itsContext = statement.WalkParents().Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
+            var myContext = this.WalkParents().Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
 
-            Combine(other, opt);
-            return true;
+            bool sameContext = false;
+            if (itsContext.Count == myContext.Count)
+            {
+                sameContext = itsContext.Select(c => myContext.Contains(c.Key)).All(p => p);
+            }
+
+            // Since the if statements are the same, we can combine the interiors!
+            return Combine(other, opt, appendIfCantCombine: sameContext, moveIfIdentical: !sameContext);
         }
 
         /// <summary>

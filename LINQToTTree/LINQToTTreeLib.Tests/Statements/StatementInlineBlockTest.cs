@@ -12,52 +12,6 @@ namespace LINQToTTreeLib.Statements
     [TestClass]
     public partial class StatementInlineBlockTest
     {
-#if false
-        /// <summary>Test stub for Add(IStatement)</summary>
-        [PexMethod]
-        [PexUseType(typeof(StatementIncrementInteger))]
-        public void Add(
-            [PexAssumeUnderTest]StatementInlineBlock target,
-            IStatement statement
-        )
-        {
-            var oldCount = target.Statements.Count();
-            target.Add(statement);
-            Assert.AreEqual(oldCount + 1, target.Statements.Count(), "Expected a statement to have been added");
-            Assert.IsFalse(target.Statements.Any(s => s == null), "Should never add a null statement");
-            Assert.AreEqual(target, statement.Parent, "Parent not set correctly");
-        }
-
-        [PexMethod]
-        [PexUseType(typeof(StatementIncrementInteger))]
-        public void Add(
-            [PexAssumeUnderTest]StatementInlineBlock target,
-            IDeclaredParameter var
-        )
-        {
-            target.Add(var);
-            Assert.AreEqual(1, target.DeclaredVariables.Count(), "Expected a statement to have been added");
-            Assert.IsFalse(target.DeclaredVariables.Any(s => s == null), "Should never add a null statement");
-        }
-
-        /// <summary>Test stub for .ctor()</summary>
-        [PexMethod]
-        public StatementInlineBlock Constructor()
-        {
-            StatementInlineBlock target = new StatementInlineBlock();
-            Assert.AreEqual(0, target.Statements.Count(), "Expected no statements after creation");
-            return target;
-        }
-
-        /// <summary>Test stub for get_Statements()</summary>
-        [PexMethod]
-        public IEnumerable<IStatement> StatementsGet([PexAssumeUnderTest]StatementInlineBlock target)
-        {
-            IEnumerable<IStatement> result = target.Statements;
-            return result;
-        }
-#endif
-
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestBadRemove()
@@ -260,23 +214,6 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
-#if false
-        [PexMethod, PexAllowedException(typeof(ArgumentException))]
-        public void TestSimpleVariableDoubleInsert([PexAssumeNotNull] string name1, [PexAssumeNotNull] string name2)
-        {
-            if (string.IsNullOrWhiteSpace(name1) || string.IsNullOrWhiteSpace(name2))
-                throw new ArgumentException("names must be something");
-
-            StatementInlineBlock b = new StatementInlineBlock();
-            var v1 = new dummyVarName(name1, typeof(int));
-            var v2 = new dummyVarName(name2, typeof(int));
-
-            b.Add(v1);
-            b.Add(v2);
-
-            Assert.AreEqual(2, b.DeclaredVariables.Count(), "incorrect number of variables");
-        }
-#endif
         class DummyOptimizer : ICodeOptimizationService
         {
             public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
@@ -305,45 +242,6 @@ namespace LINQToTTreeLib.Statements
 
             Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
         }
-
-#if false
-        /// <summary>
-        /// Make sure to test adding statements with inline blocks both the type that we can do and can't, and also
-        /// simple single line statements.
-        /// </summary>
-        /// <param name="s"></param>
-        [PexMethod]
-        [PexUseType(typeof(StatementInlineBlock))]
-        [PexUseType(typeof(StatementIncrementInteger))]
-        [PexUseType(typeof(StatementIfOnCount))]
-        public void TestAddSingleStatement(IStatement s)
-        {
-            var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(s, null), "Failed to add statement");
-
-            ///
-            /// Now check...
-            /// 
-
-            if (s.GetType() == typeof(StatementInlineBlock))
-            {
-                // This is a little tricky as we have to go pretty deep to figure out what
-                // what are "good" and bad statements for counting. 
-
-                var inlineblock = s as StatementInlineBlock;
-                var goodInfo = CountDownlevelStatements(inlineblock);
-
-                Assert.AreEqual(goodInfo.Item2, b.DeclaredVariables.Count(), "# of declared variables");
-            }
-            else
-            {
-                /// Just append!
-
-                Assert.AreEqual(1, b.Statements.Count(), "# of statements");
-                Assert.AreEqual(0, b.DeclaredVariables.Count(), "# of declared variables");
-            }
-        }
-#endif
 
         /// <summary>
         /// Recurisvely count the # of good statements.
@@ -639,6 +537,65 @@ namespace LINQToTTreeLib.Statements
             var result = inline2.TryCombineStatement(inline1, null);
             Assert.IsTrue(result, "try combine didn't work");
             Assert.AreEqual(3, inline2.Statements.Count(), "bad # of combined statements");
+        }
+
+        [TestMethod]
+        public void CombineWithMoveIdenticalStatements()
+        {
+            // Part of a fix for something found in the wild. When we move statements, with append turned off, and
+            // move turned on, make sure the move occurs.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var s1 = new StatementSimpleStatement("dude", true);
+            inline1.Add(s1);
+            var s2 = new StatementSimpleStatement("dude", true);
+            inline2.Add(s2);
+
+            Assert.IsTrue(inline2.Combine(new IStatement[] { s1 }, inline1, appendIfCantCombine: false, moveIfIdentical: true), "Combine of two idential statements should go");
+            Assert.AreEqual(0, inline1.Statements.Count(), "All statements should have been removed from block 1");
+            Assert.AreEqual(1, inline2.Statements.Count(), "statements in inlien2");
+        }
+
+        [TestMethod]
+        public void CombineWithMoveNonIdenticalStatements()
+        {
+            // Part of a fix for something found in the wild. When we move statements, with append turned off, and
+            // move turned on, make sure the move occurs.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var s1 = new StatementSimpleStatement("dude", true);
+            inline1.Add(s1);
+            var s2 = new StatementSimpleStatement("fork", true);
+            inline2.Add(s2);
+
+            Assert.IsFalse(inline2.Combine(new IStatement[] { s1 }, inline1, appendIfCantCombine: false, moveIfIdentical: true), "Combine of two idential statements should go");
+            Assert.AreEqual(1, inline1.Statements.Count(), "All statements should have been removed from block 1");
+            Assert.AreEqual(1, inline2.Statements.Count(), "statements in inlien2");
+        }
+
+        [TestMethod]
+        public void CombineWithMoveNonAndNotNonIdenticalStatements()
+        {
+            // Part of a fix for something found in the wild. When we move statements, with append turned off, and
+            // move turned on, make sure the move occurs.
+
+            var inline1 = new StatementInlineBlock();
+            var inline2 = new StatementInlineBlock();
+
+            var s1 = new StatementSimpleStatement("dude", true);
+            var s11 = new StatementSimpleStatement("fork", true);
+            inline1.Add(s1);
+            inline1.Add(s11);
+            var s2 = new StatementSimpleStatement("fork", true);
+            inline2.Add(s2);
+
+            Assert.IsFalse(inline2.Combine(new IStatement[] { s1, s11 }, inline1, appendIfCantCombine: false, moveIfIdentical: true), "Combine of two idential statements should go");
+            Assert.AreEqual(1, inline1.Statements.Count(), "All statements should have been removed from block 1");
+            Assert.AreEqual(1, inline2.Statements.Count(), "statements in inlien2");
         }
 
         /// <summary>

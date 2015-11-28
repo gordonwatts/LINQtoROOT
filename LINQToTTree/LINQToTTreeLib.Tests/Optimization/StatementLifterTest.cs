@@ -405,7 +405,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 throw new NotImplementedException();
             }
 
-            public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true, bool moveIfIdentical = false)
             {
                 throw new NotImplementedException();
             }

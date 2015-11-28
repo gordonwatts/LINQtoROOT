@@ -133,7 +133,7 @@ namespace LINQToTTreeLib.Statements
 
             Assert.IsTrue(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
             Assert.AreEqual(1, f1.Statements.Count());
-            Assert.AreEqual(1, f2.Statements.Count());
+            Assert.AreEqual(0, f2.Statements.Count());
         }
 
         [TestMethod]
@@ -167,11 +167,20 @@ namespace LINQToTTreeLib.Statements
             filterUnique.Add(f1);
 
             // The combine should fail.
-            Assert.IsFalse(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
+            Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
 
             // But some statements should have been moved! (note that f1 normally has two statements).
             Assert.AreEqual(1, f1.Statements.Count());
             Assert.AreEqual(1, f2.Statements.Count());
+        }
+
+        [TestMethod]
+        public void CombineWithIdenticalFiltersDifferentStatements()
+        {
+            // two if statements, at same level. And have different statements. Should
+            // allow for combination.
+            // This test may be somewhere else in the code, so perhaps we don't have to write it!
+            Assert.Inconclusive();
         }
 
         [TestMethod]

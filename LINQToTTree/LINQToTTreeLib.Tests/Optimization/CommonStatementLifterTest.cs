@@ -462,7 +462,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             /// <param name="parent"></param>
             /// <param name="appendIfNoCombine"></param>
             /// <returns></returns>
-            public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true)
+            public bool Combine(IEnumerable<IStatement> statements, IBookingStatementBlock parent, bool appendIfNoCombine = true, bool moveIfIdentical = false)
             {
                 return appendIfNoCombine;
             }

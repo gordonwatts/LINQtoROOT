@@ -244,6 +244,7 @@
     <Compile Include="Utils\GeneratedCodeHelpers.cs" />
     <Compile Include="Utils\ObjectHashCalculator.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
+    <Compile Include="Utils\StatementUtils.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Utils\TypeUtils.cs" />
     <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
