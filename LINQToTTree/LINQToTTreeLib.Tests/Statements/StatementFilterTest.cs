@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Variables;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -12,26 +14,6 @@ namespace LINQToTTreeLib.Statements
     [TestClass]
     public partial class StatementFilterTest
     {
-#if false
-        /// <summary>Test stub for CodeItUp()</summary>
-        [PexMethod]
-        public IEnumerable<string> CodeItUp([PexAssumeUnderTest]StatementFilter target)
-        {
-            IEnumerable<string> result = target.CodeItUp();
-            return result;
-            // TODO: add assertions to method StatementFilterTest.CodeItUp(StatementFilter)
-        }
-
-        /// <summary>Test stub for .ctor(IValue)</summary>
-        [PexMethod]
-        public StatementFilter Constructor(IValue testExpression)
-        {
-            StatementFilter target = new StatementFilter(testExpression);
-            return target;
-            // TODO: add assertions to method StatementFilterTest.Constructor(IValue)
-        }
-#endif
-
         [TestMethod]
         public void TestExprNoStatements()
         {
@@ -82,19 +64,6 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(0, result.Length, "Expect no statements for a false if statement");
         }
 
-#if false
-        [PexMethod]
-        public void TestTryCombine(IStatement s)
-        {
-            /// We should never be able to combine any filter statements currently!
-
-            var val = new Variables.ValSimple("true", typeof(bool));
-            var statement = new StatementFilter(val);
-
-            Assert.IsFalse(statement.TryCombineStatement(s, null), "unable to do any combines for Filter");
-        }
-#endif
-
         [TestMethod]
         public void TestSimpleCombine()
         {
@@ -139,28 +108,79 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(2, deep.Statements.Count(), "Number of statements isn't right here");
         }
 
-#if false
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public IStatement TestRename([PexAssumeUnderTest] StatementFilter statement, [PexAssumeNotNull] string oldname, [PexAssumeNotNull]string newname)
+        [TestMethod]
+        public void CombineFilterWithHiddenBehindIf()
         {
-            var origianllines = statement.CodeItUp().ToArray();
-            statement.RenameVariable(oldname, newname);
-            var finallines = statement.CodeItUp().ToArray();
+            // Seen in the wild. We have two identical fi statements, one outside, and one inside another
+            // (different) if statement. It is ok to combine these two as the code is identical.
+            // See test CombineFilterWithHiddenBehindIfAndExtraStatements for the case where at
+            // least one statement needs to be left behind.
 
-            Assert.AreEqual(origianllines.Length, finallines.Length, "# of lines change during variable rename");
+            // Top level guy. This is the unique filter statement.
+            var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
 
-            var varReplacer = new Regex(string.Format(@"\b{0}\b", oldname));
+            // Next, we will do the two common ones.
+            var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+            var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
 
-            var sharedlines = origianllines.Zip(finallines, (o, n) => Tuple.Create(o, n));
-            foreach (var pair in sharedlines)
-            {
-                var orig = pair.Item1;
-                var origReplafce = varReplacer.Replace(orig, newname);
-                Assert.AreEqual(origReplafce, pair.Item2, "expected the renaming to be pretty simple.");
-            }
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            f1.Add(a1);
+            f2.Add(a2);
 
-            return statement;
+            filterUnique.Add(f1);
+
+            Assert.IsTrue(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
+            Assert.AreEqual(1, f1.Statements.Count());
+            Assert.AreEqual(1, f2.Statements.Count());
         }
-#endif
+
+        [TestMethod]
+        public void CombineFilterWithHiddenBehindIfAndExtraStatements()
+        {
+            // Seen in the wild. We have two identical fi statements, one outside, and one inside another
+            // (different) if statement. It is ok to combine these two as the code is identical.
+            // See test CombineFilterWithHiddenBehindIfAndExtraStatements for the case where at
+            // least one statement needs to be left behind.
+
+            // Top level guy. This is the unique filter statement.
+            var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
+
+            // Next, we will do the two common ones.
+            var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+            var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            f1.Add(a1);
+            f2.Add(a2);
+
+            // Now, a unique assignment. This can't be lifted b.c. it is hidden behind a different if statement in
+            // the outside (the filterUnique).
+
+            var pSpecial = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var aUnique = new StatementAssign(pSpecial, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }, true);
+            f1.Add(aUnique);
+
+            filterUnique.Add(f1);
+
+            // The combine should fail.
+            Assert.IsFalse(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
+
+            // But some statements should have been moved! (note that f1 normally has two statements).
+            Assert.AreEqual(1, f1.Statements.Count());
+            Assert.AreEqual(1, f2.Statements.Count());
+        }
+
+        [TestMethod]
+        public void DeclarationsAreMovedToo()
+        {
+            // In this new world of moving things around, we move decl and statements, but they aren't really connected.
+            // So we should make sure that decl aren't moved accidentally when they shouldn't be.
+
+            Assert.Inconclusive();
+        }
     }
 }

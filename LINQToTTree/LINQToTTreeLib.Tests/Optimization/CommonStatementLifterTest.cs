@@ -1046,13 +1046,98 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsInstanceOfType(block1, typeof(StatementFilter));
             var filter = block1 as StatementFilter;
             Assert.AreEqual(1, filter.Statements.Count());
+
+            var ifStatementI = cc.QueryCode().First().Statements.Where(s => s is StatementFilter && ((s as StatementFilter).TestExpression.RawValue == "i")).Cast<StatementFilter>().FirstOrDefault();
+            Assert.IsNotNull(ifStatementI);
+            Assert.AreEqual(0, ifStatementI.Statements.Count());
+        }
+
+        [TestMethod]
+        public void DuplicateIfStatementWithExtraInnerLineAtEnd()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+
+            var toplevel = gc.CurrentScope;
+
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+
+            AddConditionalExpr(gc);
+            var p1Extra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+            gc.Add(new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), new IDeclaredParameter[] { }, true));
+
+            gc.Pop();
+            AddConditionalExpr(gc);
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            Console.WriteLine("Before optimization:");
+            cc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(cc);
+
+            Console.WriteLine();
+            Console.WriteLine("After optimization:");
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First().Statements.Skip(2).FirstOrDefault();
+            Assert.IsInstanceOfType(block1, typeof(StatementFilter));
+            var filter = block1 as StatementFilter;
+            Assert.AreEqual(1, filter.Statements.Count());
+
+            var ifStatementI = cc.QueryCode().First().Statements.Where(s => s is StatementFilter && ((s as StatementFilter).TestExpression.RawValue == "i")).Cast<StatementFilter>().FirstOrDefault();
+            Assert.IsNotNull(ifStatementI);
+            Assert.AreEqual(1, ifStatementI.Statements.Count());
+        }
+
+        [TestMethod]
+        public void DuplicateIfStatementWithExtraInnerLineIfDeepIf()
+        {
+            var gc = new GeneratedCode();
+            gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
+
+            var toplevel = gc.CurrentScope;
+
+            var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
+            gc.Add(ifstatement);
+
+            var p1Extra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+            var toadd = new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), new IDeclaredParameter[] { }, true);
+            AddSingleIfExpr(gc, addIn: toadd);
+
+            gc.Pop();
+
+            AddSingleIfExpr(gc);
+
+            var cc = new CombinedGeneratedCode();
+            cc.AddGeneratedCode(gc);
+
+            Console.WriteLine("Before optimization:");
+            cc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(cc);
+
+            Console.WriteLine();
+            Console.WriteLine("After optimization:");
+            cc.DumpCodeToConsole();
+
+            var block1 = cc.QueryCode().First().Statements.Skip(2).FirstOrDefault();
+            Assert.IsInstanceOfType(block1, typeof(StatementFilter));
+            var filter = block1 as StatementFilter;
+            Assert.AreEqual(1, filter.Statements.Count());
+
+            var ifStatementI = cc.QueryCode().First().Statements.Where(s => s is StatementFilter && ((s as StatementFilter).TestExpression.RawValue == "i")).Cast<StatementFilter>().FirstOrDefault();
+            Assert.IsNotNull(ifStatementI);
+            Assert.AreEqual(1, ifStatementI.Statements.Count());
         }
 
         /// <summary>
         /// Helper function to add a conditional statement.
         /// </summary>
         /// <param name="gc"></param>
-        private void AddConditionalExpr(GeneratedCode gc)
+        private void AddConditionalExpr(GeneratedCode gc, IStatement addInFirst = null, IStatement addInSecond = null)
         {
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
             gc.Add(p1);
@@ -1062,11 +1147,38 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(assignp2);
             var ifstatement = new StatementFilter(p2);
             gc.Add(ifstatement);
+            if (addInFirst != null)
+                gc.Add(addInFirst);
             var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), new IDeclaredParameter[] { }, false);
             gc.Add(assign3);
             gc.Pop();
+
             gc.Add(new StatementFilter(new ValSimple($"!{p2.ParameterName}", typeof(bool))));
             gc.Add(new StatementAssign(p1, new ValSimple("f2", typeof(double)), new IDeclaredParameter[] { }, false));
+            if (addInSecond != null)
+            {
+                gc.Add(addInSecond);
+            }
+            gc.Pop();
+        }
+
+        /// <summary>
+        /// Helper function to add a conditional statement.
+        /// </summary>
+        /// <param name="gc"></param>
+        private void AddSingleIfExpr(GeneratedCode gc, IStatement addIn = null)
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+            gc.Add(p1);
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), new IDeclaredParameter[] { }, true);
+            gc.Add(assignp2);
+            var ifstatement = new StatementFilter(p2);
+            gc.Add(ifstatement);
+            if (addIn != null)
+                gc.Add(addIn);
+            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), new IDeclaredParameter[] { }, false);
+            gc.Add(assign3);
             gc.Pop();
         }
 
