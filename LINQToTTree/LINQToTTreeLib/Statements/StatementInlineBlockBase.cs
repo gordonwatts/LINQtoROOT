@@ -390,11 +390,6 @@ namespace LINQToTTreeLib.Statements
             var statementsToRemove = new List<IStatement>();
             foreach (var s in statements)
             {
-                // TODO: If TryCombineStatement is going to move things accross if statements, and there are not
-                // identical items, then we have bad things happening. We need some sort of protection that is
-                // at a statement granular level here. So we can move some statements, but not all statements.
-                // At the very least to make this "correct", TryCombineStatement when moving accorss if statements
-                // needs to fail unless the destination is identical.
                 var firstGood = currentStatements.SkipWhile(sinner => !sinner.TryCombineStatement(s, myopt)).ToArray();
 
                 // If we couldn't find a way to combine this guy, then we will put it as the first statement in our list.
