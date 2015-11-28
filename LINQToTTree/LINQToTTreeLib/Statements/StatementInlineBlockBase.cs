@@ -506,6 +506,13 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameBlockVariables(string originalName, string newName)
         {
+            // And remove any declarations. When we rename, we are doing it because this block
+            // is being made to look like an already existing other block - so the variable will
+            // have been declared over there already.
+            var decl = DeclaredVariables.Where(d => d.RawValue == originalName).FirstOrDefault();
+            if (decl != null)
+                Remove(decl);
+
             foreach (var s in _statements)
             {
                 s.RenameVariable(originalName, newName);

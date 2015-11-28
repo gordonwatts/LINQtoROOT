@@ -206,7 +206,6 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(0, f2.Statements.Count());
         }
 
-#if false
         // This is a bug, but not a bug that should matter at all. So lets see how far we can get with
         // ignoring it.
         [TestMethod]
@@ -256,6 +255,5 @@ namespace LINQToTTreeLib.Statements
 
             Assert.AreEqual(0, filterUnique.DeclaredVariables.Count(), "Declared Variables");
         }
-#endif
     }
 }
