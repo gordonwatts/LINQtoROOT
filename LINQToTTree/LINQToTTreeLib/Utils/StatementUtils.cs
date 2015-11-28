@@ -14,16 +14,19 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static IEnumerable<IStatementCompound> WalkParents(this IStatement s)
+        public static IEnumerable<IStatementCompound> WalkParents(this IStatement s, bool includeThisStatment = false)
         {
+            bool skipAStatement = !includeThisStatment;
             while (s != null)
             {
-                var p = s.Parent;
-                if (p != null && p is IStatementCompound)
+                if (!skipAStatement)
                 {
-                    yield return p as IStatementCompound;
+                    if (s is IStatementCompound)
+                    yield return s as IStatementCompound;
                 }
-                s = p;
+                skipAStatement = false;
+
+                s = s.Parent;
             }
         }
     }

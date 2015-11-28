@@ -81,8 +81,8 @@ namespace LINQToTTreeLib.Statements
             // -> This is not a general optimization. For example, if .Fill is called, that has side effects.
             //    But our code is such that we don't have to worry about that - .Fill is only going to get
             //    called once, and so those statements will never be identical.
-            var itsContext = statement.WalkParents().Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
-            var myContext = this.WalkParents().Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
+            var itsContext = statement.WalkParents(includeThisStatment: true).Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
+            var myContext = this.WalkParents(includeThisStatment: true).Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
 
             bool sameContext = false;
             if (itsContext.Count == myContext.Count)
