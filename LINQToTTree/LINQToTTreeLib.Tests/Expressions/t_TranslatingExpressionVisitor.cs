@@ -541,6 +541,10 @@ namespace LINQToTTreeLib.Tests
 
             [TTreeVariableGrouping]
             [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
+            public SourceType3Container2 specialIndexSecond;
+
+            [TTreeVariableGrouping]
+            [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
             public SourceType3Container2[] specialIndicies;
 
             [TTreeVariableGrouping]
@@ -570,6 +574,7 @@ namespace LINQToTTreeLib.Tests
             }
             public int[] val;
             public int[] specialIndex;
+            public int[] specialIndexSecond;
             public int[][] specialIndicies;
         }
 
@@ -635,6 +640,36 @@ namespace LINQToTTreeLib.Tests
             var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
             Console.WriteLine(result);
             Assert.IsTrue(result.ToString().EndsWith("ResultType3).specialIndex[0]]"), result.ToString().Trim());
+        }
+
+        [TestMethod]
+        public void ArrayIndexCompareSame()
+        {
+            Expression<Func<SourceType3, bool>> lambdaExpr = arr => arr.jets[0].specialIndex != arr.jets[0].specialIndexSecond;
+            var caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+            Console.WriteLine(result);
+            Assert.IsTrue(result.ToString().Contains("ResultType3).specialIndex[0] != value(LINQToTTreeLib"), "Expression back wasn't translated as expected");
+        }
+
+        [TestMethod]
+        public void ArrayCompareNotSame()
+        {
+            Expression<Func<SourceType3, bool>> lambdaExpr = arr => arr.jets[0] != arr.jets[1];
+            var caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+            Console.WriteLine(result);
+            Assert.AreEqual("(0 != 1)", result.ToString(), "Expression back wasn't translated as expected");
+        }
+
+        [TestMethod]
+        public void ArrayCompareSame()
+        {
+            Expression<Func<SourceType3, bool>> lambdaExpr = arr => arr.jets[0] == arr.jets[1];
+            var caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+            Console.WriteLine(result);
+            Assert.AreEqual("(0 == 1)", result.ToString(), "Expression back wasn't translated as expected");
         }
 
         [TestMethod]

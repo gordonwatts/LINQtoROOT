@@ -462,17 +462,65 @@ namespace LINQToTTreeLib
                 }
             }
 
+            // If this is a comparison, and these are objects that have indicies (in whatever we are looping through)...
+            if (expression.NodeType == ExpressionType.Equal || expression.NodeType == ExpressionType.NotEqual)
+            {
+                // Are we pointing to something we can deal with?
+                var indexLeft = ExtractIndexReference(expression.Left);
+                if (indexLeft != null)
+                {
+                    var indexRight = ExtractIndexReference(expression.Right);
+                    if (indexRight != null)
+                    {
+                        if (expression.NodeType == ExpressionType.NotEqual)
+                        {
+                            return Expression.NotEqual(indexLeft, indexRight);
+                        } else
+                        {
+                            return Expression.Equal(indexLeft, indexRight);
+                        }
+                    }
+                }
+            }
+
             return base.VisitBinaryExpression(expression);
         }
 
         /// <summary>
-        /// Array index can be a little rough b/c it can be traning to make a translation. This is actually quite tricking
-        /// - especially in teh case of an array grouping - we have to go find a variable we can use as a proxy to get a size
-        /// operator on! :-)
+        /// Given an expression, see if we can decode it into an array pointer of one sort or another.
         /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        private Expression VisitArrayLength(UnaryExpression expression)
+        /// <param name="expr"></param>
+        /// <returns>or null if it can't be decoded as an array</returns>
+        private Expression ExtractIndexReference(Expression expr)
+        {
+            try {
+                if (expr.NodeType == ExpressionType.ArrayIndex)
+                {
+                    var indexExpr = (expr as BinaryExpression).Right;
+                    return VisitExpressionImplemented(indexExpr);
+                }
+                else
+                {
+                    var arrayInfo = DecodeArrayPointerExpression(expr);
+                    if (arrayInfo == null)
+                        return null;
+
+                    return VisitExpressionImplemented(arrayInfo.TargetIndexExpression);
+                }
+            } catch
+            {
+                return null;
+            }
+        }
+
+/// <summary>
+/// Array index can be a little rough b/c it can be traning to make a translation. This is actually quite tricking
+/// - especially in teh case of an array grouping - we have to go find a variable we can use as a proxy to get a size
+/// operator on! :-)
+/// </summary>
+/// <param name="expression"></param>
+/// <returns></returns>
+private Expression VisitArrayLength(UnaryExpression expression)
         {
             ///
             /// The key to this is what the operand is. If it isn't a member
