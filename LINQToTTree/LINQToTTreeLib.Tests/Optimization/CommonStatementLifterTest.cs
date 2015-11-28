@@ -1153,7 +1153,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(assign3);
             gc.Pop();
 
-            gc.Add(new StatementFilter(new ValSimple($"!{p2.ParameterName}", typeof(bool))));
+            gc.Add(new StatementFilter(new ValSimple("!" + p2.ParameterName, typeof(bool))));
             gc.Add(new StatementAssign(p1, new ValSimple("f2", typeof(double)), new IDeclaredParameter[] { }, false));
             if (addInSecond != null)
             {
