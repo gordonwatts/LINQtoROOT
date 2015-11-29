@@ -27,5 +27,12 @@ namespace LINQToTTreeLib.Variables
             return target;
         }
 #endif
+        [TestMethod]
+        public void RenameMethodCall()
+        {
+            var target = new ValSimple("(*aNTH1F_1233).Fill(((double)aInt32_326),1.0*((1.0*1.0)*1.0))", typeof(int));
+            target.RenameRawValue("aInt32_326", "aInt32_37");
+            Assert.AreEqual("(*aNTH1F_1233).Fill(((double)aInt32_37),1.0*((1.0*1.0)*1.0))", target.RawValue);
+        }
     }
 }
