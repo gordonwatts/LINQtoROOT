@@ -179,7 +179,7 @@ namespace LINQToTTreeLib.Statements
             // The combine should fail.
             Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
 
-            Console.WriteLine("Before optimization:");
+            Console.WriteLine("After optimization:");
             foreach (var l in topLevel.CodeItUp())
             {
                 Console.WriteLine(l);
@@ -231,7 +231,7 @@ namespace LINQToTTreeLib.Statements
             // The combine should fail.
             Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
 
-            Console.WriteLine("Before optimization:");
+            Console.WriteLine("After optimization:");
             foreach (var l in topLevel.CodeItUp())
             {
                 Console.WriteLine(l);
