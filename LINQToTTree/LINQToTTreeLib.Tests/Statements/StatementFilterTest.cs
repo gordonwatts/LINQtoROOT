@@ -137,7 +137,7 @@ namespace LINQToTTreeLib.Statements
         }
 
         [TestMethod]
-        public void CombineFilterWithHiddenBehindIfAndExtraStatements()
+        public void CombineFilterWithHiddenBehindIfAndExtraIndependentStatements()
         {
             // Seen in the wild. We have two identical fi statements, one outside, and one inside another
             // (different) if statement. It is ok to combine these two as the code is identical.
@@ -187,6 +187,58 @@ namespace LINQToTTreeLib.Statements
 
             // But some statements should have been moved! (note that f1 normally has two statements).
             Assert.AreEqual(1, f1.Statements.Count());
+            Assert.AreEqual(1, f2.Statements.Count());
+        }
+
+        [TestMethod]
+        public void CombineFilterWithHiddenBehindIfAndExtraDependentStatements()
+        {
+            // When we move an if statement, if there are extra statements and they depend on the code
+            // we want to move, then we can't move them.
+
+            // Top level guy. This is the unique filter statement.
+            var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
+
+            // Next, we will do the two common ones.
+            var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+            var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            f1.Add(a1);
+            f2.Add(a2);
+
+            // Now, a unique assignment. This can't be lifted b.c. it is hidden behind a different if statement in
+            // the outside (the filterUnique).
+
+            var pSpecial = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var aUnique = new StatementAssign(pSpecial, p, new IDeclaredParameter[] { }, true);
+            f1.Add(aUnique);
+
+            filterUnique.Add(f1);
+
+            var topLevel = new StatementInlineBlock();
+            topLevel.Add(filterUnique);
+            topLevel.Add(f2);
+
+            Console.WriteLine("Before optimization:");
+            foreach (var l in topLevel.CodeItUp())
+            {
+                Console.WriteLine(l);
+            }
+
+            // The combine should fail.
+            Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
+
+            Console.WriteLine("Before optimization:");
+            foreach (var l in topLevel.CodeItUp())
+            {
+                Console.WriteLine(l);
+            }
+
+            // But some statements should have been moved! (note that f1 normally has two statements).
+            Assert.AreEqual(2, f1.Statements.Count());
             Assert.AreEqual(1, f2.Statements.Count());
         }
 
