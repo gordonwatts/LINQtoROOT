@@ -166,8 +166,24 @@ namespace LINQToTTreeLib.Statements
 
             filterUnique.Add(f1);
 
+            var topLevel = new StatementInlineBlock();
+            topLevel.Add(filterUnique);
+            topLevel.Add(f2);
+
+            Console.WriteLine("Before optimization:");
+            foreach (var l in topLevel.CodeItUp())
+            {
+                Console.WriteLine(l);
+            }
+
             // The combine should fail.
             Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
+
+            Console.WriteLine("Before optimization:");
+            foreach (var l in topLevel.CodeItUp())
+            {
+                Console.WriteLine(l);
+            }
 
             // But some statements should have been moved! (note that f1 normally has two statements).
             Assert.AreEqual(1, f1.Statements.Count());
