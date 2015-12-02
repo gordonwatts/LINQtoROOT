@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
-        /// Look through all the code, and dump out everythign to an ienumerable.
+        /// Look through all the code, and dump out everything to an IEnumerable.
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -103,11 +103,21 @@ namespace LINQToTTreeLib.Tests
             }
         }
 
+        public static IEnumerable<string> DumpCode(this IBookingStatementBlock block)
+        {
+            return block.CodeItUp();
+        }
+
         /// <summary>
         /// Dump the code to the console - for debugging a test...
         /// </summary>
         /// <param name="code"></param>
         public static void DumpCodeToConsole(this GeneratedCode code)
+        {
+            code.DumpCode().DumpToConsole();
+        }
+
+        public static void DumpCodeToConsole(this IBookingStatementBlock code)
         {
             code.DumpCode().DumpToConsole();
         }

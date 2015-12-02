@@ -76,13 +76,33 @@ namespace LINQToTTreeLib.Statements
             }
 
             // The combine is going to go (on some level). Exactly how it goes depends on the context
-            // that the statement and this guy sit in. Specifically - if they are burried in different
-            // if statements then we can't move non-idential things.
+            // that the statement and this guy sit in. Specifically - if they are buried in different
+            // if statements then we can't move non-identical things.
+            // Here are the rules:
+            // -> If both if's have the same parents, then we can combine them without worry.
+            //    This is a little funny because we will often be combining them from different
+            //    tree's (though the same). So we have to be a little careful looking backwards.
+            //    This combination means that we can do this even if the statements in the body of the if
+            //    are different.
+            // -> If one is hidden behind another if statement, then we can combine iff:
+            //      1) The one we are combining into is not the one hidden
+            //      2) The bodies of the if statement are identical
+            // -> If there is some other case, then we can't combine at all.
+            //
+            // Further notes:
             // -> This is not a general optimization. For example, if .Fill is called, that has side effects.
             //    But our code is such that we don't have to worry about that - .Fill is only going to get
             //    called once, and so those statements will never be identical.
+
+            // Understand if the context of the two is the same or not (or how different).
             var itsContext = statement.WalkParents(includeThisStatment: true).Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
             var myContext = this.WalkParents(includeThisStatment: true).Where(s => s is StatementFilter).Cast<StatementFilter>().ToLookup(s => s.TestExpression.RawValue);
+
+            if (itsContext.Count < myContext.Count)
+            {
+                // It is at a higher level than us, so we can't replicate it.
+                return false;
+            }
 
             bool sameContext = false;
             if (itsContext.Count == myContext.Count)
@@ -91,7 +111,7 @@ namespace LINQToTTreeLib.Statements
             }
 
             // Since the if statements are the same, we can combine the interiors!
-            return Combine(other, opt, appendIfCantCombine: sameContext, moveIfIdentical: !sameContext);
+            return Combine(other, opt, appendIfCantCombine: sameContext);
         }
 
         /// <summary>

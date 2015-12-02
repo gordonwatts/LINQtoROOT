@@ -7,6 +7,7 @@ using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Variables;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Tests;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -34,7 +35,7 @@ namespace LINQToTTreeLib.Statements
             var result = statement.CodeItUp().ToArray();
             Assert.AreEqual(4, result.Length, "no statements, so wasn't expecting any sort of output at all");
             Assert.AreEqual("if (1 == 1)", result[0], "if statement isn't correct");
-            Assert.AreEqual("{", result[1], "open braket");
+            Assert.AreEqual("{", result[1], "open bracket");
             Assert.AreEqual("  dude;", result[2], "statement isn't in the proper spot");
             Assert.AreEqual("}", result[3], "end of block not right");
         }
@@ -48,7 +49,7 @@ namespace LINQToTTreeLib.Statements
 
             var result = statement.CodeItUp().ToArray();
             Assert.AreEqual(3, result.Length, "true test means only the involved statements should be in here!");
-            Assert.AreEqual("{", result[0], "open braket");
+            Assert.AreEqual("{", result[0], "open bracket");
             Assert.AreEqual("  dude;", result[1], "statement isn't in the proper spot");
             Assert.AreEqual("}", result[2], "end of block not right");
         }
@@ -75,7 +76,7 @@ namespace LINQToTTreeLib.Statements
             var s2 = new StatementFilter(val2);
             s2.Add(new StatementSimpleStatement("var2"));
 
-            Assert.IsTrue(s1.TryCombineStatement(s2, null), "statement shoudl have combined");
+            Assert.IsTrue(s1.TryCombineStatement(s2, null), "statement should have combined");
             Assert.AreEqual(2, s1.Statements.Count(), "# of combined statements");
 
         }
@@ -101,7 +102,7 @@ namespace LINQToTTreeLib.Statements
 
             s2.Add(s21);
 
-            Assert.IsTrue(s1.TryCombineStatement(s2, null), "statement shoudl have combined");
+            Assert.IsTrue(s1.TryCombineStatement(s2, null), "statement should have combined");
             Assert.AreEqual(1, s1.Statements.Count(), "# of combined statements");
             var deep = s1.Statements.First() as StatementInlineBlockBase;
             Assert.IsNotNull(deep, "couldn't find interior statement");
@@ -109,10 +110,10 @@ namespace LINQToTTreeLib.Statements
         }
 
         [TestMethod]
-        public void CombineFilterWithHiddenBehindIf()
+        public void CombineFilterWithHiddenBehindDeeperIf()
         {
-            // Seen in the wild. We have two identical fi statements, one outside, and one inside another
-            // (different) if statement. It is ok to combine these two as the code is identical.
+            // Seen in the wild. We have two identical if statements, one outside, and one inside another
+            // (different) if statement. It is OK to combine these two as the code is identical.
             // See test CombineFilterWithHiddenBehindIfAndExtraStatements for the case where at
             // least one statement needs to be left behind.
 
@@ -131,16 +132,74 @@ namespace LINQToTTreeLib.Statements
 
             filterUnique.Add(f1);
 
+            Assert.IsFalse(f1.TryCombineStatement(f2, null), "Two of the same if statements, but the merge is at a higher level than the target");
+        }
+
+        [TestMethod]
+        public void CombineFilterWithHiddenBehindIf()
+        {
+            // Seen in the wild. We have two identical if statements, one outside, and one inside another
+            // (different) if statement. It is OK to combine these two as the code is identical.
+            // See test CombineFilterWithHiddenBehindIfAndExtraStatements for the case where at
+            // least one statement needs to be left behind.
+
+            // Top level guy. This is the unique filter statement.
+            var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
+
+            // Next, we will do the two common ones.
+            var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+            var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            f1.Add(a1);
+            f2.Add(a2);
+
+            filterUnique.Add(f1);
+
+            Assert.IsTrue(f2.TryCombineStatement(f1, null), "Two of the same if statements, but the target is at a higher level than the merge");
+            Assert.AreEqual(1, f2.Statements.Count());
+        }
+
+        [TestMethod]
+        public void CombineFilterAtSameLevelWithDifferentStatements()
+        {
+            // Two if statements with same "if", at the same level, and combine second with first.
+
+            // Next, we will do the two common ones.
+            var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+            var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a2 = new StatementAssign(p2, new ValSimple("15", typeof(int)), new IDeclaredParameter[] { }, true);
+            f1.Add(a1);
+            f2.Add(a2);
+
+
+            Console.WriteLine("Before optimization:");
+            foreach (var l in f1.CodeItUp())
+            {
+                Console.WriteLine(l);
+            }
+
             Assert.IsTrue(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
-            Assert.AreEqual(1, f1.Statements.Count());
-            Assert.AreEqual(0, f2.Statements.Count());
+
+            Console.WriteLine("After optimization:");
+            foreach (var l in f1.CodeItUp())
+            {
+                Console.WriteLine(l);
+            }
+            Assert.AreEqual(2, f1.Statements.Count());
         }
 
         [TestMethod]
         public void CombineFilterWithHiddenBehindIfAndExtraIndependentStatements()
         {
-            // Seen in the wild. We have two identical fi statements, one outside, and one inside another
-            // (different) if statement. It is ok to combine these two as the code is identical.
+            // Seen in the wild. We have two identical if statements, one outside, and one inside another
+            // (different) if statement. It is OK to combine these two as the code is identical.
             // See test CombineFilterWithHiddenBehindIfAndExtraStatements for the case where at
             // least one statement needs to be left behind.
 
@@ -166,28 +225,21 @@ namespace LINQToTTreeLib.Statements
 
             filterUnique.Add(f1);
 
-            var topLevel = new StatementInlineBlock();
-            topLevel.Add(filterUnique);
-            topLevel.Add(f2);
+            var topLevel1 = new StatementInlineBlock();
+            var topLevel2 = new StatementInlineBlock();
+            topLevel1.Add(filterUnique);
+            topLevel2.Add(f2);
 
-            Console.WriteLine("Before optimization:");
-            foreach (var l in topLevel.CodeItUp())
-            {
-                Console.WriteLine(l);
-            }
+            Console.WriteLine("Before optimization (target):");
+            topLevel2.DumpCodeToConsole();
+            Console.WriteLine("Before optimization (merge):");
+            topLevel1.DumpCodeToConsole();
 
             // The combine should fail.
             Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
 
-            Console.WriteLine("After optimization:");
-            foreach (var l in topLevel.CodeItUp())
-            {
-                Console.WriteLine(l);
-            }
-
-            // But some statements should have been moved! (note that f1 normally has two statements).
-            Assert.AreEqual(1, f1.Statements.Count());
-            Assert.AreEqual(1, f2.Statements.Count());
+            // Nothing should have been touched in f1 - double check.
+            Assert.AreEqual(2, f1.Statements.Count());
         }
 
         [TestMethod]
@@ -245,49 +297,55 @@ namespace LINQToTTreeLib.Statements
         [TestMethod]
         public void DeclarationsAreIgnoredDuringLowerLevelMove()
         {
-            // In this new world of moving things around, we move decl and statements, but they aren't really connected.
-            // So we should make sure that decl aren't moved accidentally when they shouldn't be.
+            // In this new world of moving things around, we move declaration and statements, but they aren't really connected.
+            // So we should make sure that declaration aren't moved accidentally when they shouldn't be.
 
             // Inline block at the top
-            var topLevel = new StatementInlineBlock();
+            var topLevel1 = new StatementInlineBlock();
+            var topLevel2 = new StatementInlineBlock();
 
             // Top level guy. This is the unique filter statement.
             var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
-            topLevel.Add(filterUnique);
+            topLevel1.Add(filterUnique);
 
             // Next, we will do the two common ones.
             var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
             var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            topLevel.Add(p);
+            topLevel1.Add(p);
+            topLevel2.Add(p);
             var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
             var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
             f1.Add(a1);
             f2.Add(a2);
 
             filterUnique.Add(f1);
-            topLevel.Add(f2);
+            topLevel2.Add(f2);
 
-            Assert.IsTrue(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
+            Console.WriteLine("Before optimization (target):");
+            topLevel1.DumpCodeToConsole();
+            Console.WriteLine("After optimization (merge):");
+            topLevel2.DumpCodeToConsole();
+
+            Assert.IsFalse(f1.TryCombineStatement(f2, null), "Two of the same if statements, but the one to be merged is not hidden behind other if statements!");
             Assert.AreEqual(1, f1.Statements.Count());
-            Assert.AreEqual(0, f2.Statements.Count());
+            Assert.AreEqual(1, f2.Statements.Count());
         }
 
-        // This is a bug, but not a bug that should matter at all. So lets see how far we can get with
-        // ignoring it.
         [TestMethod]
         public void DeclarationsAreMovedCorrectlyWhenStatementsReassigned()
         {
-            // In this new world of moving things around, we move decl and statements, but they aren't really connected.
-            // So we should make sure that decl aren't moved accidentally when they shouldn't be.
+            // In this new world of moving things around, we move declaration and statements, but they aren't really connected.
+            // So we should make sure that declaration aren't moved accidentally when they shouldn't be.
 
             // Inline block at the top
-            var topLevel = new StatementInlineBlock();
+            var topLevel1 = new StatementInlineBlock();
+            var topLevel2 = new StatementInlineBlock();
 
             // Top level guy. This is the unique filter statement.
             var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
-            topLevel.Add(filterUnique);
+            topLevel1.Add(filterUnique);
 
             // Next, we will do the two common ones.
             var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
@@ -296,32 +354,66 @@ namespace LINQToTTreeLib.Statements
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             filterUnique.Add(p1);
-            topLevel.Add(p2);
+            topLevel2.Add(p2);
             var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
             var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
             f1.Add(a1);
             f2.Add(a2);
 
             filterUnique.Add(f1);
-            topLevel.Add(f2);
+            topLevel2.Add(f2);
 
-            Console.WriteLine("Before optimization:");
-            foreach (var l in topLevel.CodeItUp())
-            {
-                Console.WriteLine(l);
-            }
+            Console.WriteLine("Before optimization (target):");
+            topLevel2.DumpCodeToConsole();
+            Console.WriteLine("Before optimization (what is being merged):");
+            topLevel1.DumpCodeToConsole();
 
             Assert.IsTrue(f2.TryCombineStatement(f1, null), "Two of the same if statements, and the combine should have worked");
 
             Console.WriteLine("After optimization:");
-            foreach (var l in topLevel.CodeItUp())
+            foreach (var l in topLevel2.CodeItUp())
             {
                 Console.WriteLine(l);
             }
-            Assert.AreEqual(0, f1.Statements.Count());
             Assert.AreEqual(1, f2.Statements.Count());
+        }
 
-            Assert.AreEqual(0, filterUnique.DeclaredVariables.Count(), "Declared Variables");
+        [TestMethod]
+        public void CombineFailsWhenNestedIsTarget()
+        {
+            // In this new world of moving things around, we move declaration and statements, but they aren't really connected.
+            // So we should make sure that declaration aren't moved accidentally when they shouldn't be.
+
+            // Inline block at the top
+            var topLevel1 = new StatementInlineBlock();
+            var topLevel2 = new StatementInlineBlock();
+
+            // Top level guy. This is the unique filter statement.
+            var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
+            topLevel1.Add(filterUnique);
+
+            // Next, we will do the two common ones.
+            var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+            var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            filterUnique.Add(p1);
+            topLevel2.Add(p2);
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            f1.Add(a1);
+            f2.Add(a2);
+
+            filterUnique.Add(f1);
+            topLevel2.Add(f2);
+
+            Console.WriteLine("Before optimization (target):");
+            topLevel1.DumpCodeToConsole();
+            Console.WriteLine("Before optimization (what is being merged):");
+            topLevel2.DumpCodeToConsole();
+
+            Assert.IsFalse(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
         }
     }
 }
