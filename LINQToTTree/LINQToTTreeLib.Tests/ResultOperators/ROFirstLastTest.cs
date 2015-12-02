@@ -33,34 +33,6 @@ namespace LINQToTTreeLib.ResultOperators
             MEFUtilities.MyClassDone();
         }
 
-#if false
-        /// <summary>Test stub for CanHandle(Type)</summary>
-        [PexMethod]
-        public bool CanHandle([PexAssumeUnderTest]ROFirstLast target, Type resultOperatorType)
-        {
-            bool result = target.CanHandle(resultOperatorType);
-            return result;
-            // TODO: add assertions to method ROFirstLastTest.CanHandle(ROFirstLast, Type)
-        }
-
-        /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)</summary>
-        [PexMethod, PexAllowedException(typeof(NotImplementedException)), PexAllowedException(typeof(NullReferenceException))]
-        public Expression ProcessResultOperator(
-            [PexAssumeUnderTest]ROFirstLast target,
-            ResultOperatorBase resultOperator,
-            QueryModel queryModel,
-            IGeneratedQueryCode _codeEnv,
-            ICodeContext _codeContext,
-            CompositionContainer container
-        )
-        {
-            Expression result = target.ProcessResultOperator
-                                   (resultOperator, queryModel, _codeEnv, _codeContext, container);
-            return result;
-            // TODO: add assertions to method ROFirstLastTest.ProcessResultOperator(ROFirstLast, ResultOperatorBase, QueryModel, IGeneratedCode, ICodeContext, CompositionContainer)
-        }
-#endif
-
         public class ntup2
         {
             public int[] run;

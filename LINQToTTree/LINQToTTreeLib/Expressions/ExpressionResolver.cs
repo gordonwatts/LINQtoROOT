@@ -326,12 +326,16 @@ namespace LINQToTTreeLib.Expressions
                     else if (blArray != null && IsNullConstant(b.Right))
                     {
                         var index = CheckNotConst(ExtractObjectArrayIndex(cmpLeft));
-                        return Expression.Equal(index, Expression.Constant(-1));
+                        return expression.NodeType == ExpressionType.Equal ?
+                            Expression.Equal(index, Expression.Constant(-1))
+                            : Expression.NotEqual(index, Expression.Constant(-1));
                     }
                     else if (brArray != null && IsNullConstant(cmpLeft))
                     {
                         var index = CheckNotConst(ExtractObjectArrayIndex(cmpRight));
-                        return Expression.Equal(Expression.Constant(-1), index);
+                        return expression.NodeType == ExpressionType.Equal ? 
+                            Expression.Equal(Expression.Constant(-1), index)
+                            : Expression.NotEqual(Expression.Constant(-1), index);
                     }
                     else
                     {

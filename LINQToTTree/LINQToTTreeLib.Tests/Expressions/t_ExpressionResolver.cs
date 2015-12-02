@@ -31,15 +31,6 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.MyClassDone();
         }
 
-#if false
-        [PexMethod]
-        public Expression RunResolve(Expression source, IGeneratedQueryCode gc, ICodeContext cc)
-        {
-            MEFUtilities.Compose(new TypeHandlerCache());
-            return ExpressionResolver.Resolve(source, gc, cc, MEFUtilities.MEFContainer);
-        }
-#endif
-
         /// <summary>
         /// Test that when we have a sub-expression it only gets emitted into the code once.
         ///</summary>
@@ -133,6 +124,29 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
             Assert.AreEqual(ExpressionType.Equal, result.NodeType, "Expected an equal");
+
+            var b = result as BinaryExpression;
+            Assert.IsInstanceOfType(b.Left, typeof(ParameterExpression), "Left expr");
+            Assert.IsInstanceOfType(b.Right, typeof(ConstantExpression), "Right expr");
+
+            var r = b.Right as ParameterExpression;
+            var l = b.Left as ConstantExpression;
+
+            //Assert.Inconclusive("Do we want to allow the user to write this - what does it mean??");
+            // The way this get coded up is pretty harmless. So I guess we let it go...
+        }
+
+        [TestMethod]
+        public void TestObjectArrayCompareNENull()
+        {
+            MEFUtilities.Compose(new TypeHandlerCache());
+            Expression<Func<SourceType2, int, int, bool>> lambaExpr = (s, a1, a2) => s.jets[a1] != null;
+            GeneratedCode gc = new GeneratedCode();
+            CodeContext cc = new CodeContext();
+            var result = ExpressionResolver.Resolve(lambaExpr.Body, gc, cc, MEFUtilities.MEFContainer);
+
+            Assert.IsInstanceOfType(result, typeof(BinaryExpression), "Expression type");
+            Assert.AreEqual(ExpressionType.NotEqual, result.NodeType, "Expected an not equal");
 
             var b = result as BinaryExpression;
             Assert.IsInstanceOfType(b.Left, typeof(ParameterExpression), "Left expr");
