@@ -446,7 +446,7 @@ namespace LINQToTTreeLib.ResultOperators
             var res = DummyQueryExectuor.FinalResult;
             res.DumpCodeToConsole();
             var cnt = res.DumpCode().Where(l => l.Contains("-1")).Count();
-            Assert.AreEqual(4, cnt, "Improper # of -1's in the code");
+            Assert.AreEqual(3, cnt, "Improper # of -1's in the code");
         }
 
         [TestMethod]
