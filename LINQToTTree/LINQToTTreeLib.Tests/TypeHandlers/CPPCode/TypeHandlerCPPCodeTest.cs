@@ -70,22 +70,6 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             CanHandle(new TypeHandlerCPPCode(), typeof(DoItClass));
         }
 
-#if false
-        /// <summary>Test stub for ProcessConstantReference(ConstantExpression, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
-        [PexMethod, PexAllowedException(typeof(NotImplementedException))]
-        internal IValue ProcessConstantReference(
-            [PexAssumeUnderTest]TypeHandlerCPPCode target,
-            ConstantExpression expr,
-            GeneratedCode codeEnv
-        )
-        {
-            IValue result
-               = target.ProcessConstantReference(expr, codeEnv, MEFUtilities.MEFContainer);
-            return result;
-            // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessConstantReference(TypeHandlerCPPCode, ConstantExpression, IGeneratedQueryCode, ICodeContext, CompositionContainer)
-        }
-#endif
-
         [TestMethod]
         public void TestSimpleCodeAddon()
         {
@@ -138,50 +122,24 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.AreEqual(expected.ToString(), st2, "statement line incorrect");
         }
 
-#if false
-        /// <summary>Test stub for ProcessMethodCall(MethodCallExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
-        [PexMethod]
-        internal Expression ProcessMethodCall(
-            [PexAssumeUnderTest]TypeHandlerCPPCode target,
-            MethodCallExpression expr,
-            IGeneratedQueryCode gc,
-            ICodeContext context,
-            CompositionContainer container
-        )
+        [TestMethod]
+        public void RenameCPPResultVariable()
         {
-            Expression result01
-               = target.ProcessMethodCall(expr, gc, context, container);
-            return result01;
-            // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessMethodCall(TypeHandlerCPPCode, MethodCallExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
-        }
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
 
-        [PexMethod]
-        internal IValue CodeMethodCall(
-            [PexAssumeUnderTest]TypeHandlerCPPCode target,
-            MethodCallExpression expr,
-            IGeneratedQueryCode gc,
-            CompositionContainer container
-            )
-        {
-            return target.CodeMethodCall(expr, gc, container);
-        }
+            var param = Expression.Parameter(typeof(int), "p");
+            var paramplus = Expression.MakeBinary(ExpressionType.Add, param, Expression.Constant(1));
+            var expr = Expression.Call(typeof(DoItClass).GetMethod("DoIt"), paramplus);
 
-        /// <summary>Test stub for ProcessNew(NewExpression, IValue&amp;, IGeneratedQueryCode, ICodeContext, CompositionContainer)</summary>
-        [PexMethod, PexAllowedException(typeof(NotImplementedException))]
-        internal Expression ProcessNew(
-            [PexAssumeUnderTest]TypeHandlerCPPCode target,
-            NewExpression expression,
-            out IValue result,
-            IGeneratedQueryCode gc,
-            CompositionContainer container
-        )
-        {
-            Expression result01
-               = target.ProcessNew(expression, out result, gc, container);
-            return result01;
-            // TODO: add assertions to method TypeHandlerCPPCodeTest.ProcessNew(TypeHandlerCPPCode, NewExpression, IValue&, IGeneratedQueryCode, ICodeContext, CompositionContainer)
+            var result = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
+            gc.CodeBody.RenameVariable(result.RawValue, "abogus_1234");
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsTrue(gc.DumpCode().Where(s => s.Contains("int abogus_1234")).Any(), "Didn't find the variable name in the code");
         }
-#endif
 
         [TestMethod]
         public void TestForUniqueReplacement()

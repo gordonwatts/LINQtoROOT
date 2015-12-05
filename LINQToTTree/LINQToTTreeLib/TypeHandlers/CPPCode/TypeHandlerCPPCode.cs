@@ -270,7 +270,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <param name="newName"></param>
             public void RenameVariable(string originalName, string newName)
             {
-                resultName.ReplaceVariableNames(originalName, newName);
+                resultName = resultName.ReplaceVariableNames(originalName, newName);
                 LinesOfCode = LinesOfCode.Select(l => l.ReplaceVariableNames(originalName, newName)).ToList();
             }
 
