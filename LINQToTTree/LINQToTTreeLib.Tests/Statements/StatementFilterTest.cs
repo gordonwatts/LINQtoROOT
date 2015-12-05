@@ -210,9 +210,10 @@ namespace LINQToTTreeLib.Statements
             var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
             var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
 
-            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
-            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -238,8 +239,67 @@ namespace LINQToTTreeLib.Statements
             // The combine should fail.
             Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
 
+            Console.WriteLine("After optimization (target):");
+            topLevel2.DumpCodeToConsole();
+            Console.WriteLine("After optimization (merge):");
+            topLevel1.DumpCodeToConsole();
+
             // Nothing should have been touched in f1 - double check.
             Assert.AreEqual(2, f1.Statements.Count());
+        }
+
+        [TestMethod]
+        public void CombineFilterWithHiddenBehindIfAndExtraIndependentStatementsAndDeclaredVariables()
+        {
+            // When we try and fail to combine if statements, make sure we don't leave dangling name
+            // changes - that the declaration aren't totally renamed.
+
+            // Top level guy. This is the unique filter statement.
+            var filterUnique = new StatementFilter(new ValSimple("fUnique", typeof(bool)));
+
+            // Next, we will do the two common ones.
+            var f1 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+            var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
+
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            f1.Add(p1);
+            f2.Add(p2);
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            f1.Add(a1);
+            f2.Add(a2);
+
+            // Now, a unique assignment. This can't be lifted b.c. it is hidden behind a different if statement in
+            // the outside (the filterUnique).
+
+            var pSpecial = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var aUnique = new StatementAssign(pSpecial, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }, true);
+            f1.Add(aUnique);
+
+            filterUnique.Add(f1);
+
+            var topLevel1 = new StatementInlineBlock();
+            var topLevel2 = new StatementInlineBlock();
+            topLevel1.Add(filterUnique);
+            topLevel2.Add(f2);
+
+            Console.WriteLine("Before optimization (target):");
+            topLevel2.DumpCodeToConsole();
+            Console.WriteLine("Before optimization (merge):");
+            topLevel1.DumpCodeToConsole();
+
+            // The combine should fail.
+            Assert.IsFalse(f2.TryCombineStatement(f1, null), "The two are different if statements, so it should have failed");
+
+            Console.WriteLine("After optimization (target):");
+            topLevel2.DumpCodeToConsole();
+            Console.WriteLine("After optimization (merge):");
+            topLevel1.DumpCodeToConsole();
+
+            // Nothing should have been touched in f1 - double check.
+            Assert.AreEqual(2, f1.Statements.Count());
+            Assert.AreEqual(1, f1.DeclaredVariables.Count());
         }
 
         [TestMethod]
@@ -414,6 +474,11 @@ namespace LINQToTTreeLib.Statements
             topLevel2.DumpCodeToConsole();
 
             Assert.IsFalse(f1.TryCombineStatement(f2, null), "Two of the same if statements, and the combine should have worked");
+
+            Console.WriteLine("After optimization (target):");
+            topLevel1.DumpCodeToConsole();
+            Console.WriteLine("After optimization (merge):");
+            topLevel2.DumpCodeToConsole();
         }
     }
 }
