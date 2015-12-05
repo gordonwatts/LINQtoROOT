@@ -198,3 +198,4 @@ LINQToTTree/start_LINQToTTree.bat
 LINQToTTree-*.nuspec
 DemosAndTests/start_DemosAndTests.bat
 DemosAndTests/SimpleNugetPackageDependencyTest/ROOTLINQ/junk_macro_parsettree_CollectionTree.C
+*.opendb

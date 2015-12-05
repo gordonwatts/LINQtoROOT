@@ -465,14 +465,14 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Absorbe all the info from this combined block into this one.
+        /// Absorb all the info from this combined block into this one.
         /// </summary>
         /// <param name="block"></param>
         protected bool Combine(StatementInlineBlockBase block, ICodeOptimizationService opt, bool appendIfCantCombine = true, bool moveIfIdentical = false)
         {
-            var r = Combine(block.Statements, block, appendIfCantCombine: appendIfCantCombine, moveIfIdentical: moveIfIdentical);
+            var combineSucceeded = Combine(block.Statements, block, appendIfCantCombine: appendIfCantCombine, moveIfIdentical: moveIfIdentical);
             Combine(block.DeclaredVariables);
-            return r;
+            return combineSucceeded;
         }
 
         /// <summary>
@@ -506,6 +506,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameBlockVariables(string originalName, string newName)
         {
+#if false
             // And remove any declarations. When we rename, we are doing it because this block
             // is being made to look like an already existing other block - so the variable will
             // have been declared over there already.
@@ -513,6 +514,15 @@ namespace LINQToTTreeLib.Statements
             if (decl != null)
                 Remove(decl);
 
+#else
+            // Rename the declared variables as requested. While these variables may be used again,
+            // they need to appear here or if the combine fails, they will not be declared (and they
+            // will be used).
+            foreach (var v in DeclaredVariables.Where(d => d.RawValue == originalName))
+            {
+                v.RenameRawValue(originalName, newName);
+            }
+#endif
             foreach (var s in _statements)
             {
                 s.RenameVariable(originalName, newName);
