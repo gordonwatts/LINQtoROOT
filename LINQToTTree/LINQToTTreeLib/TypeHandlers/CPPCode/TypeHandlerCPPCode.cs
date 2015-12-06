@@ -248,7 +248,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
             {
                 //
-                // First, the decl for the result variable.
+                // First, the declaration for the result variable.
                 //
 
                 yield return string.Format("{0} {1};", cppType, resultName);
