@@ -1,11 +1,11 @@
-﻿using Remotion.Linq.Clauses.Expressions;
+﻿//
+// This file is almost completely copied, word-for-word, from the re-linq distribution. 
+// 
+using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
 using System;
-//
-// This file is almost completely copied, word-for-word, from the re-linq distribution. 
 using System.Linq.Expressions;
 using System.Text;
-// 
 
 namespace LINQToTTreeLib.Expressions
 {

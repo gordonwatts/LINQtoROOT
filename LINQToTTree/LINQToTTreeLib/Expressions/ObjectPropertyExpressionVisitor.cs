@@ -6,7 +6,8 @@ using Remotion.Linq.Parsing;
 namespace LINQToTTreeLib.Expressions
 {
     /// <summary>
-    /// Sometimes you'll find things like "new Tuple<int, int>(5, 10).Item1" in our code.
+    /// Sometimes you'll find things like "new Tuple<int, int>(5, 10).Item1" or
+    /// "new CustomObject(){Val1 = 5}.Val1" in our code.
     /// The job of this translator is to replace the above with "5". Called by
     /// the Translating Expression Visitor to automatically deal with this sort of thing.
     /// This also works with the temp objects that LINQ will generate with the anonymous
