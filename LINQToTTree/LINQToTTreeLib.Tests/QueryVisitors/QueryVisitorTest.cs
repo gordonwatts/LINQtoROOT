@@ -469,6 +469,38 @@ namespace LINQToTTreeLib
             public Expression HeldExpression { get; private set; }
         }
 
+        // To help with the TranslateTupleWithLambda test.
+        public class JetInfoExtra
+        {
+            public subNtupleObjects1 Jet;
+        }
+
+        [TestMethod]
+        public void TranslateTupleWithLambda()
+        {
+            // This was seen in the wild - a rather complex expression that failed to translate.
+            // A combination of Tuple, lambda, and calls to FuturePlot.
+
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var alljets = q.SelectMany(x => x.jets)
+                .Select(j => new JetInfoExtra() { Jet = j });
+            var source = alljets
+                .Select(j => Tuple.Create(j, 1.0));
+
+            var vParameter = Expression.Parameter(typeof(Tuple<JetInfoExtra, double>), "v");
+            Expression<Func<Tuple<JetInfoExtra, double>, double>> xValue = xval => xval.Item1.Jet.var2;
+            var callGetter = Expression.Invoke(xValue, vParameter);
+
+            var dParameter = Expression.Parameter(typeof(double), "d");
+            var sumExpr = Expression.Add(dParameter, callGetter);
+            var lambda1 = Expression.Lambda<Action<double, Tuple<JetInfoExtra, double>>>(sumExpr, dParameter, vParameter);
+
+            var dfuture = source.ApplyToObject(0.0, lambda1);
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+        }
+
         [TestMethod]
         public void TestSortSimple()
         {
