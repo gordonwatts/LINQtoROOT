@@ -26,9 +26,8 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         public static Expression Translate(Expression expr, List<string> cookies, Func<Expression, Expression> resolver)
         {
-            // Remove Tuple's and similar things.
-            var objlift = new ObjectPropertyExpressionVisitor();
-            var exprObjsRemoved = objlift.VisitExpression(expr);
+            // Remove Tuple's and custom objects.
+            var exprObjsRemoved = ObjectPropertyExpressionVisitor.RemoveObjectAndTupleReferences(expr);
 
             // Now, do our custom translations.
             var trans = new TranslatingExpressionVisitor();
