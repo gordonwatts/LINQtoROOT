@@ -47,15 +47,6 @@ namespace LINQToTTreeLib.Tests
             }
         }
 
-        /// <summary>
-        ///A test for TranslatingExpressionVisitor Constructor
-        ///</summary>
-        [TestMethod()]
-        public void TestTranslatingExpressionVisitorConstructor()
-        {
-            TranslatingExpressionVisitor target = new TranslatingExpressionVisitor();
-        }
-
         public class NoTranslateClass
         {
             public int val;

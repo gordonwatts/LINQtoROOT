@@ -30,19 +30,36 @@ namespace LINQToTTreeLib
             var exprObjsRemoved = ObjectPropertyExpressionVisitor.RemoveObjectAndTupleReferences(expr);
 
             // Now, do our custom translations.
-            var trans = new TranslatingExpressionVisitor();
-            trans.Resolver = resolver;
-            var result = trans.VisitExpression(exprObjsRemoved);
+            var oldResolver = _impl.Value.Resolver;
+            _impl.Value.Resolver = resolver;
 
-            // Keep track of what we did so we can make sure our caching logic works ok.
-            cookies.AddRange(trans.RenameList);
-            return result;
+            var oldRenameList = _impl.Value.RenameList;
+            _impl.Value.RenameList = new List<string>();
+
+            try {
+                var result = _impl.Value.VisitExpression(exprObjsRemoved);
+
+                // Track all cookies going out!
+                cookies.AddRange(_impl.Value.RenameList);
+                return result;
+            }
+            finally
+            {
+                // Reset to previous state.
+                _impl.Value.Resolver = oldResolver;
+                _impl.Value.RenameList = oldRenameList;
+            }
         }
+
+        /// <summary>
+        /// Cache the implementation
+        /// </summary>
+        private static Lazy<TranslatingExpressionVisitor> _impl = new Lazy<TranslatingExpressionVisitor>(() => new TranslatingExpressionVisitor());
 
         /// <summary>
         /// Get the minor stuff up and running
         /// </summary>
-        public TranslatingExpressionVisitor()
+        private TranslatingExpressionVisitor()
         {
             RenameList = new List<string>();
         }
@@ -512,14 +529,14 @@ namespace LINQToTTreeLib
             }
         }
 
-/// <summary>
-/// Array index can be a little rough b/c it can be traning to make a translation. This is actually quite tricking
-/// - especially in teh case of an array grouping - we have to go find a variable we can use as a proxy to get a size
-/// operator on! :-)
-/// </summary>
-/// <param name="expression"></param>
-/// <returns></returns>
-private Expression VisitArrayLength(UnaryExpression expression)
+        /// <summary>
+        /// Array index can be a little rough b/c it can be traning to make a translation. This is actually quite tricking
+        /// - especially in teh case of an array grouping - we have to go find a variable we can use as a proxy to get a size
+        /// operator on! :-)
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        private Expression VisitArrayLength(UnaryExpression expression)
         {
             ///
             /// The key to this is what the operand is. If it isn't a member
@@ -718,22 +735,6 @@ private Expression VisitArrayLength(UnaryExpression expression)
             var root = FindObjectOfType(memberExpr, attr.BaseType);
             var indexTargetAccess = Expression.MakeMemberAccess(root, indexTargetMember);
             return VisitExpressionImplemented(Expression.ArrayLength(indexTargetAccess));
-
-#if false
-            ///
-            /// Now, find, with renames, what the "muonindex" points to, and build access to it from
-            /// a translated root.
-            /// 
-
-            var targetMember = ResolveMemberName(classToTranslateTo.TargetClassType, memberExpr.Member);
-
-            var root = FindObjectOfType(memberExpr, attr.BaseType);
-            var transRoot = TranslateRootObject(root, classToTranslateTo.TargetClassType);
-            var memberAccess = Expression.MakeMemberAccess(transRoot, targetMember);
-
-            // That is the target - so return the length of it.
-            return Expression.ArrayLength(memberAccess);
-#endif
         }
 
         /// <summary>
