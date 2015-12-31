@@ -56,6 +56,10 @@ namespace LINQToTreeHelpers.Tests
             {
                 f.Delete();
             }
+            while (f.Exists)
+            {
+                f.Refresh();
+            }
 
             using (var ftf = new FutureTFile(f))
             {
