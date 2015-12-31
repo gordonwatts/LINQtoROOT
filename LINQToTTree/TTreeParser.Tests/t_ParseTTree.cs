@@ -260,18 +260,24 @@ namespace TTreeParser.Tests
         public void GenerateClassesWithCustomClassesAndSubClasses()
         {
             var f = new ROOTNET.NTFile("ComplexNtupleTestInput.root", "READ");
-            Assert.IsTrue(f.IsOpen(), "Test file not found");
-            var t = f.Get("btag") as ROOTNET.Interface.NTTree;
-            var p = new ParseTTree();
-            var result = p.GenerateClasses(t).ToArray();
+            try {
+                Assert.IsTrue(f.IsOpen(), "Test file not found");
+                var t = f.Get("btag") as ROOTNET.Interface.NTTree;
+                Assert.IsNotNull(t.Name); // Make sure we got the tree correctly
+                var p = new ParseTTree();
+                var result = p.GenerateClasses(t).ToArray();
 
-            // Make sure the global features are right
-            Assert.AreEqual(1, result.Where(c => c.IsTopLevelClass).Count(), "# of top level classes");
-            Assert.AreEqual(3, result.Length, "# of classes");
-            var classMap = result.ToDictionary(r => r.Name, r => r);
-            Assert.IsTrue(classMap.ContainsKey("btag"), "btag class present");
-            Assert.IsTrue(classMap.ContainsKey("MuonInBJet"), "MuonInBJet class present");
-            Assert.IsTrue(classMap.ContainsKey("BTagJet"), "btag class present");
+                // Make sure the global features are right
+                Assert.AreEqual(1, result.Where(c => c.IsTopLevelClass).Count(), "# of top level classes");
+                Assert.AreEqual(3, result.Length, "# of classes");
+                var classMap = result.ToDictionary(r => r.Name, r => r);
+                Assert.IsTrue(classMap.ContainsKey("btag"), "btag class present");
+                Assert.IsTrue(classMap.ContainsKey("MuonInBJet"), "MuonInBJet class present");
+                Assert.IsTrue(classMap.ContainsKey("BTagJet"), "btag class present");
+            } finally
+            {
+                f.Close();
+            }
         }
 
         [TestMethod]
@@ -311,52 +317,6 @@ namespace TTreeParser.Tests
                 }
             }
         }
-
-#if false
-        /// This test relyies on having the ntuple stuff translated, something we are doing in the
-        /// demos now, not here in the actual test cases - where we do everything ad-hoc.
-        [TestMethod]
-        public void GenerateClassesTestComplexUnknownObjects()
-        {
-            var f = new ROOTNET.NTFile("../../../TTreeParser.Tests/ComplexNtupleTestInput.root", "READ");
-            Assert.IsTrue(f.IsOpen(), "File wasn't found");
-            var t = f.Get("btag") as ROOTNET.Interface.NTTree;
-            Assert.IsNotNull(t, "couldn't find the tree");
-
-            var p = new ParseTTree();
-            var result = p.GenerateClasses(t).ToArray();
-
-            foreach (var s in result)
-            {
-                Assert.IsInstanceOfType(s, typeof(ROOTClassShell), "result incorrect type");
-                var rc = s as ROOTClassShell;
-                if (rc.Name == "BTagJet")
-                {
-                    Assert.AreEqual(rc.SubClassName, "TLorentzVector");
-                    Assert.AreEqual(5, rc.Items.Count());
-                }
-                else if (rc.Name == "MuonInBJet")
-                {
-                    Assert.AreEqual(rc.SubClassName, "TLorentzVector");
-                    Assert.AreEqual(4, rc.Items.Count(), "# items incorrect for muon in bjet");
-                }
-                else if (rc.Name == "btag")
-                {
-                    Assert.IsNull(rc.SubClassName, "Expecting no sub class!");
-                    Assert.AreEqual(3, rc.Items.Count(), "# items is incorrect for btag object");
-                }
-                else
-                {
-                    Assert.Fail("Invalid class came back: '" + rc.Name + "'.");
-                }
-            }
-
-            CheckSerialization(result, "GenerateClassesTestComplexUnknownObjects");
-            /// There should be 3 classes in there!
-            Assert.AreEqual(3, result.Length, "incorrect # of classes parsed");
-
-        }
-#endif
 
         [TestMethod]
         public void GenerateClassesTestVectorIntAndDoubleAndShort()
