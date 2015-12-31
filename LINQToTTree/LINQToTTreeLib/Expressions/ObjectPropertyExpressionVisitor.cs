@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.Expressions
             var exprType = expression.Expression.Type;
             if (expression.Expression.NodeType == ExpressionType.New)
             {
-                // Is it a Tule?
+                // Is it a Tuple?
                 if (exprType.Name.StartsWith("Tuple`"))
                 {
                     int itemIndex = Convert.ToInt32(expression.Member.Name.Substring(4));
