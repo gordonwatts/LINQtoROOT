@@ -153,6 +153,35 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void CustomObjectInsideTuple()
+        {
+            Expression<Func<int>> lambaExpr = () => new Tuple<customObject, double>(new customObject() { Var1 = 5, Var2 = 10 }, 1.0).Item1.Var1;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
+            Console.WriteLine(result);
+            Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+            Assert.AreEqual(5, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        class customObjectTuple
+        {
+            public Tuple<int, int> var1;
+        }
+
+        [TestMethod]
+        public void TupleInsideCustomObject()
+        {
+            Expression<Func<int>> lambaExpr = () => new customObjectTuple() { var1 = new Tuple<int, int>(1, 2) }.var1.Item2;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
+            Console.WriteLine(result);
+            Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
+            Assert.AreEqual(typeof(int), result.Type, "result type not right");
+            Assert.AreEqual(2, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        [TestMethod]
         public void TestCustomObjectBadInitalizer()
         {
             // There should be no changes - we will fail later on!
