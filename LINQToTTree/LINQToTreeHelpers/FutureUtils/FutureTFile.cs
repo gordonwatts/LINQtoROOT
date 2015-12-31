@@ -15,6 +15,10 @@ namespace LINQToTreeHelpers.FutureUtils
             {
                 throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
             }
+            if (!f.IsWritable())
+            {
+                throw new InvalidOperationException(string.Format("File '{0}' was not opened in write mode. No idea why, but this is definately not going to work!", name));
+            }
             ROOTNET.NTDirectory.CurrentDirectory().cd("root:");
             return f;
         }
