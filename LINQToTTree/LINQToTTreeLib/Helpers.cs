@@ -355,6 +355,14 @@ namespace LINQToTTreeLib
             throw new NotSupportedException("No direct call allowed");
         }
 
+        /// <summary>
+        /// Returns true if a pointer in one objects points to a valid item.
+        /// For example if the array index is -1 it will return false.
+        /// Used when you have an TTree leaf that is an index into another array in the TTree.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="arg"></param>
+        /// <returns></returns>
         public static bool IsGoodIndex<T>(this T arg)
         {
             throw new NotSupportedException("No direct call allowed - this is a marker for the translation process in LINQToROOT");
