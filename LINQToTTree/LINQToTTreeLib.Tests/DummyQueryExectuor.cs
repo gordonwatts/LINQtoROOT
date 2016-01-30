@@ -1,4 +1,5 @@
 ﻿using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Files;
 using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
@@ -78,6 +79,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new ROMinMax());
                 MEFUtilities.AddPart(new ROAnyAll());
                 MEFUtilities.AddPart(new ROUniqueCombinations());
+                MEFUtilities.AddPart(new ROAsCSV());
                 MEFUtilities.AddPart(new ROPairWiseAll());
                 MEFUtilities.AddPart(new ROAsQueriable());
                 MEFUtilities.AddPart(new ROSum());

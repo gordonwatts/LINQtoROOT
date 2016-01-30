@@ -8,6 +8,7 @@ using Remotion.Linq;
 using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using Remotion.Linq.Parsing.Structure;
 using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
+using LINQToTTreeLib.Files;
 
 namespace LINQToTTreeLib
 {
@@ -189,7 +190,12 @@ namespace LINQToTTreeLib
 
             var ourProviders = new INodeTypeProvider[]
             {
-                MethodInfoBasedNodeTypeRegistry.CreateFromTypes(new Type[] {typeof(UniqueCombinationsExpressionNode), typeof(PairWiseAllExpressionNode), typeof(AsQueriableExpressionNode)}),
+                MethodInfoBasedNodeTypeRegistry.CreateFromTypes(new Type[] {
+                    typeof(UniqueCombinationsExpressionNode),
+                    typeof(PairWiseAllExpressionNode),
+                    typeof(AsQueriableExpressionNode),
+                    typeof(AsCSVExpressionNode),
+                }),
             };
 
             var defaultNodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();

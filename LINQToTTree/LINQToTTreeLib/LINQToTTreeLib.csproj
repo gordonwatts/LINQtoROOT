@@ -165,6 +165,11 @@
     <Compile Include="Expressions\ParameterReplacementExpressionVisitor.cs" />
     <Compile Include="Expressions\ExpressionToCPP.cs" />
     <Compile Include="Expressions\SubExpressionReplacement.cs" />
+    <Compile Include="Files\AsCSVExpressionNode.cs" />
+    <Compile Include="Files\AsCSVResultOperator.cs" />
+    <Compile Include="Files\FileHelperQueryExtensions.cs" />
+    <Compile Include="Files\ROAsCSV.cs" />
+    <Compile Include="Files\StatementCSVDump.cs" />
     <Compile Include="FutureResultOperators.cs" />
     <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />
