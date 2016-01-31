@@ -5,11 +5,13 @@ using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq.Expressions;
 using System.Text;
+using System.Linq;
 
 namespace LINQToTTreeLib.Files
 {
@@ -35,7 +37,7 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
-        /// We want to save the result out to a file.
+        /// We want to print the results out to a file.
         /// </summary>
         /// <param name="resultOperator"></param>
         /// <param name="queryModel"></param>
@@ -43,6 +45,12 @@ namespace LINQToTTreeLib.Files
         /// <param name="_codeContext"></param>
         /// <param name="container"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// We can handle several types of streams here:
+        /// 1) a stream of double's - this is just one column.
+        /// 2) A stream of Tuples
+        /// 3) A stream of custom objects
+        /// </remarks>
         public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             // Argument checking
@@ -61,17 +69,37 @@ namespace LINQToTTreeLib.Files
             bool first = true;
             foreach (var h in asCSV.HeaderColumns)
             {
-                headerline.Append(h);
                 if (!first)
                 {
                     headerline.Append(", ");
                 }
+                headerline.Append(h);
+                first = false;
             }
             gc.AddInitalizationStatement(new Statements.StatementSimpleStatement($"{stream.RawValue} << \"{headerline.ToString()}\" << std::endl;"));
 
+            // Printing out the item values really depends on what we are looking at (single stream, tuple, etc.).
+            var streamType = queryModel.SelectClause.Selector.Type;
+            var streamSelector = queryModel.SelectClause.Selector;
+
+            var itemValues = new List<Expression>();
+            if (streamType == typeof(double))
+            {
+                // A single stream of doubles
+                itemValues.Add(queryModel.SelectClause.Selector);
+
+            } else if (streamType.Name.StartsWith("Tuple"))
+            {
+                var targs = streamType.GenericTypeArguments.Zip(Enumerable.Range(1, 100), (t, c) => Tuple.Create(t, c));
+                foreach (var templateType in targs)
+                {
+                    itemValues.Add(Expression.PropertyOrField(streamSelector, $"Item{templateType.Item2}"));
+                }
+            }
+
             // We are just going to print out the line with the item in it.
-            var itemValue = ExpressionToCPP.GetExpression(queryModel.SelectClause.Selector, gc, cc, container);
-            var pstatement = new StatementCSVDump(stream, itemValue);
+            var itemAsValues = itemValues.Select(iv => ExpressionToCPP.GetExpression(iv, gc, cc, container));
+            var pstatement = new StatementCSVDump(stream, itemAsValues.ToArray());
             gc.Add(pstatement);
 
             // The return is a file path in the C# world. But here in C++, what should be returned?

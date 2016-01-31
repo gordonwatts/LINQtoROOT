@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.Files
     class StatementCSVDump : IStatement
     {
         private IValue _stream;
-        private IValue _item;
+        private IValue[] _items;
 
         public IStatement Parent { get; set; }
 
@@ -22,10 +22,10 @@ namespace LINQToTTreeLib.Files
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="item"></param>
-        public StatementCSVDump(IValue stream, IValue item)
+        public StatementCSVDump(IValue stream, IValue[] items)
         {
             _stream = stream;
-            _item = item;
+            _items = items;
         }
  
         /// <summary>
@@ -34,7 +34,16 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            yield return $"{_stream.RawValue} << {_item.RawValue} << std::endl;";
+            var bld = new StringBuilder();
+            foreach (var item in _items.Select(i => i.RawValue))
+            {
+                if (bld.Length != 0)
+                {
+                    bld.Append(" \", \" <<");
+                }
+                bld.AppendFormat($"{item} <<");
+            }
+            yield return $"{_stream.RawValue} << {bld.ToString()} std::endl;";
         }
 
         /// <summary>
@@ -45,7 +54,10 @@ namespace LINQToTTreeLib.Files
         public void RenameVariable(string originalName, string newName)
         {
             _stream.RenameRawValue(originalName, newName);
-            _item.RenameRawValue(originalName, newName);
+            foreach(var i in _items)
+            {
+                i.RenameRawValue(originalName, newName);
+            }
         }
 
         /// <summary>

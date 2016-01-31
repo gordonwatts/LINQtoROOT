@@ -17,17 +17,18 @@ namespace LINQToTTreeLib.Files
     class AsCSVExpressionNode : ResultOperatorExpressionNodeBase
     {
         /// <summary>
-        /// What extensions can we handle in this (amazingly) complex code?
+        /// What extensions can we handle here?
         /// </summary>
         public static MethodInfo[] SupportedMethods =
              new[] {
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<double>) null, (FileInfo) null, (string) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double>>) null, (FileInfo)null, (string) null, (string) null))
              };
 
         /// <summary>
         /// Hold onto the colunm name
         /// </summary>
-        private Expression _columnName;
+        private Expression[] _columnNames;
 
         /// <summary>
         /// Hold onto the file info.
@@ -38,11 +39,21 @@ namespace LINQToTTreeLib.Files
         /// The expression node parser.
         /// </summary>
         /// <param name="parseInfo"></param>
-        public AsCSVExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnName)
+        public AsCSVExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnName1, Expression columnName2, Expression columnName3, Expression columnName4)
           : base(parseInfo, null, null)
         {
             _fileInfo = fileInfo;
-            _columnName = columnName;
+            List<Expression> names = new List<Expression>();
+            if (columnName1 != null)
+                names.Add(columnName1);
+            if (columnName2 != null)
+                names.Add(columnName2);
+            if (columnName3 != null)
+                names.Add(columnName3);
+            if (columnName4 != null)
+                names.Add(columnName4);
+
+            _columnNames = names.ToArray();
         }
 
         public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
@@ -64,7 +75,7 @@ namespace LINQToTTreeLib.Files
                  _parameterLambda.Body,
                  clauseGenerationContext);
 #endif
-            return new AsCSVResultOperator((_fileInfo as ConstantExpression).Value as FileInfo, (_columnName as ConstantExpression).Value as string);
+            return new AsCSVResultOperator((_fileInfo as ConstantExpression).Value as FileInfo, _columnNames.Select(cn => (cn as ConstantExpression).Value as string).ToArray());
 
         }
     }

@@ -31,7 +31,16 @@ namespace LINQToTTreeLib.Tests.Files
         [TestMethod]
         public void SingleDoubleStreamToCSVFileGeneratesOutput()
         {
-            GeneratedCode query1 = GeneratedCodeFor(SimpleSingleRunQuery);
+            GeneratedCode query1 = GeneratedCodeFor(QuerySimpleSingleRun);
+
+            // Check that we have a cout somewhere in the statemnt.
+            Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("<<") && l.Contains(".run")).Any(), "At least one cout statement.");
+        }
+
+        [TestMethod]
+        public void TupleDoubleStreamToCSVFileGeneratesOutput()
+        {
+            GeneratedCode query1 = GeneratedCodeFor(QueryTupleTwoDoubles);
 
             // Check that we have a cout somewhere in the statemnt.
             Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("<<") && l.Contains(".run")).Any(), "At least one cout statement.");
@@ -41,14 +50,14 @@ namespace LINQToTTreeLib.Tests.Files
         public void AsCSVSetsResultVariable()
         {
             // Check that the QM returns a "good" result.
-            var gc = GeneratedCodeFor(SimpleSingleRunQuery);
+            var gc = GeneratedCodeFor(QuerySimpleSingleRun);
             Assert.IsNotNull(gc.ResultValue, "Result Value should be a FileInfo");
         }
 
         [TestMethod]
         public void AsCSVIncludeFiles()
         {
-            var gc = GeneratedCodeFor(SimpleSingleRunQuery);
+            var gc = GeneratedCodeFor(QuerySimpleSingleRun);
             Assert.IsTrue(gc.IncludeFiles.Contains("<fstream>"), "Output file stream header missing");
         }
 
@@ -56,7 +65,7 @@ namespace LINQToTTreeLib.Tests.Files
         public void AsCSVInitialValueProper()
         {
             // Check that the QM returns a "good" result.
-            var gc = GeneratedCodeFor(SimpleSingleRunQuery);
+            var gc = GeneratedCodeFor(QuerySimpleSingleRun);
             Assert.IsNotNull(gc.ResultValueAsVaraible);
             Assert.IsNotNull(gc.ResultValueAsVaraible.InitialValue);
             Assert.IsTrue(gc.ResultValueAsVaraible.InitialValue.RawValue.Contains("hi.csv"), $"Initial value doesn't have hi.csv in it: {gc.ResultValueAsVaraible.InitialValue.RawValue}");
@@ -69,6 +78,40 @@ namespace LINQToTTreeLib.Tests.Files
             // Remove file if it exists
             CleanUpFile(new FileInfo("hi.csv"));
 
+            FileInfo result = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+
+            Assert.AreEqual("hi.csv", result.Name);
+            Assert.IsTrue(result.Exists, "File exists");
+
+            // Check the contents of the resulting file. It should have the 10 lines from the root
+            // file plus a column header.
+            var lines = result.ReadAllLines().ToArray();
+            Assert.AreEqual(11, lines.Length);
+            Assert.AreEqual("firstCol", lines[0]);
+            Assert.AreEqual("10", lines[1]);
+        }
+
+        [TestMethod]
+        public void TupleStreamCompiled()
+        {
+            // Remove file if it exists
+            CleanUpFile(new FileInfo("hi.csv"));
+
+            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleTwoDoubles);
+
+            Assert.AreEqual("hi.csv", result.Name);
+            Assert.IsTrue(result.Exists, "File exists");
+
+            // Check the contents of the resulting file. It should have the 10 lines from the root
+            // file plus a column header.
+            var lines = result.ReadAllLines().ToArray();
+            Assert.AreEqual(11, lines.Length);
+            Assert.AreEqual("firstCol, second Col", lines[0]);
+            Assert.AreEqual("10, 10", lines[1]);
+        }
+
+        private static FileInfo RunQueryForSingleColumnTTree(Action queryBuilder)
+        {
             // Test a full round trip for a really simple CSV dump.
             var rootFile = TestUtils.CreateFileOfInt(10);
 
@@ -82,7 +125,7 @@ namespace LINQToTTreeLib.Tests.Files
             /// Get a simple query we can "play" with
             /// 
 
-            var query = QueryModelFor(SimpleSingleRunQuery);
+            var query = QueryModelFor(queryBuilder);
 
             ///
             /// Ok, now we can actually see if we can make it "go".
@@ -91,16 +134,7 @@ namespace LINQToTTreeLib.Tests.Files
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(singleIntNtuple));
             var result = exe.ExecuteScalar<FileInfo>(query);
-
-            Assert.AreEqual("hi.csv", result.Name);
-            Assert.IsTrue(result.Exists, "File exists");
-
-            // Check the contents of the resulting file. It should have the 10 lines from the root
-            // file plus a column header.
-            var lines = result.ReadAllLines().ToArray();
-            Assert.AreEqual(11, lines.Length);
-            Assert.AreEqual("firstCol", lines[0]);
-            Assert.AreEqual("10", lines[1]);
+            return result;
         }
 
         /// <summary>
@@ -150,12 +184,24 @@ namespace LINQToTTreeLib.Tests.Files
         /// <summary>
         /// Generate a simple single run query
         /// </summary>
-        private static void SimpleSingleRunQuery()
+        private static void QuerySimpleSingleRun()
         {
             var q = new QueriableDummy<singleIntNtuple>();
             q
                 .Select(e => e.run)
                 .AsCSV(new FileInfo("hi.csv"), "firstCol");
+        }
+
+        /// <summary>
+        /// A tuple with two doubles.
+        /// </summary>
+        private static void QueryTupleTwoDoubles()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => Tuple.Create(e.run, e.run))
+                .AsCSV(new FileInfo("hi.csv"), "firstCol", "second Col");
+
         }
         #endregion
     }

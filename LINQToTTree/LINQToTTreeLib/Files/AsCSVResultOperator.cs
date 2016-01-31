@@ -24,10 +24,10 @@ namespace LINQToTTreeLib.Files
         /// </summary>
         /// <param name="outputfile"></param>
         /// <param name="headerColumnTitle"></param>
-        public AsCSVResultOperator(FileInfo outputfile, string headerColumnTitle)
+        public AsCSVResultOperator(FileInfo outputfile, string[] headerColumnTitle)
         {
             OutputFile = outputfile;
-            HeaderColumns = new string[] { headerColumnTitle };
+            HeaderColumns = headerColumnTitle;
         }
 
         public string[] HeaderColumns { get; private set; }
