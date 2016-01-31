@@ -9,10 +9,14 @@
 #foreach($f in $IncludeFiles)
 \#include "$f"
 #end
+
 \#include <TFile.h>
 
 \#include <string>
 \#include <stdexcept>
+#foreach($f in $SystemIncludeFiles)
+\#include $f
+#end
 
 using std::string;
 

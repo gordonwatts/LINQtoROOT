@@ -740,7 +740,8 @@ namespace LINQToTTreeLib
             /// Output all the include files, from everywhere we have managed to collect them.
             /// 
 
-            context.Put("IncludeFiles", code.IncludeFiles);
+            context.Put("IncludeFiles", code.IncludeFiles.Where(f => !f.StartsWith("<")).ToArray());
+            context.Put("SystemIncludeFiles", code.IncludeFiles.Where(f => f.StartsWith("<")).ToArray());
 
             ///
             /// Now do it!
