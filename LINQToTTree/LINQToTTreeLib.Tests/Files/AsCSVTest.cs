@@ -321,7 +321,6 @@ namespace LINQToTTreeLib.Tests.Files
             q
                 .Select(e => Tuple.Create(e.run, e.run))
                 .AsCSV(new FileInfo("hi.csv"), "firstCol", "second Col");
-
         }
 
         /// <summary>

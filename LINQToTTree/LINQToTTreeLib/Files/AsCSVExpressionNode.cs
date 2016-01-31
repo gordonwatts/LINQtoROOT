@@ -21,20 +21,13 @@ namespace LINQToTTreeLib.Files
         /// </summary>
         public static MethodInfo[] SupportedMethods =
              new[] {
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<double>) null, (FileInfo) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double>>) null, (FileInfo)null, (string) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<object>) null, (FileInfo) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<object>) null, (FileInfo) null, (string[]) null)),
              };
 
         /// <summary>
         /// Hold onto the colunm name
         /// </summary>
-        private Expression[] _columnNames;
+        private string[] _columnNames;
 
         /// <summary>
         /// Hold onto the file info.
@@ -45,44 +38,78 @@ namespace LINQToTTreeLib.Files
         /// The expression node parser.
         /// </summary>
         /// <param name="parseInfo"></param>
-        public AsCSVExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnName1, Expression columnName2, Expression columnName3, Expression columnName4, Expression columnName5, Expression columnName6, Expression columnName7)
+        public AsCSVExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnNames)
           : base(parseInfo, null, null)
         {
             _fileInfo = fileInfo;
-            List<Expression> names = new List<Expression>();
 
             // If this is a custom object, then we may be getting the column titles from there. If not,
             // then pull from the list that was given to us as part of this ctor.
             var selectExpr = (parseInfo.Source as SelectExpressionNode);
             if (selectExpr == null)
                 throw new ArgumentException($"Unable to deal with AsCsv when not part of a Select statement - it showed up as a {parseInfo.Source.GetType().Name}");
-            if (columnName1 == null 
-                && selectExpr.NodeResultType.Name.StartsWith("IQueryable"))
+
+            // Next, figure out how many columns we have, and the
+            // default names (if the user hasn't given us any) by looking at the generic argument
+            // to IQuerable.
+            var objectTypeToDump = selectExpr.NodeResultType.GetGenericArguments()[0];
+            var defaultColumnNames = new List<string>();
+            if (TypeIsEasilyDumped(objectTypeToDump))
             {
-                var customObjType = selectExpr.NodeResultType.GetGenericArguments()[0];
-                foreach (var f in customObjType.GetFields())
+                defaultColumnNames.Add("col1");
+            }
+            else if (objectTypeToDump.Name.StartsWith("Tuple"))
+            {
+                // Tuple - so just name it something random.
+                var genericArgs = objectTypeToDump.GetGenericArguments();
+                foreach (var pIndex in Enumerable.Range(1, genericArgs.Length))
                 {
-                    names.Add(Expression.Constant(f.Name));
+                    if (!TypeIsEasilyDumped(genericArgs[pIndex-1]))
+                    {
+                        throw new ArgumentException($"Unable to serialize type {genericArgs[pIndex - 1].Name} in Tuple");
+                    }
+                    defaultColumnNames.Add($"col{pIndex}");
+                }
+            }
+            else
+            {
+                foreach (var f in objectTypeToDump.GetFields())
+                {
+                    if (!TypeIsEasilyDumped(f.FieldType))
+                    {
+                        throw new ArgumentException($"Unable to serialize type {f.FieldType.Name} in {objectTypeToDump.Name}");
+                    }
+                    defaultColumnNames.Add(f.Name);
                 }
             }
 
-            // Otherwise, look at the various arguments.
-            if (columnName1 != null)
-                names.Add(columnName1);
-            if (columnName2 != null)
-                names.Add(columnName2);
-            if (columnName3 != null)
-                names.Add(columnName3);
-            if (columnName4 != null)
-                names.Add(columnName4);
-            if (columnName5 != null)
-                names.Add(columnName5);
-            if (columnName6 != null)
-                names.Add(columnName6);
-            if (columnName7 != null)
-                names.Add(columnName7);
+            // Next, look at the columns that were given to us. Make sure there aren't too many.
+            var finalColNames = new List<string>();
+            if (columnNames != null)
+            {
+                var givenNames = (columnNames as ConstantExpression).Value as string[];
+                if (givenNames != null)
+                {
+                    if (givenNames.Length > defaultColumnNames.Count)
+                    {
+                        throw new ArgumentException("More column headers were given than are present in the data!");
+                    }
+                    finalColNames.AddRange(givenNames);
+                }
+            }
+            finalColNames.AddRange(defaultColumnNames.Skip(finalColNames.Count));
+            _columnNames = finalColNames.ToArray();
+        }
 
-            _columnNames = names.ToArray();
+        /// <summary>
+        /// Is this something that is easy to dump? Only int and long fit this for now.
+        /// </summary>
+        /// <param name="objectToDump"></param>
+        /// <returns></returns>
+        private bool TypeIsEasilyDumped(Type objectToDump)
+        {
+            return objectToDump == typeof(int)
+                || objectToDump == typeof(double);
         }
 
         public override Expression Resolve(ParameterExpression inputParameter, Expression expressionToBeResolved, ClauseGenerationContext clauseGenerationContext)
@@ -104,7 +131,7 @@ namespace LINQToTTreeLib.Files
                  _parameterLambda.Body,
                  clauseGenerationContext);
 #endif
-            return new AsCSVResultOperator((_fileInfo as ConstantExpression).Value as FileInfo, _columnNames.Select(cn => (cn as ConstantExpression).Value as string).ToArray());
+            return new AsCSVResultOperator((_fileInfo as ConstantExpression).Value as FileInfo, _columnNames);
 
         }
     }
