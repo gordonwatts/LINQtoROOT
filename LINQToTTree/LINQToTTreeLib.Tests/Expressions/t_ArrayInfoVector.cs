@@ -61,7 +61,7 @@ namespace LINQToTTreeLib.Tests
 
             public IValue ProcessConstantReference(ConstantExpression expr, IGeneratedQueryCode codeEnv, System.ComponentModel.Composition.Hosting.CompositionContainer container)
             {
-                return new Variables.ValSimple("35", expr.Type);
+                return new LINQToTTreeLib.Variables.ValSimple("35", expr.Type);
             }
 
             public Expression ProcessConstantReferenceExpression(ConstantExpression expr, System.ComponentModel.Composition.Hosting.CompositionContainer container)
