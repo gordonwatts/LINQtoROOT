@@ -64,7 +64,21 @@ namespace LINQToTTreeLib.Variables
         [TestMethod]
         public void CPPTypeForFileInfo()
         {
-            Assert.AreEqual("std::string", AsCPPType(typeof(FileInfo)), "FileInfo");
+            // There is no special integration for this guy - so we shouldn't try
+            // to see one here.
+            Assert.AreEqual("FileInfo", AsCPPType(typeof(FileInfo)), "FileInfo");
+        }
+
+        [CPPObjectRepresentationType("long double")]
+        class MyObj
+        {
+
+        }
+
+        [TestMethod]
+        public void CPPTypeForCustomObject()
+        {
+            Assert.AreEqual("long double", AsCPPType(typeof(MyObj)), "MyObj");
         }
 
         [TestMethod]
