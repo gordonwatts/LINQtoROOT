@@ -43,7 +43,6 @@ namespace LINQToTTreeLib.Tests.Files
             // Check that the QM returns a "good" result.
             var gc = GeneratedCodeFor(SimpleSingleRunQuery);
             Assert.IsNotNull(gc.ResultValue, "Result Value should be a FileInfo");
-            Assert.AreEqual(typeof(FileInfo), gc.ResultValue.Type);
         }
 
         [TestMethod]

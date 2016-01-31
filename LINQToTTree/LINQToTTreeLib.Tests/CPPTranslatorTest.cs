@@ -142,18 +142,7 @@ namespace LINQToTTreeLib
                 get { return new IQMFuncExecutable[] { }; }
             }
 
-            public IEnumerable<IStatement> InitalizationStatements
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public IEnumerable<IStatement> InitalizationStatements { get { return new IStatement[] { }; } }
         }
 
         /// <summary>
