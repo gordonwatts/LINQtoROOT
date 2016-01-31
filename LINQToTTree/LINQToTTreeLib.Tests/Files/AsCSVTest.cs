@@ -155,25 +155,6 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
-        public void SingleDoubleStreamCompiled()
-        {
-            // Remove file if it exists
-            CleanUpFile(new FileInfo("hi.csv"));
-
-            FileInfo result = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-
-            Assert.AreEqual("hi.csv", result.Name);
-            Assert.IsTrue(result.Exists, "File exists");
-
-            // Check the contents of the resulting file. It should have the 10 lines from the root
-            // file plus a column header.
-            var lines = result.ReadAllLines().ToArray();
-            Assert.AreEqual(11, lines.Length);
-            Assert.AreEqual("firstCol", lines[0]);
-            Assert.AreEqual("10", lines[1]);
-        }
-
-        [TestMethod]
         public void TupleStreamCompiled()
         {
             // Remove file if it exists

@@ -43,7 +43,7 @@ namespace LINQToTTreeLib
         /// <param name="q"></param>
         /// <param name="expr"></param>
         /// <returns></returns>
-        private static IFutureValue<TResult> FutureExecuteScalarHelper<TSource, TResult>(QueriableTTree<TSource> q, MethodCallExpression expr)
+        internal static IFutureValue<TResult> FutureExecuteScalarHelper<TSource, TResult>(QueriableTTree<TSource> q, MethodCallExpression expr)
         {
             ///
             /// Generate the query model
@@ -68,7 +68,7 @@ namespace LINQToTTreeLib
         /// <typeparam name="TSource"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        private static QueriableTTree<TSource> CheckSource<TSource>(IQueryable<TSource> query)
+        internal static QueriableTTree<TSource> CheckSource<TSource>(IQueryable<TSource> query)
         {
             ///
             /// Really - we can deal with only *one* type of querable!!

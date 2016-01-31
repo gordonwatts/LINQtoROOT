@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,6 +33,26 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
+        /// Run a future for the simple double AsCSV.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="outputFile"></param>
+        /// <param name="columnHeader"></param>
+        /// <returns></returns>
+        public static IFutureValue<FileInfo> FutureAsCSV(this IQueryable<double> source, FileInfo outputFile, string columnHeader)
+        {
+            var q = FutureResultOperators.CheckSource<double>(source);
+
+            // Build up the AsCSV expression.
+
+            var countMethod = typeof(FileHelperQueryExtensions).GetMethods().Where(m => m.Name == "AsCSV").Where(m => m.GetParameters().Length == 3 && m.GetParameters()[0].ParameterType.Name == "IQueryable<double>").First();
+            var expr = Expression.Call(null, countMethod, q.Expression);
+
+            return FutureResultOperators.FutureExecuteScalarHelper<double, FileInfo>(q, expr);
+        }
+
+        /// <summary>
         /// Do the translation for a custom class.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -48,6 +69,26 @@ namespace LINQToTTreeLib.Files
                     ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
                     source.Expression, Expression.Constant(outputFile)))
                     as FileInfo;
+        }
+
+        /// <summary>
+        /// Do a future for a custom object.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="outputFile"></param>
+        /// <returns></returns>
+        public static IFutureValue<FileInfo> FutureAsCSV<T>(this IQueryable<T> source, FileInfo outputFile)
+        {
+            var q = FutureResultOperators.CheckSource<T>(source);
+
+            // Build up the AsCSV expression.
+
+            var countMethodGeneric = typeof(FileHelperQueryExtensions).GetMethods().Where(m => m.Name == "AsCSV").Where(m => m.GetParameters().Length == 2).First();
+            var countMethod = countMethodGeneric.MakeGenericMethod(typeof(T));
+            var expr = Expression.Call(null, countMethod, q.Expression);
+
+            return FutureResultOperators.FutureExecuteScalarHelper<T, FileInfo>(q, expr);
         }
 
         /// <summary>
