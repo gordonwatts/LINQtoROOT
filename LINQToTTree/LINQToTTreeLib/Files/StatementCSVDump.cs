@@ -34,7 +34,7 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public IEnumerable<string> CodeItUp()
         {
-            yield return $"{_stream.RawValue} << {_item.RawValue} << endl;";
+            yield return $"{_stream.RawValue} << {_item.RawValue} << std::endl;";
         }
 
         /// <summary>

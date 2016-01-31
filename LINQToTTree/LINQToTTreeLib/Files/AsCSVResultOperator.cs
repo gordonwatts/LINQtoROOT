@@ -26,9 +26,19 @@ namespace LINQToTTreeLib.Files
         /// <param name="headerColumnTitle"></param>
         public AsCSVResultOperator(FileInfo outputfile, string headerColumnTitle)
         {
-
+            OutputFile = outputfile;
         }
+        
+        /// <summary>
+        /// Get the output file we are to write to.
+        /// </summary>
+        public FileInfo OutputFile { get; private set; }
 
+        /// <summary>
+        /// Called by re-linq when cloning is required.
+        /// </summary>
+        /// <param name="cloneContext"></param>
+        /// <returns></returns>
         public override ResultOperatorBase Clone(CloneContext cloneContext)
         {
             throw new NotImplementedException();

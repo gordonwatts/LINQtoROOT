@@ -12,7 +12,7 @@ using System.IO;
 namespace LINQToTTreeLib.Files
 {
     /// <summary>
-    /// Convert the method into an QueryModel information block.
+    /// Convert the AsCSV extension method into an QueryModel information block.
     /// </summary>
     class AsCSVExpressionNode : ResultOperatorExpressionNodeBase
     {

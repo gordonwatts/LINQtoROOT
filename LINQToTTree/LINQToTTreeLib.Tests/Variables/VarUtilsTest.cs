@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 // <copyright file="VarUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -58,6 +59,12 @@ namespace LINQToTTreeLib.Variables
             Assert.AreEqual("float", AsCPPType(typeof(float)), "float incorrect");
             Assert.AreEqual("double", AsCPPType(typeof(double)), "double incorrect");
             Assert.AreEqual("freak", AsCPPType(typeof(freak)), "freak incorrect");
+        }
+
+        [TestMethod]
+        public void CPPTypeForFileInfo()
+        {
+            Assert.AreEqual("std::string", AsCPPType(typeof(FileInfo)), "FileInfo");
         }
 
         [TestMethod]

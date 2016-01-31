@@ -253,6 +253,7 @@
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Utils\TypeUtils.cs" />
     <Compile Include="Variables\Savers\SaveSimpleVariable.cs" />
+    <Compile Include="Variables\Savers\SaveVarFileInfo.cs" />
     <Compile Include="Variables\Savers\VariableSaverManager.cs" />
     <Compile Include="Variables\Savers\SaveVarObject.cs" />
     <Compile Include="Variables\VarUtils.cs" />

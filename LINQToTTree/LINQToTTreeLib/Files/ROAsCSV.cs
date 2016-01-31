@@ -1,22 +1,19 @@
 ﻿using LinqToTTreeInterfacesLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
-using System.ComponentModel.Composition.Hosting;
-using System.Linq.Expressions;
+using System;
 using System.ComponentModel.Composition;
-using LINQToTTreeLib.Variables;
+using System.ComponentModel.Composition.Hosting;
 using System.IO;
-using LINQToTTreeLib.Expressions;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Files
 {
     /// <summary>
-    /// Basics to implement the AsCSV result operator.
+    /// Part of our LINQToTree-relinq infrastructure - take the result operator and generate code for it.
     /// </summary>
     [Export(typeof(IQVScalarResultOperator))]
     class ROAsCSV : IQVScalarResultOperator
@@ -47,12 +44,39 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
+            // Argument checking
+            var asCSV = resultOperator as AsCSVResultOperator;
+            if (asCSV == null)
+                throw new ArgumentException("resultOperaton");
+
+            // Open and close the file
+            gc.AddIncludeFile("<fstream>");
+            gc.AddIncludeFile("<iostream>");
+
+            var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputTextStreamFile));
+            gc.AddOneLevelUp(stream);
+
             // We are just going to print out the line with the item in it.
             var itemValue = ExpressionToCPP.GetExpression(queryModel.SelectClause.Selector, gc, cc, container);
-            var pstatement = new StatementCSVDump(new ValSimple("cout", typeof(Stream)), itemValue);
+            var pstatement = new StatementCSVDump(stream, itemValue);
             gc.Add(pstatement);
 
-            return Expression.Constant(1);
+            // The return is a file path in the C# world. But here in C++, what should be returned?
+            // We will use a string.
+            gc.AddIncludeFile("<string>");
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(FileInfo));
+            result.InitialValue = new ValSimple($"\"{asCSV.OutputFile.FullName.AddCPPEscapeCharacters()}\"", typeof(FileInfo));
+            return result;
+        }
+
+        class OutputTextStreamFile
+        {
+            private string _fname;
+
+            public OutputTextStreamFile(string fname)
+            {
+                _fname = fname;
+            }
         }
     }
 }

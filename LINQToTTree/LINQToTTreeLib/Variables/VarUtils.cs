@@ -4,6 +4,7 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -261,6 +262,9 @@ namespace LINQToTTreeLib.Variables
                 else if (t == typeof(bool))
                 {
                     return "bool";
+                } else if (t == typeof(FileInfo))
+                {
+                    return "std::string";
                 }
 
                 ///

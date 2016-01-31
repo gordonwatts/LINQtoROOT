@@ -48,5 +48,17 @@ namespace LINQToTTreeLib.Utils
             var search = new Regex(string.Format(@"\b{0}\b", varname));
             return search.Replace(source, replacement);
         }
+
+        /// <summary>
+        /// If there are characters in this string that must be escaped before the string is turned from its internal rep into
+        /// one for C++, do it.
+        /// </summary>
+        /// <param name="original"></param>
+        /// <returns></returns>
+        public static string AddCPPEscapeCharacters(this string original)
+        {
+            return original
+                .Replace("\\", "\\\\");
+        }
     }
 }
