@@ -50,7 +50,6 @@ namespace LINQToTTreeLib.Tests.Files
         public void AsCSVIncludeFiles()
         {
             var gc = GeneratedCodeFor(SimpleSingleRunQuery);
-            Assert.IsTrue(gc.IncludeFiles.Contains("<string>"), "String header missing");
             Assert.IsTrue(gc.IncludeFiles.Contains("<fstream>"), "Output file stream header missing");
         }
 
@@ -97,8 +96,12 @@ namespace LINQToTTreeLib.Tests.Files
             Assert.AreEqual("hi.csv", result.Name);
             Assert.IsTrue(result.Exists, "File exists");
 
-            // Check the contents of the resulting file
-            Assert.Inconclusive();
+            // Check the contents of the resulting file. It should have the 10 lines from the root
+            // file plus a column header.
+            var lines = result.ReadAllLines().ToArray();
+            Assert.AreEqual(11, lines.Length);
+            Assert.AreEqual("firstCol", lines[0]);
+            Assert.AreEqual("10", lines[1]);
         }
 
         /// <summary>

@@ -53,8 +53,8 @@ namespace LINQToTTreeLib.Files
             gc.AddIncludeFile("<fstream>");
             gc.AddIncludeFile("<iostream>");
 
-            var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputTextStreamFile));
-            gc.AddOneLevelUp(stream);
+            var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputCSVTextFileType));
+            stream.InitialValue = new OutputCSVTextFileType(asCSV.OutputFile, asCSV.HeaderColumns);
 
             // We are just going to print out the line with the item in it.
             var itemValue = ExpressionToCPP.GetExpression(queryModel.SelectClause.Selector, gc, cc, container);
@@ -63,20 +63,7 @@ namespace LINQToTTreeLib.Files
 
             // The return is a file path in the C# world. But here in C++, what should be returned?
             // We will use a string.
-            gc.AddIncludeFile("<string>");
-            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(FileInfo));
-            result.InitialValue = new ValSimple($"\"{asCSV.OutputFile.FullName.AddCPPEscapeCharacters()}\"", typeof(FileInfo));
-            return result;
-        }
-
-        class OutputTextStreamFile
-        {
-            private string _fname;
-
-            public OutputTextStreamFile(string fname)
-            {
-                _fname = fname;
-            }
+            return stream;
         }
     }
 }

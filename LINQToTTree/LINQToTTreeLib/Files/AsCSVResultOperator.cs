@@ -27,8 +27,11 @@ namespace LINQToTTreeLib.Files
         public AsCSVResultOperator(FileInfo outputfile, string headerColumnTitle)
         {
             OutputFile = outputfile;
+            HeaderColumns = new string[] { headerColumnTitle };
         }
-        
+
+        public string[] HeaderColumns { get; private set; }
+
         /// <summary>
         /// Get the output file we are to write to.
         /// </summary>

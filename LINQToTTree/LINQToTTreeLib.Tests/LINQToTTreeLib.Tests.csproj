@@ -202,6 +202,7 @@
     <Compile Include="Expressions\t_MultiLevelArrays.cs" />
     <Compile Include="Expressions\FindDeclarableParametersTest.cs" />
     <Compile Include="Files\AsCSVTest.cs" />
+    <Compile Include="Files\FileUtilsForTesting.cs" />
     <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FutureResultOperatorsTest.cs" />
     <Compile Include="FutureValueTTest.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="t_TypeDefTranslator.cs" />
     <Compile Include="VariableSaveManagers.cs" />
     <Compile Include="Variables\Savers\SaveVarObjectTest.cs" />
+    <Compile Include="Variables\Savers\VariableSaveManagerTest.cs" />
     <Compile Include="Variables\ValSimpleTest.cs" />
     <Compile Include="Variables\VarUtilsTest.cs" />
   </ItemGroup>
