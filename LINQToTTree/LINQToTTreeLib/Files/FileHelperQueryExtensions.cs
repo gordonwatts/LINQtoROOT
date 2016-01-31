@@ -49,5 +49,23 @@ namespace LINQToTTreeLib.Files
                     source.Expression, Expression.Constant(outputFile), Expression.Constant(item1Header), Expression.Constant(item2Header)))
                     as FileInfo;
         }
+        public static FileInfo AsCSV<T1, T2, T3>(this IQueryable<Tuple<T1, T2, T3>> source, FileInfo outputFile, string item1Header, string item2Header, string item3Header)
+        {
+            // Translate into an expression call
+            return source.Provider.Execute(
+                Expression.Call(
+                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T1), typeof(T2), typeof(T3)),
+                    source.Expression, Expression.Constant(outputFile), Expression.Constant(item1Header), Expression.Constant(item2Header), Expression.Constant(item3Header)))
+                    as FileInfo;
+        }
+        public static FileInfo AsCSV<T1, T2, T3, T4>(this IQueryable<Tuple<T1, T2, T3, T4>> source, FileInfo outputFile, string item1Header, string item2Header, string item3Header, string item4Header)
+        {
+            // Translate into an expression call
+            return source.Provider.Execute(
+                Expression.Call(
+                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T1), typeof(T2), typeof(T3), typeof(T4)),
+                    source.Expression, Expression.Constant(outputFile), Expression.Constant(item1Header), Expression.Constant(item2Header), Expression.Constant(item3Header), Expression.Constant(item4Header)))
+                    as FileInfo;
+        }
     }
 }

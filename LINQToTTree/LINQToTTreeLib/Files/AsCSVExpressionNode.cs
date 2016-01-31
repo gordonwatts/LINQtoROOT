@@ -22,7 +22,9 @@ namespace LINQToTTreeLib.Files
         public static MethodInfo[] SupportedMethods =
              new[] {
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<double>) null, (FileInfo) null, (string) null)),
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double>>) null, (FileInfo)null, (string) null, (string) null))
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double>>) null, (FileInfo)null, (string) null, (string) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null)),
              };
 
         /// <summary>
