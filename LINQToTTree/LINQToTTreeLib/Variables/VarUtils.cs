@@ -4,7 +4,7 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -262,9 +262,6 @@ namespace LINQToTTreeLib.Variables
                 else if (t == typeof(bool))
                 {
                     return "bool";
-                } else if (t == typeof(FileInfo))
-                {
-                    return "std::string";
                 }
 
                 ///
@@ -281,6 +278,13 @@ namespace LINQToTTreeLib.Variables
                 }
             }
 
+            // See if there is a custom attribute assocaited that we should use
+            var attr = t.GetCustomAttributes(typeof(CPPObjectRepresentationTypeAttribute), false).FirstOrDefault();
+            if (attr != null)
+            {
+                return (attr as CPPObjectRepresentationTypeAttribute).CPPTypeName;
+            }
+            
             ///
             /// Ok - if this is an object, for example, the enclosing ntuple object
             /// 
