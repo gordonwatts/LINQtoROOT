@@ -28,6 +28,7 @@ namespace LINQToTTreeLib.Files
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null)),
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null)),
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<object>) null, (FileInfo) null)),
              };
 
         /// <summary>
@@ -49,6 +50,23 @@ namespace LINQToTTreeLib.Files
         {
             _fileInfo = fileInfo;
             List<Expression> names = new List<Expression>();
+
+            // If this is a custom object, then we may be getting the column titles from there. If not,
+            // then pull from the list that was given to us as part of this ctor.
+            var selectExpr = (parseInfo.Source as SelectExpressionNode);
+            if (selectExpr == null)
+                throw new ArgumentException($"Unable to deal with AsCsv when not part of a Select statement - it showed up as a {parseInfo.Source.GetType().Name}");
+            if (columnName1 == null 
+                && selectExpr.NodeResultType.Name.StartsWith("IQueryable"))
+            {
+                var customObjType = selectExpr.NodeResultType.GetGenericArguments()[0];
+                foreach (var f in customObjType.GetFields())
+                {
+                    names.Add(Expression.Constant(f.Name));
+                }
+            }
+
+            // Otherwise, look at the various arguments.
             if (columnName1 != null)
                 names.Add(columnName1);
             if (columnName2 != null)

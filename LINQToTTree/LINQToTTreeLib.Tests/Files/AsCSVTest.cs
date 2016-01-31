@@ -47,6 +47,15 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void CustomObjectStreamToCSVFileGeneratesOutput()
+        {
+            GeneratedCode query1 = GeneratedCodeFor(QueryTupleOurCustomObject);
+
+            // Check that we have a cout somewhere in the statemnt.
+            Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("<<") && l.Contains(".run")).Any(), "At least one cout statement.");
+        }
+
+        [TestMethod]
         public void AsCSVSetsResultVariable()
         {
             // Check that the QM returns a "good" result.
@@ -146,6 +155,25 @@ namespace LINQToTTreeLib.Tests.Files
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("firstCol, second Col, col3, col4, col5, col6, col7", lines[0]);
             Assert.AreEqual("10, 10, 10, 10, 10, 10, 10", lines[1]);
+        }
+
+        [TestMethod]
+        public void CustomObjectStreamCompiled()
+        {
+            // Remove file if it exists
+            CleanUpFile(new FileInfo("hi.csv"));
+
+            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObject);
+
+            Assert.AreEqual("hi.csv", result.Name);
+            Assert.IsTrue(result.Exists, "File exists");
+
+            // Check the contents of the resulting file. It should have the 10 lines from the root
+            // file plus a column header.
+            var lines = result.ReadAllLines().ToArray();
+            Assert.AreEqual(11, lines.Length);
+            Assert.AreEqual("col1, col2, col3", lines[0]);
+            Assert.AreEqual("10, 10, 10", lines[1]);
         }
 
         private static FileInfo RunQueryForSingleColumnTTree(Action queryBuilder)
@@ -263,6 +291,20 @@ namespace LINQToTTreeLib.Tests.Files
             q
                 .Select(e => Tuple.Create(e.run, e.run, e.run, e.run, e.run, e.run, e.run))
                 .AsCSV(new FileInfo("hi.csv"), "firstCol", "second Col", "col3", "col4", "col5", "col6", "col7");
+        }
+
+        class ourCustomObject
+        {
+            public double col1;
+            public int col2;
+            public double col3;
+        }
+        private static void QueryTupleOurCustomObject()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int) e.run, col3 = e.run})
+                .AsCSV(new FileInfo("hi.csv"));
         }
         #endregion
     }

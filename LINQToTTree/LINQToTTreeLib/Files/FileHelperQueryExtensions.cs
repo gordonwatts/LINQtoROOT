@@ -32,6 +32,25 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
+        /// Do the translation for a custom class.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="outputFile"></param>
+        /// <param name="columnHeader"></param>
+        /// <returns></returns>
+        public static FileInfo AsCSV<T>(this IQueryable<T> source, FileInfo outputFile)
+            where T : class
+        {
+            // Translate into an expression call
+            return source.Provider.Execute(
+                Expression.Call(
+                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
+                    source.Expression, Expression.Constant(outputFile)))
+                    as FileInfo;
+        }
+
+        /// <summary>
         /// Turn a list of tuples into a csv file.
         /// WARNING: Only tuple tupes like int and double can be used as column values.
         /// </summary>

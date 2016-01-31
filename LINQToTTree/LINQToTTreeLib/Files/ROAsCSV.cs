@@ -95,6 +95,15 @@ namespace LINQToTTreeLib.Files
                 {
                     itemValues.Add(Expression.PropertyOrField(streamSelector, $"Item{templateType.Item2}"));
                 }
+            } else if (streamType.GetFields().Length > 0)
+            {
+                foreach (var fName in streamType.GetFields().Select(f => f.Name))
+                {
+                    itemValues.Add(Expression.PropertyOrField(streamSelector, fName));
+                }
+            } else
+            {
+                throw new InvalidOperationException($"Do not know how to generate CSV file from a sequence of {streamType.Name} objects!");
             }
 
             // We are just going to print out the line with the item in it.
