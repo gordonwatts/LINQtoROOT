@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace LINQToTTreeLib.Files
 {
@@ -49,12 +50,24 @@ namespace LINQToTTreeLib.Files
             if (asCSV == null)
                 throw new ArgumentException("resultOperaton");
 
-            // Open and close the file
+            // Declare the file variable.
             gc.AddIncludeFile("<fstream>");
             gc.AddIncludeFile("<iostream>");
 
             var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputCSVTextFileType));
-            stream.InitialValue = new OutputCSVTextFileType(asCSV.OutputFile, asCSV.HeaderColumns);
+            stream.InitialValue = new OutputCSVTextFileType(asCSV.OutputFile);
+
+            var headerline = new StringBuilder();
+            bool first = true;
+            foreach (var h in asCSV.HeaderColumns)
+            {
+                headerline.Append(h);
+                if (!first)
+                {
+                    headerline.Append(", ");
+                }
+            }
+            gc.AddInitalizationStatement(new Statements.StatementSimpleStatement($"{stream.RawValue} << \"{headerline.ToString()}\" << std::endl;"));
 
             // We are just going to print out the line with the item in it.
             var itemValue = ExpressionToCPP.GetExpression(queryModel.SelectClause.Selector, gc, cc, container);

@@ -89,6 +89,12 @@ namespace LINQToTTreeLib
                 QueueVariableForTransfer(v);
             }
 
+            // Initialization code. No combination should be required here.
+            foreach (var s in code.InitalizationStatements)
+            {
+                _initStatements.Add(s);
+            }
+
             ///
             /// Include Files - only add if we don't have them on the list already.
             /// 
@@ -295,5 +301,12 @@ namespace LINQToTTreeLib
         {
             get { return _functions; }
         }
+
+        private List<IStatement> _initStatements = new List<IStatement>();
+
+        /// <summary>
+        /// Get the list of initialization statements.
+        /// </summary>
+        public IEnumerable<IStatement> InitalizationStatements { get { return _initStatements; } }
     }
 }

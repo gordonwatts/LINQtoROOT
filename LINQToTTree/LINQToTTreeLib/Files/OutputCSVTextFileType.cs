@@ -27,18 +27,12 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
-        /// Return the column headers for this text file.
-        /// </summary>
-        public string[] ColumnHeaders { get; private set; }
-
-        /// <summary>
         /// Initialize with the proper file to stash.
         /// </summary>
         /// <param name="outputFile"></param>
-        public OutputCSVTextFileType(FileInfo outputFile, string[] colHeaders)
+        public OutputCSVTextFileType(FileInfo outputFile)
         {
             this.OutputFile = outputFile;
-            this.ColumnHeaders = colHeaders;
         }
 
         /// <summary>

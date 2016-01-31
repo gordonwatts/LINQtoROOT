@@ -48,6 +48,7 @@ namespace LINQToTTreeLib
             result["NumberOfQueryFunctions"] = numberOfBlocks;
             result["QueryFunctionBlocks"] = TranslateQueryBlocks(queryBlocks, queriesPerFunction, numberOfBlocks);
             result["SlaveTerminateStatements"] = TranslateFinalizingVariables(code.ResultValues, code);
+            result["InitStatements"] = code.InitalizationStatements.SelectMany(s => s.CodeItUp());
 
             // Functions have to be written out too.
             result["QueryMemberFunctions"] = code.Functions.SelectMany(f => f.CodeItUp());

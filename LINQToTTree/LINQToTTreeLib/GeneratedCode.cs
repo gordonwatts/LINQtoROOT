@@ -44,12 +44,16 @@ namespace LINQToTTreeLib
         /// </summary>
         public IEnumerable<IDeclaredParameter> ResultValues
         {
-            get { yield return ResultValueAsVaraible; }
+            get
+            {
+                if (ResultValueAsVaraible != null)
+                    yield return ResultValueAsVaraible;
+            }
         }
 
         /// <summary>
         /// The code body is basically a bunch of statements, which starts from our top level
-        /// statement.
+        /// statement. These occur in the Process section.
         /// </summary>
         public IBookingStatementBlock CodeBody { get; private set; }
 
@@ -573,5 +577,25 @@ namespace LINQToTTreeLib
         {
             get { return QMFunctions; }
         }
+
+        /// <summary>
+        /// Cache any initalization statements.
+        /// </summary>
+        private List<IStatement> _initStatements = new List<IStatement>();
+
+        /// <summary>
+        /// The list of init statements.
+        /// </summary>
+        public IEnumerable<IStatement> InitalizationStatements { get { return _initStatements; } }
+
+        /// <summary>
+        /// Add an initalization statement.
+        /// </summary>
+        /// <param name="p"></param>
+        public void AddInitalizationStatement(IStatement p)
+        {
+            _initStatements.Add(p);
+        }
+
     }
 }

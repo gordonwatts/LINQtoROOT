@@ -70,6 +70,12 @@ namespace LinqToTTreeInterfacesLib
         void AddAtResultScope(IStatement p);
 
         /// <summary>
+        /// Adds an initalization statement. These statmeents are executed during slave begin.
+        /// </summary>
+        /// <param name="p"></param>
+        void AddInitalizationStatement(IStatement p);
+
+        /// <summary>
         /// The current booking scope is made to be the result scope. Any result operators that are several levels down,
         /// but return their results as a non-sequence, will use this to declare themselves.
         /// </summary>

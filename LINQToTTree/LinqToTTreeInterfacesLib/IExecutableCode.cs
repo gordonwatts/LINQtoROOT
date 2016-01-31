@@ -44,5 +44,10 @@ namespace LinqToTTreeInterfacesLib
         /// Returns the list of functions that can be executed.
         /// </summary>
         IEnumerable<IQMFuncExecutable> Functions { get; }
+
+        /// <summary>
+        /// List of statements that can be run at initalization.
+        /// </summary>
+        IEnumerable<IStatement> InitalizationStatements { get; }
     }
 }

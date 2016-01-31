@@ -116,6 +116,26 @@ namespace LINQToTTreeLib
         }
 #endif
 
+        [TestMethod]
+        public void CombinedGeneratedDifferentInitalizationStatements()
+        {
+            var q1 = new GeneratedCode();
+            var q2 = new GeneratedCode();
+
+            var s1 = new Statements.StatementSimpleStatement("dude1");
+            var s2 = new Statements.StatementSimpleStatement("dude2");
+
+            q1.AddInitalizationStatement(s1);
+            q2.AddInitalizationStatement(s2);
+
+            var target = new CombinedGeneratedCode();
+            target.AddGeneratedCode(q1);
+            target.AddGeneratedCode(q2);
+
+            var initStatements = target.InitalizationStatements.ToArray();
+            Assert.AreEqual(2, initStatements.Length);
+        }
+
         /// <summary>
         /// Explicit test to see if the combining works correctly.
         /// </summary>

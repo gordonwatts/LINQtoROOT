@@ -45,6 +45,10 @@ public:
 #foreach($v in $ResultVariables)
 		$v.VariableName = $v.InitialValue;
 #end
+
+#foreach($s in $InitStatements)
+		$s
+#end
 	}
 
 	/// Called when we are closign the file and shutting down on the slave
