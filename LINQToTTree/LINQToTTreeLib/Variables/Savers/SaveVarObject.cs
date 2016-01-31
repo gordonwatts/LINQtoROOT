@@ -26,6 +26,16 @@ namespace LINQToTTreeLib.Variables.Savers
         }
 
         /// <summary>
+        /// Return the list of all the things we want to cache to make up this variable.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        public string[] GetCachedNames(IDeclaredParameter iVariable)
+        {
+            return new string[] { iVariable.RawValue };
+        }
+
+        /// <summary>
         /// The lines of code that can be used to save this guy to a file. This is actually quite easy
         /// - we just book it!
         /// </summary>
@@ -56,12 +66,12 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj)
         {
             if (obj == null)
                 throw new ArgumentNullException("Obj cannot be null");
 
-            var named = obj as ROOTNET.Interface.NTNamed;
+            var named = obj[0] as ROOTNET.Interface.NTNamed;
             if (named == null)
                 throw new ArgumentException("Object isn't named");
 

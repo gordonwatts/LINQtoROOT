@@ -263,14 +263,14 @@ namespace LINQToTTreeLib
 
             try
             {
-
-                var k = tf.ListOfKeys.FirstOrDefault() as ROOTNET.Interface.NTKey;
-                if (k == null)
+                var keys = tf.ListOfKeys;
+                if (keys.Size == 0)
                     return new Tuple<bool, T>(false, default(T));
 
-                var cachedObject = k.ReadObj();
+                var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj());
                 ROOTNET.NTROOT.gROOT.cd();
-                return new Tuple<bool, T>(true, varSaver.LoadResult<T>(theVar, k.ReadObj()));
+                var v = varSaver.LoadResult<T>(theVar, cachedObjects.ToArray());
+                return new Tuple<bool, T>(v != null, v);
             }
             finally
             {
@@ -342,7 +342,7 @@ namespace LINQToTTreeLib
         /// <param name="sourceFiles"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        public void CacheItem(IQueryResultCacheKey akey, ROOTNET.Interface.NTObject o)
+        public void CacheItem(IQueryResultCacheKey akey, ROOTNET.Interface.NTObject[] objs)
         {
             var key = akey as KeyInfo;
             if (key == null)
@@ -383,15 +383,22 @@ namespace LINQToTTreeLib
                 }
             }
 
-            ///
-            /// Ok, now save it to the root file
-            /// 
+            // Ok, now save all of them to the root file
 
-            var osaver = o.Clone();
+            var clones = objs.Select(o => o.Clone()).ToArray();
             var trf = new ROOTNET.NTFile(key.RootFile.FullName, "RECREATE");
-            osaver.Write();
-            trf.Write();
-            trf.Close();
+            try
+            {
+                foreach (var obj in clones)
+                {
+                    obj.Write();
+                }
+            }
+            finally
+            {
+                trf.Write();
+                trf.Close();
+            }
         }
 
         /// <summary>

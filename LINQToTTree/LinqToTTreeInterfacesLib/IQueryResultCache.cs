@@ -44,6 +44,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_rootFile"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        void CacheItem(IQueryResultCacheKey key, ROOTNET.Interface.NTObject o);
+        void CacheItem(IQueryResultCacheKey key, ROOTNET.Interface.NTObject[] o);
     }
 }

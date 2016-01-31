@@ -28,6 +28,16 @@ namespace LINQToTTreeLib.Variables.Savers
         }
 
         /// <summary>
+        /// Return the list of all the things we want to cache to make up this variable.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        public string[] GetCachedNames(IDeclaredParameter iVariable)
+        {
+            return new string[] { iVariable.RawValue };
+        }
+
+        /// <summary>
         /// Return a list of include files needed when saving this sort of variable.
         /// Since we are storing filenames as paths, we will just cache it here.
         /// </summary>
@@ -45,9 +55,9 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
         {
-            var s = obj as NTH1F;
+            var s = obj[0] as NTH1F;
             if (s == null) throw
                     new InvalidOperationException($"FileInfo cached value should be a TObjString object, but is {s.GetType().Name}.");
 

@@ -37,6 +37,13 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="iVariable"></param>
         /// <param name="dir"></param>
         /// <returns></returns>
-        T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj);
+        T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj);
+
+        /// <summary>
+        /// Returns a list of names that should be stored together in a cache
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        string[] GetCachedNames(IDeclaredParameter iVariable);
     }
 }

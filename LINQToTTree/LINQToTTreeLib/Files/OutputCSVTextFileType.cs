@@ -68,6 +68,16 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
+        /// Return the list of all the things we want to cache to make up this variable.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public string[] GetCachedNames(IDeclaredParameter v)
+        {
+            return new string[] { v.RawValue, $"{v.RawValue}_size"};
+        }
+
+        /// <summary>
         /// Include files that need to be used. Since this is an fstream...
         /// </summary>
         /// <param name="iVariable"></param>
@@ -75,6 +85,8 @@ namespace LINQToTTreeLib.Files
         public IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
         {
             yield return "<fstream>";
+            yield return "TH1I.h";
+            yield return "TSystem.h";
         }
 
         /// <summary>
@@ -84,17 +96,43 @@ namespace LINQToTTreeLib.Files
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
         {
-            var s = obj as NTH1F;
-            if (s == null) throw
-                    new InvalidOperationException($"FileInfo cached value should be a TObjString object, but is {s.GetType().Name}.");
+            // Fetch out the path and the size in bytes of the file.
+            NTH1I hPath = null, hSize = null;
 
-            // We have to do this funny type conversion b.c. though we will only be called with a
-            // T == FileInfo, the compiler doesn't know that. It could be a "FileInfo" or an "int" as far
-            // as it is concerned.
-            object o = new FileInfo(s.Title);
-            return (T)o;
+            foreach (var h in obj)
+            {
+                if (h.Name.EndsWith("_size"))
+                {
+                    hSize = h as NTH1I;
+                } else
+                {
+                    hPath = h as NTH1I;
+                }
+            }
+
+            if (hPath == null || hSize == null)
+            {
+                throw new InvalidOperationException("Internal error - cache is missing either the path for a CSV file or its size");
+            }
+
+            // See if the file is there, and make sure its size is the same.
+            // That will have to do for the cache lookup.
+            // Funny conversion are b.c. we are in the middle of a crazy generic here.
+
+            var f = new FileInfo(hPath.Title);
+            if (!f.Exists)
+            {
+                return (T) (object) null;
+            }
+
+            if (f.Length != (int) hSize.GetBinContent(1))
+            {
+                return (T)(object)null;
+            }
+
+            return (T)(object)f;
         }
 
         /// <summary>
@@ -114,10 +152,32 @@ namespace LINQToTTreeLib.Files
                 throw new InvalidOperationException($"Unable to save OutputTextFileType because it's parameter has no declared value!");
             }
 
+            // Close the file.
             yield return $"{v.RawValue}.close();";
-            yield return string.Format("TH1F *{0}_hist = new TH1F(\"{0}\", \"{1}\", 1, 0.0, 1.0);", v.RawValue, (v.InitialValue as OutputCSVTextFileType).OutputFile.FullName.AddCPPEscapeCharacters());
+
+            // Write out the path.
+            var fileAsCPPString = (v.InitialValue as OutputCSVTextFileType).OutputFile.FullName.AddCPPEscapeCharacters();
+            yield return string.Format("TH1I *{0}_hist = new TH1I(\"{0}\", \"{1}\", 1, 0.0, 1.0);", v.RawValue, fileAsCPPString);
             yield return v.RawValue + "_hist->SetDirectory(0);";
             yield return "Book(" + v.RawValue + "_hist);";
+
+            // Write out the mod time and the file size.
+            yield return $"Long_t {v.RawValue}_size;";
+            yield return $"Long_t {v.RawValue}_modification_time;";
+            yield return $"gSystem->GetPathInfo(\"{fileAsCPPString}\", 0, &{v.RawValue}_size, 0, &{v.RawValue}_modification_time);";
+
+            foreach (var s in SaveIntValue($"{v.RawValue}_size"))
+            {
+                yield return s;
+            }
+        }
+
+        private IEnumerable<string> SaveIntValue(string v)
+        {
+            yield return string.Format("TH1I *{0}_hist = new TH1I(\"{0}\", \"var transport\", 1, 0.0, 1.0);",v);
+            yield return $"{v}_hist->SetBinContent(1, {v});";
+            yield return v + "_hist->SetDirectory(0);";
+            yield return $"Book({v}_hist);";
         }
     }
 }

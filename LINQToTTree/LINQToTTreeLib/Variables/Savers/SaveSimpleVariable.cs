@@ -18,6 +18,16 @@ namespace LINQToTTreeLib.Variables.Savers
         };
 
         /// <summary>
+        /// Return the list of all the things we want to cache to make up this variable.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <returns></returns>
+        public string[] GetCachedNames(IDeclaredParameter iVariable)
+        {
+            return new string[] { iVariable.RawValue };
+        }
+
+        /// <summary>
         /// A list of the types we know how to deal with.
         /// </summary>
         private static Dictionary<Type, VTypeInfo> _types = new Dictionary<Type, VTypeInfo>() { 
@@ -71,11 +81,11 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj)
         {
-            var h = obj as ROOTNET.NTH1;
+            var h = obj[0] as ROOTNET.NTH1;
             if (h == null)
-                throw new InvalidOperationException("Object of type '" + obj.ClassName() + "' is not an integer histogram, which is what we were expecting for this result!");
+                throw new InvalidOperationException("Object of type '" + obj[0].ClassName() + "' is not an integer histogram, which is what we were expecting for this result!");
 
             object result = _types[iVariable.Type]._converter(h);
             return (T)result;

@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace LINQToTTreeLib
 {
@@ -82,15 +83,25 @@ namespace LINQToTTreeLib
             }
 
             /// <summary>
+            /// Return the list of all the things we want to cache to make up this variable.
+            /// </summary>
+            /// <param name="iVariable"></param>
+            /// <returns></returns>
+            public string[] GetCachedNames(IDeclaredParameter iVariable)
+            {
+                return new string[] { iVariable.RawValue };
+            }
+
+            /// <summary>
             /// We return an int! :-)
             /// </summary>
             /// <typeparam name="T"></typeparam>
             /// <param name="iVariable"></param>
             /// <param name="obj"></param>
             /// <returns></returns>
-            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
             {
-                var h = obj as ROOTNET.Interface.NTH1F;
+                var h = obj[0] as ROOTNET.Interface.NTH1F;
                 if (h == null)
                     throw new InvalidOperationException("must be a histogram that is passed");
 
@@ -105,6 +116,16 @@ namespace LINQToTTreeLib
         /// </summary>
         class DummyHistoSaver : IVariableSaver
         {
+            /// <summary>
+            /// Return the list of all the things we want to cache to make up this variable.
+            /// </summary>
+            /// <param name="iVariable"></param>
+            /// <returns></returns>
+            public string[] GetCachedNames(IDeclaredParameter iVariable)
+            {
+                return new string[] { iVariable.RawValue };
+            }
+
             public bool CanHandle(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
@@ -120,9 +141,9 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
             {
-                var h = obj.Clone();
+                var h = obj[0].Clone();
                 return (T)h;
             }
         }
@@ -254,7 +275,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), new NTObject[] { h });
 
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
@@ -293,7 +314,7 @@ namespace LINQToTTreeLib
             var q = new QueryResultCache();
             var k1 = q.GetKey(new Uri[] { f1, f2 }, "test", null, null, query);
             var k2 = q.GetKey(new Uri[] { f2, f1 }, "test", null, null, query);
-            q.CacheItem(k1, h);
+            q.CacheItem(k1, new NTObject[] { h });
 
             //
             // Now, do the lookup, but with files in a different order.
@@ -318,7 +339,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), new NTObject[] { h });
 
             /// Modify the file
 
@@ -336,7 +357,7 @@ namespace LINQToTTreeLib
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
 
             // Next, update the cache and look to make sure that the cache returns a hit this time!
-            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query), new NTObject[] { h });
             r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsTrue(r.Item1, "altered file should have made this fail");
         }
@@ -353,7 +374,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), new NTObject[] { h });
 
             /// Modify the file
 
@@ -379,7 +400,7 @@ namespace LINQToTTreeLib
 
             var h = new ROOTNET.NTLorentzVector(1.0, 2.0, 3.0, 4.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), new NTObject[] { h });
 
             /// And make sure the lookup gets back the same object!
 
@@ -403,7 +424,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), new NTObject[] { h });
 
             /// And make sure the lookup fails now!
 
@@ -432,7 +453,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), new NTObject[] { h });
 
             /// And make sure the lookup works now!
 
@@ -466,7 +487,7 @@ namespace LINQToTTreeLib
                 h.Directory = null;
                 h.SetBinContent(1, 5.0);
 
-                q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
+                q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), new NTObject[] { h });
             }
 
             /// And make sure the lookup works now!
@@ -500,7 +521,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), new NTObject[] { h });
 
             /// And make sure the lookup works now!
 
@@ -527,7 +548,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), new NTObject[] { h });
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
@@ -552,7 +573,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query), new NTObject[] { h });
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
@@ -578,7 +599,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), h);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query), new NTObject[] { h });
 
             var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "expected hit");

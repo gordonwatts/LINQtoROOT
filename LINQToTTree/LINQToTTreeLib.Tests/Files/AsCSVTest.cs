@@ -82,6 +82,79 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void DummyFileShouldBeUpdated()
+        {
+            // Remove file if it exists
+            var hiFile = new FileInfo("hi.csv");
+            CleanUpFile(hiFile);
+
+            // Create dummy file.
+            using (var wr = hiFile.CreateText())
+            {
+                wr.WriteLine("hi there");
+            }
+
+            FileInfo result = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            Assert.IsTrue(result.Exists, "File exists");
+
+            // Make sure file contains something reasonable.
+            var lines = result.ReadAllLines().ToArray();
+            Assert.AreEqual(11, lines.Length);
+        }
+
+        [TestMethod]
+        public void AlreadyMadeFileShouldNotBeRemade()
+        {
+            // Remove file if it exists
+            CleanUpFile(new FileInfo("hi.csv"));
+
+            var result1 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            result1.Refresh();
+            Assert.IsTrue(result1.Exists, "File exists");
+            var modTime = result1.LastWriteTime;
+
+            // Run it a second time, and see what happens.
+            var result2 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            result2.Refresh();
+            Assert.AreEqual(modTime, result2.LastWriteTime);
+        }
+
+        [TestMethod]
+        public void DeletedFileRegenerated()
+        {
+            // Remove file if it exists
+            CleanUpFile(new FileInfo("hi.csv"));
+
+            var result1 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            result1.Refresh();
+            result1.Delete();
+
+            // Run it a second time, and see what happens.
+            var result2 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            result2.Refresh();
+            Assert.IsTrue(result2.Exists);
+        }
+
+        [TestMethod]
+        public void FileModifiedToKilLCache()
+        {
+            // Remove file if it exists
+            CleanUpFile(new FileInfo("hi.csv"));
+
+            var result1 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            using (var wr = result1.CreateText())
+            {
+                wr.WriteLine("hi there");
+            }
+
+            // Run it a second time, and see what happens.
+            var result2 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            result2.Refresh();
+            var lines = result2.ReadAllLines();
+            Assert.AreEqual(11, lines.ToArray().Length);
+        }
+
+        [TestMethod]
         public void SingleDoubleStreamCompiled()
         {
             // Remove file if it exists

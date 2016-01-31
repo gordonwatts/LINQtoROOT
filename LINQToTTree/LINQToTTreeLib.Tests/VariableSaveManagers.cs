@@ -35,7 +35,12 @@ namespace LINQToTTreeLib.Tests
                 return Enumerable.Empty<string>();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string[] GetCachedNames(IDeclaredParameter iVariable)
             {
                 throw new NotImplementedException();
             }

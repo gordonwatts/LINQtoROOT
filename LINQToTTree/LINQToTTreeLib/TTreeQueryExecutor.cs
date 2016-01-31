@@ -647,18 +647,18 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private T ExtractResult<T>(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
         {
-            ///
-            /// Load the object and try to extract whatever info we need to from it
-            /// 
+            // Load the object and try to extract whatever info we need to from it
 
-            if (!results.Keys.Contains(iVariable.RawValue))
+            var s = _varSaver.Get(iVariable);
+            var allNames = s.GetCachedNames(iVariable);
+
+            if (allNames.Where(n => !results.Keys.Contains(n)).Any())
                 throw new InvalidOperationException(string.Format("The result list from the query did not contains an object named '{0}'.", iVariable.RawValue));
 
-            var o = results[iVariable.RawValue];
+            var objs = allNames.Select(n => results[n]).ToArray();
 
-            _cache.CacheItem(key, o);
-            var s = _varSaver.Get(iVariable);
-            return s.LoadResult<T>(iVariable, o);
+            _cache.CacheItem(key, objs);
+            return s.LoadResult<T>(iVariable, objs);
         }
 
         /// <summary>
