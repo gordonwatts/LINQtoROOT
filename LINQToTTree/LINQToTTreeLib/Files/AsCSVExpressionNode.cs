@@ -25,6 +25,9 @@ namespace LINQToTTreeLib.Files
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double>>) null, (FileInfo)null, (string) null, (string) null)),
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null)),
                 GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<Tuple<double, double, double, double, double, double, double>>) null, (FileInfo)null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null, (string) null)),
              };
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace LINQToTTreeLib.Files
         /// The expression node parser.
         /// </summary>
         /// <param name="parseInfo"></param>
-        public AsCSVExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnName1, Expression columnName2, Expression columnName3, Expression columnName4)
+        public AsCSVExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnName1, Expression columnName2, Expression columnName3, Expression columnName4, Expression columnName5, Expression columnName6, Expression columnName7)
           : base(parseInfo, null, null)
         {
             _fileInfo = fileInfo;
@@ -54,6 +57,12 @@ namespace LINQToTTreeLib.Files
                 names.Add(columnName3);
             if (columnName4 != null)
                 names.Add(columnName4);
+            if (columnName5 != null)
+                names.Add(columnName5);
+            if (columnName6 != null)
+                names.Add(columnName6);
+            if (columnName7 != null)
+                names.Add(columnName7);
 
             _columnNames = names.ToArray();
         }

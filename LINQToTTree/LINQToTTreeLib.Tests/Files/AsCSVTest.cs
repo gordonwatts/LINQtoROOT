@@ -129,6 +129,25 @@ namespace LINQToTTreeLib.Tests.Files
             Assert.AreEqual("10, 10, 10, 10", lines[1]);
         }
 
+        [TestMethod]
+        public void TupleStreamCompiled8()
+        {
+            // Remove file if it exists
+            CleanUpFile(new FileInfo("hi.csv"));
+
+            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleSevenDoubles);
+
+            Assert.AreEqual("hi.csv", result.Name);
+            Assert.IsTrue(result.Exists, "File exists");
+
+            // Check the contents of the resulting file. It should have the 10 lines from the root
+            // file plus a column header.
+            var lines = result.ReadAllLines().ToArray();
+            Assert.AreEqual(11, lines.Length);
+            Assert.AreEqual("firstCol, second Col, col3, col4, col5, col6, col7", lines[0]);
+            Assert.AreEqual("10, 10, 10, 10, 10, 10, 10", lines[1]);
+        }
+
         private static FileInfo RunQueryForSingleColumnTTree(Action queryBuilder)
         {
             // Test a full round trip for a really simple CSV dump.
@@ -233,6 +252,17 @@ namespace LINQToTTreeLib.Tests.Files
                 .Select(e => Tuple.Create(e.run, e.run, e.run, e.run))
                 .AsCSV(new FileInfo("hi.csv"), "firstCol", "second Col", "col3", "col4");
 
+        }
+
+        /// <summary>
+        /// A tuple with two doubles.
+        /// </summary>
+        private static void QueryTupleSevenDoubles()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => Tuple.Create(e.run, e.run, e.run, e.run, e.run, e.run, e.run))
+                .AsCSV(new FileInfo("hi.csv"), "firstCol", "second Col", "col3", "col4", "col5", "col6", "col7");
         }
         #endregion
     }

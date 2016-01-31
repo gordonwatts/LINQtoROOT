@@ -67,5 +67,32 @@ namespace LINQToTTreeLib.Files
                     source.Expression, Expression.Constant(outputFile), Expression.Constant(item1Header), Expression.Constant(item2Header), Expression.Constant(item3Header), Expression.Constant(item4Header)))
                     as FileInfo;
         }
+        public static FileInfo AsCSV<T1, T2, T3, T4, T5>(this IQueryable<Tuple<T1, T2, T3, T4, T5>> source, FileInfo outputFile, string item1Header, string item2Header, string item3Header, string item4Header, string item5Header)
+        {
+            // Translate into an expression call
+            return source.Provider.Execute(
+                Expression.Call(
+                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5)),
+                    source.Expression, Expression.Constant(outputFile), Expression.Constant(item1Header), Expression.Constant(item2Header), Expression.Constant(item3Header), Expression.Constant(item4Header), Expression.Constant(item5Header)))
+                    as FileInfo;
+        }
+        public static FileInfo AsCSV<T1, T2, T3, T4, T5, T6>(this IQueryable<Tuple<T1, T2, T3, T4, T5, T6>> source, FileInfo outputFile, string item1Header, string item2Header, string item3Header, string item4Header, string item5Header, string item6Header)
+        {
+            // Translate into an expression call
+            return source.Provider.Execute(
+                Expression.Call(
+                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6)),
+                    source.Expression, Expression.Constant(outputFile), Expression.Constant(item1Header), Expression.Constant(item2Header), Expression.Constant(item3Header), Expression.Constant(item4Header), Expression.Constant(item5Header), Expression.Constant(item6Header)))
+                    as FileInfo;
+        }
+        public static FileInfo AsCSV<T1, T2, T3, T4, T5, T6, T7>(this IQueryable<Tuple<T1, T2, T3, T4, T5, T6, T7>> source, FileInfo outputFile, string item1Header, string item2Header, string item3Header, string item4Header, string item5Header, string item6Header, string item7Header)
+        {
+            // Translate into an expression call
+            return source.Provider.Execute(
+                Expression.Call(
+                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5), typeof(T6), typeof(T7)),
+                    source.Expression, Expression.Constant(outputFile), Expression.Constant(item1Header), Expression.Constant(item2Header), Expression.Constant(item3Header), Expression.Constant(item4Header), Expression.Constant(item5Header), Expression.Constant(item6Header), Expression.Constant(item7Header)))
+                    as FileInfo;
+        }
     }
 }
