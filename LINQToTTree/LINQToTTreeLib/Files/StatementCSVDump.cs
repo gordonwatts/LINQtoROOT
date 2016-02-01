@@ -61,14 +61,15 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
-        /// Figure out if we can combine these guys.
+        /// Since this statement has an external side-effect, it can't be combined
+        /// ever - it should never appear mroe than once.
         /// </summary>
         /// <param name="statement"></param>
         /// <param name="optimize"></param>
         /// <returns></returns>
         public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }
