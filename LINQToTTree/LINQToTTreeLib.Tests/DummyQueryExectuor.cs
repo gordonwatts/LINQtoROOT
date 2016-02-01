@@ -80,6 +80,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new ROAnyAll());
                 MEFUtilities.AddPart(new ROUniqueCombinations());
                 MEFUtilities.AddPart(new ROAsCSV());
+                MEFUtilities.AddPart(new ROAsTTree());
                 MEFUtilities.AddPart(new ROPairWiseAll());
                 MEFUtilities.AddPart(new ROAsQueriable());
                 MEFUtilities.AddPart(new ROSum());

@@ -1,17 +1,16 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
-using LINQToTTreeLib.Variables;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Linq;
 
 namespace LINQToTTreeLib.Files
 {
@@ -19,7 +18,7 @@ namespace LINQToTTreeLib.Files
     /// Part of our LINQToTree-relinq infrastructure - take the result operator and generate code for it.
     /// </summary>
     [Export(typeof(IQVScalarResultOperator))]
-    class ROAsCSV : ROAsFile
+    class ROAsTTree : ROAsFile
     {
         /// <summary>
         /// We deal with the AsCSV result operator.
@@ -28,7 +27,7 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public override bool CanHandle(Type resultOperatorType)
         {
-            return resultOperatorType == typeof(AsCSVResultOperator);
+            return resultOperatorType == typeof(AsTTreeResultOperator);
         }
 
         /// <summary>
@@ -57,28 +56,20 @@ namespace LINQToTTreeLib.Files
             gc.AddIncludeFile("<fstream>");
             gc.AddIncludeFile("<iostream>");
 
+            // Declare the TTree and the file we will be using!
             var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputCSVTextFileType));
             stream.InitialValue = new OutputCSVTextFileType(asCSV.OutputFile);
 
-            var headerline = new StringBuilder();
-            bool first = true;
-            foreach (var h in asCSV.HeaderColumns)
-            {
-                if (!first)
-                {
-                    headerline.Append(", ");
-                }
-                headerline.Append(h);
-                first = false;
-            }
-            gc.AddInitalizationStatement(new Statements.StatementSimpleStatement($"{stream.RawValue} << \"{headerline.ToString()}\" << std::endl;"));
+            // Open the file and declare the tree
+            gc.AddInitalizationStatement(new StatementSimpleStatement($"{stream.RawValue}.first = new TFile(\"{asCSV.OutputFile.FullName.AddCPPEscapeCharacters()}\",\"RECREATE\")"));
+            gc.AddInitalizationStatement(new StatementSimpleStatement($"{stream.RawValue}.second = new TTree(\"mytree\")"));
 
             // Get the list of item values we are going to need here.
             List<Expression> itemValues = ExtractItemValueExpressions(queryModel);
 
             // We are just going to print out the line with the item in it.
             var itemAsValues = itemValues.Select(iv => ExpressionToCPP.GetExpression(iv, gc, cc, container));
-            var pstatement = new StatementCSVDump(stream, itemAsValues.ToArray());
+            var pstatement = new StatementSimpleStatement($"{stream.RawValue}.second->Fill()");
             gc.Add(pstatement);
 
             // The return is a file path in the C# world. But here in C++, what should be returned?

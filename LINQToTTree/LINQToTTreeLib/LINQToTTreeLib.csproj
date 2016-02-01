@@ -167,9 +167,16 @@
     <Compile Include="Expressions\SubExpressionReplacement.cs" />
     <Compile Include="Files\AsCSVExpressionNode.cs" />
     <Compile Include="Files\AsCSVResultOperator.cs" />
+    <Compile Include="Files\AsFileExpressionNode.cs" />
+    <Compile Include="Files\AsFileResultOperator.cs" />
+    <Compile Include="Files\AsTTreeExpressionNode.cs" />
+    <Compile Include="Files\AsTTreeResultOperator.cs" />
     <Compile Include="Files\FileHelperQueryExtensions.cs" />
     <Compile Include="Files\OutputCSVTextFileType.cs" />
+    <Compile Include="Files\OutputTTreeFileType.cs" />
     <Compile Include="Files\ROAsCSV.cs" />
+    <Compile Include="Files\ROAsFile.cs" />
+    <Compile Include="Files\ROAsTTree.cs" />
     <Compile Include="Files\StatementCSVDump.cs" />
     <Compile Include="FutureResultOperators.cs" />
     <Compile Include="FutureValue.cs" />

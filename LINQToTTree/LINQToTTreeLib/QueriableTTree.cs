@@ -195,6 +195,7 @@ namespace LINQToTTreeLib
                     typeof(PairWiseAllExpressionNode),
                     typeof(AsQueriableExpressionNode),
                     typeof(AsCSVExpressionNode),
+                    typeof(AsTTreeExpressionNode),
                 }),
             };
 

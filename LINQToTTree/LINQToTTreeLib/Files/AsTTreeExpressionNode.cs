@@ -10,14 +10,14 @@ namespace LINQToTTreeLib.Files
     /// <summary>
     /// Convert the AsCSV extension method into an QueryModel information block.
     /// </summary>
-    class AsCSVExpressionNode : AsFileExpressionNode
+    class AsTTreeExpressionNode : AsFileExpressionNode
     {
         /// <summary>
         /// What extensions can we handle here?
         /// </summary>
         public static MethodInfo[] SupportedMethods =
              new[] {
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<object>) null, (FileInfo) null, (string[]) null)),
+                GetSupportedMethod (() => FileHelperQueryExtensions.AsTTree((IQueryable<object>) null, (FileInfo) null, (string[]) null)),
              };
 
         /// <summary>
@@ -26,8 +26,8 @@ namespace LINQToTTreeLib.Files
         /// <param name="parseInfo"></param>
         /// <param name="fileInfo"></param>
         /// <param name="columnNames"></param>
-        public AsCSVExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnNames)
-            : base (parseInfo, fileInfo, columnNames)
+        public AsTTreeExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnNames)
+            : base(parseInfo, fileInfo, columnNames)
         { }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         protected override ResultOperatorBase CreateResultOperator(ClauseGenerationContext clauseGenerationContext)
         {
-            return new AsCSVResultOperator((_fileInfo as ConstantExpression).Value as FileInfo, _columnNames);
+            return new AsTTreeResultOperator((_fileInfo as ConstantExpression).Value as FileInfo, _columnNames);
         }
     }
 }
