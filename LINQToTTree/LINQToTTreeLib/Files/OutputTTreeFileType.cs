@@ -152,8 +152,8 @@ namespace LINQToTTreeLib.Files
             }
 
             // Close the file.
-            yield return $"{v.RawValue}.first.Write();";
-            yield return $"{v.RawValue}.first.Close();";
+            yield return $"{v.RawValue}.first->Write();";
+            yield return $"{v.RawValue}.first->Close();";
 
             // Write out the path.
             var fileAsCPPString = (v.InitialValue as OutputTTreeFileType).OutputFile.FullName.AddCPPEscapeCharacters();
