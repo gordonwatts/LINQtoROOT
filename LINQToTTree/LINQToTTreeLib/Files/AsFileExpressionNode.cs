@@ -36,17 +36,12 @@ namespace LINQToTTreeLib.Files
         {
             _fileInfo = fileInfo;
 
-            // If this is a custom object, then we may be getting the column titles from there. If not,
-            // then pull from the list that was given to us as part of this ctor.
-            var selectExpr = (parseInfo.Source as SelectExpressionNode);
-            if (selectExpr == null)
-                throw new ArgumentException($"Unable to deal with AsCsv when not part of a Select statement - it showed up as a {parseInfo.Source.GetType().Name}");
-
-            // Next, figure out how many columns we have, and the
-            // default names (if the user hasn't given us any) by looking at the generic argument
-            // to IQuerable.
-            var objectTypeToDump = selectExpr.NodeResultType.GetGenericArguments()[0];
+            // Next, figure out what it is we are dumping. To do this, we look at the IQueriable
+            // generic argument, and then depending on what we find, we extract type and column
+            // information.
+            var objectTypeToDump = parseInfo.ParsedExpression.Arguments[0].Type.GetGenericArguments()[0];
             var defaultColumnNames = new List<string>();
+
             if (TypeIsEasilyDumped(objectTypeToDump))
             {
                 defaultColumnNames.Add("col1");
