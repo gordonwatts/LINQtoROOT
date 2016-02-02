@@ -71,7 +71,8 @@ namespace LINQToTTreeLib.Files
 
             // We are just going to print out the line with the item in it.
             var itemAsValues = itemValues.Select(iv => ExpressionToCPP.GetExpression(iv, gc, cc, container));
-            var pstatement = new StatementSimpleStatement($"{stream.RawValue}.second->Fill()");
+            var pstatement = new StatementFillTree(stream, itemAsValues.Zip(asCSV.HeaderColumns, (i, h) => Tuple.Create(i, h)).ToArray());
+
             gc.Add(pstatement);
 
             // The return is a file path in the C# world. But here in C++, what should be returned?

@@ -178,6 +178,7 @@
     <Compile Include="Files\ROAsFile.cs" />
     <Compile Include="Files\ROAsTTree.cs" />
     <Compile Include="Files\StatementCSVDump.cs" />
+    <Compile Include="Files\StatementFillTree.cs" />
     <Compile Include="FutureResultOperators.cs" />
     <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />

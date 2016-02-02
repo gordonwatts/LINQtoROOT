@@ -7,6 +7,9 @@ using System.Text;
 using LINQToTTreeLib.Files;
 using System.Threading.Tasks;
 using Remotion.Linq;
+using ROOTNET;
+
+using static System.Console;
 
 namespace LINQToTTreeLib.Tests.Files
 {
@@ -50,9 +53,29 @@ namespace LINQToTTreeLib.Tests.Files
             Assert.AreEqual("hi.root", result.Name);
             Assert.IsTrue(result.Exists, "File exists");
 
-            // Check the contents of the resulting file. It should have the 10 lines from the root
-            // file plus a column header.
-            Assert.Inconclusive();
+            // Check the contents of the file. It should have a Tree in it with 10 entries.
+            var f = NTFile.Open(result.FullName);
+            try {
+                var t = f.Get("mytree") as ROOTNET.Interface.NTTree;
+                Assert.IsNotNull(t, "Getting a tree from the file");
+                Assert.AreEqual(10, t.Entries);
+
+                var leaves = t.ListOfLeaves;
+                foreach (var leaf in leaves.Select(l => l.Name))
+                {
+                    WriteLine($"Leave name: {leaf}");
+                }
+                Assert.AreEqual(3, leaves.Entries, "Number of leaves");
+
+                foreach (dynamic entry in t)
+                {
+                    WriteLine($"Entry value: col1: {entry.col1} col2: {entry.col2} col3: {entry.col3}");
+                    Assert.AreEqual(10, entry.col1);
+                }
+            } finally
+            {
+                f.Close();
+            }
         }
 
         #region Test Query Generation
