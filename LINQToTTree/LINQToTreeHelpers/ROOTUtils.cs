@@ -121,13 +121,37 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Create a TLorentzVector from px, py, pz, and E.
+        /// Cacluate DR^2 for eta/phi pairs.
         /// </summary>
-        /// <param name="px"></param>
-        /// <param name="py"></param>
-        /// <param name="pz"></param>
-        /// <param name="E"></param>
+        /// <param name="eta1">Eta of particle 1</param>
+        /// <param name="phi1">Phi of particle 1</param>
+        /// <param name="eta2">Eta of particle 2</param>
+        /// <param name="phi2">Phi of particle 2</param>
         /// <returns></returns>
+        [CPPCode(IncludeFiles = new[] { "TLorentzVector.h", "TVector2.h" },
+            Code = new[] {
+                "double detaUnique = eta1-eta2;",
+                "double dphiUnique = TVector2::Phi_mpi_pi(phi1 - phi2);",
+                "DeltaR2 = detaUnique*detaUnique + dphiUnique*dphiUnique;"
+            })]
+        public static double DeltaR2(double eta1, double phi1, double eta2, double phi2)
+        {
+            throw new NotImplementedException("this should never get called");
+#if false
+            double deta = eta1 - eta2;
+            double deltaphi = ROOTNET.NTVector2.Phi_mpi_pi(phi1 - phi2);
+            return deta * deta + deltaphi * deltaphi;
+#endif
+        }
+        
+        /// <summary>
+                 /// Create a TLorentzVector from px, py, pz, and E.
+                 /// </summary>
+                 /// <param name="px"></param>
+                 /// <param name="py"></param>
+                 /// <param name="pz"></param>
+                 /// <param name="E"></param>
+                 /// <returns></returns>
         [CPPCode(IncludeFiles = new string[] { "TLorentzVector.h" },
             Code = new string[]{
                 "TLorentzVector tlzUnique;",
