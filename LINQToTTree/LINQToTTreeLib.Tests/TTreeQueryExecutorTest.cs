@@ -2273,6 +2273,44 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestComplexSimpleTypeInlineIfIntCode()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        let j = evt.myvectorofint[0] == 0 ? evt.myvectorofint.First() : evt.myvectorofint.Skip(1).First()
+                        where (j != 1)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
         public void TestInlineIfObjectCode()
         {
             const int numberOfIter = 25;

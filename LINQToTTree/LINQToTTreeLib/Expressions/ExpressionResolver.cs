@@ -453,8 +453,13 @@ namespace LINQToTTreeLib.Expressions
             /// <returns></returns>
             protected override Expression VisitConditionalExpression(ConditionalExpression expression)
             {
-                if (CheckForSubQueries.CheckExpression(expression.IfFalse)
-                    || CheckForSubQueries.CheckExpression(expression.IfTrue))
+                // We can support complex sub-expressions so long as they don't leak out of the
+                // comparison.
+                if (expression.Type.IsClass
+                    && (
+                        CheckForSubQueries.CheckExpression(expression.IfFalse)
+                        || CheckForSubQueries.CheckExpression(expression.IfTrue))
+                    )
                     throw new NotSupportedException(string.Format("Complex true/false clauses in a conditional expression are not supported: '{0}'", expression.ToString()));
 
                 return base.VisitConditionalExpression(expression);

@@ -622,9 +622,11 @@ namespace LINQToTTreeLib.Tests
                 evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index]);
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
+        //[ExpectedException(typeof(NotSupportedException))]
         public void TestInlineIfWithComplexIfthenAnswers()
         {
+            //TODO - make sure this doesn't open the way for something awful. It was obviously
+            // a bug at some point. but the code now seems to be ok.
             // A crash that happened in one of my seperate programs...
 
             var q = new QueriableDummy<CollectionTree>();
