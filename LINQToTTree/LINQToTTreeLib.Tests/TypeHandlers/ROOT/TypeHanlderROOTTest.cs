@@ -86,6 +86,47 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             Assert.AreEqual(result1.RawValue, result2.RawValue, "Expected the same raw value for the same object in the same expression");
         }
 
+#if false
+        [TestMethod]
+        public void QueueNamespaceObject()
+        {
+            var t = new TypeHandlerROOT();
+
+            var origRootObj = new ROOTNET.NROOT.NMath.NBasicMinimizer();
+            var rootObj = Expression.Constant(origRootObj);
+
+            var gc = new GeneratedCode();
+            var result = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
+
+            Assert.IsNotNull(result);
+
+            Assert.AreEqual(1, gc.VariablesToTransfer.Count(), "Variables to transfer");
+        }
+
+        [TestMethod]
+        public void QueueTMVAObject()
+        {
+            var t = new TypeHandlerROOT();
+
+            var f = new ROOTNET.NTFile("hi.root", "RECREATE");
+            try
+            {
+                var origRootObj = new ROOTNET.NTMVA.NFactory(new ROOTNET.NTString("hi"), f);
+                var rootObj = Expression.Constant(origRootObj);
+
+                var gc = new GeneratedCode();
+                var result = t.ProcessConstantReference(rootObj, gc, MEFUtilities.MEFContainer);
+
+                Assert.IsNotNull(result);
+
+                Assert.AreEqual(1, gc.VariablesToTransfer.Count(), "Variables to transfer");
+            } finally
+            {
+                f.Close();
+            }
+        }
+
+#endif
         [TestMethod]
         public void TestROOTMethodReference()
         {

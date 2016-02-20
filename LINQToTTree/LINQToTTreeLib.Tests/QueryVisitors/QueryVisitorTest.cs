@@ -153,6 +153,24 @@ namespace LINQToTTreeLib
             Assert.AreEqual(7, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
+#if false
+        [TestMethod]
+        public void CountFromConcatSources()
+        {
+            var q1 = new QueriableDummy<ntup>();
+            var q2 = new QueriableDummy<ntup>();
+            var q = q1.Concat(q2);
+
+            var r1 = q.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            query1.DumpCodeToConsole();
+
+            Assert.AreEqual(7, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
+        }
+#endif
+
         [TestMethod]
         public void TestCountOnArray()
         {
