@@ -99,20 +99,128 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="libASImageGuiWrapper, Version=9.9.5880.4882, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libASImageGuiWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libASImageWrapper, Version=9.9.5880.4880, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libASImageWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="libCoreWrapper, Version=9.9.5880.4210, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Dynamic.5.34.34.9\lib\net40\libCoreWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="libEGPythia8Wrapper, Version=9.9.5880.4300, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libEGPythia8Wrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libEGWrapper, Version=9.9.5880.4298, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libEGWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libEveWrapper, Version=9.9.5880.5060, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libEveWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libFitPanelWrapper, Version=9.9.5880.4902, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libFitPanelWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libFoamWrapper, Version=9.9.5880.4332, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libFoamWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libFumiliWrapper, Version=9.9.5880.4303, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libFumiliWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGdmlWrapper, Version=9.9.5880.4906, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGdmlWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGedWrapper, Version=9.9.5880.4778, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGedWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGeneticWrapper, Version=9.9.5880.4305, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGeneticWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGenVectorWrapper, Version=9.9.5880.4084, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGenVectorWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGeomBuilderWrapper, Version=9.9.5880.4939, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGeomBuilderWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGeomPainterWrapper, Version=9.9.5880.4944, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGeomPainterWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGeomWrapper, Version=9.9.5880.4777, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGeomWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGpadWrapper, Version=9.9.5880.4390, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Graphing.5.34.34.9\lib\net40\libGpadWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGraf3dWrapper, Version=9.9.5880.4418, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Graphing.5.34.34.9\lib\net40\libGraf3dWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="libGrafWrapper, Version=9.9.5880.4373, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.9\lib\net40\libGrafWrapper.dll</HintPath>
+      <HintPath>..\packages\ROOT.NET.Graphing.5.34.34.9\lib\net40\libGrafWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGuiBldWrapper, Version=9.9.5880.4952, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGuiBldWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGuiHtmlWrapper, Version=9.9.5880.5216, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGuiHtmlWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGuiWrapper, Version=9.9.5880.4684, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGuiWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libGviz3dWrapper, Version=9.9.5880.5213, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libGviz3dWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libHistPainterWrapper, Version=9.9.5880.5207, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libHistPainterWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="libHistWrapper, Version=9.9.5880.4325, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libHistWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="libHtmlWrapper, Version=9.9.5880.5090, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libHtmlWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="libMathCoreWrapper, Version=9.9.5880.4252, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libMathCoreWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libMatrixWrapper, Version=9.9.5880.4312, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libMatrixWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libMinuit2Wrapper, Version=9.9.5880.5015, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libMinuit2Wrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libMinuitWrapper, Version=9.9.5880.4707, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libMinuitWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libMLPWrapper, Version=9.9.5880.5030, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libMLPWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="libNetWrapper, Version=9.9.5880.4275, Culture=neutral, processorArchitecture=x86">
@@ -123,20 +231,124 @@
       <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libPhysicsWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="libPostscriptWrapper, Version=9.9.5880.5093, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libPostscriptWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libProofDrawWrapper, Version=9.9.5880.4961, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.PROOF.5.34.34.9\lib\net40\libProofDrawWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libProofPlayerWrapper, Version=9.9.5880.4984, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.PROOF.5.34.34.9\lib\net40\libProofPlayerWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libProofWrapper, Version=9.9.5880.4811, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.PROOF.5.34.34.9\lib\net40\libProofWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libQuadpWrapper, Version=9.9.5880.4326, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libQuadpWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRecorderWrapper, Version=9.9.5880.5046, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRecorderWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libReflexDictWrapper, Version=9.9.5880.5074, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libReflexDictWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRGLWrapper, Version=9.9.5880.4875, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRGLWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRHTTPWrapper, Version=9.9.5880.5025, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRHTTPWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="libRIOWrapper, Version=9.9.5880.4247, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libRIOWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRODBCWrapper, Version=9.9.5880.5036, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRODBCWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRooFitCoreWrapper, Version=9.9.5880.4695, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRooFitCoreWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRooFitWrapper, Version=9.9.5880.4896, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRooFitWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRooStatsWrapper, Version=9.9.5880.5200, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRooStatsWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libRootAuthWrapper, Version=9.9.5880.5094, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libRootAuthWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libSessionViewerWrapper, Version=9.9.5880.5114, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libSessionViewerWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libSpectrumPainterWrapper, Version=9.9.5880.5113, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libSpectrumPainterWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libSpectrumWrapper, Version=9.9.5880.5111, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libSpectrumWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libSPlotWrapper, Version=9.9.5880.5095, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libSPlotWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libSQLIOWrapper, Version=9.9.5880.5105, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libSQLIOWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libTableWrapper, Version=9.9.5880.5258, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libTableWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="libThreadWrapper, Version=9.9.5880.4222, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libThreadWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="libTMVAWrapper, Version=9.9.5880.5220, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libTMVAWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="libTreePlayerWrapper, Version=9.9.5880.4391, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Tree.5.34.34.9\lib\net40\libTreePlayerWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="libTreeViewerWrapper, Version=9.9.5880.5235, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libTreeViewerWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="libTreeWrapper, Version=9.9.5880.4375, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Tree.5.34.34.9\lib\net40\libTreeWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libUnuranWrapper, Version=9.9.5880.5228, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libUnuranWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libVMCWrapper, Version=9.9.5880.5235, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libVMCWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libWin32gdkWrapper, Version=9.9.5880.5237, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libWin32gdkWrapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libXMLIOWrapper, Version=9.9.5880.4290, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.All.5.34.34.9\lib\net40\libXMLIOWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
