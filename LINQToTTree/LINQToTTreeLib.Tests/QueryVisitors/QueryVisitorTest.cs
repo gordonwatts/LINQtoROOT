@@ -1326,6 +1326,29 @@ namespace LINQToTTreeLib
                 return tlz;
 #pragma warning disable 0162
             }
+
+            [CPPCode(Code = new string[] { "CalcLenOfString = strlen(arg);" }, IncludeFiles = new string[] { "stdlib.h" })]
+            public static int CalcLenOfString(string arg)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void TestCodePassedStringArgument()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var listing = from evt in q
+                          where CPPHelperFunctions.CalcLenOfString("hi") > 10.0
+                          select evt;
+            var dude = listing.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+
+            var lm = query.DumpCode().Where(l => l.Contains("\"hi\"")).Count();
+            Assert.AreEqual(1, lm, "# of times the hi appears in quotes");
         }
 
         /// <summary>

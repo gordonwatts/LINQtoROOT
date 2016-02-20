@@ -73,7 +73,7 @@ namespace LINQToTTreeLib
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="true", expr = Expression.Constant(true)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="false", expr = Expression.Constant(false)},
             new ConstantTestTemplate(){ ExpectedType=typeof(ROOTNET.NTH1F), ExpectedValue="LoadFromInputList\\<TH1F\\*\\>\\(\"aNTH1F_.+\"\\)", expr = Expression.Constant(new ROOTNET.NTH1F("hi", "there", 10, 0.0, 20.0))},
-            new ConstantTestTemplate(){ ExpectedType=typeof(string), ExpectedValue="dude", expr = Expression.Constant("dude")},
+            new ConstantTestTemplate(){ ExpectedType=typeof(string), ExpectedValue="\"dude\"", expr = Expression.Constant("dude")},
             new ConstantTestTemplate(){ ExpectedType=typeof(ROOTNET.NTH1F), ExpectedValue="0", expr = Expression.Constant(null, typeof(ROOTNET.NTH1F))}
         };
 

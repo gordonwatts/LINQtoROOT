@@ -266,6 +266,7 @@
     <Compile Include="Variables\Savers\SaveVarFileInfo.cs" />
     <Compile Include="Variables\Savers\VariableSaverManager.cs" />
     <Compile Include="Variables\Savers\SaveVarObject.cs" />
+    <Compile Include="Variables\ConstantString.cs" />
     <Compile Include="Variables\VarUtils.cs" />
     <Compile Include="Variables\ValSimple.cs" />
   </ItemGroup>

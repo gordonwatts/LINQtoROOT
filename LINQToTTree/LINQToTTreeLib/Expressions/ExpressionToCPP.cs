@@ -249,7 +249,7 @@ namespace LINQToTTreeLib.Expressions
             }
             else if (expression.Type == typeof(string))
             {
-                _result = new ValSimple(expression.Value as string, typeof(string));
+                _result = new ConstantString(expression.Value as string);
             }
             else if (expression.Value == null)
             {

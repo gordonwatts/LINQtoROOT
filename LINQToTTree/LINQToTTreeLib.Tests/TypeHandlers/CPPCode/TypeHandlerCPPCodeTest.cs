@@ -57,6 +57,17 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             {
                 throw new NotImplementedException();
             }
+
+            /// <summary>
+            /// A simple one with a string.
+            /// </summary>
+            /// <param name="var"></param>
+            /// <returns></returns>
+            [CPPCode(Code = new string[] { "DoItWithAString = strlen(arg);" }, IncludeFiles = new string[] { "stdlib.h" })]
+            public static int DoItWithAString(string arg)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -97,6 +108,32 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             Assert.AreEqual(1, gc.IncludeFiles.Count(), "# of include files");
             Assert.AreEqual("TLorentzVector.h", gc.IncludeFiles.First(), "include file name");
+        }
+
+        [TestMethod]
+        public void CodeAddonWithStringArgument()
+        {
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+
+            var param = Expression.Parameter(typeof(string), "p");
+            var expr = Expression.Call(typeof(DoItClass).GetMethod("DoItWithAString"), param);
+
+            var result = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            Assert.IsNotNull(result, "result!");
+            var vname = result.RawValue;
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements that came back");
+            var st1 = gc.CodeBody.Statements.First() as IStatement;
+
+            Assert.AreEqual("int " + vname + ";", st1.CodeItUp().First(), "line #1 is incorrect");
+
+            var expected = new StringBuilder();
+            expected.AppendFormat("{0} = strlen(p);", vname);
+            Assert.AreEqual(expected.ToString(), st1.CodeItUp().Skip(1).First(), "statement line incorrect");
         }
 
         [TestMethod]
