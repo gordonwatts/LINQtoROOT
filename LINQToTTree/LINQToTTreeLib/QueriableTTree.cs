@@ -223,13 +223,6 @@ namespace LINQToTTreeLib
                 ExpressionTreeParser.CreateDefaultProcessor(transformerRegistry));
 
             return new QueryParser(expressionTreeParser);
-
-            ///
-            /// Right now we are not doing anything special, so just do the default!
-            /// 
-
-            //return QueryParser.CreateDefault();
-            ///(this.Provider as DefaultQueryProvider).ExpressionTreeParser.NodeTypeRegistry.Register(xxx.SupportedMethods, typeof(xxx));
         }
     }
 }
