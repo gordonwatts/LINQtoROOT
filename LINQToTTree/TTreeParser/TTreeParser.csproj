@@ -62,44 +62,44 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="libCoreWrapper, Version=9.9.5880.4210, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.34.9\lib\net40\libCoreWrapper.dll</HintPath>
+    <Reference Include="libCoreWrapper, Version=10.10.5895.14658, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.34.10\lib\net40\libCoreWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libGrafWrapper, Version=9.9.5880.4373, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.9\lib\net40\libGrafWrapper.dll</HintPath>
+    <Reference Include="libGrafWrapper, Version=10.10.5895.14835, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.10\lib\net40\libGrafWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libHistWrapper, Version=9.9.5880.4325, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libHistWrapper.dll</HintPath>
+    <Reference Include="libHistWrapper, Version=10.10.5895.14784, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.34.10\lib\net40\libHistWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libMathCoreWrapper, Version=9.9.5880.4252, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libMathCoreWrapper.dll</HintPath>
+    <Reference Include="libMathCoreWrapper, Version=10.10.5895.14709, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.34.10\lib\net40\libMathCoreWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libNetWrapper, Version=9.9.5880.4275, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.9\lib\net40\libNetWrapper.dll</HintPath>
+    <Reference Include="libNetWrapper, Version=10.10.5895.14731, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.10\lib\net40\libNetWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libPhysicsWrapper, Version=9.9.5880.4284, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libPhysicsWrapper.dll</HintPath>
+    <Reference Include="libPhysicsWrapper, Version=10.10.5895.14741, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.34.10\lib\net40\libPhysicsWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libRIOWrapper, Version=9.9.5880.4247, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libRIOWrapper.dll</HintPath>
+    <Reference Include="libRIOWrapper, Version=10.10.5895.14701, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.34.10\lib\net40\libRIOWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libThreadWrapper, Version=9.9.5880.4222, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Core.5.34.34.9\lib\net40\libThreadWrapper.dll</HintPath>
+    <Reference Include="libThreadWrapper, Version=10.10.5895.14672, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Core.5.34.34.10\lib\net40\libThreadWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libTreePlayerWrapper, Version=9.9.5880.4391, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.9\lib\net40\libTreePlayerWrapper.dll</HintPath>
+    <Reference Include="libTreePlayerWrapper, Version=10.10.5895.14853, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.10\lib\net40\libTreePlayerWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="libTreeWrapper, Version=9.9.5880.4375, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.9\lib\net40\libTreeWrapper.dll</HintPath>
+    <Reference Include="libTreeWrapper, Version=10.10.5895.14836, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Tree.5.34.34.10\lib\net40\libTreeWrapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -109,8 +109,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WrapperPlumbingLibrary, Version=2.6.5880.4070, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.34.9\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
+    <Reference Include="WrapperPlumbingLibrary, Version=2.6.5895.14500, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ROOT.NET.Dynamic.5.34.34.10\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -135,12 +135,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.34.9\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.34.9\build\net40\ROOT.NET.Dynamic.targets')" />
+  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.34.10\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.34.10\build\net40\ROOT.NET.Dynamic.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\ROOT.NET.Dynamic.5.34.34.9\build\net40\ROOT.NET.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ROOT.NET.Dynamic.5.34.34.9\build\net40\ROOT.NET.Dynamic.targets'))" />
+    <Error Condition="!Exists('..\packages\ROOT.NET.Dynamic.5.34.34.10\build\net40\ROOT.NET.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ROOT.NET.Dynamic.5.34.34.10\build\net40\ROOT.NET.Dynamic.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
