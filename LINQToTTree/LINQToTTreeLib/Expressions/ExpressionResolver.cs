@@ -460,9 +460,47 @@ namespace LINQToTTreeLib.Expressions
                         CheckForSubQueries.CheckExpression(expression.IfFalse)
                         || CheckForSubQueries.CheckExpression(expression.IfTrue))
                     )
+                {
                     throw new NotSupportedException(string.Format("Complex true/false clauses in a conditional expression are not supported: '{0}'", expression.ToString()));
+                }
 
-                return base.VisitConditionalExpression(expression);
+                // If this is a class as a result, then we can't do much extra processing here. So skip.
+                if (expression.Type.IsClass)
+                {
+                    return base.VisitConditionalExpression(expression);
+                }
+
+                // Run the code for the test, and then create the if/then/else that will support it.
+                var testExpression = base.VisitExpression(expression.Test);
+                var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+                GeneratedCode.Add(new Statements.StatementAssign(testBoolInCode,
+                    ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer),
+                    FindDeclarableParameters.FindAll(testExpression),
+                    true
+                    ));
+
+                // The result
+                var conditionalResult = DeclarableParameter.CreateDeclarableParameterExpression(expression.Type);
+                GeneratedCode.Add(conditionalResult);
+
+                // Do the if true statement
+                var topScope = GeneratedCode.CurrentScope;
+                GeneratedCode.Add(new Statements.StatementFilter(testBoolInCode));
+                var iftrueExpression = VisitExpression(expression.IfTrue);
+                GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(iftrueExpression, GeneratedCode, CodeContext, MEFContainer),
+                    FindDeclarableParameters.FindAll(iftrueExpression)));
+                GeneratedCode.CurrentScope = topScope;
+
+                // Do the if false statement
+                GeneratedCode.Add(new Statements.StatementFilter(ExpressionToCPP.GetExpression(Expression.Not(testBoolInCode), GeneratedCode, CodeContext, MEFContainer)));
+                var ifFalseExpression = VisitExpression(expression.IfFalse);
+                GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(ifFalseExpression, GeneratedCode, CodeContext, MEFContainer),
+                    FindDeclarableParameters.FindAll(ifFalseExpression)));
+                GeneratedCode.CurrentScope = topScope;
+
+                // Consider this expression now transformed, so return the result, not
+                // the conditional expression itself.
+                return conditionalResult;
             }
 
             /// <summary>
@@ -497,7 +535,7 @@ namespace LINQToTTreeLib.Expressions
                 }
             }
 
-            #endregion
+#endregion
         }
     }
 }

@@ -188,6 +188,56 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestConditionalEvaluationInBranch()
+        {
+            var q = new QueriableDummy<ntupArray>();
+
+            var r1 = from evt in q
+                     select evt.run.Count() > 5 
+                        ? evt.run.Where(r => r > 5).Count() 
+                        : evt.run.Where(r => r > 10).Count();
+            var r2 = r1.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            query1.DumpCodeToConsole();
+
+            var ifs = query1.CodeBody.Statements.Where(s => s is Statements.StatementFilter).Cast<Statements.StatementFilter>().ToArray();
+            Assert.AreEqual(2, ifs.Length, "# of if statements");
+            var if1body = ifs[0].Statements.SelectMany(s => s.CodeItUp()).ToArray();
+            Assert.AreEqual(1, if1body.Length);
+            Assert.IsTrue(if1body[0].Contains("QMFunction"), if1body[0]);
+            var if2body = ifs[1].Statements.SelectMany(s => s.CodeItUp()).ToArray();
+            Assert.AreEqual(1, if2body.Length);
+            Assert.IsTrue(if2body[0].Contains("QMFunction"), if2body[0]);
+        }
+
+        [TestMethod]
+        public void TestConditionalEvaluationInBranchWithComplexSubQuery()
+        {
+            var q = new QueriableDummy<ntupArray>();
+
+            var r1 = from evt in q
+                     from r in evt.run
+                     select r > 5
+                        ? evt.run.Where(mr => mr > r).Count()
+                        : evt.run.Where(mr => mr < r).Count();
+            var r2 = r1.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            query1.DumpCodeToConsole();
+
+            var forloop = query1.CodeBody.Statements.Where(s => s is Statements.StatementForLoop).Cast<Statements.StatementForLoop>().ToArray();
+            Assert.AreEqual(1, forloop.Length, "#of for loops");
+
+            var ifs = forloop[0].Statements.Where(s => s is Statements.StatementFilter).Cast<Statements.StatementFilter>().ToArray();
+            Assert.AreEqual(2, ifs.Length, "# of if statements");
+            var if1body = ifs[0].Statements.SelectMany(s => s.CodeItUp()).ToArray();
+            Assert.AreNotEqual(1, if1body.Length, "Not enough statements in if body");
+            var if2body = ifs[1].Statements.SelectMany(s => s.CodeItUp()).ToArray();
+            Assert.AreNotEqual(1, if2body.Length, "Not enough statements in if body");
+        }
+
+        [TestMethod]
         public void TestCountOnArrayWithIf()
         {
             var q = new QueriableDummy<ntupArray>();
