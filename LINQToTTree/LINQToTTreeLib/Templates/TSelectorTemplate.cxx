@@ -14,11 +14,14 @@
 
 \#include <string>
 \#include <stdexcept>
+\#include <iostream>
 #foreach($f in $SystemIncludeFiles)
 \#include $f
 #end
 
 using std::string;
+using std::cout;
+using std::endl;
 
 #ifdef __MAKECINT__
 #foreach($l in $CINTLines)
@@ -77,16 +80,22 @@ public:
 		fDirector.SetReadEntry(entry);
 		ResetCache();
 
+		try {
 		///
 		/// Run the processing code
 		///
 
 #set ( $blockIndex = 0 )
 #foreach($block in $QueryFunctionBlocks)
-		ExecuteQueryBlock$blockIndex ();
+			ExecuteQueryBlock$blockIndex ();
 #set ( $blockIndex = $blockIndex + 1 )
 #end
 
+		}
+		catch (std::exception &e) {
+			cout << "Error caught in generated C++ code: " << e.what() << endl;
+			throw;
+		}
 		///
 		/// Always return true - we want to go onto the next entry, afterall.
 		///
