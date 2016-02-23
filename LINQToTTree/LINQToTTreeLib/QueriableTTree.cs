@@ -196,6 +196,7 @@ namespace LINQToTTreeLib
                     typeof(AsQueriableExpressionNode),
                     typeof(AsCSVExpressionNode),
                     typeof(AsTTreeExpressionNode),
+                    typeof(ConcatExpressionNode),
                 }),
             };
 

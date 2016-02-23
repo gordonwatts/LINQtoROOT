@@ -194,6 +194,7 @@
     <Compile Include="QMFunctions\QMFunctionArgument.cs" />
     <Compile Include="QueriableTTree.cs" />
     <Compile Include="QueryResultCache.cs" />
+    <Compile Include="QueryVisitors\ConcatSplitterQueryVisitor.cs" />
     <Compile Include="QueryVisitors\CreateTupleExpressionTransformer.cs" />
     <Compile Include="QueryVisitors\EnumerableRangeExpression.cs" />
     <Compile Include="QueryVisitors\EnumerableRangeExpressionTransformer.cs" />
@@ -201,6 +202,8 @@
     <Compile Include="QueryVisitors\PropertyExpressionTransformer.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
+    <Compile Include="relinq\ConcatExpressionNode.cs" />
+    <Compile Include="relinq\ConcatResultOperator.cs" />
     <Compile Include="ResultOperators\ROGroup.cs" />
     <Compile Include="Statements\StatementLoopOverGroupItems.cs" />
     <Compile Include="Statements\StatementLoopOverGroups.cs" />
