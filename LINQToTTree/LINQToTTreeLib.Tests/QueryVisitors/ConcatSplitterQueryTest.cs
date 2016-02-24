@@ -1,6 +1,7 @@
 ﻿using LINQToTTreeLib.QueryVisitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
+using Remotion.Linq.Clauses.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         public void QMWithNoConcats()
         {
             var q1 = new QMExtractorQueriable<ntup>();
-            var q2 = new QMExtractorQueriable<ntup>();
             var r1 = q1.Count();
 
             var qm = QMExtractorExecutor.LastQM;
@@ -44,6 +44,46 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(2, qmList.Length);
             Assert.AreEqual(qmList[0].ToString(), qmList[1].ToString());
+
+            // Make sure the query providers are correct! Since we don't care about the order.
+            var providersUsed = ExtractProviders<ntup>(qmList);
+            Assert.IsTrue(providersUsed.Contains(q1.Provider));
+            Assert.IsTrue(providersUsed.Contains(q2.Provider));
+            Assert.AreEqual(2, providersUsed.Count);
+        }
+
+        /// <summary>
+        /// Extract the providers from each query sent in.
+        /// </summary>
+        /// <param name="qmList"></param>
+        /// <returns></returns>
+        private HashSet<IQueryProvider> ExtractProviders<T>(params QueryModel[] qmList)
+        {
+            var r = new HashSet<IQueryProvider>();
+
+            foreach (var q in qmList)
+            {
+                var fromClause = q.MainFromClause.FromExpression;
+
+                if (fromClause is SubQueryExpression)
+                {
+                    fromClause = (fromClause as SubQueryExpression).QueryModel.MainFromClause.FromExpression;
+                }
+
+                if (fromClause is ConstantExpression)
+                {
+                    var cVal = fromClause as ConstantExpression;
+                    var provider = (cVal.Value as QMExtractorQueriable<T>);
+                    Assert.IsNotNull(provider);
+                    r.Add(provider.Provider);
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            }
+
+            return r;
         }
 
         [TestMethod]
@@ -65,6 +105,13 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             Assert.AreEqual(3, qmList.Length);
             Assert.AreEqual(qmList[0].ToString(), qmList[1].ToString());
             Assert.AreEqual(qmList[0].ToString(), qmList[2].ToString());
+
+            // Make sure the query providers are correct! Since we don't care about the order.
+            var providersUsed = ExtractProviders<ntup>(qmList);
+            Assert.IsTrue(providersUsed.Contains(q1.Provider));
+            Assert.IsTrue(providersUsed.Contains(q2.Provider));
+            Assert.IsTrue(providersUsed.Contains(q3.Provider));
+            Assert.AreEqual(3, providersUsed.Count);
         }
 
         [TestMethod]
@@ -86,6 +133,13 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             Assert.AreEqual(3, qmList.Length);
             Assert.AreEqual(qmList[0].ToString(), qmList[2].ToString());
             Assert.IsTrue(qmList[1].ToString().EndsWith("Count()"), $"'{qmList[1].ToString()}' doesn't end with Count()");
+
+            // Make sure the query providers are correct! Since we don't care about the order.
+            var providersUsed = ExtractProviders<ntup>(qmList);
+            Assert.IsTrue(providersUsed.Contains(q1.Provider));
+            Assert.IsTrue(providersUsed.Contains(q2.Provider));
+            Assert.IsTrue(providersUsed.Contains(q3.Provider));
+            Assert.AreEqual(3, providersUsed.Count);
         }
 
         [TestMethod]
@@ -115,6 +169,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var q1 = new QMExtractorQueriable<ntup>();
             var q2 = new QMExtractorQueriable<ntup>();
             var q3 = new QMExtractorQueriable<ntup>();
+
             var r1 = q1.Select(r => r.run).Concat(q2.Select(r => r.run)).Select(r => r * 2).Concat(q3.Select(r => r.run)).Count();
 
             var qm = QMExtractorExecutor.LastQM;
