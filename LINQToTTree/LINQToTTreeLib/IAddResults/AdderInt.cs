@@ -35,6 +35,13 @@ namespace LINQToTTreeLib.IAddResults
             return accumulator + o2;
         }
 
+        /// <summary>
+        /// Add the integers together.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="accumulator"></param>
+        /// <param name="o2"></param>
+        /// <returns></returns>
         public T Update<T>(T accumulator, T o2)
         {
             var a = accumulator as int?;
