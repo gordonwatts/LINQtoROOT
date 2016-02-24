@@ -74,8 +74,10 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 {
                     var cVal = fromClause as ConstantExpression;
                     var provider = (cVal.Value as QMExtractorQueriable<T>);
-                    Assert.IsNotNull(provider);
-                    r.Add(provider.Provider);
+                    if (provider != null)
+                    {
+                        r.Add(provider.Provider);
+                    }
                 }
                 else
                 {
@@ -182,6 +184,52 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(3, qmList.Length);
             Assert.AreNotEqual(qmList[0].ToString(), qmList[1].ToString());
+        }
+
+        /// <summary>
+        /// Stumbled on this while running a much more complex test in to generate code.
+        /// Obviously doing a bad replacement here!
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        [TestMethod]
+        public void QMWithDifferentSourcesAndSelectMany()
+        {
+            var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupe>();
+            var q2 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+
+            var dude = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int)1).Concat(q1.Select(i => (int)1)).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm);
+
+            foreach (var qmNew in qmList)
+            {
+                Console.WriteLine(qmNew);
+            }
+
+            Assert.AreEqual(2, qmList.Length);
+
+            // The queries should split as follows. Make sure.
+            var dude2 = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int)1).Count();
+            var qm2String = QMExtractorExecutor.LastQM.CleanQMString();
+            var dude1 = q1.Select(i => (int)1).Count();
+            var qm1String = QMExtractorExecutor.LastQM.CleanQMString();
+
+            Assert.IsTrue(qmList.Where(q => q.CleanQMString() == qm1String).Any(), qm1String);
+            Assert.IsTrue(qmList.Where(q => q.CleanQMString() == qm2String).Any(), qm2String);
+
+            // Make sure the query providers are correct! Since we don't care about the order.
+            var providersUsed1 = ExtractProviders<TTreeQueryExecutorTest.TestNtupe>(qmList);
+            var providersUsed2 = ExtractProviders<TTreeQueryExecutorTest.TestNtupeArrD>(qmList);
+            foreach (var item in providersUsed2)
+            {
+                providersUsed1.Add(item);
+            }
+            Assert.AreEqual(2, providersUsed1.Count);
+            Assert.IsTrue(providersUsed1.Contains(q1.Provider));
+            Assert.IsTrue(providersUsed1.Contains(q2.Provider));
         }
 
         [TestMethod]

@@ -4,6 +4,7 @@ using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
+using Remotion.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -727,6 +728,18 @@ namespace LINQToTTreeLib.Tests
                 if (m.Success)
                     yield return m.Groups["var"].Value;
             }
+        }
+
+        /// <summary>
+        /// Return a string form of the QM that might be a bit better suited for comparisons
+        /// </summary>
+        /// <param name="qm"></param>
+        /// <returns></returns>
+        public static string CleanQMString(this QueryModel qm)
+        {
+            return qm.ToString()
+                .Replace("{", "").Replace("}", "") // Get rid of sub-query differentiators
+                ;
         }
     }
 }

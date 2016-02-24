@@ -92,6 +92,7 @@ namespace LINQToTTreeLib.QueryVisitors
                 }
                 newQM.MainFromClause.FromExpression = ro.Source2;
                 newQM.SelectClause.Selector = new QuerySourceReferenceExpression(newQM.MainFromClause);
+                newQM.BodyClauses.Clear();
                 lst.Add(newQM);
 
                 // Ok - we've taken one branch. We need to remove it from the list of things to look at, and work on the
