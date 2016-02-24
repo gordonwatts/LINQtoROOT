@@ -67,7 +67,14 @@ namespace LINQToTTreeLib.QueryVisitors
         /// <returns></returns>
         private static IEnumerable<QueryModel> SplitQMByConcatResultOperator(QueryModel queryModel)
         {
-            // Now, look for concat operators in the list.
+            // If there are no concat result operators in the list, then we just bail quickly.
+            // This is to specifically avoid the Clone operation.
+            if (!queryModel.ResultOperators.Where(r => r is ConcatResultOperator).Any())
+            {
+                return new QueryModel[] { queryModel };
+            }
+
+            // Now, look for concat operators in the list. Pop them out when we find them.
             ConcatResultOperator ro = null;
             var qm = queryModel.Clone();
             var lst = new List<QueryModel>();
