@@ -2,6 +2,7 @@
 using LINQToTTreeLib.Files;
 using LINQToTTreeLib.QMFunctions;
 using LINQToTTreeLib.ResultOperators;
+using LINQToTTreeLib.Tests.IAddResults;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.CPPCode;
 using LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls;
@@ -102,6 +103,8 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
                 MEFUtilities.AddPart(new HandleGroupType());
                 MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
+
+                MEFUtilities.AddPart(new AdderInt());
             }
 
             var qv = new QueryVisitor(Result, new CodeContext() { BaseNtupleObjectType = _baseType }, MEFUtilities.MEFContainer);

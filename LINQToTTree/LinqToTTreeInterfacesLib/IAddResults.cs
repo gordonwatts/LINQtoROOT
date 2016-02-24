@@ -9,7 +9,7 @@ namespace LinqToTTreeInterfacesLib
     /// <summary>
     /// For adding together results from a run
     /// </summary>
-    public interface IAddResults
+    public interface IAddResult
     {
         /// <summary>
         /// Return true if we can add items of type t
@@ -19,13 +19,14 @@ namespace LinqToTTreeInterfacesLib
         bool CanHandle(Type t);
 
         /// <summary>
-        /// return accumulator = accumulator + o2. o2 may not be altered in any way.
+        /// return accumulator = accumulator + o2. o2 may not be altered in any way. Return accumulator.
+        /// This allows both ref and value symantics (so shoudl work for int as well as a TH1F).
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="accumulator">The accumulator. Add </param>
         /// <param name="o2"></param>
         /// <returns></returns>
-        void Update<T>(T accumulator, T o2);
+        T Update<T>(T accumulator, T o2);
 
         /// <summary>
         /// Make a clone, if appropriate, of the first value. FOr example, if we are looking at integers, then this

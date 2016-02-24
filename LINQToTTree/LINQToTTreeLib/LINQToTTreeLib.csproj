@@ -183,6 +183,7 @@
     <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="IAddResults\AdderInt.cs" />
     <Compile Include="Optimization\CommonStatementLifter.cs" />
     <Compile Include="Optimization\Optimizer.cs" />
     <Compile Include="Optimization\StatementLifter.cs" />

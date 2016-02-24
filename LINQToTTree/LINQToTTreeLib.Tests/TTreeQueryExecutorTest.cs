@@ -6,6 +6,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Tests.IAddResults;
 
 namespace LINQToTTreeLib
 {
@@ -319,6 +320,26 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        public void RunSimpleConcatSameSourceCountResult()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+            ntuple._gProxyFile = proxyFile.FullName;
+
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile }, "dude", typeof(ntuple));
+            var dude = q.Concat(q).Count();
+
+            Assert.AreEqual(numberOfIter*2, dude);
+        }
+
+        [TestMethod]
+        public void RunSimpleConcatTwoSourcesCountResult()
+        {
+            Assert.Inconclusive();
         }
 
         [TestMethod]

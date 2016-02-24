@@ -16,6 +16,8 @@ using NVelocity;
 using NVelocity.App;
 using Remotion.Linq;
 using LINQToTTreeLib.QueryVisitors;
+using Remotion.Linq.Clauses.Expressions;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -294,8 +296,10 @@ namespace LINQToTTreeLib
         /// </summary>
         List<IQueuedQuery> _queuedQueries = new List<IQueuedQuery>();
 
+#pragma warning disable CS0649
         [ImportMany]
-        IEnumerable<IAddResults> _resultAdders;
+        IEnumerable<IAddResult> _resultAdders;
+#pragma warning restore
 
         /// <summary>
         /// Future Value for adders. NOTE: This is not functional. If you update the result of somethign returned here,
@@ -305,11 +309,12 @@ namespace LINQToTTreeLib
         private class AddedFutureValue<T> : IFutureValue<T>
         {
             private IFutureValue<T> _accumulator;
-            private IAddResults _adder;
+            private IAddResult _adder;
             private IFutureValue<T> _o2;
             private bool added = false;
+            private T _val;
 
-            public AddedFutureValue(IFutureValue<T> accumulator, IFutureValue<T> o2, IAddResults adder)
+            public AddedFutureValue(IFutureValue<T> accumulator, IFutureValue<T> o2, IAddResult adder)
             {
                 _accumulator = accumulator;
                 _o2 = o2;
@@ -336,9 +341,10 @@ namespace LINQToTTreeLib
                 {
                     if (!added)
                     {
-                        _adder.Update(_accumulator.Value, _o2.Value);
+                        _val = _adder.Update(_accumulator.Value, _o2.Value);
+                        added = true;
                     }
-                    return _accumulator.Value;
+                    return _val;
                 }
             }
         }
@@ -441,7 +447,7 @@ namespace LINQToTTreeLib
             if (qmsConcated.Length > 1)
             {
                 // Get the future values for all of these.
-                var qmValues = qmsConcated.Select(q => ExecuteScalarAsFuture<TResult>(q)).ToArray();
+                var qmValues = qmsConcated.Select(q => ExecuteUnknownQM<TResult>(q)).ToArray();
 
                 // Get the addition operator for these folks
                 var adder = _resultAdders
@@ -460,6 +466,49 @@ namespace LINQToTTreeLib
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Execute or queue an unknown query model. If this is a QM that contains one of our own, 
+        /// then we just skip out and call back into execute future.
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="q"></param>
+        /// <returns></returns>
+        private IFutureValue<TResult> ExecuteUnknownQM<TResult>(QueryModel q)
+        {
+            var provider = FindQueryProvider(q)
+                .ThrowIfNull(() => new InvalidOperationException($"I can't determine the provider for the QueryModel '{q.ToString()}' - giving up!"));
+
+            // See if it is "us"
+            if ((provider as DefaultQueryProvider)?.Executor is TTreeQueryExecutor)
+            {
+                var exe = (provider as DefaultQueryProvider).Executor as TTreeQueryExecutor;
+                return exe.ExecuteScalarAsFuture<TResult>(q);
+            } else
+            {
+                // It is not, so we will just execute it right here.
+                //TResult r = provider.
+                throw new InvalidOperationException("Currently unable to directly execute querys on other providers");
+            }
+        }
+
+        /// <summary>
+        /// Given a query model, determine who the provider is.
+        /// </summary>
+        /// <param name="q"></param>
+        /// <returns></returns>
+        private IQueryProvider FindQueryProvider(QueryModel q)
+        {
+            var fromExpression = q.MainFromClause.FromExpression;
+            while (fromExpression is SubQueryExpression)
+            {
+                fromExpression = (fromExpression as SubQueryExpression).QueryModel.MainFromClause.FromExpression;
+            }
+
+            var cVal = (fromExpression as ConstantExpression)
+                ?.Value as IQueryable;
+            return cVal?.Provider;
         }
 
         /// <summary>
