@@ -15,6 +15,7 @@ using LINQToTTreeLib.Utils;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Linq;
+using LINQToTTreeLib.QueryVisitors;
 
 namespace LINQToTTreeLib
 {
@@ -213,8 +214,9 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Return a collection. We currently don't support this, so it remains a
         /// bomb! And it is not likely one would want to move a TB of info back from a
-        /// File to another... now, writing it out to a file is a possibility - but
-        /// that would be a seperate scalar result. :-)
+        /// File to local .NET memory... now, writing it out to a file is a possibility, and there
+        /// is a AsTTree result operator now that will do just this. However, it returns a TTree or a FileInfo,
+        /// which means that it is a scalar.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryModel"></param>
@@ -292,6 +294,55 @@ namespace LINQToTTreeLib
         /// </summary>
         List<IQueuedQuery> _queuedQueries = new List<IQueuedQuery>();
 
+        [ImportMany]
+        IEnumerable<IAddResults> _resultAdders;
+
+        /// <summary>
+        /// Future Value for adders. NOTE: This is not functional. If you update the result of somethign returned here,
+        /// then this will return the updated result - it holds onto an object reference!!!
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class AddedFutureValue<T> : IFutureValue<T>
+        {
+            private IFutureValue<T> _accumulator;
+            private IAddResults _adder;
+            private IFutureValue<T> _o2;
+            private bool added = false;
+
+            public AddedFutureValue(IFutureValue<T> accumulator, IFutureValue<T> o2, IAddResults adder)
+            {
+                _accumulator = accumulator;
+                _o2 = o2;
+                _adder = adder;
+            }
+            
+            /// <summary>
+            /// Are they both ready?
+            /// </summary>
+            public bool HasValue
+            {
+                get
+                {
+                    return _accumulator.HasValue && _o2.HasValue;
+                }
+            }
+
+            /// <summary>
+            /// Returns the value.
+            /// </summary>
+            public T Value
+            {
+                get
+                {
+                    if (!added)
+                    {
+                        _adder.Update(_accumulator.Value, _o2.Value);
+                    }
+                    return _accumulator.Value;
+                }
+            }
+        }
+
         /// <summary>
         /// Internal method to return a future to a query.
         /// We first check the cache, if there is a hit, we assign the result
@@ -310,6 +361,15 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(6, "ExecuteScalarAsFuture: Startup");
             Init();
             LocalInit();
+
+            // If the user has put together several different sources with Concat, we need to
+            // split those out. We will call back into ourselves to evalute each QM - this ends
+            // the updating if this is multiple QM's.
+            var r = ExecuteScalarConcatQM<TResult>(queryModel);
+            if (r != null)
+            {
+                return r;
+            }
 
             ///
             /// The query visitor is what we will use to scan the actual guys.
@@ -357,7 +417,7 @@ namespace LINQToTTreeLib
             }
 
             ///
-            /// Ok, no cache hit. Optimize and queue up the run. So queue up the run.
+            /// Ok, no cache hit. Optimize and queue up the run.
             /// 
 
             if (UseStatementOptimizer)
@@ -366,6 +426,40 @@ namespace LINQToTTreeLib
             var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this) };
             _queuedQueries.Add(cq);
             return cq.Future;
+        }
+
+        /// <summary>
+        /// Evaluate the QM if it has Concat result operators in it. This can mean that we are dealing with multiple
+        /// sources of data, so we will need to execute those queries privatly.
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="queryModel"></param>
+        /// <returns></returns>
+        private IFutureValue<TResult> ExecuteScalarConcatQM<TResult>(QueryModel queryModel)
+        {
+            var qmsConcated = ConcatSplitterQueryVisitor.Split(queryModel);
+            if (qmsConcated.Length > 1)
+            {
+                // Get the future values for all of these.
+                var qmValues = qmsConcated.Select(q => ExecuteScalarAsFuture<TResult>(q)).ToArray();
+
+                // Get the addition operator for these folks
+                var adder = _resultAdders
+                    .ThrowIfNull(() => new InvalidOperationException("Result Adders has not be compesed!"))
+                    .Where(a => a.CanHandle(typeof(TResult)))
+                    .FirstOrDefault()
+                    .ThrowIfNull(() => new InvalidOperationException($"Unable to find an IAddResult object for type '{typeof(TResult).Name}' - so can't add them together! Please provide MEF export."));
+
+                var fsum = qmValues
+                    .Skip(1)
+                    .Aggregate(qmValues.First() as IFutureValue<TResult>, (accum, value) => new AddedFutureValue<TResult>(accum, value, adder));
+
+                return fsum;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>

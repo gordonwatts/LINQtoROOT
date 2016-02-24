@@ -256,6 +256,7 @@
     <Compile Include="TypeHandlers\TypeHandlerConvert.cs" />
     <Compile Include="TypeHandlers\TypeHandlerHelpers.cs" />
     <Compile Include="Utils\EnumerableUtils.cs" />
+    <Compile Include="Utils\ExceptionUtils.cs" />
     <Compile Include="Utils\ExpressionUtilities.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\GeneratedCodeHelpers.cs" />

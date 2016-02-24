@@ -109,6 +109,34 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             // Basically different by +1, not totally sure how to determine that easily here, so will leave it untested for now.
         }
 
+        [TestMethod]
+        public void QMWithDifferentSelectConcats()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            var q3 = new QMExtractorQueriable<ntup>();
+            var r1 = q1.Select(r => r.run).Concat(q2.Select(r => r.run)).Select(r => r * 2).Concat(q3.Select(r => r.run)).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm);
+
+            foreach (var qmNew in qmList)
+            {
+                Console.WriteLine(qmNew);
+            }
+
+            Assert.AreEqual(3, qmList.Length);
+            Assert.AreNotEqual(qmList[0].ToString(), qmList[1].ToString());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void ConcatOfArrays()
+        {
+            // Thsi should fail - we don't allow arrays to be concat'd currently.
+            Assert.Inconclusive();
+        }
+
         /// <summary>
         /// Queriable that is soley designed to extract a query model
         /// </summary>

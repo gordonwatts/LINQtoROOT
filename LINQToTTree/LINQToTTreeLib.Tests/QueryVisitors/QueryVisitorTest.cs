@@ -153,7 +153,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(7, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
 
-#if false
         [TestMethod]
         public void CountFromConcatSources()
         {
@@ -169,7 +168,6 @@ namespace LINQToTTreeLib
 
             Assert.AreEqual(7, query1.DumpCode().Count(), "# of lines of code"); // the {, "the addition", and the "}".
         }
-#endif
 
         [TestMethod]
         public void TestCountOnArray()

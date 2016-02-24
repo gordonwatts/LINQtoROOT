@@ -40,7 +40,7 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public override ResultOperatorBase Clone(CloneContext cloneContext)
         {
-            throw new NotImplementedException();
+            return new AsFileResultOperator(OutputFile, HeaderColumns);
         }
 
         /// <summary>
