@@ -6,7 +6,6 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LINQToTTreeLib.Tests.IAddResults;
 
 namespace LINQToTTreeLib
 {
@@ -160,6 +159,22 @@ namespace LINQToTTreeLib
         /// Ntuple with emptys for everything.
         /// </summary>
         public class ntuple
+        {
+            public static string _gProxyFile = "";
+            public static string[] _gObjectFiles = { };
+            public static string[] _gCINTLines = { };
+
+            internal static void Reset()
+            {
+                _gProxyFile = "";
+                _gObjectFiles = new string[0];
+            }
+        }
+
+        /// <summary>
+        /// Same, in case we need two at once
+        /// </summary>
+        public class ntuple2
         {
             public static string _gProxyFile = "";
             public static string[] _gObjectFiles = { };
@@ -334,6 +349,25 @@ namespace LINQToTTreeLib
             var dude = q.Concat(q).Count();
 
             Assert.AreEqual(numberOfIter*2, dude);
+        }
+
+        [TestMethod]
+        public void RunSimpleConcatTwoSourceCountResult()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var proxyFile1 = TestUtils.GenerateROOTProxy(rootFile1, "dude");
+            ntuple._gProxyFile = proxyFile1.FullName;
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile1 }, "dude", typeof(ntuple));
+
+            var rootFile2 = TestUtils.CreateFileOfVectorDouble(numberOfIter);
+            var proxyFile2 = TestUtils.GenerateROOTProxy(rootFile2, "dude");
+            ntuple2._gProxyFile = proxyFile2.FullName;
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupeArrD>(new[] { rootFile2 }, "dude", typeof(ntuple2));
+
+            var dude = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int) 1).Concat(q1.Select(e => (int) 1)).Count();
+
+            Assert.AreEqual(numberOfIter * 10 + numberOfIter, dude);
         }
 
         [TestMethod]
