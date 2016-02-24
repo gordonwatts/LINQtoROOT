@@ -371,12 +371,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void RunSimpleConcatTwoSourcesCountResult()
-        {
-            Assert.Inconclusive();
-        }
-
-        [TestMethod]
         public void TestSimpleResultDebugCompile()
         {
             var rootFile = TestUtils.CreateFileOfInt(10);
