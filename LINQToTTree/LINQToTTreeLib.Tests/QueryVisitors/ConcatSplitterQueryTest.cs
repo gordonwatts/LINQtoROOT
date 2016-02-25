@@ -14,7 +14,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
     [TestClass]
     public class ConcatQuerySplitterTest
     {
-        // TODO: replace all the for print with DumpToConsole()
         [TestMethod]
         public void QMWithNoConcats()
         {
@@ -36,12 +35,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var r1 = q1.Concat(q2).Count();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
-
-            foreach (var qmNew in qmList)
-            {
-                Console.WriteLine(qmNew);
-            }
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
             Assert.AreEqual(qmList[0].ToString(), qmList[1].ToString());
@@ -98,12 +93,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var r1 = q1.Concat(q2).Concat(q3).Count();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
-
-            foreach (var qmNew in qmList)
-            {
-                Console.WriteLine(qmNew);
-            }
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
 
             Assert.AreEqual(3, qmList.Length);
             Assert.AreEqual(qmList[0].ToString(), qmList[1].ToString());
@@ -126,12 +117,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var r1 = q1.Concat(q2.Concat(q3)).Count();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
-
-            foreach (var qmNew in qmList)
-            {
-                Console.WriteLine(qmNew);
-            }
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
 
             Assert.AreEqual(3, qmList.Length);
             Assert.AreEqual(qmList[0].ToString(), qmList[2].ToString());
@@ -153,12 +140,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var r1 = q1.Select(r => r.run).Concat(q2.Select(r => r.run + 1)).Count();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
-
-            foreach (var qmNew in qmList)
-            {
-                Console.WriteLine(qmNew);
-            }
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
             Assert.AreNotEqual(qmList[0].ToString(), qmList[1].ToString());
@@ -184,12 +167,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .Count();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
-
-            foreach (var qmNew in qmList)
-            {
-                Console.WriteLine(qmNew);
-            }
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
 
             Assert.AreEqual(3, qmList.Length);
             // TODO: fix this so it works.
@@ -296,12 +275,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var dude = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int)1).Concat(q1.Select(i => (int)1)).Count();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
-
-            foreach (var qmNew in qmList)
-            {
-                Console.WriteLine(qmNew);
-            }
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
 
