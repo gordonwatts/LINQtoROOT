@@ -48,7 +48,8 @@ namespace LINQToTTreeLib.QueryVisitors
             public List<QueryModel> _allModels = new List<QueryModel>();
 
             /// <summary>
-            /// Look at all the result operators.
+            /// Look at all the result operators. The Concat operators can affect what happens before and after thier
+            /// position in the RO list. So we have to look at it as a collection, rather than individually.
             /// </summary>
             /// <param name="resultOperators"></param>
             /// <param name="queryModel"></param>
@@ -72,7 +73,7 @@ namespace LINQToTTreeLib.QueryVisitors
             private static IEnumerable<QueryModel> SplitQMByConcatResultOperator(QueryModel queryModel)
             {
                 // If there are no concat result operators in the list, then we just bail quickly.
-                // This is to specifically avoid the Clone operation.
+                // This is to specifically avoid the Clone operation unless we actually need it.
                 if (!queryModel.ResultOperators.Where(r => r is ConcatResultOperator).Any())
                 {
                     return new QueryModel[] { queryModel };
@@ -106,7 +107,6 @@ namespace LINQToTTreeLib.QueryVisitors
                 }
 
                 // The qm left over needs to be added to the list.
-                // TODO: add code to prevent the ".Clone()" in the case that the QM has no Concat operators?
                 lst.Add(qm);
                 return lst;
             }
@@ -164,8 +164,6 @@ namespace LINQToTTreeLib.QueryVisitors
 
                         // The rest become new reuslt operators. We put them in basically right where this one is (which
                         // has now been modified by the above line).
-                        // TODO: bad refactorying - SplitQMByConcatREsultOperator needs to return a list of expressions.
-                        //       leave for now till we understand how to do other result operators between the Concat RO's!
                         foreach (var qm in queryModels.Take(queryModels.Length - 1))
                         {
                             queryModel.ResultOperators.Insert(index + 1, new ConcatResultOperator(qm.MainFromClause.FromExpression));
