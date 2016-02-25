@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.Tests.QueryVisitors
 {
+    // TODO: Add Checkquery checks wherever appropriate
     [TestClass]
     public class ConcatQuerySplitterTest
     {
@@ -21,10 +22,11 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var r1 = q1.Count();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
 
             Assert.AreEqual(1, qmList.Length);
-            Assert.AreEqual(qm.ToString(), qmList[0].ToString());
+            CheckForQuery(() => q1.Count(), qmList);
         }
 
         [TestMethod]
@@ -39,7 +41,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
-            Assert.AreEqual(qmList[0].ToString(), qmList[1].ToString());
+            CheckForQuery(() => q1.Count(), qmList, 2); // Can't really tell the diff between q1 and q2.
 
             // Make sure the query providers are correct! Since we don't care about the order.
             var providersUsed = ExtractProviders<ntup>(qmList);
@@ -97,8 +99,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(3, qmList.Length);
-            Assert.AreEqual(qmList[0].ToString(), qmList[1].ToString());
-            Assert.AreEqual(qmList[0].ToString(), qmList[2].ToString());
+            CheckForQuery(() => q1.Count(), qmList, 3);
 
             // Make sure the query providers are correct! Since we don't care about the order.
             var providersUsed = ExtractProviders<ntup>(qmList);
@@ -121,8 +122,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(3, qmList.Length);
-            Assert.AreEqual(qmList[0].ToString(), qmList[2].ToString());
-            Assert.IsTrue(qmList[1].ToString().EndsWith("Count()"), $"'{qmList[1].ToString()}' doesn't end with Count()");
+            CheckForQuery(() => q1.Count(), qmList, 3);
 
             // Make sure the query providers are correct! Since we don't care about the order.
             var providersUsed = ExtractProviders<ntup>(qmList);
@@ -144,9 +144,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
-            Assert.AreNotEqual(qmList[0].ToString(), qmList[1].ToString());
-
-            // Basically different by +1, not totally sure how to determine that easily here, so will leave it untested for now.
+            CheckForQuery(() => q1.Select(r => r.run).Count(), qmList);
+            CheckForQuery(() => q2.Select(r => r.run + 1).Count(), qmList);
         }
 
         [TestMethod]
@@ -171,10 +170,10 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(3, qmList.Length);
-            // TODO: fix this so it works.
-            //CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList);
-            //CheckForQuery(() => q2.Select(r => r.run).Select(r => r * 2).Count(), qmList);
-            //CheckForQuery(() => q3.Select(r => r.run).Count(), qmList);
+            CheckForQuery(() => q3.Select(r => r.run).Count(), qmList);
+
+            // TODO: fix this so it works. Query optimization done by re-linq makes this "tough".
+            //CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList, 2);
         }
 
         [TestMethod]
@@ -216,8 +215,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(2, qmList.Length);
 
-            // Generates the proper thing, but does it "down one" with an extra from int i in xxx". :(
-            // TODO: fix this so it doesn't unnessecarrily introduce done level down.
+            // TODO: Query optimization to remove the one-level down in our queries.
             //CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList);
             //CheckForQuery(() => q1.Select(r => r.run + 1).Select(r => r * 2).Count(), qmList);
         }
@@ -251,12 +249,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
-            Assert.AreEqual(qmList[0].ToString(), qmList[1].ToString());
 
-            var rwanted = q1.Select(r => r.run).Select(r => r * 2).Count();
-            var qmExpected = QMExtractorExecutor.LastQM;
-
-            Assert.AreEqual(qmExpected.CleanQMString(), qmList[0].CleanQMString());
+            CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList, 2);
         }
 
         /// <summary>
@@ -280,14 +274,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(2, qmList.Length);
 
-            // The queries should split as follows. Make sure.
-            var dude2 = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int)1).Count();
-            var qm2String = QMExtractorExecutor.LastQM.CleanQMString();
-            var dude1 = q1.Select(i => (int)1).Count();
-            var qm1String = QMExtractorExecutor.LastQM.CleanQMString();
-
-            Assert.IsTrue(qmList.Where(q => q.CleanQMString() == qm1String).Any(), qm1String);
-            Assert.IsTrue(qmList.Where(q => q.CleanQMString() == qm2String).Any(), qm2String);
+            CheckForQuery(() => q1.Select(i => (int)1).Count(), qmList);
+            CheckForQuery(() => q2.SelectMany(e => e.myvectorofdouble).Select(i => (int)1).Count(), qmList);
 
             // Make sure the query providers are correct! Since we don't care about the order.
             var providersUsed1 = ExtractProviders<TTreeQueryExecutorTest.TestNtupe>(qmList);
@@ -314,8 +302,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             var qm = QMExtractorExecutor.LastQM;
             var qmList = ConcatSplitterQueryVisitor.Split(qm);
-
-            Assert.AreEqual(1, qmList.Length);
         }
     }
 }

@@ -8,6 +8,7 @@ using Remotion.Linq.Clauses;
 using LINQToTTreeLib.relinq;
 using Remotion.Linq.Clauses.Expressions;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -88,9 +89,7 @@ namespace LINQToTTreeLib.QueryVisitors
                     // become the query from clause. Note this also means messing with the "select" clause to make sure it
                     // isn't doing anything special (select clause comes before result operators, semantically).
 
-                    var mfc = new MainFromClause(qm.MainFromClause.ItemName, ro.Source2.Type, ro.Source2);
-                    var selector = new QuerySourceReferenceExpression(mfc);
-                    var newQM = new QueryModel(mfc, new SelectClause(selector));
+                    QueryModel newQM = NewQMFromOldWithLifting(ro.Source2, qm.MainFromClause.ItemName);
 
                     var cc = new CloneContext(new QuerySourceMapping());
 
@@ -113,6 +112,35 @@ namespace LINQToTTreeLib.QueryVisitors
             }
 
             /// <summary>
+            /// Build a new QM given a from expression. If the from expression is just a sub-query expression,
+            /// and it is "simple", then lift it.
+            /// </summary>
+            /// <param name="ro"></param>
+            /// <param name="qm"></param>
+            /// <returns></returns>
+            /// <remarks>
+            /// This is an optimization. From the semantic point of view, this code should not change anything.
+            /// </remarks>
+            private static QueryModel NewQMFromOldWithLifting(Expression fromExpr, string itemName)
+            {
+                // If this is a SQE, and it is "simple", then we can lift it.
+                if (fromExpr is SubQueryExpression)
+                {
+                    var sqe = fromExpr as SubQueryExpression;
+                    if (sqe.QueryModel.ResultOperators.Count == 0 && sqe.QueryModel.BodyClauses.Count == 0)
+                    {
+                        return sqe.QueryModel.Clone();
+                    }
+                }
+
+                // Now simple - so we will have some trouble if we have to add on other result operators, etc.
+                var mfc = new MainFromClause(itemName, fromExpr.Type, fromExpr);
+                var selector = new QuerySourceReferenceExpression(mfc);
+                var newQM = new QueryModel(mfc, new SelectClause(selector));
+                return newQM;
+            }
+
+            /// <summary>
             /// Look at the result operator to see if it has a concat embeded in it.
             /// </summary>
             /// <param name="resultOperator"></param>
@@ -132,7 +160,7 @@ namespace LINQToTTreeLib.QueryVisitors
                         queryModels = queryModels.SelectMany(q => Split(q)).ToArray();
 
                         // The last qm becomes the new target of the Concat result operator we are looking at.
-                        ro.Source2 = new SubQueryExpression(queryModels.Last());
+                        ro.Source2 = queryModels.Last().WrapSQE();
 
                         // The rest become new reuslt operators. We put them in basically right where this one is (which
                         // has now been modified by the above line).
@@ -188,7 +216,7 @@ namespace LINQToTTreeLib.QueryVisitors
                         foreach (var qSub in qms)
                         {
                             var qm = queryModel.Clone();
-                            qm.MainFromClause.FromExpression = new SubQueryExpression(qSub);
+                            qm.MainFromClause.FromExpression = qSub.WrapSQE();
 
                             if (lastConcatIndex.HasValue && qSub != qms[qms.Length - 1])
                             {
@@ -211,7 +239,36 @@ namespace LINQToTTreeLib.QueryVisitors
                     _models.Add(queryModel);
                 }
             }
+        }
+    }
 
+    static class QueryModelHelpers
+    {
+        /// <summary>
+        /// Be clever about wrapping a sub-query expression. For example, if the query is just a SQE already,
+        /// return that, rather than wrapping it twice.
+        /// </summary>
+        /// <param name="qSub"></param>
+        /// <returns></returns>
+        public static SubQueryExpression WrapSQE(this QueryModel qm)
+        {
+            if (qm.ResultOperators.Count == 0 && qm.BodyClauses.Count == 0)
+            {
+                if (qm.MainFromClause.FromExpression is SubQueryExpression)
+                {
+                    if (qm.SelectClause.Selector is QuerySourceReferenceExpression)
+                    {
+                        var qsre = qm.SelectClause.Selector as QuerySourceReferenceExpression;
+                        if (qsre.ReferencedQuerySource == qm.MainFromClause)
+                        {
+                            return qm.MainFromClause.FromExpression as SubQueryExpression;
+                        }
+                    }
+                }
+            }
+
+            // Ok, nothing smart to do here. Return the default guy.
+            return new SubQueryExpression(qm);
         }
     }
 }
