@@ -741,5 +741,20 @@ namespace LINQToTTreeLib.Tests
                 .Replace("{", "").Replace("}", "") // Get rid of sub-query differentiators
                 ;
         }
+
+        /// <summary>
+        /// Dump a list of query models to the console.
+        /// </summary>
+        /// <param name="qms"></param>
+        /// <returns></returns>
+        public static QueryModel[] DumpToConsole(this QueryModel[] qms)
+        {
+            foreach (var qmNew in qms)
+            {
+                Console.WriteLine(qmNew);
+            }
+
+            return qms;
+        }
     }
 }
