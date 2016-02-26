@@ -166,8 +166,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .Where(x => x > 5)
                 .Count();
 
-            var r = all.Count();
-
             var qm = QMExtractorExecutor.LastQM;
             var qmList = ConcatSplitterQueryVisitor.Split(qm)
                 .DumpToConsole();
