@@ -5,12 +5,12 @@ using System.ComponentModel.Composition;
 namespace LINQToTTreeLib.IAddResults
 {
     [Export(typeof(IAddResult))]
-    class AdderInt : IAddResult
+    class AdderDouble : IAddResult
     {
         // We deal only with integers
         public bool CanHandle(Type t)
         {
-            return t == typeof(int);
+            return t == typeof(double);
         }
 
         /// <summary>
@@ -33,8 +33,8 @@ namespace LINQToTTreeLib.IAddResults
         /// <returns></returns>
         public T Update<T>(T accumulator, T o2)
         {
-            var a = accumulator as int?;
-            var o = o2 as int?;
+            var a = accumulator as double?;
+            var o = o2 as double?;
 
             object r = a.Value + o.Value;
 

@@ -1,16 +1,23 @@
 ﻿using LinqToTTreeInterfacesLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.IAddResults
 {
+    /// <summary>
+    /// Add generic histograms
+    /// </summary>
     [Export(typeof(IAddResult))]
-    class AdderInt : IAddResult
+    class AdderTH : IAddResult
     {
         // We deal only with integers
         public bool CanHandle(Type t)
         {
-            return t == typeof(int);
+            return t.GetInterfaces().Contains(typeof(ROOTNET.Interface.NTH1));
         }
 
         /// <summary>
@@ -21,7 +28,8 @@ namespace LINQToTTreeLib.IAddResults
         /// <returns></returns>
         public T Clone<T>(T o)
         {
-            return o;
+            var h = o as ROOTNET.Interface.NTH1;
+            return (T) h.Clone();
         }
 
         /// <summary>
@@ -33,12 +41,12 @@ namespace LINQToTTreeLib.IAddResults
         /// <returns></returns>
         public T Update<T>(T accumulator, T o2)
         {
-            var a = accumulator as int?;
-            var o = o2 as int?;
+            var a = accumulator as ROOTNET.Interface.NTH1;
+            var o = o2 as ROOTNET.Interface.NTH1;
 
-            object r = a.Value + o.Value;
+            a.Add(o);
 
-            return (T)r;
+            return accumulator;
         }
     }
 }

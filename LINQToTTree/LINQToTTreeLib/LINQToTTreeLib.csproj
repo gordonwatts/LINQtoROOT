@@ -183,7 +183,9 @@
     <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="IAddResults\AdderDouble.cs" />
     <Compile Include="IAddResults\AdderInt.cs" />
+    <Compile Include="IAddResults\AdderTH.cs" />
     <Compile Include="Optimization\CommonStatementLifter.cs" />
     <Compile Include="Optimization\Optimizer.cs" />
     <Compile Include="Optimization\StatementLifter.cs" />
