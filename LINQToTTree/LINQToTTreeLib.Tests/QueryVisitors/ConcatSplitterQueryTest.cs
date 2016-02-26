@@ -289,6 +289,24 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             Assert.IsTrue(providersUsed1.Contains(q2.Provider));
         }
 
+#if false
+        [TestMethod]
+        public void WithConcatInSelectMany()
+        {
+            var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupe>();
+            var q2 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+
+            var dude = q2.SelectMany(e => e.myvectorofdouble.Select(i => (int)1).Concat(q1.Select(eb => (int)1))).Count();
+            var qm = QMExtractorExecutor.LastQM;
+
+            var QMList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, QMList.Length);
+
+        }
+#endif
+
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void ConcatOfArrays()

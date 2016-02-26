@@ -370,6 +370,29 @@ namespace LINQToTTreeLib
             Assert.AreEqual(numberOfIter * 10 + numberOfIter, dude);
         }
 
+#if false
+        This isn't working b.c. the SelectMany contains the Concat, and we don't have code yet that lifts that out.
+
+        [TestMethod]
+        public void RunNestedConcat()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var proxyFile1 = TestUtils.GenerateROOTProxy(rootFile1, "dude");
+            ntuple._gProxyFile = proxyFile1.FullName;
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile1 }, "dude", typeof(ntuple));
+
+            var rootFile2 = TestUtils.CreateFileOfVectorDouble(numberOfIter);
+            var proxyFile2 = TestUtils.GenerateROOTProxy(rootFile2, "dude");
+            ntuple2._gProxyFile = proxyFile2.FullName;
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupeArrD>(new[] { rootFile2 }, "dude", typeof(ntuple2));
+
+            var dude = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int)1).Concat(q1.Select(eb => (int)1)).Count();
+
+            Assert.AreEqual(numberOfIter * 10 + numberOfIter, dude);
+        }
+#endif
+
         [TestMethod]
         public void TestSimpleResultDebugCompile()
         {
