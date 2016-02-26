@@ -133,6 +133,65 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
+        public void QMWith3Aggregate()
+        {
+            var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+            var q2 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+            var q3 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+            var seq = new IQueryable<TTreeQueryExecutorTest.TestNtupeArrD>[] { q1, q2, q3 };
+
+            var all = seq.Skip(1).Aggregate(seq[0], (allc, next) => allc.Concat(next));
+            var r = all.Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(3, qmList.Length);
+            CheckForQuery(() => q1.Count(), qmList, 3);
+        }
+
+        [TestMethod]
+        public void QMWithThreeAndSearchOperator()
+        {
+            var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+            var q2 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+            var q3 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+            var seq = new IQueryable<TTreeQueryExecutorTest.TestNtupeArrD>[] { q1, q2, q3 };
+
+            var all = seq.Skip(1).Aggregate(seq[0], (allc, next) => allc.Concat(next));
+
+            all
+                .Select(e => e.myvectorofdouble.OrderByDescending(j => j).First())
+                .Where(x => x > 5)
+                .Count();
+
+            var r = all.Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(3, qmList.Length);
+            CheckForQuery(() => q1.Select(e => e.myvectorofdouble.OrderByDescending(j => j).First()).Where(x => x > 5).Count(), qmList, 3);
+        }
+
+        [TestMethod]
+        public void QMWithBadClone()
+        {
+            // Found when running the test - with a global Clone as a test. Fail to do the Clone.
+
+            var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
+
+            var dudeQ = from evt in q1
+                        select evt.myvectorofdouble.Count();
+            var dude = dudeQ.Aggregate(0.0, (acc, val) => acc + val);
+
+            var qm = QMExtractorExecutor.LastQM;
+            qm.Clone();
+        }
+
+        [TestMethod]
         public void QMWithSelectConcats()
         {
             var q1 = new QMExtractorQueriable<ntup>();
