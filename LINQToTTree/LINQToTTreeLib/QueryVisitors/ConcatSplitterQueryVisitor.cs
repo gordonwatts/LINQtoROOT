@@ -90,7 +90,7 @@ namespace LINQToTTreeLib.QueryVisitors
                     // become the query from clause. Note this also means messing with the "select" clause to make sure it
                     // isn't doing anything special (select clause comes before result operators, semantically).
 
-                    QueryModel newQM = NewQMFromOldWithLifting(ro.Source2, qm.MainFromClause.ItemName);
+                    QueryModel newQM = NewQMFromOldWithLifting(ro.Source2, qm.MainFromClause.ItemType, qm.MainFromClause.ItemName);
 
                     var cc = new CloneContext(new QuerySourceMapping());
 
@@ -121,7 +121,7 @@ namespace LINQToTTreeLib.QueryVisitors
             /// <remarks>
             /// This is an optimization. From the semantic point of view, this code should not change anything.
             /// </remarks>
-            private static QueryModel NewQMFromOldWithLifting(Expression fromExpr, string itemName)
+            private static QueryModel NewQMFromOldWithLifting(Expression fromExpr, Type itemType, string itemName)
             {
                 // If this is a SQE, and it is "simple", then we can lift it.
                 if (fromExpr is SubQueryExpression)
@@ -134,7 +134,7 @@ namespace LINQToTTreeLib.QueryVisitors
                 }
 
                 // Now simple - so we will have some trouble if we have to add on other result operators, etc.
-                var mfc = new MainFromClause(itemName, fromExpr.Type, fromExpr);
+                var mfc = new MainFromClause(itemName, itemType, fromExpr);
                 var selector = new QuerySourceReferenceExpression(mfc);
                 var newQM = new QueryModel(mfc, new SelectClause(selector));
                 return newQM;
