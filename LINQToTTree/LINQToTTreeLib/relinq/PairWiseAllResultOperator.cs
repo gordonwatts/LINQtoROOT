@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.relinq
@@ -20,7 +19,7 @@ namespace LINQToTTreeLib.relinq
         /// <returns></returns>
         public override string ToString()
         {
-            return "PairWiseAll (" + FormattingExpressionTreeVisitor.Format(Test) + ")";
+            return "PairWiseAll (" + Test.ToString() + ")";
         }
 
         public override Remotion.Linq.Clauses.ResultOperatorBase Clone(Remotion.Linq.Clauses.CloneContext cloneContext)

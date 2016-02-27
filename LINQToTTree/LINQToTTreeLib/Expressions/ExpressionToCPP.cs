@@ -3,7 +3,6 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using Remotion.Linq.Clauses.ExpressionTreeVisitors;
 using Remotion.Linq.Parsing;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace LINQToTTreeLib.Expressions
     /// <summary>
     /// Convert an expression to C++... everything else should have been done by now.
     /// </summary>
-    class ExpressionToCPP : ThrowingExpressionTreeVisitor
+    class ExpressionToCPP : ThrowingExpressionVisitor
     {
         /// <summary>
         /// Helper routine to return the expression as a string.
@@ -98,7 +97,7 @@ namespace LINQToTTreeLib.Expressions
 
             // Do the visit, cache the result.
 
-            visitor.VisitExpression(expr);
+            visitor.Visit(expr);
 
             if (ce != null)
             {
@@ -163,7 +162,7 @@ namespace LINQToTTreeLib.Expressions
         /// We turn this into a real if statement, rather than a fake if statement. This is to try to keep any code
         /// associated with the side that won't be executed, not being executed.
         /// </remarks>
-        protected override Expression VisitConditionalExpression(ConditionalExpression expression)
+        protected override Expression VisitConditional(ConditionalExpression expression)
         {
             var testExpression = expression.Test;
             var trueExpression = expression.IfTrue;
@@ -222,7 +221,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitConstantExpression(ConstantExpression expression)
+        protected override Expression VisitConstant(ConstantExpression expression)
         {
             if (expression.Type == typeof(int))
             {
@@ -268,7 +267,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitBinaryExpression(BinaryExpression expression)
+        protected override Expression VisitBinary(BinaryExpression expression)
         {
             string op = "";
             bool CastToFinalType = false;
@@ -362,7 +361,7 @@ namespace LINQToTTreeLib.Expressions
 
             if (op == "")
             {
-                return base.VisitBinaryExpression(expression);
+                return base.VisitBinary(expression);
             }
 
             //
@@ -435,7 +434,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitUnaryExpression(UnaryExpression expression)
+        protected override Expression VisitUnary(UnaryExpression expression)
         {
             switch (expression.NodeType)
             {
@@ -456,7 +455,7 @@ namespace LINQToTTreeLib.Expressions
                     break;
 
                 default:
-                    return base.VisitUnaryExpression(expression);
+                    return base.VisitUnary(expression);
             }
 
             return expression;
@@ -539,7 +538,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitMemberExpression(MemberExpression expression)
+        protected override Expression VisitMember(MemberExpression expression)
         {
             //
             // See if we have special handling for this.
@@ -604,7 +603,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitParameterExpression(ParameterExpression expression)
+        protected override Expression VisitParameter(ParameterExpression expression)
         {
             _result = new ValSimple(expression.Name, expression.Type);
 
@@ -616,7 +615,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitExtensionExpression(Remotion.Linq.Clauses.Expressions.ExtensionExpression expression)
+        protected override Expression VisitExtension(Expression expression)
         {
             if (expression.NodeType == DeclarableParameter.ExpressionType)
             {
@@ -626,7 +625,7 @@ namespace LINQToTTreeLib.Expressions
             }
             else
             {
-                return base.VisitExtensionExpression(expression);
+                return base.VisitExtension(expression);
             }
         }
 
@@ -636,7 +635,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitLambdaExpression(LambdaExpression expression)
+        protected override Expression VisitLambda<T>(Expression<T> expression)
         {
             _result = GetExpression(expression.Body);
 
@@ -649,7 +648,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitNewExpression(NewExpression expression)
+        protected override Expression VisitNew(NewExpression expression)
         {
             var exprOut = TypeHandlers.ProcessNew(expression, out _result, _codeEnv, MEFContainer);
             return exprOut;
@@ -660,7 +659,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+        protected override Expression VisitMethodCall(MethodCallExpression expression)
         {
             _result = TypeHandlers.CodeMethodCall(expression, _codeEnv, MEFContainer);
 
@@ -704,7 +703,8 @@ namespace LINQToTTreeLib.Expressions
         private string FormatUnhandledItem<T>(T unhandledItem)
         {
             var itemAsExpression = unhandledItem as Expression;
-            return itemAsExpression != null ? FormattingExpressionTreeVisitor.Format(itemAsExpression) : unhandledItem.ToString();
+            return itemAsExpression.ToString();
+            //return itemAsExpression != null ? FormattingExpressionVisitor.Format(itemAsExpression) : unhandledItem.ToString();
         }
 
         /// <summary>

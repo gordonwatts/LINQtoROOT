@@ -35,7 +35,7 @@ namespace LINQToTTreeLib.Expressions
             while (_impl.Value.DidRemove)
             {
                 _impl.Value.DidRemove = false;
-                e = _impl.Value.VisitExpression(e);
+                e = _impl.Value.Visit(e);
             }
             return e;
         }
@@ -43,7 +43,7 @@ namespace LINQToTTreeLib.Expressions
         /// <summary>
         /// Implementation of the visitor pattern
         /// </summary>
-        class ObjectPropertyExpressionVisitorImpl : ExpressionTreeVisitor
+        class ObjectPropertyExpressionVisitorImpl : RelinqExpressionVisitor
         {
             /// <summary>
             /// Set to true if we have removed a tuple or custom object.
@@ -55,7 +55,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override System.Linq.Expressions.Expression VisitMemberExpression(System.Linq.Expressions.MemberExpression expression)
+            protected override System.Linq.Expressions.Expression VisitMember(System.Linq.Expressions.MemberExpression expression)
             {
                 //
                 // If this is a property referencing an object, perhaps we can decode a short-circut of what was actually
@@ -71,7 +71,7 @@ namespace LINQToTTreeLib.Expressions
                         int itemIndex = Convert.ToInt32(expression.Member.Name.Substring(4));
                         var newExpr = expression.Expression as NewExpression;
                         DidRemove = true;
-                        return VisitExpression(newExpr.Arguments[itemIndex - 1]);
+                        return Visit(newExpr.Arguments[itemIndex - 1]);
                     }
                     if (exprType.Name.StartsWith("<>f__AnonymousType"))
                     {
@@ -100,7 +100,7 @@ namespace LINQToTTreeLib.Expressions
                 // no where!
                 //
 
-                return base.VisitMemberExpression(expression);
+                return base.VisitMember(expression);
             }
 
             /// <summary>
@@ -125,7 +125,7 @@ namespace LINQToTTreeLib.Expressions
                     throw new InvalidOperationException(string.Format("Type '{0}' seems to have more than one member named '{1}'!", memberInit.Type.Name, propName));
 
                 var binding = matchingInits[0] as MemberAssignment;
-                return VisitExpression(binding.Expression);
+                return Visit(binding.Expression);
             }
 
             /// <summary>
@@ -153,7 +153,7 @@ namespace LINQToTTreeLib.Expressions
                 // That index tells us the argument order, and which argument to grab
                 //
 
-                return VisitExpression(newExpr.Arguments[memIndex]);
+                return Visit(newExpr.Arguments[memIndex]);
             }
         }
     }

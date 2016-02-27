@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Remotion.Linq.Clauses;
 using System.Linq.Expressions;
 using System.Reflection;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.relinq
 {
@@ -25,7 +26,7 @@ namespace LINQToTTreeLib.relinq
         /// </remarks>
         public static MethodInfo[] SupportedMethods = new[]
             {
-                GetSupportedMethod (() => System.Linq.Queryable.Concat<object>((IQueryable<object>) null, (IQueryable<object>) null)),
+                TypeUtils.GetSupportedMethod (() => System.Linq.Queryable.Concat<object>((IQueryable<object>) null, (IQueryable<object>) null)),
             };
 
         private Expression _source2;

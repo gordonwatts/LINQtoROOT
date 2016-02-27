@@ -1,6 +1,5 @@
 ﻿using LINQToTTreeLib.QueryVisitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Remotion.Linq.Parsing;
-using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using Remotion.Linq.Parsing.Structure.ExpressionTreeProcessors;
+using Remotion.Linq.Parsing.ExpressionVisitors.Transformation;
+using Remotion.Linq.Parsing.ExpressionVisitors.TreeEvaluation;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -59,17 +60,28 @@ namespace LINQToTTreeLib.QueryVisitors
             //
 
             var exprFinder = new ExpressionFunctionExpander();
-            var expanded = exprFinder.VisitExpression(expression);
-            var result = new PartialEvaluatingExpressionTreeProcessor().Process(expanded);
+            var expanded = exprFinder.Visit(expression);
+            var result = new PartialEvaluatingExpressionTreeProcessor(new EvaluatableExpressionFilterAll()).Process(expanded);
             return result;
         }
 
         /// <summary>
-        /// An invokation. Attempt to decode the Compile from an Expression. Support the normal ".NET" way of doing things
-        /// as opposed to the "invoke" method above (which has a slightly cleaner syntax, but not much!).
+        /// Simple expression evaluator that will evaluate all aspects of an expression that can be
+        /// in memory.
         /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
+        internal sealed class EvaluatableExpressionFilterAll : EvaluatableExpressionFilterBase
+        {
+            public EvaluatableExpressionFilterAll()
+            {
+            }
+        }
+        
+        /// <summary>
+         /// An invokation. Attempt to decode the Compile from an Expression. Support the normal ".NET" way of doing things
+         /// as opposed to the "invoke" method above (which has a slightly cleaner syntax, but not much!).
+         /// </summary>
+         /// <param name="expression"></param>
+         /// <returns></returns>
         public Expression Transform(InvocationExpression expression)
         {
             //
@@ -92,13 +104,13 @@ namespace LINQToTTreeLib.QueryVisitors
             //
 
             var exprFinder = new ExpressionFunctionExpander();
-            return exprFinder.VisitExpression(expression);
+            return exprFinder.Visit(expression);
         }
 
         /// <summary>
         /// Internal class that will expand a function and do parameter replacement.
         /// </summary>
-        class ExpressionFunctionExpander : ExpressionTreeVisitor
+        class ExpressionFunctionExpander : RelinqExpressionVisitor
         {
             /// <summary>
             /// A list of the parameters we will need to 
@@ -115,7 +127,7 @@ namespace LINQToTTreeLib.QueryVisitors
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+            protected override Expression VisitMethodCall(MethodCallExpression expression)
             {
                 //
                 // Fail quickly if this isn't the right type of expression.
@@ -123,10 +135,10 @@ namespace LINQToTTreeLib.QueryVisitors
 
                 if (expression.Object != null
                     || expression.Method.Name != "Invoke")
-                    return base.VisitMethodCallExpression(expression);
+                    return base.VisitMethodCall(expression);
 
                 if (expression.Method.DeclaringType != typeof(Helpers))
-                    return base.VisitMethodCallExpression(expression);
+                    return base.VisitMethodCall(expression);
 
                 //
                 // Get the expression. We have to extract the expression from somewhere in order to get at it here.
@@ -176,7 +188,7 @@ namespace LINQToTTreeLib.QueryVisitors
                 {
                     if (_parameterLookup.ContainsKey(apair.Item1))
                         throw new InvalidOperationException("Can't resuse a parameter that is already used!");
-                    _parameterLookup[apair.Item1] = VisitExpression(apair.Item2);
+                    _parameterLookup[apair.Item1] = Visit(apair.Item2);
                 }
 
                 //
@@ -185,7 +197,7 @@ namespace LINQToTTreeLib.QueryVisitors
                 //
 
                 _lambdasInProgress.Push(lambda);
-                var r = VisitExpression(lambda.Body);
+                var r = Visit(lambda.Body);
                 _lambdasInProgress.Pop();
 
                 //
@@ -209,7 +221,7 @@ namespace LINQToTTreeLib.QueryVisitors
             private Expression ExtractFunctionExpression(Expression expr)
             {
                 var finder = new EvaluteExpressionFinder();
-                var funcExpr = finder.VisitExpression(expr);
+                var funcExpr = finder.Visit(expr);
                 if (funcExpr == null)
                     throw new NotSupportedException(string.Format("Unable to extract a function expression from '{0}' to use in an expression Invoke", expr.ToString()));
 
@@ -225,14 +237,14 @@ namespace LINQToTTreeLib.QueryVisitors
             /// <summary>
             /// Helper class to evalute an expression to extract its actual value. We do the actual work. :(
             /// </summary>
-            class EvaluteExpressionFinder : ExpressionTreeVisitor
+            class EvaluteExpressionFinder : RelinqExpressionVisitor
             {
                 /// <summary>
                 /// A member of some item.
                 /// </summary>
                 /// <param name="expression"></param>
                 /// <returns></returns>
-                protected override Expression VisitMemberExpression(MemberExpression expression)
+                protected override Expression VisitMember(MemberExpression expression)
                 {
                     //
                     // Get the base expression we can refer to access. If a static object
@@ -243,7 +255,7 @@ namespace LINQToTTreeLib.QueryVisitors
                     Expression val = null;
                     if (expression.Expression != null)
                     {
-                        val = VisitExpression(expression.Expression);
+                        val = Visit(expression.Expression);
                         if (val.NodeType != ExpressionType.Constant)
                         {
                             return Expression.MakeMemberAccess(val, expression.Member);
@@ -284,7 +296,7 @@ namespace LINQToTTreeLib.QueryVisitors
             /// </summary>
             /// <param name="paramExpr"></param>
             /// <returns></returns>
-            protected override Expression VisitParameterExpression(ParameterExpression paramExpr)
+            protected override Expression VisitParameter(ParameterExpression paramExpr)
             {
                 Expression r;
                 if (_parameterLookup.TryGetValue(paramExpr, out r))
@@ -297,7 +309,7 @@ namespace LINQToTTreeLib.QueryVisitors
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitInvocationExpression(InvocationExpression expression)
+            protected override Expression VisitInvocation(InvocationExpression expression)
             {
                 //
                 // See if we can figure it out quickly, and just go on if this isn't the right type.
@@ -306,25 +318,25 @@ namespace LINQToTTreeLib.QueryVisitors
                 //
 
                 if (expression.Expression.NodeType != ExpressionType.Call)
-                    return base.VisitInvocationExpression(expression);
+                    return base.VisitInvocation(expression);
 
                 var callExpr = expression.Expression as MethodCallExpression;
                 if (callExpr.Object == null
                     || !typeof(Expression).IsAssignableFrom(callExpr.Object.Type)
                     || callExpr.Method.Name != "Compile")
                 {
-                    return base.VisitInvocationExpression(expression);
+                    return base.VisitInvocation(expression);
                 }
 
                 Expression functionExpression = callExpr.Object as Expression;
                 if (!functionExpression.Type.IsGenericType
                     || functionExpression.Type.GetGenericArguments().Length != 1)
-                    return base.VisitInvocationExpression(expression);
+                    return base.VisitInvocation(expression);
 
                 var expressionGenericArgs = functionExpression.Type.GetGenericArguments()[0];
                 if (!expressionGenericArgs.IsGenericType
                     || !expressionGenericArgs.FullName.StartsWith("System.Func"))
-                    return base.VisitInvocationExpression(expression);
+                    return base.VisitInvocation(expression);
 
                 //
                 // Great! We are set. Next, get ahold of the actual expression (the

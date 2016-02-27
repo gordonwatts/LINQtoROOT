@@ -1,4 +1,5 @@
-﻿using Remotion.Linq.Clauses;
+﻿using LINQToTTreeLib.Utils;
+using Remotion.Linq.Clauses;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace LINQToTTreeLib.Files
         /// </summary>
         public static MethodInfo[] SupportedMethods =
              new[] {
-                GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<object>) null, (FileInfo) null, (string[]) null)),
+                TypeUtils.GetSupportedMethod (() => FileHelperQueryExtensions.AsCSV((IQueryable<object>) null, (FileInfo) null, (string[]) null)),
              };
 
         /// <summary>

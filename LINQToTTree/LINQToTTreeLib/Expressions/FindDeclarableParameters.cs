@@ -8,12 +8,12 @@ namespace LINQToTTreeLib.Expressions
     /// This class will find all declarable parameters and execute some small amount 
     /// code for each declarable parameter that is found.
     /// </summary>
-    public class FindDeclarableParameters : ExpressionTreeVisitor
+    public class FindDeclarableParameters : RelinqExpressionVisitor
     {
         public static IEnumerable<DeclarableParameter> FindAll(Expression expr)
         {
             var e = new FindDeclarableParameters();
-            e.VisitExpression(expr);
+            e.Visit(expr);
             return e._foundParams;
         }
 
@@ -27,14 +27,14 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitExtensionExpression(Remotion.Linq.Clauses.Expressions.ExtensionExpression expression)
+        protected override Expression VisitExtension(Expression expression)
         {
             if (expression is DeclarableParameter)
             {
                 _foundParams.Add(expression as DeclarableParameter);
                 return expression;
             }
-            return base.VisitExtensionExpression(expression);
+            return base.VisitExtension(expression);
         }
     }
 }
