@@ -9,7 +9,6 @@ using LINQToTTreeLib.relinq;
 using Remotion.Linq.Clauses.Expressions;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
-using Remotion.Linq.Transformations;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -216,11 +215,6 @@ namespace LINQToTTreeLib.QueryVisitors
                         {
                             var qm = queryModel.Clone();
                             qm.MainFromClause.FromExpression = qSub.WrapSQE();
-
-                            // Remove unneeded from statements.
-                            var flattener = new SubQueryFromClauseFlattener();
-                            flattener.VisitQueryModel(qm);
-
 
                             if (lastConcatIndex.HasValue && qSub != qms[qms.Length - 1])
                             {
