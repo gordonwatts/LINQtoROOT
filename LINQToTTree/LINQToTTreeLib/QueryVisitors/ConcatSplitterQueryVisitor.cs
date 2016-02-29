@@ -14,20 +14,20 @@ using Remotion.Linq.Transformations;
 namespace LINQToTTreeLib.QueryVisitors
 {
     /// <summary>
-    /// Scan a qm for "Concat" result operators. Split the query each time we find a concat operator to produce multiple
+    /// Scan a QueryModel for "Concat" result operators. Split the query each time we find a concat operator to produce multiple
     /// concat operators.
     /// </summary>
     public class ConcatSplitterQueryVisitor
     {
         /// <summary>
-        /// Look at the QM and find all Concats - split the query into multiple queries.
+        /// Look at the QM and find all Concat operators - split the query into multiple queries.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
         public static QueryModel[] Split(QueryModel source)
         {
             // Extract the from clauses, and then from that extract the result clauses.
-            // This funciton, Split, is called recursively during this processing.
+            // This function, Split, is called recursively during this processing.
             var qvf = new SplitFromClauses();
             qvf.VisitQueryModel(source);
 
@@ -49,7 +49,7 @@ namespace LINQToTTreeLib.QueryVisitors
             public List<QueryModel> _allModels = new List<QueryModel>();
 
             /// <summary>
-            /// Look at all the result operators. The Concat operators can affect what happens before and after thier
+            /// Look at all the result operators. The Concat operators can affect what happens before and after their
             /// position in the RO list. So we have to look at it as a collection, rather than individually.
             /// </summary>
             /// <param name="resultOperators"></param>
@@ -67,7 +67,7 @@ namespace LINQToTTreeLib.QueryVisitors
 
             /// <summary>
             /// Given a query model, look at all the result operators for Concat operators, and split everything up
-            /// into seperate query models.
+            /// into separate query models.
             /// </summary>
             /// <param name="queryModel"></param>
             /// <returns></returns>
@@ -107,7 +107,7 @@ namespace LINQToTTreeLib.QueryVisitors
                     qm.ResultOperators.Remove(ro);
                 }
 
-                // The qm left over needs to be added to the list.
+                // The QueryModel left over needs to be added to the list.
                 lst.Add(qm);
                 return lst;
             }
@@ -142,7 +142,7 @@ namespace LINQToTTreeLib.QueryVisitors
             }
 
             /// <summary>
-            /// Look at the result operator to see if it has a concat embeded in it.
+            /// Look at the result operator to see if it has a concat embedded in it.
             /// </summary>
             /// <param name="resultOperator"></param>
             /// <param name="queryModel"></param>
@@ -157,13 +157,13 @@ namespace LINQToTTreeLib.QueryVisitors
 
                     if (queryModels.Length > 1)
                     {
-                        // If there are more than one QM, then we need to recurisvely split the QM's down the line.
+                        // If there are more than one QM, then we need to recursively split the QM's down the line.
                         queryModels = queryModels.SelectMany(q => Split(q)).ToArray();
 
-                        // The last qm becomes the new target of the Concat result operator we are looking at.
+                        // The last QueryModel becomes the new target of the Concat result operator we are looking at.
                         ro.Source2 = queryModels.Last().WrapSQE();
 
-                        // The rest become new reuslt operators. We put them in basically right where this one is (which
+                        // The rest become new result operators. We put them in basically right where this one is (which
                         // has now been modified by the above line).
                         foreach (var qm in queryModels.Take(queryModels.Length - 1))
                         {
@@ -179,7 +179,7 @@ namespace LINQToTTreeLib.QueryVisitors
         }
 
         /// <summary>
-        /// Split the from clauses. This is a seperate QV pattern because after we split the from
+        /// Split the from clauses. This is a separate QV pattern because after we split the from
         /// clauses we have to stop processing on the query.
         /// </summary>
         private class SplitFromClauses : QueryModelVisitorBase

@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
-            CheckForQuery(() => q1.Count(), qmList, 2); // Can't really tell the diff between q1 and q2.
+            CheckForQuery(() => q1.Count(), qmList, 2); // Can't really tell the difference between q1 and q2.
 
             // Make sure the query providers are correct! Since we don't care about the order.
             var providersUsed = ExtractProviders<ntup>(qmList);
@@ -152,6 +152,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
+        [Ignore]
         public void QMWithThreeAndSearchOperator()
         {
             var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
@@ -175,6 +176,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
+        [Ignore]
         public void QMWithBadClone()
         {
             // Found when running the test - with a global Clone as a test. Fail to do the Clone.
@@ -344,8 +346,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             Assert.IsTrue(providersUsed1.Contains(q2.Provider));
         }
 
-#if false
         [TestMethod]
+        [Ignore]
         public void WithConcatInSelectMany()
         {
             var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupe>();
@@ -360,7 +362,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             Assert.AreEqual(2, QMList.Length);
 
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
