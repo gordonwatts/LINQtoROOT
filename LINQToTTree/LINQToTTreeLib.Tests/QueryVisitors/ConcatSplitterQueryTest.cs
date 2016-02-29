@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.Tests.QueryVisitors
 {
-    // TODO: Add Checkquery checks wherever appropriate
     [TestClass]
     public class ConcatQuerySplitterTest
     {
@@ -228,9 +227,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(3, qmList.Length);
             CheckForQuery(() => q3.Select(r => r.run).Count(), qmList);
-
-            // TODO: fix this so it works. Query optimization done by re-linq makes this "tough".
-            //CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList, 2);
+            CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList, 2);
         }
 
         [TestMethod]
@@ -272,9 +269,8 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(2, qmList.Length);
 
-            // TODO: Query optimization to remove the one-level down in our queries.
-            //CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList);
-            //CheckForQuery(() => q1.Select(r => r.run + 1).Select(r => r * 2).Count(), qmList);
+            CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList);
+            CheckForQuery(() => q1.Select(r => r.run + 1).Select(r => r * 2).Count(), qmList);
         }
 
         /// <summary>
