@@ -100,7 +100,7 @@ namespace LINQToTTreeLib.QueryVisitors
                     {
                         newQM.ResultOperators.Add(qm.ResultOperators[i].Clone(cc));
                     }
-                    lst.Add(newQM);
+                    lst.Add(newQM.Flatten());
 
                     // Ok - we've taken one branch. We need to remove it from the list of things to look at, and work on the
                     // next one.
@@ -108,7 +108,7 @@ namespace LINQToTTreeLib.QueryVisitors
                 }
 
                 // The QueryModel left over needs to be added to the list.
-                lst.Add(qm);
+                lst.Add(qm.Flatten());
                 return lst;
             }
 
@@ -161,7 +161,7 @@ namespace LINQToTTreeLib.QueryVisitors
                         queryModels = queryModels.SelectMany(q => Split(q)).ToArray();
 
                         // The last QueryModel becomes the new target of the Concat result operator we are looking at.
-                        ro.Source2 = queryModels.Last().WrapSQE();
+                        ro.Source2 = new SubQueryExpression(queryModels.Last());
 
                         // The rest become new result operators. We put them in basically right where this one is (which
                         // has now been modified by the above line).
@@ -215,7 +215,7 @@ namespace LINQToTTreeLib.QueryVisitors
                         foreach (var qSub in qms)
                         {
                             var qm = queryModel.Clone();
-                            qm.MainFromClause.FromExpression = qSub.WrapSQE();
+                            qm.MainFromClause.FromExpression = new SubQueryExpression(qSub);
                             qm.Flatten();
 
                             if (lastConcatIndex.HasValue && qSub != qms[qms.Length - 1])
@@ -244,33 +244,6 @@ namespace LINQToTTreeLib.QueryVisitors
 
     static class QueryModelHelpers
     {
-        /// <summary>
-        /// Be clever about wrapping a sub-query expression. For example, if the query is just a SQE already,
-        /// return that, rather than wrapping it twice.
-        /// </summary>
-        /// <param name="qSub"></param>
-        /// <returns></returns>
-        public static SubQueryExpression WrapSQE(this QueryModel qm)
-        {
-            if (qm.ResultOperators.Count == 0 && qm.BodyClauses.Count == 0)
-            {
-                if (qm.MainFromClause.FromExpression is SubQueryExpression)
-                {
-                    if (qm.SelectClause.Selector is QuerySourceReferenceExpression)
-                    {
-                        var qsre = qm.SelectClause.Selector as QuerySourceReferenceExpression;
-                        if (qsre.ReferencedQuerySource == qm.MainFromClause)
-                        {
-                            return qm.MainFromClause.FromExpression as SubQueryExpression;
-                        }
-                    }
-                }
-            }
-
-            // Ok, nothing smart to do here. Return the default guy.
-            return new SubQueryExpression(qm);
-        }
-
         /// <summary>
         /// Make the creation semi-efficient.
         /// </summary>
