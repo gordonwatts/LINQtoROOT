@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.Tests.QueryVisitors
@@ -278,11 +279,12 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         /// </summary>
         /// <param name="mq1"></param>
         /// <param name="qmList"></param>
-        private void CheckForQuery<T>(Func<T> generateQuery, QueryModel[] qmList, int count = 1)
+        private void CheckForQuery<T>(Func<T> generateQuery, QueryModel[] qmList, int count = 1, string generatedReplacement = null)
         {
             generateQuery();
             var qm = QMExtractorExecutor.LastQM.CleanQMString();
-            Assert.AreEqual(count, qmList.Where(q => q.CleanQMString() == qm).Count(), $"Could not find {count} instances of the query model {qm}.");
+
+            Assert.AreEqual(count, qmList.Where(q => q.CleanQMString().ReplaceGenerated(generatedReplacement) == qm).Count(), $"Could not find {count} instances of the query model {qm}.");
         }
 
         [TestMethod]
@@ -303,7 +305,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(2, qmList.Length);
 
-            CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList, 2);
+            CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList, 2, "r");
         }
 
         /// <summary>
@@ -373,6 +375,19 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             var qm = QMExtractorExecutor.LastQM;
             var qmList = ConcatSplitterQueryVisitor.Split(qm);
+        }
+    }
+
+    static class QMHelpers
+    {
+        public static string ReplaceGenerated (this string qm, string replacementVariable)
+        {
+            var matches = Regex.Match(qm, "<generated>_[0-9]+");
+            if (matches.Success)
+            {
+                qm = qm.Replace(matches.Value, replacementVariable);
+            }
+            return qm;
         }
     }
 }

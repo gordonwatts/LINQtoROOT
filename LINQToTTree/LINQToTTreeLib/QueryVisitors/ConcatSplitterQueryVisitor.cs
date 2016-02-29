@@ -216,11 +216,7 @@ namespace LINQToTTreeLib.QueryVisitors
                         {
                             var qm = queryModel.Clone();
                             qm.MainFromClause.FromExpression = qSub.WrapSQE();
-
-                            // Remove unneeded from statements.
-                            var flattener = new SubQueryFromClauseFlattener();
-                            flattener.VisitQueryModel(qm);
-
+                            qm.Flatten();
 
                             if (lastConcatIndex.HasValue && qSub != qms[qms.Length - 1])
                             {
@@ -273,6 +269,22 @@ namespace LINQToTTreeLib.QueryVisitors
 
             // Ok, nothing smart to do here. Return the default guy.
             return new SubQueryExpression(qm);
+        }
+
+        /// <summary>
+        /// Make the creation semi-efficient.
+        /// </summary>
+        private static Lazy<SubQueryFromClauseFlattener> _flattener = new Lazy<SubQueryFromClauseFlattener>(() => new SubQueryFromClauseFlattener());
+
+        /// <summary>
+        /// Flatten the query model.
+        /// </summary>
+        /// <param name="qm"></param>
+        /// <returns></returns>
+        public static QueryModel Flatten(this QueryModel qm)
+        {
+            _flattener.Value.VisitQueryModel(qm);
+            return qm;
         }
     }
 }
