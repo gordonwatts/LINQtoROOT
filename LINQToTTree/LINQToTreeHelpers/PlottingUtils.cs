@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using ROOTNET.Interface;
 
 namespace LINQToTreeHelpers
 {
@@ -46,6 +47,11 @@ namespace LINQToTreeHelpers
             /// weight in the Fill call to a TH histogram.
             /// </summary>
             Expression<Func<T, double>> Weight { get; }
+
+            /// <summary>
+            /// Get the bin function. This applied to T will give you the bin number in the histogram.
+            /// </summary>
+            Expression<Func<T, ROOTNET.Interface.NTH1, int>> Bin { get; }
 
             /// <summary>
             /// Return a future value for the plot, with a full name and title as specified, from
@@ -98,6 +104,18 @@ namespace LINQToTreeHelpers
             /// Make a future plot from the sequence.
             /// </summary>
             public IPlotSpec<T> Plotter { get; set; }
+
+            /// <summary>
+            /// Getting a single bin for a histogram that comes from a sequence doesn't
+            /// make sense. So we are going to fail. Hard.
+            /// </summary>
+            public Expression<Func<IEnumerable<T>, NTH1, int>> Bin
+            {
+                get
+                {
+                    throw new InvalidOperationException("Don't know how to get the bin number for a sequence of items.");
+                }
+            }
 
             /// <summary>
             /// Make a future plot from the sequence of filtered events. We use the full blow plotter guy below
@@ -172,6 +190,19 @@ namespace LINQToTreeHelpers
             /// An additional weight function to add in.
             /// </summary>
             public Expression<Func<U, double>> Weight { get; set; }
+
+            /// <summary>
+            /// Get the bin for this guy by running the object through the converter.
+            /// </summary>
+            public Expression<Func<U, NTH1, int>> Bin
+            {
+                get
+                {
+                    Expression<Func<U, NTH1, int>> r = (o, h) => Plotter.Bin.Invoke(Converter.Invoke(o), h);
+                    return r;
+
+                }
+            }
         }
 
         /// <summary>
@@ -203,6 +234,18 @@ namespace LINQToTreeHelpers
             /// to the plot.
             /// </summary>
             public Expression<Func<T, double>> getter;
+
+            /// <summary>
+            /// Return an expression that will extract the bin
+            /// </summary>
+            public Expression<Func<T, NTH1, int>> Bin
+            {
+                get
+                {
+                    Expression<Func<T, NTH1, int>> r = (o, h) => h.FindBin(getter.Invoke(o));
+                    return r;
+                }
+            }
 
             /// <summary>
             /// Only events in the sequence of T that pass this filter will be plotted.
@@ -324,6 +367,18 @@ namespace LINQToTreeHelpers
             /// The string.Format string that represents the title of the plot.
             /// </summary>
             public string TitleFormat { get; set; }
+
+            /// <summary>
+            /// Return the bin number for a 2D histogram.
+            /// </summary>
+            public Expression<Func<T, NTH1, int>> Bin
+            {
+                get
+                {
+                    Expression<Func<T, NTH1, int>> r = (o, h) => h.FindBin(xgetter.Invoke(o), ygetter.Invoke(o));
+                    return r;
+                }
+            }
 
             /// <summary>
             /// Return a FuturePlot that will turn into the final 2D plot.
