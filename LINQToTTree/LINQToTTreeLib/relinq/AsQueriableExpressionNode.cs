@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.relinq
 {
@@ -18,7 +19,7 @@ namespace LINQToTTreeLib.relinq
         /// </summary>
         public static MethodInfo[] SupportedMethods = new[]
             {
-                GetSupportedMethod (() => Queryable.AsQueryable<object>((IEnumerable<object>) null))
+                TypeUtils.GetSupportedMethod (() => Queryable.AsQueryable<object>((IEnumerable<object>) null))
             };
 
         /// <summary>

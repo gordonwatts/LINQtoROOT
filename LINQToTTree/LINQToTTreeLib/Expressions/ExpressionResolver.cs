@@ -48,7 +48,7 @@ namespace LINQToTTreeLib.Expressions
         /// <summary>
         /// Walk the expression, resolving whatever needs to be resolved.
         /// </summary>
-        class ResolveToExpression : ExpressionTreeVisitor
+        class ResolveToExpression : RelinqExpressionVisitor
         {
             /// <summary>
             /// Translate an expression.
@@ -64,7 +64,7 @@ namespace LINQToTTreeLib.Expressions
                     container.SatisfyImportsOnce(tr);
                 }
 
-                return tr.VisitExpression(expr);
+                return tr.Visit(expr);
             }
 
             /// <summary>
@@ -73,7 +73,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            public override Expression VisitExpression(Expression expression)
+            public override Expression Visit(Expression expression)
             {
                 //
                 // Sometimes we are called with a null - we ignore that! :-)
@@ -104,7 +104,7 @@ namespace LINQToTTreeLib.Expressions
                 // Now do the rest of the parsing.
                 //
 
-                return base.VisitExpression(expr);
+                return base.Visit(expr);
             }
 
             /// <summary>
@@ -122,7 +122,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitInvocationExpression(InvocationExpression expression)
+            protected override Expression VisitInvocation(InvocationExpression expression)
             {
                 ///
                 /// Declare all the parameters for lookup.
@@ -168,9 +168,9 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitMemberExpression(MemberExpression expression)
+            protected override Expression VisitMember(MemberExpression expression)
             {
-                var expr = base.VisitMemberExpression(expression);
+                var expr = base.VisitMember(expression);
                 if (expr != expression)
                     return expr.Resolve(GeneratedCode, CodeContext, MEFContainer);
                 return expr;
@@ -182,7 +182,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitUnaryExpression(UnaryExpression expression)
+            protected override Expression VisitUnary(UnaryExpression expression)
             {
                 switch (expression.NodeType)
                 {
@@ -193,7 +193,7 @@ namespace LINQToTTreeLib.Expressions
                     //    return expression;
 
                     default:
-                        return base.VisitUnaryExpression(expression);
+                        return base.VisitUnary(expression);
                 }
             }
 
@@ -202,7 +202,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+            protected override Expression VisitMethodCall(MethodCallExpression expression)
             {
                 //
                 // Give the various type handlers a chance to alter the expression call if they want.
@@ -237,7 +237,7 @@ namespace LINQToTTreeLib.Expressions
             /// </remarks>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+            protected override Expression VisitSubQuery(SubQueryExpression expression)
             {
                 if (MEFContainer == null)
                     throw new InvalidOperationException("MEFContainer can't be null if we need to analyze a sub query!");
@@ -303,7 +303,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitBinaryExpression(BinaryExpression expression)
+            protected override Expression VisitBinary(BinaryExpression expression)
             {
                 // If this is a binary expression, and it is == or !=, it could be that we have an object compare
                 // of the translated objects.
@@ -346,7 +346,7 @@ namespace LINQToTTreeLib.Expressions
                 else
                 {
                     // Everything else we let go as we might otherwise.
-                    return base.VisitBinaryExpression(expression);
+                    return base.VisitBinary(expression);
                 }
             }
 
@@ -438,7 +438,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitConstantExpression(ConstantExpression expression)
+            protected override Expression VisitConstant(ConstantExpression expression)
             {
                 if (TypeHandlers == null)
                     throw new InvalidOperationException("Can't visit a constant expression unless the typehandlers have been initalized");
@@ -451,7 +451,7 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override Expression VisitConditionalExpression(ConditionalExpression expression)
+            protected override Expression VisitConditional(ConditionalExpression expression)
             {
                 // We can support complex sub-expressions so long as they don't leak out of the
                 // comparison.
@@ -467,11 +467,11 @@ namespace LINQToTTreeLib.Expressions
                 // If this is a class as a result, then we can't do much extra processing here. So skip.
                 if (expression.Type.IsClass)
                 {
-                    return base.VisitConditionalExpression(expression);
+                    return base.VisitConditional(expression);
                 }
 
                 // Run the code for the test, and then create the if/then/else that will support it.
-                var testExpression = base.VisitExpression(expression.Test);
+                var testExpression = base.Visit(expression.Test);
                 var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
                 GeneratedCode.Add(new Statements.StatementAssign(testBoolInCode,
                     ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer),
@@ -486,14 +486,14 @@ namespace LINQToTTreeLib.Expressions
                 // Do the if true statement
                 var topScope = GeneratedCode.CurrentScope;
                 GeneratedCode.Add(new Statements.StatementFilter(testBoolInCode));
-                var iftrueExpression = VisitExpression(expression.IfTrue);
+                var iftrueExpression = Visit(expression.IfTrue);
                 GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(iftrueExpression, GeneratedCode, CodeContext, MEFContainer),
                     FindDeclarableParameters.FindAll(iftrueExpression)));
                 GeneratedCode.CurrentScope = topScope;
 
                 // Do the if false statement
                 GeneratedCode.Add(new Statements.StatementFilter(ExpressionToCPP.GetExpression(Expression.Not(testBoolInCode), GeneratedCode, CodeContext, MEFContainer)));
-                var ifFalseExpression = VisitExpression(expression.IfFalse);
+                var ifFalseExpression = Visit(expression.IfFalse);
                 GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(ifFalseExpression, GeneratedCode, CodeContext, MEFContainer),
                     FindDeclarableParameters.FindAll(ifFalseExpression)));
                 GeneratedCode.CurrentScope = topScope;
@@ -506,12 +506,12 @@ namespace LINQToTTreeLib.Expressions
             /// <summary>
             /// Quick expression traversal object to look for sub-expressions.
             /// </summary>
-            private class CheckForSubQueries : ExpressionTreeVisitor
+            private class CheckForSubQueries : RelinqExpressionVisitor
             {
                 public static bool CheckExpression(Expression expr)
                 {
                     var e = new CheckForSubQueries();
-                    e.VisitExpression(expr);
+                    e.Visit(expr);
                     return e.SawSubQuery;
                 }
 
@@ -528,7 +528,7 @@ namespace LINQToTTreeLib.Expressions
                 /// </summary>
                 public bool SawSubQuery { get; set; }
 
-                protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+                protected override Expression VisitSubQuery(SubQueryExpression expression)
                 {
                     SawSubQuery = true;
                     return expression;

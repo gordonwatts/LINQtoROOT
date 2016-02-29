@@ -5,10 +5,10 @@ using System.Linq.Expressions;
 using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.relinq;
 using Remotion.Linq;
-using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
 using Remotion.Linq.Parsing.Structure;
 using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
 using LINQToTTreeLib.Files;
+using Remotion.Linq.Parsing.ExpressionVisitors.Transformation;
 
 namespace LINQToTTreeLib
 {
@@ -188,21 +188,17 @@ namespace LINQToTTreeLib
             // Provider for our classes, and they also go into the whole pot of soup
             //
 
-            var ourProviders = new INodeTypeProvider[]
-            {
-                MethodInfoBasedNodeTypeRegistry.CreateFromTypes(new Type[] {
-                    typeof(UniqueCombinationsExpressionNode),
-                    typeof(PairWiseAllExpressionNode),
-                    typeof(AsQueriableExpressionNode),
-                    typeof(AsCSVExpressionNode),
-                    typeof(AsTTreeExpressionNode),
-                    typeof(ConcatExpressionNode),
-                }),
-            };
+            var mreg = new MethodInfoBasedNodeTypeRegistry();
+            mreg.Register(UniqueCombinationsExpressionNode.SupportedMethods, typeof(UniqueCombinationsExpressionNode));
+            mreg.Register(PairWiseAllExpressionNode.SupportedMethods, typeof(PairWiseAllExpressionNode));
+            mreg.Register(AsQueriableExpressionNode.SupportedMethods, typeof(AsQueriableExpressionNode));
+            mreg.Register(AsCSVExpressionNode.SupportedMethods, typeof(AsCSVExpressionNode));
+            mreg.Register(AsTTreeExpressionNode.SupportedMethods, typeof(AsTTreeExpressionNode));
+            mreg.Register(ConcatExpressionNode.SupportedMethods, typeof(ConcatExpressionNode));
 
             var defaultNodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
 
-            var newProvider = new CompoundNodeTypeProvider(ourProviders.Concat(new INodeTypeProvider[] { defaultNodeTypeProvider }));
+            var newProvider = new CompoundNodeTypeProvider(new INodeTypeProvider[] { mreg, defaultNodeTypeProvider });
 
             //
             // All the various transformers we need...

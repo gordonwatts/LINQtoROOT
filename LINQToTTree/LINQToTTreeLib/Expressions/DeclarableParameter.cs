@@ -14,12 +14,17 @@ namespace LINQToTTreeLib.Expressions
     /// Often used in returns from various operators that have some value that can be used
     /// in the next phase of the query or as a result (i.e. Count, etc.).
     /// </remarks>
-    public class DeclarableParameter : ExtensionExpression, IDeclaredParameter
+    public class DeclarableParameter : Expression, IDeclaredParameter
     {
         /// <summary>
-        /// The expression type for testing to see if it is a declared variable.
+        /// Create a new variable that is an array.
         /// </summary>
-        public const ExpressionType ExpressionType = (ExpressionType)110002;
+        /// <param name="varType"></param>
+        /// <returns></returns>
+        public static DeclarableParameter CreateDeclarableParameterArrayExpression(Type varType)
+        {
+            return new DeclarableParameter(varType.MakeArrayType(1), string.Format("{0}Array", varType.CreateUniqueVariableName()));
+        }
 
         /// <summary>
         /// Declare a variable of the given type. The variable name will be assigned
@@ -32,15 +37,6 @@ namespace LINQToTTreeLib.Expressions
             return new DeclarableParameter(varType, varType.CreateUniqueVariableName());
         }
 
-        /// <summary>
-        /// Create a new variable that is an array.
-        /// </summary>
-        /// <param name="varType"></param>
-        /// <returns></returns>
-        public static DeclarableParameter CreateDeclarableParameterArrayExpression(Type varType)
-        {
-            return new DeclarableParameter(varType.MakeArrayType(1), string.Format("{0}Array", varType.CreateUniqueVariableName()));
-        }
 
         /// <summary>
         /// Create a Dictionary type. This maps to a std::map....
@@ -56,22 +52,57 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
+        /// The expression type for testing to see if it is a declared variable.
+        /// </summary>
+        public const ExpressionType ExpressionType = (ExpressionType)110002;
+        private Type _type;
+
+        /// <summary>
+        /// Return the expression type
+        /// </summary>
+        public override ExpressionType NodeType { get { return ExpressionType; } }
+
+        /// <summary>
+        /// We don't have to do anything. So let it go.
+        /// </summary>
+        /// <param name="visitor"></param>
+        /// <returns></returns>
+        protected override Expression VisitChildren(ExpressionVisitor visitor)
+        {
+            return this;
+        }
+
+        /// <summary>
         /// Build the variable.
         /// </summary>
         /// <param name="varType"></param>
         /// <param name="varName"></param>
         private DeclarableParameter(Type varType, string varName)
-            : base(varType, ExpressionType)
         {
+            _type = varType;
             if (varName == null)
                 throw new ArgumentNullException("varName");
             ParameterName = varName;
         }
 
         /// <summary>
+        /// Return the type of this node
+        /// </summary>
+        public override Type Type { get { return _type; } }
+
+        /// <summary>
         /// Return the variable name for this declared variable.
         /// </summary>
         public string ParameterName { get; private set; }
+
+#if false
+        public override bool CanReduce { get { return true; } }
+
+        public override Expression Reduce()
+        {
+            return this;
+        }
+#endif
 
         /// <summary>
         /// Rename the parameter name to the new name as long as it matches the old name.
@@ -110,16 +141,6 @@ namespace LINQToTTreeLib.Expressions
         public void SetInitialValue(string v)
         {
             InitialValue = new ValSimple(v, Type);
-        }
-
-        /// <summary>
-        /// Visit the children (if we need to). Since we have no childrn, we just return.
-        /// </summary>
-        /// <param name="visitor"></param>
-        /// <returns></returns>
-        protected override Expression VisitChildren(Remotion.Linq.Parsing.ExpressionTreeVisitor visitor)
-        {
-            return this;
         }
 
         /// <summary>

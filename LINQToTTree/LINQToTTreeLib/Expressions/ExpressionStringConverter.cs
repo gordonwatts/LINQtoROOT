@@ -15,7 +15,7 @@ namespace LINQToTTreeLib.Expressions
     /// to circumvent a limitation in the <see cref="Expression"/> class, where overriding <see cref="Expression.ToString"/> in custom expressions
     /// will not work.
     /// </summary>
-    public class ExpressionStringConverter : ExpressionTreeVisitor
+    public class ExpressionStringConverter : RelinqExpressionVisitor
     {
         private bool _useHashCodes;
         /// <summary>
@@ -27,7 +27,7 @@ namespace LINQToTTreeLib.Expressions
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");
-            var transformedExpression = new ExpressionStringConverter(useUniqueHashCodes).VisitExpression(expression);
+            var transformedExpression = new ExpressionStringConverter(useUniqueHashCodes).Visit(expression);
             return transformedExpression.ToString();
         }
 
@@ -36,32 +36,23 @@ namespace LINQToTTreeLib.Expressions
             _useHashCodes = useHashCodes;
         }
 
-        protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
+        protected override Expression VisitQuerySourceReference(QuerySourceReferenceExpression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");
             return Expression.Parameter(expression.Type, "[" + expression.ReferencedQuerySource.ItemName + "]");
         }
 
-        protected override Expression VisitSubQueryExpression(SubQueryExpression expression)
+        protected override Expression VisitSubQuery(SubQueryExpression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");
             return Expression.Parameter(expression.Type, "{" + expression.QueryModel + "}");
         }
 
-        protected override Expression VisitUnknownNonExtensionExpression(Expression expression)
+        protected override Expression VisitExtension(Expression node)
         {
-            if (expression == null)
-                throw new ArgumentNullException("expression");
-            return Expression.Parameter(expression.Type, expression.ToString());
-        }
-
-        protected override Expression VisitExtensionExpression(ExtensionExpression expression)
-        {
-            if (expression == null)
-                throw new ArgumentNullException("expression");
-            return Expression.Parameter(expression.Type, expression.ToString());
+            return Expression.Parameter(node.Type, node.ToString());
         }
 
         /// <summary>
@@ -69,7 +60,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitConstantExpression(ConstantExpression expression)
+        protected override Expression VisitConstant(ConstantExpression expression)
         {
             if (expression.Type.GetInterface(typeof(ROOTNET.Interface.NTH1).Name) != null)
             {
@@ -96,7 +87,7 @@ namespace LINQToTTreeLib.Expressions
             }
             else
             {
-                return base.VisitConstantExpression(expression);
+                return base.VisitConstant(expression);
             }
         }
     }

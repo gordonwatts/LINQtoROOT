@@ -1,10 +1,7 @@
-﻿using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
+﻿using Remotion.Linq.Parsing.ExpressionVisitors.Transformation;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.QueryVisitors
 {

@@ -15,7 +15,7 @@ namespace LINQToTTreeLib
     /// Visit an expression and translate it to another expression. We are driven by attributes
     /// on the objects we are trying to translate.
     /// </summary>
-    public class TranslatingExpressionVisitor : ExpressionTreeVisitor
+    public class TranslatingExpressionVisitor : RelinqExpressionVisitor
     {
         /// <summary>
         /// Translate a fully formed expression. Partial expressions
@@ -37,7 +37,7 @@ namespace LINQToTTreeLib
             _impl.Value.RenameList = new List<string>();
 
             try {
-                var result = _impl.Value.VisitExpression(exprObjsRemoved);
+                var result = _impl.Value.Visit(exprObjsRemoved);
 
                 // Track all cookies going out!
                 cookies.AddRange(_impl.Value.RenameList);
@@ -69,7 +69,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public override Expression VisitExpression(Expression expression)
+        public override Expression Visit(Expression expression)
         {
             ///
             /// Make sure this member reference is for a "leaf". For exmaple, if we have the valid expression
@@ -91,7 +91,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private Expression VisitExpressionImplemented(Expression expression)
         {
-            return base.VisitExpression(expression);
+            return base.Visit(expression);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitMemberExpression(MemberExpression expression)
+        protected override Expression VisitMember(MemberExpression expression)
         {
             ///
             /// If this is a bare array that is connected to the main object, then we want
@@ -197,7 +197,7 @@ namespace LINQToTTreeLib
             /// Hopefully the default behavior is the right thing to do here!
             /// 
 
-            return base.VisitMemberExpression(expression);
+            return base.VisitMember(expression);
         }
 
         /// <summary>
@@ -434,14 +434,14 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitUnaryExpression(UnaryExpression expression)
+        protected override Expression VisitUnary(UnaryExpression expression)
         {
             switch (expression.NodeType)
             {
                 case ExpressionType.ArrayLength:
                     return VisitArrayLength(expression);
                 default:
-                    return base.VisitUnaryExpression(expression);
+                    return base.VisitUnary(expression);
             }
         }
 
@@ -453,7 +453,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitBinaryExpression(BinaryExpression expression)
+        protected override Expression VisitBinary(BinaryExpression expression)
         {
             //
             // If we are comparing a "new" against a null, then we don't support that.
@@ -499,7 +499,7 @@ namespace LINQToTTreeLib
                 }
             }
 
-            return base.VisitBinaryExpression(expression);
+            return base.VisitBinary(expression);
         }
 
         /// <summary>
@@ -674,7 +674,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitMethodCallExpression(MethodCallExpression expression)
+        protected override Expression VisitMethodCall(MethodCallExpression expression)
         {
             // IsGoodIndex: make sure that the indexed parameter points to something interesting.
             var method = expression.Method;
@@ -707,7 +707,7 @@ namespace LINQToTTreeLib
                     );
             }
 
-            return base.VisitMethodCallExpression(expression);
+            return base.VisitMethodCall(expression);
         }
 
         /// <summary>

@@ -27,13 +27,13 @@ namespace LINQToTTreeLib.Expressions
                 throw new ArgumentNullException("Replacement expression can't be null");
 
             var t = new ReplaceDriver(pattern, replacement);
-            return t.VisitExpression(source);
+            return t.Visit(source);
         }
 
         /// <summary>
         /// Internal class that will do the real work.
         /// </summary>
-        class ReplaceDriver : ExpressionTreeVisitor
+        class ReplaceDriver : RelinqExpressionVisitor
         {
             private Expression _pattern;
             private Expression _replacement;
@@ -53,13 +53,13 @@ namespace LINQToTTreeLib.Expressions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            public override Expression VisitExpression(Expression expression)
+            public override Expression Visit(Expression expression)
             {
                 if (expression != null)
                     if (expression.ToString() == _patternString)
                         return _replacement;
 
-                return base.VisitExpression(expression);
+                return base.Visit(expression);
             }
         }
 

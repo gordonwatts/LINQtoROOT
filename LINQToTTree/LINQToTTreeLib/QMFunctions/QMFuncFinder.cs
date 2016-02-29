@@ -189,7 +189,7 @@ namespace LINQToTTreeLib.QMFunctions
                     _mainFromQS = fromClause;
 
                 _qmContextStack.Peek().AddFromItem(fromClause);
-                _exprVisitor.VisitExpression(fromClause.FromExpression);
+                _exprVisitor.Visit(fromClause.FromExpression);
                 base.VisitMainFromClause(fromClause, queryModel);
             }
 
@@ -202,7 +202,7 @@ namespace LINQToTTreeLib.QMFunctions
             public override void VisitAdditionalFromClause(AdditionalFromClause fromClause, QueryModel queryModel, int index)
             {
                 _qmContextStack.Peek().AddFromItem(fromClause);
-                _exprVisitor.VisitExpression(fromClause.FromExpression);
+                _exprVisitor.Visit(fromClause.FromExpression);
                 base.VisitAdditionalFromClause(fromClause, queryModel, index);
             }
 
@@ -217,7 +217,7 @@ namespace LINQToTTreeLib.QMFunctions
                 base.VisitOrderByClause(orderByClause, queryModel, index);
                 foreach (var expr in orderByClause.Orderings.Select(o => o.Expression))
                 {
-                    _exprVisitor.VisitExpression(expr);
+                    _exprVisitor.Visit(expr);
                 }
             }
 
@@ -229,7 +229,7 @@ namespace LINQToTTreeLib.QMFunctions
             /// <param name="index"></param>
             public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
             {
-                _exprVisitor.VisitExpression(whereClause.Predicate);
+                _exprVisitor.Visit(whereClause.Predicate);
             }
 
             /// <summary>
@@ -239,7 +239,7 @@ namespace LINQToTTreeLib.QMFunctions
             /// <param name="queryModel"></param>
             public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
             {
-                _exprVisitor.VisitExpression(selectClause.Selector);
+                _exprVisitor.Visit(selectClause.Selector);
             }
 
             /// <summary>
@@ -263,7 +263,7 @@ namespace LINQToTTreeLib.QMFunctions
         /// <summary>
         /// Look at an expression for QM that should be parsed.
         /// </summary>
-        private class QMExpressionVisitor : ExpressionTreeVisitor
+        private class QMExpressionVisitor : RelinqExpressionVisitor
         {
             private QMFuncVisitor _qmVisitor;
             public QMExpressionVisitor(QMFuncVisitor qmFinder)
@@ -276,7 +276,7 @@ namespace LINQToTTreeLib.QMFunctions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override System.Linq.Expressions.Expression VisitSubQueryExpression(Remotion.Linq.Clauses.Expressions.SubQueryExpression expression)
+            protected override System.Linq.Expressions.Expression VisitSubQuery(Remotion.Linq.Clauses.Expressions.SubQueryExpression expression)
             {
                 _qmVisitor.VisitQueryModel(expression.QueryModel);
                 return expression;
@@ -287,10 +287,10 @@ namespace LINQToTTreeLib.QMFunctions
             /// </summary>
             /// <param name="expression"></param>
             /// <returns></returns>
-            protected override System.Linq.Expressions.Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
+            protected override System.Linq.Expressions.Expression VisitQuerySourceReference(QuerySourceReferenceExpression expression)
             {
                 _qmVisitor.AddQSReference(expression);
-                return base.VisitQuerySourceReferenceExpression(expression);
+                return base.VisitQuerySourceReference(expression);
             }
         }
 

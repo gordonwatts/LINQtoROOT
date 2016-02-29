@@ -1,4 +1,4 @@
-﻿using Remotion.Linq.Parsing.ExpressionTreeVisitors.Transformation;
+﻿using Remotion.Linq.Parsing.ExpressionVisitors.Transformation;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.QueryVisitors

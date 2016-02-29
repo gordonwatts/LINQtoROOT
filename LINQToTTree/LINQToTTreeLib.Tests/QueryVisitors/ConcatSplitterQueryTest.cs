@@ -364,7 +364,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
         public void ConcatOfArrays()
         {
             // We need to fail badly when we have the Concat operator in a select clause.
@@ -375,7 +374,10 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var r = q1.Select(e => e.myvectorofdouble.Concat(e.myvectorofdouble).Count()).Sum();
 
             var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm);
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(1, qmList.Length);
         }
     }
 

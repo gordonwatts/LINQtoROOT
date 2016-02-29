@@ -11,7 +11,7 @@ namespace LINQToTTreeLib.Expressions
     /// <summary>
     /// Replaces parameter references with known parameters
     /// </summary>
-    internal class ParameterReplacementExpressionVisitor : ExpressionTreeVisitor
+    internal class ParameterReplacementExpressionVisitor : RelinqExpressionVisitor
     {
         private ICodeContext _context;
 
@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.Expressions
         public static Expression ReplaceParameters(Expression expr, ICodeContext context)
         {
             var prep = new ParameterReplacementExpressionVisitor(context);
-            return prep.VisitExpression(expr);
+            return prep.Visit(expr);
         }
 
         /// <summary>
@@ -41,11 +41,11 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="paramExpr"></param>
         /// <returns></returns>
-        protected override Expression VisitParameterExpression(ParameterExpression paramExpr)
+        protected override Expression VisitParameter(ParameterExpression paramExpr)
         {
             var replaceit = ResolveExpressionReplacement(paramExpr.Name);
             if (replaceit == null)
-                return base.VisitParameterExpression(paramExpr);
+                return base.VisitParameter(paramExpr);
 
             if (replaceit.Type != paramExpr.Type)
                 throw new InvalidOperationException(string.Format("Parameter {0} can't be replaced because it would change the type!", paramExpr.Name));
@@ -58,7 +58,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
+        protected override Expression VisitQuerySourceReference(QuerySourceReferenceExpression expression)
         {
             var replaceit = ResolveExpressionReplacement(expression.ReferencedQuerySource);
             if (replaceit == null)
@@ -75,7 +75,7 @@ namespace LINQToTTreeLib.Expressions
         private Expression ResolveExpressionReplacement(string exprName)
         {
             var replaceit = _context.GetReplacement(exprName);
-            return VisitExpression(replaceit);
+            return Visit(replaceit);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace LINQToTTreeLib.Expressions
         private Expression ResolveExpressionReplacement(IQuerySource exprName)
         {
             var replaceit = _context.GetReplacement(exprName);
-            return VisitExpression(replaceit);
+            return Visit(replaceit);
         }
 
         /// <summary>
@@ -98,12 +98,12 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitLambdaExpression(LambdaExpression expression)
+        protected override Expression VisitLambda<T>(Expression<T> expression)
         {
             var popers = (from a in expression.Parameters
                           select _context.Remove(a.Name)).ToArray();
 
-            var result = base.VisitLambdaExpression(expression);
+            var result = base.VisitLambda(expression);
 
             foreach (var p in popers)
             {
@@ -119,9 +119,9 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        protected override Expression VisitExtensionExpression(ExtensionExpression expression)
+        protected override Expression VisitExtension(Expression expression)
         {
-            if (expression is DeclarableParameter)
+            if (expression.NodeType == DeclarableParameter.ExpressionType)
             {
                 var dc = expression as DeclarableParameter;
                 var rep = _context.GetReplacement(dc.ParameterName);
@@ -129,9 +129,10 @@ namespace LINQToTTreeLib.Expressions
                     return rep;
                 return dc;
             }
-            return base.VisitExtensionExpression(expression);
+            return base.VisitExtension(expression);
         }
 
+#if false
         /// <summary>
         /// Deal with the various types of expression.
         /// </summary>
@@ -144,5 +145,6 @@ namespace LINQToTTreeLib.Expressions
 
             return base.VisitUnknownNonExtensionExpression(expression);
         }
+#endif
     }
 }

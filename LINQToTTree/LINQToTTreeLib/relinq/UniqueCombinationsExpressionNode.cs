@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Remotion.Linq.Parsing.Structure.IntermediateModel;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.relinq
 {
@@ -17,8 +18,8 @@ namespace LINQToTTreeLib.relinq
         /// </summary>
         public static MethodInfo[] SupportedMethods = new[]
             {
-                GetSupportedMethod (() => Helpers.UniqueCombinations<object>((IEnumerable<object>) null)),
-                GetSupportedMethod (() => Helpers.UniqueCombinations<object>((IQueryable<object>) null))
+                TypeUtils.GetSupportedMethod (() => Helpers.UniqueCombinations<object>((IEnumerable<object>) null)),
+                TypeUtils.GetSupportedMethod (() => Helpers.UniqueCombinations<object>((IQueryable<object>) null))
             };
 
         public UniqueCombinationsExpressionNode(MethodCallExpressionParseInfo parseInfo)

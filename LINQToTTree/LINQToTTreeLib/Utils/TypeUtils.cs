@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace LINQToTTreeLib.Utils
@@ -89,6 +90,20 @@ namespace LINQToTTreeLib.Utils
                 || v == typeof(short)
                 || v == typeof(double)
                 || v == typeof(float);
+        }
+
+        /// <summary>
+        /// Extract a generic method burried inside an expression. Allows us to write somethign that makes sense,
+        /// and have the computer pull everything out.
+        /// </summary>
+        /// <param name="methodReference"></param>
+        /// <returns></returns>
+        public static MethodInfo GetSupportedMethod (Expression<Action> methodReference)
+        {
+            return (methodReference.Body as MethodCallExpression)
+                .ThrowIfNull(() => new InvalidOperationException("Passed a method reference that isn't a method reference!"))
+                .Method
+                .GetGenericMethodDefinition();
         }
     }
 }
