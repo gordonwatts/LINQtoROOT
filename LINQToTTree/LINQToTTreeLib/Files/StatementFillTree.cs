@@ -85,7 +85,10 @@ namespace LINQToTTreeLib.Files
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            throw new NotImplementedException();
+            foreach (var variable in _columnValues)
+            {
+                variable.Item1.RenameRawValue(originalName, newName);
+            }
         }
 
         /// <summary>
