@@ -11,7 +11,7 @@ using ROOTNET.Interface;
 namespace LINQToTreeHelpers
 {
     /// <summary>
-    /// Utilities (extention methods, static methods, etc.) to make plotting more
+    /// Utilities (extension methods, static methods, etc.) to make plotting more
     /// uniform. Builds on the FuturePlot type of routines.
     /// </summary>
     /// <remarks>
@@ -21,7 +21,7 @@ namespace LINQToTreeHelpers
     {
         /// <summary>
         /// Base interface for a plotter of a stream of object T. If you have a new kind of plot, and want to
-        /// use the same infrastrucutre, implement this interface.
+        /// use the same infrastructure, implement this interface.
         /// </summary>
         public interface IPlotSpec<T>
         {
@@ -410,7 +410,7 @@ namespace LINQToTreeHelpers
         }
 
         /// <summary>
-        /// Create a plot spec that runs on a sequence of a sequence objects like T from a plotter than runs on a sequecen of T
+        /// Create a plot spec that runs on a sequence of a sequence objects like T from a plotter than runs on a sequence of T
         /// </summary>
         /// <remarks>
         /// This is useful if you have a plot of pT, and you want to convert it to make a plot of pT's of a
@@ -473,9 +473,9 @@ namespace LINQToTreeHelpers
         /// <typeparam name="T">The old plotter sequence type</typeparam>
         /// <param name="source">The original plotter specification</param>
         /// <param name="converter">Convert from objects of type U to objects of type T</param>
-        /// <param name="argumentPrefix">Prefex to add to the name and title arguments</param>
+        /// <param name="argumentPrefix">Prefix to add to the name and title arguments</param>
         /// <param name="filter">Only let through objects of type U that satisfy this filter</param>
-        /// <param name="weight">Additional weight to be applied multiplicitavely to any other weights already set</param>
+        /// <param name="weight">Additional weight to be applied multiplicatively to any other weights already set</param>
         /// <returns></returns>
         public static IPlotSpec<U> FromType<T, U>(this IPlotSpec<T> source, Expression<Func<U, T>> converter, string argumentPrefix = "",
             Expression<Func<U, bool>> filter = null, Expression<Func<U, double>> weight = null)
