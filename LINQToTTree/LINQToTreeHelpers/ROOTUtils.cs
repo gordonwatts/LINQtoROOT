@@ -191,6 +191,24 @@ namespace LINQToTreeHelpers
             return tlz;
 #endif
         }
+
+        /// <summary>
+        /// Calculate the delta phi between two phi's - and normalize the return between -pi an pi.
+        /// </summary>
+        /// <param name="phi1">First phi</param>
+        /// <param name="phi2">Second phi</param>
+        /// <returns>The difference, between -pi and pi</returns>
+        [CPPCode(IncludeFiles = new[] { "TVector2.h" },
+    Code = new[] {
+                "DeltaPhi = TVector2::Phi_mpi_pi(phi1 - phi2);",
+    })]
+        public static double DeltaPhi(double phi1, double phi2)
+        {
+            throw new NotImplementedException("this should never get called");
+#if false
+            return ROOTNET.NTVector2.Phi_mpi_pi(phi1 - phi2);
+#endif
+        }
         #endregion
 
     }
