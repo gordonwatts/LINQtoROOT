@@ -172,7 +172,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
                 .DumpToConsole();
 
             Assert.AreEqual(3, qmList.Length);
-            CheckForQuery(() => q1.Select(e => e.myvectorofdouble.OrderByDescending(j => j).First()).Where(x => x > 5).Count(), qmList, 3);
+            CheckForQuery(() => q1.Select(e => e.myvectorofdouble.OrderByDescending(j => j).First()).Where(x => x > 5).Count(), qmList, 3, "e");
         }
 
         [TestMethod]
