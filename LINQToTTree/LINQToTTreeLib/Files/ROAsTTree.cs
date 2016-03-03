@@ -48,7 +48,7 @@ namespace LINQToTTreeLib.Files
         public override Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container)
         {
             // Argument checking
-            var asCSV = resultOperator as AsFileResultOperator;
+            var asCSV = resultOperator as AsTTreeResultOperator;
             if (asCSV == null)
                 throw new ArgumentException("resultOperaton");
 

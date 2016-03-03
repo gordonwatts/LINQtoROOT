@@ -24,5 +24,16 @@ namespace LINQToTTreeLib.Files
             : base(outputfile, headerColumnTitle)
         {
         }
+
+        /// <summary>
+        /// Clone the operator
+        /// </summary>
+        /// <param name="cloneContext"></param>
+        /// <returns></returns>
+        public override ResultOperatorBase Clone(CloneContext cloneContext)
+        {
+            return new AsCSVResultOperator(OutputFile, HeaderColumns);
+        }
+
     }
 }

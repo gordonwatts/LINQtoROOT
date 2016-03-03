@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.Files
     /// <remarks>
     /// Following the pattern seen here: https://www.re-motion.org/blogs/mix/2010/10/28/re-linq-extensibility-custom-query-operators
     /// </remarks>
-    class AsFileResultOperator : ValueFromSequenceResultOperatorBase
+    abstract class AsFileResultOperator : ValueFromSequenceResultOperatorBase
     {
         /// <summary>
         /// Initalize the result operator with the appropriate items.
@@ -32,16 +32,6 @@ namespace LINQToTTreeLib.Files
         /// Get the output file we are to write to.
         /// </summary>
         public FileInfo OutputFile { get; private set; }
-
-        /// <summary>
-        /// Called by re-linq when cloning is required.
-        /// </summary>
-        /// <param name="cloneContext"></param>
-        /// <returns></returns>
-        public override ResultOperatorBase Clone(CloneContext cloneContext)
-        {
-            return new AsFileResultOperator(OutputFile, HeaderColumns);
-        }
 
         /// <summary>
         /// Run the operation in memory.
