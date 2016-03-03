@@ -19,8 +19,7 @@ Import-Module -DisableNameChecking $mod
 # this nuget package
 
 $FileVersion = (Get-Item "LINQToTTree\LINQToTTreeLib\bin\$release\LINQToTTreeLib.dll").VersionInfo.ProductVersion -split "\."
-$FileVersion[3] = $BuildNumber
-$version = $FileVersion -join "."
+$version = "$($FileVersion[0]).$($FileVersion[1]).$($FileVersion[2])-build$($BuildNumber)"
 
 # Next, do the nuget build, one for each ROOT package.
 build-LINQToTTree-nuget-packages $PWD $PWD $version -PDB:$PDB -NameSuffix $NameSuffix -Release $release
