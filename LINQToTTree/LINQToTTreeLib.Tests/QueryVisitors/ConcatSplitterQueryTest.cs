@@ -152,7 +152,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
-        [Ignore]
         public void QMWithThreeAndSearchOperator()
         {
             var q1 = new QMExtractorQueriable<TTreeQueryExecutorTest.TestNtupeArrD>();
@@ -176,7 +175,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
-        [Ignore]
         public void QMWithBadClone()
         {
             // Found when running the test - with a global Clone as a test. Fail to do the Clone.
