@@ -2280,7 +2280,6 @@ namespace LINQToTTreeLib
         }
 
         [Ignore]
-        [TestMethod]
         public void TestSimpleLoopEnumerabelRangeWithVar()
         {
             // This fails becaues Enumerable.Range isn't parsed properly - it looks like when our
@@ -2300,7 +2299,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [Ignore]
         public void TestEnumerableRangeExpression()
         {
             // This fails becaues Enumerable.Range isn't parsed properly - it looks like when our
@@ -2353,7 +2351,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [Ignore]
         public void TestSimpleLoopEnumerabelRangeWithVarNZStart()
         {
             // This fails becaues Enumerable.Range isn't parsed properly - it looks like when our

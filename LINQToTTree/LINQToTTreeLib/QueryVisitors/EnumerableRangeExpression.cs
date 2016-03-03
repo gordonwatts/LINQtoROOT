@@ -57,7 +57,7 @@ namespace LINQToTTreeLib.QueryVisitors
             var nLowBoundary = visitor.Visit(LowBoundary);
             var nHighBoundary = visitor.Visit(HighBoundary);
 
-            if (nLowBoundary == LowBoundary || nHighBoundary == HighBoundary)
+            if (nLowBoundary == LowBoundary && nHighBoundary == HighBoundary)
             {
                 return this;
             }
