@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.Files
     abstract class AsFileExpressionNode : ResultOperatorExpressionNodeBase
     {
         /// <summary>
-        /// Hold onto the colunm name
+        /// Hold onto the column name
         /// </summary>
         protected string[] _columnNames;
 

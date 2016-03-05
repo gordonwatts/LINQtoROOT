@@ -38,7 +38,7 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
-        /// Dealing with the process is the most important thing we do, so delagate it!
+        /// Dealing with the process is the most important thing we do, so delegate it!
         /// </summary>
         /// <param name="resultOperator"></param>
         /// <param name="queryModel"></param>
@@ -82,7 +82,7 @@ namespace LINQToTTreeLib.Files
             }
             else
             {
-                throw new InvalidOperationException($"Do not know how to generate CSV file from a sequence of {streamType.Name} objects!");
+                throw new InvalidOperationException($"Do not know how to generate values for a file from a sequence of {streamType.Name} objects!");
             }
 
             return itemValues;

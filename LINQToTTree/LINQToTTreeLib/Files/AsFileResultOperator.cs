@@ -16,7 +16,7 @@ namespace LINQToTTreeLib.Files
     abstract class AsFileResultOperator : ValueFromSequenceResultOperatorBase
     {
         /// <summary>
-        /// Initalize the result operator with the appropriate items.
+        /// Initialize the result operator with the appropriate items.
         /// </summary>
         /// <param name="outputfile"></param>
         /// <param name="headerColumnTitle"></param>
