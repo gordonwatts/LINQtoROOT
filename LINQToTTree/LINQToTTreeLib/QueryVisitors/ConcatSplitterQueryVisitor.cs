@@ -10,6 +10,7 @@ using Remotion.Linq.Clauses.Expressions;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using Remotion.Linq.Transformations;
+using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -167,7 +168,7 @@ namespace LINQToTTreeLib.QueryVisitors
                         // has now been modified by the above line).
                         foreach (var qm in queryModels.Take(queryModels.Length - 1))
                         {
-                            queryModel.ResultOperators.Insert(index + 1, new ConcatResultOperator(qm.MainFromClause.FromExpression));
+                            queryModel.ResultOperators.Insert(index + 1, new ConcatResultOperator(qm.MainFromClause.ItemName, qm.MainFromClause.ItemType, qm.MainFromClause.FromExpression));
                         }
                     }
                 }

@@ -9,6 +9,7 @@ using Remotion.Linq.Parsing.Structure;
 using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
 using LINQToTTreeLib.Files;
 using Remotion.Linq.Parsing.ExpressionVisitors.Transformation;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace LINQToTTreeLib
 {
@@ -194,7 +195,7 @@ namespace LINQToTTreeLib
             mreg.Register(AsQueriableExpressionNode.SupportedMethods, typeof(AsQueriableExpressionNode));
             mreg.Register(AsCSVExpressionNode.SupportedMethods, typeof(AsCSVExpressionNode));
             mreg.Register(AsTTreeExpressionNode.SupportedMethods, typeof(AsTTreeExpressionNode));
-            mreg.Register(ConcatExpressionNode.SupportedMethods, typeof(ConcatExpressionNode));
+            mreg.Register(ConcatExpressionNode.GetSupportedMethods(), typeof(ConcatExpressionNode));
 
             var defaultNodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
 
