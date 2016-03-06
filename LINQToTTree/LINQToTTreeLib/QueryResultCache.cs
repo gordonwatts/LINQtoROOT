@@ -48,9 +48,11 @@ namespace LINQToTTreeLib
 
             public string QueryText { get; set; }
 
+            public string UniqueHashString { get; set; }
+
             public string GetUniqueHashString()
             {
-                return Path.GetFileNameWithoutExtension(RootFile.Name);
+                return UniqueHashString;
             }
         }
 
@@ -159,8 +161,12 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(29, "GetKey: Calculating query hash");
             var queryHash = result.QueryText.GetHashCode();
             TraceHelpers.TraceInfo(30, "GetKey: Calculating the input object hash");
-            string queryNameBase = string.Format(@"\\query {0}-inp{1}-crm{2}", queryHash.ToString(), CalcObjectHash(inputObjects), crumbHash);
+            var inputObjectHash = CalcObjectHash(inputObjects);
+            string queryNameBase = string.Format(@"\\query {0}-inp{1}-crm{2}", queryHash.ToString(), inputObjectHash, crumbHash);
             result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + ".root");
+
+            // And a complete unique hash string.
+            result.UniqueHashString = $"files{flieHash.ToString()}-query{queryHash.ToString()}-objs{inputObjectHash}-crm{crumbHash}";
 
             TraceHelpers.TraceInfo(31, "GetKey: Done");
             return result;

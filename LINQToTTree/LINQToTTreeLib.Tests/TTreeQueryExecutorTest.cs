@@ -6,6 +6,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Files;
 
 namespace LINQToTTreeLib
 {
@@ -368,6 +369,55 @@ namespace LINQToTTreeLib
             var dude = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int) 1).Concat(q1.Select(e => (int) 1)).Count();
 
             Assert.AreEqual(numberOfIter * 10 + numberOfIter, dude);
+        }
+
+        [TestMethod]
+        public void RunSimpleConcatTwoSourceAsFilesDifferentQueries()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var proxyFile1 = TestUtils.GenerateROOTProxy(rootFile1, "dude");
+            ntuple._gProxyFile = proxyFile1.FullName;
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile1 }, "dude", typeof(ntuple));
+
+            var rootFile2 = TestUtils.CreateFileOfVectorDouble(numberOfIter);
+            var proxyFile2 = TestUtils.GenerateROOTProxy(rootFile2, "dude");
+            ntuple2._gProxyFile = proxyFile2.FullName;
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupeArrD>(new[] { rootFile2 }, "dude", typeof(ntuple2));
+
+            var dude = q2.SelectMany(e => e.myvectorofdouble).Select(i => (int)1).Concat(q1.Select(e => (int)1)).AsTTree();
+
+            foreach (var f in dude)
+            {
+                Console.WriteLine(f.FullName);
+            }
+
+            Assert.AreEqual(2, dude.Length);
+            Assert.AreNotEqual(dude[0].Name, dude[1].Name);
+        }
+
+        [TestMethod]
+        public void RunSimpleConcatTwoSourceAsFiles()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile2 = TestUtils.CreateFileOfInt(numberOfIter*2);
+
+            var proxyFile1 = TestUtils.GenerateROOTProxy(rootFile1, "dude");
+            ntuple._gProxyFile = proxyFile1.FullName;
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile1 }, "dude", typeof(ntuple));
+
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile2 }, "dude", typeof(ntuple));
+
+            var dude = q1.Concat(q2).AsTTree();
+
+            foreach (var f in dude)
+            {
+                Console.WriteLine(f.FullName);
+            }
+
+            Assert.AreEqual(2, dude.Length);
+            Assert.AreNotEqual(dude[0].Name, dude[1].Name);
         }
 
 #if false
