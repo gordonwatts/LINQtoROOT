@@ -52,7 +52,7 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public override IStreamedDataInfo GetOutputDataInfo(IStreamedDataInfo inputInfo)
         {
-            return new StreamedScalarValueInfo(typeof(FileInfo));
+            return new StreamedScalarValueInfo(typeof(FileInfo[]));
         }
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.Files
         protected string[] _columnNames;
 
         /// <summary>
-        /// Hold onto the file info.
+        /// Filename pattern we should base the output file on.
         /// </summary>
         protected Expression _fileInfo;
 

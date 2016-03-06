@@ -24,14 +24,14 @@ namespace LINQToTTreeLib.Files
         /// <param name="source">Sequence to save to the file</param>
         /// <param name="outputFile">The file to be written. Will be deleted if already present.</param>
         /// <param name="columnHeader">Header to be used in the output file.</param>
-        public static FileInfo AsCSV<T> (this IQueryable<T> source, FileInfo outputFile, params string[] columnHeaders)
+        public static FileInfo[] AsCSV<T> (this IQueryable<T> source, FileInfo outputFile, params string[] columnHeaders)
         {
             // Translate into an expression call
             return source.Provider.Execute(
                 Expression.Call(
                     ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
                     source.Expression, Expression.Constant(outputFile), Expression.Constant(columnHeaders)))
-                    as FileInfo;
+                    as FileInfo[];
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace LINQToTTreeLib.Files
         /// <param name="outputFile"></param>
         /// <param name="columnHeader"></param>
         /// <returns></returns>
-        public static IFutureValue<FileInfo> FutureAsCSV<T>(this IQueryable<T> source, FileInfo outputFile, params string[] columnHeader)
+        public static IFutureValue<FileInfo[]> FutureAsCSV<T>(this IQueryable<T> source, FileInfo outputFile, params string[] columnHeader)
         {
             var q = FutureResultOperators.CheckSource<T>(source);
 
@@ -54,7 +54,7 @@ namespace LINQToTTreeLib.Files
             var countMethod = countMethodGeneric.MakeGenericMethod(typeof(T));
             var expr = Expression.Call(null, countMethod, q.Expression);
 
-            return FutureResultOperators.FutureExecuteScalarHelper<T, FileInfo>(q, expr);
+            return FutureResultOperators.FutureExecuteScalarHelper<T, FileInfo[]>(q, expr);
         }
 
         /// <summary>
@@ -68,13 +68,13 @@ namespace LINQToTTreeLib.Files
         /// <param name="leaveHeaders">Headers to be used in the leaves. If left blank they will be auto-generated from the incoming object</param>
         /// <param name="treeName">Name of the tree written to the file. Defaults to "DataTree"</param>
         /// <param name="treeTitle">Title for the tree.</param>
-        /// <returns>A FileInfo that points to the resulting ROOT file.</returns>
+        /// <returns>A list of files (FileInfo's) that point to the resulting ROOT file.</returns>
         /// <remarks>
         /// Because TTree's can get large, we don't hold this in memory. Rather the TTree is attached to the
         /// specified ROOT file. The file is also not cached. Be careful about modifying it - if it is modified,
         /// the framework will almost certainly detect it, and cause it to be regenerated.
         /// </remarks>
-        public static FileInfo AsTTree<T>(this IQueryable<T> source, string treeName = "DataTree", string treeTitle = "Tree data saved via AsTTree output", FileInfo outputROOTFile = null, params string[] leaveHeaders)
+        public static FileInfo[] AsTTree<T>(this IQueryable<T> source, string treeName = "DataTree", string treeTitle = "Tree data saved via AsTTree output", FileInfo outputROOTFile = null, params string[] leaveHeaders)
         {
             // Translate into an expression call
             return source.Provider.Execute(
@@ -85,7 +85,7 @@ namespace LINQToTTreeLib.Files
                     Expression.Constant(treeTitle),
                     Expression.Constant(outputROOTFile, typeof(FileInfo)),
                     Expression.Constant(leaveHeaders)))
-                    as FileInfo;
+                    as FileInfo[];
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace LINQToTTreeLib.Files
         /// Because TTree's can get large, we don't hold this in memory. Rather the TTree is attached to the
         /// specified ROOT file. The file is also not cached. Be careful about modifying it - if it is modified,
         /// the framework will almost certainly detect it, and cause it to be regenerated.
-        public static IFutureValue<FileInfo> FutureAsTTree<T>(this IQueryable<T> source, FileInfo outputFile, params string[] columnHeader)
+        public static IFutureValue<FileInfo[]> FutureAsTTree<T>(this IQueryable<T> source, string treeName = "DataTree", string treeTitle = "Tree data saved via AsTTree output", FileInfo outputFile = null, params string[] columnHeader)
         {
             var q = FutureResultOperators.CheckSource<T>(source);
 
@@ -109,9 +109,9 @@ namespace LINQToTTreeLib.Files
 
             var countMethodGeneric = typeof(FileHelperQueryExtensions).GetMethods().Where(m => m.Name == "AsTTree").First();
             var countMethod = countMethodGeneric.MakeGenericMethod(typeof(T));
-            var expr = Expression.Call(null, countMethod, q.Expression);
+            var expr = Expression.Call(null, countMethod, q.Expression, Expression.Constant(treeName), Expression.Constant(treeTitle), Expression.Constant(outputFile, typeof(FileInfo)), Expression.Constant(columnHeader));
 
-            return FutureResultOperators.FutureExecuteScalarHelper<T, FileInfo>(q, expr);
+            return FutureResultOperators.FutureExecuteScalarHelper<T, FileInfo[]>(q, expr);
         }
     }
 }

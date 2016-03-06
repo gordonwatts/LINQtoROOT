@@ -131,7 +131,7 @@ namespace LINQToTTreeLib.Files
                 return (T)(object)null;
             }
 
-            return (T)(object)f;
+            return (T)(object)(new FileInfo[] { f });
         }
 
         /// <summary>

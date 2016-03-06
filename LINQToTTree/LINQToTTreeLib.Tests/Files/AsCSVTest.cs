@@ -94,11 +94,12 @@ namespace LINQToTTreeLib.Tests.Files
                 wr.WriteLine("hi there");
             }
 
-            FileInfo result = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            Assert.IsTrue(result.Exists, "File exists");
+            var result = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            Assert.AreEqual(1, result.Length);
+            Assert.IsTrue(result[0].Exists, "File exists");
 
             // Make sure file contains something reasonable.
-            var lines = result.ReadAllLines().ToArray();
+            var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
         }
 
@@ -109,14 +110,15 @@ namespace LINQToTTreeLib.Tests.Files
             CleanUpFile(new FileInfo("hi.csv"));
 
             var result1 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            result1.Refresh();
-            Assert.IsTrue(result1.Exists, "File exists");
-            var modTime = result1.LastWriteTime;
+            Assert.AreEqual(1, result1.Length);
+            result1[0].Refresh();
+            Assert.IsTrue(result1[0].Exists, "File exists");
+            var modTime = result1[0].LastWriteTime;
 
             // Run it a second time, and see what happens.
             var result2 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            result2.Refresh();
-            Assert.AreEqual(modTime, result2.LastWriteTime);
+            result2[0].Refresh();
+            Assert.AreEqual(modTime, result2[0].LastWriteTime);
         }
 
         [TestMethod]
@@ -126,13 +128,13 @@ namespace LINQToTTreeLib.Tests.Files
             CleanUpFile(new FileInfo("hi.csv"));
 
             var result1 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            result1.Refresh();
-            result1.Delete();
+            result1[0].Refresh();
+            result1[0].Delete();
 
             // Run it a second time, and see what happens.
             var result2 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            result2.Refresh();
-            Assert.IsTrue(result2.Exists);
+            result2[0].Refresh();
+            Assert.IsTrue(result2[0].Exists);
         }
 
         [TestMethod]
@@ -142,15 +144,15 @@ namespace LINQToTTreeLib.Tests.Files
             CleanUpFile(new FileInfo("hi.csv"));
 
             var result1 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            using (var wr = result1.CreateText())
+            using (var wr = result1[0].CreateText())
             {
                 wr.WriteLine("hi there");
             }
 
             // Run it a second time, and see what happens.
             var result2 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            result2.Refresh();
-            var lines = result2.ReadAllLines();
+            result2[0].Refresh();
+            var lines = result2[0].ReadAllLines();
             Assert.AreEqual(11, lines.ToArray().Length);
         }
 
@@ -160,14 +162,14 @@ namespace LINQToTTreeLib.Tests.Files
             // Remove file if it exists
             CleanUpFile(new FileInfo("hi.csv"));
 
-            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleTwoDoubles);
+            var result = RunQueryForSingleColumnTTree(QueryTupleTwoDoubles);
 
-            Assert.AreEqual("hi.csv", result.Name);
-            Assert.IsTrue(result.Exists, "File exists");
+            Assert.AreEqual("hi.csv", result[0].Name);
+            Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
             // file plus a column header.
-            var lines = result.ReadAllLines().ToArray();
+            var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("firstCol, second Col", lines[0]);
             Assert.AreEqual("10, 10", lines[1]);
@@ -179,14 +181,14 @@ namespace LINQToTTreeLib.Tests.Files
             // Remove file if it exists
             CleanUpFile(new FileInfo("hi.csv"));
 
-            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleFourDoubles);
+            var result = RunQueryForSingleColumnTTree(QueryTupleFourDoubles);
 
-            Assert.AreEqual("hi.csv", result.Name);
-            Assert.IsTrue(result.Exists, "File exists");
+            Assert.AreEqual("hi.csv", result[0].Name);
+            Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
             // file plus a column header.
-            var lines = result.ReadAllLines().ToArray();
+            var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("firstCol, second Col, col3, col4", lines[0]);
             Assert.AreEqual("10, 10, 10, 10", lines[1]);
@@ -198,14 +200,14 @@ namespace LINQToTTreeLib.Tests.Files
             // Remove file if it exists
             CleanUpFile(new FileInfo("hi.csv"));
 
-            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleSevenDoubles);
+            var result = RunQueryForSingleColumnTTree(QueryTupleSevenDoubles);
 
-            Assert.AreEqual("hi.csv", result.Name);
-            Assert.IsTrue(result.Exists, "File exists");
+            Assert.AreEqual("hi.csv", result[0].Name);
+            Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
             // file plus a column header.
-            var lines = result.ReadAllLines().ToArray();
+            var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("firstCol, second Col, col3, col4, col5, col6, col7", lines[0]);
             Assert.AreEqual("10, 10, 10, 10, 10, 10, 10", lines[1]);
@@ -217,20 +219,20 @@ namespace LINQToTTreeLib.Tests.Files
             // Remove file if it exists
             CleanUpFile(new FileInfo("hi.csv"));
 
-            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObject);
+            var result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObject);
 
-            Assert.AreEqual("hi.csv", result.Name);
-            Assert.IsTrue(result.Exists, "File exists");
+            Assert.AreEqual("hi.csv", result[0].Name);
+            Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
             // file plus a column header.
-            var lines = result.ReadAllLines().ToArray();
+            var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("col1, col2, col3", lines[0]);
             Assert.AreEqual("10, 10, 10", lines[1]);
         }
 
-        private static FileInfo RunQueryForSingleColumnTTree(Action queryBuilder)
+        private static FileInfo[] RunQueryForSingleColumnTTree(Action queryBuilder)
         {
             // Test a full round trip for a really simple CSV dump.
             var rootFile = TestUtils.CreateFileOfInt(10);
@@ -253,7 +255,7 @@ namespace LINQToTTreeLib.Tests.Files
 
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(singleIntNtuple));
-            var result = exe.ExecuteScalar<FileInfo>(query);
+            var result = exe.ExecuteScalar<FileInfo[]>(query);
             return result;
         }
 

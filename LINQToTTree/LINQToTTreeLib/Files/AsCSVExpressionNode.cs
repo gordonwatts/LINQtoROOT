@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Files
              };
 
         /// <summary>
-        /// Initalize with the file and column headers
+        /// Initialize with the file and column headers
         /// </summary>
         /// <param name="parseInfo"></param>
         /// <param name="fileInfo"></param>

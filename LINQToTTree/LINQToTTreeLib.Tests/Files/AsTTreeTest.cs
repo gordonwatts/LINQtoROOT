@@ -153,8 +153,9 @@ namespace LINQToTTreeLib.Tests.Files
 
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(singleIntNtuple));
-            var result = exe.ExecuteScalar<FileInfo>(query);
-            return result;
+            var result = exe.ExecuteScalar<FileInfo[]>(query);
+            Assert.AreEqual(1, result.Length);
+            return result[0];
         }
 
         /// <summary>
