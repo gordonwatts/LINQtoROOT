@@ -95,7 +95,8 @@ namespace LINQToTTreeLib.Statements
                 _evaluator
                     .ThrowIfNull(() => new InvalidOperationException("Attempt to modify the value after it has already been evaluated."));
 
-                _evaluator = () => transform(_evaluator());
+                var oldEval = _evaluator;
+                _evaluator = () => transform(oldEval());
             }
 
             /// <summary>
