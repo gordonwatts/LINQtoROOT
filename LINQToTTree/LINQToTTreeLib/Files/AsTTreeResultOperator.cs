@@ -15,14 +15,19 @@ namespace LINQToTTreeLib.Files
     /// </remarks>
     class AsTTreeResultOperator : AsFileResultOperator
     {
+        public string TreeName { get; private set; }
+        public string TreeTitle { get; private set; }
+
         /// <summary>
         /// Initialize the result operator with the appropriate items.
         /// </summary>
         /// <param name="outputfile"></param>
         /// <param name="headerColumnTitle"></param>
-        public AsTTreeResultOperator(FileInfo outputfile, string[] headerColumnTitle)
+        public AsTTreeResultOperator(string treeName, string treeTitle, FileInfo outputfile, string[] headerColumnTitle)
             : base(outputfile, headerColumnTitle)
         {
+            TreeName = treeName;
+            TreeTitle = treeTitle;
         }
 
         /// <summary>
@@ -32,7 +37,7 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public override ResultOperatorBase Clone(CloneContext cloneContext)
         {
-            return new AsTTreeResultOperator(OutputFile, HeaderColumns);
+            return new AsTTreeResultOperator(TreeName, TreeTitle, OutputFile, HeaderColumns);
         }
     }
 }

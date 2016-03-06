@@ -43,11 +43,56 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void TupleSetTitleAndItems()
+        {
+            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObjectTitleAndNameDefaultFile);
+
+            Assert.IsTrue(result.Exists, "resulting file does not exist");
+            var f = NTFile.Open(result.FullName);
+            try
+            {
+                var t = f.Get("PhysicsTree") as ROOTNET.Interface.NTTree;
+                Assert.IsNotNull(t, "Getting a tree from the file");
+
+                Assert.AreEqual("PhysicsTree", t.Name);
+                Assert.AreEqual("Data that we've written for a physics tree", t.Title);
+
+            }
+            finally
+            {
+                f.Close();
+            }
+        }
+
+        [TestMethod]
+        public void TupleCustomLeafNames()
+        {
+            FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObjectCustomLeafNames);
+
+            Assert.IsTrue(result.Exists, "File exists");
+
+            // Check the contents of the file.
+            var f = NTFile.Open(result.FullName);
+            try
+            {
+                var t = f.Get("DataTree") as ROOTNET.Interface.NTTree;
+                Assert.IsNotNull(t, "Getting a tree from the file");
+
+                var leaves = t.ListOfLeaves;
+                Assert.AreEqual(3, leaves.Entries, "Number of leaves");
+                Assert.AreEqual("c1", leaves[0].Name);
+                Assert.AreEqual("c2", leaves[1].Name);
+                Assert.AreEqual("col3", leaves[2].Name);
+            }
+            finally
+            {
+                f.Close();
+            }
+        }
+
+        [TestMethod]
         public void TupleStreamCompiled()
         {
-            // Remove file if it exists
-            CleanUpFile(new FileInfo("hi.csv"));
-
             FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObject);
 
             Console.WriteLine(result.FullName);
@@ -60,7 +105,7 @@ namespace LINQToTTreeLib.Tests.Files
             // Check the contents of the file. It should have a Tree in it with 10 entries.
             var f = NTFile.Open(result.FullName);
             try {
-                var t = f.Get("mytree") as ROOTNET.Interface.NTTree;
+                var t = f.Get("DataTree") as ROOTNET.Interface.NTTree;
                 Assert.IsNotNull(t, "Getting a tree from the file");
                 Assert.AreEqual(10, t.Entries);
 
@@ -163,9 +208,30 @@ namespace LINQToTTreeLib.Tests.Files
             var q = new QueriableDummy<singleIntNtuple>();
             q
                 .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run + 1, col3 = e.run + 2 })
-                .AsTTree(new FileInfo("hi.root"));
+                .AsTTree(outputROOTFile: new FileInfo("hi.root"));
         }
 
+        /// <summary>
+        /// Reset the leaf names
+        /// </summary>
+        private static void QueryTupleOurCustomObjectCustomLeafNames()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run + 1, col3 = e.run + 2 })
+                .AsTTree("DataTree", "this is a test", null, "c1", "c2");
+        }
+
+        /// <summary>
+        /// Simple query for a customized object.
+        /// </summary>
+        private static void QueryTupleOurCustomObjectTitleAndNameDefaultFile()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run + 1, col3 = e.run + 2 })
+                .AsTTree("PhysicsTree", "Data that we've written for a physics tree");
+        }
 
         /// <summary>
         /// Delete file if it exists.

@@ -18,8 +18,11 @@ namespace LINQToTTreeLib.Files
         /// </summary>
         public static MethodInfo[] SupportedMethods =
              new[] {
-                TypeUtils.GetSupportedMethod (() => FileHelperQueryExtensions.AsTTree((IQueryable<object>) null, (FileInfo) null, (string[]) null)),
+                TypeUtils.GetSupportedMethod (() => FileHelperQueryExtensions.AsTTree((IQueryable<object>) null, (string) null, (string) null, (FileInfo) null, (string[]) null)),
              };
+
+        readonly Expression _treeName;
+        readonly Expression _treeTitle;
 
         /// <summary>
         /// Initialize with the file and column headers
@@ -27,9 +30,12 @@ namespace LINQToTTreeLib.Files
         /// <param name="parseInfo"></param>
         /// <param name="fileInfo"></param>
         /// <param name="columnNames"></param>
-        public AsTTreeExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression fileInfo, Expression columnNames)
+        public AsTTreeExpressionNode(MethodCallExpressionParseInfo parseInfo, Expression treeName, Expression treeTitle, Expression fileInfo, Expression columnNames)
             : base(parseInfo, fileInfo, columnNames)
-        { }
+        {
+            _treeName = treeName;
+            _treeTitle = treeTitle;
+        }
 
         /// <summary>
         /// Create the actual re-linq resolution operator.
@@ -38,7 +44,9 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         protected override ResultOperatorBase CreateResultOperator(ClauseGenerationContext clauseGenerationContext)
         {
-            return new AsTTreeResultOperator((_fileInfo as ConstantExpression).Value as FileInfo, _columnNames);
+            return new AsTTreeResultOperator(
+                (_treeName as ConstantExpression).Value as string, (_treeTitle as ConstantExpression).Value as string,
+                (_fileInfo as ConstantExpression).Value as FileInfo, _columnNames);
         }
     }
 }

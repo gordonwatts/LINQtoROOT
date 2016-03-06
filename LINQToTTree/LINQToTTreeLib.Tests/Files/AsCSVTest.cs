@@ -11,7 +11,7 @@ using Remotion.Linq;
 namespace LINQToTTreeLib.Tests.Files
 {
     /// <summary>
-    /// Test various AsCSV extensions to make sure they work ok.
+    /// Test various AsCSV extensions to make sure they work OK.
     /// </summary>
     [TestClass]
     public class AsCSVTest
@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.Tests.Files
         {
             GeneratedCode query1 = GeneratedCodeFor(QuerySimpleSingleRun);
 
-            // Check that we have a cout somewhere in the statemnt.
+            // Check that we have a cout somewhere in the statement.
             Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("<<") && l.Contains(".run")).Any(), "At least one cout statement.");
         }
 
@@ -42,7 +42,7 @@ namespace LINQToTTreeLib.Tests.Files
         {
             GeneratedCode query1 = GeneratedCodeFor(QueryTupleTwoDoubles);
 
-            // Check that we have a cout somewhere in the statemnt.
+            // Check that we have a cout somewhere in the statement.
             Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("<<") && l.Contains(".run")).Any(), "At least one cout statement.");
         }
 
@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.Tests.Files
         {
             GeneratedCode query1 = GeneratedCodeFor(QueryTupleOurCustomObject);
 
-            // Check that we have a cout somewhere in the statemnt.
+            // Check that we have a cout somewhere in the statement.
             Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("<<") && l.Contains(".run")).Any(), "At least one cout statement.");
         }
 
@@ -248,7 +248,7 @@ namespace LINQToTTreeLib.Tests.Files
             var query = QueryModelFor(queryBuilder);
 
             ///
-            /// Ok, now we can actually see if we can make it "go".
+            /// OK, now we can actually see if we can make it "go".
             /// 
 
             ntuple._gProxyFile = proxyFile.FullName;
