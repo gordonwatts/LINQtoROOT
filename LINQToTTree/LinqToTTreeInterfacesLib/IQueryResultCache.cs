@@ -8,7 +8,11 @@ namespace LinqToTTreeInterfacesLib
     /// </summary>
     public interface IQueryResultCacheKey
     {
-
+        /// <summary>
+        /// Return a hash string for this query. It should be unique.
+        /// </summary>
+        /// <returns></returns>
+        string GetUniqueHashString();
     }
 
     /// <summary>
@@ -39,7 +43,7 @@ namespace LinqToTTreeInterfacesLib
         Tuple<bool, T> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IDeclaredParameter theVar);
 
         /// <summary>
-        /// Save an item for later lookup and retreival.
+        /// Save an item for later lookup and retrieval.
         /// </summary>
         /// <param name="_rootFile"></param>
         /// <param name="qm"></param>

@@ -11,6 +11,25 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementSimpleStatement : IStatement
     {
+        /// <summary>
+        /// Create a simple statement line, with a future to generate the actual line.
+        /// </summary>
+        /// <param name="futureLine"></param>
+        /// <param name="addSemicolon"></param>
+        public StatementSimpleStatement(Func<string> futureLine, bool addSemicolon = true)
+        {
+            futureLine
+                .ThrowIfNull(() => new ArgumentException("StatemeintSimpleStatment should not be called with a null input line"));
+
+            AddSemicolon = addSemicolon;
+            _statementGenerator = new EvalStringOnce(() => CleanLine(futureLine(), AddSemicolon));
+        }
+
+        /// <summary>
+        /// Create a simple statement line with a given string.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="addSemicolon"></param>
         public StatementSimpleStatement(string line, bool addSemicolon = true)
         {
             if (line == null)
@@ -18,18 +37,29 @@ namespace LINQToTTreeLib.Statements
 
             AddSemicolon = addSemicolon;
 
+            _statementGenerator = new EvalStringOnce(() => CleanLine(line, AddSemicolon));
+        }
+
+        /// <summary>
+        /// Clean up the line of semicolons, etc.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="addSemicolon"></param>
+        /// <returns></returns>
+        private static string CleanLine (string line, bool addSemicolon)
+        {
             ///
             /// Strip off all ending semi-colons. They will get added back
             /// in when we "codeitup".
             /// 
 
-            Line = line.Trim();
+            line = line.Trim();
             if (addSemicolon)
             {
-                while (Line.EndsWith(";"))
+                while (line.EndsWith(";"))
                 {
-                    Line = Line.Substring(0, Line.Length - 1);
-                    Line = Line.Trim();
+                    line = line.Substring(0, line.Length - 1);
+                    line = line.Trim();
                 }
             }
 
@@ -37,11 +67,63 @@ namespace LINQToTTreeLib.Statements
             /// Empty lines just aren't allowed! :-)
             /// 
 
-            if (string.IsNullOrWhiteSpace(Line))
+            if (string.IsNullOrWhiteSpace(line))
                 throw new ArgumentException("line can't be empty");
 
+            return line;
         }
-        public string Line { get; private set; }
+
+        /// <summary>
+        /// Class to track logic for evaluating a function for a result once.
+        /// </summary>
+        class EvalStringOnce
+        {
+            Func<string> _evaluator;
+            string _result = null;
+
+            public EvalStringOnce(Func<string> evaluator)
+            {
+                _evaluator = evaluator;
+            }
+
+            /// <summary>
+            /// Apply a transform to the string
+            /// </summary>
+            /// <param name="transform"></param>
+            public void ApplyFunc(Func<string, string> transform)
+            {
+                _evaluator
+                    .ThrowIfNull(() => new InvalidOperationException("Attempt to modify the value after it has already been evaluated."));
+
+                _evaluator = () => transform(_evaluator());
+            }
+
+            /// <summary>
+            /// Return the Value, evaluating it if need be
+            /// </summary>
+            public string Value
+            {
+                get
+                {
+                    if (_evaluator != null)
+                    {
+                        _result = _evaluator();
+                        _evaluator = null;
+                    }
+                    return _result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// So we call the code it up only once.
+        /// </summary>
+        private EvalStringOnce _statementGenerator = null;
+
+        /// <summary>
+        /// Returns the line text
+        /// </summary>
+        public string Line { get { return _statementGenerator.Value; } }
 
         /// <summary>
         /// Will a semicolon be added to this line when it is dumped?
@@ -74,7 +156,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            Line = Line.ReplaceVariableNames(originalName, newName);
+            _statementGenerator.ApplyFunc(a => a.ReplaceVariableNames(originalName, newName));
         }
 
         /// <summary>

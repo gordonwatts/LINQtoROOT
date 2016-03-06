@@ -47,6 +47,11 @@ namespace LINQToTTreeLib
             public string[] ExtraQueryInfoLines { get; set; }
 
             public string QueryText { get; set; }
+
+            public string GetUniqueHashString()
+            {
+                return Path.GetFileNameWithoutExtension(RootFile.Name);
+            }
         }
 
         /// <summary>

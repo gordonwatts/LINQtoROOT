@@ -386,6 +386,17 @@ namespace LINQToTTreeLib
             var result = new GeneratedCode();
             var codeContext = new CodeContext() { BaseNtupleObjectType = _baseNtupleObjectType };
 
+            // Future to return the cache key. Put some coding protection in there.
+            IQueryResultCacheKey key = null;
+            codeContext.CacheKeyFuture = () =>
+            {
+                if (key == null)
+                {
+                    throw new InvalidOperationException("Call to fetch the cache key before it is set");
+                }
+                return key;
+            };
+
             var qv = new QueryVisitor(result, codeContext, _gContainer);
             _gContainer.SatisfyImportsOnce(qv);
 
@@ -401,7 +412,6 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(8, "ExecuteScalarAsFuture: Getting cache key");
-            IQueryResultCacheKey key = null;
             {
                 object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
                 key = _cache.GetKey(_exeReq.RootFiles, _exeReq.TreeName, inputs, codeContext.CacheCookies.ToArray(), queryModel);
@@ -477,7 +487,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private IFutureValue<TResult> ExecuteUnknownQM<TResult>(QueryModel q)
         {
-            var provider = FindQueryProvider(q)
+            var provider = q.FindQueryProvider()
                 .ThrowIfNull(() => new InvalidOperationException($"I can't determine the provider for the QueryModel '{q.ToString()}' - giving up!"));
 
             // See if it is "us"
@@ -489,30 +499,12 @@ namespace LINQToTTreeLib
             {
                 // It is not, so we will just execute it right here.
                 //TResult r = provider.
-                throw new InvalidOperationException("Currently unable to directly execute querys on other providers");
+                throw new InvalidOperationException("Currently unable to directly execute queries on other providers");
             }
         }
 
         /// <summary>
-        /// Given a query model, determine who the provider is.
-        /// </summary>
-        /// <param name="q"></param>
-        /// <returns></returns>
-        private IQueryProvider FindQueryProvider(QueryModel q)
-        {
-            var fromExpression = q.MainFromClause.FromExpression;
-            while (fromExpression is SubQueryExpression)
-            {
-                fromExpression = (fromExpression as SubQueryExpression).QueryModel.MainFromClause.FromExpression;
-            }
-
-            var cVal = (fromExpression as ConstantExpression)
-                ?.Value as IQueryable;
-            return cVal?.Provider;
-        }
-
-        /// <summary>
-        /// Called when it is time to execut all the queries
+        /// Called when it is time to execute all the queries
         /// </summary>
         internal void ExecuteQueuedQueries()
         {

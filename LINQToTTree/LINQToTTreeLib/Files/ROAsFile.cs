@@ -8,6 +8,7 @@ using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
+using System.IO;
 
 namespace LINQToTTreeLib.Files
 {
@@ -86,6 +87,22 @@ namespace LINQToTTreeLib.Files
             }
 
             return itemValues;
+        }
+
+        /// <summary>
+        /// Given an original filename, make it unique using the cache item.
+        /// However, this is a future, sadly, so we have to return a function that will generate it correctly.
+        /// </summary>
+        /// <param name="originalName">The starting name for the file</param>
+        /// <param name="cc">Code context that we will use to get the cache key.</param>
+        /// <returns></returns>
+        protected static Func<FileInfo> GenerateUniqueFile(FileInfo originalName, ICodeContext cc)
+        {
+            // Get the hash key (or the promise for it).
+            var futureKey = cc.CacheKeyFuture;
+
+            // For the file lets add the hash to the end of the filename.
+            return () => new FileInfo(Path.Combine(originalName.DirectoryName, $"{Path.GetFileNameWithoutExtension(originalName.Name)} - {futureKey().GetUniqueHashString()}{originalName.Extension}"));
         }
 
     }

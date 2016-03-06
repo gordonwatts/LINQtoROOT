@@ -456,7 +456,12 @@ namespace LINQToTTreeLib
         /// </summary>
         public Type BaseNtupleObjectType { get; set; }
 
-        #region Cached Varaible Scoping
+        /// <summary>
+        /// Get/Set the function that will return a cache key
+        /// </summary>
+        public Func<IQueryResultCacheKey> CacheKeyFuture { get; set; }
+
+        #region Cached Variable Scoping
 
         private List<IVariableScopeHolder> _cachedScopeVars = new List<IVariableScopeHolder>();
 
@@ -502,6 +507,7 @@ namespace LINQToTTreeLib
             }
             _cachedScopeVars.Clear();
         }
+
         #endregion
 
     }

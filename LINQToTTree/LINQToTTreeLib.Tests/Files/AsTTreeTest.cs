@@ -38,7 +38,7 @@ namespace LINQToTTreeLib.Tests.Files
         {
             GeneratedCode query1 = GeneratedCodeFor(QueryTupleOurCustomObject);
 
-            // Check that we have a cout somewhere in the statemnt.
+            // Check that we have a Fill somewhere in the statement.
             Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("->Fill()")).Any(), "At least one Fill statement.");
         }
 
@@ -50,8 +50,12 @@ namespace LINQToTTreeLib.Tests.Files
 
             FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObject);
 
-            Assert.AreEqual("hi.root", result.Name);
+            Console.WriteLine(result.FullName);
             Assert.IsTrue(result.Exists, "File exists");
+            Assert.AreNotEqual("hi.root", result.Name);
+            Assert.AreEqual(".root", result.Extension);
+            Assert.IsTrue(result.Name.StartsWith("hi"));
+            Assert.IsFalse(result.FullName.Contains(".."));
 
             // Check the contents of the file. It should have a Tree in it with 10 entries.
             var f = NTFile.Open(result.FullName);
@@ -71,6 +75,8 @@ namespace LINQToTTreeLib.Tests.Files
                 {
                     WriteLine($"Entry value: col1: {entry.col1} col2: {entry.col2} col3: {entry.col3}");
                     Assert.AreEqual(10, entry.col1);
+                    Assert.AreEqual(11, entry.col2);
+                    Assert.AreEqual(12, entry.col3);
                 }
             } finally
             {
@@ -156,7 +162,7 @@ namespace LINQToTTreeLib.Tests.Files
         {
             var q = new QueriableDummy<singleIntNtuple>();
             q
-                .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run, col3 = e.run })
+                .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run + 1, col3 = e.run + 2 })
                 .AsTTree(new FileInfo("hi.root"));
         }
 

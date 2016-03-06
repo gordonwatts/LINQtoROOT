@@ -82,6 +82,45 @@ namespace LINQToTTreeLib.Statements
             Assert.IsFalse(st1.TryCombineStatement(st3, null), "diff statements should not combine");
         }
 
+        [TestMethod]
+        public void SimpleStatementNoCallBackTillCodeUp()
+        {
+            bool called = false;
+            var st = new StatementSimpleStatement(() => { called = true; return "int j"; });
+            Assert.IsFalse(called, "Call back called too early");
+            var lines = st.CodeItUp().ToArray();
+            Assert.IsTrue(called);
+        }
+
+        [TestMethod]
+        public void SimpleStatementNoCallBackTillCodeUp2()
+        {
+            int count = 0;
+            var st = new StatementSimpleStatement(() => { count++; return "int j"; });
+            var lines = st.CodeItUp().ToArray();
+            Assert.AreEqual(1, count);
+            var lines2 = st.CodeItUp().ToArray();
+            Assert.AreEqual(1, count);
+        }
+
+        [TestMethod]
+        public void SimpleStatementCallbackLineWithSemicolon()
+        {
+            var st = new StatementSimpleStatement(() => "int j");
+            var lines = st.CodeItUp().ToArray();
+            Assert.AreEqual(1, lines.Length);
+            Assert.AreEqual("int j;", lines[0]);
+        }
+
+        [TestMethod]
+        public void SimpleStatementCallbackLineWithNoSemicolon()
+        {
+            var st = new StatementSimpleStatement(() => "}", addSemicolon: false);
+            var lines = st.CodeItUp().ToArray();
+            Assert.AreEqual(1, lines.Length);
+            Assert.AreEqual("}", lines[0]);
+        }
+
 #if false
         [PexMethod]
         public bool TestTryCombine([PexAssumeUnderTest] StatementSimpleStatement target, IStatement st)

@@ -156,15 +156,14 @@ namespace LINQToTTreeLib.Files
             yield return $"{v.RawValue}.first->Close();";
 
             // Write out the path.
-            var fileAsCPPString = (v.InitialValue as OutputTTreeFileType).OutputFile.FullName.AddCPPEscapeCharacters();
-            yield return string.Format("TH1I *{0}_hist = new TH1I(\"{0}\", \"{1}\", 1, 0.0, 1.0);", v.RawValue, fileAsCPPString);
+            yield return $"TH1I *{v.RawValue}_hist = new TH1I(\"{v.RawValue}\", {v.RawValue}.first->GetName(), 1, 0.0, 1.0);";
             yield return v.RawValue + "_hist->SetDirectory(0);";
             yield return "Book(" + v.RawValue + "_hist);";
 
             // Write out the mod time and the file size.
             yield return $"Long_t {v.RawValue}_size;";
             yield return $"Long_t {v.RawValue}_modification_time;";
-            yield return $"gSystem->GetPathInfo(\"{fileAsCPPString}\", 0, &{v.RawValue}_size, 0, &{v.RawValue}_modification_time);";
+            yield return $"gSystem->GetPathInfo({v.RawValue}.first->GetName(), 0, &{v.RawValue}_size, 0, &{v.RawValue}_modification_time);";
 
             foreach (var s in SaveIntValue($"{v.RawValue}_size"))
             {

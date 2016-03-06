@@ -17,13 +17,13 @@ namespace LinqToTTreeInterfacesLib
     }
 
     /// <summary>
-    /// Context for coding - this is the temprorary stuff that follows along during code generation... but doesn't
+    /// Context for coding - this is the temporary stuff that follows along during code generation... but doesn't
     /// need to be kept around once we are done.
     /// </summary>
     public interface ICodeContext
     {
         /// <summary>
-        /// Add a vairable mapping to an expression. Used for dealing with parameters and the like.
+        /// Add a variable mapping to an expression. Used for dealing with parameters and the like.
         /// Use the return object to pop it off the stack when you are done.
         /// </summary>
         /// <param name="indexName"></param>
@@ -78,7 +78,7 @@ namespace LinqToTTreeInterfacesLib
         IQuerySource[] GetAndResetQuerySourceLookups();
 
         /// <summary>
-        /// Place the list of query sources back on the interna list.
+        /// Place the list of query sources back on the internal list.
         /// </summary>
         /// <param name="qsList"></param>
         void RestoreQuerySourceLookups(IEnumerable<IQuerySource> qsList);
@@ -92,7 +92,7 @@ namespace LinqToTTreeInterfacesLib
         IVariableScopeHolder Remove(string indexName);
 
         /// <summary>
-        /// Get the current index loop variable - evalusates to
+        /// Get the current index loop variable - evaluates to
         /// whatever it is our current expression.
         /// </summary>
         Expression LoopVariable { get; }
@@ -122,7 +122,7 @@ namespace LinqToTTreeInterfacesLib
         Type BaseNtupleObjectType { get; }
 
         /// <summary>
-        /// Add a variable to the cache that should be elminiated in the end.
+        /// Add a variable to the cache that should be eliminated in the end.
         /// </summary>
         /// <param name="variableScopeHolder"></param>
         void CacheVariableToEliminate(IVariableScopeHolder variableScopeHolder);
@@ -134,7 +134,7 @@ namespace LinqToTTreeInterfacesLib
         IEnumerable<IVariableScopeHolder> ResetCachedVariableList();
 
         /// <summary>
-        /// Pop all the variables on teh cached list out of the code context.
+        /// Pop all the variables on the cached list out of the code context.
         /// </summary>
         void PopCachedVariableList();
 
@@ -143,5 +143,12 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="cachedScopedVariables"></param>
         void LoadCachedVariableList(IEnumerable<IVariableScopeHolder> cachedScopedVariables);
+
+        /// <summary>
+        /// Return a query result cache key. This is a promise to return it. It will only
+        /// succeed after it has been set (after the complete expression has been visited).
+        /// </summary>
+        /// <returns></returns>
+        Func<IQueryResultCacheKey> CacheKeyFuture { get; set; }
     }
 }

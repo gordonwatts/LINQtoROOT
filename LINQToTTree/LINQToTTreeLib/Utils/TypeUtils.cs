@@ -105,5 +105,18 @@ namespace LINQToTTreeLib.Utils
                 .Method
                 .GetGenericMethodDefinition();
         }
+
+        /// <summary>
+        /// Simple cast operator for functional programming, man! :-)
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="F"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static TResult CastTo<TResult> (this object source)
+            where TResult : class
+        {
+            return source as TResult;
+        }
     }
 }
