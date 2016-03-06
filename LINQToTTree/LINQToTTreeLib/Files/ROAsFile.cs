@@ -32,10 +32,10 @@ namespace LINQToTTreeLib.Files
         /// <param name="_codeEnv"></param>
         /// <param name="_codeContext"></param>
         /// <param name="container"></param>
-        /// <returns></returns>
+        /// <returns>Null, to tell the framework that it should run the full blown result operator infrastructure</returns>
         public Tuple<bool, Expression> ProcessIdentityQuery(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         /// <summary>

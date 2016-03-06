@@ -43,6 +43,13 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void QuerySimple()
+        {
+            var q1 = GeneratedCodeFor(ASimpleQuery);
+
+        }
+
+        [TestMethod]
         public void TupleSetTitleAndItems()
         {
             FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObjectTitleAndNameDefaultFile);
@@ -209,6 +216,13 @@ namespace LINQToTTreeLib.Tests.Files
             var q = new QueriableDummy<singleIntNtuple>();
             q
                 .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run + 1, col3 = e.run + 2 })
+                .AsTTree(outputROOTFile: new FileInfo("hi.root"));
+        }
+
+        private static void ASimpleQuery()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
                 .AsTTree(outputROOTFile: new FileInfo("hi.root"));
         }
 
