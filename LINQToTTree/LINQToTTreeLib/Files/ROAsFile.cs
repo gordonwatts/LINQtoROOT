@@ -60,7 +60,7 @@ namespace LINQToTTreeLib.Files
             var streamSelector = queryModel.SelectClause.Selector;
 
             var itemValues = new List<Expression>();
-            if (streamType == typeof(double))
+            if (streamType == typeof(double) || streamType == typeof(int))
             {
                 // A single stream of doubles
                 itemValues.Add(queryModel.SelectClause.Selector);
