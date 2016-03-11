@@ -113,6 +113,27 @@ namespace LINQToTTreeLib.Statements
         }
 
         [TestMethod]
+        public void SimpleStatementCallbackAndTransform()
+        {
+            var st = new StatementSimpleStatement(() => "int j");
+            st.RenameVariable("j", "k");
+            var lines = st.CodeItUp().ToArray();
+            Assert.AreEqual(1, lines.Length);
+            Assert.AreEqual("int k;", lines[0]);
+        }
+
+        [TestMethod]
+        public void SimpleStatementCallbackAndTransformAfterRendering()
+        {
+            var st = new StatementSimpleStatement(() => "int j");
+            var lines = st.CodeItUp().ToArray();
+            st.RenameVariable("j", "k");
+            lines = st.CodeItUp().ToArray();
+            Assert.AreEqual(1, lines.Length);
+            Assert.AreEqual("int k;", lines[0]);
+        }
+
+        [TestMethod]
         public void SimpleStatementCallbackLineWithNoSemicolon()
         {
             var st = new StatementSimpleStatement(() => "}", addSemicolon: false);

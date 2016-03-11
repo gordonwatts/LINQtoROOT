@@ -92,11 +92,14 @@ namespace LINQToTTreeLib.Statements
             /// <param name="transform"></param>
             public void ApplyFunc(Func<string, string> transform)
             {
-                _evaluator
-                    .ThrowIfNull(() => new InvalidOperationException("Attempt to modify the value after it has already been evaluated."));
-
-                var oldEval = _evaluator;
-                _evaluator = () => transform(oldEval());
+                if (_evaluator == null)
+                {
+                    _result = transform(_result);
+                } else
+                {
+                    var oldEval = _evaluator;
+                    _evaluator = () => transform(oldEval());
+                }
             }
 
             /// <summary>
