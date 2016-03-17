@@ -302,7 +302,7 @@ namespace LINQToTTreeLib
 #pragma warning restore
 
         /// <summary>
-        /// Future Value for adders. NOTE: This is not functional. If you update the result of somethign returned here,
+        /// Future Value for adders. NOTE: This is not functional. If you update the result of something returned here,
         /// then this will return the updated result - it holds onto an object reference!!!
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -343,6 +343,42 @@ namespace LINQToTTreeLib
                     {
                         _val = _adder.Update(_accumulator.Value, _o2.Value);
                         added = true;
+                    }
+                    return _val;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Do first cloning of the value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private class CloneFutureValue<T> : IFutureValue<T>
+        {
+            private IAddResult _adder;
+            private IFutureValue<T> _held;
+            private bool _cloned = false;
+            private T _val;
+
+            public CloneFutureValue(IFutureValue<T> held, IAddResult adder)
+            {
+                _adder = adder;
+                _held = held;
+            }
+
+            /// <summary>
+            /// If we have a value, then we have a value.
+            /// </summary>
+            public bool HasValue { get { return _held.HasValue; } }
+
+            public T Value
+            {
+                get
+                {
+                    if (!_cloned)
+                    {
+                        _val = _adder.Clone(_held.Value);
+                        _cloned = true;
                     }
                     return _val;
                 }
@@ -446,7 +482,7 @@ namespace LINQToTTreeLib
 
         /// <summary>
         /// Evaluate the QM if it has Concat result operators in it. This can mean that we are dealing with multiple
-        /// sources of data, so we will need to execute those queries privatly.
+        /// sources of data, so we will need to execute those queries privately.
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="queryModel"></param>
@@ -461,14 +497,14 @@ namespace LINQToTTreeLib
 
                 // Get the addition operator for these folks
                 var adder = _resultAdders
-                    .ThrowIfNull(() => new InvalidOperationException("Result Adders has not be compesed!"))
+                    .ThrowIfNull(() => new InvalidOperationException("Result Adders has not be composed!"))
                     .Where(a => a.CanHandle(typeof(TResult)))
                     .FirstOrDefault()
                     .ThrowIfNull(() => new InvalidOperationException($"Unable to find an IAddResult object for type '{typeof(TResult).Name}' - so can't add them together! Please provide MEF export."));
 
                 var fsum = qmValues
                     .Skip(1)
-                    .Aggregate(qmValues.First() as IFutureValue<TResult>, (accum, value) => new AddedFutureValue<TResult>(accum, value, adder));
+                    .Aggregate(adder.Clone(qmValues.First()), (accum, value) => new AddedFutureValue<TResult>(accum, value, adder));
 
                 return fsum;
             }
