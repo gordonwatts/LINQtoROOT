@@ -8,6 +8,7 @@ using Remotion.Linq.Clauses;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.IO;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Files
 {
@@ -61,7 +62,7 @@ namespace LINQToTTreeLib.Files
             }
             else
             {
-                foreach (var f in objectTypeToDump.GetFields())
+                foreach (var f in objectTypeToDump.GetFieldsInDeclOrder())
                 {
                     if (!TypeIsEasilyDumped(f.FieldType))
                     {

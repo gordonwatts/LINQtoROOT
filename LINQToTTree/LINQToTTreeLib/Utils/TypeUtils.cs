@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -98,7 +99,7 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="methodReference"></param>
         /// <returns></returns>
-        public static MethodInfo GetSupportedMethod (Expression<Action> methodReference)
+        public static MethodInfo GetSupportedMethod(Expression<Action> methodReference)
         {
             return (methodReference.Body as MethodCallExpression)
                 .ThrowIfNull(() => new InvalidOperationException("Passed a method reference that isn't a method reference!"))
@@ -113,10 +114,21 @@ namespace LINQToTTreeLib.Utils
         /// <typeparam name="F"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static TResult CastTo<TResult> (this object source)
+        public static TResult CastTo<TResult>(this object source)
             where TResult : class
         {
             return source as TResult;
+        }
+
+        /// <summary>
+        /// Fetch the fields of an object, and return them in declaration order.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static IEnumerable<FieldInfo> GetFieldsInDeclOrder (this Type obj)
+        {
+            return obj.GetFields()
+                .OrderBy(f => f.MetadataToken);
         }
     }
 }

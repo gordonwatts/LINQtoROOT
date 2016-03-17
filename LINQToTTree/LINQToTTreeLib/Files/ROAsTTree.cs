@@ -82,7 +82,7 @@ namespace LINQToTTreeLib.Files
             List<Expression> itemValues = ExtractItemValueExpressions(queryModel);
 
             // We are just going to print out the line with the item in it.
-            var itemAsValues = itemValues.Select(iv => ExpressionToCPP.GetExpression(iv, gc, cc, container));
+            var itemAsValues = itemValues.Select(iv => ExpressionToCPP.GetExpression(iv, gc, cc, container)).ToArray();
             var pstatement = new StatementFillTree(stream, itemAsValues.Zip(asTTree.HeaderColumns, (i, h) => Tuple.Create(i, h)).ToArray());
 
             gc.Add(pstatement);

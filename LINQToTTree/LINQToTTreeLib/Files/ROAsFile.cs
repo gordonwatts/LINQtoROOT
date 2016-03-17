@@ -9,6 +9,7 @@ using Remotion.Linq.Clauses;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
 using System.IO;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Files
 {
@@ -76,7 +77,7 @@ namespace LINQToTTreeLib.Files
             }
             else if (streamType.GetFields().Length > 0)
             {
-                foreach (var fName in streamType.GetFields().Select(f => f.Name))
+                foreach (var fName in streamType.GetFieldsInDeclOrder().Select(f => f.Name))
                 {
                     itemValues.Add(Expression.PropertyOrField(streamSelector, fName));
                 }
