@@ -504,7 +504,7 @@ namespace LINQToTTreeLib
 
                 var fsum = qmValues
                     .Skip(1)
-                    .Aggregate(adder.Clone(qmValues.First()), (accum, value) => new AddedFutureValue<TResult>(accum, value, adder));
+                    .Aggregate(new CloneFutureValue<TResult>(qmValues.First(), adder) as IFutureValue<TResult>, (accum, value) => new AddedFutureValue<TResult>(accum, value, adder));
 
                 return fsum;
             }
