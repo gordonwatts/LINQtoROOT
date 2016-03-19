@@ -82,7 +82,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
         /// <summary>
         /// Discovered in the wild: a lift put statements out of order. This happens because one
-        /// statement looks like it can be absorbed into another, when burried inside it, there is
+        /// statement looks like it can be absorbed into another, when buried inside it, there is
         /// some object reference which doesn't work.
         /// </summary>
         [TestMethod]
@@ -359,11 +359,11 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
-        /// Identical loops should not be lifted! That would be very bad. If they are lifted, then
+        /// Identical nested loops should not be lifted! That would be very bad. If they are lifted, then
         /// you will miss a 2D run on something!
         /// </summary>
         [TestMethod]
-        public void TestIdenticalLoopsStayPut()
+        public void TestIdenticalNestedLoopsStayPut()
         {
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
@@ -392,7 +392,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(2, firstLoop.Statements.Count(), "# of statements in first loop");
             var secondLoop = firstLoop.Statements.Skip(1).First() as DummyLoop;
             Assert.IsNotNull(secondLoop, "second loop");
-            Assert.AreEqual(1, secondLoop.Statements.Count(), "# of satements in second loop");
+            Assert.AreEqual(1, secondLoop.Statements.Count(), "# of statements in second loop");
         }
 
         /// <summary>
@@ -424,7 +424,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
             {
-                yield return "{";
+                yield return "do {";
                 foreach (var s in _statements)
                 {
                     foreach (var l in s.CodeItUp())

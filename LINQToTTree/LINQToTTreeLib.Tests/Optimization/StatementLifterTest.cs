@@ -202,7 +202,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// 2. Loop
         /// 3.   Statement that is independent of loop 1
         /// 
-        /// It is ok to live statement 3 to be above Loop, but we can't
+        /// It is OK to lift statement 3 to be above Loop, but we can't
         /// move it past #1.
         /// </summary>
         [TestMethod]
