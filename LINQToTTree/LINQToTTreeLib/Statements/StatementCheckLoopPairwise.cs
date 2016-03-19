@@ -6,7 +6,7 @@ namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Given an array of indicies, makes a loop over them. One then
-    /// can add a check (or similar) to the interiror.
+    /// can add a check (or similar) to the interior.
     /// </summary>
     public class StatementCheckLoopPairwise : StatementInlineBlockBase, IStatementLoop
     {
@@ -17,9 +17,9 @@ namespace LINQToTTreeLib.Statements
         private IDeclaredParameter _whatIsGood;
 
         /// <summary>
-        /// Loop over all the indicies we are given (sort of like an indicrect) in a double loop. For each one
+        /// Loop over all the indicies we are given (sort of like an indirect) in a double loop. For each one
         /// make sure that they satisfy the function. if we find any failing, mark both as bad. You must set
-        /// the TEST variable, but do it after this guy is part of the generatedcode - scoping must be tracked
+        /// the TEST variable, but do it after this guy is part of the generated code - scoping must be tracked
         /// correctly!!
         /// </summary>
         /// <param name="indiciesToInspect">The list of indicies we should set index1 and index2 to</param>
@@ -63,7 +63,7 @@ namespace LINQToTTreeLib.Statements
         public override IEnumerable<string> CodeItUp()
         {
             //
-            // Make sure that the list of bools is reset initially. Assume it is empty when we
+            // Make sure that the list of bool is reset initially. Assume it is empty when we
             // are called.
             //
 
@@ -106,7 +106,7 @@ namespace LINQToTTreeLib.Statements
 
             yield return "    }"; // Inner lop (index2)
             yield return "  }"; // The if this index is worth looking at
-            yield return "}"; // Outter for loop
+            yield return "}"; // Outer for loop
 
         }
 

@@ -94,7 +94,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Keeps track of the the current scope
+        /// Keeps track of the current scope
         /// </summary>
         private class CurrentScopeInfo : IScopeInfo
         {
@@ -193,7 +193,7 @@ namespace LINQToTTreeLib
                 throw new ArgumentNullException("cannot add null variable!");
 
             if (PreviousDeclarationScopePointer == null)
-                throw new InvalidOperationException("Can't declare one varaible one level up when one level up doesn't exist!");
+                throw new InvalidOperationException("Can't declare one variable one level up when one level up doesn't exist!");
 
             PreviousDeclarationScopePointer.Add(valSimple);
         }
@@ -293,7 +293,7 @@ namespace LINQToTTreeLib
 
 
         /// <summary>
-        /// Add a statement up above the current scope pointer - just outside somethign that is a loop
+        /// Add a statement up above the current scope pointer - just outside something that is a loop
         /// construct.
         /// </summary>
         /// <param name="s"></param>
@@ -571,7 +571,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Get the list of functions, as exectuable sources.
+        /// Get the list of functions, as executable sources.
         /// </summary>
         public IEnumerable<IQMFuncExecutable> Functions
         {
@@ -579,17 +579,17 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Cache any initalization statements.
+        /// Cache any initialization statements.
         /// </summary>
         private List<IStatement> _initStatements = new List<IStatement>();
 
         /// <summary>
-        /// The list of init statements.
+        /// The list of initialization statements.
         /// </summary>
         public IEnumerable<IStatement> InitalizationStatements { get { return _initStatements; } }
 
         /// <summary>
-        /// Add an initalization statement.
+        /// Add an initialization statement.
         /// </summary>
         /// <param name="p"></param>
         public void AddInitalizationStatement(IStatement p)

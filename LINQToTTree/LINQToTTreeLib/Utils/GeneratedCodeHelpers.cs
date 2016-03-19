@@ -15,7 +15,7 @@ namespace LINQToTTreeLib.Utils
         /// <param name="gc"></param>
         /// <param name="cc"></param>
         /// <param name="alreadySeen"></param>
-        /// <param name="startStatement">The first statment to start our scan from</param>
+        /// <param name="startStatement">The first statement to start our scan from</param>
         public static IEnumerable<IDeclaredParameter> GetUsedQuerySourceVariables(this IGeneratedQueryCode gc, IStatement startStatement, IDeclaredParameter alreadySeen = null)
         {
             var scope = startStatement as IStatement;
