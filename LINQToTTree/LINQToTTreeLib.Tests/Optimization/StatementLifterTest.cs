@@ -2,6 +2,7 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -227,8 +228,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
         /// <summary>
         /// 1. Loop 1 over array a
-        /// 2. Loop 2 over array a
-        /// 3.  something with iterator from Loop 1 and Loop 2.
+        /// 2.   Loop 2 over array a
+        /// 3.     something with iterator from Loop 1 and Loop 2.
         /// 
         /// You can't necessarily pull things out when they are nested identical loops - they may well be
         /// there for a reason!
@@ -362,7 +363,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// 1. no side effect statement
         /// 2. non ICM statement that is a compound statement
         /// 3.   no side effect statement
-        /// Nothing shoudl be lifted in this case.
+        /// Nothing should be lifted in this case.
         /// </summary>
         [TestMethod]
         public void TestNoLiftPastNoMoveCompound()
@@ -382,6 +383,202 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsInstanceOfType(secondStatement, typeof(DummyStatementCompoundNoCMInfo), "Second statement");
         }
 
+        /// <summary>
+        /// Make sure lift occurs when identical loops are present
+        /// 1. loop A
+        /// 2. if statement
+        /// 3.   loop A
+        /// 4.   statement
+        /// In this case loop A can be removed.
+        /// </summary>
+        [TestMethod]
+        public void LiftIdenticalLoopOutOfIfStatement()
+        {
+            var gc = new GeneratedCode();
+            var c1 = AddLoop(gc);
+            gc.Pop();
+            AddIf(gc);
+            var c2 = AddLoop(gc);
+            gc.Pop();
+            AddSum(gc, c1, c2);
+
+            Console.WriteLine("Before lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            // Now check that things happened as we would expect them to happen.
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of statements inside first for loop");
+
+            var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
+            Assert.IsNotNull(ifStatement, "Finding if statement");
+            Assert.AreEqual(1, ifStatement.Statements.Count(), "# of statements inside the if statement");
+            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAssign));
+            var ass = ifStatement.Statements.First() as StatementAssign;
+            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+        }
+
+        /// <summary>
+        /// If loops aren't identical we can't really do the lift, even if it is close.
+        /// 1. loop A
+        /// 2. if statement
+        /// 3.   loop A'
+        /// 4.   statement
+        /// Here A' contains the statements in A plus an extra statement.
+        /// Eventually, perhaps we can remove the common portion in A as long as it isn't touched in A'. But not for now.
+        /// </summary>
+        [TestMethod]
+        public void NoLiftAlmostIdenticalLoopOutOfIfStatement()
+        {
+            var gc = new GeneratedCode();
+            var c1 = AddLoop(gc);
+            gc.Pop();
+            AddIf(gc);
+            var c2 = AddLoop(gc, addDependentStatement: true);
+            gc.Pop();
+            AddSum(gc, c1, c2);
+
+            Console.WriteLine("Before lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            // Now check that things happened as we would expect them to happen.
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of statements inside first for loop");
+
+            var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
+            Assert.IsNotNull(ifStatement, "Finding if statement");
+            Assert.AreEqual(2, ifStatement.Statements.Count(), "# of statements inside the if statement");
+        }
+
+        /// <summary>
+        /// A loop repeated can be combined
+        /// 1. loop A
+        /// 2. loop A
+        /// 3. statement
+        /// Second loop A can be removed.
+        /// </summary>
+        [TestMethod]
+        public void CombineRepeatedLoops()
+        {
+            var gc = new GeneratedCode();
+            var c1 = AddLoop(gc);
+            gc.Pop();
+            var c2 = AddLoop(gc);
+            gc.Pop();
+            AddSum(gc, c1, c2);
+
+            Console.WriteLine("Before lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            // Now check that things happened as we would expect them to happen.
+            var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
+            Assert.IsNotNull(ass, "Finding the assignment statement");
+            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+        }
+
+        /// <summary>
+        /// A loop repeated can be combined
+        /// 1. loop A
+        /// 2. loop A'
+        /// 3. statement
+        /// Where loop A' includes the statements in A plus extra. Until we can look
+        /// into individual statements, we can't lift the common portion of A'.
+        /// </summary>
+        [TestMethod]
+        public void CombineRepeatedAlmostIdenticalLoops()
+        {
+            var gc = new GeneratedCode();
+            var c1 = AddLoop(gc);
+            gc.Pop();
+            var c2 = AddLoop(gc, true);
+            gc.Pop();
+            AddSum(gc, c1, c2);
+
+            Console.WriteLine("Before lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            // Now check that things happened as we would expect them to happen.
+            var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
+            Assert.IsNotNull(ass, "Finding the assignment statement");
+            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+            Assert.AreEqual(2, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(sf => sf.Statements.Count() == 2).Count(), "# of statement sin the for loop");
+        }
+
+        /// <summary>
+        /// Create a new declarable parameter that will sum these two things.
+        /// </summary>
+        /// <param name="gc"></param>
+        /// <param name="c1"></param>
+        /// <param name="c2"></param>
+        private IDeclaredParameter AddSum(GeneratedCode gc, IDeclaredParameter c1, IDeclaredParameter c2)
+        {
+            var r = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            gc.Add(new StatementAssign(r, new ValSimple($"{c1.RawValue}+{c2.RawValue}", c1.Type), new IDeclaredParameter[] { c1, c2 }));
+
+            return r;
+        }
+
+        /// <summary>
+        /// Add a simple if statement.
+        /// </summary>
+        /// <param name="gc"></param>
+        private void AddIf(GeneratedCode gc)
+        {
+            gc.Add(new StatementFilter(new ValSimple("5>10", typeof(bool))));
+        }
+
+        /// <summary>
+        /// Add a simple loop to the current scope. It will have one statement in it, declared at the outer level.
+        /// </summary>
+        /// <param name="gc"></param>
+        private IDeclaredParameter AddLoop(GeneratedCode gc, bool addDependentStatement = false)
+        {
+            var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopVar, new ValSimple("5", typeof(int)));
+
+            // Add a counter that gets... counted.
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var counterExtra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(counter);
+            if (addDependentStatement)
+            {
+                gc.Add(counterExtra);
+            }
+            gc.Add(loop);
+            gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
+            if (addDependentStatement)
+            {
+                gc.Add(new StatementAssign(counterExtra, new ValSimple($"{counterExtra.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counterExtra, counter }));
+            }
+
+            return counter;
+        }
+
+        /// <summary>
+        /// Dummy statement to help with testing.
+        /// </summary>
         class DummyStatementCompoundNoCMInfo : IStatementCompound
         {
             private List<IStatement> _statements = new List<IStatement>();
