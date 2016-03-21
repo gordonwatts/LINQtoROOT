@@ -136,6 +136,26 @@ namespace LINQToTTreeLib.Optimization
         }
 
         /// <summary>
+        /// Check to see if the statement is idempotent.
+        /// a = a + 1 is not
+        /// a = 10 is
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns>true if it is, false other wise. If we can't tell, we assume false</returns>
+        private static bool StatmentIdempotent(IStatement s)
+        {
+            if (!(s is ICMStatementInfo))
+                return false;
+
+            var sInfo = s as ICMStatementInfo;
+            var sResults = sInfo.ResultVariables;
+            var sDependents = sInfo.DependentVariables;
+            sResults.Intersect(sDependents);
+
+            return sResults.Count == 0;
+        }
+
+        /// <summary>
         /// Given a statement that has bubble-up info in it, we will try to move
         /// it up one.
         /// </summary>
@@ -167,7 +187,15 @@ namespace LINQToTTreeLib.Optimization
             if (declared.Count > 0)
                 return false;
 
-            // Ok, now insert it one level up, just before the parent.
+            // And does this statement idempotent? "a = a + 1" has the side effect of altering
+            // a - so if it is repeated it won't have the same result. On the other hand,
+            // "a = 10" will always have the same effect. The former should not be lifted
+            // out of a loop.
+            if (parent is IStatementLoop
+                && !StatmentIdempotent(item))
+                return false;
+
+            // OK, now insert it one level up, just before the parent.
             return MoveStatement(parent, item);
         }
 
