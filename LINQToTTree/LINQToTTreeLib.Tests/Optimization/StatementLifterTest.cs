@@ -244,7 +244,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loop1 = new StatementForLoop(loopP1, limit);
             v.Add(loop1);
             var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var loop2 = new StatementForLoop(loopP1, limit);
+            var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
             v.Add(new StatementWithNoSideEffects());
 
@@ -384,12 +384,36 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// loop A
+        /// Inside A is a simple counter statement. Make sure it doesn't get lifted.
+        /// </summary>
+        [TestMethod]
+        public void NoLiftSimpleStatement()
+        {
+            var gc = new GeneratedCode();
+            AddLoop(gc);
+
+            Console.WriteLine("Before optimization");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After optimization");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+        }
+
+        /// <summary>
         /// Make sure lift occurs when identical loops are present
         /// 1. loop A
         /// 2. if statement
         /// 3.   loop A
         /// 4.   statement
         /// In this case loop A can be removed.
+        /// Normally, this can't be lifted as we don't want to lift things out of an
+        /// if statement. However, in this case, they are identical, so it is OK.
         /// </summary>
         [TestMethod]
         public void LiftIdenticalLoopOutOfIfStatement()
@@ -487,7 +511,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Now check that things happened as we would expect them to happen.
             var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
             Assert.IsNotNull(ass, "Finding the assignment statement");
-            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+            Assert.AreEqual("aInt32_3+aInt32_7", ass.Expression.RawValue);
             Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
         }
 
@@ -520,9 +544,33 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Now check that things happened as we would expect them to happen.
             var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
             Assert.IsNotNull(ass, "Finding the assignment statement");
-            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+            Assert.AreEqual("aInt32_3+aInt32_7", ass.Expression.RawValue);
             Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
-            Assert.AreEqual(2, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(sf => sf.Statements.Count() == 2).Count(), "# of statement sin the for loop");
+            Assert.AreEqual(3, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(sf => sf.Statements.Count() == 2).Count(), "# of statement sin the for loop");
+        }
+
+        /// <summary>
+        /// A loop that loops over the same object, but it uses the results of the first loop in the second loop
+        /// should not allow for a combining.
+        /// </summary>
+        [TestMethod]
+        public void DontCombineDependentLoops()
+        {
+            var gc = new GeneratedCode();
+            var c1 = AddLoop(gc);
+            gc.Pop();
+            var c2 = AddLoop(gc, useCounter: c1);
+            gc.Pop();
+
+            Console.WriteLine("Before lifting");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After lifting");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
         }
 
         /// <summary>
@@ -553,7 +601,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Add a simple loop to the current scope. It will have one statement in it, declared at the outer level.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddLoop(GeneratedCode gc, bool addDependentStatement = false)
+        private IDeclaredParameter AddLoop(GeneratedCode gc, bool addDependentStatement = false, IDeclaredParameter useCounter = null)
         {
             var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var loop = new StatementForLoop(loopVar, new ValSimple("5", typeof(int)));
@@ -567,7 +615,13 @@ namespace LINQToTTreeLib.Tests.Optimization
                 gc.Add(counterExtra);
             }
             gc.Add(loop);
-            gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
+            if (useCounter == null)
+            {
+                gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
+            } else
+            {
+                gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue}+{useCounter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, useCounter }));
+            }
             if (addDependentStatement)
             {
                 gc.Add(new StatementAssign(counterExtra, new ValSimple($"{counterExtra.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counterExtra, counter }));
@@ -948,7 +1002,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
-                throw new NotImplementedException();
+                return false;
             }
 
             public IStatement Parent { get; set; }
@@ -1020,7 +1074,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
-                throw new NotImplementedException();
+                return false;
             }
 
             public IStatement Parent { get; set; }

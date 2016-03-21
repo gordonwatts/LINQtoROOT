@@ -36,21 +36,28 @@ namespace LINQToTTreeLib.Optimization
         /// Loop through optimizable statements
         /// </summary>
         /// <param name="statements"></param>
+        /// <returns>If we have modified something that has bubble up one level, we return true. This means we've messed up the statement list at the outer level and the optimization loop needs to be re-run.</returns>
         private static bool VisitOptimizableStatements(IStatementCompound statements)
         {
-            bool modified = true;
             bool returnModified = false;
+
+            bool modified = true;
             while (modified)
             {
                 modified = false;
+                var opter = new BlockRenamer(statements);
                 foreach (var item in statements.Statements)
                 {
+                    // If it is a compound statement, there may be statements that are "invariant" in it,
+                    // so we can lift them out.
                     if (item is IStatementCompound)
                     {
                         // If the statement is a compound statement, then we try to go down a level.
                         modified = VisitOptimizableStatements(item as IStatementCompound);
                     }
-                    else if (item is ICMStatementInfo)
+
+                    // Perhaps the whole statement could be pulled up?
+                    if (!modified && (item is ICMStatementInfo))
                     {
                         // if we have optimize info, then see what we can do with it.
                         modified = BubbleUp(statements, item);
@@ -58,9 +65,14 @@ namespace LINQToTTreeLib.Optimization
                             returnModified = true;
                     }
 
+                    // Finally, check to see if this statement is identical to anyone else further up or not.
+                    if (!modified)
+                    {
+                        modified = BubleUpAndCombine(statements, item, opter);
+                    }
+
                     // If anything was modified, we need to re-run since all the various pointers, etc., will have
                     // been changed.
-
                     if (modified)
                         break;
                 }
@@ -68,8 +80,63 @@ namespace LINQToTTreeLib.Optimization
             return returnModified;
         }
 
+        private static bool BubleUpAndCombine(IStatementCompound statements, IStatement item, ICodeOptimizationService opter)
+        {
+            return MoveFirstWithCombine(statements, item, opter);
+        }
+
         /// <summary>
-        /// Given a statement that has buble-up info in it, we will try to move
+        /// Move to the first one, seeing if we can combine as we go.
+        /// </summary>
+        /// <param name="statements"></param>
+        /// <param name="item"></param>
+        private static bool MoveFirstWithCombine(IStatementCompound statements, IStatement item, ICodeOptimizationService opter)
+        {
+            // First, move this forward as far as we can, and try to combine as we go.
+            var previousStatements = statements.Statements.TakeWhile(s => s != item);
+
+            // Now, see if we can move past each statement. If we can, see if they can be combined.
+            foreach (var s in previousStatements.Reverse())
+            {
+                if (StatementCommutes(s, item))
+                {
+                    if (s.TryCombineStatement(item, opter))
+                    {
+                        statements.Remove(item);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Can exchange the orders these statements are?
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private static bool StatementCommutes(IStatement s1, IStatement s2)
+        {
+            if (!(s1 is ICMStatementInfo))
+                return false;
+            if (!(s2 is ICMStatementInfo))
+                return false;
+
+            var c1Info = s1 as ICMStatementInfo;
+            var c2Info = s2 as ICMStatementInfo;
+            var c1Vars = new HashSet<string>(c1Info.ResultVariables.Concat(c1Info.DependentVariables));
+            var c2Vars = new HashSet<string>(c2Info.ResultVariables.Concat(c2Info.DependentVariables));
+            c1Vars.IntersectWith(c2Vars);
+            if (c1Vars.Count > 0)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Given a statement that has bubble-up info in it, we will try to move
         /// it up one.
         /// </summary>
         /// <param name="statements"></param>
@@ -135,23 +202,41 @@ namespace LINQToTTreeLib.Optimization
 
             // Loop through each statement, and see if we can go past each one.
 
-            var allvars = new HashSet<string>((item as ICMStatementInfo).DependentVariables.Concat((item as ICMStatementInfo).ResultVariables));
             foreach (var cStatement in parent.Statements)
             {
                 if (cStatement == item)
                     return true;
-                if (!(cStatement is ICMStatementInfo))
+                if (!StatementCommutes(cStatement, item))
+                {
                     return false;
-
-                var cInfo = cStatement as ICMStatementInfo;
-                var cVars = new HashSet<string>(cInfo.ResultVariables.Concat(cInfo.DependentVariables));
-                cVars.IntersectWith(allvars);
-                if (cVars.Count > 0)
-                    return false;
+                }
             }
 
             // That is weird. It never appeared here!
             throw new InvalidOperationException();
+        }
+
+        /// <summary>
+        /// Used to rename variables one level up
+        /// </summary>
+        private class BlockRenamer : ICodeOptimizationService
+        {
+            private IStatementCompound statements;
+
+            public BlockRenamer(IStatementCompound statements)
+            {
+                this.statements = statements;
+            }
+
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

@@ -361,7 +361,7 @@ namespace LINQToTTreeLib.Statements
 
         /// <summary>
         /// Given a list of statements, attempt to combine them with the ones we already have
-        /// internaly. If we can't, then just append them. This is like our "Add" above, but we
+        /// internally. If we can't, then just append them. This is like our "Add" above, but we
         /// first check to see if any of the statements can be added in. This always
         /// succeeds (no need for a bool return) because we just add things onto the end.
         /// </summary>

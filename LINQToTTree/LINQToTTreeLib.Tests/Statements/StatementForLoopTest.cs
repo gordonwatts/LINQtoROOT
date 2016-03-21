@@ -3,6 +3,7 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System;
 
 namespace LINQToTTreeLib.Tests.Statements
@@ -129,6 +130,64 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsTrue(r, "combination should work");
             Assert.AreEqual(base1, loop1.Parent, "loop 1 parent");
             Assert.AreEqual(loop1, loop22.Parent, "Loop 2 parent");
+        }
+
+        [TestMethod]
+        public void ZeroDependentVariables()
+        {
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s = new StatementForLoop(counter, new ValSimple("5", typeof(int)));
+
+            Assert.AreEqual(0, s.DependentVariables.Count, "# of dependent variables");
+            Assert.AreEqual(0, s.ResultVariables.Count, "# of result variables");
+        }
+
+        [TestMethod]
+        public void DependentAndResultVariables()
+        {
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s = new StatementForLoop(counter, new ValSimple("5", typeof(int)));
+
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, result });
+            s.Add(assign);
+
+            Assert.AreEqual(1, s.DependentVariables.Count, "# of dependent variables");
+            Assert.AreEqual(result.RawValue, s.DependentVariables.First());
+            Assert.AreEqual(result.RawValue, s.ResultVariables.First());
+            Assert.AreEqual(1, s.ResultVariables.Count, "# of result variables");
+        }
+
+        [TestMethod]
+        public void DependentAndResultVariablesWithDecl()
+        {
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s = new StatementForLoop(counter, new ValSimple("5", typeof(int)));
+
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s.Add(result);
+
+            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, result });
+            s.Add(assign);
+
+            Assert.AreEqual(0, s.DependentVariables.Count, "# of dependent variables");
+            Assert.AreEqual(0, s.ResultVariables.Count, "# of result variables");
+        }
+
+        [TestMethod]
+        public void DeclaredVariablesLocalOnly()
+        {
+            var outter = new StatementInlineBlock();
+            outter.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            var s = new StatementForLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("5", typeof(int)));
+            s.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            outter.Add(s);
+
+            Assert.AreEqual(2, s.DeclaredVariables.Count());
+            Assert.AreEqual(3, s.AllDeclaredVariables.Count());
         }
     }
 }

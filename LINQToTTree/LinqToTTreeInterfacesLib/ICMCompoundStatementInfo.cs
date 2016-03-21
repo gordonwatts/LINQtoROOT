@@ -10,7 +10,7 @@ namespace LinqToTTreeInterfacesLib
     {
         /// <summary>
         /// True if normal bubble up of statements is allowed. For example, for loops would allow this,
-        /// but if statements wouldn't. Dosen't mean it can't happen, just that it isn't recommended to
+        /// but if statements wouldn't. Doesn't mean it can't happen, just that it isn't recommended to
         /// let it happen naturally without other pointers indicating it should.
         /// </summary>
         bool AllowNormalBubbleUp { get; }
