@@ -80,6 +80,13 @@ namespace LINQToTTreeLib.Optimization
             return returnModified;
         }
 
+        /// <summary>
+        /// See if we can't propagate this up, trying to combine it or bubble it up if there is something identical further up.
+        /// </summary>
+        /// <param name="statements"></param>
+        /// <param name="item"></param>
+        /// <param name="opter"></param>
+        /// <returns></returns>
         private static bool BubleUpAndCombine(IStatementCompound statements, IStatement item, ICodeOptimizationService opter)
         {
             return MoveFirstWithCombine(statements, item, opter);
@@ -87,6 +94,9 @@ namespace LINQToTTreeLib.Optimization
 
         /// <summary>
         /// Move to the first one, seeing if we can combine as we go.
+        /// We will attempt two things:
+        /// 1. Is the statement above the "same"? If so, try to elminate the downlevel statement.
+        /// 2. Can it be combined?
         /// </summary>
         /// <param name="statements"></param>
         /// <param name="item"></param>
@@ -98,7 +108,12 @@ namespace LINQToTTreeLib.Optimization
             // Now, see if we can move past each statement. If we can, see if they can be combined.
             foreach (var s in previousStatements.Reverse())
             {
-                if (StatementCommutes(s, item))
+                if (MakeStatmentsEquivalent(s, item))
+                {
+                    statements.Remove(item);
+                    return true;
+                }
+                else if (StatementCommutes(s, item))
                 {
                     if (s.TryCombineStatement(item, opter))
                     {
@@ -108,6 +123,21 @@ namespace LINQToTTreeLib.Optimization
                 }
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// Determine if thse two statements are equivalent.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// A statement is considered equivalent if it would only take variable renames to adjust the
+        /// statements to look identical.
+        /// </remarks>
+        private static bool MakeStatmentsEquivalent(IStatement s, IStatement item)
+        {
             return false;
         }
 

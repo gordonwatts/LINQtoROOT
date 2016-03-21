@@ -557,7 +557,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(ass, "Finding the assignment statement");
             Assert.AreEqual($"{c1.RawValue}+{c2.RawValue}", ass.Expression.RawValue);
             Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
-            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Count() == 2).Count(), "# of it statements with 2 sub-statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of it statements with 2 sub-statements");
         }
 
         /// <summary>
