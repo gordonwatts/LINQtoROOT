@@ -456,6 +456,8 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// In this case loop A can be removed.
         /// Normally, this can't be lifted as we don't want to lift things out of an
         /// if statement. However, in this case, they are identical, so it is OK.
+        /// We don't normally want to lift things past an if statement b.c. it is an efficiency
+        /// protector
         /// </summary>
         [TestMethod]
         public void LiftIdenticalLoopOutOfIfStatement()
