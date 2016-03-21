@@ -559,40 +559,6 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
-        /// A loop repeated can be combined
-        /// 1. loop A
-        /// 2. loop A'
-        /// 3. statement
-        /// Where loop A' includes the statements in A plus extra. Until we can look
-        /// into individual statements, we can't lift the common portion of A'.
-        /// </summary>
-        [TestMethod]
-        public void CombineRepeatedAlmostIdenticalLoops()
-        {
-            var gc = new GeneratedCode();
-            var c1 = AddLoop(gc);
-            gc.Pop();
-            var c2 = AddLoop(gc, true);
-            gc.Pop();
-            AddSum(gc, c1, c2);
-
-            Console.WriteLine("Before lifting and optimization: ");
-            gc.DumpCodeToConsole();
-
-            StatementLifter.Optimize(gc);
-
-            Console.WriteLine("After lifting and optimization: ");
-            gc.DumpCodeToConsole();
-
-            // Now check that things happened as we would expect them to happen.
-            var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
-            Assert.IsNotNull(ass, "Finding the assignment statement");
-            Assert.AreEqual("aInt32_3+aInt32_7", ass.Expression.RawValue);
-            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
-            Assert.AreEqual(3, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(sf => sf.Statements.Count() == 2).Count(), "# of statement sin the for loop");
-        }
-
-        /// <summary>
         /// A loop that loops over the same object, but it uses the results of the first loop in the second loop
         /// should not allow for a combining.
         /// </summary>
