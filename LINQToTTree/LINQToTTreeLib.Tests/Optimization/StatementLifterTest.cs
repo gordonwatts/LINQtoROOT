@@ -231,11 +231,11 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// 2.   Loop 2 over array a
         /// 3.     something with iterator from Loop 1 and Loop 2.
         /// 
-        /// You can't necessarily pull things out when they are nested identical loops - they may well be
-        /// there for a reason!
+        /// Since the statement explicitly has no side effects, it should be
+        /// popped up to the top.
         /// </summary>
         [TestMethod]
-        public void TestNoLifeNestedIdenticalLoops()
+        public void LiftNoSideEffectFromNestedIdenticalLoops()
         {
             var v = new GeneratedCode();
 
@@ -255,14 +255,8 @@ namespace LINQToTTreeLib.Tests.Optimization
             Console.WriteLine("Optimized:");
             v.DumpCodeToConsole();
 
-            // Make sure it is two if statements, nested.
-            var if1 = v.CodeBody.Statements.Skip(1).First() as StatementForLoop;
-            Assert.IsNotNull(if1, "if #1");
-            var if2 = if1.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if2, "if #2");
-
-            // Make sure the two loop variables are different.
-            Assert.AreNotEqual(if1.LoopIndexVariable != if2.LoopIndexVariable, "Loop index vars");
+            // Check to see if it got lifted.
+            Assert.AreEqual(1, v.CodeBody.Statements.WhereCast<IStatement, StatementWithNoSideEffects>().Count(), "#of no side effect statements");
         }
 
         /// <summary>
