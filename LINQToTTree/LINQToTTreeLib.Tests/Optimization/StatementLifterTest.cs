@@ -553,8 +553,9 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Now check that things happened as we would expect them to happen.
             var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
             Assert.IsNotNull(ass, "Finding the assignment statement");
-            Assert.AreEqual("aInt32_3+aInt32_7", ass.Expression.RawValue);
+            Assert.AreEqual($"{c1.RawValue}+{c2.RawValue}", ass.Expression.RawValue);
             Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Count() == 2).Count(), "# of it statements with 2 sub-statements");
         }
 
         /// <summary>
