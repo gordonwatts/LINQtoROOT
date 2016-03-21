@@ -804,6 +804,11 @@ namespace LINQToTTreeLib.Tests.Optimization
                 throw new NotImplementedException();
             }
 
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+            {
+                throw new NotImplementedException();
+            }
+
             public IStatement Parent { get; set; }
 
             public ISet<string> DependentVariables
@@ -1051,6 +1056,11 @@ namespace LINQToTTreeLib.Tests.Optimization
                 return false;
             }
 
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+            {
+                throw new NotImplementedException();
+            }
+
             public IStatement Parent { get; set; }
 
             public System.Collections.Generic.ISet<string> DependentVariables
@@ -1121,6 +1131,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
                 return false;
+            }
+
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+            {
+                throw new NotImplementedException();
             }
 
             public IStatement Parent { get; set; }

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 namespace LinqToTTreeInterfacesLib
 {
@@ -26,5 +27,12 @@ namespace LinqToTTreeInterfacesLib
         /// where you want to record stuff in a loop. That should never get moved up or down.
         /// </remarks>
         bool NeverLift { get; }
+
+        /// <summary>
+        /// Return if this statement and the other statement are equivalent, without altering either one.
+        /// </summary>
+        /// <param name="other">The other statement to compare to</param>
+        /// <returns>True if this statement can be made equivalent, and if true, a list of variable renames required on other to make it equivalent.</returns>
+        Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other);
     }
 }

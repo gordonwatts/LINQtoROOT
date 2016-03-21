@@ -124,6 +124,11 @@ namespace LINQToTTreeLib.Statements
             RenameBlockVariables(origName, newName);
         }
 
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Allow statements to automatically bubble up past us. Anything we
         /// can get rid of is a good thing!

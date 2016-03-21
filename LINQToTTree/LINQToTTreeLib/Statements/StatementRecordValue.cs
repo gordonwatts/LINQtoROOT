@@ -138,6 +138,11 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Get/Set the compound statement this is embeded in.
         /// </summary>

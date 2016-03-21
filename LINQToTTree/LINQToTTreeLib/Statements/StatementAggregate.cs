@@ -112,6 +112,11 @@ namespace LINQToTTreeLib.Statements
             return false;
         }
 
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Points to the statement that holds onto us.
         /// </summary>

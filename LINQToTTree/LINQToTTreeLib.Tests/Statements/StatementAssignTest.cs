@@ -212,7 +212,101 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(i.RawValue, s1.ResultVariables.First(), "the name");
             Assert.AreEqual(1, s1.DependentVariables.Count, "no dependent variables");
             Assert.AreEqual(di.RawValue, s1.DependentVariables.First(), "a dependent variable");
+        }
 
+        [TestMethod]
+        public void AssignEquivalentSame()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s2 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1, "can do the combination");
+            Assert.AreEqual(0, r.Item2.Count(), "# of variables to rename");
+        }
+
+        [TestMethod]
+        public void AssignEquivalentDiffFunc()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s2 = new StatementAssign(p1, new ValSimple($"sin({d1.RawValue})", typeof(int)), new IDeclaredParameter[] { d1 });
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsFalse(r.Item1, "should not be able to do the combination");
+        }
+
+        [TestMethod]
+        public void AssignEquivalentDifferentDependents()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s2 = new StatementAssign(p1, new ValSimple($"{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d2 });
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1, "can do the combination");
+            Assert.AreEqual(1, r.Item2.Count(), "# of variables to rename");
+            Assert.AreEqual(d2.RawValue, r.Item2.First().Item1, "first time of rename");
+            Assert.AreEqual(d1.RawValue, r.Item2.First().Item2, "first time of rename");
+        }
+
+        [TestMethod]
+        public void AssignEquivalentTwoDifferentDependents()
+        {
+            // Replacing two dependents gets to be more than we can do becasue of ordering and the roll they might
+            // be playing.
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d1, d2 });
+            var s2 = new StatementAssign(p1, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int)), new IDeclaredParameter[] { d3, d4 });
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1, "can do the combination");
+        }
+
+        [TestMethod]
+        public void AssignEquivalentDifferentResults()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s2 = new StatementAssign(p2, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1, "can do the combination");
+            Assert.AreEqual(1, r.Item2.Count(), "# of variables to rename");
+            Assert.AreEqual(p2.RawValue, r.Item2.First().Item1, "first time of rename");
+            Assert.AreEqual(p1.RawValue, r.Item2.First().Item2, "first time of rename");
+        }
+
+        [TestMethod]
+        public void AssignEquivalentDifferentResultsAndDependents()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s2 = new StatementAssign(p2, new ValSimple($"{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d2 });
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1, "can do the combination");
+            Assert.AreEqual(2, r.Item2.Count(), "# of variables to rename");
         }
     }
 }

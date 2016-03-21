@@ -336,6 +336,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 uniqueVariableTranslations.Add(varRepl, uniqueTranslated);
             }
 
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+            {
+                throw new NotImplementedException();
+            }
+
             /// <summary>
             /// List of variables that we depend on for results
             /// </summary>
