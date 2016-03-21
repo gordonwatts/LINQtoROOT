@@ -415,7 +415,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             var counter = AddLoop(gc, mainStatementType: MainStatementType.IsConstant);
             gc.Pop();
-            gc.Add(counter);
 
             Console.WriteLine("Before optimization");
             gc.DumpCodeToConsole();
@@ -438,8 +437,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         public void LiftConstantDefinedInLoop()
         {
             var gc = new GeneratedCode();
-            var counter = AddLoop(gc, mainStatementType: MainStatementType.IsConstant);
-            gc.Add(counter);
+            var counter = AddLoop(gc, mainStatementType: MainStatementType.IsConstant, defineCounterInsideBlock: true);
 
             Console.WriteLine("Before optimization");
             gc.DumpCodeToConsole();
@@ -452,7 +450,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements");
             Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement,StatementAssign>().Count(), "# of assign statements");
             Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Count() == 0).Count(), "# of if statements with zero statements in it");
-            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of declarations");
         }
 
         /// <summary>
@@ -657,28 +655,43 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Add a simple loop to the current scope. It will have one statement in it, declared at the outer level.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddLoop(GeneratedCode gc, bool addDependentStatement = false, IDeclaredParameter useCounter = null, MainStatementType mainStatementType = MainStatementType.IsCounter)
+        private IDeclaredParameter AddLoop(GeneratedCode gc,
+            bool addDependentStatement = false,
+            IDeclaredParameter useCounter = null,
+            MainStatementType mainStatementType = MainStatementType.IsCounter,
+            bool defineCounterInsideBlock = false)
         {
             if (mainStatementType != MainStatementType.IsCounter && useCounter != null)
             {
                 throw new ArgumentException("Can't do a counter when main statement type doesn't use a counter");
             }
 
-            var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var loop = new StatementForLoop(loopVar, new ValSimple("5", typeof(int)));
-
             // Add a counter that gets... counted.
             var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            if (!defineCounterInsideBlock)
+            {
+                gc.Add(counter);
+            }
+
+            // And an extra variable that is defined outside the loop
             var counterExtra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             if (addDependentStatement)
             {
                 gc.Add(counterExtra);
             }
-            gc.Add(loop);
 
-            if (mainStatementType == MainStatementType.IsCounter)
+            // Now do the loop.
+            var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopVar, new ValSimple("5", typeof(int)));
+            gc.Add(loop);
+            if (defineCounterInsideBlock)
             {
                 gc.Add(counter);
+            }
+
+            // Now add statements to the loop
+            if (mainStatementType == MainStatementType.IsCounter)
+            {
                 if (useCounter == null)
                 {
                     gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
