@@ -756,5 +756,19 @@ namespace LINQToTTreeLib.Tests
 
             return qms;
         }
+
+        /// <summary>
+        /// If the object is of type U, then cast it to type U.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<U> WhereCast<T,U> (this IEnumerable<T> source)
+        {
+            return source
+                .Where(s => s is U)
+                .Cast<U>();
+        }
     }
 }

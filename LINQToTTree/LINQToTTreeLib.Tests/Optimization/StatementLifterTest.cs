@@ -406,6 +406,56 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// loop A
+        /// Inside A is a very simple constant statement. Make sure it does get lifted.
+        /// </summary>
+        [TestMethod]
+        public void LiftConstantStatementInLoop()
+        {
+            var gc = new GeneratedCode();
+            var counter = AddLoop(gc, mainStatementType: MainStatementType.IsConstant);
+            gc.Pop();
+            gc.Add(counter);
+
+            Console.WriteLine("Before optimization");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After optimization");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementAssign).Count(), "# of assign statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 0).Count(), "# of if statements with zero statements in it");
+        }
+
+        /// <summary>
+        /// loop A
+        /// Inside A is a very simple constant statement. Make sure it does get lifted.
+        /// </summary>
+        [TestMethod]
+        public void LiftConstantDefinedInLoop()
+        {
+            var gc = new GeneratedCode();
+            var counter = AddLoop(gc, mainStatementType: MainStatementType.IsConstant);
+            gc.Add(counter);
+
+            Console.WriteLine("Before optimization");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After optimization");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement,StatementAssign>().Count(), "# of assign statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Count() == 0).Count(), "# of if statements with zero statements in it");
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count());
+        }
+
+        /// <summary>
         /// Make sure lift occurs when identical loops are present
         /// 1. loop A
         /// 2. if statement
@@ -597,31 +647,51 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(new StatementFilter(new ValSimple("5>10", typeof(bool))));
         }
 
+        enum MainStatementType
+        {
+            IsCounter,
+            IsConstant
+        }
+
         /// <summary>
         /// Add a simple loop to the current scope. It will have one statement in it, declared at the outer level.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddLoop(GeneratedCode gc, bool addDependentStatement = false, IDeclaredParameter useCounter = null)
+        private IDeclaredParameter AddLoop(GeneratedCode gc, bool addDependentStatement = false, IDeclaredParameter useCounter = null, MainStatementType mainStatementType = MainStatementType.IsCounter)
         {
+            if (mainStatementType != MainStatementType.IsCounter && useCounter != null)
+            {
+                throw new ArgumentException("Can't do a counter when main statement type doesn't use a counter");
+            }
+
             var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var loop = new StatementForLoop(loopVar, new ValSimple("5", typeof(int)));
 
             // Add a counter that gets... counted.
             var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var counterExtra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            gc.Add(counter);
             if (addDependentStatement)
             {
                 gc.Add(counterExtra);
             }
             gc.Add(loop);
-            if (useCounter == null)
+
+            if (mainStatementType == MainStatementType.IsCounter)
             {
-                gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
+                gc.Add(counter);
+                if (useCounter == null)
+                {
+                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
+                }
+                else
+                {
+                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue}+{useCounter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, useCounter }));
+                }
             } else
             {
-                gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue}+{useCounter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, useCounter }));
+                gc.Add(new StatementAssign(counter, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
             }
+
             if (addDependentStatement)
             {
                 gc.Add(new StatementAssign(counterExtra, new ValSimple($"{counterExtra.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counterExtra, counter }));
