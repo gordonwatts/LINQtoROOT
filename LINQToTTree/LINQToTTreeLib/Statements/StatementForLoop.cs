@@ -124,9 +124,76 @@ namespace LINQToTTreeLib.Statements
             RenameBlockVariables(origName, newName);
         }
 
-        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
+        /// <summary>
+        /// Test to see if this for loop is the same as the other statement. Identical, in a way that we can delete the "other" totally after
+        /// appropriate renaming.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
-            throw new NotImplementedException();
+            // Make sure it is a for statement.
+            if (!(other is StatementForLoop))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementForLoop;
+
+            // If the number of statements isn't the same, then this doesn't matter.
+            if (Statements.Count() != s2.Statements.Count())
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            // Make sure the limit is the same, after applying the replacements.
+            var limit = s2.ArrayLength.RawValue;
+            if (replaceFirst != null)
+            {
+                foreach (var item in replaceFirst)
+                {
+                    limit = limit.Replace(item.Item1, item.Item2);
+                }
+            }
+            if (ArrayLength.RawValue != limit)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            // Now, the initial list of renames includes the loop variable and anything handed to us.
+            var renames = new HashSet<Tuple<string, string>>();
+            if (replaceFirst != null)
+            {
+                renames.AddRange(replaceFirst);
+            }
+            renames.Add(Tuple.Create(s2._loopVariable.RawValue, _loopVariable.RawValue));
+            var originalRenames = new HashSet<Tuple<string, string>>(renames);
+
+            // Loop through the statements, accumulating renames as we go.
+            foreach (var s in Statements.Zip(s2.Statements, (st1, st2) => Tuple.Create(st1, st2)))
+            {
+                var s1Info = s.Item1 as ICMStatementInfo;
+                var s2Info = s.Item2 as ICMStatementInfo;
+                if (s1Info == null || s2Info == null)
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
+
+                var newRenames = s1Info.RequiredForEquivalence(s2Info, renames);
+                if (!newRenames.Item1)
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
+                renames.AddRange(newRenames.Item2);
+            }
+
+            // If we make it here, then we are good. The last thing to do before returning the result is to remove
+            // any renames and any declared variables
+            var declaredVariables = s2.DeclaredVariables;
+            var finalRenames = renames
+                .Except(originalRenames)
+                .Where(i => !declaredVariables.Contains(i.Item1));
+            return Tuple.Create(true, finalRenames);
         }
 
         /// <summary>
