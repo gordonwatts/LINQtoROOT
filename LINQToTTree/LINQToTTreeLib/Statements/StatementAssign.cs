@@ -128,7 +128,7 @@ namespace LINQToTTreeLib.Statements
         /// Can we figure out a way to make the second statement look like the first one?
         /// </summary>
         /// <param name="other"></param>
-        /// <returns></returns>
+        /// <returns>What should be changed in other to make it equivalent to this statement</returns>
         public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
             // Well, if we can't we can't.
@@ -138,15 +138,26 @@ namespace LINQToTTreeLib.Statements
             }
             var s2 = other as StatementAssign;
 
+            // First, do all replacements
+            var otherResultValue = s2.ResultVariable.RawValue;
+            var expr = s2.Expression.RawValue;
+            if (replaceFirst != null)
+            {
+                foreach (var item in replaceFirst)
+                {
+                    expr = expr.Replace(item.Item1, item.Item2);
+                    otherResultValue = otherResultValue.Replace(item.Item1, item.Item2);
+                }
+            }
+
             // Track the renames we need to do.
             var renames = new List<Tuple<string, string>>();
-            var expr = s2.Expression.RawValue;
 
             // Look at the result and see if we there is a simple translation.
-            if (ResultVariable.RawValue != s2.ResultVariable.RawValue)
+            if (ResultVariable.RawValue != otherResultValue)
             {
-                renames.Add(Tuple.Create(s2.ResultVariable.RawValue, ResultVariable.RawValue));
-                expr = expr.Replace(s2.ResultVariable.RawValue, ResultVariable.RawValue);
+                renames.Add(Tuple.Create(otherResultValue, ResultVariable.RawValue));
+                expr = expr.Replace(otherResultValue, ResultVariable.RawValue);
             }
 
             if (expr == Expression.RawValue)

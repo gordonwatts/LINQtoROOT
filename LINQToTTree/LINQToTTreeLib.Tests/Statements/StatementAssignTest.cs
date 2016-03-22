@@ -229,6 +229,21 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void AssignEquivalentSameAfterReplacement()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s2 = new StatementAssign(p1, new ValSimple($"{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d2 });
+
+            var r = s1.RequiredForEquivalence(s2, new Tuple<string, string>[] { new Tuple<string, string>(d2.RawValue, d1.RawValue) });
+            Assert.IsTrue(r.Item1, "can do the combination");
+            Assert.AreEqual(0, r.Item2.Count(), "# of variables to rename");
+        }
+
+        [TestMethod]
         public void AssignEquivalentDiffFunc()
         {
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
