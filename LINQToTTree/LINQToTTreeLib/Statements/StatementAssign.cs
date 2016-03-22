@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
 using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -167,8 +168,14 @@ namespace LINQToTTreeLib.Statements
 
             // Now we have to go through the dependent variables. If there are common dependent variables, then we
             // can ignore them. The rest we have to do the translation for.
-            var dependentUs = DependentVariables.Except(other.DependentVariables).ToArray();
-            var dependentThem = other.DependentVariables.Except(DependentVariables).ToArray();
+            var otherDependentVarialbesEnum = other.DependentVariables.Replace(renames);
+            if (replaceFirst != null)
+            {
+                otherDependentVarialbesEnum = otherDependentVarialbesEnum.Replace(replaceFirst);
+            }
+            var otherDependentVarialbes = otherDependentVarialbesEnum.ToArray();
+            var dependentUs = DependentVariables.Except(otherDependentVarialbes).ToArray();
+            var dependentThem = otherDependentVarialbes.Except(DependentVariables).ToArray();
 
             if (dependentUs.Length != dependentThem.Length)
             {
