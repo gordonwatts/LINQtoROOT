@@ -804,7 +804,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 throw new NotImplementedException();
             }
 
-            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
             {
                 throw new NotImplementedException();
             }
@@ -1056,7 +1056,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 return false;
             }
 
-            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
             {
                 throw new NotImplementedException();
             }
@@ -1133,7 +1133,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 return false;
             }
 
-            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
             {
                 throw new NotImplementedException();
             }

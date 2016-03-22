@@ -138,7 +138,7 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
-        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
         {
             throw new NotImplementedException();
         }

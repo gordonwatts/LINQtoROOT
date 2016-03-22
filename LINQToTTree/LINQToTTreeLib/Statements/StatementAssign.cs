@@ -110,8 +110,8 @@ namespace LINQToTTreeLib.Statements
             if (otherAssign.ResultVariable.RawValue == ResultVariable.RawValue)
                 return true;
 
-            // If we have delcared, then we are sole owner - so we can force the change. Otherwise, we
-            // need to let the infrastructure figure out where the decl is and change it from there.
+            // If we have declared, then we are sole owner - so we can force the change. Otherwise, we
+            // need to let the infrastructure figure out where the declared is and change it from there.
 
             if (DeclareResult)
             {
@@ -129,7 +129,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other)
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
             // Well, if we can't we can't.
             if (!(other is StatementAssign))

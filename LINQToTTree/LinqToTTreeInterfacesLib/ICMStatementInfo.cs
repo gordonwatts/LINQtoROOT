@@ -9,7 +9,7 @@ namespace LinqToTTreeInterfacesLib
     public interface ICMStatementInfo
     {
         /// <summary>
-        /// List of variables that this statment depends on. These are considered
+        /// List of variables that this statement depends on. These are considered
         /// the "input" variables for this statement.
         /// </summary>
         ISet<string> DependentVariables { get; }
@@ -32,7 +32,8 @@ namespace LinqToTTreeInterfacesLib
         /// Return if this statement and the other statement are equivalent, without altering either one.
         /// </summary>
         /// <param name="other">The other statement to compare to</param>
+        /// <param name="replaceFirst">These substitutions must be made before any others</param>
         /// <returns>True if this statement can be made equivalent, and if true, a list of variable renames required on other to make it equivalent.</returns>
-        Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other);
+        Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null);
     }
 }
