@@ -45,7 +45,7 @@ namespace LINQToTTreeLib.Optimization
             while (modified)
             {
                 modified = false;
-                var opter = new BlockRenamer(statements);
+                var opter = new BlockRenamer(statements as IBookingStatementBlock, statements as IBookingStatementBlock);
                 foreach (var item in statements.Statements)
                 {
                     // If it is a compound statement, there may be statements that are "invariant" in it,
@@ -95,7 +95,7 @@ namespace LINQToTTreeLib.Optimization
         /// <summary>
         /// Move to the first one, seeing if we can combine as we go.
         /// We will attempt two things:
-        /// 1. Is the statement above the "same"? If so, try to elminate the downlevel statement.
+        /// 1. Is the statement above the "same"? If so, try to eliminate the down-level statement.
         /// 2. Can it be combined?
         /// </summary>
         /// <param name="statements"></param>
@@ -110,7 +110,6 @@ namespace LINQToTTreeLib.Optimization
             {
                 if (MakeStatmentsEquivalent(s, item))
                 {
-                    statements.Remove(item);
                     return true;
                 }
                 else if (StatementCommutes(s, item))
@@ -127,7 +126,7 @@ namespace LINQToTTreeLib.Optimization
         }
 
         /// <summary>
-        /// Determine if thse two statements are equivalent.
+        /// See if we can make these two statements the same. If so, then bubble it up and go.
         /// </summary>
         /// <param name="s"></param>
         /// <param name="item"></param>
@@ -136,8 +135,38 @@ namespace LINQToTTreeLib.Optimization
         /// A statement is considered equivalent if it would only take variable renames to adjust the
         /// statements to look identical.
         /// </remarks>
-        private static bool MakeStatmentsEquivalent(IStatement s, IStatement item)
+        private static bool MakeStatmentsEquivalent(IStatement s1, IStatement s2)
         {
+            // Make sure the meta-data is present to work with.
+            var sc1 = s1 as ICMStatementInfo;
+            var sc2 = s2 as ICMStatementInfo;
+
+            if (sc1 == null || sc2 == null)
+            {
+                return false;
+            }
+
+            // Now, see if they are equivalent. If so, perform the required rename.
+            var r = sc1.RequiredForEquivalence(sc2);
+            if (r.Item1)
+            {
+                var s1Parent = (s1 as IStatementCompound).Parent as IBookingStatementBlock;
+                var s2Parent = (s2 as IStatementCompound).Parent as IBookingStatementBlock;
+                if (s1Parent == null || s2Parent == null)
+                {
+                    return false;
+                }
+
+                var opt = new BlockRenamer(s2Parent, s1Parent);
+                s2Parent.Remove(s2);
+                foreach (var item in r.Item2)
+                {
+                    opt.ForceRemoveDeclaration(item.Item2, s2Parent);
+                    opt.ForceRenameVariable(item.Item1, item.Item2);
+                }
+
+                return true;
+            }
             return false;
         }
 
@@ -200,6 +229,8 @@ namespace LINQToTTreeLib.Optimization
             var cmpInfo = parent as ICMCompoundStatementInfo;
             if (cmpInfo == null)
                 return false;
+
+            // OK, now lets see if we can bubble it up one level.
             if (!cmpInfo.AllowNormalBubbleUp)
                 return false;
 
@@ -334,29 +365,6 @@ namespace LINQToTTreeLib.Optimization
 
             // That is weird. It never appeared here!
             throw new InvalidOperationException();
-        }
-
-        /// <summary>
-        /// Used to rename variables one level up
-        /// </summary>
-        private class BlockRenamer : ICodeOptimizationService
-        {
-            private IStatementCompound statements;
-
-            public BlockRenamer(IStatementCompound statements)
-            {
-                this.statements = statements;
-            }
-
-            public void ForceRenameVariable(string originalName, string newName)
-            {
-                throw new NotImplementedException();
-            }
-
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
-            {
-                throw new NotImplementedException();
-            }
         }
     }
 }

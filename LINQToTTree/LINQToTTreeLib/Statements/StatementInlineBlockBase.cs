@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Implements a block of code and the ability to combine, render, etc. Meant to
-    /// be used as a base objec,t however. The class that surrounds this one
+    /// be used as a base object however. The class that surrounds this one
     /// does not add extra statements inside this block - but it might have something like
     /// an "if" statement around the contents of the block.
     /// </summary>
@@ -229,111 +230,6 @@ namespace LINQToTTreeLib.Statements
         public abstract bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt);
 
         /// <summary>
-        /// If someone wants to rename statements downstream, we take care of it.
-        /// </summary>
-        private class BlockRenamer : ICodeOptimizationService
-        {
-            /// <summary>
-            /// Track the holder block for old variables.
-            /// </summary>
-            private IBookingStatementBlock _holderBlockOld;
-
-            /// <summary>
-            /// Track the holder block for new variables.
-            /// </summary>
-            private IBookingStatementBlock _holderBlockNew;
-
-            public BlockRenamer(IBookingStatementBlock holderOldStatements, IBookingStatementBlock holderNewStatements)
-            {
-                if (holderOldStatements == null)
-                    throw new ArgumentNullException("holder");
-                this._holderBlockOld = holderOldStatements;
-                if (holderNewStatements == null)
-                    throw new ArgumentNullException("holder");
-                this._holderBlockNew = holderNewStatements;
-            }
-
-            /// <summary>
-            /// Rename succeeds if we can find the declared variable, amone other things.
-            /// </summary>
-            /// <param name="oldName">Name of the old parameter that we are replacing</param>
-            /// <param name="newParam">The new parameter we will replace it with</param>
-            /// <param name="newHolderBlock">The booking context we are currently looking at for the new name (the _holder) of the statement we are looking at</param>
-            /// <returns>True if the variables could be renamed (and the rename is done), false otherwise</returns>
-            /// <remarks>
-            /// The newHolderBlock is needed because it is used to determine if the new variable is declared in the same place
-            /// or not.
-            /// </remarks>
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newParam)
-            {
-                //
-                // First, see if we can find the block where the variable is declared.
-                //
-
-                var vr = FindDeclaredVariable(oldName, _holderBlockOld);
-
-                if (vr == null)
-                    return false;
-
-                //
-                // Make sure that the variable we are switching to is also declared. If it is an "external" then we
-                // are going to have a problem here! And, the variables had better be declared the same "scope" above, or
-                // that means they are also being used for something different.
-                //
-
-                var vrNew = FindDeclaredVariable(newParam.ParameterName, _holderBlockNew);
-                if (vrNew == null || vrNew.Item3 != vr.Item3)
-                    return false;
-
-                // Check that its initialization is the same!
-                bool initValueSame = (vr.Item1.InitialValue == null && newParam.InitialValue == null)
-                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.Type == newParam.InitialValue.Type && vr.Item1.InitialValue.RawValue == newParam.InitialValue.RawValue));
-                if (!initValueSame)
-                    return false;
-
-                // Rename the variable!
-                vr.Item2.RenameVariable(oldName, newParam.ParameterName);
-
-                return true;
-            }
-
-            /// <summary>
-            /// Walk the tree back looking for a variable
-            /// </summary>
-            /// <param name="oldName"></param>
-            /// <param name="statement"></param>
-            /// <returns>A tuple of the declared old variable, the block it was booked in, and how far up the chain we had to go to find it.</returns>
-            private Tuple<IDeclaredParameter, IBookingStatementBlock, int> FindDeclaredVariable(string oldName, IStatement statement)
-            {
-                if (statement == null)
-                    return null;
-
-                if (statement is IBookingStatementBlock)
-                {
-                    var hr = statement as IBookingStatementBlock;
-                    var vr = hr.DeclaredVariables.Where(v => v.ParameterName == oldName).FirstOrDefault();
-                    if (vr != null)
-                        return Tuple.Create(vr, hr, 0);
-                }
-
-                var onedown = FindDeclaredVariable(oldName, statement.Parent);
-                if (onedown == null)
-                    return null;
-                return Tuple.Create(onedown.Item1, onedown.Item2, onedown.Item3 + 1);
-            }
-
-            /// <summary>
-            /// Do the rename in this block and deeper.
-            /// </summary>
-            /// <param name="originalName"></param>
-            /// <param name="newName"></param>
-            public void ForceRenameVariable(string originalName, string newName)
-            {
-                _holderBlockOld.RenameVariable(originalName, newName);
-            }
-        }
-
-        /// <summary>
         /// Helper class - when a statement shows up with no context.
         /// </summary>
         class FailingCodeOptimizer : ICodeOptimizationService
@@ -544,7 +440,7 @@ namespace LINQToTTreeLib.Statements
         {
             var whoIsFirst = Statements.Where(s => s == first || s == second).FirstOrDefault();
             if (whoIsFirst == null)
-                throw new ArgumentException("Unable to find either the first or second statement in th elist");
+                throw new ArgumentException("Unable to find either the first or second statement in the list");
 
             return whoIsFirst == first;
         }
