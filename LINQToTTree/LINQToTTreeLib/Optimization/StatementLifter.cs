@@ -150,8 +150,8 @@ namespace LINQToTTreeLib.Optimization
             var r = sc1.RequiredForEquivalence(sc2);
             if (r.Item1)
             {
-                var s1Parent = (s1 as IStatementCompound).Parent as IBookingStatementBlock;
-                var s2Parent = (s2 as IStatementCompound).Parent as IBookingStatementBlock;
+                var s1Parent = s1.Parent as IBookingStatementBlock;
+                var s2Parent = s2.Parent as IBookingStatementBlock;
                 if (s1Parent == null || s2Parent == null)
                 {
                     return false;
