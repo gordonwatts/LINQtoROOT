@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace LINQToTTreeLib.Optimization
             while (modified)
             {
                 modified = false;
-                var opter = new BlockRenamer(statements as IBookingStatementBlock, statements as IBookingStatementBlock);
+                var opter = new BlockRenamer(statements.FindBookingParent(), statements.FindBookingParent());
                 foreach (var item in statements.Statements)
                 {
                     // If it is a compound statement, there may be statements that are "invariant" in it,

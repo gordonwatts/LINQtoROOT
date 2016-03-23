@@ -29,5 +29,18 @@ namespace LINQToTTreeLib.Utils
                 s = s.Parent;
             }
         }
+
+        /// <summary>
+        /// Find a parent that is a booking block. Return null otherwise.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static IBookingStatementBlock FindBookingParent(this IStatement s)
+        {
+            return s.WalkParents(true)
+                .Where(m => m is IBookingStatementBlock)
+                .Cast<IBookingStatementBlock>()
+                .FirstOrDefault();
+        }
     }
 }
