@@ -10,6 +10,7 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
+using System.ComponentModel.Composition.Hosting;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
@@ -45,7 +46,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         }
 
         /// <summary>
-        /// Nothing like this sort of class should appear as a const reference - so bomb if we see it.
+        /// Nothing like this sort of class should appear as a constant reference - so bomb if we see it.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
@@ -84,7 +85,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, System.ComponentModel.Composition.Hosting.CompositionContainer container)
+        public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
             if (expr == null)
                 throw new ArgumentNullException("expr");
@@ -138,7 +139,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             var cppType = expr.Type.AsCPPType();
             var resultName = expr.Type.CreateUniqueVariableName();
 
-            var cppStatement = new CPPCodeStatement(expr.Method, cppType, resultName, dependents);
+            var cppStatement = new CPPCodeStatement(expr.Method, cppType, resultName, code.Code, dependents);
             gc.Add(cppStatement);
 
             paramLookup.Add(expr.Method.Name, resultName);
@@ -168,32 +169,14 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             {
                 var uniqueName = varRepl.Substring(0, varRepl.Length - "Unique".Length);
                 var uniqueTranslated = uniqueName + _uniqueCounter.ToString();
-                paramLookup.Add(varRepl, uniqueTranslated);
                 cppStatement.AddUniqueVariable(varRepl, uniqueTranslated);
                 _uniqueCounter++;
             }
 
-            ///
-            /// Now, go through the lines of code and translate things. We have to be careful 
-            /// in the replacement. For example, if the parameter is "E", don't replace the "E"
-            /// in SetPtPhiEtaE method name!
-            /// 
-
-            var paramReplaceRegex = (from kv in paramLookup
-                                     select new
-                                     {
-                                         Key = kv.Key,
-                                         Value = new Regex(string.Format(@"\b{0}\b", kv.Key))
-                                     }).ToDictionary(k => k.Key, v => v.Value);
-
-            foreach (var line in code.Code)
+            // Add the parameters that need to be translated here.
+            foreach (var paramName in paramLookup)
             {
-                var tline = line;
-                foreach (var k in paramLookup.Keys)
-                {
-                    tline = paramReplaceRegex[k].Replace(tline, paramLookup[k]);
-                }
-                cppStatement.AddLine(tline);
+                cppStatement.AddParamReplacement(paramName.Key, paramName.Value);
             }
 
             return result;
@@ -201,27 +184,29 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
         /// <summary>
         /// A single statement that deals with this special code. We do this rather than make it up otherwise
-        /// as we have special combination symantics.
+        /// as we have special combination semantics.
         /// </summary>
         private class CPPCodeStatement : IStatement, ICMStatementInfo
         {
-            private System.Reflection.MethodInfo methodInfo;
-            private string cppType;
-            private string resultName;
+            private System.Reflection.MethodInfo _methodInfo;
+            private string _cppType;
+            private string _resultName;
 
             /// <summary>
-            /// Init a code block statement
+            /// Initialize a code block statement
             /// </summary>
             /// <param name="methodInfo"></param>
             /// <param name="cppType"></param>
             /// <param name="resultName"></param>
             /// <param name="dependents">The dependent variables. Null if there are none (or an empty set)</param>
-            public CPPCodeStatement(MethodInfo methodInfo, string typeOfResult, string resultName, HashSet<string> dependents = null)
+            public CPPCodeStatement(MethodInfo methodInfo, string typeOfResult, string resultName, IEnumerable<string> loc, HashSet<string> dependents = null)
             {
-                this.methodInfo = methodInfo;
-                this.cppType = typeOfResult;
-                this.resultName = resultName;
+                _methodInfo = methodInfo;
+                _cppType = typeOfResult;
+                _resultName = resultName;
                 ResultVariables = new HashSet<string>() { resultName };
+
+                _linesOfCode.AddRange(loc);
 
                 if (dependents == null)
                 {
@@ -230,36 +215,42 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 DependentVariables = dependents;
             }
 
-            List<string> LinesOfCode = new List<string>();
+            /// <summary>
+            /// Cache the lines of code we will insert
+            /// </summary>
+            List<string> _linesOfCode = new List<string>();
 
             /// <summary>
-            /// Add a line to the list of statements.
+            /// All variables that we need to do a replacement in
             /// </summary>
-            /// <param name="tline"></param>
-            internal void AddLine(string tline)
+            List<Tuple<string, string>> _paramReplacesments = new List<Tuple<string, string>>();
+
+            public void AddParamReplacement(string paramName, string argument)
             {
-                LinesOfCode.Add(tline);
+                _paramReplacesments.Add(new Tuple<string, string>(paramName, argument));
             }
 
             /// <summary>
             /// Return the code that will be rendered to the C++ compiler.
             /// </summary>
             /// <returns></returns>
-            public System.Collections.Generic.IEnumerable<string> CodeItUp()
+            public IEnumerable<string> CodeItUp()
             {
                 //
                 // First, the declaration for the result variable.
                 //
 
-                yield return string.Format("{0} {1};", cppType, resultName);
+                yield return string.Format("{0} {1};", _cppType, _resultName);
 
                 //
                 // Now the various lines of code that the user entered.
                 //
 
-                foreach (var l in LinesOfCode)
+                foreach (var l in _linesOfCode)
                 {
-                    yield return l;
+                    yield return l
+                        .ReplaceVariableNames(_paramReplacesments)
+                        .ReplaceVariableNames(_uniqueVariableTranslations.Select(e => Tuple.Create(e.Key, e.Value)));
                 }
             }
 
@@ -270,8 +261,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <param name="newName"></param>
             public void RenameVariable(string originalName, string newName)
             {
-                resultName = resultName.ReplaceVariableNames(originalName, newName);
-                LinesOfCode = LinesOfCode.Select(l => l.ReplaceVariableNames(originalName, newName)).ToList();
+                _resultName = _resultName.ReplaceVariableNames(originalName, newName);
+                _paramReplacesments = _paramReplacesments
+                    .Select(p => Tuple.Create(p.Item1, p.Item2.ReplaceVariableNames(originalName, newName)))
+                    .ToList();
+                _linesOfCode = _linesOfCode.Select(l => l.ReplaceVariableNames(originalName, newName)).ToList();
             }
 
             /// <summary>
@@ -290,29 +284,33 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 if (other == null)
                     return false;
 
-                if (other.methodInfo != methodInfo)
+                if (other._methodInfo != _methodInfo)
                     return false;
 
-                //
-                // To check that the lines of code are the same we have to "text replace" several things:
-                // the result and all the unique variable names.
-                //
-
-                var replacements = uniqueVariableTranslations.Keys.ToDictionary(k => other.uniqueVariableTranslations[k], k => uniqueVariableTranslations[k]);
-                replacements[other.resultName] = resultName;
-
-                var fixedUpOtherCode = other.LinesOfCode.Select(l => replacements.Keys.Aggregate(l, (line, vname) => line.ReplaceVariableNames(vname, replacements[vname])));
-                var areSame = LinesOfCode.Zip(fixedUpOtherCode, (us, them) => us == them).All(test => test);
-                if (!areSame)
+                // Make sure the lines of code are identical.
+                var loc = _linesOfCode.Zip(other._linesOfCode, (u, t) => Tuple.Create(u, t));
+                if (loc.Where(l => l.Item1 != l.Item2).Any())
+                {
                     return false;
+                }
 
-                //
-                // Ok, they are the same. The one thing that has to be changed is how the result variable
+                // Next, look at the parameters and make sure they are also the same.
+                var plist = _paramReplacesments.Zip(other._paramReplacesments, (u, t) => Tuple.Create(u, t)).Where(p => p.Item1.Item2 != _resultName);
+                if (plist.Where(p => p.Item1.Item1 != p.Item2.Item1).Any())
+                {
+                    return false;
+                }
+                if (plist.Where(p => p.Item1.Item2 != p.Item2.Item2).Any())
+                {
+                    return false;
+                }
+
+                // OK, they are the same. The one thing that has to be changed is how the result variable
                 // in the other guy is used below. So we need to make that the "same".
-                //
-
-                optimize.ForceRenameVariable(other.resultName, resultName);
-
+                if (_resultName != other._resultName)
+                {
+                    optimize.ForceRenameVariable(other._resultName, _resultName);
+                }
                 return true;
             }
 
@@ -324,7 +322,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <summary>
             /// Keep track of unique names for this statement
             /// </summary>
-            Dictionary<string, string> uniqueVariableTranslations = new Dictionary<string, string>();
+            private Dictionary<string, string> _uniqueVariableTranslations = new Dictionary<string, string>();
 
             /// <summary>
             /// Remember a unique variable name that has been translated.
@@ -333,12 +331,95 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <param name="uniqueTranslated"></param>
             internal void AddUniqueVariable(string varRepl, string uniqueTranslated)
             {
-                uniqueVariableTranslations.Add(varRepl, uniqueTranslated);
+                _uniqueVariableTranslations.Add(varRepl, uniqueTranslated);
             }
 
+            /// <summary>
+            /// Can we move the other to look like this code?
+            /// </summary>
+            /// <param name="other"></param>
+            /// <param name="replaceFirst"></param>
+            /// <returns></returns>
+            /// <remarks>
+            /// We do not have to worry about unique variables since they are internal only, and never make it outside
+            /// one of these statements.
+            /// </remarks>
             public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
             {
-                throw new NotImplementedException();
+                // Do some basic tests to try to fail early.
+                if (!(other is CPPCodeStatement))
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
+                var s2 = other as CPPCodeStatement;
+
+                if ((s2._linesOfCode.Count != _linesOfCode.Count)
+                    || (s2._uniqueVariableTranslations.Count != _uniqueVariableTranslations.Count)
+                    || (s2._paramReplacesments.Count != _paramReplacesments.Count))
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
+
+                // Lines of C++ code have to be identical (obviously).
+                var differentCode = _linesOfCode
+                    .Zip(s2._linesOfCode, (u, t) => Tuple.Create(u, t))
+                    .Where(i => i.Item1 != i.Item2);
+                if (differentCode.Any())
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
+
+                var renames = new HashSet<Tuple<string, string>>();
+
+                // First, handle the result.
+                if (_resultName != s2._resultName)
+                {
+                    renames.Add(Tuple.Create(s2._resultName, _resultName));
+                }
+
+                // Finally, we have to look at the parameters. We do this check in order.
+                foreach (var pTwo in _paramReplacesments.Zip(s2._paramReplacesments, (u,t) => Tuple.Create(u, t)))
+                {
+                    // Make sure parameter names are the same.
+                    if (pTwo.Item1.Item1 != pTwo.Item2.Item1)
+                    {
+                        return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                    }
+
+                    // Our next job is to look at the parameters and see if we can't figure out what to shift.
+                    var p1Expr = pTwo.Item1.Item2;
+                    var p2Expr = pTwo.Item2.Item2.ReplaceVariableNames(replaceFirst).ReplaceVariableNames(renames);
+
+                    if (p1Expr != p2Expr)
+                    {
+                        var dependentsInParamOrder1 = from dep in DependentVariables
+                                                     let index = p1Expr.IndexOf(dep)
+                                                     where index >= 0
+                                                     orderby index
+                                                     select dep;
+                        var dependentsInParamOrder2 = from dep in s2.DependentVariables
+                                                      let index = p2Expr.IndexOf(dep)
+                                                      where index >= 0
+                                                      orderby index
+                                                      select dep;
+                        foreach (var d in dependentsInParamOrder1.Zip(dependentsInParamOrder2, (u,t) => Tuple.Create(u, t)))
+                        {
+                            p2Expr = p2Expr.ReplaceVariableNames(d.Item2, d.Item1);
+                            renames.Add(Tuple.Create(d.Item2, d.Item1));
+                            if (p1Expr == p2Expr)
+                            {
+                                break;
+                            }
+                        } 
+                    }
+                    if (p1Expr != p2Expr)
+                    {
+                        return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                    }
+                }
+
+                // If here, then we are set.
+                return Tuple.Create(true, renames as IEnumerable<Tuple<string, string>>);
             }
 
             /// <summary>

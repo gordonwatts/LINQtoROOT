@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -38,7 +39,7 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
-        /// Find all words that match and replcae them.
+        /// Find all words that match and replace them.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="replacement"></param>
@@ -47,6 +48,24 @@ namespace LINQToTTreeLib.Utils
         {
             var search = new Regex(string.Format(@"\b{0}\b", varname));
             return search.Replace(source, replacement);
+        }
+
+        /// <summary>
+        /// Replace all words from a list of possible replacements
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="replacements"></param>
+        /// <returns></returns>
+        public static string ReplaceVariableNames(this string source, IEnumerable<Tuple<string,string>> replacements)
+        {
+            if (replacements == null)
+                return source;
+
+            foreach (var i in replacements)
+            {
+                source = source.ReplaceVariableNames(i.Item1, i.Item2);
+            }
+            return source;
         }
 
         /// <summary>
