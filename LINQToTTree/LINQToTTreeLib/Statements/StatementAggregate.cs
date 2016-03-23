@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -57,10 +59,16 @@ namespace LINQToTTreeLib.Statements
             return ResultVariable.ParameterName + "=" + Expression.RawValue;
         }
 
+        /// <summary>
+        /// Rename the variables.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
             ResultVariable.RenameParameter(originalName, newName);
             Expression.RenameRawValue(originalName, newName);
+            DependentVariables = new HashSet<string>(DependentVariables.Select(s => s.ReplaceVariableNames(originalName, newName)));
         }
 
         /// <summary>
@@ -106,12 +114,18 @@ namespace LINQToTTreeLib.Statements
             }
 
             //
-            // There is nothing else we cna do to figure out if this is the same, I"m afraid!
+            // There is nothing else we can do to figure out if this is the same, I"m afraid!
             //
 
             return false;
         }
 
+        /// <summary>
+        /// See if we can make these two statements the same.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
         public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
         {
             throw new NotImplementedException();
