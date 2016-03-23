@@ -71,7 +71,7 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        public void TestCombineWithRename()
+        public void AggregateCombineWithRename()
         {
             // a = a + b
             // c = c + b
@@ -94,7 +94,7 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        public void TestCombineWithRenameNoChance()
+        public void AggregateCombineWithRenameNoChance()
         {
             // a = a + b
             // c = c + b
@@ -111,6 +111,77 @@ namespace LINQToTTreeLib.Tests
             var opt = new MyCodeOptimizer(false);
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsFalse(result, "Expected combination would work");
+        }
+
+        [TestMethod]
+        public void AggregateEquivalentSame()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, d1, new string[] { d1.RawValue });
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, d2, new string[] { d2.RawValue });
+
+            var r = t1.RequiredForEquivalence(t2);
+            Assert.IsTrue(r.Item1);
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(2, renames.Length);
+            Assert.AreEqual(r1.RawValue, renames.Where(p => p.Item1 == r2.RawValue).First().Item2);
+            Assert.AreEqual(d1.RawValue, renames.Where(p => p.Item1 == d2.RawValue).First().Item2);
+        }
+
+        [TestMethod]
+        public void AggregateEquivalentSameWithTwoSums()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int)), new string[] { d1.RawValue, d2.RawValue });
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int)), new string[] { d4.RawValue, d3.RawValue });
+
+            var r = t1.RequiredForEquivalence(t2);
+            Assert.IsTrue(r.Item1);
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(3, renames.Length);
+        }
+
+        [TestMethod]
+        public void AggregateEquivalentNotSame()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, d1, new string[] { d1.RawValue });
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, new ValSimple($"{d2.RawValue}+b", typeof(int)), new string[] { d1.RawValue });
+
+            var r = t1.RequiredForEquivalence(t2);
+            Assert.IsFalse(r.Item1);
+        }
+
+        [TestMethod]
+        public void AggregateEquivalentSameWithPreRenames()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, d1, new string[] { d1.RawValue });
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, d2, new string[] { d1.RawValue });
+
+            var r = t1.RequiredForEquivalence(t2, new Tuple<string, string>[] { new Tuple<string, string>(d2.RawValue, d1.RawValue) });
+            Assert.IsTrue(r.Item1);
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(1, renames.Length);
+            Assert.AreEqual(r1.RawValue, renames.Where(p => p.Item1 == r2.RawValue).First().Item2);
         }
 
         /// <summary>

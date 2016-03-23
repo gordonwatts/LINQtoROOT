@@ -126,9 +126,19 @@ namespace LINQToTTreeLib.Statements
         /// <param name="other"></param>
         /// <param name="replaceFirst"></param>
         /// <returns></returns>
-        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
-            throw new NotImplementedException();
+            if (!(other is StatementAggregate))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementAggregate;
+
+            return StatementUtils.MakeEquivalentSimpleExpressionAndResult(
+                ResultVariable.RawValue, s2.ResultVariable.RawValue,
+                Expression.RawValue, s2.Expression.RawValue,
+                DependentVariables, s2.DependentVariables,
+                replaceFirst);
         }
 
         /// <summary>

@@ -107,7 +107,6 @@ namespace LINQToTTreeLib.Tests
             }
         }
 
-
         /// <summary>
         /// Try to combine with a statement that has no declare set.
         /// </summary>

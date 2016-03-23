@@ -139,74 +139,11 @@ namespace LINQToTTreeLib.Statements
             }
             var s2 = other as StatementAssign;
 
-            // First, do all replacements
-            var otherResultValue = s2.ResultVariable.RawValue;
-            var expr = s2.Expression.RawValue;
-            if (replaceFirst != null)
-            {
-                foreach (var item in replaceFirst)
-                {
-                    expr = expr.Replace(item.Item1, item.Item2);
-                    otherResultValue = otherResultValue.Replace(item.Item1, item.Item2);
-                }
-            }
-
-            // Track the renames we need to do.
-            var renames = new List<Tuple<string, string>>();
-
-            // Look at the result and see if we there is a simple translation.
-            if (ResultVariable.RawValue != otherResultValue)
-            {
-                renames.Add(Tuple.Create(otherResultValue, ResultVariable.RawValue));
-                expr = expr.Replace(otherResultValue, ResultVariable.RawValue);
-            }
-
-            if (expr == Expression.RawValue)
-            {
-                return Tuple.Create(true, renames as IEnumerable<Tuple<string, string>>);
-            }
-
-            // Now we have to go through the dependent variables. If there are common dependent variables, then we
-            // can ignore them. The rest we have to do the translation for.
-            var otherDependentVarialbesEnum = other.DependentVariables.Replace(renames);
-            if (replaceFirst != null)
-            {
-                otherDependentVarialbesEnum = otherDependentVarialbesEnum.Replace(replaceFirst);
-            }
-            var otherDependentVarialbes = otherDependentVarialbesEnum.ToArray();
-            var dependentUs = DependentVariables.Except(otherDependentVarialbes).ToArray();
-            var dependentThem = otherDependentVarialbes.Except(DependentVariables).ToArray();
-
-            if (dependentUs.Length != dependentThem.Length)
-            {
-                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-            }
-
-            var dependentThemInOrder = dependentThem
-                .Where(i => expr.IndexOf(i) >= 0)
-                .OrderBy(i => expr.IndexOf(i))
-                .ToArray();
-            var dependentUsInOrder = dependentUs
-                .Where(i => Expression.RawValue.IndexOf(i) >= 0)
-                .OrderBy(i => Expression.RawValue.IndexOf(i))
-                .ToArray();
-
-            foreach (var dependent in dependentThemInOrder.Zip(dependentUsInOrder, (o, t) => Tuple.Create(o, t)))
-            {
-                var exprNew = expr.Replace(dependent.Item1, dependent.Item2);
-                if (exprNew != expr)
-                {
-                    renames.Add(dependent);
-                    if (exprNew == Expression.RawValue)
-                    {
-                        return Tuple.Create(true, renames as IEnumerable<Tuple<string, string>>);
-                    }
-                    expr = exprNew;
-                }
-            }
-
-            // If we are here, then we have failed!
-            return Tuple.Create(false, Enumerable.Empty<Tuple<string,string>>());
+            return StatementUtils.MakeEquivalentSimpleExpressionAndResult(
+                ResultVariable.RawValue, s2.ResultVariable.RawValue,
+                Expression.RawValue, s2.Expression.RawValue,
+                DependentVariables, s2.DependentVariables,
+                replaceFirst);
         }
 
         /// <summary>
