@@ -158,6 +158,14 @@ namespace LINQToTTreeLib.Optimization
                     return false;
                 }
 
+                // We can't lift unless we can get at the declarations of all variables we want to rename.
+                var allVarsDeclaredInS2 = s2Parent.AllDeclaredVariables.Select(v => v.RawValue).ToHashSet();
+                if (!r.Item2.Select(p => p.Item1).All(v => allVarsDeclaredInS2.Contains(v)))
+                {
+                    return false;
+                }
+
+                // Remove te statement, and then do the renaming.
                 var opt = new BlockRenamer(s2Parent, s1Parent);
                 s2Parent.Remove(s2);
                 foreach (var item in r.Item2)

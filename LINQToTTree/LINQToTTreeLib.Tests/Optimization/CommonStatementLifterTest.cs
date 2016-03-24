@@ -851,6 +851,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         public void LiftIdenticalLoopOutOfIfStatement()
         {
             var gc = new GeneratedCode();
+            gc.Add(new StatementInlineBlock());
             var c1 = StatementLifterTest.AddLoop(gc);
             gc.Pop();
             StatementLifterTest.AddIf(gc);
