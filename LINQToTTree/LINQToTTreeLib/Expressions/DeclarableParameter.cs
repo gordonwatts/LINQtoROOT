@@ -141,11 +141,12 @@ namespace LINQToTTreeLib.Expressions
 
         /// <summary>
         /// Set the initial value with this type.
+        /// WARNING: this should not be dependent on any declarable parameters!
         /// </summary>
         /// <param name="v"></param>
         public void SetInitialValue(string v)
         {
-            InitialValue = new ValSimple(v, Type);
+            InitialValue = new ValSimple(v, Type, null);
         }
 
         /// <summary>
@@ -175,6 +176,19 @@ namespace LINQToTTreeLib.Expressions
         public void RenameRawValue(string oldname, string newname)
         {
             RenameParameter(oldname, newname);
+        }
+    }
+
+    internal static class DeclarableParameterUtils
+    {
+        /// <summary>
+        /// Quick and dirty to turn it into an array
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<IDeclaredParameter> AsArray(this IDeclaredParameter source)
+        {
+            return new IDeclaredParameter[] { source };
         }
     }
 }

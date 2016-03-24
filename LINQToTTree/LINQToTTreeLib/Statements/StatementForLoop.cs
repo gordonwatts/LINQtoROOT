@@ -34,7 +34,7 @@ namespace LINQToTTreeLib.Statements
             _loopVariable = loopVariable;
             InitialValue = startValue;
             if (InitialValue == null)
-                InitialValue = new ValSimple("0", typeof(int));
+                InitialValue = new ValSimple("0", typeof(int), null);
 
             if (ArrayLength.Type != typeof(int))
                 throw new ArgumentException("arraySizeVar must be an integer");

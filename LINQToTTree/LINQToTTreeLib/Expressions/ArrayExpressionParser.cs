@@ -345,8 +345,8 @@ namespace LINQToTTreeLib.Expressions
                 maxValue++; // b/c the loop is <, not <= when we code it in C++.
             }
 
-            return new EnumerableRangeArrayInfo(new ValSimple(minValue.ToString(), typeof(int)),
-                new ValSimple(maxValue.ToString(), typeof(int)));
+            return new EnumerableRangeArrayInfo(new ValSimple(minValue.ToString(), typeof(int), null),
+                new ValSimple(maxValue.ToString(), typeof(int), null));
         }
     }
 

@@ -144,6 +144,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestBinaryWithDependent()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var e = Expression.MakeBinary(ExpressionType.Add, d1, d2);
@@ -198,6 +200,8 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void ExpressionUnaryWithDependents()
         {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var e = Expression.MakeUnary(ExpressionType.Negate, d1, typeof(int));
 
@@ -346,7 +350,7 @@ namespace LINQToTTreeLib
             var gc = new GeneratedCode();
             var cc = new CodeContext();
 
-            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ntup));
             cc.Add("p", d);
             var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
 
@@ -383,29 +387,6 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), result.Type, "bad type came back");
             Assert.AreEqual("p+2", result.RawValue, "raw value was not right");
-        }
-
-        [TestMethod]
-        public void TestLambaWithParamsAndDeclared()
-        {
-            var t = new TypeHandlerCache();
-            MEFUtilities.Compose(t);
-
-            var laFunc = Expression.Lambda(Expression.MakeBinary(ExpressionType.Add,
-                Expression.Parameter(typeof(int), "p"),
-                Expression.Constant(2)));
-
-            var cc = new CodeContext();
-            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            cc.Add("p", d1);
-
-            GeneratedCode gc = new GeneratedCode();
-            var result = ExpressionToCPP.GetExpression(laFunc, gc, null, MEFUtilities.MEFContainer);
-            CheckGeneratedCodeEmpty(gc);
-            Assert.AreEqual(typeof(int), result.Type, "bad type came back");
-            Assert.AreEqual($"{d1.RawValue}+2", result.RawValue, "raw value was not right");
-            Assert.AreEqual(1, result.Dependants.Count());
-            Assert.AreEqual(d1.RawValue, result.Dependants.First().RawValue);
         }
 
         [TranslateToClass(typeof(transToNtup))]

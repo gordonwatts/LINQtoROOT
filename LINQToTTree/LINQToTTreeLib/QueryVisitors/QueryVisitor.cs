@@ -219,7 +219,7 @@ namespace LINQToTTreeLib
             _codeEnv.Add(new StatementFilter(qmSource.CacheVariableGood));
             _codeEnv.Add(new StatementReturn(qmSource.CacheVariable));
             _codeEnv.Pop();
-            _codeEnv.Add(new StatementAssign(qmSource.CacheVariableGood, new ValSimple("true", typeof(bool)), new IDeclaredParameter[] { }));
+            _codeEnv.Add(new StatementAssign(qmSource.CacheVariableGood, new ValSimple("true", typeof(bool), null), new IDeclaredParameter[] { }));
 
             // Now, run the code to process the query model!
 
@@ -273,17 +273,18 @@ namespace LINQToTTreeLib
             // Assemble what we need for the sequence call.
             if (qmSource.Arguments.Any())
                 throw new NotImplementedException("Can only deal with internal functions with no arguments.");
+            // NOTE: If we add parameters then we will have to fix up dependencies below.
             var call = string.Format("{0} ()", qmSource.Name);
 
             if (qmSource.IsSequence)
             {
                 // For the sequence we get the resulting vector array.
                 var cvar = DeclarableParameter.CreateDeclarableParameterExpression(qmSource.ResultType);
-                _codeEnv.Add(new StatementAssign(cvar, new ValSimple(call, qmSource.ResultType), new IDeclaredParameter[] { }, true));
+                _codeEnv.Add(new StatementAssign(cvar, new ValSimple(call, qmSource.ResultType, null), new IDeclaredParameter[] { }, true));
 
                 // Now, do a loop over it.
                 var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-                _codeEnv.Add(new StatementForLoop(loopVar, new ValSimple(string.Format("{0}.size()", cvar.RawValue), typeof(int))));
+                _codeEnv.Add(new StatementForLoop(loopVar, new ValSimple(string.Format("{0}.size()", cvar.RawValue), typeof(int), new IDeclaredParameter[] { cvar })));
 
                 // Finally, we setup the loop index variables to match what they did when we ran the functoin.
                 var oldLoopIndex = qmSource.OldLoopIndexVariable;

@@ -225,16 +225,19 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             rawValue.Append(method.theMethod.CPPName);
             rawValue.Append("(");
             bool first = true;
+            var dependents = Enumerable.Empty<IDeclaredParameter>();
             foreach (var arg in expr.Arguments.Zip(method.theMethod.Arguments, (m, a) => Tuple.Create(m, a)))
             {
                 if (!first)
                     rawValue.Append(",");
                 first = false;
-                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, ExpressionToCPP.InternalGetExpression(arg.Item1, gc, null, container).RawValue);
+                var e = ExpressionToCPP.InternalGetExpression(arg.Item1, gc, null, container);
+                rawValue.AppendFormat("({0}){1}", arg.Item2.CPPType, e.RawValue);
+                dependents = dependents.Concat(e.Dependants);
             }
             rawValue.Append(")");
 
-            var result = new ValSimple(rawValue.ToString(), expr.Type);
+            var result = new ValSimple(rawValue.ToString(), expr.Type, dependents);
 
             ///
             /// Include files

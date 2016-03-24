@@ -144,7 +144,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             paramLookup.Add(expr.Method.Name, resultName);
 
-            var result = new ValSimple(resultName, expr.Type);
+            var result = new ValSimple(resultName, expr.Type, DeclarableParameter.CreateDeclarableParameterExpression(resultName, expr.Type).AsArray());
 
             //
             // Make sure a result exists in here!

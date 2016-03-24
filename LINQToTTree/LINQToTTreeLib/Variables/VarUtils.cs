@@ -369,7 +369,7 @@ namespace LINQToTTreeLib.Variables
             if (count == 1)
                 return input;
 
-            return new ValSimple(v, input.Type);
+            return new ValSimple(v, input.Type, input.Dependants);
         }
     }
 }

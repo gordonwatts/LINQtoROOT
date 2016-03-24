@@ -104,7 +104,7 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new ValSimple(string.Format("{0}->first", _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[0]);
+                return new ValSimple($"{_groupIndex.RawValue}->first", _mapOfGroups.Type.GetGenericArguments()[0], _groupIndex.AsArray());
             }
         }
 
@@ -115,7 +115,7 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new ValSimple(string.Format("{0}->second", _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType());
+                return new ValSimple($"{_groupIndex.RawValue}->second", _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType(), _groupIndex.AsArray());
             }
         }
 

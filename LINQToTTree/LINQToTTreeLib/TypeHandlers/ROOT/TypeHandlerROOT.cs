@@ -8,6 +8,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
+using System.Collections.Generic;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -121,7 +122,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                 throw new ArgumentException(string.Format("Call to ROOT static method '{0}' where the instance is not null", expr.Method.Name));
 
             //
-            // Code up the local invokation or the static invokation to the method
+            // Code up the local invocation or the static invocation to the method
             //
 
             if (objRef != null)
@@ -137,9 +138,9 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             // Put in the arguments
             //
 
-            AddMethodArguments(expr.Arguments, gc, container, bld);
+            var argDep = AddMethodArguments(expr.Arguments, gc, container, bld);
 
-            return new ValSimple(bld.ToString(), expr.Type);
+            return new ValSimple(bld.ToString(), expr.Type, objRef == null ? argDep : objRef.Dependants.Concat(argDep));
         }
 
         /// <summary>
@@ -189,7 +190,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var ctorName = expression.Type.CreateUniqueVariableName();
             ctor.AppendFormat("{0} {1}", tname, ctorName);
 
-            AddMethodArguments(expression.Arguments, gc, container, ctor);
+            var argDep = AddMethodArguments(expression.Arguments, gc, container, ctor);
 
             gc.Add(new Statements.StatementSimpleStatement(ctor.ToString()));
 
@@ -207,7 +208,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             /// That pointer is what we return for later use!
             /// 
 
-            result = new ValSimple(ptrName, expression.Type);
+            result = new ValSimple(ptrName, expression.Type, argDep);
             return expression;
         }
 
@@ -219,10 +220,12 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <param name="builtArgs"></param>
-        private void AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, CompositionContainer container, StringBuilder builtArgs)
+        /// <returns>List of dependent variables usd in the arguments</returns>
+        private IEnumerable<IDeclaredParameter> AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, CompositionContainer container, StringBuilder builtArgs)
         {
             builtArgs.Append("(");
             bool first = true;
+            var dependents = Enumerable.Empty<IDeclaredParameter>();
             foreach (var a in args)
             {
                 if (!first)
@@ -230,9 +233,12 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
                     builtArgs.Append(",");
                 }
                 first = false;
-                builtArgs.Append(ExpressionToCPP.GetExpression(a, gc, null, container).CastToType(a));
+                var e = ExpressionToCPP.GetExpression(a, gc, null, container);
+                builtArgs.Append(e.CastToType(a));
+                dependents = dependents.Concat(e.Dependants);
             }
             builtArgs.Append(")");
+            return dependents;
         }
 
         /// <summary>
