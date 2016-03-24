@@ -27,7 +27,7 @@ namespace LINQToTTreeLib.Tests
         public void AggregateCodeItUp()
         {
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var target = new StatementAggregate(result, new ValSimple("5", typeof(int)), new string[0]);
+            var target = new StatementAggregate(result, new ValSimple("5", typeof(int)));
             Assert.AreEqual(0, target.DependentVariables.Count);
             Assert.AreEqual(result.RawValue, target.ResultVariable.RawValue);
             Assert.AreEqual(result.RawValue, target.ResultVariables.First());
@@ -43,7 +43,7 @@ namespace LINQToTTreeLib.Tests
         {
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var dep = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var target = new StatementAggregate(result, dep, new string[] { dep.RawValue });
+            var target = new StatementAggregate(result, dep);
             Assert.AreEqual(1, target.DependentVariables.Count);
             Assert.AreEqual(dep.RawValue, target.DependentVariables.First());
         }
@@ -54,7 +54,7 @@ namespace LINQToTTreeLib.Tests
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var dep = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var depname = dep.RawValue;
-            var target = new StatementAggregate(result, dep, new string[] { dep.RawValue });
+            var target = new StatementAggregate(result, dep);
             target.CodeItUp().DumpToConsole();
 
             target.RenameVariable(dep.RawValue, "foot");
@@ -79,11 +79,11 @@ namespace LINQToTTreeLib.Tests
 
             var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ainc = new ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
-            var s1 = new StatementAggregate(a, ainc, new string[0]);
+            var s1 = new StatementAggregate(a, ainc);
 
             var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var cinc = new ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
-            var s2 = new StatementAggregate(c, cinc, new string[0]);
+            var s2 = new StatementAggregate(c, cinc);
 
             var opt = new MyCodeOptimizer(true);
             var result = s1.TryCombineStatement(s2, opt);
@@ -102,11 +102,11 @@ namespace LINQToTTreeLib.Tests
 
             var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ainc = new ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
-            var s1 = new StatementAggregate(a, ainc, new string[0]);
+            var s1 = new StatementAggregate(a, ainc);
 
             var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var cinc = new ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
-            var s2 = new StatementAggregate(c, cinc, new string[0]);
+            var s2 = new StatementAggregate(c, cinc);
 
             var opt = new MyCodeOptimizer(false);
             var result = s1.TryCombineStatement(s2, opt);
@@ -118,11 +118,11 @@ namespace LINQToTTreeLib.Tests
         {
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t1 = new StatementAggregate(r1, d1, new string[] { d1.RawValue });
+            var t1 = new StatementAggregate(r1, d1);
 
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t2 = new StatementAggregate(r2, d2, new string[] { d2.RawValue });
+            var t2 = new StatementAggregate(r2, d2);
 
             var r = t1.RequiredForEquivalence(t2);
             Assert.IsTrue(r.Item1);
@@ -138,12 +138,12 @@ namespace LINQToTTreeLib.Tests
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t1 = new StatementAggregate(r1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int)), new string[] { d1.RawValue, d2.RawValue });
+            var t1 = new StatementAggregate(r1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int), new IDeclaredParameter[] { d1, d2 }));
 
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t2 = new StatementAggregate(r2, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int)), new string[] { d4.RawValue, d3.RawValue });
+            var t2 = new StatementAggregate(r2, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int), new IDeclaredParameter[] { d4, d3 }));
 
             var r = t1.RequiredForEquivalence(t2);
             Assert.IsTrue(r.Item1);
@@ -156,11 +156,11 @@ namespace LINQToTTreeLib.Tests
         {
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t1 = new StatementAggregate(r1, d1, new string[] { d1.RawValue });
+            var t1 = new StatementAggregate(r1, d1);
 
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t2 = new StatementAggregate(r2, new ValSimple($"{d2.RawValue}+b", typeof(int)), new string[] { d1.RawValue });
+            var t2 = new StatementAggregate(r2, new ValSimple($"{d2.RawValue}+b", typeof(int), new IDeclaredParameter[] { d1 }));
 
             var r = t1.RequiredForEquivalence(t2);
             Assert.IsFalse(r.Item1);
@@ -171,11 +171,11 @@ namespace LINQToTTreeLib.Tests
         {
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t1 = new StatementAggregate(r1, d1, new string[] { d1.RawValue });
+            var t1 = new StatementAggregate(r1, d1);
 
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var t2 = new StatementAggregate(r2, d2, new string[] { d1.RawValue });
+            var t2 = new StatementAggregate(r2, d2);
 
             var r = t1.RequiredForEquivalence(t2, new Tuple<string, string>[] { new Tuple<string, string>(d2.RawValue, d1.RawValue) });
             Assert.IsTrue(r.Item1);

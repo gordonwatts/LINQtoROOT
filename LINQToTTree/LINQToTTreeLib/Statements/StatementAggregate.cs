@@ -30,7 +30,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="accumulator"></param>
         /// <param name="funcResolved"></param>
         /// <param name="dependentVariables">List of variables that the val statement depends on</param>
-        public StatementAggregate(DeclarableParameter result, IValue val, IEnumerable<string> dependentVariables)
+        public StatementAggregate(DeclarableParameter result, IValue val)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -42,7 +42,7 @@ namespace LINQToTTreeLib.Statements
 
             // Which variables we have as input and output
 
-            DependentVariables = new HashSet<string>(dependentVariables);
+            DependentVariables = new HashSet<string>(val.Dependants.Select(v => v.RawValue));
             ResultVariables = new HashSet<string>() { result.RawValue };
         }
 

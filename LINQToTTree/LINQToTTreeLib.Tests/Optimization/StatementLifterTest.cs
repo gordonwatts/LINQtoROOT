@@ -626,12 +626,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ass1 = new StatementAssign(a1, new ValSimple($"{fc1}*2", typeof(int), new IDeclaredParameter[] { fc1 }));
             gc.Add(ass1);
-            var agg1 = new StatementAggregate(innerCounter, new ValSimple($"{innerCounter.RawValue}+{a1.RawValue}", typeof(int)), new string[] { innerCounter.RawValue, a1.RawValue });
+            var agg1 = new StatementAggregate(innerCounter, new ValSimple($"{innerCounter.RawValue}+{a1.RawValue}", typeof(int), new IDeclaredParameter[] { innerCounter, a1 }));
             gc.Add(agg1);
 
             // and the outer sum.
             gc.Pop();
-            var agg2 = new StatementAggregate(counter, new ValSimple($"{counter.RawValue}+{innerCounter.RawValue}", typeof(int)), new string[] { counter.RawValue, innerCounter.RawValue });
+            var agg2 = new StatementAggregate(counter, new ValSimple($"{counter.RawValue}+{innerCounter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, innerCounter }));
             gc.Add(agg2);
 
             // Great!

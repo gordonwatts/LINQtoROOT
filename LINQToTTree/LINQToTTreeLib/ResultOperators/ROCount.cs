@@ -61,7 +61,7 @@ namespace LINQToTTreeLib.ResultOperators
             var add = Expression.Add(accumulator, Expression.Constant((int)1));
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
 
-            gc.Add(new StatementAggregate(accumulator, addResolved, FindDeclarableParameters.FindAll(add).Select(p => p.RawValue)));
+            gc.Add(new StatementAggregate(accumulator, addResolved));
             return accumulator;
         }
 
