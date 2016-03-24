@@ -451,50 +451,6 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
-        /// Make sure lift occurs when identical loops are present
-        /// 1. loop A
-        /// 2. if statement
-        /// 3.   loop A
-        /// 4.   statement
-        /// In this case loop A can be removed.
-        /// Normally, this can't be lifted as we don't want to lift things out of an
-        /// if statement. However, in this case, they are identical, so it is OK.
-        /// We don't normally want to lift things past an if statement b.c. it is an efficiency
-        /// protector
-        /// </summary>
-        [TestMethod]
-        [Ignore]
-        public void LiftIdenticalLoopOutOfIfStatement()
-        {
-            var gc = new GeneratedCode();
-            var c1 = AddLoop(gc);
-            gc.Pop();
-            AddIf(gc);
-            var c2 = AddLoop(gc);
-            gc.Pop();
-            AddSum(gc, c1, c2);
-
-            Console.WriteLine("Before lifting and optimization: ");
-            gc.DumpCodeToConsole();
-
-            StatementLifter.Optimize(gc);
-
-            Console.WriteLine("After lifting and optimization: ");
-            gc.DumpCodeToConsole();
-
-            // Now check that things happened as we would expect them to happen.
-            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
-            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of statements inside first for loop");
-
-            var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
-            Assert.IsNotNull(ifStatement, "Finding if statement");
-            Assert.AreEqual(1, ifStatement.Statements.Count(), "# of statements inside the if statement");
-            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAssign));
-            var ass = ifStatement.Statements.First() as StatementAssign;
-            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
-        }
-
-        /// <summary>
         /// If loops aren't identical we can't really do the lift, even if it is close.
         /// 1. loop A
         /// 2. if statement
@@ -658,7 +614,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// <param name="gc"></param>
         /// <param name="c1"></param>
         /// <param name="c2"></param>
-        private IDeclaredParameter AddSum(GeneratedCode gc, IDeclaredParameter c1, IDeclaredParameter c2)
+        public static IDeclaredParameter AddSum(GeneratedCode gc, IDeclaredParameter c1, IDeclaredParameter c2)
         {
             var r = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
@@ -671,12 +627,12 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Add a simple if statement.
         /// </summary>
         /// <param name="gc"></param>
-        private void AddIf(GeneratedCode gc)
+        public static void AddIf(GeneratedCode gc)
         {
             gc.Add(new StatementFilter(new ValSimple("5>10", typeof(bool))));
         }
 
-        enum MainStatementType
+        public enum MainStatementType
         {
             IsCounter,
             IsConstant
@@ -686,7 +642,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Add a simple loop to the current scope. It will have one statement in it, declared at the outer level.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddLoop(GeneratedCode gc,
+        public static IDeclaredParameter AddLoop(GeneratedCode gc,
             bool addDependentStatement = false,
             IDeclaredParameter useCounter = null,
             MainStatementType mainStatementType = MainStatementType.IsCounter,
