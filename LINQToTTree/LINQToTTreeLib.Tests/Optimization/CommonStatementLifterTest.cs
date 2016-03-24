@@ -917,7 +917,6 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// It should not be lifted since it will alter the counting!
         /// </summary>
         [TestMethod]
-        [Ignore]
         public void AggregateLiftDoubleInnerLoop()
         {
             var q = new QueriableDummy<dummyntup>();
