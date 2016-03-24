@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Add to the list of variables that are to be recoreded.
+        /// Add to the list of variables that are to be recorded.
         /// </summary>
         /// <param name="saver"></param>
         /// <param name="loopIndexVar"></param>
@@ -138,18 +138,18 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
-        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Get/Set the compound statement this is embeded in.
+        /// Get/Set the compound statement this is embedded in.
         /// </summary>
         public IStatement Parent { get; set; }
 
         /// <summary>
-        /// What are the varsa that we need as input.
+        /// What are the vars that we need as input.
         /// </summary>
         public ISet<string> DependentVariables
         {
@@ -157,7 +157,7 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// What are teh variables that are a result.
+        /// What are the variables that are a result.
         /// </summary>
         public ISet<string> ResultVariables
         {

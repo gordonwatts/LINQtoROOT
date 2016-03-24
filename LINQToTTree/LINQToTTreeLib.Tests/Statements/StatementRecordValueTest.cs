@@ -22,37 +22,29 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
-#if false
-        /// <summary>
-        ///A test for CodeItUp
-        ///</summary>
-        [PexMethod]
-        public string[] TestCodeItUp([PexAssumeUnderTest] StatementRecordValue target)
+        [TestMethod]
+        public void RecordValue1ResultVariables()
         {
-            var actual = target.CodeItUp().ToArray();
-            return actual;
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
+
+            Assert.AreEqual(1, s1.ResultVariables.Count());
+            Assert.AreEqual(index.RawValue, s1.ResultVariables.First());
         }
 
-        /// <summary>
-        ///A test for RenameVariable
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementRecordValue TestRenameVariable([PexAssumeUnderTest] StatementRecordValue target, string originalName, string newName)
+        [TestMethod]
+        public void RecordValue2ResultVariables()
         {
-            target.RenameVariable(originalName, newName);
-            return target;
-        }
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
 
-        /// <summary>
-        ///A test for TryCombineStatement
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public bool TestTryCombineStatement([PexAssumeUnderTest] StatementRecordValue target, IStatement statement, ICodeOptimizationService optimize)
-        {
-            var actual = target.TryCombineStatement(statement, optimize);
-            return actual;
+            var index2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.AddNewSaver(index2, new ValSimple("j", typeof(int)));
+
+            Assert.AreEqual(2, s1.ResultVariables.Count());
         }
-#endif
 
         [TestMethod]
         public void TestTCIdenticalButForFirstLast()
@@ -98,6 +90,108 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(3, dop._renameRequests.Count, "# of rename requests");
             Assert.AreEqual(Tuple.Create(index2.RawValue, index1.RawValue), dop._renameRequests[0], "first rename");
             Assert.AreEqual(Tuple.Create(index4.RawValue, index3.RawValue), dop._renameRequests[1], "second rename");
+        }
+
+        [TestMethod]
+        public void RecordValueEquivSame()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
+            var s2 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1);
+            Assert.AreEqual(0, r.Item2.Count());
+        }
+
+        [TestMethod]
+        public void RecordValueEquivDifferentSeens()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen1, true);
+            var seen2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s2 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen2, true);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1);
+            Assert.AreEqual(1, r.Item2.Count());
+            Assert.AreEqual(seen1.RawValue, r.Item2.Where(l => l.Item1 == seen2.RawValue).First().Item1);
+        }
+
+        [TestMethod]
+        public void RecordValueEquivDiffRecord()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
+            var s2 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, false);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsFalse(r.Item1);
+        }
+
+        [TestMethod]
+        public void RecordValueEquivDiffCalc()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
+            var s2 = new StatementRecordValue(index, new ValSimple("j", typeof(int)), seen, true);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsFalse(r.Item1);
+        }
+
+        [TestMethod]
+        public void RecordValueEquiv1DependentVariable()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementRecordValue(index, d1, seen, true);
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementRecordValue(index, d2, seen, true);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1);
+            Assert.AreEqual(1, r.Item2.Count());
+            Assert.AreEqual(d1.RawValue, r.Item2.First().Item2);
+        }
+
+        [TestMethod]
+        public void RecordValueEquiv4DependentVariable()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementRecordValue(index, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int)), seen, true);
+            var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementRecordValue(index, new ValSimple($"{d4.RawValue}+{d3.RawValue}", typeof(int)), seen, true);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsTrue(r.Item1);
+            Assert.AreEqual(2, r.Item2.Count());
+            Assert.AreEqual(d1.RawValue, r.Item2.Where(l => l.Item1 == d2.RawValue).First().Item1);
+            Assert.AreEqual(d3.RawValue, r.Item2.Where(l => l.Item1 == d4.RawValue).First().Item1);
+        }
+
+        [TestMethod]
+        public void RecordValueEquiv3DependentVariable()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementRecordValue(index, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int)), seen, true);
+            var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementRecordValue(index, new ValSimple($"{d3.RawValue}+{d3.RawValue}", typeof(int)), seen, true);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsFalse(r.Item1);
         }
 
         class dummyOpt : ICodeOptimizationService
