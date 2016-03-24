@@ -863,7 +863,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
-        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outter loop one.
+        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outer loop one.
         /// It should not be lifted since it will alter the counting!
         /// </summary>
         [TestMethod]
@@ -878,6 +878,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                         select rr1).Aggregate(0, (acc, v) => acc + v);
             var resu1 = res1.Aggregate(0, (acc, v) => acc + v);
             var query1 = DummyQueryExectuor.FinalResult;
+
             StatementLifter.Optimize(query1);
 
             var res2 = from f in q
@@ -887,6 +888,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                                select rr1).Aggregate(0, (acc, v) => acc + v);
             var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
             var query2 = DummyQueryExectuor.FinalResult;
+
             StatementLifter.Optimize(query2);
 
             // Combine the queries
@@ -904,6 +906,71 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // We can't totally combine because some gets extract into a function.
             Assert.AreEqual(3, query.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
+        }
+
+        /// <summary>
+        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outer loop one.
+        /// It should not be lifted since it will alter the counting!
+        /// </summary>
+        [TestMethod]
+        public void AggregateLiftDoubleInnerLoop()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var res2 = from f in q
+                       from r12 in f.valC1D
+                       select (from r1 in f.valC1D
+                               let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r12))
+                               select rr1).Aggregate(0, (acc, v) => acc + v);
+            var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            Console.WriteLine("Unoptimized");
+            query2.DumpCodeToConsole();
+
+            StatementLifter.Optimize(query2);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            query2.DumpCodeToConsole();
+
+            // We can't totally combine because some gets extract into a function.
+            Assert.AreEqual(2, query2.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
+        }
+
+        /// <summary>
+        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outter loop one.
+        /// It should not be lifted since it will alter the counting!
+        /// </summary>
+        [TestMethod]
+        public void AggregateStatementLiftNonSideEffect()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var res1 = from f in q
+                       select
+                       (from r1 in f.valC1D
+                        let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                        select rr1).Aggregate(0, (acc, v) => acc + v);
+            var resu1 = res1.Aggregate(0, (acc, v) => acc + v);
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            Console.WriteLine("Unoptimized");
+            Console.WriteLine();
+            query1.DumpCodeToConsole();
+
+            StatementLifter.Optimize(query1);
+
+            Console.WriteLine();
+            Console.WriteLine("Optimized");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            query1.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query1.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
         }
 
         [TestMethod]

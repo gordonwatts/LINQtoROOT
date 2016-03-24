@@ -590,6 +590,68 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// for c1
+        ///  int counter;
+        ///  for c2
+        ///    value that depends on c1
+        ///    sum of value that depends on c1 but not c2
+        ///  sum of sum of value that depends on c1 but not c2
+        ///  
+        /// The inner statement is lifted to the outer statement and left to hang.
+        /// </summary>
+        [TestMethod]
+        public void DontLiftThroughTwoForStatements()
+        {
+            var gc = new GeneratedCode();
+
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            counter.InitialValue = new ValSimple("0", typeof(int));
+            gc.Add(counter);
+
+            // The two for loops
+            var fc1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var for1 = new StatementForLoop(fc1, new ValSimple("5", typeof(int)));
+            gc.Add(for1);
+
+            var innerCounter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            innerCounter.InitialValue = new ValSimple("0", typeof(int));
+            gc.Add(innerCounter);
+
+            var fc2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var for2 = new StatementForLoop(fc1, new ValSimple("5", typeof(int)));
+            gc.Add(for2);
+
+            // Now, calc based only on fc1
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var ass1 = new StatementAssign(a1, new ValSimple($"{fc1}*2", typeof(int)), new IDeclaredParameter[] { fc1 });
+            gc.Add(ass1);
+            var agg1 = new StatementAggregate(innerCounter, new ValSimple($"{innerCounter.RawValue}+{a1.RawValue}", typeof(int)), new string[] { innerCounter.RawValue, a1.RawValue });
+            gc.Add(agg1);
+
+            // and the outer sum.
+            gc.Pop();
+            var agg2 = new StatementAggregate(counter, new ValSimple($"{counter.RawValue}+{innerCounter.RawValue}", typeof(int)), new string[] { counter.RawValue, innerCounter.RawValue });
+            gc.Add(agg2);
+
+            // Great!
+            Console.WriteLine("Unoptimized");
+            gc.DumpCodeToConsole();
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("Optimized");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            // Make sure the inner aggregate got lifted out properly.
+            Assert.AreEqual(1, for2.Statements.Count(), "# of statements in the inner for loop");
+        }
+
+        /// <summary>
         /// Create a new declarable parameter that will sum these two things.
         /// </summary>
         /// <param name="gc"></param>
