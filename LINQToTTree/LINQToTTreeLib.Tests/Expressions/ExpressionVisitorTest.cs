@@ -20,7 +20,6 @@ using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib
 {
-    /// <summary>This class contains parameterized unit tests for ExpressionVisitor</summary>
     [TestClass]
     public partial class ExpressionVisitorTest
     {
@@ -128,6 +127,7 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(g);
             Assert.AreEqual(c.ExpectedType, r.Type, "Expected type is incorrect");
             Assert.AreEqual(c.ExpectedValue, r.RawValue, "value is incorrect");
+            Assert.AreEqual(0, r.Dependants.Count());
         }
 
         [TestMethod]
@@ -139,6 +139,23 @@ namespace LINQToTTreeLib
             {
                 TestBinaryExpressionCase(c);
             }
+        }
+
+        [TestMethod]
+        public void TestBinaryWithDependent()
+        {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var e = Expression.MakeBinary(ExpressionType.Add, d1, d2);
+
+            GeneratedCode g = new GeneratedCode();
+            var v = ExpressionToCPP.GetExpression(e, g, null, MEFUtilities.MEFContainer);
+
+            Assert.AreEqual(2, v.Dependants.Count());
+            Assert.IsTrue(v.Dependants.Where(d => d.RawValue == d1.RawValue).Any());
+            Assert.IsTrue(v.Dependants.Where(d => d.RawValue == d2.RawValue).Any());
         }
 
         public class UnaryTestCase
@@ -180,6 +197,20 @@ namespace LINQToTTreeLib
             }
         }
 
+        [TestMethod]
+        public void ExpressionUnaryWithDependents()
+        {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var e = Expression.MakeUnary(ExpressionType.Negate, d1, typeof(int));
+
+            var g = new GeneratedCode();
+            var r = ExpressionToCPP.GetExpression(e, g, null, MEFUtilities.MEFContainer);
+            Assert.AreEqual(1, r.Dependants.Count());
+            Assert.AreEqual(d1.RawValue, r.Dependants.First().RawValue);
+        }
+
         public class DummyQueryReference : IQuerySource
         {
             public string ItemName { get; set; }
@@ -201,11 +232,14 @@ namespace LINQToTTreeLib
             QuerySourceReferenceExpression q = new QuerySourceReferenceExpression(new DummyQueryReference() { ItemName = "evt", ItemType = typeof(int) });
             GeneratedCode gc = new GeneratedCode();
             var cc = new CodeContext();
-            cc.Add(q.ReferencedQuerySource, Expression.Parameter(typeof(int), "evt"));
+            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            cc.Add(q.ReferencedQuerySource, d);
             var r = ExpressionToCPP.GetExpression(q, gc, cc, null);
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
-            Assert.AreEqual("evt", r.RawValue, "expansion incorrect");
+            Assert.AreEqual(d.RawValue, r.RawValue, "expansion incorrect");
+            Assert.AreEqual(1, r.Dependants.Count());
+            Assert.AreEqual(d.RawValue, r.Dependants.First().RawValue);
         }
 
         /// <summary>
@@ -236,6 +270,7 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(int), r.Type, "incorrect type");
             Assert.AreEqual("(*d).run", r.RawValue, "incorrect reference");
+            Assert.AreEqual(0, r.Dependants.Count());
         }
 
         [TestMethod]
@@ -306,6 +341,21 @@ namespace LINQToTTreeLib
             CheckGeneratedCodeEmpty(gc);
             Assert.AreEqual(typeof(ntup), r.Type, "type is not correct");
             Assert.AreEqual("count", r.RawValue, "raw value is not right");
+        }
+
+        [TestMethod]
+        public void ParameterSubWithDeclaredParameter()
+        {
+            var e = Expression.Parameter(typeof(ntup), "p");
+            var gc = new GeneratedCode();
+            var cc = new CodeContext();
+
+            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(ntup));
+            cc.Add("p", d);
+            var r = ExpressionToCPP.GetExpression(e, gc, cc, null);
+
+            Assert.AreEqual(1, r.Dependants.Count());
+            Assert.AreEqual(d.RawValue, r.Dependants.First().RawValue);
         }
 
         [TestMethod]

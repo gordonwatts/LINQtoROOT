@@ -64,7 +64,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign);
 
             var cc = new CombinedGeneratedCode();
@@ -99,10 +99,10 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var randomVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            if1s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
-            if2s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
-            if1s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
-            if2s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
+            if1s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
+            if2s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
+            if1s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
+            if2s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
 
             // We will put the first if's - that we can perhaps combine with - at the top level (though we
             // shouldn't combine with them!).
@@ -128,14 +128,14 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Have the modified if statement contain the modification now.
 
             var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)));
             //blockWithModified.Add(varToBeModified);
             gc.Add(varToBeModified);
             if1s1.Add(statementModifier);
 
             // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
             var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            var assignment = new StatementAssign(finalVar, varToBeModified);
             //blockWithModified.Add(finalVar);
             gc.Add(finalVar);
             if2s1.Add(assignment);
@@ -163,11 +163,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign1);
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
 
 
@@ -202,18 +202,18 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign1);
 
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
 
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p3, p2, true);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
@@ -254,7 +254,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(p1);
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, false);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), false);
             gc.Add(assign1);
 
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
@@ -262,11 +262,11 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(p2);
-            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, false);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), false);
             gc.Add(assign2);
 
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p3, p2, true);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
@@ -298,15 +298,15 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign1);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign11 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign11 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign11);
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
-            var assign22 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
+            var assign22 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign22);
             gc.Add(assign2);
 
@@ -334,14 +334,14 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign1);
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
@@ -371,13 +371,13 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(new DummyLoop());
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign1);
 
             gc.Add(new DummyLoop());
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
 
             var cc = new CombinedGeneratedCode();
@@ -502,14 +502,14 @@ namespace LINQToTTreeLib.Tests.Optimization
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
 
             var ifstatement2 = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement2);
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
@@ -537,13 +537,13 @@ namespace LINQToTTreeLib.Tests.Optimization
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign3);
             gc.Pop();
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign1);
 
             var cc = new CombinedGeneratedCode();
@@ -573,23 +573,23 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var ifstatement1 = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement1);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign3);
             gc.Pop();
 
             var ifstatement2 = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement2);
-            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign4);
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign5);
             gc.Pop();
 
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign1);
 
             var cc = new CombinedGeneratedCode();
@@ -618,7 +618,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Add one common assign statement.
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign2);
 
             // Go down two levels.
@@ -628,10 +628,10 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(ifstatement2);
 
             // Two levels down add the second common and unique statements.
-            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), true);
             gc.Add(assign4);
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), true);
             gc.Add(assign5);
 
 
@@ -729,7 +729,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int))));
 
             Console.WriteLine("Unoptimized:");
             v.DumpCodeToConsole();
@@ -770,7 +770,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
             v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int))));
 
             Console.WriteLine("Unoptimized:");
             v.DumpCodeToConsole();
@@ -802,7 +802,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.Add(loop1);
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)), true);
             loop1.Add(assign1);
 
             Console.WriteLine("Unoptimized:");
@@ -839,10 +839,10 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
             v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int))));
 
             v.CurrentScope = lp1Scope;
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int))));
 
             Console.WriteLine("Unoptimized:");
             v.DumpCodeToConsole();
@@ -1137,7 +1137,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             AddConditionalExpr(gc);
             var p1Extra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
-            gc.Add(new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), new IDeclaredParameter[] { }, true));
+            gc.Add(new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), true));
 
             gc.Pop();
             AddConditionalExpr(gc);
@@ -1176,7 +1176,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(ifstatement);
 
             var p1Extra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
-            var toadd = new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), new IDeclaredParameter[] { }, true);
+            var toadd = new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), true);
             AddSingleIfExpr(gc, addIn: toadd);
 
             gc.Pop();
@@ -1215,18 +1215,18 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(p1);
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), new IDeclaredParameter[] { }, true);
+            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), true);
             gc.Add(assignp2);
             var ifstatement = new StatementFilter(p2);
             gc.Add(ifstatement);
             if (addInFirst != null)
                 gc.Add(addInFirst);
-            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), new IDeclaredParameter[] { }, false);
+            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), false);
             gc.Add(assign3);
             gc.Pop();
 
             gc.Add(new StatementFilter(new ValSimple("!" + p2.ParameterName, typeof(bool))));
-            gc.Add(new StatementAssign(p1, new ValSimple("f2", typeof(double)), new IDeclaredParameter[] { }, false));
+            gc.Add(new StatementAssign(p1, new ValSimple("f2", typeof(double)), false));
             if (addInSecond != null)
             {
                 gc.Add(addInSecond);
@@ -1243,13 +1243,13 @@ namespace LINQToTTreeLib.Tests.Optimization
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
             gc.Add(p1);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), new IDeclaredParameter[] { }, true);
+            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), true);
             gc.Add(assignp2);
             var ifstatement = new StatementFilter(p2);
             gc.Add(ifstatement);
             if (addIn != null)
                 gc.Add(addIn);
-            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), new IDeclaredParameter[] { }, false);
+            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), false);
             gc.Add(assign3);
             gc.Pop();
         }

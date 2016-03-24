@@ -506,7 +506,7 @@ namespace LINQToTTreeLib
             gc.Add(new StatementForLoop(loopV, new Variables.ValSimple("5", typeof(int))));
             gc.Pop(true);
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements present now");
-            gc.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new Variables.ValSimple("ih", typeof(int)), null));
+            gc.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new Variables.ValSimple("ih", typeof(int))));
             Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements present now");
         }
 
@@ -517,10 +517,10 @@ namespace LINQToTTreeLib
             var loopV = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(new StatementForLoop(loopV, new Variables.ValSimple("5", typeof(int))));
             gc.Add(new StatementInlineBlock());
-            gc.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new Variables.ValSimple("ih", typeof(int)), null));
+            gc.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new Variables.ValSimple("ih", typeof(int))));
             gc.Pop(true);
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements present now");
-            gc.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new Variables.ValSimple("ih", typeof(int)), null));
+            gc.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new Variables.ValSimple("ih", typeof(int))));
             Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements present now");
         }
 

@@ -4,6 +4,7 @@ using LINQToTTreeLib.Variables;
 using Remotion.Linq.Clauses.Expressions;
 using System;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -16,6 +17,7 @@ namespace LINQToTTreeLib.Expressions
     /// </remarks>
     public class DeclarableParameter : Expression, IDeclaredParameter
     {
+        #region Creators
         /// <summary>
         /// Create a new variable that is an array.
         /// </summary>
@@ -24,6 +26,17 @@ namespace LINQToTTreeLib.Expressions
         public static DeclarableParameter CreateDeclarableParameterArrayExpression(Type varType)
         {
             return new DeclarableParameter(varType.MakeArrayType(1), string.Format("{0}Array", varType.CreateUniqueVariableName()));
+        }
+
+        /// <summary>
+        /// Use only if you know what you are doing is going to render a unique name!
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="varType"></param>
+        /// <returns></returns>
+        public static DeclarableParameter CreateDeclarableParameterExpression(string name, Type varType)
+        {
+            return new DeclarableParameter(varType, name);
         }
 
         /// <summary>
@@ -50,6 +63,7 @@ namespace LINQToTTreeLib.Expressions
             var sDict = gDict.MakeGenericType(new Type[] { indexType, valueType });
             return new DeclarableParameter(sDict, string.Format("{0}Map", sDict.CreateUniqueVariableName()));
         }
+        #endregion
 
         /// <summary>
         /// The expression type for testing to see if it is a declared variable.
@@ -95,15 +109,6 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         public string ParameterName { get; private set; }
 
-#if false
-        public override bool CanReduce { get { return true; } }
-
-        public override Expression Reduce()
-        {
-            return this;
-        }
-#endif
-
         /// <summary>
         /// Rename the parameter name to the new name as long as it matches the old name.
         /// </summary>
@@ -129,26 +134,38 @@ namespace LINQToTTreeLib.Expressions
 
         /// <summary>
         /// Initial value to set this declared variable to. If
-        /// null it shoudl be set to the default value (like "0" for int).
-        /// Assume everything is explicitly initalized!
+        /// null it should be set to the default value (like "0" for int).
+        /// Assume everything is explicitly initialized!
         /// </summary>
         public IValue InitialValue { get; set; }
 
         /// <summary>
         /// Set the initial value with this type.
+        /// WARNING: this should not be dependent on any declarable parameters!
         /// </summary>
         /// <param name="v"></param>
         public void SetInitialValue(string v)
         {
-            InitialValue = new ValSimple(v, Type);
+            InitialValue = new ValSimple(v, Type, null);
         }
 
         /// <summary>
-        /// Return the pareamter name as our value raw value.
+        /// Return the parameter name as our value raw value.
         /// </summary>
         public string RawValue
         {
             get { return ParameterName; }
+        }
+
+        /// <summary>
+        /// We depend only on ourselves!
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> Dependants
+        {
+            get
+            {
+                return new IDeclaredParameter[] { this };
+            }
         }
 
         /// <summary>
@@ -159,6 +176,19 @@ namespace LINQToTTreeLib.Expressions
         public void RenameRawValue(string oldname, string newname)
         {
             RenameParameter(oldname, newname);
+        }
+    }
+
+    internal static class DeclarableParameterUtils
+    {
+        /// <summary>
+        /// Quick and dirty to turn it into an array
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<IDeclaredParameter> AsArray(this IDeclaredParameter source)
+        {
+            return new IDeclaredParameter[] { source };
         }
     }
 }

@@ -46,7 +46,18 @@ namespace LINQToTTreeLib.Files
         public Type Type { get { return typeof(OutputTTreeFileType); } }
 
         /// <summary>
-        /// No renaming can happen since we hold what is basically a constnat value.
+        /// We don't hold onto a variable (we are a dummy, in some sense).
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> Dependants
+        {
+            get
+            {
+                return Enumerable.Empty<IDeclaredParameter>();
+            }
+        }
+
+        /// <summary>
+        /// No renaming can happen since we hold what is basically a constant value.
         /// </summary>
         /// <param name="oldname"></param>
         /// <param name="newname"></param>
@@ -77,7 +88,7 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
-        /// Include files that need to be used. Since this is an fstream...
+        /// Include files that need to be used. Since this is an file stream...
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>

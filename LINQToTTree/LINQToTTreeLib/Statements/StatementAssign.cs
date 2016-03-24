@@ -12,7 +12,7 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementAssign : IStatement, ICMStatementInfo
     {
-        public StatementAssign(IDeclaredParameter result, IValue val, IEnumerable<IDeclaredParameter> dependentVariables, bool declare = false)
+        public StatementAssign(IDeclaredParameter result, IValue val, bool declare = false)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -23,15 +23,7 @@ namespace LINQToTTreeLib.Statements
             Expression = val;
             DeclareResult = declare;
             ResultVariables = new HashSet<string>() { result.RawValue };
-            var dvars = new HashSet<string>();
-            if (dependentVariables != null)
-            {
-                foreach (var item in dependentVariables)
-                {
-                    dvars.Add(item.RawValue);
-                }
-            }
-            DependentVariables = dvars;
+            DependentVariables = new HashSet<string>(val.Dependants.Select(v => v.RawValue));
         }
 
         /// <summary>

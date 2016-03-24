@@ -624,7 +624,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Now, calc based only on fc1
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var ass1 = new StatementAssign(a1, new ValSimple($"{fc1}*2", typeof(int)), new IDeclaredParameter[] { fc1 });
+            var ass1 = new StatementAssign(a1, new ValSimple($"{fc1}*2", typeof(int), new IDeclaredParameter[] { fc1 }));
             gc.Add(ass1);
             var agg1 = new StatementAggregate(innerCounter, new ValSimple($"{innerCounter.RawValue}+{a1.RawValue}", typeof(int)), new string[] { innerCounter.RawValue, a1.RawValue });
             gc.Add(agg1);
@@ -662,7 +662,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         {
             var r = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            gc.Add(new StatementAssign(r, new ValSimple($"{c1.RawValue}+{c2.RawValue}", c1.Type), new IDeclaredParameter[] { c1, c2 }));
+            gc.Add(new StatementAssign(r, new ValSimple($"{c1.RawValue}+{c2.RawValue}", c1.Type, new IDeclaredParameter[] { c1, c2 })));
 
             return r;
         }
@@ -725,20 +725,20 @@ namespace LINQToTTreeLib.Tests.Optimization
             {
                 if (useCounter == null)
                 {
-                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
+                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int), new IDeclaredParameter[] { counter })));
                 }
                 else
                 {
-                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue}+{useCounter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, useCounter }));
+                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue}+{useCounter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, useCounter })));
                 }
             } else
             {
-                gc.Add(new StatementAssign(counter, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
+                gc.Add(new StatementAssign(counter, new ValSimple("1", typeof(int))));
             }
 
             if (addDependentStatement)
             {
-                gc.Add(new StatementAssign(counterExtra, new ValSimple($"{counterExtra.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counterExtra, counter }));
+                gc.Add(new StatementAssign(counterExtra, new ValSimple($"{counterExtra.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counterExtra, counter })));
             }
 
             return counter;

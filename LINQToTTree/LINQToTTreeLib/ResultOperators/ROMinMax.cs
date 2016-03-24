@@ -90,9 +90,9 @@ namespace LINQToTTreeLib.ResultOperators
             /// 
 
             var vIsFilled = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            vIsFilled.InitialValue = new ValSimple("false", typeof(bool));
+            vIsFilled.InitialValue = new ValSimple("false", typeof(bool), null);
             var vMaxMin = DeclarableParameter.CreateDeclarableParameterExpression(valueExpr.Type);
-            vMaxMin.InitialValue = new ValSimple("0", typeof(int));
+            vMaxMin.InitialValue = new ValSimple("0", typeof(int), null);
 
             gc.AddOutsideLoop(vIsFilled);
 

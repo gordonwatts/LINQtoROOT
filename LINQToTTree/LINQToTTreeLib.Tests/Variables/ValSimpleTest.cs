@@ -1,6 +1,8 @@
 // <copyright file="ValSimpleTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
-using System;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace LINQToTTreeLib.Variables
 {
@@ -8,31 +10,40 @@ namespace LINQToTTreeLib.Variables
     [TestClass]
     public partial class ValSimpleTest
     {
-#if false
-        /// <summary>Test stub for .ctor(String)</summary>
-        [PexMethod]
-        internal ValSimple Constructor(string v)
-        {
-            ValSimple target = new ValSimple(v, typeof(int));
-            Assert.AreEqual(v, target.RawValue, "Should have been set to the same thing!");
-            return target;
-        }
-
-        [PexMethod]
-        internal ValSimple TestCTorWithType(string v, Type t)
-        {
-            ValSimple target = new ValSimple(v, t);
-            Assert.AreEqual(v, target.RawValue, "Should have been set to the same thing!");
-            Assert.IsNotNull(target.Type, "Expected some value for the type!");
-            return target;
-        }
-#endif
         [TestMethod]
         public void RenameMethodCall()
         {
             var target = new ValSimple("(*aNTH1F_1233).Fill(((double)aInt32_326),1.0*((1.0*1.0)*1.0))", typeof(int));
             target.RenameRawValue("aInt32_326", "aInt32_37");
             Assert.AreEqual("(*aNTH1F_1233).Fill(((double)aInt32_37),1.0*((1.0*1.0)*1.0))", target.RawValue);
+        }
+
+        [TestMethod]
+        public void ValSimpleNullDependents()
+        {
+            var v = new ValSimple("5", typeof(int), null);
+            Assert.IsNotNull(v.Dependants);
+            Assert.AreEqual(0, v.Dependants.Count());
+        }
+
+        [TestMethod]
+        public void ValSimpleWithDependents()
+        {
+            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v = new ValSimple($"5+{d.RawValue}", typeof(int), new IDeclaredParameter[] { d });
+            Assert.IsNotNull(v.Dependants);
+            Assert.AreEqual(1, v.Dependants.Count());
+        }
+
+        [TestMethod]
+        public void ValSimpleRenameWithDependents()
+        {
+            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v = new ValSimple($"5+{d.RawValue}", typeof(int), new IDeclaredParameter[] { d });
+
+            v.RenameRawValue(d.RawValue, "my_go_1");
+            Assert.AreEqual("5+my_go_1", v.RawValue);
+            Assert.AreEqual("my_go_1", v.Dependants.First().RawValue);
         }
     }
 }

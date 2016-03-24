@@ -182,10 +182,10 @@ namespace LINQToTTreeLib
 
             var f1 = QMFuncUtils.GenerateFunction();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)));
             var f2 = QMFuncUtils.GenerateFunction();
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)));
 
             q1.Add(f1);
             q1.Add(s1);
@@ -215,10 +215,10 @@ namespace LINQToTTreeLib
 
             var f1 = GenerateFunction2();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)));
             var f2 = GenerateFunction2();
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2[1].Name + "()", typeof(int)));
 
             q1.Add(f1[0]);
             q1.Add(f1[1]);
@@ -251,10 +251,10 @@ namespace LINQToTTreeLib
 
             var f1 = GenerateFunction2();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1[1].Name + "()", typeof(int)));
             var f2 = QMFuncUtils.GenerateFunction();
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2.Name + "()", typeof(int)));
 
             q1.Add(f1[0]);
             q1.Add(f1[1]);
@@ -285,10 +285,10 @@ namespace LINQToTTreeLib
 
             var f1 = QMFuncUtils.GenerateFunction();
             var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s1 = new Statements.StatementAssign(r1, new Variables.ValSimple(f1.Name + "()", typeof(int)));
             var f2 = GenerateFunction2();
             var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2[1].Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var s2 = new Statements.StatementAssign(r2, new Variables.ValSimple(f2[1].Name + "()", typeof(int)));
 
             q1.Add(f1);
             q1.Add(s1);
@@ -321,7 +321,7 @@ namespace LINQToTTreeLib
             var f = new QMFuncSource(h);
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var st = new StatementAssign(p, new ValSimple(fsub.Name + "()", typeof(int)), new IDeclaredParameter[] { });
+            var st = new StatementAssign(p, new ValSimple(fsub.Name + "()", typeof(int)));
             var inlineblock = new StatementInlineBlock();
             inlineblock.Add(st);
             inlineblock.Add(new StatementReturn(p));

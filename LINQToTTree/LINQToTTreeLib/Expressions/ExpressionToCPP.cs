@@ -80,7 +80,7 @@ namespace LINQToTTreeLib.Expressions
                     return v;
             }
 
-            // We have to do the visit - make sure everything is prep'd.
+            // We have to do the visit - make sure everything is prepared.
 
             if (cc == null)
             {
@@ -109,7 +109,7 @@ namespace LINQToTTreeLib.Expressions
 
         /// <summary>
         /// Local version of get expression that passes on all of our information. This is basically
-        /// a syntatic shortcut.
+        /// a syntactic shortcut.
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
@@ -144,7 +144,7 @@ namespace LINQToTTreeLib.Expressions
         private ICodeContext _codeContext;
 
         /// <summary>
-        /// ctor - only called by our helper routine above.
+        /// constructor - only called by our helper routine above.
         /// </summary>
         /// <param name="ce"></param>
         private ExpressionToCPP(IGeneratedQueryCode ce, ICodeContext cc)
@@ -175,7 +175,6 @@ namespace LINQToTTreeLib.Expressions
             var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             _codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
                 GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer),
-                FindDeclarableParameters.FindAll(testExpression),
                 true
                 ));
 
@@ -193,13 +192,11 @@ namespace LINQToTTreeLib.Expressions
 
             var topScope = _codeEnv.CurrentScope;
             _codeEnv.Add(new Statements.StatementFilter(testBoolInCode));
-            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer),
-                FindDeclarableParameters.FindAll(trueExpression)));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer)));
             _codeEnv.CurrentScope = topScope;
 
             _codeEnv.Add(new Statements.StatementFilter(GetExpression(Expression.Not(testBoolInCode), _codeEnv, _codeContext, MEFContainer)));
-            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer),
-                FindDeclarableParameters.FindAll(falseExpression)));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer)));
             _codeEnv.CurrentScope = topScope;
 
             //
@@ -217,7 +214,7 @@ namespace LINQToTTreeLib.Expressions
 
         /// <summary>
         /// Deal with a constant expression. Exactly how this is dealt with depends on the value. We process
-        /// the mmost important ones directly, and the MEF-off the others. :-)
+        /// the most important ones directly, and the MEF-off the others. :-)
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
@@ -225,7 +222,7 @@ namespace LINQToTTreeLib.Expressions
         {
             if (expression.Type == typeof(int))
             {
-                _result = new ValSimple(expression.Value.ToString(), expression.Type);
+                _result = new ValSimple(expression.Value.ToString(), expression.Type, null);
             }
             else if (expression.Type == typeof(float)
               || expression.Type == typeof(double))
@@ -233,17 +230,17 @@ namespace LINQToTTreeLib.Expressions
                 var s = expression.Value.ToString();
                 if (!s.Contains("."))
                     s += ".0";
-                _result = new ValSimple(s, expression.Type);
+                _result = new ValSimple(s, expression.Type, null);
             }
             else if (expression.Type == typeof(bool))
             {
                 if ((bool)expression.Value)
                 {
-                    _result = new ValSimple("true", typeof(bool));
+                    _result = new ValSimple("true", typeof(bool), null);
                 }
                 else
                 {
-                    _result = new ValSimple("false", typeof(bool));
+                    _result = new ValSimple("false", typeof(bool), null);
                 }
             }
             else if (expression.Type == typeof(string))
@@ -252,7 +249,7 @@ namespace LINQToTTreeLib.Expressions
             }
             else if (expression.Value == null)
             {
-                _result = new ValSimple("0", expression.Type);
+                _result = new ValSimple("0", expression.Type, null);
             }
             else
             {
@@ -392,7 +389,7 @@ namespace LINQToTTreeLib.Expressions
 
             StringBuilder bld = new StringBuilder();
             bld.AppendFormat(format, sLHS.ApplyParensIfNeeded(), op, sRHS.ApplyParensIfNeeded());
-            _result = new ValSimple(bld.ToString(), resultType);
+            _result = new ValSimple(bld.ToString(), resultType, RHS.Dependants.Concat(LHS.Dependants));
 
             return expression;
         }
@@ -439,15 +436,18 @@ namespace LINQToTTreeLib.Expressions
             switch (expression.NodeType)
             {
                 case ExpressionType.Negate:
-                    _result = new ValSimple("-" + GetExpression(expression.Operand).CastToType(expression).ApplyParensIfNeeded(), expression.Type);
+                    var e1 = GetExpression(expression.Operand);
+                    _result = new ValSimple("-" + e1.CastToType(expression).ApplyParensIfNeeded(), expression.Type, e1.Dependants);
                     break;
 
                 case ExpressionType.Not:
-                    _result = new ValSimple("!" + GetExpression(expression.Operand).CastToType(expression).ApplyParensIfNeeded(), expression.Type);
+                    var e2 = GetExpression(expression.Operand);
+                    _result = new ValSimple("!" + e2.CastToType(expression).ApplyParensIfNeeded(), expression.Type, e2.Dependants);
                     break;
 
                 case ExpressionType.Convert:
-                    _result = new ValSimple(GetExpression(expression.Operand).CastToType(expression), expression.Type);
+                    var e3 = GetExpression(expression.Operand);
+                    _result = new ValSimple(e3.CastToType(expression), expression.Type, e3.Dependants);
                     break;
 
                 case ExpressionType.ArrayLength:
@@ -518,7 +518,8 @@ namespace LINQToTTreeLib.Expressions
                     var cattrs = ma.Expression.Type.TypeHasAttribute<TClonesArrayImpliedClassAttribute>();
                     if (cattrs != null)
                     {
-                        _result = new ValSimple(string.Format("{0}.GetEntries()", GetExpression(ma.Expression).AsObjectReference(ma.Expression)), typeof(int));
+                        var e = GetExpression(ma.Expression);
+                        _result = new ValSimple(string.Format("{0}.GetEntries()", e.AsObjectReference(ma.Expression)), typeof(int), e.Dependants);
                         return;
                     }
                 }
@@ -529,7 +530,7 @@ namespace LINQToTTreeLib.Expressions
             //
 
             var arrayBase = GetExpression(expression.Operand);
-            _result = new ValSimple(arrayBase.AsObjectReference(expression.Operand) + ".size()", expression.Type);
+            _result = new ValSimple(arrayBase.AsObjectReference(expression.Operand) + ".size()", expression.Type, arrayBase.Dependants);
         }
 
         /// <summary>
@@ -577,7 +578,7 @@ namespace LINQToTTreeLib.Expressions
             {
                 if (expression.Type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
-                    _result = new ValSimple(baseExpr.AsObjectReference(expression) + "." + leafName, expression.Type);
+                    _result = new ValSimple(baseExpr.AsObjectReference(expression) + "." + leafName, expression.Type, baseExpr.Dependants);
                 }
                 else
                 {
@@ -592,7 +593,7 @@ namespace LINQToTTreeLib.Expressions
 
             if (_result == null)
             {
-                _result = new ValSimple(baseExpr.AsObjectReference(expression.Expression) + "." + leafName, expression.Type);
+                _result = new ValSimple(baseExpr.AsObjectReference(expression.Expression) + "." + leafName, expression.Type, baseExpr.Dependants);
             }
 
             return expression;
@@ -605,7 +606,7 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitParameter(ParameterExpression expression)
         {
-            _result = new ValSimple(expression.Name, expression.Type);
+            _result = new ValSimple(expression.Name, expression.Type, null);
 
             return expression;
         }
@@ -620,7 +621,7 @@ namespace LINQToTTreeLib.Expressions
             if (expression.NodeType == DeclarableParameter.ExpressionType)
             {
                 var decl = expression as DeclarableParameter;
-                _result = new ValSimple(decl.ParameterName, decl.Type);
+                _result = new ValSimple(decl.ParameterName, decl.Type, new IDeclaredParameter[] { decl });
                 return expression;
             }
             else
@@ -668,8 +669,7 @@ namespace LINQToTTreeLib.Expressions
             if (_result.Type.IsNumberType() && !_result.IsSimpleTerm())
             {
                 var cachedValue = DeclarableParameter.CreateDeclarableParameterExpression(_result.Type);
-                var assign = new Statements.StatementAssign(cachedValue, _result,
-                    FindDeclarableParameters.FindAll(expression), declare: true);
+                var assign = new Statements.StatementAssign(cachedValue, _result, declare: true);
                 _codeEnv.Add(assign);
                 _result = cachedValue;
             }
