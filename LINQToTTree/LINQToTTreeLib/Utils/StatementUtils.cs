@@ -93,6 +93,47 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
+        /// Two statements should become common. Take care of everything.
+        /// </summary>
+        /// <param name="renames"></param>
+        /// <param name="s1"></param>
+        /// <param name="s2"></param>
+        /// <returns></returns>
+        public static Tuple<bool, IEnumerable<Tuple<string, string>>> RequireForEquivForExpression(this Tuple<bool, IEnumerable<Tuple<string, string>>> renames,
+            ICMStatementInfo s1, ICMStatementInfo s2)
+        {
+            if (!renames.Item1)
+                return renames;
+
+            if (s1 == null || s2 == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            // Run the require for the two statements.
+            var r = s1.RequiredForEquivalence(s2, renames.Item2);
+            if (!r.Item1)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            if (r.Item2 == null || r.Item2.Count() == 0)
+            {
+                return renames;
+            }
+
+            return Tuple.Create(true, renames.Item2.Concat(r.Item2));
+        }
+
+        public static Tuple<bool, IEnumerable<Tuple<string,string>>> FilterRenames (this Tuple<bool, IEnumerable<Tuple<string, string>>> renames, Func<Tuple<string,string>, bool> filter)
+        {
+            if (!renames.Item1 || renames.Item2 == null)
+                return renames;
+
+            return Tuple.Create(true, renames.Item2.Where(filter));
+        }
+
+        /// <summary>
         /// Can we make two expressions with a set of dependents look a like? What needs to be done to do it?
         /// </summary>
         /// <param name="renames"></param>

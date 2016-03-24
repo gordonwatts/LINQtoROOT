@@ -369,13 +369,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                     return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
                 }
 
-                var renames = new HashSet<Tuple<string, string>>();
-
                 // First, handle the result.
-                if (_resultName != s2._resultName)
-                {
-                    renames.Add(Tuple.Create(s2._resultName, _resultName));
-                }
+                var renames = Tuple.Create(true, replaceFirst)
+                    .RequireForEquivForExpression(_resultName, s2._resultName);
 
                 // Finally, we have to look at the parameters. We do this check in order.
                 foreach (var pTwo in _paramReplacesments.Zip(s2._paramReplacesments, (u,t) => Tuple.Create(u, t)))
@@ -386,40 +382,13 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                         return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
                     }
 
-                    // Our next job is to look at the parameters and see if we can't figure out what to shift.
-                    var p1Expr = pTwo.Item1.Item2;
-                    var p2Expr = pTwo.Item2.Item2.ReplaceVariableNames(replaceFirst).ReplaceVariableNames(renames);
-
-                    if (p1Expr != p2Expr)
-                    {
-                        var dependentsInParamOrder1 = from dep in DependentVariables
-                                                     let index = p1Expr.IndexOf(dep)
-                                                     where index >= 0
-                                                     orderby index
-                                                     select dep;
-                        var dependentsInParamOrder2 = from dep in s2.DependentVariables
-                                                      let index = p2Expr.IndexOf(dep)
-                                                      where index >= 0
-                                                      orderby index
-                                                      select dep;
-                        foreach (var d in dependentsInParamOrder1.Zip(dependentsInParamOrder2, (u,t) => Tuple.Create(u, t)))
-                        {
-                            p2Expr = p2Expr.ReplaceVariableNames(d.Item2, d.Item1);
-                            renames.Add(Tuple.Create(d.Item2, d.Item1));
-                            if (p1Expr == p2Expr)
-                            {
-                                break;
-                            }
-                        } 
-                    }
-                    if (p1Expr != p2Expr)
-                    {
-                        return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-                    }
+                    renames = renames
+                        .RequireForEquivForExpression(pTwo.Item1.Item2, DependentVariables, pTwo.Item2.Item2, s2.DependentVariables);
                 }
 
                 // If here, then we are set.
-                return Tuple.Create(true, renames as IEnumerable<Tuple<string, string>>);
+                return renames
+                    .ExceptFor(replaceFirst);
             }
 
             /// <summary>

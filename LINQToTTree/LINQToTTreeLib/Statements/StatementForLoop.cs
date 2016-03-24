@@ -147,53 +147,27 @@ namespace LINQToTTreeLib.Statements
             }
 
             // Make sure the limit is the same, after applying the replacements.
-            var limit = s2.ArrayLength.RawValue;
-            if (replaceFirst != null)
-            {
-                foreach (var item in replaceFirst)
-                {
-                    limit = limit.Replace(item.Item1, item.Item2);
-                }
-            }
-            if (ArrayLength.RawValue != limit)
-            {
-                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-            }
+            var renames = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(ArrayLength.RawValue, DependentVariables, s2.ArrayLength.RawValue, s2.DependentVariables);
 
             // Now, the initial list of renames includes the loop variable and anything handed to us.
-            var renames = new HashSet<Tuple<string, string>>();
-            if (replaceFirst != null)
-            {
-                renames.AddRange(replaceFirst);
-            }
-            renames.Add(Tuple.Create(s2._loopVariable.RawValue, _loopVariable.RawValue));
-            var originalRenames = new HashSet<Tuple<string, string>>(renames);
+            renames = renames
+                .RequireForEquivForExpression(_loopVariable.RawValue, s2._loopVariable.RawValue);
 
             // Loop through the statements, accumulating renames as we go.
             foreach (var s in Statements.Zip(s2.Statements, (st1, st2) => Tuple.Create(st1, st2)))
             {
-                var s1Info = s.Item1 as ICMStatementInfo;
-                var s2Info = s.Item2 as ICMStatementInfo;
-                if (s1Info == null || s2Info == null)
-                {
-                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-                }
-
-                var newRenames = s1Info.RequiredForEquivalence(s2Info, renames);
-                if (!newRenames.Item1)
-                {
-                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-                }
-                renames.AddRange(newRenames.Item2);
+                renames = renames
+                    .RequireForEquivForExpression(s.Item1 as ICMStatementInfo, s.Item2 as ICMStatementInfo);
             }
 
             // If we make it here, then we are good. The last thing to do before returning the result is to remove
             // any renames and any declared variables
             var declaredVariables = s2.DeclaredVariables;
-            var finalRenames = renames
-                .Except(originalRenames)
-                .Where(i => !declaredVariables.Contains(i.Item1));
-            return Tuple.Create(true, finalRenames);
+
+            return renames
+                .ExceptFor(replaceFirst)
+                .FilterRenames(i => !declaredVariables.Contains(i.Item1));
         }
 
         /// <summary>

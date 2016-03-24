@@ -161,13 +161,12 @@ namespace LINQToTTreeLib.Statements
 
             // Now, just look at all the expressions. Yes this is a monad. Yes I should use something real.
             var renames = Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(_valueWasSeen.RawValue, new string[] { _valueWasSeen.RawValue },
-                s2._valueWasSeen.RawValue, new string[] { s2._valueWasSeen.RawValue });
+                .RequireForEquivForExpression(_valueWasSeen.RawValue, s2._valueWasSeen.RawValue);
 
             foreach (var s in _savers.Zip(s2._savers, (u,t) => Tuple.Create(u, t)))
             {
-                renames = renames.RequireForEquivForExpression(s.Item1.Item1.RawValue, new string[] { s.Item1.Item1.RawValue },
-                    s.Item2.Item1.RawValue, new string[] { s.Item2.Item1.RawValue });
+                renames = renames.RequireForEquivForExpression(s.Item1.Item1.RawValue,
+                    s.Item2.Item1.RawValue);
 
                 renames = renames.RequireForEquivForExpression(s.Item1.Item2.RawValue, s.Item1.Item3.Select(p => p.RawValue),
                     s.Item2.Item2.RawValue, s.Item2.Item3.Select(p => p.RawValue));
