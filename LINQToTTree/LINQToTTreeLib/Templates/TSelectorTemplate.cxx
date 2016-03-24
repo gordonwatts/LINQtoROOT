@@ -33,7 +33,7 @@ $l
 class query$QueryIndex : public $baseClassName
 {
 public:
-	/// So there is some init that CINT will know about
+	/// So there is some initialize that CINT will know about
 	/// (I don't know why this is required, but it is).
 	query$QueryIndex()
 	{
@@ -44,7 +44,7 @@ public:
 	{
 		$baseClassName::SlaveBegin(t);
 
-		/// Init the variables that we are going to be carrying along with us.
+		/// initialize the variables that we are going to be carrying along with us.
 #foreach($v in $ResultVariables)
 		$v.VariableName = $v.InitialValue;
 #end
@@ -54,7 +54,7 @@ public:
 #end
 	}
 
-	/// Called when we are closign the file and shutting down on the slave
+	/// Called when we are closing the file and shutting down on the slave
 	void SlaveTerminate()
 	{
 		$baseClassName::SlaveTerminate();
@@ -97,7 +97,7 @@ public:
 			throw;
 		}
 		///
-		/// Always return true - we want to go onto the next entry, afterall.
+		/// Always return true - we want to go onto the next entry, after all.
 		///
 
 		return true;

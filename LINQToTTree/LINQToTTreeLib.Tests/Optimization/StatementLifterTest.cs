@@ -600,6 +600,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// The inner statement is lifted to the outer statement and left to hang.
         /// </summary>
         [TestMethod]
+        [Ignore]
         public void DontLiftThroughTwoForStatements()
         {
             var gc = new GeneratedCode();
