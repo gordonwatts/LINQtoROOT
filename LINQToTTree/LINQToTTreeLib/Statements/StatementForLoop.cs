@@ -219,6 +219,7 @@ namespace LINQToTTreeLib.Statements
                     .SelectMany(s => s.DependentVariables)
                     .Where(v => v != _loopVariable.RawValue)
                     .Where(v => !DeclaredVariables.Contains(v))
+                    .Concat(ArrayLength.Dependants.Select(p => p.RawValue))
                     ;
                 return new HashSet<string>(dependents);
             }

@@ -191,6 +191,18 @@ namespace LINQToTTreeLib.Tests.Statements
         }
 
         [TestMethod]
+        public void ForLoopLimitDependencies()
+        {
+            var limit = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s = new StatementForLoop(loop, limit);
+
+            Assert.AreEqual(1, s.DependentVariables.Count);
+            Assert.AreEqual(limit.RawValue, s.DependentVariables.First());
+        }
+
+        [TestMethod]
         public void ForLoopEmptySameLimit()
         {
             var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
