@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// List of the values and parameters we should stuff them into when we fire.
         /// </summary>
-        private List<Tuple<IDeclaredParameter, IValue>> _savers = new List<Tuple<IDeclaredParameter, IValue>>();
+        private List<Tuple<IDeclaredParameter, IValue, IDeclaredParameter[]>> _savers = new List<Tuple<IDeclaredParameter, IValue, IDeclaredParameter[]>>();
 
         /// <summary>
         /// Set this to true when we have seen a first value.
@@ -34,7 +35,8 @@ namespace LINQToTTreeLib.Statements
         /// <param name="indexValue"></param>
         /// <param name="valueWasSeen"></param>
         /// <param name="recordOnlyFirstValue"></param>
-        public StatementRecordValue(IDeclaredParameter indexSaveLocation, IValue indexExpression,
+        public StatementRecordValue(IDeclaredParameter indexSaveLocation,
+            IValue indexExpression, IDeclaredParameter[] dependents,
             IDeclaredParameter markWhenSeen, bool recordOnlyFirstValue)
         {
             if (indexSaveLocation == null)
@@ -44,7 +46,7 @@ namespace LINQToTTreeLib.Statements
             if (markWhenSeen == null)
                 throw new ArgumentNullException("markWhenSeen");
 
-            AddNewSaver(indexSaveLocation, indexExpression);
+            AddNewSaver(indexSaveLocation, indexExpression, dependents);
             this._recordOnlyFirstValue = recordOnlyFirstValue;
             this._valueWasSeen = markWhenSeen;
         }
@@ -54,9 +56,9 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="saver"></param>
         /// <param name="loopIndexVar"></param>
-        public void AddNewSaver(IDeclaredParameter saver, IValue loopIndexVar)
+        public void AddNewSaver(IDeclaredParameter saver, IValue loopIndexVar, IDeclaredParameter[] dependents)
         {
-            _savers.Add(Tuple.Create(saver, loopIndexVar));
+            _savers.Add(Tuple.Create(saver, loopIndexVar, dependents));
         }
 
         /// <summary>
@@ -138,9 +140,40 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
+        /// <summary>
+        /// See if we can't make everything the same. Since we have so many expressions to manage, this isn't totally "fun".
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
         public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
-            throw new NotImplementedException();
+            if (!(other is StatementRecordValue))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementRecordValue;
+
+            if (s2._recordOnlyFirstValue != _recordOnlyFirstValue || s2._savers.Count != _savers.Count)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            // Now, just look at all the expressions. Yes this is a monad. Yes I should use something real.
+            var renames = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(_valueWasSeen.RawValue, new string[] { _valueWasSeen.RawValue },
+                s2._valueWasSeen.RawValue, new string[] { s2._valueWasSeen.RawValue });
+
+            foreach (var s in _savers.Zip(s2._savers, (u,t) => Tuple.Create(u, t)))
+            {
+                renames = renames.RequireForEquivForExpression(s.Item1.Item1.RawValue, new string[] { s.Item1.Item1.RawValue },
+                    s.Item2.Item1.RawValue, new string[] { s.Item2.Item1.RawValue });
+
+                renames = renames.RequireForEquivForExpression(s.Item1.Item2.RawValue, s.Item1.Item3.Select(p => p.RawValue),
+                    s.Item2.Item2.RawValue, s.Item2.Item3.Select(p => p.RawValue));
+            }
+
+            return renames.ExceptFor(replaceFirst);
         }
 
         /// <summary>
@@ -153,15 +186,38 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         public ISet<string> DependentVariables
         {
-            get { throw new NotImplementedException(); }
+            get {
+                var h = new HashSet<string>();
+                foreach (var s in _savers)
+                {
+                    h.AddRange(s.Item3.Select(v => v.RawValue));
+                }
+
+                if (_recordOnlyFirstValue)
+                {
+                    h.Add(_valueWasSeen.RawValue);
+                }
+
+                return h;
+            }
         }
 
         /// <summary>
-        /// What are the variables that are a result.
+        /// What are the variables that are a result. This is everything we are going to be setting.
         /// </summary>
         public ISet<string> ResultVariables
         {
-            get { throw new NotImplementedException(); }
+            get {
+                var h = new HashSet<string>();
+
+                h.Add(_valueWasSeen.RawValue);
+                foreach (var s in _savers)
+                {
+                    h.Add(s.Item1.RawValue);
+                }
+
+                return h;
+            }
         }
 
 

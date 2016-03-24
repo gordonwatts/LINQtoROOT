@@ -60,66 +60,125 @@ namespace LINQToTTreeLib.Utils
             ISet<string> dependents1, ISet<string> dependents2,
             IEnumerable<Tuple<string, string>> replaceFirst)
         {
-            // First, do all replacements
-            var otherResultValue = resultVariable2.ReplaceVariableNames(replaceFirst);
-            var expr = expression2.ReplaceVariableNames(replaceFirst);
+            var r = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(resultVariable1, resultVariable2)
+                .RequireForEquivForExpression(expression1, dependents1, expression2, dependents2)
+                .ExceptFor(replaceFirst);
 
-            // Track the renames we need to do.
-            var renames = new List<Tuple<string, string>>();
+            return r;
+        }
 
-            // Look at the result and see if we there is a simple translation.
-            if (resultVariable1 != otherResultValue)
+        /// <summary>
+        /// Do the rename when we have two variables. This is a special case, and will always succeed.
+        /// </summary>
+        /// <param name="renames"></param>
+        /// <param name="var1"></param>
+        /// <param name="var2"></param>
+        /// <returns></returns>
+        public static Tuple<bool, IEnumerable<Tuple<string, string>>> RequireForEquivForExpression(this Tuple<bool, IEnumerable<Tuple<string, string>>> renames,
+            string var1,
+            string var2)
+        {
+            // Monad option - quick check.
+            if (!renames.Item1)
+                return renames;
+
+            var v2 = var2.ReplaceVariableNames(renames.Item2);
+            if (var1 == v2)
             {
-                renames.Add(Tuple.Create(otherResultValue, resultVariable1));
-                expr = expr.Replace(otherResultValue, resultVariable1);
+                return renames.CheckForListNull();
             }
 
-            if (expr == expression1)
+            return Tuple.Create(true, renames.CheckForListNull().Item2.Concat(new Tuple<string, string>[] { new Tuple<string, string>(var2, var1) }));
+        }
+
+        /// <summary>
+        /// Can we make two expressions with a set of dependents look a like? What needs to be done to do it?
+        /// </summary>
+        /// <param name="renames"></param>
+        /// <param name="e1"></param>
+        /// <param name="dependents1"></param>
+        /// <param name="e2"></param>
+        /// <param name="dependents2"></param>
+        /// <returns></returns>
+        public static Tuple<bool, IEnumerable<Tuple<string,string>>> RequireForEquivForExpression (this Tuple<bool, IEnumerable<Tuple<string,string>>> renames,
+            string e1, IEnumerable<string> dependents1,
+            string e2, IEnumerable<string> dependents2)
+        {
+            // Monad option - quick check.
+            if (!renames.Item1)
+                return renames;
+
+            // Now, build a new list of renames
+            var rn = renames.Item2 == null ? new List<Tuple<string,string>>() : new List<Tuple<string, string>>(renames.Item2);
+
+            // First, apply everything to our second expression.
+            var exp2 = e2.ReplaceVariableNames(rn);
+            if (exp2 == e1)
             {
-                return Tuple.Create(true, renames as IEnumerable<Tuple<string, string>>);
+                return renames.CheckForListNull();
             }
 
-            // Now we have to go through the dependent variables. If there are common dependent variables, then we
-            // can ignore them. The rest we have to do the translation for.
-            var otherDependentVarialbesEnum = dependents2.Replace(renames);
-            if (replaceFirst != null)
-            {
-                otherDependentVarialbesEnum = otherDependentVarialbesEnum.Replace(replaceFirst);
-            }
-            var otherDependentVarialbes = otherDependentVarialbesEnum.ToArray();
-            var dependentUs = dependents1.Except(otherDependentVarialbes).ToArray();
-            var dependentThem = otherDependentVarialbes.Except(dependents1).ToArray();
+            // Now, sort by what we see in dependent variables, and see what we can replace here.
+            var dependent2InOrder = dependents2
+                .Where(i => exp2.IndexOf(i) >= 0)
+                .OrderBy(i => exp2.IndexOf(i))
+                .ToHashSet();
 
-            if (dependentUs.Length != dependentThem.Length)
-            {
-                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-            }
+            var dependent1InOrder = dependents1.Except(renames.CheckForListNull().Item2.Select(i => i.Item2))
+                .Where(i => e1.IndexOf(i) >= 0)
+                .OrderBy(i => e1.IndexOf(i))
+                .ToHashSet();
 
-            var dependentThemInOrder = dependentThem
-                .Where(i => expr.IndexOf(i) >= 0)
-                .OrderBy(i => expr.IndexOf(i))
-                .ToArray();
-            var dependentUsInOrder = dependentUs
-                .Where(i => expression1.IndexOf(i) >= 0)
-                .OrderBy(i => expression1.IndexOf(i))
-                .ToArray();
+            var dep1InOrder = dependent1InOrder.Except(dependent2InOrder);
+            var dep2InOrder = dependent2InOrder.Except(dependent1InOrder);
 
-            foreach (var dependent in dependentThemInOrder.Zip(dependentUsInOrder, (o, t) => Tuple.Create(o, t)))
+            // Loop through them now
+            foreach (var dependent in dep2InOrder.Zip(dep1InOrder, (o, t) => Tuple.Create(o, t)))
             {
-                var exprNew = expr.Replace(dependent.Item1, dependent.Item2);
-                if (exprNew != expr)
+                var exprNew = exp2.Replace(dependent.Item1, dependent.Item2);
+                if (exprNew != exp2)
                 {
-                    renames.Add(dependent);
-                    if (exprNew == expression1)
+                    rn.Add(dependent);
+                    if (exprNew == e1)
                     {
-                        return Tuple.Create(true, renames as IEnumerable<Tuple<string, string>>);
+                        return Tuple.Create(true, rn as IEnumerable<Tuple<string, string>>);
                     }
-                    expr = exprNew;
+                    exp2 = exprNew;
                 }
             }
 
-            // If we are here, then we have failed!
             return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+        }
+
+        /// <summary>
+        /// Prevent nulls
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private static Tuple<bool, IEnumerable<Tuple<string,string>>> CheckForListNull (this Tuple<bool, IEnumerable<Tuple<string, string>>> s)
+        {
+            if (s.Item2 == null)
+            {
+                return Tuple.Create(s.Item1, new Tuple<string, string>[0] as IEnumerable<Tuple<string,string>>);
+            }
+            return s;
+        }
+
+        /// <summary>
+        /// Filter a list out.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="exceptList"></param>
+        /// <returns></returns>
+        internal static Tuple<bool, IEnumerable<Tuple<string, string>>> ExceptFor(this Tuple<bool, IEnumerable<Tuple<string, string>>> s, IEnumerable<Tuple<string,string>> exceptList)
+        {
+            if (!s.Item1 || s.Item2 == null || exceptList == null)
+                return s;
+
+            var h = new HashSet<Tuple<string, string>>(exceptList);
+            var filteredList = s.Item2.Where(p => !h.Contains(p)).ToArray();
+            return Tuple.Create(true, filteredList as IEnumerable<Tuple<string, string>>);
         }
     }
 }

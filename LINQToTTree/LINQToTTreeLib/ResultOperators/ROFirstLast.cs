@@ -111,14 +111,14 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddAtResultScope(valueWasSeen);
             gc.AddAtResultScope(indexSeen);
 
-            var rv = new Statements.StatementRecordValue(indexSeen, ExpressionToCPP.GetExpression(indexExpr.AsExpression(), gc, cc, container), valueWasSeen, isFirst);
+            var rv = new Statements.StatementRecordValue(indexSeen, indexExpr, new IDeclaredParameter[] { indexExpr }, valueWasSeen, isFirst);
             gc.Add(rv);
 
             foreach (var v in gc.GetUsedQuerySourceVariables(rv, indexExpr))
             {
                 var saver = DeclarableParameter.CreateDeclarableParameterExpression(v.Type);
                 gc.AddAtResultScope(saver);
-                rv.AddNewSaver(saver, v);
+                rv.AddNewSaver(saver, v, new IDeclaredParameter[] { v });
                 cc.Add(v.RawValue, saver);
             }
 

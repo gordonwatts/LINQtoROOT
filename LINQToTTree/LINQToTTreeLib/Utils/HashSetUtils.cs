@@ -24,5 +24,23 @@ namespace LINQToTTreeLib.Utils
 
             return source;
         }
+
+        /// <summary>
+        /// So we can do it functionally.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static HashSet<T> ToHashSet<T> (this IEnumerable<T> source)
+        {
+            var r = new HashSet<T>();
+
+            foreach (var item in source)
+            {
+                r.Add(item);
+            }
+
+            return r;
+        }
     }
 }
