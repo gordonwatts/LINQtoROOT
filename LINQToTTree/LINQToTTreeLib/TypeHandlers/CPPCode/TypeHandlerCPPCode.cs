@@ -136,15 +136,17 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// use it correctly! :-)
             /// 
 
-            var cppType = expr.Type.AsCPPType();
-            var resultName = expr.Type.CreateUniqueVariableName();
+            //var cppType = expr.Type.AsCPPType();
+            //var resultName = expr.Type.CreateUniqueVariableName();
+            var cppResult = DeclarableParameter.CreateDeclarableParameterExpression(expr.Type);
 
-            var cppStatement = new CPPCodeStatement(expr.Method, cppType, resultName, code.Code, dependents);
+            var cppStatement = new CPPCodeStatement(expr.Method, cppResult, code.Code, dependents);
             gc.Add(cppStatement);
+            gc.Add(cppResult);
 
-            paramLookup.Add(expr.Method.Name, resultName);
+            paramLookup.Add(expr.Method.Name, cppResult.RawValue);
 
-            var result = new ValSimple(resultName, expr.Type, DeclarableParameter.CreateDeclarableParameterExpression(resultName, expr.Type).AsArray());
+            var result = new ValSimple(cppResult.RawValue, expr.Type, DeclarableParameter.CreateDeclarableParameterExpression(cppResult.RawValue, expr.Type).AsArray());
 
             //
             // Make sure a result exists in here!
@@ -189,8 +191,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         private class CPPCodeStatement : IStatement, ICMStatementInfo
         {
             private System.Reflection.MethodInfo _methodInfo;
-            private string _cppType;
-            private string _resultName;
+            private IValue _cppResult;
 
             /// <summary>
             /// Initialize a code block statement
@@ -199,12 +200,11 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <param name="cppType"></param>
             /// <param name="resultName"></param>
             /// <param name="dependents">The dependent variables. Null if there are none (or an empty set)</param>
-            public CPPCodeStatement(MethodInfo methodInfo, string typeOfResult, string resultName, IEnumerable<string> loc, HashSet<string> dependents = null)
+            public CPPCodeStatement(MethodInfo methodInfo, IValue cppResult, IEnumerable<string> loc, HashSet<string> dependents = null)
             {
                 _methodInfo = methodInfo;
-                _cppType = typeOfResult;
-                _resultName = resultName;
-                ResultVariables = new HashSet<string>() { resultName };
+                _cppResult = cppResult;
+                ResultVariables = new HashSet<string>() { _cppResult.RawValue };
 
                 _linesOfCode.AddRange(loc);
 
@@ -237,12 +237,6 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             public IEnumerable<string> CodeItUp()
             {
                 //
-                // First, the declaration for the result variable.
-                //
-
-                yield return string.Format("{0} {1};", _cppType, _resultName);
-
-                //
                 // Now the various lines of code that the user entered.
                 //
 
@@ -261,7 +255,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <param name="newName"></param>
             public void RenameVariable(string originalName, string newName)
             {
-                _resultName = _resultName.ReplaceVariableNames(originalName, newName);
+                _cppResult.RenameRawValue(originalName, newName);
                 _paramReplacesments = _paramReplacesments
                     .Select(p => Tuple.Create(p.Item1, p.Item2.ReplaceVariableNames(originalName, newName)))
                     .ToList();
@@ -295,7 +289,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                 }
 
                 // Next, look at the parameters and make sure they are also the same.
-                var plist = _paramReplacesments.Zip(other._paramReplacesments, (u, t) => Tuple.Create(u, t)).Where(p => p.Item1.Item2 != _resultName);
+                var plist = _paramReplacesments.Zip(other._paramReplacesments, (u, t) => Tuple.Create(u, t)).Where(p => p.Item1.Item2 != _cppResult.RawValue);
                 if (plist.Where(p => p.Item1.Item1 != p.Item2.Item1).Any())
                 {
                     return false;
@@ -307,9 +301,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
                 // OK, they are the same. The one thing that has to be changed is how the result variable
                 // in the other guy is used below. So we need to make that the "same".
-                if (_resultName != other._resultName)
+                if (_cppResult.RawValue != other._cppResult.RawValue)
                 {
-                    optimize.ForceRenameVariable(other._resultName, _resultName);
+                    optimize.ForceRenameVariable(other._cppResult.RawValue, _cppResult.RawValue);
                 }
                 return true;
             }
@@ -371,7 +365,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
                 // First, handle the result.
                 var renames = Tuple.Create(true, replaceFirst)
-                    .RequireForEquivForExpression(_resultName, s2._resultName);
+                    .RequireForEquivForExpression(_cppResult.RawValue, s2._cppResult.RawValue);
 
                 // Finally, we have to look at the parameters. We do this check in order.
                 foreach (var pTwo in _paramReplacesments.Zip(s2._paramReplacesments, (u,t) => Tuple.Create(u, t)))

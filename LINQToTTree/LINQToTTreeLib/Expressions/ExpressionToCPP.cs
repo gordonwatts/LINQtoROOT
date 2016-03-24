@@ -173,9 +173,9 @@ namespace LINQToTTreeLib.Expressions
             //
 
             var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            _codeEnv.Add(testBoolInCode);
             _codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
-                GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer),
-                true
+                GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer)
                 ));
 
             //
@@ -669,7 +669,8 @@ namespace LINQToTTreeLib.Expressions
             if (_result.Type.IsNumberType() && !_result.IsSimpleTerm())
             {
                 var cachedValue = DeclarableParameter.CreateDeclarableParameterExpression(_result.Type);
-                var assign = new Statements.StatementAssign(cachedValue, _result, declare: true);
+                _codeEnv.Add(cachedValue);
+                var assign = new Statements.StatementAssign(cachedValue, _result);
                 _codeEnv.Add(assign);
                 _result = cachedValue;
             }

@@ -236,21 +236,6 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
-
-        [TestMethod]
-        public void TestSimpleBlockCombine()
-        {
-            /// Combine two statements in a single block. Make sure that
-            IStatement b1 = new StatementSimpleStatement("int");
-            IStatement b2 = new StatementSimpleStatement("dude");
-
-            var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(b1, new DummyOptimizer()), "should always be able to add extra statements");
-            Assert.IsTrue(b.TryCombineStatement(b2, new DummyOptimizer()), "should always be able to add another extra statement");
-
-            Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
-        }
-
         /// <summary>
         /// Recurisvely count the # of good statements.
         /// </summary>
@@ -870,6 +855,22 @@ namespace LINQToTTreeLib.Statements
 
             Assert.IsTrue(s.IsBefore(s1, s2), "s1 before s2");
             Assert.IsFalse(s.IsBefore(s2, s1), "s2 is before s1");
+        }
+
+        [TestMethod]
+        public void InlineBlockDeclaredVariablesEmpty()
+        {
+            var s = new StatementInlineBlock();
+            Assert.AreEqual(0, s.DeclaredVariables.Count());
+        }
+
+        [TestMethod]
+        public void InlineBlockDeclardVariablesOne()
+        {
+            var s = new StatementInlineBlock();
+            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s.Add(d);
+            Assert.AreEqual(1, s.DeclaredVariables.Count());
         }
     }
 }

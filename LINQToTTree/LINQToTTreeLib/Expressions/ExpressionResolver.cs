@@ -473,9 +473,9 @@ namespace LINQToTTreeLib.Expressions
                 // Run the code for the test, and then create the if/then/else that will support it.
                 var testExpression = base.Visit(expression.Test);
                 var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+                GeneratedCode.Add(testBoolInCode);
                 GeneratedCode.Add(new Statements.StatementAssign(testBoolInCode,
-                    ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer),
-                    true
+                    ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer)
                     ));
 
                 // The result

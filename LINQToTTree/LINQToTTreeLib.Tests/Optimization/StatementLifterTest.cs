@@ -972,7 +972,8 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.Add(loop1);
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)), true);
+            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)));
+            loop1.Add(p2);
             loop1.Add(assign1);
 
             Console.WriteLine("Unoptimized:");

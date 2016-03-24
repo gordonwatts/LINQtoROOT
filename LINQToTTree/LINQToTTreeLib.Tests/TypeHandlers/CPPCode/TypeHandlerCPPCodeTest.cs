@@ -102,11 +102,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements that came back");
             var st1 = gc.CodeBody.Statements.First() as IStatement;
 
-            Assert.AreEqual("int " + vname + ";", st1.CodeItUp().First(), "line #1 is incorrect");
-
             var expected = new StringBuilder();
             expected.AppendFormat("{0} = p*2;", vname);
-            Assert.AreEqual(expected.ToString(), st1.CodeItUp().Skip(1).First(), "statement line incorrect");
+            Assert.AreEqual(expected.ToString(), st1.CodeItUp().First(), "statement line incorrect");
 
             Assert.AreEqual(1, gc.IncludeFiles.Count(), "# of include files");
             Assert.AreEqual("TLorentzVector.h", gc.IncludeFiles.First(), "include file name");
@@ -131,11 +129,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements that came back");
             var st1 = gc.CodeBody.Statements.First() as IStatement;
 
-            Assert.AreEqual("int " + vname + ";", st1.CodeItUp().First(), "line #1 is incorrect");
-
             var expected = new StringBuilder();
             expected.AppendFormat("{0} = strlen(p);", vname);
-            Assert.AreEqual(expected.ToString(), st1.CodeItUp().Skip(1).First(), "statement line incorrect");
+            Assert.AreEqual(expected.ToString(), st1.CodeItUp().First(), "statement line incorrect");
         }
 
         [TestMethod]
@@ -154,7 +150,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             gc.DumpCodeToConsole();
 
             var vname = result.RawValue;
-            var st2 = gc.CodeBody.Statements.First().CodeItUp().Skip(1).First();
+            var st2 = gc.CodeBody.Statements.First().CodeItUp().First();
 
             var expected = new StringBuilder();
             expected.AppendFormat("{0} = (p+1)*2;", vname);
@@ -221,9 +217,8 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            var declStatement = gc.CodeBody.Statements.First();
-
-            Assert.IsTrue(declStatement.CodeItUp().First().StartsWith("TLorentzVector* aNTLorentzVector"), "return variable declaration in correct");
+            var declStatement = gc.CodeBody.DeclaredVariables.ToArray();
+            Assert.AreEqual(1, declStatement.Length);
         }
 
         [TestMethod]
@@ -295,7 +290,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
             gc.DumpCodeToConsole();
 
-            var ifstatement = gc.CodeBody.Statements.First().CodeItUp().Skip(1).First();
+            var ifstatement = gc.CodeBody.Statements.First().CodeItUp().First();
             Assert.IsFalse(ifstatement.EndsWith(";"), string.Format("Line '{0}' ends with a semicolon", ifstatement));
         }
 
@@ -405,7 +400,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             gc.DumpCodeToConsole();
 
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements total");
-            var setStatement = gc.CodeBody.Statements.First().CodeItUp().Skip(2).First();
+            var setStatement = gc.CodeBody.Statements.First().CodeItUp().Skip(1).First();
             Assert.IsNotNull(setStatement, "Bad type for 3rd statement");
             Assert.IsTrue(setStatement.Contains("SetPtEtaPhiE(ptParam, etaParam, phiParam, EParam)"), string.Format("Line '{0}' doesn't have correct set statement.", setStatement));
         }
@@ -428,12 +423,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             gc.DumpCodeToConsole();
 
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements total");
-            var atBeginning = gc.CodeBody.Statements.First().CodeItUp().Skip(1).FirstOrDefault();
-            var atEnding = gc.CodeBody.Statements.First().CodeItUp().Skip(2).FirstOrDefault();
-            Assert.IsNotNull(atBeginning, "Bad type for 3rd statement");
+            var atEnding = gc.CodeBody.Statements.First().CodeItUp().Skip(1).FirstOrDefault();
             Assert.IsNotNull(atEnding, "Bad type for 3rd statement");
-            Assert.IsTrue(atBeginning.StartsWith("EParam"), string.Format("Line '{0}' doesn't start with parameter replacement", atBeginning));
-            Assert.IsTrue(atEnding.EndsWith("ptParam"), string.Format("Line '{0}' doesn't ends with parameter replacement", atBeginning));
+            Assert.IsTrue(atEnding.EndsWith("ptParam"), string.Format("Line '{0}' doesn't ends with parameter replacement", atEnding));
         }
 
         [TestMethod]

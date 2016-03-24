@@ -10,9 +10,14 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Emit an assignment statement
     /// </summary>
+    /// <remarks>
+    /// We used to have an option to declare the variable inline. This was something that made code easier to write.
+    /// However, it turns out when doing optimization, having code declared mid-block make determining data flow
+    /// much more complex. So that was removed.
+    /// </remarks>
     public class StatementAssign : IStatement, ICMStatementInfo
     {
-        public StatementAssign(IDeclaredParameter result, IValue val, bool declare = false)
+        public StatementAssign(IDeclaredParameter result, IValue val)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -21,7 +26,6 @@ namespace LINQToTTreeLib.Statements
 
             ResultVariable = result;
             Expression = val;
-            DeclareResult = declare;
             ResultVariables = new HashSet<string>() { result.RawValue };
             DependentVariables = new HashSet<string>(val.Dependants.Select(v => v.RawValue));
         }
@@ -47,13 +51,7 @@ namespace LINQToTTreeLib.Statements
 
             if (result != setTo)
             {
-                var line = "";
-                if (DeclareResult)
-                {
-                    line += ResultVariable.Type.AsCPPType() + " ";
-                }
-                line += result + "=" + setTo + ";";
-                yield return line;
+                yield return result + "=" + setTo + ";"; ;
             }
         }
 
@@ -94,9 +92,6 @@ namespace LINQToTTreeLib.Statements
             if (Expression.RawValue != otherAssign.Expression.RawValue)
                 return false;
 
-            if (DeclareResult != otherAssign.DeclareResult)
-                return false;
-
             // If the statements are identical, then we can combine by default without having to do any
             // further work.
 
@@ -106,15 +101,7 @@ namespace LINQToTTreeLib.Statements
             // If we have declared, then we are sole owner - so we can force the change. Otherwise, we
             // need to let the infrastructure figure out where the declared is and change it from there.
 
-            if (DeclareResult)
-            {
-                opt.ForceRenameVariable(otherAssign.ResultVariable.RawValue, ResultVariable.RawValue);
-                return true;
-            }
-            else
-            {
-                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
-            }
+            return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
         }
 
         /// <summary>
@@ -142,11 +129,6 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
-
-        /// <summary>
-        /// True if we should declare this result when we emit it the assignment.
-        /// </summary>
-        public bool DeclareResult { get; set; }
 
         /// <summary>
         /// List of all variables we are depending on.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using System.Linq;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -31,14 +32,9 @@ namespace LINQToTTreeLib.Statements
             if (statement == null)
                 throw new ArgumentNullException("statement should not be null");
 
-            //
-            // If this is not a plain inline block, we can do a simple add
-            //
-
-            if (statement.GetType() != typeof(StatementInlineBlock))
+            if (!(statement is StatementInlineBlock))
             {
-                Combine(new[] { statement }, null);
-                return true;
+                return false;
             }
 
             //

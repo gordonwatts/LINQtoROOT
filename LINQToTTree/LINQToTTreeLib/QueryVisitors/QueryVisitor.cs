@@ -280,7 +280,8 @@ namespace LINQToTTreeLib
             {
                 // For the sequence we get the resulting vector array.
                 var cvar = DeclarableParameter.CreateDeclarableParameterExpression(qmSource.ResultType);
-                _codeEnv.Add(new StatementAssign(cvar, new ValSimple(call, qmSource.ResultType, null), true));
+                _codeEnv.Add(cvar);
+                _codeEnv.Add(new StatementAssign(cvar, new ValSimple(call, qmSource.ResultType, null)));
 
                 // Now, do a loop over it.
                 var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
