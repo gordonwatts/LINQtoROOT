@@ -83,7 +83,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var st = new StatementPairLoop(array, index1, index2);
             var vr = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             vr.RenameRawValue(vr.RawValue, index1.RawValue);
-            st.Add(new StatementAssign(vr, new ValSimple("ops", typeof(int)), null));
+            st.Add(new StatementAssign(vr, new ValSimple("ops", typeof(int))));
 
             st.RenameVariable(index1.RawValue, "dude1");
             Assert.AreEqual("dude1", index1.RawValue, "index1 after index1 rename");

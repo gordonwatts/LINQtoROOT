@@ -125,8 +125,8 @@ namespace LINQToTTreeLib.Statements
             var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
-            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), true);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), true);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -151,8 +151,8 @@ namespace LINQToTTreeLib.Statements
             var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
-            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), true);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), true);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -173,8 +173,8 @@ namespace LINQToTTreeLib.Statements
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
-            var a2 = new StatementAssign(p2, new ValSimple("15", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), true);
+            var a2 = new StatementAssign(p2, new ValSimple("15", typeof(int)), true);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -212,8 +212,8 @@ namespace LINQToTTreeLib.Statements
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
-            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), true);
+            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), true);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -221,7 +221,7 @@ namespace LINQToTTreeLib.Statements
             // the outside (the filterUnique).
 
             var pSpecial = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var aUnique = new StatementAssign(pSpecial, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }, true);
+            var aUnique = new StatementAssign(pSpecial, new ValSimple("10", typeof(int)), true);
             f1.Add(aUnique);
 
             filterUnique.Add(f1);
@@ -265,8 +265,8 @@ namespace LINQToTTreeLib.Statements
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             f1.Add(p1);
             f2.Add(p2);
-            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
-            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), false);
+            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), false);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -274,7 +274,7 @@ namespace LINQToTTreeLib.Statements
             // the outside (the filterUnique).
 
             var pSpecial = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var aUnique = new StatementAssign(pSpecial, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }, true);
+            var aUnique = new StatementAssign(pSpecial, new ValSimple("10", typeof(int)), true);
             f1.Add(aUnique);
 
             filterUnique.Add(f1);
@@ -316,8 +316,8 @@ namespace LINQToTTreeLib.Statements
             var f2 = new StatementFilter(new ValSimple("f1", typeof(bool)));
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
-            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), true);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), true);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -325,7 +325,7 @@ namespace LINQToTTreeLib.Statements
             // the outside (the filterUnique).
 
             var pSpecial = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var aUnique = new StatementAssign(pSpecial, p, new IDeclaredParameter[] { }, true);
+            var aUnique = new StatementAssign(pSpecial, p, true);
             f1.Add(aUnique);
 
             filterUnique.Add(f1);
@@ -375,8 +375,8 @@ namespace LINQToTTreeLib.Statements
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             topLevel1.Add(p);
             topLevel2.Add(p);
-            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
-            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            var a1 = new StatementAssign(p, new ValSimple("5", typeof(int)), false);
+            var a2 = new StatementAssign(p, new ValSimple("5", typeof(int)), false);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -415,8 +415,8 @@ namespace LINQToTTreeLib.Statements
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             filterUnique.Add(p1);
             topLevel2.Add(p2);
-            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
-            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), false);
+            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), false);
             f1.Add(a1);
             f2.Add(a2);
 
@@ -460,8 +460,8 @@ namespace LINQToTTreeLib.Statements
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             filterUnique.Add(p1);
             topLevel2.Add(p2);
-            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
-            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { }, false);
+            var a1 = new StatementAssign(p1, new ValSimple("5", typeof(int)), false);
+            var a2 = new StatementAssign(p2, new ValSimple("5", typeof(int)), false);
             f1.Add(a1);
             f2.Add(a2);
 

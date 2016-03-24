@@ -160,9 +160,7 @@ namespace LINQToTTreeLib.ResultOperators
 
                 gc.Add(new Statements.StatementFilter(valueWasSeen));
                 gc.Add(new Statements.StatementAssign(actualValue,
-                    ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container),
-                    FindDeclarableParameters.FindAll(firstlastValue)
-                    ));
+                    ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
                 gc.Pop();
 
                 return actualValue;

@@ -175,7 +175,6 @@ namespace LINQToTTreeLib.Expressions
             var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             _codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
                 GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer),
-                FindDeclarableParameters.FindAll(testExpression),
                 true
                 ));
 
@@ -193,13 +192,11 @@ namespace LINQToTTreeLib.Expressions
 
             var topScope = _codeEnv.CurrentScope;
             _codeEnv.Add(new Statements.StatementFilter(testBoolInCode));
-            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer),
-                FindDeclarableParameters.FindAll(trueExpression)));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer)));
             _codeEnv.CurrentScope = topScope;
 
             _codeEnv.Add(new Statements.StatementFilter(GetExpression(Expression.Not(testBoolInCode), _codeEnv, _codeContext, MEFContainer)));
-            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer),
-                FindDeclarableParameters.FindAll(falseExpression)));
+            _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer)));
             _codeEnv.CurrentScope = topScope;
 
             //
@@ -672,8 +669,7 @@ namespace LINQToTTreeLib.Expressions
             if (_result.Type.IsNumberType() && !_result.IsSimpleTerm())
             {
                 var cachedValue = DeclarableParameter.CreateDeclarableParameterExpression(_result.Type);
-                var assign = new Statements.StatementAssign(cachedValue, _result,
-                    FindDeclarableParameters.FindAll(expression), declare: true);
+                var assign = new Statements.StatementAssign(cachedValue, _result, declare: true);
                 _codeEnv.Add(assign);
                 _result = cachedValue;
             }

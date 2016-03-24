@@ -30,7 +30,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
             var f = new QMFuncSource(h);
 
             var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var st = new StatementAssign(p, new ValSimple("5", typeof(int)), new IDeclaredParameter[] { });
+            var st = new StatementAssign(p, new ValSimple("5", typeof(int)));
             var inlineblock = new StatementInlineBlock();
             inlineblock.Add(st);
             inlineblock.Add(new StatementReturn(p));

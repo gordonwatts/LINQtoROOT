@@ -115,8 +115,8 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, null, true);
-            var s2 = new StatementAssign(i, sv, null, false);
+            var s1 = new StatementAssign(i, sv, true);
+            var s2 = new StatementAssign(i, sv, false);
 
             Assert.IsFalse(s1.TryCombineStatement(s2, new DummyOptService()), "Combine a declare with a non-declare");
             Assert.IsFalse(s2.TryCombineStatement(s1, new DummyOptService()), "Combine a non-declare with a declare");
@@ -132,8 +132,8 @@ namespace LINQToTTreeLib.Tests
             var i1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var i2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i1, sv, null, false);
-            var s2 = new StatementAssign(i2, sv, null, false);
+            var s1 = new StatementAssign(i1, sv, false);
+            var s2 = new StatementAssign(i2, sv, false);
 
             Assert.IsFalse(s1.TryCombineStatement(s2, new DummyOptService(false)), "Combine when no decl found");
         }
@@ -147,8 +147,8 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, null, false);
-            var s2 = new StatementAssign(i, sv, null, false);
+            var s1 = new StatementAssign(i, sv, false);
+            var s2 = new StatementAssign(i, sv, false);
 
             Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService(true)), "Combine when no decl found");
         }
@@ -162,8 +162,8 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, null, true);
-            var s2 = new StatementAssign(i, sv, null, true);
+            var s1 = new StatementAssign(i, sv, true);
+            var s2 = new StatementAssign(i, sv, true);
 
             Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService(false)), "Combine a declare with a non-declare");
         }
@@ -173,7 +173,7 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, null, true);
+            var s1 = new StatementAssign(i, sv, true);
 
             Assert.IsTrue(s1.CodeItUp().First().Trim().StartsWith("int "), "Check for decl: " + s1.CodeItUp().First());
         }
@@ -183,7 +183,7 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, null);
+            var s1 = new StatementAssign(i, sv);
 
             Assert.IsTrue(s1.CodeItUp().First().Trim().StartsWith("aInt32_"), "Check for decl: " + s1.CodeItUp().First());
         }
@@ -193,7 +193,7 @@ namespace LINQToTTreeLib.Tests
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var sv = new ValSimple("5", typeof(int));
-            var s1 = new StatementAssign(i, sv, null);
+            var s1 = new StatementAssign(i, sv);
 
             Assert.AreEqual(1, s1.ResultVariables.Count, "# result variables");
             Assert.AreEqual(i.RawValue, s1.ResultVariables.First(), "the name");
@@ -204,9 +204,9 @@ namespace LINQToTTreeLib.Tests
         public void TestCMValuesForSimpleExpression()
         {
             var i = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var sv = new ValSimple("5", typeof(int));
             var di = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
-            var s1 = new StatementAssign(i, sv, dependentVariables: new IDeclaredParameter[] { di });
+            var sv = new ValSimple("5", typeof(int), new IDeclaredParameter[] { di });
+            var s1 = new StatementAssign(i, sv);
             Assert.AreEqual(1, s1.ResultVariables.Count, "# result variables");
             Assert.AreEqual(i.RawValue, s1.ResultVariables.First(), "the name");
             Assert.AreEqual(1, s1.DependentVariables.Count, "no dependent variables");
@@ -219,8 +219,8 @@ namespace LINQToTTreeLib.Tests
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
-            var s2 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
+            var s2 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
 
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsTrue(r.Item1, "can do the combination");
@@ -234,8 +234,8 @@ namespace LINQToTTreeLib.Tests
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
-            var s2 = new StatementAssign(p1, new ValSimple($"{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d2 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
+            var s2 = new StatementAssign(p1, new ValSimple($"{d2.RawValue}", typeof(int), new IDeclaredParameter[] { d2 }));
 
             var r = s1.RequiredForEquivalence(s2, new Tuple<string, string>[] { new Tuple<string, string>(d2.RawValue, d1.RawValue) });
             Assert.IsTrue(r.Item1, "can do the combination");
@@ -251,8 +251,8 @@ namespace LINQToTTreeLib.Tests
             var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d1, d2 });
-            var s2 = new StatementAssign(p1, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int)), new IDeclaredParameter[] { d3, d4 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int), new IDeclaredParameter[] { d1, d2 }));
+            var s2 = new StatementAssign(p1, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int), new IDeclaredParameter[] { d3, d4 }));
 
             var r = s1.RequiredForEquivalence(s2, new Tuple<string, string>[] { new Tuple<string, string>(d3.RawValue, d1.RawValue) });
             Assert.IsTrue(r.Item1, "can do the combination");
@@ -266,8 +266,8 @@ namespace LINQToTTreeLib.Tests
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
-            var s2 = new StatementAssign(p1, new ValSimple($"sin({d1.RawValue})", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
+            var s2 = new StatementAssign(p1, new ValSimple($"sin({d1.RawValue})", typeof(int), new IDeclaredParameter[] { d1 }));
 
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsFalse(r.Item1, "should not be able to do the combination");
@@ -280,8 +280,8 @@ namespace LINQToTTreeLib.Tests
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
-            var s2 = new StatementAssign(p1, new ValSimple($"{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d2 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
+            var s2 = new StatementAssign(p1, new ValSimple($"{d2.RawValue}", typeof(int), new IDeclaredParameter[] { d2 }));
 
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsTrue(r.Item1, "can do the combination");
@@ -301,8 +301,8 @@ namespace LINQToTTreeLib.Tests
             var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d1, d2 });
-            var s2 = new StatementAssign(p1, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int)), new IDeclaredParameter[] { d3, d4 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int), new IDeclaredParameter[] { d1, d2 }));
+            var s2 = new StatementAssign(p1, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int), new IDeclaredParameter[] { d3, d4 }));
 
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsTrue(r.Item1, "can do the combination");
@@ -315,8 +315,8 @@ namespace LINQToTTreeLib.Tests
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
-            var s2 = new StatementAssign(p2, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
+            var s2 = new StatementAssign(p2, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
 
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsTrue(r.Item1, "can do the combination");
@@ -333,8 +333,8 @@ namespace LINQToTTreeLib.Tests
             var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int)), new IDeclaredParameter[] { d1 });
-            var s2 = new StatementAssign(p2, new ValSimple($"{d2.RawValue}", typeof(int)), new IDeclaredParameter[] { d2 });
+            var s1 = new StatementAssign(p1, new ValSimple($"{d1.RawValue}", typeof(int), new IDeclaredParameter[] { d1 }));
+            var s2 = new StatementAssign(p2, new ValSimple($"{d2.RawValue}", typeof(int), new IDeclaredParameter[] { d2 }));
 
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsTrue(r.Item1, "can do the combination");

@@ -150,7 +150,7 @@ namespace LINQToTTreeLib.Tests.Statements
 
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, result });
+            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, result }));
             s.Add(assign);
 
             Assert.AreEqual(1, s.DependentVariables.Count, "# of dependent variables");
@@ -168,7 +168,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             s.Add(result);
 
-            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counter, result });
+            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, result }));
             s.Add(assign);
 
             Assert.AreEqual(0, s.DependentVariables.Count, "# of dependent variables");
@@ -227,7 +227,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c1, new ValSimple("6", typeof(int)));
@@ -244,12 +244,12 @@ namespace LINQToTTreeLib.Tests.Statements
             var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
             var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
 
             var r = s1.RequiredForEquivalence(s2);
 
@@ -267,12 +267,12 @@ namespace LINQToTTreeLib.Tests.Statements
             var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
             var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
 
             var r = s1.RequiredForEquivalence(s2, new Tuple<string, string>[] { new Tuple<string, string>(a2.RawValue, a1.RawValue) });
 
@@ -308,14 +308,14 @@ namespace LINQToTTreeLib.Tests.Statements
             var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+1", typeof(int)), new IDeclaredParameter[] { a1 }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+1", typeof(int), new IDeclaredParameter[] { a1 })));
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
             var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+1", typeof(int)), new IDeclaredParameter[] { a2 }));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+1", typeof(int), new IDeclaredParameter[] { a2 })));
 
             var r = s1.RequiredForEquivalence(s2);
 
@@ -334,15 +334,15 @@ namespace LINQToTTreeLib.Tests.Statements
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int)), new IDeclaredParameter[] { a1, v1 }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int), new IDeclaredParameter[] { a1, v1 })));
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
             var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int)), new IDeclaredParameter[] { a2, v2 }));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int), new IDeclaredParameter[] { a2, v2 })));
 
             var r = s1.RequiredForEquivalence(s2);
 
@@ -359,16 +359,16 @@ namespace LINQToTTreeLib.Tests.Statements
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int)), new IDeclaredParameter[] { a1, v1 }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int), new IDeclaredParameter[] { a1, v1 })));
             s1.Add(v1);
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
             var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int)), new IDeclaredParameter[] { a2, v2 }));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int), new IDeclaredParameter[] { a2, v2 })));
             s2.Add(v2);
 
             var r = s1.RequiredForEquivalence(s2);
@@ -386,15 +386,15 @@ namespace LINQToTTreeLib.Tests.Statements
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int)), new IDeclaredParameter[] { a1, v1 }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int), new IDeclaredParameter[] { a1, v1 })));
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c1, new ValSimple("6", typeof(int)));
             var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{a2.RawValue}", typeof(int)), new IDeclaredParameter[] { a2 }));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{a2.RawValue}", typeof(int), new IDeclaredParameter[] { a2 })));
 
             var r = s1.RequiredForEquivalence(s2);
 
@@ -409,15 +409,15 @@ namespace LINQToTTreeLib.Tests.Statements
             var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{a1.RawValue}", typeof(int)), new IDeclaredParameter[] { a1 }));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{a1.RawValue}", typeof(int), new IDeclaredParameter[] { a1 })));
 
             var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s2 = new StatementForLoop(c1, new ValSimple("6", typeof(int)));
             var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
-            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int)), new IDeclaredParameter[] { a2, v2 }));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int), new IDeclaredParameter[] { a2, v2 })));
 
             var r = s1.RequiredForEquivalence(s2);
 
