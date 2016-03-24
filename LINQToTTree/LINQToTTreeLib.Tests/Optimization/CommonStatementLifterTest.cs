@@ -789,9 +789,9 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
         }
 
-#if false
-        // We don't detect loop invarients correctly yet - so these will remain inside a loop for now.
+        // We don't detect loop invariants correctly yet - so these will remain inside a loop for now.
         [TestMethod]
+        [Ignore]
         public void LiftLoopInvarient()
         {
             var v = new GeneratedCode();
@@ -814,7 +814,6 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             Assert.Inconclusive();
         }
-#endif
 
         /// <summary>
         /// 1. Loop 1 over array a
