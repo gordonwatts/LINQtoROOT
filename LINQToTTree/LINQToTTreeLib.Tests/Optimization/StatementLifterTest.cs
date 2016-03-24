@@ -974,6 +974,34 @@ namespace LINQToTTreeLib.Tests.Optimization
             var assCode = outterLoop.Statements.Skip(1).First();
             Assert.AreEqual("StatementAssign", assCode.GetType().Name, "Lifted assignment statement.");
         }
+
+        // We don't detect loop invariants correctly yet - so these will remain inside a loop for now.
+        [TestMethod]
+        public void LiftLoopInvarient()
+        {
+            var v = new GeneratedCode();
+
+            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            v.Add(loop1);
+
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)), true);
+            loop1.Add(assign1);
+
+            Console.WriteLine("Unoptimized:");
+            v.DumpCodeToConsole();
+
+            StatementLifter.Optimize(v);
+
+            Console.WriteLine("");
+            Console.WriteLine("Optimized:");
+            v.DumpCodeToConsole();
+
+            Assert.AreEqual(0, loop1.Statements.Count());
+        }
+
 #if false
         /// <summary>
         /// A loop contains an if statement that exists above - so they could be combined

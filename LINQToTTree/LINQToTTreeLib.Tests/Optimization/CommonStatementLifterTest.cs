@@ -789,32 +789,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
         }
 
-        // We don't detect loop invariants correctly yet - so these will remain inside a loop for now.
-        [TestMethod]
-        [Ignore]
-        public void LiftLoopInvarient()
-        {
-            var v = new GeneratedCode();
-
-            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
-            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var loop1 = new StatementForLoop(loopP1, limit);
-            v.Add(loop1);
-
-            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)), true);
-            loop1.Add(assign1);
-
-            Console.WriteLine("Unoptimized:");
-            v.DumpCodeToConsole();
-            CommonStatementLifter.Optimize(v);
-            Console.WriteLine("");
-            Console.WriteLine("Optimized:");
-            v.DumpCodeToConsole();
-
-            Assert.Inconclusive();
-        }
-
         /// <summary>
         /// 1. Loop 1 over array a
         /// 2. Loop 2 over array a
