@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static LINQToTTreeLib.Tests.TestUtils;
 
 namespace LINQToTTreeLib.Tests.Optimization
 {
@@ -543,6 +544,35 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.DumpCodeToConsole();
 
             Assert.AreEqual(2, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+        }
+
+        [TestMethod]
+        public void LiftConstantInPairWise()
+        {
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (from cmb in evt.myvectorofint.PairWiseAll((i1, i2) => QueryVisitorTest.CPPHelperFunctions.Calc(i1) != QueryVisitorTest.CPPHelperFunctions.Calc(i2)) select cmb).Count() == 10
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var gc = DummyQueryExectuor.FinalResult;
+            Console.WriteLine("Unoptimized");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("Optimized");
+            Console.WriteLine("");
+
+            gc.DumpCodeToConsole();
+
+            var index1Ref = gc.DumpCode().Where(l => l.Contains("[index1]") && l.Contains("int")).Select(l => l.Substring(0, l.IndexOf("=")).Trim()).ToArray();
+            var index2Ref = gc.DumpCode().Where(l => l.Contains("[index2]") && l.Contains("int")).Select(l => l.Substring(0, l.IndexOf("=")).Trim()).ToArray();
+
+            Assert.AreNotEqual(index1Ref[0], index2Ref[0]);
         }
 
         /// <summary>

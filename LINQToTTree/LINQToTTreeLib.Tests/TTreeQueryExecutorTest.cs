@@ -1808,7 +1808,6 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [Ignore]
         public void TestPairwiseAllWithExternalRef()
         {
             // Definatly some problems with the code generated here:
@@ -1845,6 +1844,7 @@ namespace LINQToTTreeLib
             var dude = dudeQ.Count();
 
             var query = DummyQueryExectuor.LastQueryModel;
+            Console.WriteLine("Unoptimized");
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             ///
