@@ -556,7 +556,6 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// The inner statement is lifted to the outer statement and left to hang.
         /// </summary>
         [TestMethod]
-        [Ignore]
         public void DontLiftThroughTwoForStatements()
         {
             var gc = new GeneratedCode();
@@ -575,7 +574,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(innerCounter);
 
             var fc2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var for2 = new StatementForLoop(fc1, new ValSimple("5", typeof(int)));
+            var for2 = new StatementForLoop(fc2, new ValSimple("5", typeof(int)));
             gc.Add(for2);
 
             // Now, calc based only on fc1
