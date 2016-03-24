@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LINQToTTreeLib.Variables;
-using LinqToTTreeInterfacesLib;
-using System.IO;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using ROOTNET.Interface;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
+using System.Linq;
 
 namespace LINQToTTreeLib.Files
 {
@@ -37,7 +35,7 @@ namespace LINQToTTreeLib.Files
 
         /// <summary>
         /// The actual value of the object, which in this case is the
-        /// filestream ctor
+        /// file stream constructor
         /// </summary>
         public string RawValue { get { return $"std::ofstream(\"{OutputFile.FullName.AddCPPEscapeCharacters()}\")"; } }
 
@@ -47,7 +45,18 @@ namespace LINQToTTreeLib.Files
         public Type Type { get { return typeof(OutputCSVTextFileType); } }
 
         /// <summary>
-        /// No renaming can happen since we hold what is basically a constnat value.
+        /// We don't hold onto a variable (we are a dummy, in some sense).
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> Dependants
+        {
+            get
+            {
+                return Enumerable.Empty<IDeclaredParameter>();
+            }
+        }
+
+        /// <summary>
+        /// No renaming can happen since we hold what is basically a constant value.
         /// </summary>
         /// <param name="oldname"></param>
         /// <param name="newname"></param>
@@ -78,7 +87,7 @@ namespace LINQToTTreeLib.Files
         }
 
         /// <summary>
-        /// Include files that need to be used. Since this is an fstream...
+        /// Include files that need to be used. Since this is an file stream...
         /// </summary>
         /// <param name="iVariable"></param>
         /// <returns></returns>

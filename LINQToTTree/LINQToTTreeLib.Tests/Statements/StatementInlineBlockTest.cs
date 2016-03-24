@@ -208,6 +208,14 @@ namespace LINQToTTreeLib.Statements
                 }
             }
 
+            public IEnumerable<IDeclaredParameter> Dependants
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public void RenameParameter(string oldname, string newname)
             {
                 return;

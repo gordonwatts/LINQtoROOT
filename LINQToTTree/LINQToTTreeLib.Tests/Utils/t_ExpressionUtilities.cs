@@ -5,6 +5,7 @@ using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -113,6 +114,14 @@ namespace LINQToTTreeLib.Tests
             public string RawValue
             {
                 get { return "dude"; }
+            }
+
+            public IEnumerable<IDeclaredParameter> Dependants
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
             }
 
             public void RenameRawValue(string oldname, string newname)

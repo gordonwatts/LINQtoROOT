@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
             //
             // Queue this object for transfer, get a "unique" name back. This will also double check
-            // to see if the object is already up there read yto be queued.
+            // to see if the object is already up there read to be queued.
             //
 
             var varNameForTransport = codeEnv.QueueForTransfer(rootObject);
