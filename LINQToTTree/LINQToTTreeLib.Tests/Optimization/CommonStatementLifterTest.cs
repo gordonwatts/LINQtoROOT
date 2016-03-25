@@ -902,6 +902,50 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// Make sure lift occurs when identical loops are present, but in reverse order.
+        /// 1. if statement
+        /// 2.   loop A
+        /// 3.   statement
+        /// 4. loop A
+        /// In this case loop A can be removed.
+        /// Normally, this can't be lifted as we don't want to lift things out of an
+        /// if statement. However, in this case, they are identical, so it is OK.
+        /// We don't normally want to lift things past an if statement b.c. it is an efficiency
+        /// protector
+        /// </summary>
+        [TestMethod]
+        public void LiftIdenticalLoopOutOfIfStatementReverse()
+        {
+            var gc = new GeneratedCode();
+            StatementLifterTest.AddIf(gc);
+            var c2 = StatementLifterTest.AddLoop(gc);
+            gc.Pop();
+            gc.Pop();
+            var c1 = StatementLifterTest.AddLoop(gc);
+
+            Console.WriteLine("Before lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("After lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            // Now check that things happened as we would expect them to happen.
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of statements inside first for loop");
+
+            var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
+            Assert.IsNotNull(ifStatement, "Finding if statement");
+            Assert.AreEqual(1, ifStatement.Statements.Count(), "# of statements inside the if statement");
+            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAssign));
+            var ass = ifStatement.Statements.First() as StatementAssign;
+            Assert.AreEqual($"{c1.RawValue}+{c1.RawValue}", ass.Expression.RawValue);
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of variables declared");
+            Assert.AreEqual(c1.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "Counter is declared.");
+        }
+
+        /// <summary>
         /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outer loop one.
         /// It should not be lifted since it will alter the counting!
         /// </summary>

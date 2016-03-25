@@ -49,49 +49,6 @@ namespace LINQToTTreeLib.Optimization
             {
                 FindEquivalentAboveAndCombine(block, s);
             }
-
-#if false
-            bool rerun = true;
-            while (rerun)
-            {
-                rerun = false;
-                foreach (var s in block.Statements)
-                {
-                    if (s is IStatementCompound)
-                    {
-                        // If it is not a loop, try to move it.
-
-                        if (!(s is IStatementLoop))
-                        {
-                            var whereDone = MoveStatement(block, s, codeStack);
-                            if (whereDone != null)
-                                return whereDone;
-                        }
-
-                        // Go down a level...
-                        var r = VisitCodeBlock(s as IStatementCompound, nextLevelStatementStack);
-                        if (r != null)
-                        {
-                            if (r != block)
-                                return r;
-                            if (r == block)
-                            {
-                                rerun = true;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // This statement, can it be combined above us?
-                        var whereDone = MoveStatement(block, s, codeStack);
-                        if (whereDone != null)
-                            return whereDone;
-                    }
-                }
-            }
-            return null;
-#endif
         }
 
         /// <summary>
