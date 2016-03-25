@@ -157,7 +157,7 @@ namespace LINQToTTreeLib.Optimization
 
             var declared = cmpInfo.DeclaredVariables;
             var inputs = (item as ICMStatementInfo).DependentVariables;
-            var requiredDeclared = declared.Intersect(inputs);
+            var requiredDeclared = declared.Select(p => p.RawValue).Intersect(inputs);
             if (requiredDeclared.Count() > 0)
                 return false;
 

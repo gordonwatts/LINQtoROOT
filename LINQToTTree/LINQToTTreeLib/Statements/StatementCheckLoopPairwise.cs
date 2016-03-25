@@ -190,14 +190,12 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return all declared variables in this guy
         /// </summary>
-        public new ISet<string> DeclaredVariables
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get
             {
-                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
-                r.Add(_index1.RawValue);
-                r.Add(_index2.RawValue);
-                return r;
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { _index1, _index2 });
             }
         }
 

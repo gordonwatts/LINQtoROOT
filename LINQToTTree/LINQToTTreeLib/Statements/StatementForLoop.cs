@@ -176,7 +176,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return the list of declared variables.
         /// </summary>
-        public new IEnumerable<IDeclaredParameter> DeclaredVariables
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get
             {

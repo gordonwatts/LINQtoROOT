@@ -213,16 +213,12 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return all declared variables in this guy
         /// </summary>
-        public new ISet<string> DeclaredVariables
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get
             {
-                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
-                foreach (var saver in _mapRecords)
-                {
-                    r.Add(saver.indexVariable.RawValue);
-                }
-                return r;
+                return base.DeclaredVariables
+                    .Concat(_mapRecords.Select(m => m.indexVariable));
             }
         }
 

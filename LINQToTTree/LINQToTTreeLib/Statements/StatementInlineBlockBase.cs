@@ -119,7 +119,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return the variables in the block
         /// </summary>
-        public IEnumerable<IDeclaredParameter> DeclaredVariables
+        public virtual IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get { return _variables; }
         }
