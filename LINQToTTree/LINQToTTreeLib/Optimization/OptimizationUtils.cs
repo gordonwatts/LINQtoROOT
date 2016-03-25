@@ -25,12 +25,39 @@ namespace LINQToTTreeLib.Optimization
 
             var c1Info = s1 as ICMStatementInfo;
             var c2Info = s2 as ICMStatementInfo;
-            var c1Vars = new HashSet<string>(c1Info.ResultVariables.Concat(c1Info.DependentVariables));
-            var c2Vars = new HashSet<string>(c2Info.ResultVariables.Concat(c2Info.DependentVariables));
-            var r = c1Vars.Intersect(c2Vars);
-            if (r.Count() > 0)
+
+            // If the results of 1 will alter 2 or vice versa
+            var c1DependsOnC2 = c1Info.DependentVariables.Intersect(c2Info.ResultVariables);
+            if (c1DependsOnC2.Count() > 0)
                 return false;
 
+            var c2DependsOnC1 = c2Info.DependentVariables.Intersect(c1Info.ResultVariables);
+            if (c2DependsOnC1.Count() > 0)
+                return false;
+
+            // If they both change the same variables, then we have an ordering problem.
+            var resultsDependent = c1Info.ResultVariables.Intersect(c2Info.ResultVariables);
+            if (resultsDependent.Count() > 0)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// See if s1 commutes past s2.
+        /// </summary>
+        /// <param name="s1"></param>
+        /// <param name="statements"></param>
+        /// <returns></returns>
+        public static bool StatementCommutes(IStatement s1, IEnumerable<IStatement> statements)
+        {
+            foreach (var s in statements)
+            {
+                if (!(StatementCommutes(s1, s)))
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
