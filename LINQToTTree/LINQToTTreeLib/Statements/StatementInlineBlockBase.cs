@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.Statements
     /// does not add extra statements inside this block - but it might have something like
     /// an "if" statement around the contents of the block.
     /// </summary>
-    public abstract class StatementInlineBlockBase : IBookingStatementBlock, ICMCompoundStatementInfo
+    public abstract class StatementInlineBlockBase : IBookingStatementBlock, ICMCompoundStatementInfo, ICMStatementInfo
     {
         /// <summary>
         /// The list of statements in this block.
@@ -436,14 +436,47 @@ namespace LINQToTTreeLib.Statements
         public abstract bool AllowNormalBubbleUp { get; }
 
         /// <summary>
-        /// Return a list of declared variables
+        /// Get a list of all dependent variables used in this code block.
+        /// If you add some new things (like the test expression for an if statement),
+        /// then override this.
         /// </summary>
-        ISet<string> ICMCompoundStatementInfo.DeclaredVariables
+        public virtual ISet<string> DependentVariables
         {
             get
             {
-                return DeclaredVariables.Select(s => s.RawValue).ToHashSet();
+                var dependents = Statements
+                    .Where(s => s is ICMStatementInfo)
+                    .Cast<ICMStatementInfo>()
+                    .SelectMany(s => s.DependentVariables)
+                    .Where(v => !DeclaredVariables.Select(p => p.RawValue).Contains(v))
+                    ;
+                return new HashSet<string>(dependents);
             }
+        }
+
+        /// <summary>
+        /// Return the list of variables that are altered by this code block. Override if
+        /// there is another source somewhere!
+        /// </summary>
+        public ISet<string> ResultVariables
+        {
+            get
+            {
+                var results = Statements
+                    .Where(s => s is ICMStatementInfo)
+                    .Cast<ICMStatementInfo>()
+                    .SelectMany(s => s.ResultVariables)
+                    .Where(v => !DeclaredVariables.Select(p => p.RawValue).Contains(v));
+                return new HashSet<string>(results);
+            }
+        }
+
+        /// <summary>
+        /// As long as the dependent/result stuff is satisfied, then a lifting can occur no problem.
+        /// </summary>
+        public bool NeverLift
+        {
+            get { return false; }
         }
 
         /// <summary>
@@ -467,6 +500,53 @@ namespace LINQToTTreeLib.Statements
                 throw new ArgumentException("Unable to find either the first or second statement in the list");
 
             return whoIsFirst == first;
+        }
+
+        /// <summary>
+        /// We can't determine directly if we can combine.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public virtual Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+        }
+
+        /// <summary>
+        /// Helper routine. Pass it all renames relavent, and it will do all the testing.
+        /// It will return the FULL rename list, including everything you have passed in!
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        protected virtual Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalenceForBase(ICMStatementInfo other, Tuple<bool, IEnumerable<Tuple<string, string>>> renames)
+        {
+            if (!renames.Item1)
+                return renames;
+
+            // We assume this works at this point!
+            var s2 = other as StatementInlineBlockBase;
+
+            // If the number of statements isn't the same, then this doesn't matter.
+            if (Statements.Count() != s2.Statements.Count())
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            // Loop through the statements, accumulating renames as we go.
+            foreach (var s in Statements.Zip(s2.Statements, (st1, st2) => Tuple.Create(st1, st2)))
+            {
+                renames = renames
+                    .RequireForEquivForExpression(s.Item1 as ICMStatementInfo, s.Item2 as ICMStatementInfo);
+            }
+
+            // If we make it here, then we are good. The last thing to do before returning the result is to remove
+            // any renames and any declared variables
+            var declaredVariables = s2.DeclaredVariables;
+
+            return renames
+                .FilterRenames(i => !declaredVariables.Select(p => p.RawValue).Contains(i.Item1));
         }
     }
 }

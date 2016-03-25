@@ -18,7 +18,7 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// All variables declared by this guy.
         /// </summary>
-        ISet<string> DeclaredVariables { get; }
+        IEnumerable<IDeclaredParameter> DeclaredVariables { get; }
 
         /// <summary>
         /// Blocks, like if statements or for statements, have a statement that is at the top of the block.

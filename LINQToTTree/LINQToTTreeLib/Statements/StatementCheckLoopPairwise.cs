@@ -118,6 +118,21 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override ISet<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(_indciesToInspect.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+
+        /// <summary>
         /// Attempt to combine two of these statements. We can do this iff the source expression that
         /// we are testing is the same. Then the two indicies need to be renamed (it is assumed that we have total
         /// control - as you can see from the generated code above).

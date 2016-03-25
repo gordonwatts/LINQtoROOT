@@ -227,6 +227,21 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override ISet<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(_mapRecords.Select(m => m.mapRecords).Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+
+        /// <summary>
         /// Can we get past the loop controls? This is a bit of a mess.
         /// </summary>
         /// <param name="followStatement"></param>

@@ -113,6 +113,34 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
+        /// Given two IValue's, do the expression conversion.
+        /// </summary>
+        /// <param name="renames"></param>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static Tuple<bool, IEnumerable<Tuple<string,string>>> RequireForEquivForExpression (this Tuple<bool, IEnumerable<Tuple<string, string>>> renames, IDeclaredParameter p1, IDeclaredParameter p2)
+        {
+            return renames
+                .RequireForEquivForExpression(p1.RawValue, p1.Dependants.Select(p => p.RawValue),
+                p2.RawValue, p2.Dependants.Select(p => p.RawValue));
+        }
+
+        /// <summary>
+        /// Given two IValue's, do the expression conversion.
+        /// </summary>
+        /// <param name="renames"></param>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static Tuple<bool, IEnumerable<Tuple<string, string>>> RequireForEquivForExpression(this Tuple<bool, IEnumerable<Tuple<string, string>>> renames, IValue p1, IValue p2)
+        {
+            return renames
+                .RequireForEquivForExpression(p1.RawValue, p1.Dependants.Select(p => p.RawValue),
+                p2.RawValue, p2.Dependants.Select(p => p.RawValue));
+        }
+
+        /// <summary>
         /// Two statements should become common. Take care of everything.
         /// </summary>
         /// <param name="renames"></param>

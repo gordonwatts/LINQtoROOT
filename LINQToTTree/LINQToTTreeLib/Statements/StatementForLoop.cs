@@ -131,7 +131,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="other"></param>
         /// <param name="replaceFirst"></param>
         /// <returns></returns>
-        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        public override Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
             // Make sure it is a for statement.
             if (!(other is StatementForLoop))
@@ -139,12 +139,6 @@ namespace LINQToTTreeLib.Statements
                 return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
             }
             var s2 = other as StatementForLoop;
-
-            // If the number of statements isn't the same, then this doesn't matter.
-            if (Statements.Count() != s2.Statements.Count())
-            {
-                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-            }
 
             // Make sure the limit is the same, after applying the replacements.
             var renames = Tuple.Create(true, replaceFirst)
@@ -154,20 +148,9 @@ namespace LINQToTTreeLib.Statements
             renames = renames
                 .RequireForEquivForExpression(_loopVariable.RawValue, s2._loopVariable.RawValue);
 
-            // Loop through the statements, accumulating renames as we go.
-            foreach (var s in Statements.Zip(s2.Statements, (st1, st2) => Tuple.Create(st1, st2)))
-            {
-                renames = renames
-                    .RequireForEquivForExpression(s.Item1 as ICMStatementInfo, s.Item2 as ICMStatementInfo);
-            }
-
-            // If we make it here, then we are good. The last thing to do before returning the result is to remove
-            // any renames and any declared variables
-            var declaredVariables = s2.DeclaredVariables;
-
-            return renames
-                .ExceptFor(replaceFirst)
-                .FilterRenames(i => !declaredVariables.Contains(i.Item1));
+            // And do everything in the block
+            return RequiredForEquivalenceForBase(other, renames)
+                .ExceptFor(replaceFirst);
         }
 
         /// <summary>
@@ -191,15 +174,14 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Return all declared variables in this guy
+        /// Return the list of declared variables.
         /// </summary>
-        public new ISet<string> DeclaredVariables
+        public new IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get
             {
-                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
-                r.Add(_loopVariable.RawValue);
-                return r;
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { _loopVariable });
             }
         }
 
@@ -220,44 +202,15 @@ namespace LINQToTTreeLib.Statements
         /// Return a list of all dependent variables. Will not include the counter
         /// </summary>
         /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
-        public ISet<string> DependentVariables
+        public override ISet<string> DependentVariables
         {
             get
             {
-                var dependents = Statements
-                    .Where(s => s is ICMStatementInfo)
-                    .Cast<ICMStatementInfo>()
-                    .SelectMany(s => s.DependentVariables)
-                    .Where(v => v != _loopVariable.RawValue)
-                    .Where(v => !DeclaredVariables.Contains(v))
+                var dependents = base.DependentVariables
                     .Concat(ArrayLength.Dependants.Select(p => p.RawValue))
                     ;
                 return new HashSet<string>(dependents);
             }
-        }
-
-        /// <summary>
-        /// A list of all the result variables
-        /// </summary>
-        public ISet<string> ResultVariables
-        {
-            get
-            {
-                var results = Statements
-                    .Where(s => s is ICMStatementInfo)
-                    .Cast<ICMStatementInfo>()
-                    .SelectMany(s => s.ResultVariables)
-                    .Where(v => !DeclaredVariables.Contains(v));
-                return new HashSet<string>(results);
-            }
-        }
-
-        /// <summary>
-        /// As long as the dependent/result stuff is satisfied, then a lifting can occur no problem.
-        /// </summary>
-        public bool NeverLift
-        {
-            get { return false; }
         }
     }
 }

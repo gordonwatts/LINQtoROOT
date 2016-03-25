@@ -98,11 +98,27 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+
         /// <summary>
-        /// We don't have the code to do the combination yet, so we have to bail!
+        /// Return a list of all dependent variables. Will not include the counter
         /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override ISet<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(Limit.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+        
+        /// <summary>
+                 /// We don't have the code to do the combination yet, so we have to bail!
+                 /// </summary>
+                 /// <param name="statement"></param>
+                 /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)

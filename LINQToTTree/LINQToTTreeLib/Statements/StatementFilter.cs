@@ -10,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     /// Deal with a "Where"-like clause. Basically, we have an expression which we evaluate, and we make sure that
     /// it goes!
     /// </summary>
-    public class StatementFilter : StatementInlineBlockBase
+    public class StatementFilter : StatementInlineBlockBase, ICMStatementInfo
     {
         /// <summary>
         /// Get the expresion we are going to test
@@ -121,6 +121,30 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Make an attempt to combine if statements.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public override Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            // Quick check.
+            if (!(other is StatementFilter))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementFilter;
+
+            // Do the test expression.
+            var renames = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(TestExpression, s2.TestExpression);
+
+            // And do everything in the block
+            return RequiredForEquivalenceForBase(other, renames)
+                .ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
         /// Rename our variables
         /// </summary>
         /// <param name="origName"></param>
@@ -135,6 +159,20 @@ namespace LINQToTTreeLib.Statements
         {
             var varsImpacted = followStatement.ResultVariables.Intersect(TestExpression.Dependants.Select(s => s.RawValue));
             return !varsImpacted.Any();
+        }
+
+        /// <summary>
+        /// Return the list of dependent variables, which includes ones in our test
+        /// expression.
+        /// </summary>
+        public override ISet<string> DependentVariables
+        {
+            get
+            {
+                return base.DependentVariables
+                    .Concat(TestExpression.Dependants.Select(p => p.RawValue))
+                    .ToHashSet();
+            }
         }
     }
 }
