@@ -189,6 +189,7 @@
     <Compile Include="IAddResults\AdderTH.cs" />
     <Compile Include="Optimization\BlockRenamer.cs" />
     <Compile Include="Optimization\CommonStatementLifter.cs" />
+    <Compile Include="Optimization\OptimizationUtils.cs" />
     <Compile Include="Optimization\Optimizer.cs" />
     <Compile Include="Optimization\StatementLifter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

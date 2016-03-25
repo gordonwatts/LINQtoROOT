@@ -872,7 +872,6 @@ namespace LINQToTTreeLib.Tests.Optimization
         public void LiftIdenticalLoopOutOfIfStatement()
         {
             var gc = new GeneratedCode();
-            gc.Add(new StatementInlineBlock());
             var c1 = StatementLifterTest.AddLoop(gc);
             gc.Pop();
             StatementLifterTest.AddIf(gc);
@@ -897,7 +896,9 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(1, ifStatement.Statements.Count(), "# of statements inside the if statement");
             Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAssign));
             var ass = ifStatement.Statements.First() as StatementAssign;
-            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+            Assert.AreEqual($"{c1.RawValue}+{c1.RawValue}", ass.Expression.RawValue);
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of variables declared");
+            Assert.AreEqual(c1.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "Counter is declared.");
         }
 
         /// <summary>

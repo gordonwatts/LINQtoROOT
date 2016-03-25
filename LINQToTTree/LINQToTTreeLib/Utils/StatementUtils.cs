@@ -22,7 +22,9 @@ namespace LINQToTTreeLib.Utils
                 if (!skipAStatement)
                 {
                     if (s is IStatementCompound)
-                    yield return s as IStatementCompound;
+                    {
+                        yield return s as IStatementCompound;
+                    }
                 }
                 skipAStatement = false;
 
@@ -41,6 +43,24 @@ namespace LINQToTTreeLib.Utils
                 .Where(m => m is IBookingStatementBlock)
                 .Cast<IBookingStatementBlock>()
                 .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Return the parents of this statement.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="stopBeforeBookingParent"></param>
+        /// <returns></returns>
+        public static IEnumerable<IStatement> Parents(this IStatement s, bool stopBeforeBookingParent = true)
+        {
+            if (stopBeforeBookingParent)
+            {
+                return s.WalkParents(false)
+                    .TakeWhile(st => !(st is IBookingStatementBlock));
+            } else
+            {
+                return s.WalkParents(false);
+            }
         }
 
         /// <summary>

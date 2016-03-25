@@ -1,6 +1,9 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using static LINQToTTreeLib.Optimization.OptimizationUtils;
 
 namespace LINQToTTreeLib.Optimization
 {
@@ -16,20 +19,38 @@ namespace LINQToTTreeLib.Optimization
         {
             foreach (var block in code.QueryCode())
             {
-                while (VisitCodeBlock(block, new IStatementCompound[] { }) != null)
-                    ;
+                VisitCodeBlock(block);
             }
         }
 
         /// <summary>
         /// Given a block of code, try to find statements that should be lifted up. For each statement
-        /// that we find, see if there is one in the list that can "eat" it.
+        /// that we find, see if there is one in the list that is "identical" - in short - already there.
         /// </summary>
-        /// <param name="block"></param>
-        private static IStatementCompound VisitCodeBlock(IStatementCompound block, IStatementCompound[] codeStack)
+        /// <param name="block">Examine this block for statements that can be lifted</param>
+        /// <param name="codeStack">The list of parents where we might put this statement</param>
+        private static void VisitCodeBlock(IStatementCompound block)
         {
-            var nextLevelStatementStack = codeStack.Concat(new IStatementCompound[] { block }).ToArray();
+            // Do decent first scan.
+            foreach (var s in block.Statements.RetryIfModified())
+            {
+                if (s is IStatementCompound)
+                {
+                    VisitCodeBlock(s as IStatementCompound);
+                }
+            }
 
+            // Now look at each item in the block and see if we can't find something above us that contains
+            // the very same thing. In order to pop any statement up we must
+            // 1. Be able to move it to the front of whatever block we are in
+            // 2. Find a statement previous to this block above us that will combine with it.
+
+            foreach (var s in block.Statements.RetryIfModified())
+            {
+                FindEquivalentAboveAndCombine(block, s);
+            }
+
+#if false
             bool rerun = true;
             while (rerun)
             {
@@ -70,6 +91,105 @@ namespace LINQToTTreeLib.Optimization
                 }
             }
             return null;
+#endif
+        }
+
+        /// <summary>
+        /// sToPop is a member of block, and can be or is the first statement. We see if we can pop it up
+        /// a level, and then start a scan for an equivalent statement, marching up the list. If we
+        /// find an equivalent statement, we will perform the combination and removal.
+        /// </summary>
+        /// <param name="block">The block of statements that holds sToPop</param>
+        /// <param name="sToPop">The statement to try to up level.</param>
+        /// <param name="previousStatements">Statements before this one in this block. This block might not actually contain this statement, in which case we must have this!</param>
+        private static void FindEquivalentAboveAndCombine(IStatementCompound block, IStatement sToPop, IEnumerable<IStatement> previousStatements = null)
+        {
+            // If we can't get data flow information about a statement, then we can't do anything.
+            var sInfo = sToPop as ICMStatementInfo;
+            if (sInfo == null)
+            {
+                return;
+            }
+
+            // For this next step we need to fetch the list of statements above us. Either it has
+            // been supplied to us, or we will have to generate it.
+            if (previousStatements == null)
+            {
+                previousStatements = block.Statements.TakeWhile(s => s != sInfo).Reverse();
+            }
+
+            // Make sure we can get the statement to the top of the block. As we move it
+            // forward, we want to also see if we can combine it in a straight-up way
+            // with each statement as we go by it.
+            foreach (var prevStatement in previousStatements)
+            {
+                if (MakeStatmentsEquivalent(prevStatement, sToPop))
+                {
+                    return;
+                }
+                if (!StatementCommutes(prevStatement, sToPop))
+                {
+                    return;
+                }
+            }
+
+            // The statement can be moved to the top of the block, and isn't the same as
+            // anything else we passed. Can we pull it out one level?
+            // The key to answering this is: are all the variables it needs defined at the next
+            // level up? And if not, are the missing ones simply declared down here and need to be moved up?
+            var nParent = block.Parent.FindBookingParent();
+            if (nParent == null)
+            {
+                return;
+            }
+
+            var sDependent = sInfo.DependentVariables;
+            var availAtParent = nParent.AllDeclaredVariables.Select(n => n.RawValue).Intersect(sDependent);
+            IEnumerable<string> declaredInBlock = Enumerable.Empty<string>();
+            if (block is IBookingStatementBlock)
+            {
+                declaredInBlock = (block as IBookingStatementBlock).DeclaredVariables.Select(np => np.RawValue).Intersect(sDependent);
+            }
+            if ((availAtParent.Count() + declaredInBlock.Count()) != sDependent.Count())
+            {
+                return;
+            }
+
+            // If we are going to try to lift past a loop, we have to make sure the statement is idempotent.
+            if (block is IStatementLoop && !StatementIdempotent(sToPop))
+            {
+                return;
+            }
+
+            // And the next figure out where we are in the list of statements.
+            var nPrevStatements = nParent.Statements.TakeWhile(ps => ps != block).Reverse();
+
+            // And repeat one level up with some tail recursion!
+            FindEquivalentAboveAndCombine(nParent, sToPop, nPrevStatements);
+        }
+
+        /// <summary>
+        /// See if we can move the statement to the front of the line.
+        /// </summary>
+        /// <param name="statementToMove"></param>
+        /// <param name="statements"></param>
+        /// <returns></returns>
+        private static bool MoveFirst(IStatement statementToMove, IEnumerable<IStatement> statements)
+        {
+            // Walk backwards through previous statements
+            var prevStatements = statements.TakeWhile(s => s != statementToMove).Reverse();
+
+            // See if we can move.
+            foreach (var s in prevStatements)
+            {
+                if (!StatementCommutes(s, statementToMove))
+                {
+                    return false;
+                }
+            }
+
+            // If we can commute everywhere, then we are done!
+            return true;
         }
 
         /// <summary>
