@@ -1468,11 +1468,11 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             var lines = query.DumpCode().SelectMany(l => l.Split('(', ')', '.')).Where(s => s == "Phi").Count();
-            Assert.AreEqual(1, lines, "# of Phi occurances");
+            Assert.AreEqual(1, lines, "# of Phi occurrences");
 
             var phiLine = query.DumpCode().Where(l => l.Contains("Phi()")).FirstOrDefault();
             Assert.IsNotNull(phiLine, "no phi call line");
-            Assert.IsTrue(phiLine.Trim().StartsWith("double"), "does not start with double decl: " + phiLine.Trim());
+            Assert.IsTrue(phiLine.Trim().StartsWith("aDouble"), "does not start with double declaration: " + phiLine.Trim());
         }
 
         [TestMethod]
