@@ -144,12 +144,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Optimize.
 
-            Console.WriteLine("Before optimization:");
-            gc.DumpCodeToConsole();
-            Console.WriteLine("");
-            CommonStatementLifter.Optimize(gc);
-            Console.WriteLine("After optimization:");
-            gc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(gc);
 
             var firstMention = gc.DumpCode().TakeWhile(l => !l.Contains("aInt32_4=1")).Count();
             var secondMetnion = gc.DumpCode().SkipWhile(l => !l.Contains("aInt32_4=1")).Skip(1).Where(l => l.Contains("aInt32_4")).Count();
@@ -508,7 +503,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// is ok to lift it. I wonder if the normal compiler would do that?
         /// </summary>
         [TestMethod]
-        public void TestIdenticalIfsGetLifted()
+        public void TestIdenticalNestedIfsGetLifted()
         {
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
@@ -530,8 +525,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            CommonStatementLifter.Optimize(cc);
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(cc);
 
             var block1 = cc.QueryCode().First();
             var firstFilter = block1.Statements.First() as StatementFilter;
@@ -587,11 +581,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(p1);
 
             var ifstatement1 = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement1);
             var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
-            gc.Add(p1);
             gc.Add(assign2);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)));
@@ -615,8 +609,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            CommonStatementLifter.Optimize(cc);
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(cc);
 
             var block1 = cc.QueryCode().First();
             var firstAssignment = block1.Statements.First() as StatementAssign;
@@ -713,17 +706,10 @@ namespace LINQToTTreeLib.Tests.Optimization
             query2.DumpCodeToConsole();
 
             var query = CombineQueries(query1, query2);
-            Console.WriteLine("Unoptimized");
-            query.DumpCodeToConsole();
             Assert.IsTrue(query.CheckCodeBlock(), "combined query ok");
 
-            CommonStatementLifter.Optimize(query);
+            DoOptimizationAndConsoleDump(query);
             Assert.IsTrue(query.CheckCodeBlock(), "optimzied combined query ok");
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("After optimization...");
-            Console.WriteLine();
-            query.DumpCodeToConsole();
 
             // We test for this by making sure the "abs" function is called only twice in
             // the generated code.
@@ -906,7 +892,6 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Make sure lift occurs when identical loops are present, but in reverse order.
         /// 1. if statement
         /// 2.   loop A
-        /// 3.   statement
         /// 4. loop A
         /// In this case loop A can be removed.
         /// Normally, this can't be lifted as we don't want to lift things out of an
@@ -924,13 +909,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Pop();
             var c1 = StatementLifterTest.AddLoop(gc);
 
-            Console.WriteLine("Before lifting and optimization: ");
-            gc.DumpCodeToConsole();
-
-            CommonStatementLifter.Optimize(gc);
-
-            Console.WriteLine("After lifting and optimization: ");
-            gc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(gc);
 
             // Now check that things happened as we would expect them to happen.
             Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
@@ -938,10 +917,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
             Assert.IsNotNull(ifStatement, "Finding if statement");
-            Assert.AreEqual(1, ifStatement.Statements.Count(), "# of statements inside the if statement");
-            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAssign));
-            var ass = ifStatement.Statements.First() as StatementAssign;
-            Assert.AreEqual($"{c1.RawValue}+{c1.RawValue}", ass.Expression.RawValue);
+            Assert.AreEqual(0, ifStatement.Statements.Count(), "# of statements inside the if statement");
             Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of variables declared");
             Assert.AreEqual(c1.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "Counter is declared.");
         }
@@ -1035,7 +1011,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Make the output and test a little more uniform.
         /// </summary>
         /// <param name="gc"></param>
-        private static void DoOptimizationAndConsoleDump(GeneratedCode gc)
+        private static void DoOptimizationAndConsoleDump(IExecutableCode gc)
         {
             Console.WriteLine("Before Optimization");
             Console.WriteLine("");
@@ -1325,14 +1301,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            Console.WriteLine("Before optimization:");
-            cc.DumpCodeToConsole();
-
-            CommonStatementLifter.Optimize(cc);
-
-            Console.WriteLine();
-            Console.WriteLine("After optimization:");
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(gc);
 
             var block1 = cc.QueryCode().First().Statements.Skip(2).FirstOrDefault();
             Assert.IsInstanceOfType(block1, typeof(StatementFilter));
@@ -1366,14 +1335,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            Console.WriteLine("Before optimization:");
-            cc.DumpCodeToConsole();
-
-            CommonStatementLifter.Optimize(cc);
-
-            Console.WriteLine();
-            Console.WriteLine("After optimization:");
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(cc);
 
             var block1 = cc.QueryCode().First().Statements.Skip(2).FirstOrDefault();
             Assert.IsInstanceOfType(block1, typeof(StatementFilter));

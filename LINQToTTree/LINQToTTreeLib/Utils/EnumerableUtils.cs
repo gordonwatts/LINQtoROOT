@@ -121,5 +121,42 @@ namespace LINQToTTreeLib.Utils
                 }
             }
         }
+
+        /// <summary>
+        /// Run through a iterator, and if the iterator is modified under us (and throws), just
+        /// re-run from the start.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> RetryFromStartIfModified<T>(this IEnumerable<T> source)
+            where T : class
+        {
+            bool done = false;
+            while (!done)
+            {
+                var next = source.GetEnumerator();
+                while (!done)
+                {
+                    T obj = default(T);
+                    try
+                    {
+                        done = !next.MoveNext();
+                        if (!done)
+                        {
+                            obj = next.Current;
+                        }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        break;
+                    }
+                    if (!done)
+                    {
+                        yield return obj;
+                    }
+                }
+            }
+        }
     }
 }

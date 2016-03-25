@@ -32,7 +32,7 @@ namespace LINQToTTreeLib.Optimization
         private static void VisitCodeBlock(IStatementCompound block)
         {
             // Do decent first scan.
-            foreach (var s in block.Statements.RetryIfModified())
+            foreach (var s in block.Statements.RetryFromStartIfModified())
             {
                 if (s is IStatementCompound)
                 {
@@ -45,7 +45,7 @@ namespace LINQToTTreeLib.Optimization
             // 1. Be able to move it to the front of whatever block we are in
             // 2. Find a statement previous to this block above us that will combine with it.
 
-            foreach (var s in block.Statements.RetryIfModified())
+            foreach (var s in block.Statements.RetryFromStartIfModified())
             {
                 FindEquivalentAboveAndCombine(block, s);
             }
@@ -95,7 +95,6 @@ namespace LINQToTTreeLib.Optimization
                 if (!StatementCommutes(prevStatement, sToPop))
                 {
                     madeItToTheFront = false;
-                    return;
                 }
             }
 
