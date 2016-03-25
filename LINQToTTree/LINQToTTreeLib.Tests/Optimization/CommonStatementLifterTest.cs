@@ -946,6 +946,46 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// 1. statement A
+        /// 2. if
+        /// 3.   Statement A
+        /// Where A is idempotent. This lift should occur.
+        /// </summary>
+        [TestMethod]
+        public void LiftSimpleStatementInIfBefore()
+        {
+            Assert.Inconclusive();
+        }
+
+        /// <summary>
+        /// 1. if
+        /// 2.   Statement A
+        /// 3. statement A
+        /// Where A is idempotent. This lift should occur, and statement A should be moved in front of the if statement.
+        /// </summary>
+        [TestMethod]
+        public void LiftSimpleStatementInIfAfter()
+        {
+            Assert.Inconclusive();
+        }
+
+        /// <summary>
+        /// 1. if cond1
+        /// 2.   Statement A
+        /// 3. if cond2
+        /// 4.   if cond 1
+        /// 5.     statement A
+        /// 6.   statement involving result of A
+        /// 7. Second statement involving A
+        /// Should lift that inner if statement.
+        /// </summary>
+        [TestMethod]
+        public void LiftIfStatement()
+        {
+            Assert.Inconclusive();
+        }
+
+        /// <summary>
         /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outer loop one.
         /// It should not be lifted since it will alter the counting!
         /// </summary>
