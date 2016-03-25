@@ -122,6 +122,10 @@ namespace LINQToTTreeLib.Optimization
                             {
                                 if (MakeStatmentsEquivalent(followStatement, sToPop))
                                 {
+                                    // To keep continuity and unitarity, this follow statement now has to be moved before teh betweenStatement!
+                                    var parent = followStatement.Parent as IStatementCompound;
+                                    parent.Remove(followStatement);
+                                    parent.AddBefore(followStatement, betweenStatement);
                                     return;
                                 }
                             }

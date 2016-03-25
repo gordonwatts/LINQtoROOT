@@ -1013,7 +1013,32 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void LiftStatementInAfterWithDependent()
         {
-            Assert.Inconclusive();
+            var gc = new GeneratedCode();
+
+            var pfinal = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var secondAssign = new StatementAssign(pfinal, new ValSimple($"{p.RawValue}*2", typeof(int), new IDeclaredParameter[] { p }));
+            gc.Add(p);
+            gc.Add(pfinal);
+
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: p, addInFirstAfter: secondAssign);
+            AddSimpleAssign(gc, useParam: p, valToAssign: new ValSimple("f1", typeof(int)));
+
+            Console.WriteLine("Before Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Select(s => s.Statements.Count()).First(), "# of statements under if statement");
+            Assert.AreEqual(2, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).Where(s => s is StatementAssign).Count(), "# of statements before if statement (must be assign)");
         }
 
         /// <summary>
@@ -1393,7 +1418,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Helper function to add a conditional statement.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IStatement addInFirst = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
+        private IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IStatement addInFirst = null, IStatement addInFirstAfter = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
         {
             if (mainSettingParam == null)
             {
@@ -1407,6 +1432,8 @@ namespace LINQToTTreeLib.Tests.Optimization
             if (addInFirst != null)
                 gc.Add(addInFirst);
             AddSimpleAssign(gc, valToAssign: new ValSimple("f1", typeof(double)), useParam: mainSettingParam);
+            if (addInFirstAfter != null)
+                gc.Add(addInFirstAfter);
             gc.Pop();
 
             if (doElseClause)
