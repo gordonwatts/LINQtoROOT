@@ -104,8 +104,36 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new ISet<string> DeclaredVariables
+        {
+            get
+            {
+                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
+                r.Add(_counter.RawValue);
+                return r;
+            }
+        }
+
+        /// <summary>
+        /// Can we commute with the expression we are looking at?
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            return !followStatement.ResultVariables.Intersect(_groupArray.Dependants.Select(p => p.RawValue)).Any();
+        }
+
+        /// <summary>
         /// Return the counter that we use to walk over the group items.
         /// </summary>
         public IDeclaredParameter Counter { get { return _counter; } }
+
+        /// <summary>
+        /// This is a loop - any statement we can extract we should.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return true; } }
     }
 }

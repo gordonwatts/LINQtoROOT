@@ -59,7 +59,12 @@ namespace LINQToTTreeLib.Optimization
         /// <param name="block">The block of statements that holds sToPop</param>
         /// <param name="sToPop">The statement to try to up level.</param>
         /// <param name="previousStatements">Statements before this one in this block. This block might not actually contain this statement, in which case we must have this!</param>
-        private static void FindEquivalentAboveAndCombine(IStatementCompound block, IStatement sToPop, IEnumerable<IStatement> previousStatements = null)
+        /// <param name="followingStatements">Statements after this one in this block. This block might not actually contain this statement, in which case we must have this!</param>
+        private static void FindEquivalentAboveAndCombine(IStatementCompound block, IStatement sToPop,
+            IEnumerable<IStatement> previousStatements = null,
+            IEnumerable<IStatement> followingStatements = null,
+            IStatement betweenStatement = null
+            )
         {
             // If we can't get data flow information about a statement, then we can't do anything.
             var sInfo = sToPop as ICMStatementInfo;
@@ -73,11 +78,14 @@ namespace LINQToTTreeLib.Optimization
             if (previousStatements == null)
             {
                 previousStatements = block.Statements.TakeWhile(s => s != sInfo).Reverse();
+                followingStatements = block.Statements.SkipWhile(s => s != sInfo).Skip(1);
+                betweenStatement = sToPop;
             }
 
             // Make sure we can get the statement to the top of the block. As we move it
             // forward, we want to also see if we can combine it in a straight-up way
             // with each statement as we go by it.
+            bool madeItToTheFront = true;
             foreach (var prevStatement in previousStatements)
             {
                 if (MakeStatmentsEquivalent(prevStatement, sToPop))
@@ -86,8 +94,47 @@ namespace LINQToTTreeLib.Optimization
                 }
                 if (!StatementCommutes(prevStatement, sToPop))
                 {
+                    madeItToTheFront = false;
                     return;
                 }
+            }
+
+            // Next, lets see if there isn't a statement *after* this one that we can combine it with. However,
+            // to do this, we have to move the statements *after* forward previous to this one. So a little painful.
+            // No need to do this if we working at the level of the statement: this ground will automatically be covered
+            // later in the loop.
+            if (betweenStatement != sToPop && betweenStatement is ICMCompoundStatementInfo)
+            {
+                foreach (var followStatement in followingStatements)
+                {
+                    if (followStatement is ICMStatementInfo)
+                    {
+                        // Can we commute this statement from where it is to before the statement we are working on?
+                        if (StatementCommutes(followStatement, followingStatements.TakeWhile(f => f != followStatement).Reverse()))
+                        {
+                            // Next is the tricky part. We are now sitting one down from the block that contains
+                            // the sToPop statement. Can we move it up above the block? If the statements are the same,
+                            // then we know it is ok to move it pass all the contets of the block (otherwise we would not be here).
+                            // But what if it is an if statement, and the if statement depends on somethign in sToPop? Then
+                            // we can't move it.
+                            var betweenAsBlock = betweenStatement as ICMCompoundStatementInfo;
+                            if (betweenAsBlock.CommutesWithGatingExpressions(followStatement as ICMStatementInfo))
+                            {
+                                if (MakeStatmentsEquivalent(followStatement, sToPop))
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Now the only option left is to pop it up one level. We can do that only if we were able to
+            // shift the statement all the way to the front.
+            if (!madeItToTheFront)
+            {
+                return;
             }
 
             // The statement can be moved to the top of the block, and isn't the same as
@@ -120,9 +167,10 @@ namespace LINQToTTreeLib.Optimization
 
             // And the next figure out where we are in the list of statements.
             var nPrevStatements = nParent.Statements.TakeWhile(ps => ps != block).Reverse();
+            var nFollowStatements = nParent.Statements.SkipWhile(ps => ps != block).Skip(1);
 
             // And repeat one level up with some tail recursion!
-            FindEquivalentAboveAndCombine(nParent, sToPop, nPrevStatements);
+            FindEquivalentAboveAndCombine(nParent, sToPop, nPrevStatements, nFollowStatements, block);
         }
 
         /// <summary>

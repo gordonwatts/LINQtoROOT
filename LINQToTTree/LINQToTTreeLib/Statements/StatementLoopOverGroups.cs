@@ -98,6 +98,29 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new ISet<string> DeclaredVariables
+        {
+            get
+            {
+                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
+                r.Add(_groupIndex.RawValue);
+                return r;
+            }
+        }
+
+        /// <summary>
+        /// Can we move a statement past the for loop?
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            return !followStatement.ResultVariables.Intersect(_mapOfGroups.Dependants.Select(p => p.RawValue)).Any();
+        }
+
+        /// <summary>
         /// Return the group key reference - so this is the key that is currently being processed.
         /// </summary>
         public IValue GroupKeyReference
@@ -123,5 +146,11 @@ namespace LINQToTTreeLib.Statements
         /// Get the index that we are currently using for looping
         /// </summary>
         public DeclarableParameter IndexVariable { get { return _groupIndex; } }
+
+        /// <summary>
+        /// We are a straight up loop, so we want every statement out of our interior that
+        /// we can get out!
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return true; } }
     }
 }

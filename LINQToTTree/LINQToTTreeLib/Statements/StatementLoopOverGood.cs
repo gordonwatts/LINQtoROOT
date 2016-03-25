@@ -2,6 +2,8 @@
 using LinqToTTreeInterfacesLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -42,6 +44,11 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Since statements are protected by an if, we shouldn't let them float out of the block.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
+
+        /// <summary>
         /// Render the loop and if statement...
         /// </summary>
         /// <returns></returns>
@@ -58,6 +65,19 @@ namespace LINQToTTreeLib.Statements
             }
             yield return "  }";
             yield return "}";
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new ISet<string> DeclaredVariables
+        {
+            get
+            {
+                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
+                r.Add(_index.RawValue);
+                return r;
+            }
         }
 
         /// <summary>
@@ -104,6 +124,17 @@ namespace LINQToTTreeLib.Statements
             _indiciesToCheck.RenameRawValue(origName, newName);
 
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// Check to see if we can get past the various statements.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsAffected = followStatement.ResultVariables.Intersect(_indexIsGood.Dependants.Concat(_indiciesToCheck.Dependants).Select(p => p.RawValue));
+            return !varsAffected.Any();
         }
     }
 }

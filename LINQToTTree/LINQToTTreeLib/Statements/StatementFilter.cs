@@ -18,6 +18,12 @@ namespace LINQToTTreeLib.Statements
         public IValue TestExpression { get; private set; }
 
         /// <summary>
+        /// We don't want to bubble up statements normally from here. Protected by an if statement usually means
+        /// that we are doing it for a good reason.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
+
+        /// <summary>
         /// testExpression is what we test against to see if we should fire!
         /// </summary>
         /// <param name="testExpression"></param>
@@ -123,6 +129,12 @@ namespace LINQToTTreeLib.Statements
         {
             TestExpression.RenameRawValue(origName, newName);
             RenameBlockVariables(origName, newName);
+        }
+
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsImpacted = followStatement.ResultVariables.Intersect(TestExpression.Dependants.Select(s => s.RawValue));
+            return !varsImpacted.Any();
         }
     }
 }

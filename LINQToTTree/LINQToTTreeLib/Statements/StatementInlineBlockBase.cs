@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.Statements
     /// does not add extra statements inside this block - but it might have something like
     /// an "if" statement around the contents of the block.
     /// </summary>
-    public abstract class StatementInlineBlockBase : IBookingStatementBlock
+    public abstract class StatementInlineBlockBase : IBookingStatementBlock, ICMCompoundStatementInfo
     {
         /// <summary>
         /// The list of statements in this block.
@@ -429,6 +429,30 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// Override to decide how to bubble up items
+        /// </summary>
+        public abstract bool AllowNormalBubbleUp { get; }
+
+        /// <summary>
+        /// Return a list of declared variables
+        /// </summary>
+        ISet<string> ICMCompoundStatementInfo.DeclaredVariables
+        {
+            get
+            {
+                return DeclaredVariables.Select(s => s.RawValue).ToHashSet();
+            }
+        }
+
+        /// <summary>
+        /// If there is no expression surrounding, then return true. Otherwise, one will
+        /// have to carefully double check!
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public abstract bool CommutesWithGatingExpressions(ICMStatementInfo followStatement);
 
         /// <summary>
         /// Figure out which statement occurs first in our sequence.

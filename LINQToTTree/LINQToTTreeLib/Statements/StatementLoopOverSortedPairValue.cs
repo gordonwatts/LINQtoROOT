@@ -51,6 +51,11 @@ namespace LINQToTTreeLib.Statements
             get { return _mapRecords.First().indexVariable; }
         }
 
+        /// <summary>
+        /// We are a loop - anything that can pop out should pop out.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
+
         private struct mapPlaybackInfo
         {
             /// <summary>
@@ -203,6 +208,33 @@ namespace LINQToTTreeLib.Statements
             }
 
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new ISet<string> DeclaredVariables
+        {
+            get
+            {
+                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
+                foreach (var saver in _mapRecords)
+                {
+                    r.Add(saver.indexVariable.RawValue);
+                }
+                return r;
+            }
+        }
+
+        /// <summary>
+        /// Can we get past the loop controls? This is a bit of a mess.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var dependentVariables = _mapRecords.SelectMany(m => m.mapRecords.Dependants).Select(s => s.RawValue);
+            return !followStatement.ResultVariables.Intersect(dependentVariables).Any();
         }
 
         /// <summary>

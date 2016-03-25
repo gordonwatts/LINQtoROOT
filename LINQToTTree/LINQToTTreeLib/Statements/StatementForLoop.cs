@@ -171,10 +171,21 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Check to see if the statement commutes with our loop expression.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varInConflict = followStatement.ResultVariables.Intersect(ArrayLength.Dependants.Select(s => s.RawValue));
+            return !varInConflict.Any();
+        }
+
+        /// <summary>
         /// Allow statements to automatically bubble up past us. Anything we
         /// can get rid of is a good thing!
         /// </summary>
-        public bool AllowNormalBubbleUp
+        public override bool AllowNormalBubbleUp
         {
             get { return true; }
         }

@@ -34,6 +34,15 @@ namespace LINQToTTreeLib.Statements
             get { return new IDeclaredParameter[] { index1, index2 }; }
         }
 
+        /// <summary>
+        /// This is a straight up double loop. Anything common in here should be extracted!
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return true; } }
+
+        /// <summary>
+        /// Generate the code.
+        /// </summary>
+        /// <returns></returns>
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
             if (Statements.Any())
@@ -48,6 +57,20 @@ namespace LINQToTTreeLib.Statements
                 }
                 yield return "  }";
                 yield return "}";
+            }
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new ISet<string> DeclaredVariables
+        {
+            get
+            {
+                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
+                r.Add(index1.RawValue);
+                r.Add(index2.RawValue);
+                return r;
             }
         }
 
@@ -94,5 +117,14 @@ namespace LINQToTTreeLib.Statements
             RenameBlockVariables(origName, newName);
         }
 
+        /// <summary>
+        /// Check to see if we can move past the loop limits.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            return !followStatement.ResultVariables.Intersect(arrayRecord.Dependants.Select(p => p.RawValue)).Any();
+        }
     }
 }

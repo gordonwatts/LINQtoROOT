@@ -12,6 +12,11 @@ namespace LINQToTTreeLib.Statements
     public class StatementInlineBlock : StatementInlineBlockBase
     {
         /// <summary>
+        /// Any statement can pop out that wants to - nothing is protected.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return true; } }
+
+        /// <summary>
         /// Return this translated to code, inside curly braced. First variable decl and then the statements.
         /// </summary>
         /// <returns></returns>
@@ -55,6 +60,16 @@ namespace LINQToTTreeLib.Statements
         public override void RenameVariable(string originalName, string newName)
         {
             RenameBlockVariables(originalName, newName);
+        }
+
+        /// <summary>
+        /// Since there is no gateway check like an if statement, this is automatically true.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            return true;
         }
     }
 }

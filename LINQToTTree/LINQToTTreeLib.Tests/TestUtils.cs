@@ -45,9 +45,22 @@ namespace LINQToTTreeLib.Tests
                 throw new NotImplementedException();
             }
 
+            public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+            {
+                throw new NotImplementedException();
+            }
+
             public IEnumerable<IDeclaredParameter> LoopIndexVariable
             {
                 get { throw new NotImplementedException(); }
+            }
+
+            public override bool AllowNormalBubbleUp
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 

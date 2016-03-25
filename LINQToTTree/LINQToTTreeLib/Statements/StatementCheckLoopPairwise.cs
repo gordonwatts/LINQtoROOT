@@ -2,6 +2,8 @@
 using LinqToTTreeInterfacesLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -55,6 +57,11 @@ namespace LINQToTTreeLib.Statements
         {
             get { return new IDeclaredParameter[] { _index1, _index2 }; }
         }
+
+        /// <summary>
+        /// Statements inside are protected by if statements, so we shouldn't let them bubble up when they like.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
 
         /// <summary>
         /// Return the code to implement this
@@ -163,6 +170,31 @@ namespace LINQToTTreeLib.Statements
             _indciesToInspect.RenameParameter(origName, newName);
 
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new ISet<string> DeclaredVariables
+        {
+            get
+            {
+                var r = new HashSet<string>(base.DeclaredVariables.Select(v => v.RawValue));
+                r.Add(_index1.RawValue);
+                r.Add(_index2.RawValue);
+                return r;
+            }
+        }
+
+        /// <summary>
+        /// Do we commute with the gateway expressions?
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsUsed = followStatement.ResultVariables.Intersect(_whatIsGood.Dependants.Concat(_indciesToInspect.Dependants).Select(p => p.RawValue));
+            return !varsUsed.Any();
         }
     }
 }

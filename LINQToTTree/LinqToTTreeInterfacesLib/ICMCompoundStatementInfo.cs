@@ -19,5 +19,14 @@ namespace LinqToTTreeInterfacesLib
         /// All variables declared by this guy.
         /// </summary>
         ISet<string> DeclaredVariables { get; }
+
+        /// <summary>
+        /// Blocks, like if statements or for statements, have a statement that is at the top of the block.
+        /// Sometimes we need to move an expression beyond that, and double check it can just commute with
+        /// that expression.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        bool CommutesWithGatingExpressions(ICMStatementInfo followStatement);
     }
 }

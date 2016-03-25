@@ -35,6 +35,11 @@ namespace LINQToTTreeLib.Statements
         public ComparisonOperator Comparison { get; private set; }
 
         /// <summary>
+        /// Don't let statements just buble up on their own as they are protected by an if statement.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
+
+        /// <summary>
         /// Create with value1 comp value2 - if that is true, then we will execute our
         /// inner statements and declarations.
         /// </summary>
@@ -138,6 +143,17 @@ namespace LINQToTTreeLib.Statements
             Counter.RenameRawValue(origName, newName);
             Limit.RenameRawValue(origName, newName);
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// If the statement doesn't alter anything in the block, then no problem.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsAffected = followStatement.ResultVariables.Intersect(Limit.Dependants.Select(s => s.RawValue));
+            return !varsAffected.Any();
         }
     }
 }

@@ -954,7 +954,24 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void LiftSimpleStatementInIfBefore()
         {
-            Assert.Inconclusive();
+            var gc = new GeneratedCode();
+            var p = AddSimpleAssign(gc, valToAssign: new ValSimple("f1", typeof(int)));
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: p);
+
+            Console.WriteLine("Before Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(0, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Select(s => s.Statements.Count()).First(), "# of statements under if statement");
         }
 
         /// <summary>
@@ -965,6 +982,49 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// </summary>
         [TestMethod]
         public void LiftSimpleStatementInIfAfter()
+        {
+            var gc = new GeneratedCode();
+            var p = AddConditionalExpr(gc, doElseClause: false);
+            AddSimpleAssign(gc, useParam: p, valToAssign: new ValSimple("f1", typeof(int)));
+
+            Console.WriteLine("Before Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(0, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Select(s => s.Statements.Count()).First(), "# of statements under if statement");
+        }
+
+        /// <summary>
+        /// 1. if B
+        /// 2.   statement A
+        /// 3.   dependent on A
+        /// 4. statement A
+        /// If A can commute with if, it should be put on top of if.
+        /// </summary>
+        [TestMethod]
+        public void LiftStatementInAfterWithDependent()
+        {
+            Assert.Inconclusive();
+        }
+
+        /// <summary>
+        /// 1. if A
+        /// 2.   statement A
+        /// 3.   dependent on A
+        /// 4. statement A
+        /// If A cannot commute with A, then we can't move statement A up, and we have to leave it, no lifting should occur.
+        /// </summary>
+        [TestMethod]
+        public void LiftStatementInAfterWithDependentInIfStatement()
         {
             Assert.Inconclusive();
         }
@@ -1333,30 +1393,60 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Helper function to add a conditional statement.
         /// </summary>
         /// <param name="gc"></param>
-        private void AddConditionalExpr(GeneratedCode gc, IStatement addInFirst = null, IStatement addInSecond = null)
+        private IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IStatement addInFirst = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
         {
-            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
-            gc.Add(p1);
+            if (mainSettingParam == null)
+            {
+                mainSettingParam = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+                gc.Add(mainSettingParam);
+            }
 
-            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)));
-            gc.Add(p2);
-            gc.Add(assignp2);
+            var p2 = AddSimpleAssign(gc, valToAssign: new ValSimple("f", typeof(bool)));
             var ifstatement = new StatementFilter(p2);
             gc.Add(ifstatement);
             if (addInFirst != null)
                 gc.Add(addInFirst);
-            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)));
-            gc.Add(assign3);
+            AddSimpleAssign(gc, valToAssign: new ValSimple("f1", typeof(double)), useParam: mainSettingParam);
             gc.Pop();
 
-            gc.Add(new StatementFilter(new ValSimple("!" + p2.ParameterName, typeof(bool))));
-            gc.Add(new StatementAssign(p1, new ValSimple("f2", typeof(double))));
-            if (addInSecond != null)
+            if (doElseClause)
             {
-                gc.Add(addInSecond);
+                gc.Add(new StatementFilter(new ValSimple("!" + p2.ParameterName, typeof(bool))));
+                AddSimpleAssign(gc, useParam: mainSettingParam, valToAssign: new ValSimple("f2", typeof(double)));
+                if (addInSecond != null)
+                {
+                    gc.Add(addInSecond);
+                }
+                gc.Pop();
             }
-            gc.Pop();
+
+            return mainSettingParam;
+        }
+
+        /// <summary>
+        /// Add a simple assign statement
+        /// </summary>
+        /// <param name="gc"></param>
+        /// <param name="useParam"></param>
+        /// <param name="valToAssign"></param>
+        /// <returns></returns>
+        private IDeclaredParameter AddSimpleAssign(GeneratedCode gc, IDeclaredParameter useParam = null, IValue valToAssign = null, Type t = null)
+        {
+            if (useParam == null)
+            {
+                useParam = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                gc.Add(useParam);
+            }
+            if (t == null)
+            {
+                t = typeof(int);
+            }
+            if (valToAssign == null)
+            {
+                valToAssign = new ValSimple("f1", t, null);
+            }
+            gc.Add(new StatementAssign(useParam, valToAssign));
+            return useParam;
         }
 
         /// <summary>
