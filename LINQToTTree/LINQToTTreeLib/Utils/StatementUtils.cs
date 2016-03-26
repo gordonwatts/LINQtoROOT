@@ -46,6 +46,17 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
+        /// Find a parent that is a booking block. Return null otherwise.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static IStatementCompound FindCompoundParent(this IStatement s)
+        {
+            return s.WalkParents(false)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
         /// Return the parents of this statement.
         /// </summary>
         /// <param name="s"></param>
@@ -268,6 +279,74 @@ namespace LINQToTTreeLib.Utils
             var h = new HashSet<Tuple<string, string>>(exceptList);
             var filteredList = s.Item2.Where(p => !h.Contains(p)).ToArray();
             return Tuple.Create(true, filteredList as IEnumerable<Tuple<string, string>>);
+        }
+
+        /// <summary>
+        /// Return all statements before this one. we march to the start of each block, and then up, and then all ones previous to that. Each time we go
+        /// up a level we ignore that one.
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        internal static IEnumerable<IStatement> AllStatementsPrevious (this IStatement statement)
+        {
+            var parent = statement.FindCompoundParent();
+            if (parent != null)
+            {
+                var statements = parent.Statements.TakeWhile(s => s != statement).Reverse();
+
+                foreach (var s in statements)
+                {
+                    yield return s;
+                }
+
+                // Now, go up one.
+                foreach (var s in statement.Parent.AllStatementsPrevious())
+                {
+                    yield return s;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return all statements after this one
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
+        internal static IEnumerable<IStatement> AllStatementsAfter (this IStatement statement)
+        {
+            var parent = statement.FindCompoundParent();
+            if (parent != null)
+            {
+                var statements = parent.Statements.SkipWhile(s => s != statement).Skip(1);
+
+                foreach (var s in statements)
+                {
+                    yield return s;
+                }
+
+                // Now, go up one.
+                foreach (var s in statement.Parent.AllStatementsAfter())
+                {
+                    yield return s;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Look to see if any of the variables names that are results are being used by these folks.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="varnames"></param>
+        /// <returns></returns>
+        internal static bool CheckForVariableAsReult (this IStatement s, IEnumerable<string> varnames)
+        {
+            // If we can't look, assume the worst, and that it is a result.
+            if (!(s is ICMStatementInfo))
+                return true;
+
+            var resultVariables = (s as ICMStatementInfo).ResultVariables;
+            var common = resultVariables.Intersect(varnames);
+            return common.Count() != 0;
         }
     }
 }

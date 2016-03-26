@@ -100,7 +100,17 @@ namespace LINQToTTreeLib.Optimization
                     return false;
                 }
 
-                // Remove te statement, and then do the renaming.
+                // Key to altering this is that this is the only site that allows modifications for these
+                // variables that we are going to rename. If there are more than one, then we can't modify
+                // unless we somehow know the modifications are identical.
+
+                if (CheckForVariableAsResult(s2, r.Item2.Select(i => i.Item1))
+                    || CheckForVariableAsResult(s1, r.Item2.Select(i => i.Item2)))
+                {
+                    return false;
+                }
+
+                // Remove the statement, and then do the renaming.
                 var opt = new BlockRenamer(s2Parent, s1Parent);
                 s2Parent.Remove(s2);
                 foreach (var item in r.Item2)
@@ -111,6 +121,24 @@ namespace LINQToTTreeLib.Optimization
 
                 return true;
             }
+            return false;
+        }
+
+        /// <summary>
+        /// Given a statement, check to see if somewhere else the variable is modified or altered, both before or after
+        /// the current statement.
+        /// </summary>
+        /// <param name="s2"></param>
+        /// <param name="variables"></param>
+        /// <returns>true if it was used as a result somewhere else, false otherwise</returns>
+        private static bool CheckForVariableAsResult(IStatement s2, IEnumerable<string> variables)
+        {
+            if (s2.AllStatementsPrevious().Select(s => s.CheckForVariableAsReult(variables)).Where(t => t).Any())
+                return true;
+
+            if (s2.AllStatementsAfter().Select(s => s.CheckForVariableAsReult(variables)).Where(t => t).Any())
+                return true;
+
             return false;
         }
 

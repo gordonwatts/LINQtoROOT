@@ -177,7 +177,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             DoOptimizationAndConsoleDump(gc);
 
-            Assert.AreEqual(3, gc.CodeBody.Statements.WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
+            Assert.AreEqual(3, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
             Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
             Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
 
@@ -205,7 +205,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             DoOptimizationAndConsoleDump(gc);
 
-            Assert.AreEqual(3, gc.CodeBody.Statements.WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
+            Assert.AreEqual(3, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
             Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
             Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
         }
@@ -1340,6 +1340,39 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(string.Format("int {0}=-1;", varname), firstMention.Trim(), "aint32_23 decl");
         }
 
+#if false
+        Here is the code this generates:
+    {
+      double aDouble_4=0;
+      int aInt32_5=0;
+      if (i)
+      {
+        double aDouble_2=0;
+        int aInt32_3=0;
+        aInt32_3=f;
+        if (aInt32_3)
+        {
+          aDouble_2=f1;
+        }
+        if (!aInt32_3)
+        {
+          aDouble_2=f2;
+        }
+      }
+      aInt32_5=f;
+      if (aInt32_5)
+      {
+        aDouble_4=f1;
+      }
+      if (!aInt32_5)
+      {
+        aDouble_4=f2;
+      }
+    }
+
+        Note that the two sets of if statements have to both be identical. The code doesn't recognize pairs yet, so
+        this is impossible (e.g. think about what if the second aDouble_4 was f3 instead of f2).
+
         /// <summary>
         /// Seen in the wild. A lift leaves behind multiple assignment statements that look identical.
         /// </summary>
@@ -1373,6 +1406,41 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(ifStatementI);
             Assert.AreEqual(0, ifStatementI.Statements.Count());
         }
+#endif
+
+#if false
+        Here is the code this generates:
+    {
+      double aDouble_4=0;
+      int aInt32_5=0;
+      if (i)
+      {
+        double aDouble_2=0;
+        int aInt32_3=0;
+        aInt32_3=f;
+        if (aInt32_3)
+        {
+          aDouble_2=f1;
+        }
+        if (!aInt32_3)
+        {
+          aDouble_2=f2;
+        }
+      }
+      aInt32_5=f;
+      if (aInt32_5)
+      {
+        aDouble_4=f1;
+      }
+      if (!aInt32_5)
+      {
+        aDouble_4=f2;
+      }
+    }
+
+        The optimization only works if *both* if statements are the same. If the second one had aDouble_4=f3 instead of f2, then
+        this wouldn't work. If these two if statements could be gathered into a single statement (if/else), then this combination
+        could be done. Since it is more complex than the code is currently intended to solve, we will remove this test.
 
         [TestMethod]
         public void DuplicateIfStatementWithExtraInnerLineAtEnd()
@@ -1407,6 +1475,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(ifStatementI);
             Assert.AreEqual(1, ifStatementI.Statements.Count());
         }
+#endif
 
         [TestMethod]
         public void DuplicateIfStatementWithExtraInnerLineIfDeepIf()

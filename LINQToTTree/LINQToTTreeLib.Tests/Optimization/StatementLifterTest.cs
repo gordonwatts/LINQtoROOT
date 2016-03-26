@@ -266,11 +266,11 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// <summary>
         /// Distilled from something we found in the wild.
         /// 1. Statement
-        /// 2. Non ICM Loop/compound statement (like any inline block, I guess)
+        /// 2. ICM Loop/compound statement (like any inline block, I guess)
         /// 3.   Loop
         /// 4.     Statement with no side effects
         /// 
-        /// 3 can get lifted past 2, but not above...
+        /// 4 can get lifted past 2, but not across #1 if we don't know about it.
         /// </summary>
         [TestMethod]
         public void TestLoopBelowNonLoopBlockNoSideEffects()
@@ -285,12 +285,28 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             v.Add(new StatementWithNoSideEffects());
 
-            StatementLifter.Optimize(v);
+            DoOptimizeTest(v);
 
             var firstStatement = v.CodeBody.Statements.First();
             Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
             var secondStatement = v.CodeBody.Statements.Skip(1).First();
-            Assert.IsInstanceOfType(secondStatement, typeof(StatementInlineBlock), "Second statement");
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementWithNoSideEffects), "Second statement");
+        }
+
+        private static void DoOptimizeTest(GeneratedCode v)
+        {
+            Console.WriteLine("Before Optimization:");
+            Console.WriteLine("");
+            v.DumpCodeToConsole();
+
+            StatementLifter.Optimize(v);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization:");
+            Console.WriteLine("");
+            v.DumpCodeToConsole();
         }
 
         /// <summary>
@@ -298,9 +314,9 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// 1. Statement
         /// 2. Non ICM Loop/compound statement (like any inline block, I guess)
         /// 3.   Loop
-        /// 4.     Statement with no side effects
+        /// 4.     Idempotent Statement with no side effects
         /// 
-        /// 3 can get lifted past 2, but not above...
+        /// 4 can get lifted past 2, but not above...
         /// </summary>
         [TestMethod]
         public void TestLoopBelowNonLoopBlockSideEffectsNotImportant()
@@ -316,12 +332,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             var lnp = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             v.Add(new StatementWithSideEffects(lnp));
 
-            StatementLifter.Optimize(v);
+            DoOptimizeTest(v);
 
             var firstStatement = v.CodeBody.Statements.First();
             Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
             var secondStatement = v.CodeBody.Statements.Skip(1).First();
-            Assert.IsInstanceOfType(secondStatement, typeof(StatementInlineBlock), "Second statement");
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementWithSideEffects), "Second statement");
         }
 
         /// <summary>
@@ -607,7 +623,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var for2 = new StatementForLoop(fc2, new ValSimple("5", typeof(int)));
             gc.Add(for2);
 
-            // Now, calc based only on fc1
+            // Now, calculation based only on fc1
             var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ass1 = new StatementAssign(a1, new ValSimple($"{fc1}*2", typeof(int), new IDeclaredParameter[] { fc1 }));
             gc.Add(ass1);
@@ -866,12 +882,12 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public ISet<string> DependentVariables
             {
-                get { throw new NotImplementedException(); }
+                get { return new HashSet<string>(); }
             }
 
             public ISet<string> ResultVariables
             {
-                get { throw new NotImplementedException(); }
+                get { return new HashSet<string>(); }
             }
 
             public bool NeverLift
@@ -883,7 +899,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestCodeWithDoubleIndex()
         {
-            // Looking for two loops, and the Calc function should be moved outside
+            // Looking for two loops, and the calculation function should be moved outside
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
@@ -922,7 +938,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestCodeWithDoubleIndexAndFunction()
         {
-            // Looking for two loops, and the Calc function should be moved outside
+            // Looking for two loops, and the calculation function should be moved outside
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
@@ -1090,7 +1106,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var linesOfCode = query.DumpCode().TakeWhile(l => !l.Contains("aNTLorentzVector_11).Phi"));
             var openBrackets = linesOfCode.Where(l => l.Contains("{")).Count();
             var closeBrackets = linesOfCode.Where(l => l.Contains("}")).Count();
-            Assert.AreEqual(openBrackets, closeBrackets, "#of of nesting levesl for the Phi call");
+            Assert.AreEqual(openBrackets, closeBrackets, "#of nesting levels for the Phi call");
         }
 
         /// <summary>
@@ -1204,7 +1220,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         {
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
             {
-                throw new NotImplementedException();
+                yield return "StatementNonOptimiing";
             }
 
             public void RenameVariable(string originalName, string newName)

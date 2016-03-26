@@ -196,9 +196,25 @@ namespace LINQToTTreeLib.Tests
             var r2 = r1.Count();
             var query2 = DummyQueryExectuor.FinalResult;
 
-            var query = CombineQueries(query1, query2);
+            Console.WriteLine("Query1:");
+            Console.WriteLine();
+            query1.DumpCodeToConsole();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Query2:");
+            Console.WriteLine();
+            query2.DumpCodeToConsole();
 
+            var query = CombineQueries(query1, query2);
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Combined Query:");
+            Console.WriteLine();
             query.DumpCodeToConsole();
+
+            // Check
             CheckSingleDecl(query.DumpCode());
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query code blocks");
