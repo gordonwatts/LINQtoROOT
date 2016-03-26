@@ -113,15 +113,15 @@ namespace LINQToTTreeLib.Optimization
                         {
                             // Next is the tricky part. We are now sitting one down from the block that contains
                             // the sToPop statement. Can we move it up above the block? If the statements are the same,
-                            // then we know it is ok to move it pass all the contets of the block (otherwise we would not be here).
-                            // But what if it is an if statement, and the if statement depends on somethign in sToPop? Then
+                            // then we know it is ok to move it pass all the contents of the block (otherwise we would not be here).
+                            // But what if it is an if statement, and the if statement depends on something in sToPop? Then
                             // we can't move it.
                             var betweenAsBlock = betweenStatement as ICMCompoundStatementInfo;
                             if (betweenAsBlock.CommutesWithGatingExpressions(followStatement as ICMStatementInfo))
                             {
                                 if (MakeStatmentsEquivalent(followStatement, sToPop))
                                 {
-                                    // To keep continuity and unitarity, this follow statement now has to be moved before teh betweenStatement!
+                                    // To keep continuity and unitarity, this follow statement now has to be moved before the betweenStatement!
                                     var parent = followStatement.Parent as IStatementCompound;
                                     parent.Remove(followStatement);
                                     parent.AddBefore(followStatement, betweenStatement);

@@ -61,6 +61,17 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { index1, index2 };
+            }
+        }
+
+        /// <summary>
         /// Return all declared variables in this guy
         /// </summary>
         public override IEnumerable<IDeclaredParameter> DeclaredVariables

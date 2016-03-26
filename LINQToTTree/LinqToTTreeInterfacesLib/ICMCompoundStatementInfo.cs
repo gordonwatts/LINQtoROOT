@@ -28,5 +28,19 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="followStatement"></param>
         /// <returns></returns>
         bool CommutesWithGatingExpressions(ICMStatementInfo followStatement);
+
+        /// <summary>
+        /// Return a list of result variables that are part of the statement. The loop counter in a for loop, for example.
+        /// </summary>
+        /// <remarks>
+        /// For example,
+        /// if you have "for (i = 0; i != 10; i++)" you then have i as an internal result variable.
+        /// It can be folded out such that there is a "i = i + 1" at the end of the list of statements.
+        /// This is important when one is trying to move statements out of the loop: no statement will set
+        /// the loop counter as a result variable (or BAD), but if they depend on it, then we really
+        /// can't lift it past without ramifications. On the other hand, if you trying to lift the whole
+        /// for statement, you don't care about the loop counter as it is "hidden".
+        /// </remarks>
+        IEnumerable<IDeclaredParameter> InternalResultVarialbes { get; }
     }
 }

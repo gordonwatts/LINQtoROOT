@@ -60,6 +60,17 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _groupIndex };
+            }
+        }
+
+        /// <summary>
         /// If we are the same, then combine!
         /// </summary>
         /// <param name="statement"></param>

@@ -127,14 +127,14 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return every single declared variable in the whole hierarchy!
         /// </summary>
-        public IEnumerable<IDeclaredParameter> AllDeclaredVariables
+        public virtual IEnumerable<IDeclaredParameter> AllDeclaredVariables
         {
             get
             {
                 var b = FindBookingParent(Parent);
                 if (b != null)
-                    return _variables.Concat(b.AllDeclaredVariables);
-                return _variables;
+                    return DeclaredVariables.Concat(b.AllDeclaredVariables);
+                return DeclaredVariables;
             }
         }
 
@@ -487,6 +487,15 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// List of internal variables. Since it is key not to mess this up, it must be filled by
+        /// all others. If there is no loop etc., then it doesn't matter!
+        /// </summary>
+        public abstract IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get;
+        }
+
+        /// <summary>
         /// If there is no expression surrounding, then return true. Otherwise, one will
         /// have to carefully double check!
         /// </summary>
@@ -521,7 +530,7 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Helper routine. Pass it all renames relavent, and it will do all the testing.
+        /// Helper routine. Pass it all renames relevant, and it will do all the testing.
         /// It will return the FULL rename list, including everything you have passed in!
         /// </summary>
         /// <param name="other"></param>

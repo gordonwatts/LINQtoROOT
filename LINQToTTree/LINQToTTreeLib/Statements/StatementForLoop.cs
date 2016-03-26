@@ -10,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Implement the looping statements to work over some simple counter from zero up to some number.
     /// </summary>
-    public class StatementForLoop : StatementInlineBlockBase, IStatementLoop, ICMCompoundStatementInfo, ICMStatementInfo
+    public class StatementForLoop : StatementInlineBlockBase, IStatementLoop, ICMStatementInfo
     {
         public IValue ArrayLength { get; set; }
         public IValue InitialValue { get; set; }
@@ -72,6 +72,17 @@ namespace LINQToTTreeLib.Statements
                 {
                     yield return l;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _loopVariable };
             }
         }
 
@@ -182,19 +193,6 @@ namespace LINQToTTreeLib.Statements
             {
                 return base.DeclaredVariables
                     .Concat(new IDeclaredParameter[] { _loopVariable });
-            }
-        }
-
-        /// <summary>
-        /// Override AllDeclaredVariables to add on the variables we need here.
-        /// </summary>
-        public new ISet<string> AllDeclaredVariables
-        {
-            get
-            {
-                var r = new HashSet<string>(base.AllDeclaredVariables.Select(v => v.RawValue));
-                r.Add(_loopVariable.RawValue);
-                return r;
             }
         }
 

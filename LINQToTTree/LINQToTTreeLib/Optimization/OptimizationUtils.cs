@@ -133,6 +133,13 @@ namespace LINQToTTreeLib.Optimization
         /// <returns>true if it was used as a result somewhere else, false otherwise</returns>
         private static bool CheckForVariableAsResult(IStatement s2, IEnumerable<string> variables)
         {
+            // Check that we can get past each parental boundary.
+            if (s2.WalkParents(false).Select(s => s.CheckForVariableAsInternalResult(variables)).Where(t => t).Any())
+                return true;
+
+            // Now check that we aren't also going to try to do something with a variable that is
+            // being set somewhere else... that gets into grouping statements which is too much for this
+            // optimizer. :-)
             if (s2.AllStatementsPrevious().Select(s => s.CheckForVariableAsReult(variables)).Where(t => t).Any())
                 return true;
 

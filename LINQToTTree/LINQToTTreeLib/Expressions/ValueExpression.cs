@@ -36,7 +36,6 @@ namespace LINQToTTreeLib.Expressions
         /// The expression type for testing to see if it is a declared variable.
         /// </summary>
         public const ExpressionType ExpressionType = (ExpressionType)110003;
-        private Type _type;
 
         /// <summary>
         /// Return the expression type

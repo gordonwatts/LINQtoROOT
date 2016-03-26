@@ -9,7 +9,7 @@ using System.Linq;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
-    /// A satement that will sort over the arguments to the map variable, and then loop
+    /// A statement that will sort over the arguments to the map variable, and then loop
     /// over them - using as an index the map target.
     /// </summary>
     public class StatementLoopOverSortedPairValue : StatementInlineBlockBase, IStatementLoop
@@ -153,6 +153,17 @@ namespace LINQToTTreeLib.Statements
 
                 yield return "  }";
                 yield return "}";
+            }
+        }
+
+        /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return _mapRecords.Select(mr => mr.indexVariable);
             }
         }
 

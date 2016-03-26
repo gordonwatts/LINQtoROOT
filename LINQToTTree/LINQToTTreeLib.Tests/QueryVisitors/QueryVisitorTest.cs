@@ -385,7 +385,7 @@ namespace LINQToTTreeLib
             var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
-            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.AreEqual(1, outterfloop.DeclaredVariables.Count(), "only the loop index should have been declared in the loop!");
             Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "aggregate statement type");
         }
 
@@ -423,7 +423,7 @@ namespace LINQToTTreeLib
             var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
-            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.AreEqual(1, outterfloop.DeclaredVariables.Count(), "Only the loop index should have been declared in the loop!");
             Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "aggregate statement type");
             var ass = outterfloop.Statements.First() as Statements.StatementAggregate;
             Assert.IsFalse(ass.Expression.RawValue.Contains("(int)j"), "Expression seems to reference the linq variable name j: '" + ass.Expression.RawValue + "'");
@@ -458,7 +458,7 @@ namespace LINQToTTreeLib
             var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
-            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.AreEqual(1, outterfloop.DeclaredVariables.Count(), "Only the loop index should have been declared in the loop!");
             Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementIfOnCount), "if on count incorrect");
 
             var ifcountStatement = outterfloop.Statements.First() as Statements.StatementIfOnCount;
@@ -1131,6 +1131,8 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
+            gc.DumpCodeToConsole();
+
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Expecting only for loop at the top level");
             Assert.IsInstanceOfType(gc.CodeBody.Statements.First(), typeof(IBookingStatementBlock), "vector loop not right");
             var outterfloop = gc.CodeBody.Statements.First() as IBookingStatementBlock;
@@ -1139,7 +1141,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(0, gc.CodeBody.DeclaredVariables.Count(), "Declared variables at the outside loop (the agragate var)");
 
             Assert.AreEqual(1, outterfloop.Statements.Count(), "inner loop statements not set correctly");
-            Assert.AreEqual(0, outterfloop.DeclaredVariables.Count(), "no variables should have been declared in the for loop!");
+            Assert.AreEqual(1, outterfloop.DeclaredVariables.Count(), "Only the loop index should have been declared!");
             Assert.IsInstanceOfType(outterfloop.Statements.First(), typeof(Statements.StatementAggregate), "assignment statement missing");
 
             var ass = outterfloop.Statements.First() as Statements.StatementAggregate;

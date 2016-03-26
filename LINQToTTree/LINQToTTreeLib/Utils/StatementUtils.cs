@@ -348,5 +348,25 @@ namespace LINQToTTreeLib.Utils
             var common = resultVariables.Intersect(varnames);
             return common.Count() != 0;
         }
+
+        /// <summary>
+        /// Look at the internal result variables and see if there is a conflict.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="varnames"></param>
+        /// <returns></returns>
+        internal static bool CheckForVariableAsInternalResult (this IStatement s, IEnumerable<string> varnames)
+        {
+            // If we can't look, assume the worst and that it is used.
+            if (!(s is ICMCompoundStatementInfo))
+            {
+                return true;
+            }
+
+            // Now, look at the internal variables
+            var resultVariables = (s as ICMCompoundStatementInfo).InternalResultVarialbes;
+            var common = resultVariables.Select(p => p.RawValue).Intersect(varnames);
+            return common.Count() != 0;
+        }
     }
 }

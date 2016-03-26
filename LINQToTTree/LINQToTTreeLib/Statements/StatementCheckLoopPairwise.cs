@@ -118,6 +118,17 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _index1, _index2 };
+            }
+        }
+
+        /// <summary>
         /// Return a list of all dependent variables. Will not include the counter
         /// </summary>
         /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>

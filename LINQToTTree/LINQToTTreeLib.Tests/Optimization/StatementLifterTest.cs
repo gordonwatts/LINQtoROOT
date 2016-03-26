@@ -310,6 +310,29 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         [TestMethod]
+        public void NoLiftCombineNestedForLoopsWithCommonCodeCalc()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var res2 = from f in q
+                       from r1 in f.valC1D
+                       from r2 in f.valC1D
+                       where r1 > 2
+                       let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                       let rr2 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r2))
+                       select rr1 + rr2;
+            var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            DoOptimizeTest(query2);
+
+            var for1 = query2.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().First();
+            var for2 = for1.Statements.WhereCast<IStatement, StatementForLoop>().First();
+
+            Assert.AreNotEqual(for1.LoopIndexVariable.First().RawValue, for2.LoopIndexVariable.First().RawValue);
+        }
+
+        [TestMethod]
         public void GroupAndCutInside()
         {
             var q = new QueriableDummy<dummyntup>();

@@ -35,6 +35,17 @@ namespace LINQToTTreeLib.Tests
                 yield return "}";
             }
 
+            /// <summary>
+            /// Return the index variables for this loop.
+            /// </summary>
+            public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+            {
+                get
+                {
+                    return new IDeclaredParameter[] { };
+                }
+            }
+
             public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
             {
                 throw new NotImplementedException();

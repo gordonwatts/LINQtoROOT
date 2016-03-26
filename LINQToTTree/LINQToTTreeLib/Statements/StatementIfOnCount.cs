@@ -35,7 +35,7 @@ namespace LINQToTTreeLib.Statements
         public ComparisonOperator Comparison { get; private set; }
 
         /// <summary>
-        /// Don't let statements just buble up on their own as they are protected by an if statement.
+        /// Don't let statements just bubble up on their own as they are protected by an if statement.
         /// </summary>
         public override bool AllowNormalBubbleUp { get { return false; } }
 
@@ -98,6 +98,16 @@ namespace LINQToTTreeLib.Statements
             }
         }
 
+        /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { };
+            }
+        }
 
         /// <summary>
         /// Return a list of all dependent variables. Will not include the counter

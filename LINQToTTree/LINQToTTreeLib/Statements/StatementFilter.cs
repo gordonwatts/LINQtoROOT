@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.Statements
     public class StatementFilter : StatementInlineBlockBase, ICMStatementInfo
     {
         /// <summary>
-        /// Get the expresion we are going to test
+        /// Get the expression we are going to test
         /// </summary>
         public IValue TestExpression { get; private set; }
 
@@ -62,8 +62,19 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { };
+            }
+        }
+
+        /// <summary>
         /// We filter on one simple thing. If it is the case that the tests are the same,
-        /// (identical), we do the combination, stealing the statemetns from the second one
+        /// (identical), we do the combination, stealing the statements from the second one
         /// for ourselves. No renaming is required as this is a simple test!
         /// </summary>
         /// <param name="statement"></param>
@@ -155,6 +166,12 @@ namespace LINQToTTreeLib.Statements
             RenameBlockVariables(origName, newName);
         }
 
+        /// <summary>
+        /// We have a statement tha twe want to move out of this if statement. Make sure it isn't going to alter
+        /// anything we are looking at in our if statement!
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
         public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
         {
             var varsImpacted = followStatement.ResultVariables.Intersect(TestExpression.Dependants.Select(s => s.RawValue));

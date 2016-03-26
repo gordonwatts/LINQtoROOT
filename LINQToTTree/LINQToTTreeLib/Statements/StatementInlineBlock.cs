@@ -63,6 +63,17 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { };
+            }
+        }
+
+        /// <summary>
         /// Since there is no gateway check like an if statement, this is automatically true.
         /// </summary>
         /// <param name="followStatement"></param>
