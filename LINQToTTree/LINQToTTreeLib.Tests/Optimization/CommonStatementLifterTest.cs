@@ -88,16 +88,19 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// some object reference which doesn't work.
         /// </summary>
         [TestMethod]
+        [Ignore]
         public void TestLifingPreservesOrder()
         {
             // We will have two if statements to do the combination with. They basically "hide" the modification.
             var checkVar1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var if1s1 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
-            var if1s2 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+            checkVar1.InitialValue = new ValSimple("5>10", typeof(bool));
+            var if1s1 = new StatementFilter(checkVar1);
+            var if1s2 = new StatementFilter(checkVar1);
 
             var checkVar2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var if2s1 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
-            var if2s2 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+            checkVar2.InitialValue = new ValSimple("5>10", typeof(bool));
+            var if2s1 = new StatementFilter(checkVar2);
+            var if2s2 = new StatementFilter(checkVar2);
 
             var randomVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
@@ -109,6 +112,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             // We will put the first if's - that we can perhaps combine with - at the top level (though we
             // shouldn't combine with them!).
             var gc = new GeneratedCode();
+            gc.Add(randomVar);
             gc.Add(checkVar1);
             gc.Add(checkVar2);
             gc.Add(if2s2);
@@ -149,6 +153,61 @@ namespace LINQToTTreeLib.Tests.Optimization
             var firstMention = gc.DumpCode().TakeWhile(l => !l.Contains("aInt32_4=1")).Count();
             var secondMetnion = gc.DumpCode().SkipWhile(l => !l.Contains("aInt32_4=1")).Skip(1).Where(l => l.Contains("aInt32_4")).Count();
             Assert.AreEqual(1, secondMetnion, "Mention of ainte32 4 after the first one");
+        }
+
+        /// <summary>
+        /// 1. a = 10
+        /// 2. b = 10
+        /// 3. if con1
+        /// 4.   a = 20
+        /// 5. if con2
+        /// 6.   b = 20
+        /// No combinations should occur.
+        /// </summary>
+        [TestMethod]
+        public void NoCombineDifferentHistories()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("20", typeof(int)));
+
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: a);
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: b);
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
+
+        }
+
+        /// <summary>
+        /// 1. a = 10
+        /// 2. b = 10
+        /// 3. if con1
+        /// 4.   a = 20
+        /// 5. if con2
+        /// 6.   b = 30
+        /// No combinations should occur.
+        /// </summary>
+        [TestMethod]
+        public void NoCombineDifferentFutures()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: a, mainSettingValue: new ValSimple("20", typeof(int)));
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: b, mainSettingValue: new ValSimple("30", typeof(int)));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
         }
 
         /// <summary>
@@ -503,6 +562,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// is ok to lift it. I wonder if the normal compiler would do that?
         /// </summary>
         [TestMethod]
+        [Ignore]
         public void TestIdenticalNestedIfsGetLifted()
         {
             var gc = new GeneratedCode();
@@ -672,6 +732,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// statement there is no need to re-calc the one inside the if statement.
         /// </summary>
         [TestMethod]
+        [Ignore]
         public void TestListCommonStatementOverIfWhenAlreadyThere()
         {
             var q = new QueriableDummy<dummyntup>();
@@ -1393,12 +1454,16 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Helper function to add a conditional statement.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IStatement addInFirst = null, IStatement addInFirstAfter = null, IDeclaredParameter ifStatementTest = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
+        private IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IValue mainSettingValue = null, IStatement addInFirst = null, IStatement addInFirstAfter = null, IDeclaredParameter ifStatementTest = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
         {
             if (mainSettingParam == null)
             {
                 mainSettingParam = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
                 gc.Add(mainSettingParam);
+            }
+            if (mainSettingValue == null)
+            {
+                mainSettingValue = new ValSimple("f1", typeof(double));
             }
 
             if (ifStatementTest == null)
@@ -1410,7 +1475,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(ifstatement);
             if (addInFirst != null)
                 gc.Add(addInFirst);
-            AddSimpleAssign(gc, valToAssign: new ValSimple("f1", typeof(double)), useParam: mainSettingParam);
+            AddSimpleAssign(gc, valToAssign: mainSettingValue, useParam: mainSettingParam);
             if (addInFirstAfter != null)
                 gc.Add(addInFirstAfter);
             gc.Pop();
