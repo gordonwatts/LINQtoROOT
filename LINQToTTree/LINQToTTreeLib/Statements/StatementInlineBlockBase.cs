@@ -367,7 +367,14 @@ namespace LINQToTTreeLib.Statements
         protected bool Combine(StatementInlineBlockBase block, ICodeOptimizationService opt, bool appendIfCantCombine = true, bool moveIfIdentical = false)
         {
             var combineSucceeded = Combine(block.Statements, block, appendIfCantCombine: appendIfCantCombine, moveIfIdentical: moveIfIdentical);
-            Combine(block.DeclaredVariables);
+
+            // Next, the variables that are defined inside this block (not defined by the block itself!).
+            if (combineSucceeded)
+            {
+                Combine(block._variables);
+            }
+
+            // ANd we are done!
             return combineSucceeded;
         }
 
