@@ -621,7 +621,11 @@ namespace LINQToTTreeLib.Expressions
             if (expression.NodeType == DeclarableParameter.ExpressionType)
             {
                 var decl = expression as DeclarableParameter;
-                _result = new ValSimple(decl.ParameterName, decl.Type, new IDeclaredParameter[] { decl });
+                _result = decl;
+                return expression;
+            } else if (expression.NodeType == ValueExpression.ExpressionType)
+            {
+                _result = (expression as ValueExpression).Value;
                 return expression;
             }
             else

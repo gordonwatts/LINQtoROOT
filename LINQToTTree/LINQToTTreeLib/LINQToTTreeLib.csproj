@@ -165,6 +165,7 @@
     <Compile Include="Expressions\ParameterReplacementExpressionVisitor.cs" />
     <Compile Include="Expressions\ExpressionToCPP.cs" />
     <Compile Include="Expressions\SubExpressionReplacement.cs" />
+    <Compile Include="Expressions\ValueExpression.cs" />
     <Compile Include="Files\AsCSVExpressionNode.cs" />
     <Compile Include="Files\AsCSVResultOperator.cs" />
     <Compile Include="Files\AsFileExpressionNode.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\GeneratedCodeHelpers.cs" />
     <Compile Include="Utils\HashSetUtils.cs" />
+    <Compile Include="Utils\IValueUtils.cs" />
     <Compile Include="Utils\ObjectHashCalculator.cs" />
     <Compile Include="Utils\QueryModelUtils.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />

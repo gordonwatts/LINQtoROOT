@@ -309,6 +309,31 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.DumpCodeToConsole();
         }
 
+        [TestMethod]
+        public void GroupAndCutInside()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var dudeQ = from evt in q
+                        select (from v in evt.vals
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.Where(v => v == 2).Any()
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            DoOptimizeTest(query1);
+
+            var decl = query1.DumpCode().TakeWhile(l => !l.Contains("bool aBoolean")).Count();
+            var firstUse = query1.DumpCode().TakeWhile(l => !l.Contains("aBoolean")).Count();
+
+            Assert.AreEqual(decl, firstUse, "# THe first use and the use");
+        }
+
         /// <summary>
         /// Distilled from something we found in the wild.
         /// 1. Statement

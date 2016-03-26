@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,11 +37,11 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return a string that looks like the loop item index - the core of the loop.
         /// </summary>
-        public string LoopItemIndex
+        public IValue LoopItemIndex
         {
             get
             {
-                return string.Format("{0}[{1}]", _groupArray.RawValue, _counter.RawValue);
+                return new ValSimple($"{_groupArray.RawValue}[{_counter.RawValue}]", typeof(int), _groupArray.Dependants.Concat(_counter.Dependants));
             }
         }
 

@@ -7,6 +7,7 @@ using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.TypeHandlers.ROOT;
 using LINQToTTreeLib.TypeHandlers.TranslationTypes;
 using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -156,6 +157,21 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, v.Dependants.Count());
             Assert.IsTrue(v.Dependants.Where(d => d.RawValue == d1.RawValue).Any());
             Assert.IsTrue(v.Dependants.Where(d => d.RawValue == d2.RawValue).Any());
+        }
+
+        [TestMethod]
+        public void ValueExpression()
+        {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
+
+            var v = new ValSimple("5", typeof(int));
+            var expr = v.AsExpression();
+
+            var gc = new GeneratedCode();
+            var newv = ExpressionToCPP.GetExpression(expr, gc, null, MEFUtilities.MEFContainer);
+
+            Assert.AreEqual("5", newv.RawValue);
         }
 
         public class UnaryTestCase
