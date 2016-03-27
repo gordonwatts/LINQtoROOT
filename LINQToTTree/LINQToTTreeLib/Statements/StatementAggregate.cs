@@ -103,7 +103,7 @@ namespace LINQToTTreeLib.Statements
             // Next, see if we rename the accumulator everything would be identical
             //
 
-            string tempRaw = Expression.RawValue.Replace(ResultVariable.ParameterName, otherAssign.ResultVariable.ParameterName);
+            string tempRaw = Expression.RawValue.ReplaceVariableNames(ResultVariable.ParameterName, otherAssign.ResultVariable.ParameterName);
             if (tempRaw == otherAssign.Expression.RawValue)
             {
                 // In order for this to work, we have to attempt to rename the variable that the other
