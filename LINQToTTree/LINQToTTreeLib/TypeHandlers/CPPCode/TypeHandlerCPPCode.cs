@@ -256,6 +256,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             public void RenameVariable(string originalName, string newName)
             {
                 _cppResult.RenameRawValue(originalName, newName);
+                ResultVariables = new HashSet<string>() { _cppResult.RawValue };
                 _paramReplacesments = _paramReplacesments
                     .Select(p => Tuple.Create(p.Item1, p.Item2.ReplaceVariableNames(originalName, newName)))
                     .ToList();

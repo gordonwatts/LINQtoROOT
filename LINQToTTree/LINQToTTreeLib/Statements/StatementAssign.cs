@@ -68,6 +68,7 @@ namespace LINQToTTreeLib.Statements
         public void RenameVariable(string originalName, string newName)
         {
             ResultVariable.RenameRawValue(originalName, newName);
+            ResultVariables = new HashSet<string>() { ResultVariable.RawValue };
             Expression.RenameRawValue(originalName, newName);
             DependentVariables = DependentVariables.Select(p => p.ReplaceVariableNames(originalName, newName)).ToHashSet();
         }
