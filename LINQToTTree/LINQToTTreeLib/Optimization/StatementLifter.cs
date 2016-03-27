@@ -169,85 +169,9 @@ namespace LINQToTTreeLib.Optimization
                 && !StatementIdempotent(item))
                 return false;
 
-            // OK, now insert it one level up, just before the parent.
-            return MoveStatement(parent, item);
+            // OK, now insert it one level up, just before the parent. MoveStatementUpOneLevel
+            return MoveStatementUpOneLevel(item);
         }
-
-        /// <summary>
-        /// Move a statement up one level, and put it right in front of the parent statement.
-        /// Make sure to shift any declared variables as well.
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="item"></param>
-        private static bool MoveStatement(IStatementCompound parent, IStatement item)
-        {
-            if (parent.Parent != null && (parent.Parent is IStatementCompound))
-            {
-                // If there are declared variables, then we need to move them too.
-                if (!MoveDeclaredResultsUp(parent, item))
-                {
-                    return false;
-                }
-
-                // Move the statement and put it in the next level up, just before
-                // this parent.
-                parent.Remove(item);
-                (parent.Parent as IStatementCompound).AddBefore(item, parent);
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// If a result of a statement is declared in the parent block, then move it up one.
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        private static bool MoveDeclaredResultsUp(IStatementCompound parent, IStatement item)
-        {
-            if (item is ICMStatementInfo && parent is IBookingStatementBlock)
-            {
-                var results = (item as ICMStatementInfo).ResultVariables;
-                var booking = (parent as IBookingStatementBlock);
-                var declaredVariables = new HashSet<string>(booking.DeclaredVariables.Select(p => p.RawValue));
-                var declaredResults = results.Intersect(declaredVariables).ToArray();
-                foreach (var varToMove in declaredResults)
-                {
-                    var declVarToMove = booking.DeclaredVariables.Where(p => p.RawValue == varToMove).First();
-                    booking.Remove(declVarToMove);
-                    if (!(AddBookingToParentOf(parent, declVarToMove)))
-                    {
-                        booking.Add(declVarToMove);
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// Add a declaration to a booking parent, if there is one. Return true if we could.
-        /// </summary>
-        /// <param name="s"></param>
-        /// <param name="varToDeclare"></param>
-        /// <returns></returns>
-        private static bool AddBookingToParentOf(IStatementCompound s, IDeclaredParameter varToDeclare)
-        {
-            var parent = s.Parent;
-            while (parent != null)
-            {
-                var book = parent as IBookingStatementBlock;
-                if (book != null)
-                {
-                    book.Add(varToDeclare);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
 
         /// <summary>
         /// Are we allowed to move this statement to be the first statement in this block?

@@ -466,7 +466,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// That 2 should be lifted, and the loop eliminated.
         /// </summary>
         [TestMethod]
-        public void ListIdempotentStatement()
+        public void LiftIdempotentStatementInLoop()
         {
             var gc = new GeneratedCode();
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
@@ -479,6 +479,27 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var loopFound = gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().First();
             Assert.AreEqual(0, loopFound.Statements.Count(), "# of statements in loop now");
+        }
+
+        /// <summary>
+        /// 1. if
+        /// 2.   idempotent statement not involving loop variables
+        /// That 2 should be lifted, and the loop eliminated.
+        /// </summary>
+        [TestMethod]
+        public void NoLiftIdempotentStatementInsideIf()
+        {
+            var gc = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(p1);
+            var loop = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(new StatementFilter(new ValSimple("10>20", typeof(bool))));
+            gc.Add(new StatementAssign(p1, new ValSimple("20", typeof(int))));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            var loopFound = gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().First();
+            Assert.AreEqual(1, loopFound.Statements.Count(), "# of statements in loop now");
         }
 
         /// <summary>
@@ -506,7 +527,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public void AddBefore(IStatement statement, IStatement beforeThisStatement)
             {
-                throw new NotImplementedException();
+                _statements.Insert(_statements.IndexOf(beforeThisStatement), statement);
             }
 
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
@@ -793,8 +814,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
         /// <summary>
         /// 1. Loop 1 over array a
-        /// 2. Loop 2 over array a
-        /// 3.  something with iterator from Loop 1 and Loop 2.
+        /// 2.   Loop 2 over array a
+        /// 3.     something with iterator from Loop 1 and Loop 2.
         /// 
         /// You can't necessarily pull things out when they are nested identical loops - they may well be
         /// there for a reason!
@@ -803,6 +824,8 @@ namespace LINQToTTreeLib.Tests.Optimization
         public void TestNoCommonLifeNestedIdenticalLoops()
         {
             var v = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            v.Add(p1);
 
             var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
             var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
@@ -811,7 +834,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int))));
+            v.Add(new StatementAssign(p1, new ValSimple($"{loopP1.RawValue}+{loopP2.RawValue}", typeof(int), new IDeclaredParameter[] { loopP2, loopP1 })));
 
             Console.WriteLine("Unoptimized:");
             v.DumpCodeToConsole();
@@ -823,8 +846,10 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Make sure it is two if statements, nested.
             var if1 = v.CodeBody.Statements.First() as StatementForLoop;
             Assert.IsNotNull(if1, "for #1");
-            var if2 = if1.Statements.First() as StatementAssign;
+            var if2 = if1.Statements.First() as StatementForLoop;
             Assert.IsNotNull(if2, "assign");
+            var a = if2.Statements.First() as StatementAssign;
+            Assert.IsNotNull(a);
         }
 
         /// <summary>
@@ -848,7 +873,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             v.Add(p1);
             v.Add(loop2);
-            v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
+            v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool), new IDeclaredParameter[] { loopP1 })));
             v.Add(new StatementAssign(p1, new ValSimple("10", typeof(int))));
 
             Console.WriteLine("Unoptimized:");
@@ -859,7 +884,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.DumpCodeToConsole();
 
             // Make sure it is two if statements, nested.
-            var if1 = v.CodeBody.Statements.First() as StatementForLoop;
+            var if1 = v.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Any()).First();
             Assert.IsNotNull(if1, "for #1");
             var if2 = if1.Statements.First() as StatementFilter;
             Assert.IsNotNull(if2, "if #2");
@@ -874,6 +899,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// 4.      Something independent of 1 and 2
         /// 5.   Same statement independent of 1 and 2
         /// Inner statement should be pulled out to the interior of loop 1.
+        /// And that should be pulled all the way out to the top since it is a loop invarient.
         /// </summary>
         [TestMethod]
         public void TestNoCommonLifeNestedIdenticalLoopsIfStatementAfter()
@@ -906,11 +932,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.DumpCodeToConsole();
 
             // Make sure it is two if statements, nested.
-            var if1 = v.CodeBody.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if1, "for #1");
-            var if2 = if1.Statements.First() as StatementFilter;
-            Assert.IsNotNull(if2, "if #2");
-            Assert.AreEqual(0, if2.Statements.Count(), "# of statements in if should be empty");
+            Assert.AreEqual(1, v.CodeBody.Statements.WhereCast<IStatement, StatementAssign>().Count());
         }
 
         /// <summary>

@@ -331,7 +331,7 @@ namespace LINQToTTreeLib.ResultOperators
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.CodeBody.Statements.Count(), "# of statements in the code body");
-            Assert.AreEqual(3, (query.CodeBody.Statements.First() as IBookingStatementBlock).AllDeclaredVariables.Count(), "# of declared variables");
+            Assert.AreEqual(4, (query.CodeBody.Statements.First() as IBookingStatementBlock).AllDeclaredVariables.Count(), "# of declared variables");
         }
 
         [TestMethod]

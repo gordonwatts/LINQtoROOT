@@ -171,5 +171,103 @@ namespace LINQToTTreeLib.Optimization
             return r.Count() == 0;
         }
 
+        /// <summary>
+        /// Move a statement up one level, and put it right in front of the parent statement.
+        /// Make sure to shift any declared variables as well.
+        /// </summary>
+        /// <param name="oldPparent"></param>
+        /// <param name="item"></param>
+        public static bool MoveStatementUpOneLevel(IStatement item)
+        {
+            // Next, the new parent one up had better be "good".
+            if (item.Parent == null)
+            {
+                return false;
+            }
+            if (item.Parent.Parent == null && !(item.Parent.Parent is IStatementCompound))
+            {
+                return false;
+            }
+
+            return MoveStatement(item, item.Parent);
+        }
+
+        /// <summary>
+        /// Move a statement from its old parent to its new parent. It will be removed from its current
+        /// context, and put just before the other statement. Any variable decl that have to be moved will be
+        /// moved. They are force-moved, so make sure it is safe before calling this method!
+        /// </summary>
+        /// <param name="s">The statement to move</param>
+        /// <param name="insertBeforeThisStatement">The statement before which we should insert s</param>
+        /// <returns></returns>
+        public static bool MoveStatement(IStatement s, IStatement insertBeforeThisStatement)
+        {
+            // Get the current parent where we will remove it.
+            var oldPparent = s.Parent as IStatementCompound;
+            if (oldPparent == null)
+                throw new InvalidOperationException("How can a statement's parent not be a compound statement?");
+
+            // If there are declared variables, then we need to move them too.
+            if (!MoveDeclaredResultsUp(oldPparent, s))
+            {
+                return false;
+            }
+
+            // Move the statement and put it in the next level up, just before
+            // this parent.
+            oldPparent.Remove(s);
+            (oldPparent.Parent as IStatementCompound).AddBefore(s, oldPparent);
+            return true;
+        }
+
+        /// <summary>
+        /// If a result of a statement is declared in the parent block, then move it up one.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private static bool MoveDeclaredResultsUp(IStatementCompound parent, IStatement item)
+        {
+            if (item is ICMStatementInfo && parent is IBookingStatementBlock)
+            {
+                var results = (item as ICMStatementInfo).ResultVariables;
+                var booking = (parent as IBookingStatementBlock);
+                var declaredVariables = new HashSet<string>(booking.DeclaredVariables.Select(p => p.RawValue));
+                var declaredResults = results.Intersect(declaredVariables).ToArray();
+                foreach (var varToMove in declaredResults)
+                {
+                    var declVarToMove = booking.DeclaredVariables.Where(p => p.RawValue == varToMove).First();
+                    booking.Remove(declVarToMove);
+                    if (!(AddBookingToParentOf(parent, declVarToMove)))
+                    {
+                        booking.Add(declVarToMove);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Add a declaration to a booking parent, if there is one. Return true if we could.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="varToDeclare"></param>
+        /// <returns></returns>
+        private static bool AddBookingToParentOf(IStatementCompound s, IDeclaredParameter varToDeclare)
+        {
+            var parent = s.Parent;
+            while (parent != null)
+            {
+                var book = parent as IBookingStatementBlock;
+                if (book != null)
+                {
+                    book.Add(varToDeclare);
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

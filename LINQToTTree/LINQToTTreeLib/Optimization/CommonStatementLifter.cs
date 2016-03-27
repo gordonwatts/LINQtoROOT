@@ -60,7 +60,8 @@ namespace LINQToTTreeLib.Optimization
         /// <param name="sToPop">The statement to try to up level.</param>
         /// <param name="previousStatements">Statements before this one in this block. This block might not actually contain this statement, in which case we must have this!</param>
         /// <param name="followingStatements">Statements after this one in this block. This block might not actually contain this statement, in which case we must have this!</param>
-        private static void FindEquivalentAboveAndCombine(IStatementCompound block, IStatement sToPop,
+        /// <returns>True if something was done to the statement, false if we aborted for whatever reason.</returns>
+        private static bool FindEquivalentAboveAndCombine(IStatementCompound block, IStatement sToPop,
             IEnumerable<IStatement> previousStatements = null,
             IEnumerable<IStatement> followingStatements = null,
             IStatement betweenStatement = null
@@ -70,7 +71,7 @@ namespace LINQToTTreeLib.Optimization
             if (!(block is IStatementLoop) && block.TryCombineStatement(sToPop, new BlockRenamer(sToPop.Parent.FindBookingParent(), block.FindBookingParent())))
             {
                 sToPop.FindCompoundParent().Remove(sToPop);
-                return;
+                return false;
             }
 
 
@@ -78,7 +79,7 @@ namespace LINQToTTreeLib.Optimization
             var sInfo = sToPop as ICMStatementInfo;
             if (sInfo == null)
             {
-                return;
+                return false;
             }
 
             // For this next step we need to fetch the list of statements above us. Either it has
@@ -98,7 +99,7 @@ namespace LINQToTTreeLib.Optimization
             {
                 if (MakeStatmentsEquivalent(prevStatement, sToPop))
                 {
-                    return;
+                    return true;
                 }
                 if (!StatementCommutes(prevStatement, sToPop))
                 {
@@ -133,7 +134,7 @@ namespace LINQToTTreeLib.Optimization
                                     var parent = followStatement.Parent as IStatementCompound;
                                     parent.Remove(followStatement);
                                     parent.AddBefore(followStatement, betweenStatement);
-                                    return;
+                                    return true;
                                 }
                             }
                         }
@@ -145,7 +146,7 @@ namespace LINQToTTreeLib.Optimization
             // shift the statement all the way to the front.
             if (!madeItToTheFront)
             {
-                return;
+                return false;
             }
 
             // The statement can be moved to the top of the block, and isn't the same as
@@ -155,7 +156,7 @@ namespace LINQToTTreeLib.Optimization
             var nParent = block.Parent.FindBookingParent();
             if (nParent == null)
             {
-                return;
+                return false;
             }
 
             var sDependent = sInfo.DependentVariables;
@@ -167,7 +168,7 @@ namespace LINQToTTreeLib.Optimization
             }
             if ((availAtParent.Count() + declaredInBlock.Count()) != sDependent.Count())
             {
-                return;
+                return false;
             }
 
             // If this there is a variable declared in the block internally, then we can't lift it up and out.
@@ -175,14 +176,14 @@ namespace LINQToTTreeLib.Optimization
             {
                 if ((block as ICMCompoundStatementInfo).InternalResultVarialbes.Select(p => p.RawValue).Intersect(sDependent).Any())
                 {
-                    return;
+                    return false;
                 }
             }
 
             // If we are going to try to lift past a loop, we have to make sure the statement is idempotent.
             if (block is IStatementLoop && !StatementIdempotent(sToPop))
             {
-                return;
+                return false;
             }
 
             // And the next figure out where we are in the list of statements.
@@ -190,7 +191,42 @@ namespace LINQToTTreeLib.Optimization
             var nFollowStatements = nParent.Statements.SkipWhile(ps => ps != block).Skip(1);
 
             // And repeat one level up with some tail recursion!
-            FindEquivalentAboveAndCombine(nParent, sToPop, nPrevStatements, nFollowStatements, block);
+            var statementMoved = FindEquivalentAboveAndCombine(nParent, sToPop, nPrevStatements, nFollowStatements, block);
+
+            // There is one other thing to try. If we couldn't move it above us (e.g. statementMoved is false), it could be
+            // we can leave the statement here, rather than in its original location.
+            if (!statementMoved)
+            {
+                var parentsToBlock = sToPop
+                    .WalkParents(false)
+                    .TakeWhile(s => s != block)
+                    .Concat(new IStatementCompound[] { block }).ToArray();
+
+                // If no lifting out of some statement between us and the statement, then don't do it.
+                var parentsNotOK = parentsToBlock
+                    .Where(s => s is ICMCompoundStatementInfo)
+                    .Cast<ICMCompoundStatementInfo>()
+                    .Where(s => !s.AllowNormalBubbleUp);
+                if (parentsNotOK.Any())
+                {
+                    return false;
+                }
+
+                // The next thing we have to double check is that we can do the lifting, and nothing we are going to
+                // lift is going to impact some variable.
+                var dependents = sInfo.DependentVariables;
+                var dependentAffected = parentsToBlock
+                    .Select(p => p.CheckForVariableAsInternalResult(dependents))
+                    .Where(t => t);
+                if (dependentAffected.Any())
+                {
+                    return false;
+                }
+
+                return MoveStatement(sToPop, block);
+            }
+
+            return statementMoved;
         }
 
         /// <summary>
@@ -224,7 +260,7 @@ namespace LINQToTTreeLib.Optimization
         /// <param name="s"></param>
         /// <param name="codeStack"></param>
         /// <returns></returns>
-        private static IStatementCompound MoveStatement(IStatementCompound parent, IStatement s, IStatementCompound[] codeStack)
+        private static IStatementCompound MoveStatementIntoCodeStack(IStatementCompound parent, IStatement s, IStatementCompound[] codeStack)
         {
             // Never move a statement that doesn't want to move. :-)
 
