@@ -182,7 +182,6 @@ namespace LINQToTTreeLib.Optimization
         private static bool MoveToFirst(IStatementCompound parent, IStatement item)
         {
             // If we can't move, then don't.
-
             if ((item as ICMStatementInfo).NeverLift)
                 return false;
 

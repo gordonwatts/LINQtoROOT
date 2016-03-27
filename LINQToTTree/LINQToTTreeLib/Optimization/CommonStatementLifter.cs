@@ -263,7 +263,6 @@ namespace LINQToTTreeLib.Optimization
         private static IStatementCompound MoveStatementIntoCodeStack(IStatementCompound parent, IStatement s, IStatementCompound[] codeStack)
         {
             // Never move a statement that doesn't want to move. :-)
-
             if (s is ICMStatementInfo)
             {
                 if ((s as ICMStatementInfo).NeverLift)
