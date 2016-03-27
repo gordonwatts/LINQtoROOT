@@ -162,6 +162,15 @@ namespace LINQToTTreeLib.Optimization
                 return;
             }
 
+            // If this there is a variable declared in the block internally, then we can't lift it up and out.
+            if (block is ICMCompoundStatementInfo)
+            {
+                if ((block as ICMCompoundStatementInfo).InternalResultVarialbes.Select(p => p.RawValue).Intersect(sDependent).Any())
+                {
+                    return;
+                }
+            }
+
             // If we are going to try to lift past a loop, we have to make sure the statement is idempotent.
             if (block is IStatementLoop && !StatementIdempotent(sToPop))
             {

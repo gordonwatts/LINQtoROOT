@@ -69,6 +69,7 @@ namespace LINQToTTreeLib.Statements
         {
             ResultVariable.RenameRawValue(originalName, newName);
             Expression.RenameRawValue(originalName, newName);
+            DependentVariables = DependentVariables.Select(p => p.ReplaceVariableNames(originalName, newName)).ToHashSet();
         }
 
         /// <summary>

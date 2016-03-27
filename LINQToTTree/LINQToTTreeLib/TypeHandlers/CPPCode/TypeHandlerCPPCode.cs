@@ -260,6 +260,7 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
                     .Select(p => Tuple.Create(p.Item1, p.Item2.ReplaceVariableNames(originalName, newName)))
                     .ToList();
                 _linesOfCode = _linesOfCode.Select(l => l.ReplaceVariableNames(originalName, newName)).ToList();
+                DependentVariables = DependentVariables.Select(r => r.ReplaceVariableNames(originalName, newName)).ToHashSet();
             }
 
             /// <summary>

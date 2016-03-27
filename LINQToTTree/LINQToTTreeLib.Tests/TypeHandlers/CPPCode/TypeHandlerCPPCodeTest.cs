@@ -177,6 +177,48 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         }
 
         [TestMethod]
+        public void CPPInputDependent()
+        {
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var param = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var paramplus = Expression.MakeBinary(ExpressionType.Add, param, Expression.Constant(1));
+            var expr = Expression.Call(typeof(DoItClass).GetMethod("DoIt"), paramplus);
+
+            var result = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
+
+            // Check the dependents.
+            var st = gc.CodeBody.Statements.First() as ICMStatementInfo;
+            Assert.AreEqual(1, st.DependentVariables.Count(), "# of dependents");
+            Assert.AreEqual(param.RawValue, st.DependentVariables.First());
+        }
+
+        [TestMethod]
+        public void RenameCPPInputVariableVariable()
+        {
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+            var context = new CodeContext();
+
+            var param = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var paramplus = Expression.MakeBinary(ExpressionType.Add, param, Expression.Constant(1));
+            var expr = Expression.Call(typeof(DoItClass).GetMethod("DoIt"), paramplus);
+
+            var result = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
+
+            // Check the dependents.
+            gc.CodeBody.RenameVariable(param.RawValue, "abogus_1234");
+
+            gc.DumpCodeToConsole();
+
+            var st = gc.CodeBody.Statements.First() as ICMStatementInfo;
+            Assert.AreEqual(1, st.DependentVariables.Count(), "# of dependents");
+            Assert.AreEqual("abogus_1234", st.DependentVariables.First());
+        }
+
+        [TestMethod]
         public void TestForUniqueReplacement()
         {
             var target = new TypeHandlerCPPCode();

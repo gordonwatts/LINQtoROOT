@@ -84,7 +84,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         private List<KnownTypeInfo> _knownTypes = null;
 
         /// <summary>
-        /// Init internal data structures that we use to track what we know about. This must
+        /// Initialize internal data structures that we use to track what we know about. This must
         /// be done only once. And once it is done it can't change.
         /// </summary>
         private void Init()
@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
             _knownTypes = new List<KnownTypeInfo>();
 
             ///
-            /// First, copy the highest priority items in - tohse that someone has set internally.
+            /// First, copy the highest priority items in - to see that someone has set internally.
             /// This path is used mostly during testing.
             /// 
 
@@ -118,7 +118,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         }
 
         /// <summary>
-        /// Parsae all mapping files in a directory.
+        /// Parse all mapping files in a directory.
         /// </summary>
         /// <param name="dir"></param>
         private void Parse(DirectoryInfo dir)
@@ -136,7 +136,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         }
 
         /// <summary>
-        /// Called when trying to import a constant reference accross the wire... that should never
+        /// Called when trying to import a constant reference across the wire... that should never
         /// happen here, so we should always crash!
         /// </summary>
         /// <param name="expr"></param>
@@ -148,7 +148,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         }
 
         /// <summary>
-        /// Bomb - this sort fo thign is for functions, not for anythign else! :-)
+        /// Bomb - this sort for thing is for functions, not for anything else! :-)
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="codeEnv"></param>
@@ -296,7 +296,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         }
 
         /// <summary>
-        /// Parse a stream from a file (or whatever) for function definitions and add them. Don't superseed ones that are already there, but
+        /// Parse a stream from a file (or whatever) for function definitions and add them. Don't supersede ones that are already there, but
         /// allow duplicates.
         /// </summary>
         /// <param name="stringReader"></param>
@@ -344,7 +344,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
                 }
 
                 ///
-                /// Finaly, ready to create the mapping!
+                /// Finally, ready to create the mapping!
                 /// 
 
                 var kt = new KnownTypeInfo()
@@ -365,7 +365,7 @@ namespace LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls
         }
 
         /// <summary>
-        /// Merge a type in with another type we alreayd have.
+        /// Merge a type in with another type we already have.
         /// </summary>
         /// <param name="kt"></param>
         private void Merge(KnownTypeInfo kt)

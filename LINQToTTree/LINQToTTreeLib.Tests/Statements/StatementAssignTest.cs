@@ -286,6 +286,33 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
+        public void AssignDependents()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var v = new ValSimple($"{p2.RawValue}+10", typeof(int), new IDeclaredParameter[] { p2 });
+            var a = new StatementAssign(p1, v);
+
+            Assert.AreEqual(1, a.DependentVariables.Count());
+            Assert.AreEqual(p2.RawValue, a.DependentVariables.First());          
+        }
+
+        [TestMethod]
+        public void AssignRenameDependents()
+        {
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var v = new ValSimple($"{p2.RawValue}+10", typeof(int), new IDeclaredParameter[] { p2 });
+            var a = new StatementAssign(p1, v);
+            a.RenameVariable(p2.RawValue, "aInt_1234");
+
+            Assert.AreEqual(1, a.DependentVariables.Count());
+            Assert.AreEqual("aInt_1234", a.DependentVariables.First());
+        }
+
+        [TestMethod]
         public void AssignEquivalentDifferentResultsAndDependents()
         {
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
