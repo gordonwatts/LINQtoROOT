@@ -33,7 +33,8 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
-        /// Find a parent that is a booking block. Return null otherwise.
+        /// Find a parent that is a booking block. Return null otherwise. Includes
+        /// the statement we are looking at if it is a booking statement.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -47,6 +48,7 @@ namespace LINQToTTreeLib.Utils
 
         /// <summary>
         /// Find a parent that is a booking block. Return null otherwise.
+        /// Will start with the parent of the statement s.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>

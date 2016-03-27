@@ -66,6 +66,14 @@ namespace LINQToTTreeLib.Optimization
             IStatement betweenStatement = null
             )
         {
+            // Can we combine these guys? This is when one sits in the other.
+            if (!(block is IStatementLoop) && block.TryCombineStatement(sToPop, new BlockRenamer(sToPop.Parent.FindBookingParent(), block.FindBookingParent())))
+            {
+                sToPop.FindCompoundParent().Remove(sToPop);
+                return;
+            }
+
+
             // If we can't get data flow information about a statement, then we can't do anything.
             var sInfo = sToPop as ICMStatementInfo;
             if (sInfo == null)
