@@ -830,11 +830,9 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// <summary>
         /// 1. Loop 1 over array a
         /// 2. Loop 2 over array a
-        /// 3.  if statement
-        /// 4.    something with iterator from Loop 1 and Loop 2.
-        /// 
-        /// You can't necessarily pull things out when they are nested identical loops - they may well be
-        /// there for a reason!
+        /// 3.  if statement with iterator 1
+        /// 4.    simple statement
+        /// The if statement should come up one level.
         /// </summary>
         [TestMethod]
         public void TestNoCommonLifeNestedIdenticalLoopsIf()
