@@ -173,12 +173,17 @@ namespace LINQToTTreeLib.Statements
 
                 foreach (var v in _variables)
                 {
-                    string varDecl = Variables.VarUtils.AsCPPType(v.Type) + " " + v.ParameterName;
                     var defaultValue = GenerateDefaultValue(v);
                     if (!string.IsNullOrWhiteSpace(defaultValue))
-                        varDecl = varDecl + "=" + defaultValue;
-                    varDecl += ";";
-                    yield return "  " + varDecl;
+                    {
+                        defaultValue = " = " + defaultValue;
+                    }
+                    else
+                    {
+                        defaultValue = "";
+                    }
+                    var storageSpecifier = v.DeclareAsStatic ? "static " : "";
+                    yield return $"  {storageSpecifier}{Variables.VarUtils.AsCPPType(v.Type)} {v.ParameterName}{defaultValue};";
                 }
 
                 var sublines = from s in _statements

@@ -18,27 +18,6 @@ namespace LINQToTTreeLib.ResultOperators
     [TestClass]
     public partial class TakeSkipOperatorsTest
     {
-#if false
-        /// <summary>Test stub for CanHandle(Type)</summary>
-        [PexMethod]
-        internal bool CanHandle(
-            [PexAssumeUnderTest]ROTakeSkipOperators target,
-            Type resultOperatorType
-        )
-        {
-            bool result = target.CanHandle(resultOperatorType);
-
-            if (resultOperatorType == typeof(TakeResultOperator)
-                || resultOperatorType == typeof(SkipResultOperator))
-                Assert.IsTrue(result, "Should be good to go!");
-            else
-                Assert.IsFalse(result, "Bad input type - should not have taken it!");
-
-            return result;
-        }
-
-#endif
-
         /// <summary>Test stub for ProcessResultOperator(ResultOperatorBase, QueryModel, IGeneratedCode)</summary>
         internal GeneratedCode ProcessResultOperator(
             ROTakeSkipOperators target,
@@ -140,8 +119,7 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestTakeSkipInLINQ()
+        public void TestTakeSkipAtTopLevel()
         {
             ///
             /// The below is invalid because the "Take" is at the top level - we are taking only a certain
@@ -151,10 +129,57 @@ namespace LINQToTTreeLib.ResultOperators
             var q = new QueriableDummy<ntup>();
             var result = from d in q
                          select d;
-            var c = result.Take(1).Count();
+            var c = result.Take(3).Count();
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Where(v => v.DeclareAsStatic).Count());
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count());
+        }
+
+        [TestMethod]
+        public void TestTakeSkipAtSource()
+        {
+            ///
+            /// The below is invalid because the "Take" is at the top level - we are taking only a certain
+            /// number of events. That is not legal! So we need to throw when that happens!
+            /// 
+
+            var q = new QueriableDummy<ntup>();
+            var c = q.Take(5).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Where(v => v.DeclareAsStatic).Count());
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count());
+        }
+
+        [TestMethod]
+        public void TestTakeSkipAtSubLevel()
+        {
+            ///
+            /// The below is invalid because the "Take" is at the top level - we are taking only a certain
+            /// number of events. That is not legal! So we need to throw when that happens!
+            /// 
+
+            var q = new QueriableDummy<dummyntup>();
+            var result = from d in q
+                         where d.valC1D.Take(1).Sum() > 0
+                         select d;
+            var c = result.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(0, res.DumpCode().Where(l => l.Contains("static")).Count());
         }
     }
 }

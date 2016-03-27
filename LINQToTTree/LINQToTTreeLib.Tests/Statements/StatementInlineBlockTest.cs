@@ -143,7 +143,21 @@ namespace LINQToTTreeLib.Statements
             Assert.AreEqual(4, r.Length, "incorrect number of lines");
             Assert.AreEqual("{", r[0], "open bracket");
             Assert.AreEqual("}", r[3], "close bracket");
-            Assert.IsTrue(r[1].EndsWith("=0;"));
+            Assert.IsTrue(r[1].EndsWith("= 0;"));
+        }
+
+        [TestMethod]
+        public void BlockStaticDefinition()
+        {
+            var b = new StatementInlineBlock();
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            p.DeclareAsStatic = true;
+            b.Add(p);
+
+            b.Add(new StatementAssign(p, new ValSimple("10", typeof(int))));
+
+            var r = b.CodeItUp().ToArray();
+            Assert.AreEqual(1, r.Where(l => l.Contains("static int aInt32")).Count());
         }
 
         [TestMethod]
@@ -209,6 +223,14 @@ namespace LINQToTTreeLib.Statements
             }
 
             public IEnumerable<IDeclaredParameter> Dependants
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public bool DeclareAsStatic
             {
                 get
                 {

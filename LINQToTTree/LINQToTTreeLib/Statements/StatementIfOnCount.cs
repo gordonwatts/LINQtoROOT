@@ -105,7 +105,7 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new IDeclaredParameter[] { };
+                return new IDeclaredParameter[] { Counter };
             }
         }
 
@@ -119,6 +119,7 @@ namespace LINQToTTreeLib.Statements
             {
                 var dependents = base.DependentVariables
                     .Concat(Limit.Dependants.Select(p => p.RawValue))
+                    .Concat(Counter.Dependants.Select(p => p.RawValue))
                     ;
                 return new HashSet<string>(dependents);
             }

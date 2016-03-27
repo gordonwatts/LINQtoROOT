@@ -97,6 +97,7 @@ namespace LINQToTTreeLib.Expressions
             if (varName == null)
                 throw new ArgumentNullException("varName");
             ParameterName = varName;
+            DeclareAsStatic = false;
         }
 
         /// <summary>
@@ -167,6 +168,11 @@ namespace LINQToTTreeLib.Expressions
                 return new IDeclaredParameter[] { this };
             }
         }
+
+        /// <summary>
+        /// Declare a variable as a static item
+        /// </summary>
+        public bool DeclareAsStatic { get; set; }
 
         /// <summary>
         /// Rename the raw value.

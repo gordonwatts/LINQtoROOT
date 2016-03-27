@@ -1201,6 +1201,42 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TopLevelTest()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeArrEvents>();
+            var dudeQ = from evt in q
+                        select evt;
+            var dude = dudeQ.Take(10).Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArrEvents));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
         public void TestFirstCodeDefaultTranslated()
         {
             const int numberOfIter = 25;

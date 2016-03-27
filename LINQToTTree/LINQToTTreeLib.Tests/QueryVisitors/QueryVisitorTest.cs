@@ -2783,7 +2783,7 @@ namespace LINQToTTreeLib
             // future.
 
             var lines = query.DumpCode().ToArray();
-            var firstLastVar = lines.FindVariableIn("int $$=-1");
+            var firstLastVar = lines.FindVariableIn("int $$ = -1");
 
             Assert.AreEqual(3, lines.Where(l => l.Contains(firstLastVar)).Count(), "# of lines aInt32_13 is used");
         }

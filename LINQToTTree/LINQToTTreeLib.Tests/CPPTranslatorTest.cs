@@ -183,7 +183,7 @@ namespace LINQToTTreeLib
 
             var st = (r["QueryFunctionBlocks"] as IEnumerable<IEnumerable<string>>).First().ToArray();
             Assert.AreEqual(6, st.Length, "incorrect number of statements");
-            Assert.AreEqual("int " + vInt2.RawValue + "=5;", st[2].Trim(), "incorrect initialization");
+            Assert.AreEqual("int " + vInt2.RawValue + " = 5;", st[2].Trim(), "incorrect initialization");
         }
 
         [TestMethod]

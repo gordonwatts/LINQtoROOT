@@ -58,18 +58,22 @@ namespace LINQToTTreeLib.ResultOperators
             if (skip != null && skip.Count.Type != typeof(int))
                 throw new ArgumentException("Skip operator count must be an integer!");
 
-            if (codeEnv.Depth <= 1)
-            {
-                throw new InvalidOperationException("Unable to use the Take or Skip operators at the ntuple level - need to use them only on objects inside the ntuple");
-            }
+            // If this is a "global" take, then we need to declare the variable a bit specially.
+            // Global: we have a limit on the number of objects that goes across events.
+            var isGlobalTake = codeEnv.Depth <= 1;
 
-            ///
-            /// Now, we create a count variable and that is how we will tell if we are still skipping or
-            /// taking. It must be declared in the current block, before our current code! :-)
-            /// 
+            // Now, we create a count variable and that is how we will tell if we are still skipping or
+            // taking. It must be declared in the current block, before our current code! :-)
 
             var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            codeEnv.AddOutsideLoop(counter);
+            if (isGlobalTake)
+            {
+                counter.DeclareAsStatic = true;
+                codeEnv.Add(counter);
+            } else
+            {
+                codeEnv.AddOutsideLoop(counter);
+            }
 
             var comparison = StatementIfOnCount.ComparisonOperator.LessThanEqual;
             IValue limit = null;

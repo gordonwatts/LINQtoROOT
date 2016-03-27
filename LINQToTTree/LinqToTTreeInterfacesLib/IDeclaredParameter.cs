@@ -14,8 +14,8 @@ namespace LinqToTTreeInterfacesLib
 
         /// <summary>
         /// Initial value to set this declared variable to. If
-        /// null it shoudl be set to the default value (like "0" for int).
-        /// Assume everything is explicitly initalized!
+        /// null it should be set to the default value (like "0" for int).
+        /// Assume everything is explicitly initialized!
         /// </summary>
         IValue InitialValue { get; set; }
 
@@ -23,6 +23,11 @@ namespace LinqToTTreeInterfacesLib
         /// Return the type of this parameter.
         /// </summary>
         new Type Type { get; }
+
+        /// <summary>
+        /// Return true if this should be declared as a static variable.
+        /// </summary>
+        bool DeclareAsStatic { get; }
 
         /// <summary>
         /// Rename the parameter - if has the old name

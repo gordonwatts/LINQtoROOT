@@ -124,6 +124,14 @@ namespace LINQToTTreeLib.Tests
                 }
             }
 
+            public bool DeclareAsStatic
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public void RenameRawValue(string oldname, string newname)
             {
                 throw new NotImplementedException();

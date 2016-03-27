@@ -1386,9 +1386,9 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Find the first mention of aInt32_28. It should be declared.
 
-            var varname = lines.FindVariableIn("int $$=-1;");
+            var varname = lines.FindVariableIn("int $$ = -1;");
             var firstMention = query.DumpCode().Where(l => l.Contains(varname)).Skip(0).First();
-            Assert.AreEqual(string.Format("int {0}=-1;", varname), firstMention.Trim(), "aint32_23 decl");
+            Assert.AreEqual(string.Format("int {0} = -1;", varname), firstMention.Trim(), "aint32_23 decl");
         }
 
 #if false
