@@ -422,6 +422,7 @@
     <Compile Include="FutureValueTTest.cs" />
     <Compile Include="GeneratedCodeTest.cs" />
     <Compile Include="MEFUtilities.cs" />
+    <Compile Include="Optimization\OptimizationUtilsTest.cs" />
     <Compile Include="Optimization\StatementLifterTest.cs" />
     <Compile Include="Optimization\CommonStatementLifterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

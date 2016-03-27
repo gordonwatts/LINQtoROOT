@@ -34,6 +34,15 @@ namespace LINQToTTreeLib.Statements
             get { return new IDeclaredParameter[] { index1, index2 }; }
         }
 
+        /// <summary>
+        /// This is a straight up double loop. Anything common in here should be extracted!
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return true; } }
+
+        /// <summary>
+        /// Generate the code.
+        /// </summary>
+        /// <returns></returns>
         public override System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
             if (Statements.Any())
@@ -52,11 +61,49 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// We can combine these two statements iff the array record we are looping
-        /// over is the same. Rename the index after that!
+        /// Return the index variables for this loop.
         /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { index1, index2 };
+            }
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
+        {
+            get
+            {
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { index1, index2 });
+            }
+        }
+
+        /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(arrayRecord.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+        
+        /// <summary>
+                 /// We can combine these two statements iff the array record we are looping
+                 /// over is the same. Rename the index after that!
+                 /// </summary>
+                 /// <param name="statement"></param>
+                 /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
@@ -94,5 +141,14 @@ namespace LINQToTTreeLib.Statements
             RenameBlockVariables(origName, newName);
         }
 
+        /// <summary>
+        /// Check to see if we can move past the loop limits.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            return !followStatement.ResultVariables.Intersect(arrayRecord.Dependants.Select(p => p.RawValue)).Any();
+        }
     }
 }

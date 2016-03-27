@@ -2,6 +2,8 @@
 using LinqToTTreeInterfacesLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -42,6 +44,11 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Since statements are protected by an if, we shouldn't let them float out of the block.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
+
+        /// <summary>
         /// Render the loop and if statement...
         /// </summary>
         /// <returns></returns>
@@ -61,10 +68,48 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Try to combine two of these guys
+        /// Return the index variables for this loop.
         /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _index };
+            }
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public new IEnumerable<IDeclaredParameter> DeclaredVariables
+        {
+            get
+            {
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { _index });
+            }
+        }
+
+        /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(_indiciesToCheck.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+        
+        /// <summary>
+                 /// Try to combine two of these guys
+                 /// </summary>
+                 /// <param name="statement"></param>
+                 /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
@@ -104,6 +149,17 @@ namespace LINQToTTreeLib.Statements
             _indiciesToCheck.RenameRawValue(origName, newName);
 
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// Check to see if we can get past the various statements.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsAffected = followStatement.ResultVariables.Intersect(_indexIsGood.Dependants.Concat(_indiciesToCheck.Dependants).Select(p => p.RawValue));
+            return !varsAffected.Any();
         }
     }
 }

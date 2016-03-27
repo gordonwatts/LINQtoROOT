@@ -4,6 +4,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Variables;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -22,85 +23,69 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
         }
 
-#if false
-        /// <summary>
-        ///A test for StatementAggregate Constructor
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementAggregate StatementAggregateConstructorTest(DeclarableParameter dest, IValue source)
+        [TestMethod]
+        public void AggregateCodeItUp()
         {
-            StatementAggregate target = new StatementAggregate(dest, source, new string[0]);
-            return target;
-        }
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var target = new StatementAggregate(result, new ValSimple("5", typeof(int)));
+            Assert.AreEqual(0, target.DependentVariables.Count());
+            Assert.AreEqual(result.RawValue, target.ResultVariable.RawValue);
+            Assert.AreEqual(result.RawValue, target.ResultVariables.First());
 
-        /// <summary>
-        ///A test for CodeItUp
-        ///</summary>
-        [PexMethod]
-        public string CodeItUpTest([PexAssumeUnderTest] StatementAggregate target)
-        {
-            var result = target.CodeItUp().ToArray();
+            target.CodeItUp().DumpToConsole();
 
-            Assert.AreEqual(1, result.Length, "Too many lines for an equals!");
-
-            Assert.IsTrue(result[0].Contains("="), "missing equal sign");
-            return result[0];
-        }
-
-        /// <summary>
-        ///A test for RenameVariable
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementAggregate RenameVariableTest([PexAssumeUnderTest] StatementAggregate target, string originalName, string newName)
-        {
-            target.RenameVariable(originalName, newName);
-
-            return target;
-        }
-
-        /// <summary>
-        ///A test for TryCombineStatement
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public bool TryCombineStatementTest([PexAssumeUnderTest] StatementAggregate target, IStatement statement)
-        {
-            var result = target.TryCombineStatement(statement, null);
-
-            if (statement == null)
-                Assert.Fail("Statement was null");
-
-            if (statement.GetType() != typeof(StatementAggregate))
-                Assert.IsFalse(result, "statements aren't the right type");
-
-            if (statement.CodeItUp().Count() != target.CodeItUp().Count())
-            {
-                Assert.IsFalse(result, "Different number of items");
-            }
-            else
-            {
-                var allsame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
-                Assert.AreEqual(allsame, result, "incorrect result");
-            }
-
-            return result;
+            Assert.AreEqual(1, target.CodeItUp().Count());
+            Assert.IsTrue(target.CodeItUp().First().Contains("="), "the equal sign");
         }
 
         [TestMethod]
-        public void TestCombineWithRename()
+        public void AggregateCheckDependents()
+        {
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var dep = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var target = new StatementAggregate(result, dep);
+            Assert.AreEqual(1, target.DependentVariables.Count());
+            Assert.AreEqual(dep.RawValue, target.DependentVariables.First());
+        }
+
+        [TestMethod]
+        public void AggregateRenameDependent()
+        {
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var dep = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var depname = dep.RawValue;
+            var target = new StatementAggregate(result, dep);
+            target.CodeItUp().DumpToConsole();
+
+            target.RenameVariable(dep.RawValue, "foot");
+
+            target.CodeItUp().DumpToConsole();
+
+            var r = target.CodeItUp().ToArray();
+            Assert.AreEqual(-1, r[0].IndexOf(depname));
+            Assert.AreNotEqual(-1, r[0].IndexOf("foot"));
+
+            Assert.AreEqual(result.RawValue, target.ResultVariable.RawValue);
+            Assert.AreEqual(1, target.DependentVariables.Count());
+            Assert.AreEqual("foot", target.DependentVariables.First());
+        }
+
+        [TestMethod]
+        public void AggregateCombineWithRename()
         {
             // a = a + b
             // c = c + b
             // These two should combine correctly, somehow.
 
             var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
-            var s1 = new StatementAggregate(a, ainc, new string[0]);
+            var ainc = new ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
+            var s1 = new StatementAggregate(a, ainc);
 
             var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
-            var s2 = new StatementAggregate(c, cinc, new string[0]);
+            var cinc = new ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
+            var s2 = new StatementAggregate(c, cinc);
 
-            var opt = new Tests.Factories.CodeOptimizerTest(true);
+            var opt = new MyCodeOptimizer(true);
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsTrue(result, "Expected combination would work");
 
@@ -109,24 +94,121 @@ namespace LINQToTTreeLib.Tests
         }
 
         [TestMethod]
-        public void TestCombineWithRenameNoChance()
+        public void AggregateCombineWithRenameNoChance()
         {
             // a = a + b
             // c = c + b
             // These two should combine correctly, somehow.
 
             var a = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var ainc = new Variables.ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
-            var s1 = new StatementAggregate(a, ainc, new string[0]);
+            var ainc = new ValSimple(string.Format("{0}+b", a.ParameterName), typeof(int));
+            var s1 = new StatementAggregate(a, ainc);
 
             var c = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var cinc = new Variables.ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
-            var s2 = new StatementAggregate(c, cinc, new string[0]);
+            var cinc = new ValSimple(string.Format("{0}+b", c.ParameterName), typeof(int));
+            var s2 = new StatementAggregate(c, cinc);
 
-            var opt = new Factories.CodeOptimizerTest(false);
+            var opt = new MyCodeOptimizer(false);
             var result = s1.TryCombineStatement(s2, opt);
             Assert.IsFalse(result, "Expected combination would work");
         }
-#endif
+
+        [TestMethod]
+        public void AggregateEquivalentSame()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, d1);
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, d2);
+
+            var r = t1.RequiredForEquivalence(t2);
+            Assert.IsTrue(r.Item1);
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(2, renames.Length);
+            Assert.AreEqual(r1.RawValue, renames.Where(p => p.Item1 == r2.RawValue).First().Item2);
+            Assert.AreEqual(d1.RawValue, renames.Where(p => p.Item1 == d2.RawValue).First().Item2);
+        }
+
+        [TestMethod]
+        public void AggregateEquivalentSameWithTwoSums()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, new ValSimple($"{d1.RawValue}+{d2.RawValue}", typeof(int), new IDeclaredParameter[] { d1, d2 }));
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d4 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, new ValSimple($"{d3.RawValue}+{d4.RawValue}", typeof(int), new IDeclaredParameter[] { d4, d3 }));
+
+            var r = t1.RequiredForEquivalence(t2);
+            Assert.IsTrue(r.Item1);
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(3, renames.Length);
+        }
+
+        [TestMethod]
+        public void AggregateEquivalentNotSame()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, d1);
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, new ValSimple($"{d2.RawValue}+b", typeof(int), new IDeclaredParameter[] { d1 }));
+
+            var r = t1.RequiredForEquivalence(t2);
+            Assert.IsFalse(r.Item1);
+        }
+
+        [TestMethod]
+        public void AggregateEquivalentSameWithPreRenames()
+        {
+            var r1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t1 = new StatementAggregate(r1, d1);
+
+            var r2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var d2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var t2 = new StatementAggregate(r2, d2);
+
+            var r = t1.RequiredForEquivalence(t2, new Tuple<string, string>[] { new Tuple<string, string>(d2.RawValue, d1.RawValue) });
+            Assert.IsTrue(r.Item1);
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(1, renames.Length);
+            Assert.AreEqual(r1.RawValue, renames.Where(p => p.Item1 == r2.RawValue).First().Item2);
+        }
+
+        /// <summary>
+        /// Test object
+        /// </summary>
+        private class MyCodeOptimizer : ICodeOptimizationService
+        {
+            private bool _allowRename;
+
+            public MyCodeOptimizer(bool allowTryRename)
+            {
+                this._allowRename = allowTryRename;
+            }
+
+            public IDeclaredParameter NewVariable { get; private set; }
+            public string OldName { get; private set; }
+
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+            }
+
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
+            {
+                NewVariable = newVariable;
+                OldName = oldName;
+                return _allowRename;
+            }
+        }
     }
 }

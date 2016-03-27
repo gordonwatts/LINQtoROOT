@@ -111,7 +111,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddAtResultScope(valueWasSeen);
             gc.AddAtResultScope(indexSeen);
 
-            var rv = new Statements.StatementRecordValue(indexSeen, ExpressionToCPP.GetExpression(indexExpr.AsExpression(), gc, cc, container), valueWasSeen, isFirst);
+            var rv = new Statements.StatementRecordValue(indexSeen, indexExpr, valueWasSeen, isFirst);
             gc.Add(rv);
 
             foreach (var v in gc.GetUsedQuerySourceVariables(rv, indexExpr))
@@ -160,9 +160,7 @@ namespace LINQToTTreeLib.ResultOperators
 
                 gc.Add(new Statements.StatementFilter(valueWasSeen));
                 gc.Add(new Statements.StatementAssign(actualValue,
-                    ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container),
-                    FindDeclarableParameters.FindAll(firstlastValue)
-                    ));
+                    ExpressionToCPP.GetExpression(firstlastValue, gc, cc, container)));
                 gc.Pop();
 
                 return actualValue;

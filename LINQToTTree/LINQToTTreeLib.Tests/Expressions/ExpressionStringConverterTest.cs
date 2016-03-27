@@ -9,16 +9,6 @@ namespace LINQToTTreeLib.Expressions
     [TestClass]
     public partial class ExpressionStringConverterTest
     {
-        /// <summary>Test stub for Format(Expression)</summary>
-#if false
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public string Format(Expression expression)
-        {
-            string result = ExpressionStringConverter.Format(expression);
-            return result;
-        }
-#endif
-
         private Tuple<Expression, Expression>[] NotSameExpressions = new Tuple<Expression, Expression>[]
             {
                 Tuple.Create<Expression, Expression> (Expression.Constant(5), Expression.Constant(10)),

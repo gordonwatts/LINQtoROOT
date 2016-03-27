@@ -74,7 +74,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.Pop();
 
             //
-            // Now create the object that will be handed back for later parsing. This should contian the info that is needed to do the
+            // Now create the object that will be handed back for later parsing. This should contain the info that is needed to do the
             // actual looping over the groups when it is requested.
             //
 
@@ -365,12 +365,12 @@ namespace LINQToTTreeLib.ResultOperators
 
             //
             // Finally, return the loop index variable.
-            // We queue up a replacement as well - so we can make sure that when the origianl loop variable is referenced, we
+            // We queue up a replacement as well - so we can make sure that when the original loop variable is referenced, we
             // are actually referencing the interior one.
             //
 
             var loopExpression = groupObj.TargetExpression;
-            cc.Add(groupObj.TargetExpressionLoopVariable.RawValue, Expression.Parameter(typeof(int), s.LoopItemIndex));
+            cc.Add(groupObj.TargetExpressionLoopVariable.RawValue, s.LoopItemIndex.AsExpression());
 
             return new SimpleLoopVarSetting(loopExpression, s.Counter);
         }

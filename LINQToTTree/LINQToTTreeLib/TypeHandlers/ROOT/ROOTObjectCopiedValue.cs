@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.TypeHandlers.ROOT
 {
@@ -38,6 +41,8 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             StringBuilder loadString = new StringBuilder();
             loadString.AppendFormat("LoadFromInputList<{0}>(\"{1}\")", CPPType, varName);
             RawValue = loadString.ToString();
+
+            Dependants = new IDeclaredParameter[] { DeclarableParameter.CreateDeclarableParameterExpression(varName, rootType) };
         }
 
         /// <summary>
@@ -60,10 +65,18 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// </summary>
         public string OriginalTitle { get; private set; }
 
+        /// <summary>
+        /// Hold onto the dependent list.
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> Dependants { private set; get; }
 
         public void RenameRawValue(string oldname, string newname)
         {
-            RawValue = Regex.Replace(RawValue, @"\b" + oldname + @"\b", newname);
+            RawValue = RawValue.ReplaceVariableNames(oldname, newname);
+            foreach (var d in Dependants)
+            {
+                d.RenameRawValue(oldname, newname);
+            }
         }
     }
 }

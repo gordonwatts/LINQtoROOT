@@ -5,7 +5,7 @@ namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Simple statement that will code up the test for a pair-wise check. We do it
-    /// in a seperate statement like this because the "test" may well generate some
+    /// in a separate statement like this because the "test" may well generate some
     /// code lines of its own - which will cause some scoping problems if we aren't
     /// careful!
     /// </summary>
@@ -66,7 +66,7 @@ namespace LINQToTTreeLib.Statements
                 return false;
 
             //
-            // Combinine - nothing to do here.
+            // Combining - nothing to do here.
             //
 
             return true;

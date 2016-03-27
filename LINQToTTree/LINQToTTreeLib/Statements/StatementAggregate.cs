@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -28,7 +30,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="accumulator"></param>
         /// <param name="funcResolved"></param>
         /// <param name="dependentVariables">List of variables that the val statement depends on</param>
-        public StatementAggregate(DeclarableParameter result, IValue val, IEnumerable<string> dependentVariables)
+        public StatementAggregate(DeclarableParameter result, IValue val)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -40,7 +42,7 @@ namespace LINQToTTreeLib.Statements
 
             // Which variables we have as input and output
 
-            DependentVariables = new HashSet<string>(dependentVariables);
+            DependentVariables = new HashSet<string>(val.Dependants.Select(v => v.RawValue));
             ResultVariables = new HashSet<string>() { result.RawValue };
         }
 
@@ -57,10 +59,17 @@ namespace LINQToTTreeLib.Statements
             return ResultVariable.ParameterName + "=" + Expression.RawValue;
         }
 
+        /// <summary>
+        /// Rename the variables.
+        /// </summary>
+        /// <param name="originalName"></param>
+        /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
             ResultVariable.RenameParameter(originalName, newName);
+            ResultVariables = new HashSet<string>() { ResultVariable.RawValue };
             Expression.RenameRawValue(originalName, newName);
+            DependentVariables = new HashSet<string>(DependentVariables.Select(s => s.ReplaceVariableNames(originalName, newName)));
         }
 
         /// <summary>
@@ -95,7 +104,7 @@ namespace LINQToTTreeLib.Statements
             // Next, see if we rename the accumulator everything would be identical
             //
 
-            string tempRaw = Expression.RawValue.Replace(ResultVariable.ParameterName, otherAssign.ResultVariable.ParameterName);
+            string tempRaw = Expression.RawValue.ReplaceVariableNames(ResultVariable.ParameterName, otherAssign.ResultVariable.ParameterName);
             if (tempRaw == otherAssign.Expression.RawValue)
             {
                 // In order for this to work, we have to attempt to rename the variable that the other
@@ -106,10 +115,31 @@ namespace LINQToTTreeLib.Statements
             }
 
             //
-            // There is nothing else we cna do to figure out if this is the same, I"m afraid!
+            // There is nothing else we can do to figure out if this is the same, I"m afraid!
             //
 
             return false;
+        }
+
+        /// <summary>
+        /// See if we can make these two statements the same.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            if (!(other is StatementAggregate))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementAggregate;
+
+            return StatementUtils.MakeEquivalentSimpleExpressionAndResult(
+                ResultVariable.RawValue, s2.ResultVariable.RawValue,
+                Expression.RawValue, s2.Expression.RawValue,
+                DependentVariables, s2.DependentVariables,
+                replaceFirst);
         }
 
         /// <summary>
@@ -117,9 +147,9 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         public IStatement Parent { get; set; }
 
-        public ISet<string> DependentVariables { get; private set; }
+        public IEnumerable<string> DependentVariables { get; private set; }
 
-        public ISet<string> ResultVariables { get; private set; }
+        public IEnumerable<string> ResultVariables { get; private set; }
 
         public bool NeverLift { get { return true; } }
     }

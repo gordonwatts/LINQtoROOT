@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -22,5 +23,11 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="newname"></param>
         void RenameRawValue(string oldname, string newname);
+
+        /// <summary>
+        /// Returns a list of all declared parameters this expression
+        /// uses, if any.
+        /// </summary>
+        IEnumerable<IDeclaredParameter> Dependants { get; }
     }
 }

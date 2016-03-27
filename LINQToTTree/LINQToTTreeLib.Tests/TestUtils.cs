@@ -35,6 +35,17 @@ namespace LINQToTTreeLib.Tests
                 yield return "}";
             }
 
+            /// <summary>
+            /// Return the index variables for this loop.
+            /// </summary>
+            public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+            {
+                get
+                {
+                    return new IDeclaredParameter[] { };
+                }
+            }
+
             public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
             {
                 throw new NotImplementedException();
@@ -45,9 +56,22 @@ namespace LINQToTTreeLib.Tests
                 throw new NotImplementedException();
             }
 
+            public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+            {
+                throw new NotImplementedException();
+            }
+
             public IEnumerable<IDeclaredParameter> LoopIndexVariable
             {
                 get { throw new NotImplementedException(); }
+            }
+
+            public override bool AllowNormalBubbleUp
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 
@@ -755,6 +779,20 @@ namespace LINQToTTreeLib.Tests
             }
 
             return qms;
+        }
+
+        /// <summary>
+        /// If the object is of type U, then cast it to type U.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<U> WhereCast<T,U> (this IEnumerable<T> source)
+        {
+            return source
+                .Where(s => s is U)
+                .Cast<U>();
         }
     }
 }

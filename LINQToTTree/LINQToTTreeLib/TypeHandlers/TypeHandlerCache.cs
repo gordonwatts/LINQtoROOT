@@ -63,17 +63,15 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <returns></returns>
         public Expression ProcessMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, ICodeContext context, CompositionContainer container)
         {
-            // <pex>
             if (expr == (MethodCallExpression)null)
                 throw new ArgumentNullException("expr");
-            // </pex>
 
             var h = FindHandler(expr.Method.DeclaringType);
             return h.ProcessMethodCall(expr, gc, context, container);
         }
 
         /// <summary>
-        /// Run the method call against the expressoins we know.
+        /// Run the method call against the expressions we know.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="result"></param>
@@ -81,10 +79,8 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <returns></returns>
         public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
-            // <pex>
             if (expr == (MethodCallExpression)null)
                 throw new ArgumentNullException("expr");
-            // </pex>
 
             var h = FindHandler(expr.Method.DeclaringType);
             return h.CodeMethodCall(expr, gc, container);

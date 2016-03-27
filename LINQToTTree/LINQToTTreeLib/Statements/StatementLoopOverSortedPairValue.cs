@@ -9,7 +9,7 @@ using System.Linq;
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
-    /// A satement that will sort over the arguments to the map variable, and then loop
+    /// A statement that will sort over the arguments to the map variable, and then loop
     /// over them - using as an index the map target.
     /// </summary>
     public class StatementLoopOverSortedPairValue : StatementInlineBlockBase, IStatementLoop
@@ -50,6 +50,11 @@ namespace LINQToTTreeLib.Statements
         {
             get { return _mapRecords.First().indexVariable; }
         }
+
+        /// <summary>
+        /// We are a loop - anything that can pop out should pop out.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
 
         private struct mapPlaybackInfo
         {
@@ -152,6 +157,17 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return _mapRecords.Select(mr => mr.indexVariable);
+            }
+        }
+
+        /// <summary>
         /// See if the two statements are compatible
         /// </summary>
         /// <param name="statement"></param>
@@ -203,6 +219,44 @@ namespace LINQToTTreeLib.Statements
             }
 
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
+        {
+            get
+            {
+                return base.DeclaredVariables
+                    .Concat(_mapRecords.Select(m => m.indexVariable));
+            }
+        }
+
+        /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(_mapRecords.Select(m => m.mapRecords).Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+
+        /// <summary>
+        /// Can we get past the loop controls? This is a bit of a mess.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var dependentVariables = _mapRecords.SelectMany(m => m.mapRecords.Dependants).Select(s => s.RawValue);
+            return !followStatement.ResultVariables.Intersect(dependentVariables).Any();
         }
 
         /// <summary>

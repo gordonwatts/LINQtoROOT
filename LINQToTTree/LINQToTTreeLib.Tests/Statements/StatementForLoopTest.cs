@@ -3,6 +3,7 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System;
 
 namespace LINQToTTreeLib.Tests.Statements
@@ -129,6 +130,311 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsTrue(r, "combination should work");
             Assert.AreEqual(base1, loop1.Parent, "loop 1 parent");
             Assert.AreEqual(loop1, loop22.Parent, "Loop 2 parent");
+        }
+
+        [TestMethod]
+        public void ZeroDependentVariables()
+        {
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s = new StatementForLoop(counter, new ValSimple("5", typeof(int)));
+
+            Assert.AreEqual(0, s.DependentVariables.Count(), "# of dependent variables");
+            Assert.AreEqual(0, s.ResultVariables.Count(), "# of result variables");
+        }
+
+        [TestMethod]
+        public void DependentAndResultVariables()
+        {
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s = new StatementForLoop(counter, new ValSimple("5", typeof(int)));
+
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, result }));
+            s.Add(assign);
+
+            Assert.AreEqual(1, s.DependentVariables.Count(), "# of dependent variables");
+            Assert.AreEqual(result.RawValue, s.DependentVariables.First());
+            Assert.AreEqual(result.RawValue, s.ResultVariables.First());
+            Assert.AreEqual(1, s.ResultVariables.Count(), "# of result variables");
+        }
+
+        [TestMethod]
+        public void DependentAndResultVariablesWithDecl()
+        {
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s = new StatementForLoop(counter, new ValSimple("5", typeof(int)));
+
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s.Add(result);
+
+            var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, result }));
+            s.Add(assign);
+
+            Assert.AreEqual(0, s.DependentVariables.Count(), "# of dependent variables");
+            Assert.AreEqual(0, s.ResultVariables.Count(), "# of result variables");
+        }
+
+        [TestMethod]
+        public void DeclaredVariablesLocalOnly()
+        {
+            var outter = new StatementInlineBlock();
+            outter.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            var s = new StatementForLoop(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("5", typeof(int)));
+            s.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
+
+            outter.Add(s);
+
+            Assert.AreEqual(2, s.DeclaredVariables.Count());
+            Assert.AreEqual(3, s.AllDeclaredVariables.Count());
+        }
+
+        [TestMethod]
+        public void ForLoopLimitDependencies()
+        {
+            var limit = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var s = new StatementForLoop(loop, limit);
+
+            Assert.AreEqual(1, s.DependentVariables.Count());
+            Assert.AreEqual(limit.RawValue, s.DependentVariables.First());
+        }
+
+        [TestMethod]
+        public void ForLoopEmptySameLimit()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsTrue(r.Item1, "Are Equivalent");
+            Assert.AreEqual(0, r.Item2.Count(), "# of renames");
+        }
+
+        [TestMethod]
+        public void ForLoopEmptyDifferentLimit()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c1, new ValSimple("6", typeof(int)));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsFalse(r.Item1, "Can't be equivalent");
+        }
+
+        [TestMethod]
+        public void ForLoopDifferentNumberOfStatements()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c1, new ValSimple("6", typeof(int)));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsFalse(r.Item1, "Can't be equivalent");
+        }
+
+        [TestMethod]
+        public void ForLoopSimilarStatements()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
+            var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsTrue(r.Item1, "Should be equivalent");
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(1, renames.Length, "# of renames");
+            Assert.AreEqual(a2.RawValue, renames[0].Item1, "from rename");
+            Assert.AreEqual(a1.RawValue, renames[0].Item2, "to rename");
+        }
+
+        [TestMethod]
+        public void ForLoopGivenRenameRequestStatements()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
+            var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+
+            var r = s1.RequiredForEquivalence(s2, new Tuple<string, string>[] { new Tuple<string, string>(a2.RawValue, a1.RawValue) });
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsTrue(r.Item1, "Should be equivalent");
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(0, renames.Length, "# of renames");
+        }
+
+        [TestMethod]
+        public void ForLoopGivenRenameInLoopLimit()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var l1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, l1);
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var l2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c2, l2);
+
+            var r = s1.RequiredForEquivalence(s2, new Tuple<string, string>[] { new Tuple<string, string>(l2.RawValue, l1.RawValue) });
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsTrue(r.Item1, "Should be equivalent");
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(0, renames.Length, "# of renames");
+        }
+
+        [TestMethod]
+        public void ForLoopPropagateRenameToSecondStatement()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+1", typeof(int), new IDeclaredParameter[] { a1 })));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
+            var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+1", typeof(int), new IDeclaredParameter[] { a2 })));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsTrue(r.Item1, "Should be equivalent");
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(1, renames.Length, "# of renames");
+            Assert.AreEqual(a2.RawValue, renames[0].Item1, "from rename");
+            Assert.AreEqual(a1.RawValue, renames[0].Item2, "to rename");
+        }
+
+        [TestMethod]
+        public void ForLoopRenameTwoVariables()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int), new IDeclaredParameter[] { a1, v1 })));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
+            var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int), new IDeclaredParameter[] { a2, v2 })));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsTrue(r.Item1, "Should be equivalent");
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(2, renames.Length, "# of renames");
+        }
+
+        [TestMethod]
+        public void ForLoopRenameIgnoreDeclaredVariables()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int), new IDeclaredParameter[] { a1, v1 })));
+            s1.Add(v1);
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c2, new ValSimple("5", typeof(int)));
+            var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int), new IDeclaredParameter[] { a2, v2 })));
+            s2.Add(v2);
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsTrue(r.Item1, "Should be equivalent");
+            var renames = r.Item2.ToArray();
+            Assert.AreEqual(1, renames.Length, "# of renames");
+        }
+
+        [TestMethod]
+        public void ForLoopRenameTwiceAsTarget()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{v1.RawValue}", typeof(int), new IDeclaredParameter[] { a1, v1 })));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c1, new ValSimple("6", typeof(int)));
+            var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{a2.RawValue}", typeof(int), new IDeclaredParameter[] { a2 })));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsFalse(r.Item1, "Should be equivalent");
+        }
+
+        [TestMethod]
+        public void ForLoopRenameTwiceAsSource()
+        {
+            var c1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementForLoop(c1, new ValSimple("5", typeof(int)));
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s1.Add(new StatementAssign(a1, new ValSimple("10", typeof(int))));
+            s1.Add(new StatementAssign(a1, new ValSimple($"{a1.RawValue}+{a1.RawValue}", typeof(int), new IDeclaredParameter[] { a1 })));
+
+            var c2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s2 = new StatementForLoop(c1, new ValSimple("6", typeof(int)));
+            var a2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s2.Add(new StatementAssign(a2, new ValSimple("10", typeof(int))));
+            s2.Add(new StatementAssign(a2, new ValSimple($"{a2.RawValue}+{v2.RawValue}", typeof(int), new IDeclaredParameter[] { a2, v2 })));
+
+            var r = s1.RequiredForEquivalence(s2);
+
+            // Since only loop variable matters here, we don't care, and we can do the rename.
+            Assert.IsFalse(r.Item1, "Should be equivalent");
         }
     }
 }

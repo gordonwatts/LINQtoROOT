@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Implements a block of code and the ability to combine, render, etc. Meant to
-    /// be used as a base objec,t however. The class that surrounds this one
+    /// be used as a base object however. The class that surrounds this one
     /// does not add extra statements inside this block - but it might have something like
     /// an "if" statement around the contents of the block.
     /// </summary>
-    public abstract class StatementInlineBlockBase : IBookingStatementBlock
+    public abstract class StatementInlineBlockBase : IBookingStatementBlock, ICMCompoundStatementInfo, ICMStatementInfo
     {
         /// <summary>
         /// The list of statements in this block.
@@ -118,7 +119,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return the variables in the block
         /// </summary>
-        public IEnumerable<IDeclaredParameter> DeclaredVariables
+        public virtual IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get { return _variables; }
         }
@@ -126,14 +127,14 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return every single declared variable in the whole hierarchy!
         /// </summary>
-        public IEnumerable<IDeclaredParameter> AllDeclaredVariables
+        public virtual IEnumerable<IDeclaredParameter> AllDeclaredVariables
         {
             get
             {
                 var b = FindBookingParent(Parent);
                 if (b != null)
-                    return _variables.Concat(b.AllDeclaredVariables);
-                return _variables;
+                    return DeclaredVariables.Concat(b.AllDeclaredVariables);
+                return DeclaredVariables;
             }
         }
 
@@ -229,111 +230,6 @@ namespace LINQToTTreeLib.Statements
         public abstract bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt);
 
         /// <summary>
-        /// If someone wants to rename statements downstream, we take care of it.
-        /// </summary>
-        private class BlockRenamer : ICodeOptimizationService
-        {
-            /// <summary>
-            /// Track the holder block for old variables.
-            /// </summary>
-            private IBookingStatementBlock _holderBlockOld;
-
-            /// <summary>
-            /// Track the holder block for new variables.
-            /// </summary>
-            private IBookingStatementBlock _holderBlockNew;
-
-            public BlockRenamer(IBookingStatementBlock holderOldStatements, IBookingStatementBlock holderNewStatements)
-            {
-                if (holderOldStatements == null)
-                    throw new ArgumentNullException("holder");
-                this._holderBlockOld = holderOldStatements;
-                if (holderNewStatements == null)
-                    throw new ArgumentNullException("holder");
-                this._holderBlockNew = holderNewStatements;
-            }
-
-            /// <summary>
-            /// Rename succeeds if we can find the declared variable, amone other things.
-            /// </summary>
-            /// <param name="oldName">Name of the old parameter that we are replacing</param>
-            /// <param name="newParam">The new parameter we will replace it with</param>
-            /// <param name="newHolderBlock">The booking context we are currently looking at for the new name (the _holder) of the statement we are looking at</param>
-            /// <returns>True if the variables could be renamed (and the rename is done), false otherwise</returns>
-            /// <remarks>
-            /// The newHolderBlock is needed because it is used to determine if the new variable is declared in the same place
-            /// or not.
-            /// </remarks>
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newParam)
-            {
-                //
-                // First, see if we can find the block where the variable is declared.
-                //
-
-                var vr = FindDeclaredVariable(oldName, _holderBlockOld);
-
-                if (vr == null)
-                    return false;
-
-                //
-                // Make sure that the variable we are switching to is also declared. If it is an "external" then we
-                // are going to have a problem here! And, the variables had better be declared the same "scope" above, or
-                // that means they are also being used for something different.
-                //
-
-                var vrNew = FindDeclaredVariable(newParam.ParameterName, _holderBlockNew);
-                if (vrNew == null || vrNew.Item3 != vr.Item3)
-                    return false;
-
-                // Check that its initialization is the same!
-                bool initValueSame = (vr.Item1.InitialValue == null && newParam.InitialValue == null)
-                    || (vr.Item1.InitialValue != null && (vr.Item1.InitialValue.Type == newParam.InitialValue.Type && vr.Item1.InitialValue.RawValue == newParam.InitialValue.RawValue));
-                if (!initValueSame)
-                    return false;
-
-                // Rename the variable!
-                vr.Item2.RenameVariable(oldName, newParam.ParameterName);
-
-                return true;
-            }
-
-            /// <summary>
-            /// Walk the tree back looking for a variable
-            /// </summary>
-            /// <param name="oldName"></param>
-            /// <param name="statement"></param>
-            /// <returns>A tuple of the declared old variable, the block it was booked in, and how far up the chain we had to go to find it.</returns>
-            private Tuple<IDeclaredParameter, IBookingStatementBlock, int> FindDeclaredVariable(string oldName, IStatement statement)
-            {
-                if (statement == null)
-                    return null;
-
-                if (statement is IBookingStatementBlock)
-                {
-                    var hr = statement as IBookingStatementBlock;
-                    var vr = hr.DeclaredVariables.Where(v => v.ParameterName == oldName).FirstOrDefault();
-                    if (vr != null)
-                        return Tuple.Create(vr, hr, 0);
-                }
-
-                var onedown = FindDeclaredVariable(oldName, statement.Parent);
-                if (onedown == null)
-                    return null;
-                return Tuple.Create(onedown.Item1, onedown.Item2, onedown.Item3 + 1);
-            }
-
-            /// <summary>
-            /// Do the rename in this block and deeper.
-            /// </summary>
-            /// <param name="originalName"></param>
-            /// <param name="newName"></param>
-            public void ForceRenameVariable(string originalName, string newName)
-            {
-                _holderBlockOld.RenameVariable(originalName, newName);
-            }
-        }
-
-        /// <summary>
         /// Helper class - when a statement shows up with no context.
         /// </summary>
         class FailingCodeOptimizer : ICodeOptimizationService
@@ -361,7 +257,7 @@ namespace LINQToTTreeLib.Statements
 
         /// <summary>
         /// Given a list of statements, attempt to combine them with the ones we already have
-        /// internaly. If we can't, then just append them. This is like our "Add" above, but we
+        /// internally. If we can't, then just append them. This is like our "Add" above, but we
         /// first check to see if any of the statements can be added in. This always
         /// succeeds (no need for a bool return) because we just add things onto the end.
         /// </summary>
@@ -471,7 +367,14 @@ namespace LINQToTTreeLib.Statements
         protected bool Combine(StatementInlineBlockBase block, ICodeOptimizationService opt, bool appendIfCantCombine = true, bool moveIfIdentical = false)
         {
             var combineSucceeded = Combine(block.Statements, block, appendIfCantCombine: appendIfCantCombine, moveIfIdentical: moveIfIdentical);
-            Combine(block.DeclaredVariables);
+
+            // Next, the variables that are defined inside this block (not defined by the block itself!).
+            if (combineSucceeded)
+            {
+                Combine(block._variables);
+            }
+
+            // ANd we are done!
             return combineSucceeded;
         }
 
@@ -535,6 +438,72 @@ namespace LINQToTTreeLib.Statements
         public IStatement Parent { get; set; }
 
         /// <summary>
+        /// Override to decide how to bubble up items
+        /// </summary>
+        public abstract bool AllowNormalBubbleUp { get; }
+
+        /// <summary>
+        /// Get a list of all dependent variables used in this code block.
+        /// If you add some new things (like the test expression for an if statement),
+        /// then override this.
+        /// </summary>
+        public virtual IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = Statements
+                    .Where(s => s is ICMStatementInfo)
+                    .Cast<ICMStatementInfo>()
+                    .SelectMany(s => s.DependentVariables)
+                    .Where(v => !DeclaredVariables.Select(p => p.RawValue).Contains(v))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+
+        /// <summary>
+        /// Return the list of variables that are altered by this code block. Override if
+        /// there is another source somewhere!
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get
+            {
+                var results = Statements
+                    .Where(s => s is ICMStatementInfo)
+                    .Cast<ICMStatementInfo>()
+                    .SelectMany(s => s.ResultVariables)
+                    .Where(v => !DeclaredVariables.Select(p => p.RawValue).Contains(v));
+                return new HashSet<string>(results);
+            }
+        }
+
+        /// <summary>
+        /// As long as the dependent/result stuff is satisfied, then a lifting can occur no problem.
+        /// </summary>
+        public bool NeverLift
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// List of internal variables. Since it is key not to mess this up, it must be filled by
+        /// all others. If there is no loop etc., then it doesn't matter!
+        /// </summary>
+        public abstract IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get;
+        }
+
+        /// <summary>
+        /// If there is no expression surrounding, then return true. Otherwise, one will
+        /// have to carefully double check!
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public abstract bool CommutesWithGatingExpressions(ICMStatementInfo followStatement);
+
+        /// <summary>
         /// Figure out which statement occurs first in our sequence.
         /// </summary>
         /// <param name="first"></param>
@@ -544,9 +513,56 @@ namespace LINQToTTreeLib.Statements
         {
             var whoIsFirst = Statements.Where(s => s == first || s == second).FirstOrDefault();
             if (whoIsFirst == null)
-                throw new ArgumentException("Unable to find either the first or second statement in th elist");
+                throw new ArgumentException("Unable to find either the first or second statement in the list");
 
             return whoIsFirst == first;
+        }
+
+        /// <summary>
+        /// We can't determine directly if we can combine.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public virtual Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+        }
+
+        /// <summary>
+        /// Helper routine. Pass it all renames relevant, and it will do all the testing.
+        /// It will return the FULL rename list, including everything you have passed in!
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        protected virtual Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalenceForBase(ICMStatementInfo other, Tuple<bool, IEnumerable<Tuple<string, string>>> renames)
+        {
+            if (!renames.Item1)
+                return renames;
+
+            // We assume this works at this point!
+            var s2 = other as StatementInlineBlockBase;
+
+            // If the number of statements isn't the same, then this doesn't matter.
+            if (Statements.Count() != s2.Statements.Count())
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            // Loop through the statements, accumulating renames as we go.
+            foreach (var s in Statements.Zip(s2.Statements, (st1, st2) => Tuple.Create(st1, st2)))
+            {
+                renames = renames
+                    .RequireForEquivForExpression(s.Item1 as ICMStatementInfo, s.Item2 as ICMStatementInfo);
+            }
+
+            // If we make it here, then we are good. The last thing to do before returning the result is to remove
+            // any renames and any declared variables
+            var declaredVariables = s2.DeclaredVariables;
+
+            return renames
+                .FilterRenames(i => !declaredVariables.Select(p => p.RawValue).Contains(i.Item1));
         }
     }
 }

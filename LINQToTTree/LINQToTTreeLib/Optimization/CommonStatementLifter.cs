@@ -1,6 +1,9 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using static LINQToTTreeLib.Optimization.OptimizationUtils;
 
 namespace LINQToTTreeLib.Optimization
 {
@@ -16,60 +19,238 @@ namespace LINQToTTreeLib.Optimization
         {
             foreach (var block in code.QueryCode())
             {
-                while (VisitCodeBlock(block, new IStatementCompound[] { }) != null)
-                    ;
+                VisitCodeBlock(block);
             }
         }
 
         /// <summary>
         /// Given a block of code, try to find statements that should be lifted up. For each statement
-        /// that we find, see if there is one in the list that can "eat" it.
+        /// that we find, see if there is one in the list that is "identical" - in short - already there.
         /// </summary>
-        /// <param name="block"></param>
-        private static IStatementCompound VisitCodeBlock(IStatementCompound block, IStatementCompound[] codeStack)
+        /// <param name="block">Examine this block for statements that can be lifted</param>
+        /// <param name="codeStack">The list of parents where we might put this statement</param>
+        private static void VisitCodeBlock(IStatementCompound block)
         {
-            var nextLevelStatementStack = codeStack.Concat(new IStatementCompound[] { block }).ToArray();
-
-            bool rerun = true;
-            while (rerun)
+            // Do decent first scan.
+            foreach (var s in block.Statements.RetryFromStartIfModified())
             {
-                rerun = false;
-                foreach (var s in block.Statements)
+                if (s is IStatementCompound)
                 {
-                    if (s is IStatementCompound)
+                    VisitCodeBlock(s as IStatementCompound);
+                }
+            }
+
+            // Now look at each item in the block and see if we can't find something above us that contains
+            // the very same thing. In order to pop any statement up we must
+            // 1. Be able to move it to the front of whatever block we are in
+            // 2. Find a statement previous to this block above us that will combine with it.
+
+            foreach (var s in block.Statements.RetryFromStartIfModified())
+            {
+                FindEquivalentAboveAndCombine(block, s);
+            }
+        }
+
+        /// <summary>
+        /// sToPop is a member of block, and can be or is the first statement. We see if we can pop it up
+        /// a level, and then start a scan for an equivalent statement, marching up the list. If we
+        /// find an equivalent statement, we will perform the combination and removal.
+        /// </summary>
+        /// <param name="block">The block of statements that holds sToPop</param>
+        /// <param name="sToPop">The statement to try to up level.</param>
+        /// <param name="previousStatements">Statements before this one in this block. This block might not actually contain this statement, in which case we must have this!</param>
+        /// <param name="followingStatements">Statements after this one in this block. This block might not actually contain this statement, in which case we must have this!</param>
+        /// <returns>True if something was done to the statement, false if we aborted for whatever reason.</returns>
+        private static bool FindEquivalentAboveAndCombine(IStatementCompound block, IStatement sToPop,
+            IEnumerable<IStatement> previousStatements = null,
+            IEnumerable<IStatement> followingStatements = null,
+            IStatement betweenStatement = null
+            )
+        {
+            // Can we combine these guys? This is when one sits in the other.
+            if (!(block is IStatementLoop) && block.TryCombineStatement(sToPop, new BlockRenamer(sToPop.Parent.FindBookingParent(), block.FindBookingParent())))
+            {
+                sToPop.FindCompoundParent().Remove(sToPop);
+                return false;
+            }
+
+
+            // If we can't get data flow information about a statement, then we can't do anything.
+            var sInfo = sToPop as ICMStatementInfo;
+            if (sInfo == null)
+            {
+                return false;
+            }
+
+            // For this next step we need to fetch the list of statements above us. Either it has
+            // been supplied to us, or we will have to generate it.
+            if (previousStatements == null)
+            {
+                previousStatements = block.Statements.TakeWhile(s => s != sInfo).Reverse();
+                followingStatements = block.Statements.SkipWhile(s => s != sInfo).Skip(1);
+                betweenStatement = sToPop;
+            }
+
+            // Make sure we can get the statement to the top of the block. As we move it
+            // forward, we want to also see if we can combine it in a straight-up way
+            // with each statement as we go by it.
+            bool madeItToTheFront = true;
+            foreach (var prevStatement in previousStatements)
+            {
+                if (MakeStatmentsEquivalent(prevStatement, sToPop))
+                {
+                    return true;
+                }
+                if (!StatementCommutes(prevStatement, sToPop))
+                {
+                    madeItToTheFront = false;
+                }
+            }
+
+            // Next, lets see if there isn't a statement *after* this one that we can combine it with. However,
+            // to do this, we have to move the statements *after* forward previous to this one. So a little painful.
+            // No need to do this if we working at the level of the statement: this ground will automatically be covered
+            // later in the loop.
+            if (betweenStatement != sToPop && betweenStatement is ICMCompoundStatementInfo)
+            {
+                foreach (var followStatement in followingStatements)
+                {
+                    if (followStatement is ICMStatementInfo)
                     {
-                        // If it is not a loop, try to move it.
-
-                        if (!(s is IStatementLoop))
+                        // Can we commute this statement from where it is to before the statement we are working on?
+                        if (StatementCommutes(followStatement, followingStatements.TakeWhile(f => f != followStatement).Reverse()))
                         {
-                            var whereDone = MoveStatement(block, s, codeStack);
-                            if (whereDone != null)
-                                return whereDone;
-                        }
-
-                        // Go down a level...
-                        var r = VisitCodeBlock(s as IStatementCompound, nextLevelStatementStack);
-                        if (r != null)
-                        {
-                            if (r != block)
-                                return r;
-                            if (r == block)
+                            // Next is the tricky part. We are now sitting one down from the block that contains
+                            // the sToPop statement. Can we move it up above the block? If the statements are the same,
+                            // then we know it is ok to move it pass all the contents of the block (otherwise we would not be here).
+                            // But what if it is an if statement, and the if statement depends on something in sToPop? Then
+                            // we can't move it.
+                            var betweenAsBlock = betweenStatement as ICMCompoundStatementInfo;
+                            if (betweenAsBlock.CommutesWithGatingExpressions(followStatement as ICMStatementInfo))
                             {
-                                rerun = true;
-                                break;
+                                if (MakeStatmentsEquivalent(followStatement, sToPop))
+                                {
+                                    // To keep continuity and unitarity, this follow statement now has to be moved before the betweenStatement!
+                                    var parent = followStatement.Parent as IStatementCompound;
+                                    parent.Remove(followStatement);
+                                    parent.AddBefore(followStatement, betweenStatement);
+                                    return true;
+                                }
                             }
                         }
                     }
-                    else
-                    {
-                        // This statement, can it be combined above us?
-                        var whereDone = MoveStatement(block, s, codeStack);
-                        if (whereDone != null)
-                            return whereDone;
-                    }
                 }
             }
-            return null;
+
+            // Now the only option left is to pop it up one level. We can do that only if we were able to
+            // shift the statement all the way to the front.
+            if (!madeItToTheFront)
+            {
+                return false;
+            }
+
+            // The statement can be moved to the top of the block, and isn't the same as
+            // anything else we passed. Can we pull it out one level?
+            // The key to answering this is: are all the variables it needs defined at the next
+            // level up? And if not, are the missing ones simply declared down here and need to be moved up?
+            var nParent = block.Parent.FindBookingParent();
+            if (nParent == null)
+            {
+                return false;
+            }
+
+            var sDependent = sInfo.DependentVariables;
+            var availAtParent = nParent.AllDeclaredVariables.Select(n => n.RawValue).Intersect(sDependent);
+            IEnumerable<string> declaredInBlock = Enumerable.Empty<string>();
+            if (block is IBookingStatementBlock)
+            {
+                declaredInBlock = (block as IBookingStatementBlock).DeclaredVariables.Select(np => np.RawValue).Intersect(sDependent);
+            }
+            if ((availAtParent.Count() + declaredInBlock.Count()) != sDependent.Count())
+            {
+                return false;
+            }
+
+            // If this there is a variable declared in the block internally, then we can't lift it up and out.
+            if (block is ICMCompoundStatementInfo)
+            {
+                if ((block as ICMCompoundStatementInfo).InternalResultVarialbes.Select(p => p.RawValue).Intersect(sDependent).Any())
+                {
+                    return false;
+                }
+            }
+
+            // If we are going to try to lift past a loop, we have to make sure the statement is idempotent.
+            if (block is IStatementLoop && !StatementIdempotent(sToPop))
+            {
+                return false;
+            }
+
+            // And the next figure out where we are in the list of statements.
+            var nPrevStatements = nParent.Statements.TakeWhile(ps => ps != block).Reverse();
+            var nFollowStatements = nParent.Statements.SkipWhile(ps => ps != block).Skip(1);
+
+            // And repeat one level up with some tail recursion!
+            var statementMoved = FindEquivalentAboveAndCombine(nParent, sToPop, nPrevStatements, nFollowStatements, block);
+
+            // There is one other thing to try. If we couldn't move it above us (e.g. statementMoved is false), it could be
+            // we can leave the statement here, rather than in its original location.
+            if (!statementMoved)
+            {
+                var parentsToBlock = sToPop
+                    .WalkParents(false)
+                    .TakeWhile(s => s != block)
+                    .Concat(new IStatementCompound[] { block }).ToArray();
+
+                // If no lifting out of some statement between us and the statement, then don't do it.
+                var parentsNotOK = parentsToBlock
+                    .Where(s => s is ICMCompoundStatementInfo)
+                    .Cast<ICMCompoundStatementInfo>()
+                    .Where(s => !s.AllowNormalBubbleUp);
+                if (parentsNotOK.Any())
+                {
+                    return false;
+                }
+
+                // The next thing we have to double check is that we can do the lifting, and nothing we are going to
+                // lift is going to impact some variable.
+                var dependents = sInfo.DependentVariables;
+                var dependentAffected = parentsToBlock
+                    .Select(p => p.CheckForVariableAsInternalResult(dependents))
+                    .Where(t => t);
+                if (dependentAffected.Any())
+                {
+                    return false;
+                }
+
+                return MoveStatement(sToPop, block);
+            }
+
+            return statementMoved;
+        }
+
+        /// <summary>
+        /// See if we can move the statement to the front of the line.
+        /// </summary>
+        /// <param name="statementToMove"></param>
+        /// <param name="statements"></param>
+        /// <returns></returns>
+        private static bool MoveFirst(IStatement statementToMove, IEnumerable<IStatement> statements)
+        {
+            // Walk backwards through previous statements
+            var prevStatements = statements.TakeWhile(s => s != statementToMove).Reverse();
+
+            // See if we can move.
+            foreach (var s in prevStatements)
+            {
+                if (!StatementCommutes(s, statementToMove))
+                {
+                    return false;
+                }
+            }
+
+            // If we can commute everywhere, then we are done!
+            return true;
         }
 
         /// <summary>
@@ -79,10 +260,9 @@ namespace LINQToTTreeLib.Optimization
         /// <param name="s"></param>
         /// <param name="codeStack"></param>
         /// <returns></returns>
-        private static IStatementCompound MoveStatement(IStatementCompound parent, IStatement s, IStatementCompound[] codeStack)
+        private static IStatementCompound MoveStatementIntoCodeStack(IStatementCompound parent, IStatement s, IStatementCompound[] codeStack)
         {
             // Never move a statement that doesn't want to move. :-)
-
             if (s is ICMStatementInfo)
             {
                 if ((s as ICMStatementInfo).NeverLift)

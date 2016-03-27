@@ -473,10 +473,9 @@ namespace LINQToTTreeLib.Expressions
                 // Run the code for the test, and then create the if/then/else that will support it.
                 var testExpression = base.Visit(expression.Test);
                 var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+                GeneratedCode.Add(testBoolInCode);
                 GeneratedCode.Add(new Statements.StatementAssign(testBoolInCode,
-                    ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer),
-                    FindDeclarableParameters.FindAll(testExpression),
-                    true
+                    ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer)
                     ));
 
                 // The result
@@ -487,15 +486,13 @@ namespace LINQToTTreeLib.Expressions
                 var topScope = GeneratedCode.CurrentScope;
                 GeneratedCode.Add(new Statements.StatementFilter(testBoolInCode));
                 var iftrueExpression = Visit(expression.IfTrue);
-                GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(iftrueExpression, GeneratedCode, CodeContext, MEFContainer),
-                    FindDeclarableParameters.FindAll(iftrueExpression)));
+                GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(iftrueExpression, GeneratedCode, CodeContext, MEFContainer)));
                 GeneratedCode.CurrentScope = topScope;
 
                 // Do the if false statement
                 GeneratedCode.Add(new Statements.StatementFilter(ExpressionToCPP.GetExpression(Expression.Not(testBoolInCode), GeneratedCode, CodeContext, MEFContainer)));
                 var ifFalseExpression = Visit(expression.IfFalse);
-                GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(ifFalseExpression, GeneratedCode, CodeContext, MEFContainer),
-                    FindDeclarableParameters.FindAll(ifFalseExpression)));
+                GeneratedCode.Add(new Statements.StatementAssign(conditionalResult, ExpressionToCPP.GetExpression(ifFalseExpression, GeneratedCode, CodeContext, MEFContainer)));
                 GeneratedCode.CurrentScope = topScope;
 
                 // Consider this expression now transformed, so return the result, not

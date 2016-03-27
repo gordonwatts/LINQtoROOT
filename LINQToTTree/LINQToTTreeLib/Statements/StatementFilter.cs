@@ -10,12 +10,18 @@ namespace LINQToTTreeLib.Statements
     /// Deal with a "Where"-like clause. Basically, we have an expression which we evaluate, and we make sure that
     /// it goes!
     /// </summary>
-    public class StatementFilter : StatementInlineBlockBase
+    public class StatementFilter : StatementInlineBlockBase, ICMStatementInfo
     {
         /// <summary>
-        /// Get the expresion we are going to test
+        /// Get the expression we are going to test
         /// </summary>
         public IValue TestExpression { get; private set; }
+
+        /// <summary>
+        /// We don't want to bubble up statements normally from here. Protected by an if statement usually means
+        /// that we are doing it for a good reason.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
 
         /// <summary>
         /// testExpression is what we test against to see if we should fire!
@@ -56,8 +62,19 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { };
+            }
+        }
+
+        /// <summary>
         /// We filter on one simple thing. If it is the case that the tests are the same,
-        /// (identical), we do the combination, stealing the statemetns from the second one
+        /// (identical), we do the combination, stealing the statements from the second one
         /// for ourselves. No renaming is required as this is a simple test!
         /// </summary>
         /// <param name="statement"></param>
@@ -115,6 +132,30 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Make an attempt to combine if statements.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public override Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            // Quick check.
+            if (!(other is StatementFilter))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementFilter;
+
+            // Do the test expression.
+            var renames = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(TestExpression, s2.TestExpression);
+
+            // And do everything in the block
+            return RequiredForEquivalenceForBase(other, renames)
+                .ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
         /// Rename our variables
         /// </summary>
         /// <param name="origName"></param>
@@ -123,6 +164,32 @@ namespace LINQToTTreeLib.Statements
         {
             TestExpression.RenameRawValue(origName, newName);
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// We have a statement tha twe want to move out of this if statement. Make sure it isn't going to alter
+        /// anything we are looking at in our if statement!
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsImpacted = followStatement.ResultVariables.Intersect(TestExpression.Dependants.Select(s => s.RawValue));
+            return !varsImpacted.Any();
+        }
+
+        /// <summary>
+        /// Return the list of dependent variables, which includes ones in our test
+        /// expression.
+        /// </summary>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                return base.DependentVariables
+                    .Concat(TestExpression.Dependants.Select(p => p.RawValue))
+                    .ToHashSet();
+            }
         }
     }
 }

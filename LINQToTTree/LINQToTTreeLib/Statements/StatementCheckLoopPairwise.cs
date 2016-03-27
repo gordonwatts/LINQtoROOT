@@ -2,6 +2,8 @@
 using LinqToTTreeInterfacesLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
@@ -55,6 +57,11 @@ namespace LINQToTTreeLib.Statements
         {
             get { return new IDeclaredParameter[] { _index1, _index2 }; }
         }
+
+        /// <summary>
+        /// Statements inside are protected by if statements, so we shouldn't let them bubble up when they like.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
 
         /// <summary>
         /// Return the code to implement this
@@ -111,6 +118,32 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _index1, _index2 };
+            }
+        }
+
+        /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(_indciesToInspect.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+
+        /// <summary>
         /// Attempt to combine two of these statements. We can do this iff the source expression that
         /// we are testing is the same. Then the two indicies need to be renamed (it is assumed that we have total
         /// control - as you can see from the generated code above).
@@ -163,6 +196,29 @@ namespace LINQToTTreeLib.Statements
             _indciesToInspect.RenameParameter(origName, newName);
 
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
+        {
+            get
+            {
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { _index1, _index2 });
+            }
+        }
+
+        /// <summary>
+        /// Do we commute with the gateway expressions?
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsUsed = followStatement.ResultVariables.Intersect(_whatIsGood.Dependants.Concat(_indciesToInspect.Dependants).Select(p => p.RawValue));
+            return !varsUsed.Any();
         }
     }
 }

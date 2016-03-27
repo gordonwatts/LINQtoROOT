@@ -208,6 +208,14 @@ namespace LINQToTTreeLib.Statements
                 }
             }
 
+            public IEnumerable<IDeclaredParameter> Dependants
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public void RenameParameter(string oldname, string newname)
             {
                 return;
@@ -226,21 +234,6 @@ namespace LINQToTTreeLib.Statements
             {
                 throw new NotImplementedException();
             }
-        }
-
-
-        [TestMethod]
-        public void TestSimpleBlockCombine()
-        {
-            /// Combine two statements in a single block. Make sure that
-            IStatement b1 = new StatementSimpleStatement("int");
-            IStatement b2 = new StatementSimpleStatement("dude");
-
-            var b = new StatementInlineBlock();
-            Assert.IsTrue(b.TryCombineStatement(b1, new DummyOptimizer()), "should always be able to add extra statements");
-            Assert.IsTrue(b.TryCombineStatement(b2, new DummyOptimizer()), "should always be able to add another extra statement");
-
-            Assert.AreEqual(2, b.Statements.Count(), "expected both statements in there");
         }
 
         /// <summary>
@@ -607,11 +600,11 @@ namespace LINQToTTreeLib.Statements
         {
             // This variable will be modified in an assignment statement.
             var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)));
 
             // Next, we access this variable in an if statement.
             var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            var assignment = new StatementAssign(finalVar, varToBeModified);
             var checkVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             var ifUsesModifiedValue = new StatementFilter(new ValSimple(checkVar.RawValue, typeof(bool)));
             ifUsesModifiedValue.Add(assignment);
@@ -692,13 +685,13 @@ namespace LINQToTTreeLib.Statements
             // Have the modified if statement contain the modification now.
 
             var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)));
             blockWithModified.Add(varToBeModified);
             if1s1.Add(statementModifier);
 
             // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
             var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            var assignment = new StatementAssign(finalVar, varToBeModified);
             blockWithModified.Add(finalVar);
             if2s1.Add(assignment);
 
@@ -763,21 +756,21 @@ namespace LINQToTTreeLib.Statements
             blockWithoutModified.Add(if2s2);
             blockWithoutModified.Add(if1s2);
 
-            if1s1.Add(new StatementAssign(dummyVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
-            if2s1.Add(new StatementAssign(dummyVar, new ValSimple("2", typeof(int)), new IDeclaredParameter[] { }));
-            if1s2.Add(new StatementAssign(dummyVar, new ValSimple("3", typeof(int)), new IDeclaredParameter[] { }));
-            if2s2.Add(new StatementAssign(dummyVar, new ValSimple("4", typeof(int)), new IDeclaredParameter[] { }));
+            if1s1.Add(new StatementAssign(dummyVar, new ValSimple("1", typeof(int))));
+            if2s1.Add(new StatementAssign(dummyVar, new ValSimple("2", typeof(int))));
+            if1s2.Add(new StatementAssign(dummyVar, new ValSimple("3", typeof(int))));
+            if2s2.Add(new StatementAssign(dummyVar, new ValSimple("4", typeof(int))));
 
             // Have the modified if statement contain the modification now.
 
             var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)));
             blockWithModified.Add(varToBeModified);
             if1s1.Add(statementModifier);
 
             // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
             var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            var assignment = new StatementAssign(finalVar, varToBeModified);
             blockWithModified.Add(finalVar);
             if2s1.Add(assignment);
 
@@ -855,13 +848,29 @@ namespace LINQToTTreeLib.Statements
             var s = new StatementInlineBlock();
 
             var vdecl1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var s1 = new Statements.StatementAssign(vdecl1, new ValSimple("fork", typeof(int)), null);
-            var s2 = new Statements.StatementAssign(vdecl1, new ValSimple("fork", typeof(int)), null);
+            var s1 = new Statements.StatementAssign(vdecl1, new ValSimple("fork", typeof(int)));
+            var s2 = new Statements.StatementAssign(vdecl1, new ValSimple("fork", typeof(int)));
             s.Add(s1);
             s.Add(s2);
 
             Assert.IsTrue(s.IsBefore(s1, s2), "s1 before s2");
             Assert.IsFalse(s.IsBefore(s2, s1), "s2 is before s1");
+        }
+
+        [TestMethod]
+        public void InlineBlockDeclaredVariablesEmpty()
+        {
+            var s = new StatementInlineBlock();
+            Assert.AreEqual(0, s.DeclaredVariables.Count());
+        }
+
+        [TestMethod]
+        public void InlineBlockDeclardVariablesOne()
+        {
+            var s = new StatementInlineBlock();
+            var d = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            s.Add(d);
+            Assert.AreEqual(1, s.DeclaredVariables.Count());
         }
     }
 }

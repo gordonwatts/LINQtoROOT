@@ -2,6 +2,7 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Statements;
+using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -64,8 +65,9 @@ namespace LINQToTTreeLib.Tests.Optimization
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign);
+            gc.Add(p1);
 
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
@@ -90,23 +92,26 @@ namespace LINQToTTreeLib.Tests.Optimization
         {
             // We will have two if statements to do the combination with. They basically "hide" the modification.
             var checkVar1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var if1s1 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
-            var if1s2 = new StatementFilter(new ValSimple(checkVar1.RawValue, typeof(bool)));
+            checkVar1.InitialValue = new ValSimple("5>10", typeof(bool));
+            var if1s1 = new StatementFilter(checkVar1);
+            var if1s2 = new StatementFilter(checkVar1);
 
             var checkVar2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var if2s1 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
-            var if2s2 = new StatementFilter(new ValSimple(checkVar2.RawValue, typeof(bool)));
+            checkVar2.InitialValue = new ValSimple("5>10", typeof(bool));
+            var if2s1 = new StatementFilter(checkVar2);
+            var if2s2 = new StatementFilter(checkVar2);
 
             var randomVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            if1s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
-            if2s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
-            if1s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
-            if2s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { }));
+            if1s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
+            if2s2.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
+            if1s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
+            if2s1.Add(new StatementAssign(randomVar, new ValSimple("1", typeof(int))));
 
             // We will put the first if's - that we can perhaps combine with - at the top level (though we
             // shouldn't combine with them!).
             var gc = new GeneratedCode();
+            gc.Add(randomVar);
             gc.Add(checkVar1);
             gc.Add(checkVar2);
             gc.Add(if2s2);
@@ -128,30 +133,80 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Have the modified if statement contain the modification now.
 
             var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)), new IDeclaredParameter[] { });
+            var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)));
             //blockWithModified.Add(varToBeModified);
             gc.Add(varToBeModified);
             if1s1.Add(statementModifier);
 
             // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
             var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assignment = new StatementAssign(finalVar, varToBeModified, new IDeclaredParameter[] { varToBeModified });
+            var assignment = new StatementAssign(finalVar, varToBeModified);
             //blockWithModified.Add(finalVar);
             gc.Add(finalVar);
             if2s1.Add(assignment);
 
             // Optimize.
 
-            Console.WriteLine("Before optimization:");
-            gc.DumpCodeToConsole();
-            Console.WriteLine("");
-            CommonStatementLifter.Optimize(gc);
-            Console.WriteLine("After optimization:");
-            gc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(gc);
 
             var firstMention = gc.DumpCode().TakeWhile(l => !l.Contains("aInt32_4=1")).Count();
             var secondMetnion = gc.DumpCode().SkipWhile(l => !l.Contains("aInt32_4=1")).Skip(1).Where(l => l.Contains("aInt32_4")).Count();
             Assert.AreEqual(1, secondMetnion, "Mention of ainte32 4 after the first one");
+        }
+
+        /// <summary>
+        /// 1. a = 10
+        /// 2. b = 10
+        /// 3. if con1
+        /// 4.   a = 20
+        /// 5. if con2
+        /// 6.   b = 20
+        /// No combinations should occur.
+        /// </summary>
+        [TestMethod]
+        public void NoCombineDifferentHistories()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("20", typeof(int)));
+
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: a);
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: b);
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
+
+        }
+
+        /// <summary>
+        /// 1. a = 10
+        /// 2. b = 10
+        /// 3. if con1
+        /// 4.   a = 20
+        /// 5. if con2
+        /// 6.   b = 30
+        /// No combinations should occur.
+        /// </summary>
+        [TestMethod]
+        public void NoCombineDifferentFutures()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: a, mainSettingValue: new ValSimple("20", typeof(int)));
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: b, mainSettingValue: new ValSimple("30", typeof(int)));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
         }
 
         /// <summary>
@@ -163,11 +218,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign1);
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign2);
 
 
@@ -202,18 +258,21 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign1);
 
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)));
+            gc.Add(p2);
             gc.Add(assign2);
 
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p3, p2);
+            gc.Add(p3);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
@@ -254,7 +313,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(p1);
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, false);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign1);
 
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
@@ -262,11 +321,12 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             gc.Add(p2);
-            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, false);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)));
             gc.Add(assign2);
 
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p3, p2, new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p3, p2);
+            gc.Add(p3);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
@@ -286,7 +346,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(firstAssignment, "first assignment");
             var backIfStatement = block1.Statements.Skip(1).First() as StatementFilter;
             Assert.IsNotNull(backIfStatement, "if statement there");
-            Assert.AreEqual(0, backIfStatement.DeclaredVariables.Count(), "lifted variables should no longer be declared here");
+            Assert.AreEqual(1, backIfStatement.DeclaredVariables.Count(), "lifted variables should no longer be declared here");
         }
 
         /// <summary>
@@ -298,15 +358,17 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign1);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign11 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign11 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)));
+            gc.Add(p2);
             gc.Add(assign11);
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
-            var assign22 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            var assign22 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)));
             gc.Add(assign22);
             gc.Add(assign2);
 
@@ -334,14 +396,16 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign1);
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign2);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)));
+            gc.Add(p2);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
@@ -371,20 +435,21 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(new DummyLoop());
 
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign1);
 
             gc.Add(new DummyLoop());
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p2, new ValSimple("f", typeof(int)));
+            gc.Add(p2);
             gc.Add(assign2);
 
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            CommonStatementLifter.Optimize(cc);
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(cc);
 
             var block1 = cc.QueryCode().First();
             var firstLoop = block1.Statements.First() as DummyLoop;
@@ -393,6 +458,48 @@ namespace LINQToTTreeLib.Tests.Optimization
             var secondLoop = firstLoop.Statements.Skip(1).First() as DummyLoop;
             Assert.IsNotNull(secondLoop, "second loop");
             Assert.AreEqual(1, secondLoop.Statements.Count(), "# of statements in second loop");
+        }
+
+        /// <summary>
+        /// 1. loop
+        /// 2.   idempotent statement not involving loop variables
+        /// That 2 should be lifted, and the loop eliminated.
+        /// </summary>
+        [TestMethod]
+        public void LiftIdempotentStatementInLoop()
+        {
+            var gc = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(p1);
+            var loop = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(new StatementForLoop(loop, new ValSimple("10", typeof(int))));
+            gc.Add(new StatementAssign(p1, new ValSimple("20", typeof(int))));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            var loopFound = gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().First();
+            Assert.AreEqual(0, loopFound.Statements.Count(), "# of statements in loop now");
+        }
+
+        /// <summary>
+        /// 1. if
+        /// 2.   idempotent statement not involving loop variables
+        /// That 2 should be lifted, and the loop eliminated.
+        /// </summary>
+        [TestMethod]
+        public void NoLiftIdempotentStatementInsideIf()
+        {
+            var gc = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(p1);
+            var loop = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(new StatementFilter(new ValSimple("10>20", typeof(bool))));
+            gc.Add(new StatementAssign(p1, new ValSimple("20", typeof(int))));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            var loopFound = gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().First();
+            Assert.AreEqual(1, loopFound.Statements.Count(), "# of statements in loop now");
         }
 
         /// <summary>
@@ -414,12 +521,13 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public void Remove(IStatement statement)
             {
-                throw new NotImplementedException();
+                _statements.Remove(statement);
+                statement.Parent = null;
             }
 
             public void AddBefore(IStatement statement, IStatement beforeThisStatement)
             {
-                throw new NotImplementedException();
+                _statements.Insert(_statements.IndexOf(beforeThisStatement), statement);
             }
 
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
@@ -495,28 +603,29 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// is ok to lift it. I wonder if the normal compiler would do that?
         /// </summary>
         [TestMethod]
-        public void TestIdenticalIfsGetLifted()
+        public void TestIdenticalNestedIfsGetLifted()
         {
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign2);
 
             var ifstatement2 = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement2);
 
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)));
+            gc.Add(p2);
             gc.Add(assign3);
 
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            CommonStatementLifter.Optimize(cc);
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(cc);
 
             var block1 = cc.QueryCode().First();
             var firstFilter = block1.Statements.First() as StatementFilter;
@@ -537,13 +646,15 @@ namespace LINQToTTreeLib.Tests.Optimization
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var ifstatement = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign2);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)));
+            gc.Add(p2);
             gc.Add(assign3);
             gc.Pop();
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign1);
 
             var cc = new CombinedGeneratedCode();
@@ -570,33 +681,35 @@ namespace LINQToTTreeLib.Tests.Optimization
             var gc = new GeneratedCode();
             gc.SetResult(DeclarableParameter.CreateDeclarableParameterExpression(typeof(double)));
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(p1);
 
             var ifstatement1 = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement1);
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign2);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign3 = new StatementAssign(p2, new ValSimple("f*5", typeof(int)));
+            gc.Add(p2);
             gc.Add(assign3);
             gc.Pop();
 
             var ifstatement2 = new StatementFilter(new ValSimple("i", typeof(int)));
             gc.Add(ifstatement2);
-            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign4);
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)));
+            gc.Add(p3);
             gc.Add(assign5);
             gc.Pop();
 
-            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign1 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign1);
 
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            CommonStatementLifter.Optimize(cc);
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(cc);
 
             var block1 = cc.QueryCode().First();
             var firstAssignment = block1.Statements.First() as StatementAssign;
@@ -618,7 +731,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Add one common assign statement.
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
+            gc.Add(p1);
             gc.Add(assign2);
 
             // Go down two levels.
@@ -628,10 +742,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(ifstatement2);
 
             // Two levels down add the second common and unique statements.
-            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign4 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign4);
             var p3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)), new IDeclaredParameter[] { }, true);
+            var assign5 = new StatementAssign(p3, new ValSimple("f*5", typeof(int)));
+            gc.Add(p3);
             gc.Add(assign5);
 
 
@@ -685,23 +800,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsTrue(query1.CheckCodeBlock(), "query 1 is good format");
             Assert.IsTrue(query2.CheckCodeBlock(), "query 2 is good format");
 
-            Console.WriteLine("Query #1:");
-            query1.DumpCodeToConsole();
-            Console.WriteLine("Query #2:");
-            query2.DumpCodeToConsole();
-
             var query = CombineQueries(query1, query2);
-            Console.WriteLine("Unoptimized");
-            query.DumpCodeToConsole();
             Assert.IsTrue(query.CheckCodeBlock(), "combined query ok");
 
-            CommonStatementLifter.Optimize(query);
-            Assert.IsTrue(query.CheckCodeBlock(), "optimzied combined query ok");
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("After optimization...");
-            Console.WriteLine();
-            query.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(query);
+            Assert.IsTrue(query.CheckCodeBlock(), "optimized combined query ok");
 
             // We test for this by making sure the "abs" function is called only twice in
             // the generated code.
@@ -711,8 +814,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
         /// <summary>
         /// 1. Loop 1 over array a
-        /// 2. Loop 2 over array a
-        /// 3.  something with iterator from Loop 1 and Loop 2.
+        /// 2.   Loop 2 over array a
+        /// 3.     something with iterator from Loop 1 and Loop 2.
         /// 
         /// You can't necessarily pull things out when they are nested identical loops - they may well be
         /// there for a reason!
@@ -721,6 +824,8 @@ namespace LINQToTTreeLib.Tests.Optimization
         public void TestNoCommonLifeNestedIdenticalLoops()
         {
             var v = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            v.Add(p1);
 
             var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
             var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
@@ -729,7 +834,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            v.Add(new StatementAssign(p1, new ValSimple($"{loopP1.RawValue}+{loopP2.RawValue}", typeof(int), new IDeclaredParameter[] { loopP2, loopP1 })));
 
             Console.WriteLine("Unoptimized:");
             v.DumpCodeToConsole();
@@ -740,22 +845,19 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Make sure it is two if statements, nested.
             var if1 = v.CodeBody.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if1, "if #1");
+            Assert.IsNotNull(if1, "for #1");
             var if2 = if1.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if2, "if #2");
-
-            // Make sure the two loop variables are different.
-            Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
+            Assert.IsNotNull(if2, "assign");
+            var a = if2.Statements.First() as StatementAssign;
+            Assert.IsNotNull(a);
         }
 
         /// <summary>
         /// 1. Loop 1 over array a
         /// 2. Loop 2 over array a
-        /// 3.  if statement
-        /// 4.    something with iterator from Loop 1 and Loop 2.
-        /// 
-        /// You can't necessarily pull things out when they are nested identical loops - they may well be
-        /// there for a reason!
+        /// 3.  if statement with iterator 1
+        /// 4.    simple statement
+        /// The if statement should come up one level.
         /// </summary>
         [TestMethod]
         public void TestNoCommonLifeNestedIdenticalLoopsIf()
@@ -768,9 +870,11 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.Add(loop1);
             var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var loop2 = new StatementForLoop(loopP2, limit);
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            v.Add(p1);
             v.Add(loop2);
-            v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool), new IDeclaredParameter[] { loopP1 })));
+            v.Add(new StatementAssign(p1, new ValSimple("10", typeof(int))));
 
             Console.WriteLine("Unoptimized:");
             v.DumpCodeToConsole();
@@ -780,51 +884,22 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.DumpCodeToConsole();
 
             // Make sure it is two if statements, nested.
-            var if1 = v.CodeBody.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if1, "if #1");
-            var if2 = if1.Statements.First() as StatementForLoop;
+            var if1 = v.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Any()).First();
+            Assert.IsNotNull(if1, "for #1");
+            var if2 = if1.Statements.First() as StatementFilter;
             Assert.IsNotNull(if2, "if #2");
-
-            // Make sure the two loop variables are different.
-            Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
+            var a2 = if2.Statements.First() as StatementAssign;
+            Assert.IsNotNull(a2);
         }
-
-#if false
-        // We don't detect loop invarients correctly yet - so these will remain inside a loop for now.
-        [TestMethod]
-        public void LiftLoopInvarient()
-        {
-            var v = new GeneratedCode();
-
-            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
-            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var loop1 = new StatementForLoop(loopP1, limit);
-            v.Add(loop1);
-
-            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)), new IDeclaredParameter[] { }, true);
-            loop1.Add(assign1);
-
-            Console.WriteLine("Unoptimized:");
-            v.DumpCodeToConsole();
-            CommonStatementLifter.Optimize(v);
-            Console.WriteLine("");
-            Console.WriteLine("Optimized:");
-            v.DumpCodeToConsole();
-
-            Assert.Inconclusive();
-        }
-#endif
 
         /// <summary>
         /// 1. Loop 1 over array a
-        /// 2. Loop 2 over array a
-        /// 3.  if statement
-        /// 4.    something with iterator from Loop 1 and Loop 2.
-        /// 5. More statements.
-        /// 
-        /// You can't necessarily pull things out when they are nested identical loops - they may well be
-        /// there for a reason!
+        /// 2.   Loop 2 over array a
+        /// 3.    if statement
+        /// 4.      Something independent of 1 and 2
+        /// 5.   Same statement independent of 1 and 2
+        /// Inner statement should be pulled out to the interior of loop 1.
+        /// And that should be pulled all the way out to the top since it is a loop invarient.
         /// </summary>
         [TestMethod]
         public void TestNoCommonLifeNestedIdenticalLoopsIfStatementAfter()
@@ -839,11 +914,15 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            v.Add(p1);
             v.Add(new StatementFilter(new ValSimple(string.Format("{0}!=0", loopP1.RawValue), typeof(bool))));
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            v.Add(new StatementAssign(p1, new ValSimple("10", typeof(int))));
 
             v.CurrentScope = lp1Scope;
-            v.Add(new StatementAssign(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)), new ValSimple("10", typeof(int)), new IDeclaredParameter[] { }));
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            v.Add(p2);
+            v.Add(new StatementAssign(p2, new ValSimple("10", typeof(int))));
 
             Console.WriteLine("Unoptimized:");
             v.DumpCodeToConsole();
@@ -853,17 +932,247 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.DumpCodeToConsole();
 
             // Make sure it is two if statements, nested.
-            var if1 = v.CodeBody.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if1, "if #1");
-            var if2 = if1.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if2, "if #2");
-
-            // Make sure the two loop variables are different.
-            Assert.AreNotEqual(if1.LoopIndexVariable.First(), if2.LoopIndexVariable.First(), "Loop index vars");
+            Assert.AreEqual(1, v.CodeBody.Statements.WhereCast<IStatement, StatementAssign>().Count());
         }
 
         /// <summary>
-        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outter loop one.
+        /// 1. a = a + 1
+        /// 2. a = a + 1
+        /// should not be combined.
+        /// </summary>
+        [TestMethod]
+        public void RepeatedSelfReferenctialStatments()
+        {
+            var gc = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
+            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count());
+        }
+
+
+        /// <summary>
+        /// Make sure lift occurs when identical loops are present
+        /// 1. loop A
+        /// 2. if statement
+        /// 3.   loop A
+        /// 4.   statement
+        /// In this case loop A can be removed.
+        /// Normally, this can't be lifted as we don't want to lift things out of an
+        /// if statement. However, in this case, they are identical, so it is OK.
+        /// We don't normally want to lift things past an if statement b.c. it is an efficiency
+        /// protector
+        /// </summary>
+        [TestMethod]
+        public void LiftIdenticalLoopOutOfIfStatement()
+        {
+            var gc = new GeneratedCode();
+            var c1 = StatementLifterTest.AddLoop(gc);
+            gc.Pop();
+            StatementLifterTest.AddIf(gc);
+            var c2 = StatementLifterTest.AddLoop(gc);
+            gc.Pop();
+            StatementLifterTest.AddSum(gc, c1, c2);
+
+            Console.WriteLine("Before lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("After lifting and optimization: ");
+            gc.DumpCodeToConsole();
+
+            // Now check that things happened as we would expect them to happen.
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of statements inside first for loop");
+
+            var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
+            Assert.IsNotNull(ifStatement, "Finding if statement");
+            Assert.AreEqual(1, ifStatement.Statements.Count(), "# of statements inside the if statement");
+            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAssign));
+            var ass = ifStatement.Statements.First() as StatementAssign;
+            Assert.AreEqual($"{c1.RawValue}+{c1.RawValue}", ass.Expression.RawValue);
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of variables declared");
+            Assert.AreEqual(c1.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "Counter is declared.");
+        }
+
+        /// <summary>
+        /// Make sure lift occurs when identical loops are present, but in reverse order.
+        /// 1. if statement
+        /// 2.   loop A
+        /// 4. loop A
+        /// In this case loop A can be removed.
+        /// Normally, this can't be lifted as we don't want to lift things out of an
+        /// if statement. However, in this case, they are identical, so it is OK.
+        /// We don't normally want to lift things past an if statement b.c. it is an efficiency
+        /// protector
+        /// </summary>
+        [TestMethod]
+        public void LiftIdenticalLoopOutOfIfStatementReverse()
+        {
+            var gc = new GeneratedCode();
+            StatementLifterTest.AddIf(gc);
+            var c2 = StatementLifterTest.AddLoop(gc);
+            gc.Pop();
+            gc.Pop();
+            var c1 = StatementLifterTest.AddLoop(gc);
+
+            DoOptimizationAndConsoleDump(gc);
+
+            // Now check that things happened as we would expect them to happen.
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of statements inside first for loop");
+
+            var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
+            Assert.IsNotNull(ifStatement, "Finding if statement");
+            Assert.AreEqual(0, ifStatement.Statements.Count(), "# of statements inside the if statement");
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of variables declared");
+            Assert.AreEqual(c1.RawValue, gc.CodeBody.DeclaredVariables.First().RawValue, "Counter is declared.");
+        }
+
+        /// <summary>
+        /// 1. statement A
+        /// 2. if
+        /// 3.   Statement A
+        /// Where A is idempotent. This lift should occur.
+        /// </summary>
+        [TestMethod]
+        public void LiftSimpleStatementInIfBefore()
+        {
+            var gc = new GeneratedCode();
+            var p = AddSimpleAssign(gc, valToAssign: new ValSimple("f1", typeof(int)));
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: p);
+
+            Console.WriteLine("Before Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(0, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Select(s => s.Statements.Count()).First(), "# of statements under if statement");
+        }
+
+        /// <summary>
+        /// 1. if
+        /// 2.   Statement A
+        /// 3. statement A
+        /// Where A is idempotent. This lift should occur, and statement A should be moved in front of the if statement.
+        /// </summary>
+        [TestMethod]
+        public void LiftSimpleStatementInIfAfter()
+        {
+            var gc = new GeneratedCode();
+            var p = AddConditionalExpr(gc, doElseClause: false);
+            AddSimpleAssign(gc, useParam: p, valToAssign: new ValSimple("f1", typeof(int)));
+
+            Console.WriteLine("Before Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(0, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Select(s => s.Statements.Count()).First(), "# of statements under if statement");
+        }
+
+        /// <summary>
+        /// 1. if B
+        /// 2.   statement A
+        /// 3.   dependent on A
+        /// 4. statement A
+        /// If A can commute with if, it should be put on top of if.
+        /// </summary>
+        [TestMethod]
+        public void LiftStatementInAfterWithDependent()
+        {
+            var gc = new GeneratedCode();
+
+            var pfinal = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var p = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var secondAssign = new StatementAssign(pfinal, new ValSimple($"{p.RawValue}*2", typeof(int), new IDeclaredParameter[] { p }));
+            gc.Add(p);
+            gc.Add(pfinal);
+
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: p, addInFirstAfter: secondAssign);
+            AddSimpleAssign(gc, useParam: p, valToAssign: new ValSimple("f1", typeof(int)));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Select(s => s.Statements.Count()).First(), "# of statements under if statement");
+            Assert.AreEqual(2, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).Where(s => s is StatementAssign).Count(), "# of statements before if statement (must be assign)");
+        }
+
+        /// <summary>
+        /// Make the output and test a little more uniform.
+        /// </summary>
+        /// <param name="gc"></param>
+        private static void DoOptimizationAndConsoleDump(IExecutableCode gc)
+        {
+            Console.WriteLine("Before Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            CommonStatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+        }
+
+        /// <summary>
+        /// 1. if cond1
+        /// 2.   Statement A
+        /// 3. if cond2
+        /// 4.   if cond 1
+        /// 5.     statement A
+        /// 6.   statement involving result of A
+        /// 7. Second statement involving A
+        /// Should lift that inner if statement.
+        /// </summary>
+        [TestMethod]
+        public void LiftIfStatement()
+        {
+            var gc = new GeneratedCode();
+
+            var testExpr = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            gc.Add(testExpr);
+
+            var p = AddConditionalExpr(gc, doElseClause: false, ifStatementTest: testExpr);
+
+            var secondIf = new StatementFilter(new ValSimple("5>10", typeof(bool), null));
+            gc.Add(secondIf);
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: p, ifStatementTest: testExpr);
+            AddSimpleAssign(gc, valToAssign: new ValSimple($"{p.RawValue}*2.0", p.Type, new IDeclaredParameter[] { p }));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            var secondIfStatement = gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Skip(1).First();
+            Assert.AreEqual(1, secondIfStatement.Statements.Count(), "only the assign should remain");
+            Assert.IsTrue(secondIfStatement.Statements.Where(s => s is StatementAssign).Any(), "Is an assignmnt statement");
+        }
+
+        /// <summary>
+        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outer loop one.
         /// It should not be lifted since it will alter the counting!
         /// </summary>
         [TestMethod]
@@ -878,6 +1187,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                         select rr1).Aggregate(0, (acc, v) => acc + v);
             var resu1 = res1.Aggregate(0, (acc, v) => acc + v);
             var query1 = DummyQueryExectuor.FinalResult;
+
             StatementLifter.Optimize(query1);
 
             var res2 = from f in q
@@ -887,6 +1197,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                                select rr1).Aggregate(0, (acc, v) => acc + v);
             var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
             var query2 = DummyQueryExectuor.FinalResult;
+
             StatementLifter.Optimize(query2);
 
             // Combine the queries
@@ -904,6 +1215,75 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // We can't totally combine because some gets extract into a function.
             Assert.AreEqual(3, query.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
+            // TODO: in the inner loop i see the following:
+            //aInt32_12 = aInt32_12 + aInt32_15;
+            //aInt32_15 = aInt32_15 + aInt32_17;
+            // note how 15 is used and then updated. Is that really right? This seems like a funny combination here.
+        }
+
+        /// <summary>
+        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outer loop one.
+        /// It should not be lifted since it will alter the counting!
+        /// </summary>
+        [TestMethod]
+        public void AggregateLiftDoubleInnerLoop()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var res2 = from f in q
+                       from r12 in f.valC1D
+                       select (from r1 in f.valC1D
+                               let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r12))
+                               select rr1).Aggregate(0, (acc, v) => acc + v);
+            var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            Console.WriteLine("Unoptimized");
+            query2.DumpCodeToConsole();
+
+            StatementLifter.Optimize(query2);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("After optimization...");
+            Console.WriteLine();
+            query2.DumpCodeToConsole();
+
+            // We can't totally combine because some gets extract into a function.
+            Assert.AreEqual(2, query2.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
+        }
+
+        /// <summary>
+        /// Say you have an aggregate statement that is in an inner loop that is the "same" as the outter loop one.
+        /// It should not be lifted since it will alter the counting!
+        /// </summary>
+        [TestMethod]
+        public void AggregateStatementLiftNonSideEffect()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var res1 = from f in q
+                       select
+                       (from r1 in f.valC1D
+                        let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                        select rr1).Aggregate(0, (acc, v) => acc + v);
+            var resu1 = res1.Aggregate(0, (acc, v) => acc + v);
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            Console.WriteLine("Unoptimized");
+            Console.WriteLine();
+            query1.DumpCodeToConsole();
+
+            StatementLifter.Optimize(query1);
+
+            Console.WriteLine();
+            Console.WriteLine("Optimized");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            query1.DumpCodeToConsole();
+
+            Assert.AreEqual(1, query1.DumpCode().Where(l => l.Contains("for (")).Count(), "# of times for loop appears in the code");
         }
 
         [TestMethod]
@@ -1011,6 +1391,39 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(string.Format("int {0}=-1;", varname), firstMention.Trim(), "aint32_23 decl");
         }
 
+#if false
+        Here is the code this generates:
+    {
+      double aDouble_4=0;
+      int aInt32_5=0;
+      if (i)
+      {
+        double aDouble_2=0;
+        int aInt32_3=0;
+        aInt32_3=f;
+        if (aInt32_3)
+        {
+          aDouble_2=f1;
+        }
+        if (!aInt32_3)
+        {
+          aDouble_2=f2;
+        }
+      }
+      aInt32_5=f;
+      if (aInt32_5)
+      {
+        aDouble_4=f1;
+      }
+      if (!aInt32_5)
+      {
+        aDouble_4=f2;
+      }
+    }
+
+        Note that the two sets of if statements have to both be identical. The code doesn't recognize pairs yet, so
+        this is impossible (e.g. think about what if the second aDouble_4 was f3 instead of f2).
+
         /// <summary>
         /// Seen in the wild. A lift leaves behind multiple assignment statements that look identical.
         /// </summary>
@@ -1033,14 +1446,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            Console.WriteLine("Before optimization:");
-            cc.DumpCodeToConsole();
-
-            CommonStatementLifter.Optimize(cc);
-
-            Console.WriteLine();
-            Console.WriteLine("After optimization:");
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(gc);
 
             var block1 = cc.QueryCode().First().Statements.Skip(2).FirstOrDefault();
             Assert.IsInstanceOfType(block1, typeof(StatementFilter));
@@ -1051,6 +1457,41 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(ifStatementI);
             Assert.AreEqual(0, ifStatementI.Statements.Count());
         }
+#endif
+
+#if false
+        Here is the code this generates:
+    {
+      double aDouble_4=0;
+      int aInt32_5=0;
+      if (i)
+      {
+        double aDouble_2=0;
+        int aInt32_3=0;
+        aInt32_3=f;
+        if (aInt32_3)
+        {
+          aDouble_2=f1;
+        }
+        if (!aInt32_3)
+        {
+          aDouble_2=f2;
+        }
+      }
+      aInt32_5=f;
+      if (aInt32_5)
+      {
+        aDouble_4=f1;
+      }
+      if (!aInt32_5)
+      {
+        aDouble_4=f2;
+      }
+    }
+
+        The optimization only works if *both* if statements are the same. If the second one had aDouble_4=f3 instead of f2, then
+        this wouldn't work. If these two if statements could be gathered into a single statement (if/else), then this combination
+        could be done. Since it is more complex than the code is currently intended to solve, we will remove this test.
 
         [TestMethod]
         public void DuplicateIfStatementWithExtraInnerLineAtEnd()
@@ -1065,7 +1506,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             AddConditionalExpr(gc);
             var p1Extra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
-            gc.Add(new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), new IDeclaredParameter[] { }, true));
+            gc.Add(new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double))));
+            gc.Add(p1Extra);
 
             gc.Pop();
             AddConditionalExpr(gc);
@@ -1073,14 +1515,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
 
-            Console.WriteLine("Before optimization:");
-            cc.DumpCodeToConsole();
-
-            CommonStatementLifter.Optimize(cc);
-
-            Console.WriteLine();
-            Console.WriteLine("After optimization:");
-            cc.DumpCodeToConsole();
+            DoOptimizationAndConsoleDump(cc);
 
             var block1 = cc.QueryCode().First().Statements.Skip(2).FirstOrDefault();
             Assert.IsInstanceOfType(block1, typeof(StatementFilter));
@@ -1091,6 +1526,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsNotNull(ifStatementI);
             Assert.AreEqual(1, ifStatementI.Statements.Count());
         }
+#endif
 
         [TestMethod]
         public void DuplicateIfStatementWithExtraInnerLineIfDeepIf()
@@ -1104,8 +1540,9 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(ifstatement);
 
             var p1Extra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
-            var toadd = new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)), new IDeclaredParameter[] { }, true);
+            var toadd = new StatementAssign(p1Extra, new ValSimple("fExtra", typeof(double)));
             AddSingleIfExpr(gc, addIn: toadd);
+            gc.Add(p1Extra);
 
             gc.Pop();
 
@@ -1137,29 +1574,70 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Helper function to add a conditional statement.
         /// </summary>
         /// <param name="gc"></param>
-        private void AddConditionalExpr(GeneratedCode gc, IStatement addInFirst = null, IStatement addInSecond = null)
+        private IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IValue mainSettingValue = null, IStatement addInFirst = null, IStatement addInFirstAfter = null, IDeclaredParameter ifStatementTest = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
         {
-            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
-            gc.Add(p1);
+            if (mainSettingParam == null)
+            {
+                mainSettingParam = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
+                gc.Add(mainSettingParam);
+            }
+            if (mainSettingValue == null)
+            {
+                mainSettingValue = new ValSimple("f1", typeof(double));
+            }
 
-            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), new IDeclaredParameter[] { }, true);
-            gc.Add(assignp2);
-            var ifstatement = new StatementFilter(p2);
+            if (ifStatementTest == null)
+            {
+                ifStatementTest = AddSimpleAssign(gc, valToAssign: new ValSimple("f", typeof(bool)));
+            }
+
+            var ifstatement = new StatementFilter(ifStatementTest);
             gc.Add(ifstatement);
             if (addInFirst != null)
                 gc.Add(addInFirst);
-            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), new IDeclaredParameter[] { }, false);
-            gc.Add(assign3);
+            AddSimpleAssign(gc, valToAssign: mainSettingValue, useParam: mainSettingParam);
+            if (addInFirstAfter != null)
+                gc.Add(addInFirstAfter);
             gc.Pop();
 
-            gc.Add(new StatementFilter(new ValSimple("!" + p2.ParameterName, typeof(bool))));
-            gc.Add(new StatementAssign(p1, new ValSimple("f2", typeof(double)), new IDeclaredParameter[] { }, false));
-            if (addInSecond != null)
+            if (doElseClause)
             {
-                gc.Add(addInSecond);
+                gc.Add(new StatementFilter(new ValSimple("!" + ifStatementTest.ParameterName, typeof(bool))));
+                AddSimpleAssign(gc, useParam: mainSettingParam, valToAssign: new ValSimple("f2", typeof(double)));
+                if (addInSecond != null)
+                {
+                    gc.Add(addInSecond);
+                }
+                gc.Pop();
             }
-            gc.Pop();
+
+            return mainSettingParam;
+        }
+
+        /// <summary>
+        /// Add a simple assign statement
+        /// </summary>
+        /// <param name="gc"></param>
+        /// <param name="useParam"></param>
+        /// <param name="valToAssign"></param>
+        /// <returns></returns>
+        private IDeclaredParameter AddSimpleAssign(GeneratedCode gc, IDeclaredParameter useParam = null, IValue valToAssign = null, Type t = null)
+        {
+            if (useParam == null)
+            {
+                useParam = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                gc.Add(useParam);
+            }
+            if (t == null)
+            {
+                t = typeof(int);
+            }
+            if (valToAssign == null)
+            {
+                valToAssign = new ValSimple("f1", t, null);
+            }
+            gc.Add(new StatementAssign(useParam, valToAssign));
+            return useParam;
         }
 
         /// <summary>
@@ -1171,13 +1649,14 @@ namespace LINQToTTreeLib.Tests.Optimization
             var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
             gc.Add(p1);
             var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)), new IDeclaredParameter[] { }, true);
+            var assignp2 = new StatementAssign(p2, new ValSimple("f", typeof(bool)));
+            gc.Add(p2);
             gc.Add(assignp2);
             var ifstatement = new StatementFilter(p2);
             gc.Add(ifstatement);
             if (addIn != null)
                 gc.Add(addIn);
-            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)), new IDeclaredParameter[] { }, false);
+            var assign3 = new StatementAssign(p1, new ValSimple("f1", typeof(double)));
             gc.Add(assign3);
             gc.Pop();
         }

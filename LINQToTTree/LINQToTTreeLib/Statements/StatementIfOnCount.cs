@@ -35,6 +35,11 @@ namespace LINQToTTreeLib.Statements
         public ComparisonOperator Comparison { get; private set; }
 
         /// <summary>
+        /// Don't let statements just bubble up on their own as they are protected by an if statement.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return false; } }
+
+        /// <summary>
         /// Create with value1 comp value2 - if that is true, then we will execute our
         /// inner statements and declarations.
         /// </summary>
@@ -94,10 +99,36 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// We don't have the code to do the combination yet, so we have to bail!
+        /// Return the index variables for this loop.
         /// </summary>
-        /// <param name="statement"></param>
-        /// <returns></returns>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { };
+            }
+        }
+
+        /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(Limit.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+        
+        /// <summary>
+                 /// We don't have the code to do the combination yet, so we have to bail!
+                 /// </summary>
+                 /// <param name="statement"></param>
+                 /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
@@ -138,6 +169,17 @@ namespace LINQToTTreeLib.Statements
             Counter.RenameRawValue(origName, newName);
             Limit.RenameRawValue(origName, newName);
             RenameBlockVariables(origName, newName);
+        }
+
+        /// <summary>
+        /// If the statement doesn't alter anything in the block, then no problem.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varsAffected = followStatement.ResultVariables.Intersect(Limit.Dependants.Select(s => s.RawValue));
+            return !varsAffected.Any();
         }
     }
 }

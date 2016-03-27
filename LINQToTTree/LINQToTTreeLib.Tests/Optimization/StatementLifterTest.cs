@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static LINQToTTreeLib.Tests.TestUtils;
 
 namespace LINQToTTreeLib.Tests.Optimization
 {
@@ -82,13 +83,16 @@ namespace LINQToTTreeLib.Tests.Optimization
             v.Add(new StatementWithNoSideEffects());
             v.Add(new StatementWithNoSideEffects());
 
+            Console.WriteLine("Before optimization");
+            v.DumpCodeToConsole();
+
             StatementLifter.Optimize(v);
+            Console.WriteLine("After optimization");
+            v.DumpCodeToConsole();
 
             var firstStatement = v.CodeBody.Statements.First();
             Assert.IsInstanceOfType(firstStatement, typeof(StatementWithNoSideEffects), "first statement");
-            var secondStatement = v.CodeBody.Statements.Skip(1).First();
-            Assert.IsInstanceOfType(firstStatement, typeof(StatementWithNoSideEffects), "second statement");
-            var thirdstatement = v.CodeBody.Statements.Skip(2).First();
+            var thirdstatement = v.CodeBody.Statements.Skip(1).First();
             Assert.IsInstanceOfType(thirdstatement, typeof(StatementForLoop), "third statement");
         }
 
@@ -231,11 +235,11 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// 2.   Loop 2 over array a
         /// 3.     something with iterator from Loop 1 and Loop 2.
         /// 
-        /// You can't necessarily pull things out when they are nested identical loops - they may well be
-        /// there for a reason!
+        /// Since the statement explicitly has no side effects, it should be
+        /// popped up to the top.
         /// </summary>
         [TestMethod]
-        public void TestNoLifeNestedIdenticalLoops()
+        public void LiftNoSideEffectFromNestedIdenticalLoops()
         {
             var v = new GeneratedCode();
 
@@ -244,7 +248,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var loop1 = new StatementForLoop(loopP1, limit);
             v.Add(loop1);
             var loopP2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var loop2 = new StatementForLoop(loopP1, limit);
+            var loop2 = new StatementForLoop(loopP2, limit);
             v.Add(loop2);
             v.Add(new StatementWithNoSideEffects());
 
@@ -255,24 +259,18 @@ namespace LINQToTTreeLib.Tests.Optimization
             Console.WriteLine("Optimized:");
             v.DumpCodeToConsole();
 
-            // Make sure it is two if statements, nested.
-            var if1 = v.CodeBody.Statements.Skip(1).First() as StatementForLoop;
-            Assert.IsNotNull(if1, "if #1");
-            var if2 = if1.Statements.First() as StatementForLoop;
-            Assert.IsNotNull(if2, "if #2");
-
-            // Make sure the two loop variables are different.
-            Assert.AreNotEqual(if1.LoopIndexVariable != if2.LoopIndexVariable, "Loop index vars");
+            // Check to see if it got lifted.
+            Assert.AreEqual(1, v.CodeBody.Statements.WhereCast<IStatement, StatementWithNoSideEffects>().Count(), "#of no side effect statements");
         }
 
         /// <summary>
         /// Distilled from something we found in the wild.
         /// 1. Statement
-        /// 2. Non ICM Loop/compound statement (like any inline block, I guess)
+        /// 2. ICM Loop/compound statement (like any inline block, I guess)
         /// 3.   Loop
         /// 4.     Statement with no side effects
         /// 
-        /// 3 can get lifted past 2, but not above...
+        /// 4 can get lifted past 2, but not across #1 if we don't know about it.
         /// </summary>
         [TestMethod]
         public void TestLoopBelowNonLoopBlockNoSideEffects()
@@ -287,12 +285,76 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             v.Add(new StatementWithNoSideEffects());
 
-            StatementLifter.Optimize(v);
+            DoOptimizeTest(v);
 
             var firstStatement = v.CodeBody.Statements.First();
             Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
             var secondStatement = v.CodeBody.Statements.Skip(1).First();
-            Assert.IsInstanceOfType(secondStatement, typeof(StatementInlineBlock), "Second statement");
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementWithNoSideEffects), "Second statement");
+        }
+
+        private static void DoOptimizeTest(GeneratedCode v)
+        {
+            Console.WriteLine("Before Optimization:");
+            Console.WriteLine("");
+            v.DumpCodeToConsole();
+
+            StatementLifter.Optimize(v);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("After Optimization:");
+            Console.WriteLine("");
+            v.DumpCodeToConsole();
+        }
+
+        [TestMethod]
+        public void NoLiftCombineNestedForLoopsWithCommonCodeCalc()
+        {
+            var q = new QueriableDummy<dummyntup>();
+
+            var res2 = from f in q
+                       from r1 in f.valC1D
+                       from r2 in f.valC1D
+                       where r1 > 2
+                       let rr1 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r1))
+                       let rr2 = Math.Abs(LINQToTTreeLib.QueryVisitorTest.CPPHelperFunctions.Calc(r2))
+                       select rr1 + rr2;
+            var resu2 = res2.Aggregate(0, (acc, v) => acc + v);
+            var query2 = DummyQueryExectuor.FinalResult;
+
+            DoOptimizeTest(query2);
+
+            var for1 = query2.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().First();
+            var for2 = for1.Statements.WhereCast<IStatement, StatementForLoop>().First();
+
+            Assert.AreNotEqual(for1.LoopIndexVariable.First().RawValue, for2.LoopIndexVariable.First().RawValue);
+        }
+
+        [TestMethod]
+        public void GroupAndCutInside()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var dudeQ = from evt in q
+                        select (from v in evt.vals
+                                group v by v);
+
+            var dudeQ1 = from evt in dudeQ
+                         from grp in evt
+                         where grp.Where(v => v == 2).Any()
+                         select grp.Key;
+
+            var dudq = dudeQ1.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+
+            DoOptimizeTest(query1);
+
+            var decl = query1.DumpCode().TakeWhile(l => !l.Contains("bool aBoolean")).Count();
+            var firstUse = query1.DumpCode().TakeWhile(l => !l.Contains("aBoolean")).Count();
+
+            Assert.AreEqual(decl, firstUse, "# THe first use and the use");
         }
 
         /// <summary>
@@ -300,9 +362,9 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// 1. Statement
         /// 2. Non ICM Loop/compound statement (like any inline block, I guess)
         /// 3.   Loop
-        /// 4.     Statement with no side effects
+        /// 4.     Idempotent Statement with no side effects
         /// 
-        /// 3 can get lifted past 2, but not above...
+        /// 4 can get lifted past 2, but not above...
         /// </summary>
         [TestMethod]
         public void TestLoopBelowNonLoopBlockSideEffectsNotImportant()
@@ -318,12 +380,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             var lnp = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             v.Add(new StatementWithSideEffects(lnp));
 
-            StatementLifter.Optimize(v);
+            DoOptimizeTest(v);
 
             var firstStatement = v.CodeBody.Statements.First();
             Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
             var secondStatement = v.CodeBody.Statements.Skip(1).First();
-            Assert.IsInstanceOfType(secondStatement, typeof(StatementInlineBlock), "Second statement");
+            Assert.IsInstanceOfType(secondStatement, typeof(StatementWithSideEffects), "Second statement");
         }
 
         /// <summary>
@@ -384,42 +446,73 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
-        /// Make sure lift occurs when identical loops are present
-        /// 1. loop A
-        /// 2. if statement
-        /// 3.   loop A
-        /// 4.   statement
-        /// In this case loop A can be removed.
+        /// loop A
+        /// Inside A is a simple counter statement. Make sure it doesn't get lifted.
         /// </summary>
         [TestMethod]
-        public void LiftIdenticalLoopOutOfIfStatement()
+        public void NoLiftSimpleStatement()
         {
             var gc = new GeneratedCode();
-            var c1 = AddLoop(gc);
-            gc.Pop();
-            AddIf(gc);
-            var c2 = AddLoop(gc);
-            gc.Pop();
-            AddSum(gc, c1, c2);
+            AddLoop(gc);
 
-            Console.WriteLine("Before lifting and optimization: ");
+            Console.WriteLine("Before optimization");
             gc.DumpCodeToConsole();
 
             StatementLifter.Optimize(gc);
 
-            Console.WriteLine("After lifting and optimization: ");
+            Console.WriteLine("After optimization");
             gc.DumpCodeToConsole();
 
-            // Now check that things happened as we would expect them to happen.
-            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops at outer level");
-            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of statements inside first for loop");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+        }
 
-            var ifStatement = gc.CodeBody.Statements.Where(s => s is StatementFilter).Cast<StatementFilter>().First();
-            Assert.IsNotNull(ifStatement, "Finding if statement");
-            Assert.AreEqual(1, ifStatement.Statements.Count(), "# of statements inside the if statement");
-            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(StatementAssign));
-            var ass = ifStatement.Statements.First() as StatementAssign;
-            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+        /// <summary>
+        /// loop A
+        /// Inside A is a very simple constant statement. Make sure it does get lifted.
+        /// </summary>
+        [TestMethod]
+        public void LiftConstantStatementInLoop()
+        {
+            var gc = new GeneratedCode();
+            var counter = AddLoop(gc, mainStatementType: MainStatementType.IsConstant);
+            gc.Pop();
+
+            Console.WriteLine("Before optimization");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After optimization");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementAssign).Count(), "# of assign statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(s => s.Statements.Count() == 0).Count(), "# of if statements with zero statements in it");
+        }
+
+        /// <summary>
+        /// loop A
+        /// Inside A is a very simple constant statement. Make sure it does get lifted.
+        /// </summary>
+        [TestMethod]
+        public void LiftConstantDefinedInLoop()
+        {
+            var gc = new GeneratedCode();
+            var counter = AddLoop(gc, mainStatementType: MainStatementType.IsConstant, defineCounterInsideBlock: true);
+
+            Console.WriteLine("Before optimization");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("After optimization");
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement,StatementAssign>().Count(), "# of assign statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Count() == 0).Count(), "# of if statements with zero statements in it");
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of declarations");
         }
 
         /// <summary>
@@ -487,42 +580,125 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Now check that things happened as we would expect them to happen.
             var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
             Assert.IsNotNull(ass, "Finding the assignment statement");
-            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
+            Assert.AreEqual($"{c1.RawValue}+{c1.RawValue}", ass.Expression.RawValue);
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Where(dv => dv.RawValue == c1.RawValue).Count(), "# of declared counters");
             Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementForLoop>().Where(s => s.Statements.Count() == 1).Count(), "# of it statements with 2 sub-statements");
         }
 
         /// <summary>
-        /// A loop repeated can be combined
-        /// 1. loop A
-        /// 2. loop A'
-        /// 3. statement
-        /// Where loop A' includes the statements in A plus extra. Until we can look
-        /// into individual statements, we can't lift the common portion of A'.
+        /// A loop that loops over the same object, but it uses the results of the first loop in the second loop
+        /// should not allow for a combining.
         /// </summary>
         [TestMethod]
-        public void CombineRepeatedAlmostIdenticalLoops()
+        public void DontCombineDependentLoops()
         {
             var gc = new GeneratedCode();
             var c1 = AddLoop(gc);
             gc.Pop();
-            var c2 = AddLoop(gc, true);
+            var c2 = AddLoop(gc, useCounter: c1);
             gc.Pop();
-            AddSum(gc, c1, c2);
 
-            Console.WriteLine("Before lifting and optimization: ");
+            Console.WriteLine("Before lifting");
             gc.DumpCodeToConsole();
 
             StatementLifter.Optimize(gc);
 
-            Console.WriteLine("After lifting and optimization: ");
+            Console.WriteLine("After lifting");
             gc.DumpCodeToConsole();
 
-            // Now check that things happened as we would expect them to happen.
-            var ass = gc.CodeBody.Statements.Where(s => s is StatementAssign).Cast<StatementAssign>().First();
-            Assert.IsNotNull(ass, "Finding the assignment statement");
-            Assert.AreEqual("aInt_3+aInt_3", ass.Expression.RawValue);
-            Assert.AreEqual(1, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
-            Assert.AreEqual(2, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Cast<StatementForLoop>().Where(sf => sf.Statements.Count() == 2).Count(), "# of statement sin the for loop");
+            Assert.AreEqual(2, gc.CodeBody.Statements.Where(s => s is StatementForLoop).Count(), "# of for loops");
+        }
+
+        [TestMethod]
+        public void LiftConstantInPairWise()
+        {
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (from cmb in evt.myvectorofint.PairWiseAll((i1, i2) => QueryVisitorTest.CPPHelperFunctions.Calc(i1) != QueryVisitorTest.CPPHelperFunctions.Calc(i2)) select cmb).Count() == 10
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var gc = DummyQueryExectuor.FinalResult;
+            Console.WriteLine("Unoptimized");
+            gc.DumpCodeToConsole();
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("Optimized");
+            Console.WriteLine("");
+
+            gc.DumpCodeToConsole();
+
+            var index1Ref = gc.DumpCode().Where(l => l.Contains("[index1]") && l.Contains("int")).Select(l => l.Substring(0, l.IndexOf("=")).Trim()).ToArray();
+            var index2Ref = gc.DumpCode().Where(l => l.Contains("[index2]") && l.Contains("int")).Select(l => l.Substring(0, l.IndexOf("=")).Trim()).ToArray();
+
+            Assert.AreNotEqual(index1Ref[0], index2Ref[0]);
+        }
+
+        /// <summary>
+        /// for c1
+        ///  int counter;
+        ///  for c2
+        ///    value that depends on c1
+        ///    sum of value that depends on c1 but not c2
+        ///  sum of sum of value that depends on c1 but not c2
+        ///  
+        /// The inner statement is lifted to the outer statement and left to hang.
+        /// </summary>
+        [TestMethod]
+        public void DontLiftThroughTwoForStatements()
+        {
+            var gc = new GeneratedCode();
+
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            counter.InitialValue = new ValSimple("0", typeof(int));
+            gc.Add(counter);
+
+            // The two for loops
+            var fc1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var for1 = new StatementForLoop(fc1, new ValSimple("5", typeof(int)));
+            gc.Add(for1);
+
+            var innerCounter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            innerCounter.InitialValue = new ValSimple("0", typeof(int));
+            gc.Add(innerCounter);
+
+            var fc2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var for2 = new StatementForLoop(fc2, new ValSimple("5", typeof(int)));
+            gc.Add(for2);
+
+            // Now, calculation based only on fc1
+            var a1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var ass1 = new StatementAssign(a1, new ValSimple($"{fc1}*2", typeof(int), new IDeclaredParameter[] { fc1 }));
+            gc.Add(ass1);
+            var agg1 = new StatementAggregate(innerCounter, new ValSimple($"{innerCounter.RawValue}+{a1.RawValue}", typeof(int), new IDeclaredParameter[] { innerCounter, a1 }));
+            gc.Add(agg1);
+
+            // and the outer sum.
+            gc.Pop();
+            var agg2 = new StatementAggregate(counter, new ValSimple($"{counter.RawValue}+{innerCounter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, innerCounter }));
+            gc.Add(agg2);
+
+            // Great!
+            Console.WriteLine("Unoptimized");
+            gc.DumpCodeToConsole();
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+
+            StatementLifter.Optimize(gc);
+
+            Console.WriteLine("Optimized");
+            Console.WriteLine("");
+            gc.DumpCodeToConsole();
+
+            // Make sure the inner aggregate got lifted out properly.
+            Assert.AreEqual(1, for2.Statements.Count(), "# of statements in the inner for loop");
         }
 
         /// <summary>
@@ -531,11 +707,11 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// <param name="gc"></param>
         /// <param name="c1"></param>
         /// <param name="c2"></param>
-        private IDeclaredParameter AddSum(GeneratedCode gc, IDeclaredParameter c1, IDeclaredParameter c2)
+        public static IDeclaredParameter AddSum(GeneratedCode gc, IDeclaredParameter c1, IDeclaredParameter c2)
         {
             var r = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
 
-            gc.Add(new StatementAssign(r, new ValSimple($"{c1.RawValue}+{c2.RawValue}", c1.Type), new IDeclaredParameter[] { c1, c2 }));
+            gc.Add(new StatementAssign(r, new ValSimple($"{c1.RawValue}+{c2.RawValue}", c1.Type, new IDeclaredParameter[] { c1, c2 })));
 
             return r;
         }
@@ -544,33 +720,74 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Add a simple if statement.
         /// </summary>
         /// <param name="gc"></param>
-        private void AddIf(GeneratedCode gc)
+        public static void AddIf(GeneratedCode gc)
         {
             gc.Add(new StatementFilter(new ValSimple("5>10", typeof(bool))));
+        }
+
+        public enum MainStatementType
+        {
+            IsCounter,
+            IsConstant
         }
 
         /// <summary>
         /// Add a simple loop to the current scope. It will have one statement in it, declared at the outer level.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddLoop(GeneratedCode gc, bool addDependentStatement = false)
+        public static IDeclaredParameter AddLoop(GeneratedCode gc,
+            bool addDependentStatement = false,
+            IDeclaredParameter useCounter = null,
+            MainStatementType mainStatementType = MainStatementType.IsCounter,
+            bool defineCounterInsideBlock = false)
         {
-            var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            var loop = new StatementForLoop(loopVar, new ValSimple("5", typeof(int)));
+            if (mainStatementType != MainStatementType.IsCounter && useCounter != null)
+            {
+                throw new ArgumentException("Can't do a counter when main statement type doesn't use a counter");
+            }
 
             // Add a counter that gets... counted.
             var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            if (!defineCounterInsideBlock)
+            {
+                gc.Add(counter);
+            }
+
+            // And an extra variable that is defined outside the loop
             var counterExtra = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-            gc.Add(counter);
             if (addDependentStatement)
             {
                 gc.Add(counterExtra);
             }
+
+            // Now do the loop.
+            var loopVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopVar, new ValSimple("5", typeof(int)));
             gc.Add(loop);
-            gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int)), new IDeclaredParameter[] { counter }));
+            if (defineCounterInsideBlock)
+            {
+                gc.Add(counter);
+            }
+
+            // Now add statements to the loop
+            if (mainStatementType == MainStatementType.IsCounter)
+            {
+                if (useCounter == null)
+                {
+                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue} + 1", typeof(int), new IDeclaredParameter[] { counter })));
+                }
+                else
+                {
+                    gc.Add(new StatementAssign(counter, new ValSimple($"{counter.RawValue}+{useCounter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, useCounter })));
+                }
+            } else
+            {
+                gc.Add(new StatementAssign(counter, new ValSimple("1", typeof(int))));
+            }
+
             if (addDependentStatement)
             {
-                gc.Add(new StatementAssign(counterExtra, new ValSimple($"{counterExtra.RawValue}+{counter.RawValue}", typeof(int)), new IDeclaredParameter[] { counterExtra, counter }));
+                gc.Add(new StatementAssign(counterExtra, new ValSimple($"{counterExtra.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counterExtra, counter })));
             }
 
             return counter;
@@ -704,16 +921,21 @@ namespace LINQToTTreeLib.Tests.Optimization
                 throw new NotImplementedException();
             }
 
-            public IStatement Parent { get; set; }
-
-            public ISet<string> DependentVariables
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
             {
-                get { throw new NotImplementedException(); }
+                throw new NotImplementedException();
             }
 
-            public ISet<string> ResultVariables
+            public IStatement Parent { get; set; }
+
+            public IEnumerable<string> DependentVariables
             {
-                get { throw new NotImplementedException(); }
+                get { return new HashSet<string>(); }
+            }
+
+            public IEnumerable<string> ResultVariables
+            {
+                get { return new HashSet<string>(); }
             }
 
             public bool NeverLift
@@ -725,7 +947,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestCodeWithDoubleIndex()
         {
-            // Looking for two loops, and the Calc function should be moved outside
+            // Looking for two loops, and the calculation function should be moved outside
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
@@ -764,7 +986,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         [TestMethod]
         public void TestCodeWithDoubleIndexAndFunction()
         {
-            // Looking for two loops, and the Calc function should be moved outside
+            // Looking for two loops, and the calculation function should be moved outside
             // the first loop for efficiency reasons (as it doesn't use anything in that
             // first loop.
 
@@ -801,6 +1023,35 @@ namespace LINQToTTreeLib.Tests.Optimization
             var assCode = outterLoop.Statements.Skip(1).First();
             Assert.AreEqual("StatementAssign", assCode.GetType().Name, "Lifted assignment statement.");
         }
+
+        // We don't detect loop invariants correctly yet - so these will remain inside a loop for now.
+        [TestMethod]
+        public void LiftLoopInvarient()
+        {
+            var v = new GeneratedCode();
+
+            var limit = new LINQToTTreeLib.Variables.ValSimple("5", typeof(int));
+            var loopP1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop1 = new StatementForLoop(loopP1, limit);
+            v.Add(loop1);
+
+            var p2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var assign1 = new StatementAssign(p2, new ValSimple("f", typeof(int)));
+            loop1.Add(p2);
+            loop1.Add(assign1);
+
+            Console.WriteLine("Unoptimized:");
+            v.DumpCodeToConsole();
+
+            StatementLifter.Optimize(v);
+
+            Console.WriteLine("");
+            Console.WriteLine("Optimized:");
+            v.DumpCodeToConsole();
+
+            Assert.AreEqual(0, loop1.Statements.Count());
+        }
+
 #if false
         /// <summary>
         /// A loop contains an if statement that exists above - so they could be combined
@@ -903,7 +1154,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             var linesOfCode = query.DumpCode().TakeWhile(l => !l.Contains("aNTLorentzVector_11).Phi"));
             var openBrackets = linesOfCode.Where(l => l.Contains("{")).Count();
             var closeBrackets = linesOfCode.Where(l => l.Contains("}")).Count();
-            Assert.AreEqual(openBrackets, closeBrackets, "#of of nesting levesl for the Phi call");
+            Assert.AreEqual(openBrackets, closeBrackets, "#of nesting levels for the Phi call");
         }
 
         /// <summary>
@@ -938,7 +1189,8 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
             {
-                throw new NotImplementedException();
+                var resultString = _resultVar == null ? "null" : _resultVar.RawValue;
+                yield return $"StatementWithSideEffects(tracked = {_trackedVar.RawValue}, result = {resultString})";
             }
 
             public void RenameVariable(string originalName, string newName)
@@ -948,12 +1200,41 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
-                throw new NotImplementedException();
+                return false;
+            }
+
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
+            {
+                if (other is StatementWithSideEffects)
+                {
+                    var s2 = other as StatementWithSideEffects;
+                    var renames = new List<Tuple<string, string>>();
+                    if (_trackedVar.RawValue != s2._trackedVar.RawValue)
+                    {
+                        renames.Add(new Tuple<string, string>(s2._trackedVar.RawValue, _trackedVar.RawValue));
+                    }
+                    if (_resultVar != null && s2._resultVar != null)
+                    {
+                        if (_resultVar.RawValue != s2._resultVar.RawValue)
+                        {
+                            renames.Add(new Tuple<string, string>(s2._resultVar.RawValue, _resultVar.RawValue));
+                        }
+                    }
+                    if ((_resultVar == null || s2._resultVar == null) && _resultVar != s2.ResultVariables)
+                    {
+                        return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                    }
+                    return Tuple.Create(true, renames as IEnumerable<Tuple<string,string>>);
+                }
+                else
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
             }
 
             public IStatement Parent { get; set; }
 
-            public System.Collections.Generic.ISet<string> DependentVariables
+            public System.Collections.Generic.IEnumerable<string> DependentVariables
             {
                 get
                 {
@@ -963,7 +1244,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 }
             }
 
-            public System.Collections.Generic.ISet<string> ResultVariables
+            public System.Collections.Generic.IEnumerable<string> ResultVariables
             {
                 get
                 {
@@ -987,7 +1268,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         {
             public System.Collections.Generic.IEnumerable<string> CodeItUp()
             {
-                throw new NotImplementedException();
+                yield return "StatementNonOptimiing";
             }
 
             public void RenameVariable(string originalName, string newName)
@@ -1020,17 +1301,28 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)
             {
-                throw new NotImplementedException();
+                return false;
+            }
+
+            public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst)
+            {
+                if (other is StatementWithNoSideEffects)
+                {
+                    return Tuple.Create(true, Enumerable.Empty<Tuple<string, string>>());
+                } else
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
             }
 
             public IStatement Parent { get; set; }
 
-            public System.Collections.Generic.ISet<string> DependentVariables
+            public System.Collections.Generic.IEnumerable<string> DependentVariables
             {
                 get { return new HashSet<string>(); }
             }
 
-            public System.Collections.Generic.ISet<string> ResultVariables
+            public System.Collections.Generic.IEnumerable<string> ResultVariables
             {
                 get { return new HashSet<string>(); }
             }

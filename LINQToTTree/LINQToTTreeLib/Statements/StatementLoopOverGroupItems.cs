@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,11 +37,11 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// Return a string that looks like the loop item index - the core of the loop.
         /// </summary>
-        public string LoopItemIndex
+        public IValue LoopItemIndex
         {
             get
             {
-                return string.Format("{0}[{1}]", _groupArray.RawValue, _counter.RawValue);
+                return new ValSimple($"{_groupArray.RawValue}[{_counter.RawValue}]", typeof(int), _groupArray.Dependants.Concat(_counter.Dependants));
             }
         }
 
@@ -62,11 +63,37 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// See if we can combine statements
+        /// Return the index variables for this loop.
         /// </summary>
-        /// <param name="statement"></param>
-        /// <param name="opt"></param>
-        /// <returns></returns>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _counter };
+            }
+        }
+
+        /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(_groupArray.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
+            }
+        }
+        
+        /// <summary>
+                 /// See if we can combine statements
+                 /// </summary>
+                 /// <param name="statement"></param>
+                 /// <param name="opt"></param>
+                 /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
@@ -104,8 +131,35 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
+        {
+            get
+            {
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { _counter });
+            }
+        }
+
+        /// <summary>
+        /// Can we commute with the expression we are looking at?
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            return !followStatement.ResultVariables.Intersect(_groupArray.Dependants.Select(p => p.RawValue)).Any();
+        }
+
+        /// <summary>
         /// Return the counter that we use to walk over the group items.
         /// </summary>
         public IDeclaredParameter Counter { get { return _counter; } }
+
+        /// <summary>
+        /// This is a loop - any statement we can extract we should.
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return true; } }
     }
 }

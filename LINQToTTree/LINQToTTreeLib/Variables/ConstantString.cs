@@ -35,6 +35,17 @@ namespace LINQToTTreeLib.Variables
         public Type Type { get { return typeof(string); } }
 
         /// <summary>
+        /// We hold onto no declarable parameters
+        /// </summary>
+        public IEnumerable<IDeclaredParameter> Dependants
+        {
+            get
+            {
+                return Enumerable.Empty<IDeclaredParameter>();
+            }
+        }
+
+        /// <summary>
         /// Print out basic info - helpful for debugging.
         /// </summary>
         /// <returns></returns>

@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Variables;
+using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Emit an assignment statement
     /// </summary>
+    /// <remarks>
+    /// We used to have an option to declare the variable inline. This was something that made code easier to write.
+    /// However, it turns out when doing optimization, having code declared mid-block make determining data flow
+    /// much more complex. So that was removed.
+    /// </remarks>
     public class StatementAssign : IStatement, ICMStatementInfo
     {
-        public StatementAssign(IDeclaredParameter result, IValue val, IEnumerable<IDeclaredParameter> dependentVariables, bool declare = false)
+        public StatementAssign(IDeclaredParameter result, IValue val)
         {
             if (result == null)
                 throw new ArgumentNullException("Accumulator must not be zero");
@@ -19,17 +26,8 @@ namespace LINQToTTreeLib.Statements
 
             ResultVariable = result;
             Expression = val;
-            DeclareResult = declare;
             ResultVariables = new HashSet<string>() { result.RawValue };
-            var dvars = new HashSet<string>();
-            if (dependentVariables != null)
-            {
-                foreach (var item in dependentVariables)
-                {
-                    dvars.Add(item.RawValue);
-                }
-            }
-            DependentVariables = dvars;
+            DependentVariables = new HashSet<string>(val.Dependants.Select(v => v.RawValue));
         }
 
         /// <summary>
@@ -53,13 +51,7 @@ namespace LINQToTTreeLib.Statements
 
             if (result != setTo)
             {
-                var line = "";
-                if (DeclareResult)
-                {
-                    line += ResultVariable.Type.AsCPPType() + " ";
-                }
-                line += result + "=" + setTo + ";";
-                yield return line;
+                yield return result + "=" + setTo + ";"; ;
             }
         }
 
@@ -76,7 +68,9 @@ namespace LINQToTTreeLib.Statements
         public void RenameVariable(string originalName, string newName)
         {
             ResultVariable.RenameRawValue(originalName, newName);
+            ResultVariables = new HashSet<string>() { ResultVariable.RawValue };
             Expression.RenameRawValue(originalName, newName);
+            DependentVariables = DependentVariables.Select(p => p.ReplaceVariableNames(originalName, newName)).ToHashSet();
         }
 
         /// <summary>
@@ -100,27 +94,37 @@ namespace LINQToTTreeLib.Statements
             if (Expression.RawValue != otherAssign.Expression.RawValue)
                 return false;
 
-            if (DeclareResult != otherAssign.DeclareResult)
-                return false;
-
             // If the statements are identical, then we can combine by default without having to do any
             // further work.
 
             if (otherAssign.ResultVariable.RawValue == ResultVariable.RawValue)
                 return true;
 
-            // If we have delcared, then we are sole owner - so we can force the change. Otherwise, we
-            // need to let the infrastructure figure out where the decl is and change it from there.
+            // If we have declared, then we are sole owner - so we can force the change. Otherwise, we
+            // need to let the infrastructure figure out where the declared is and change it from there.
 
-            if (DeclareResult)
+            return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
+        }
+
+        /// <summary>
+        /// Can we figure out a way to make the second statement look like the first one?
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>What should be changed in other to make it equivalent to this statement</returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            // Well, if we can't we can't.
+            if (!(other is StatementAssign))
             {
-                opt.ForceRenameVariable(otherAssign.ResultVariable.RawValue, ResultVariable.RawValue);
-                return true;
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
             }
-            else
-            {
-                return opt.TryRenameVarialbeOneLevelUp(otherAssign.ResultVariable.RawValue, ResultVariable);
-            }
+            var s2 = other as StatementAssign;
+
+            return StatementUtils.MakeEquivalentSimpleExpressionAndResult(
+                ResultVariable.RawValue, s2.ResultVariable.RawValue,
+                Expression.RawValue, s2.Expression.RawValue,
+                DependentVariables, s2.DependentVariables,
+                replaceFirst);
         }
 
         /// <summary>
@@ -129,19 +133,14 @@ namespace LINQToTTreeLib.Statements
         public IStatement Parent { get; set; }
 
         /// <summary>
-        /// True if we should declare this result when we emit it the assignment.
-        /// </summary>
-        public bool DeclareResult { get; set; }
-
-        /// <summary>
         /// List of all variables we are depending on.
         /// </summary>
-        public ISet<string> DependentVariables { get; private set; }
+        public IEnumerable<string> DependentVariables { get; private set; }
 
         /// <summary>
         /// The list of variables that get altered as a side-effect of this statement.
         /// </summary>
-        public ISet<string> ResultVariables { get; private set; }
+        public IEnumerable<string> ResultVariables { get; private set; }
 
         /// <summary>
         /// REturns false: we can move this statement if we want.

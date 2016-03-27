@@ -60,6 +60,17 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _groupIndex };
+            }
+        }
+
+        /// <summary>
         /// If we are the same, then combine!
         /// </summary>
         /// <param name="statement"></param>
@@ -98,13 +109,35 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Return all declared variables in this guy
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
+        {
+            get
+            {
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { _groupIndex });
+            }
+        }
+
+        /// <summary>
+        /// Can we move a statement past the for loop?
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            return !followStatement.ResultVariables.Intersect(_mapOfGroups.Dependants.Select(p => p.RawValue)).Any();
+        }
+
+        /// <summary>
         /// Return the group key reference - so this is the key that is currently being processed.
         /// </summary>
         public IValue GroupKeyReference
         {
             get
             {
-                return new ValSimple(string.Format("{0}->first", _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[0]);
+                return new ValSimple($"{_groupIndex.RawValue}->first", _mapOfGroups.Type.GetGenericArguments()[0], _groupIndex.AsArray());
             }
         }
 
@@ -115,7 +148,7 @@ namespace LINQToTTreeLib.Statements
         {
             get
             {
-                return new ValSimple(string.Format("{0}->second", _groupIndex.RawValue), _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType());
+                return new ValSimple($"{_groupIndex.RawValue}->second", _mapOfGroups.Type.GetGenericArguments()[1].MakeArrayType(), _groupIndex.AsArray());
             }
         }
 
@@ -123,5 +156,11 @@ namespace LINQToTTreeLib.Statements
         /// Get the index that we are currently using for looping
         /// </summary>
         public DeclarableParameter IndexVariable { get { return _groupIndex; } }
+
+        /// <summary>
+        /// We are a straight up loop, so we want every statement out of our interior that
+        /// we can get out!
+        /// </summary>
+        public override bool AllowNormalBubbleUp { get { return true; } }
     }
 }

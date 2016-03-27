@@ -10,7 +10,7 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Implement the looping statements to work over some simple counter from zero up to some number.
     /// </summary>
-    public class StatementForLoop : StatementInlineBlockBase, IStatementLoop, ICMCompoundStatementInfo
+    public class StatementForLoop : StatementInlineBlockBase, IStatementLoop, ICMStatementInfo
     {
         public IValue ArrayLength { get; set; }
         public IValue InitialValue { get; set; }
@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="loopVariable">The variable that will be running in the loop</param>
         /// <param name="arraySizeVar">The size of the array. Evaluated just once before the loop is run.</param>
-        /// <param name="startValue">Inital spot in array, defaults to zero</param>
+        /// <param name="startValue">Initial spot in array, defaults to zero</param>
         public StatementForLoop(IDeclaredParameter loopVariable, IValue arraySizeVar, IValue startValue = null)
         {
             if (loopVariable == null)
@@ -34,7 +34,7 @@ namespace LINQToTTreeLib.Statements
             _loopVariable = loopVariable;
             InitialValue = startValue;
             if (InitialValue == null)
-                InitialValue = new ValSimple("0", typeof(int));
+                InitialValue = new ValSimple("0", typeof(int), null);
 
             if (ArrayLength.Type != typeof(int))
                 throw new ArgumentException("arraySizeVar must be an integer");
@@ -72,6 +72,17 @@ namespace LINQToTTreeLib.Statements
                 {
                     yield return l;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Return the index variables for this loop.
+        /// </summary>
+        public override IEnumerable<IDeclaredParameter> InternalResultVarialbes
+        {
+            get
+            {
+                return new IDeclaredParameter[] { _loopVariable };
             }
         }
 
@@ -125,24 +136,78 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Test to see if this for loop is the same as the other statement. Identical, in a way that we can delete the "other" totally after
+        /// appropriate renaming.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public override Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            // Make sure it is a for statement.
+            if (!(other is StatementForLoop))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementForLoop;
+
+            // Make sure the limit is the same, after applying the replacements.
+            var renames = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(ArrayLength.RawValue, DependentVariables, s2.ArrayLength.RawValue, s2.DependentVariables);
+
+            // Now, the initial list of renames includes the loop variable and anything handed to us.
+            renames = renames
+                .RequireForEquivForExpression(_loopVariable.RawValue, s2._loopVariable.RawValue);
+
+            // And do everything in the block
+            return RequiredForEquivalenceForBase(other, renames)
+                .ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
+        /// Check to see if the statement commutes with our loop expression.
+        /// </summary>
+        /// <param name="followStatement"></param>
+        /// <returns></returns>
+        public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
+        {
+            var varInConflict = followStatement.ResultVariables.Intersect(ArrayLength.Dependants.Select(s => s.RawValue));
+            return !varInConflict.Any();
+        }
+
+        /// <summary>
         /// Allow statements to automatically bubble up past us. Anything we
         /// can get rid of is a good thing!
         /// </summary>
-        public bool AllowNormalBubbleUp
+        public override bool AllowNormalBubbleUp
         {
             get { return true; }
         }
 
         /// <summary>
-        /// Return all declared variables in this guy
+        /// Return the list of declared variables.
         /// </summary>
-        public new ISet<string> DeclaredVariables
+        public override IEnumerable<IDeclaredParameter> DeclaredVariables
         {
             get
             {
-                var r = new HashSet<string>(AllDeclaredVariables.Select(v => v.RawValue));
-                r.Add(_loopVariable.RawValue);
-                return r;
+                return base.DeclaredVariables
+                    .Concat(new IDeclaredParameter[] { _loopVariable });
+            }
+        }
+
+        /// <summary>
+        /// Return a list of all dependent variables. Will not include the counter
+        /// </summary>
+        /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
+        public override IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var dependents = base.DependentVariables
+                    .Concat(ArrayLength.Dependants.Select(p => p.RawValue))
+                    ;
+                return new HashSet<string>(dependents);
             }
         }
     }

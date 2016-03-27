@@ -75,7 +75,7 @@ namespace LINQToTTreeLib.ResultOperators
             p1.Pop();
 
             if (accumulator.RawValue != funcResolved.RawValue)
-                _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved, FindDeclarableParameters.FindAll(a.Func.Body).Select(p => p.RawValue)));
+                _codeEnv.Add(new Statements.StatementAggregate(accumulator, funcResolved));
 
             return accumulator;
         }

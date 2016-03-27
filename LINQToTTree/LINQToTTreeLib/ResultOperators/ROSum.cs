@@ -76,7 +76,7 @@ namespace LINQToTTreeLib.ResultOperators
             var add = Expression.Add(accumulator, cc.LoopVariable);
 
             var addResolved = ExpressionToCPP.GetExpression(add, gc, cc, container);
-            gc.Add(new StatementAggregate(accumulator, addResolved, FindDeclarableParameters.FindAll(add).Select(p => p.RawValue)));
+            gc.Add(new StatementAggregate(accumulator, addResolved));
 
             //
             // The sum will just be this accumulator - so return it.
@@ -95,7 +95,7 @@ namespace LINQToTTreeLib.ResultOperators
             gc.AddOutsideLoop(counter);
             gc.AddOutsideLoop(accumulator);
             var incbyone = Expression.Add(counter, Expression.Constant(1));
-            gc.Add(new StatementAggregate(counter, ExpressionToCPP.GetExpression(incbyone, gc, cc, container), FindDeclarableParameters.FindAll(incbyone).Select(p => p.RawValue)));
+            gc.Add(new StatementAggregate(counter, ExpressionToCPP.GetExpression(incbyone, gc, cc, container)));
 
             // It is an error to average a sequence with no elements. So we need to throw a C++ exception. We need to pop up out of the loop in order
             // to do this.
