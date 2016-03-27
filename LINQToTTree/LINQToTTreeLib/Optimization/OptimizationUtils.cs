@@ -86,6 +86,16 @@ namespace LINQToTTreeLib.Optimization
             var r = sc1.RequiredForEquivalence(sc2);
             if (r.Item1)
             {
+                // There is one condition underwhich this combination should not happen:
+                // The statements are identical and they are not idempotent. That measn we would
+                // have "a = a + 1" twice in a row, and we can't combine those.
+                if (r.Item2.Count() == 0 && !StatementIdempotent(s2))
+                {
+                    return false;
+                }
+
+                // Ok, go after the parents to see if we can make sure there aren't common variables to be
+                // declared.
                 var s1Parent = s1.Parent as IBookingStatementBlock;
                 var s2Parent = s2.Parent as IBookingStatementBlock;
                 if (s1Parent == null || s2Parent == null)

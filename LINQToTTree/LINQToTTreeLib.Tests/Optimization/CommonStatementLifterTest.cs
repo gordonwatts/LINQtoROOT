@@ -936,6 +936,26 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// 1. a = a + 1
+        /// 2. a = a + 1
+        /// should not be combined.
+        /// </summary>
+        [TestMethod]
+        public void RepeatedSelfReferenctialStatments()
+        {
+            var gc = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
+            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count());
+        }
+
+
+        /// <summary>
         /// Make sure lift occurs when identical loops are present
         /// 1. loop A
         /// 2. if statement
