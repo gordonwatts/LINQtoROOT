@@ -447,7 +447,7 @@ namespace LINQToTTreeLib.Statements
         /// If you add some new things (like the test expression for an if statement),
         /// then override this.
         /// </summary>
-        public virtual ISet<string> DependentVariables
+        public virtual IEnumerable<string> DependentVariables
         {
             get
             {
@@ -465,7 +465,7 @@ namespace LINQToTTreeLib.Statements
         /// Return the list of variables that are altered by this code block. Override if
         /// there is another source somewhere!
         /// </summary>
-        public ISet<string> ResultVariables
+        public IEnumerable<string> ResultVariables
         {
             get
             {

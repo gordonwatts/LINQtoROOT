@@ -155,9 +155,9 @@ namespace LINQToTTreeLib.Tests
             var sv = new ValSimple("5", typeof(int));
             var s1 = new StatementAssign(i, sv);
 
-            Assert.AreEqual(1, s1.ResultVariables.Count, "# result variables");
+            Assert.AreEqual(1, s1.ResultVariables.Count(), "# result variables");
             Assert.AreEqual(i.RawValue, s1.ResultVariables.First(), "the name");
-            Assert.AreEqual(0, s1.DependentVariables.Count, "no dependent variables");
+            Assert.AreEqual(0, s1.DependentVariables.Count(), "no dependent variables");
         }
 
         [TestMethod]
@@ -167,9 +167,9 @@ namespace LINQToTTreeLib.Tests
             var di = DeclarableParameter.CreateDeclarableParameterExpression(typeof(double));
             var sv = new ValSimple("5", typeof(int), new IDeclaredParameter[] { di });
             var s1 = new StatementAssign(i, sv);
-            Assert.AreEqual(1, s1.ResultVariables.Count, "# result variables");
+            Assert.AreEqual(1, s1.ResultVariables.Count(), "# result variables");
             Assert.AreEqual(i.RawValue, s1.ResultVariables.First(), "the name");
-            Assert.AreEqual(1, s1.DependentVariables.Count, "no dependent variables");
+            Assert.AreEqual(1, s1.DependentVariables.Count(), "no dependent variables");
             Assert.AreEqual(di.RawValue, s1.DependentVariables.First(), "a dependent variable");
         }
 

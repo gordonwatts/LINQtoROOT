@@ -138,8 +138,8 @@ namespace LINQToTTreeLib.Tests.Statements
             var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var s = new StatementForLoop(counter, new ValSimple("5", typeof(int)));
 
-            Assert.AreEqual(0, s.DependentVariables.Count, "# of dependent variables");
-            Assert.AreEqual(0, s.ResultVariables.Count, "# of result variables");
+            Assert.AreEqual(0, s.DependentVariables.Count(), "# of dependent variables");
+            Assert.AreEqual(0, s.ResultVariables.Count(), "# of result variables");
         }
 
         [TestMethod]
@@ -153,10 +153,10 @@ namespace LINQToTTreeLib.Tests.Statements
             var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, result }));
             s.Add(assign);
 
-            Assert.AreEqual(1, s.DependentVariables.Count, "# of dependent variables");
+            Assert.AreEqual(1, s.DependentVariables.Count(), "# of dependent variables");
             Assert.AreEqual(result.RawValue, s.DependentVariables.First());
             Assert.AreEqual(result.RawValue, s.ResultVariables.First());
-            Assert.AreEqual(1, s.ResultVariables.Count, "# of result variables");
+            Assert.AreEqual(1, s.ResultVariables.Count(), "# of result variables");
         }
 
         [TestMethod]
@@ -171,8 +171,8 @@ namespace LINQToTTreeLib.Tests.Statements
             var assign = new StatementAssign(result, new ValSimple($"{result.RawValue}+{counter.RawValue}", typeof(int), new IDeclaredParameter[] { counter, result }));
             s.Add(assign);
 
-            Assert.AreEqual(0, s.DependentVariables.Count, "# of dependent variables");
-            Assert.AreEqual(0, s.ResultVariables.Count, "# of result variables");
+            Assert.AreEqual(0, s.DependentVariables.Count(), "# of dependent variables");
+            Assert.AreEqual(0, s.ResultVariables.Count(), "# of result variables");
         }
 
         [TestMethod]
@@ -198,7 +198,7 @@ namespace LINQToTTreeLib.Tests.Statements
 
             var s = new StatementForLoop(loop, limit);
 
-            Assert.AreEqual(1, s.DependentVariables.Count);
+            Assert.AreEqual(1, s.DependentVariables.Count());
             Assert.AreEqual(limit.RawValue, s.DependentVariables.First());
         }
 

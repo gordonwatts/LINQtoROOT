@@ -389,12 +389,12 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             /// <summary>
             /// List of variables that we depend on for results
             /// </summary>
-            public ISet<string> DependentVariables { get; private set; }
+            public IEnumerable<string> DependentVariables { get; private set; }
 
             /// <summary>
             /// List of variables that we have that contain our results.
             /// </summary>
-            public ISet<string> ResultVariables { get; private set; }
+            public IEnumerable<string> ResultVariables { get; private set; }
 
             /// <summary>
             /// Return false - we are allowed to move.

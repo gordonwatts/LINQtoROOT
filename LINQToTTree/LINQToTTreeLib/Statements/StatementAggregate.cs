@@ -146,9 +146,9 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         public IStatement Parent { get; set; }
 
-        public ISet<string> DependentVariables { get; private set; }
+        public IEnumerable<string> DependentVariables { get; private set; }
 
-        public ISet<string> ResultVariables { get; private set; }
+        public IEnumerable<string> ResultVariables { get; private set; }
 
         public bool NeverLift { get { return true; } }
     }

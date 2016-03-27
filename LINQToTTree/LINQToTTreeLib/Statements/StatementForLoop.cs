@@ -200,7 +200,7 @@ namespace LINQToTTreeLib.Statements
         /// Return a list of all dependent variables. Will not include the counter
         /// </summary>
         /// <remarks>We calculate this on the fly as we have no good way to know when we've been modified</remarks>
-        public override ISet<string> DependentVariables
+        public override IEnumerable<string> DependentVariables
         {
             get
             {

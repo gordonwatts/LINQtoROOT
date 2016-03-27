@@ -28,7 +28,7 @@ namespace LINQToTTreeLib.Tests
         {
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var target = new StatementAggregate(result, new ValSimple("5", typeof(int)));
-            Assert.AreEqual(0, target.DependentVariables.Count);
+            Assert.AreEqual(0, target.DependentVariables.Count());
             Assert.AreEqual(result.RawValue, target.ResultVariable.RawValue);
             Assert.AreEqual(result.RawValue, target.ResultVariables.First());
 
@@ -44,7 +44,7 @@ namespace LINQToTTreeLib.Tests
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var dep = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var target = new StatementAggregate(result, dep);
-            Assert.AreEqual(1, target.DependentVariables.Count);
+            Assert.AreEqual(1, target.DependentVariables.Count());
             Assert.AreEqual(dep.RawValue, target.DependentVariables.First());
         }
 
@@ -66,7 +66,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreNotEqual(-1, r[0].IndexOf("foot"));
 
             Assert.AreEqual(result.RawValue, target.ResultVariable.RawValue);
-            Assert.AreEqual(1, target.DependentVariables.Count);
+            Assert.AreEqual(1, target.DependentVariables.Count());
             Assert.AreEqual("foot", target.DependentVariables.First());
         }
 

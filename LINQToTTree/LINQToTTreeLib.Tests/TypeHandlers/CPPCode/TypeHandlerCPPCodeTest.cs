@@ -308,9 +308,9 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.IsNotNull(ccpstatement);
             var cmInfo = ccpstatement as ICMStatementInfo;
             Assert.IsNotNull(cmInfo);
-            Assert.AreEqual(1, cmInfo.ResultVariables.Count, "# of result variables");
+            Assert.AreEqual(1, cmInfo.ResultVariables.Count(), "# of result variables");
             Assert.AreEqual(r.RawValue, cmInfo.ResultVariables.First(), "Result variable name");
-            Assert.AreEqual(2, cmInfo.DependentVariables.Count, "# of dependent variables");
+            Assert.AreEqual(2, cmInfo.DependentVariables.Count(), "# of dependent variables");
             Assert.IsTrue(cmInfo.DependentVariables.Contains(p_pt.RawValue), "doesn't have pt");
             Assert.IsTrue(cmInfo.DependentVariables.Contains(p_eta.RawValue), "Doesn't have eta");
         }

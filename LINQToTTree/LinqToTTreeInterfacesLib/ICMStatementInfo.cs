@@ -12,12 +12,12 @@ namespace LinqToTTreeInterfacesLib
         /// List of variables that this statement depends on. These are considered
         /// the "input" variables for this statement.
         /// </summary>
-        ISet<string> DependentVariables { get; }
+        IEnumerable<string> DependentVariables { get; }
 
         /// <summary>
         /// The resulting variables - things that this statement updates.
         /// </summary>
-        ISet<string> ResultVariables { get; }
+        IEnumerable<string> ResultVariables { get; }
 
         /// <summary>
         /// This statement should never be optimized and moved by moving it outside an existing for or if block. Ever.

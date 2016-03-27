@@ -928,12 +928,12 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public IStatement Parent { get; set; }
 
-            public ISet<string> DependentVariables
+            public IEnumerable<string> DependentVariables
             {
                 get { return new HashSet<string>(); }
             }
 
-            public ISet<string> ResultVariables
+            public IEnumerable<string> ResultVariables
             {
                 get { return new HashSet<string>(); }
             }
@@ -1234,7 +1234,7 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public IStatement Parent { get; set; }
 
-            public System.Collections.Generic.ISet<string> DependentVariables
+            public System.Collections.Generic.IEnumerable<string> DependentVariables
             {
                 get
                 {
@@ -1244,7 +1244,7 @@ namespace LINQToTTreeLib.Tests.Optimization
                 }
             }
 
-            public System.Collections.Generic.ISet<string> ResultVariables
+            public System.Collections.Generic.IEnumerable<string> ResultVariables
             {
                 get
                 {
@@ -1317,12 +1317,12 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public IStatement Parent { get; set; }
 
-            public System.Collections.Generic.ISet<string> DependentVariables
+            public System.Collections.Generic.IEnumerable<string> DependentVariables
             {
                 get { return new HashSet<string>(); }
             }
 
-            public System.Collections.Generic.ISet<string> ResultVariables
+            public System.Collections.Generic.IEnumerable<string> ResultVariables
             {
                 get { return new HashSet<string>(); }
             }

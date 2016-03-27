@@ -90,7 +90,7 @@ namespace LINQToTTreeLib.Utils
         public static Tuple<bool, IEnumerable<Tuple<string, string>>> MakeEquivalentSimpleExpressionAndResult(
             string resultVariable1, string resultVariable2,
             string expression1, string expression2,
-            ISet<string> dependents1, ISet<string> dependents2,
+            IEnumerable<string> dependents1, IEnumerable<string> dependents2,
             IEnumerable<Tuple<string, string>> replaceFirst)
         {
             var r = Tuple.Create(true, replaceFirst)

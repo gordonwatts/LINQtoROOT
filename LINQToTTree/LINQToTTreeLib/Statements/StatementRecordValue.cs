@@ -183,7 +183,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// What are the vars that we need as input.
         /// </summary>
-        public ISet<string> DependentVariables
+        public IEnumerable<string> DependentVariables
         {
             get {
                 var h = new HashSet<string>();
@@ -204,7 +204,7 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// What are the variables that are a result. This is everything we are going to be setting.
         /// </summary>
-        public ISet<string> ResultVariables
+        public IEnumerable<string> ResultVariables
         {
             get {
                 var h = new HashSet<string>();

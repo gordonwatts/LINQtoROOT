@@ -134,12 +134,12 @@ namespace LINQToTTreeLib.Statements
         /// <summary>
         /// List of all variables we are depending on.
         /// </summary>
-        public ISet<string> DependentVariables { get; private set; }
+        public IEnumerable<string> DependentVariables { get; private set; }
 
         /// <summary>
         /// The list of variables that get altered as a side-effect of this statement.
         /// </summary>
-        public ISet<string> ResultVariables { get; private set; }
+        public IEnumerable<string> ResultVariables { get; private set; }
 
         /// <summary>
         /// REturns false: we can move this statement if we want.

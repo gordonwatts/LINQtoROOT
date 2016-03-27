@@ -182,7 +182,7 @@ namespace LINQToTTreeLib.Statements
         /// Return the list of dependent variables, which includes ones in our test
         /// expression.
         /// </summary>
-        public override ISet<string> DependentVariables
+        public override IEnumerable<string> DependentVariables
         {
             get
             {
