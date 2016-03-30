@@ -1,16 +1,13 @@
 ﻿using Remotion.Linq;
+using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Clauses.ResultOperators;
+using Remotion.Linq.Transformations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Remotion.Linq.Clauses;
-using LINQToTTreeLib.relinq;
-using Remotion.Linq.Clauses.Expressions;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Linq.Expressions;
-using Remotion.Linq.Transformations;
-using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -58,9 +55,17 @@ namespace LINQToTTreeLib.QueryVisitors
             protected override void VisitResultOperators(ObservableCollection<ResultOperatorBase> resultOperators, QueryModel queryModel)
             {
                 // First, visit each individual result operator.
+                bool seenConcat = false;
                 for (int i = 0; i < queryModel.ResultOperators.Count; i++)
                 {
+                    var ro = queryModel.ResultOperators[i];
+                    seenConcat = seenConcat || (ro is ConcatResultOperator);
                     VisitResultOperator(queryModel.ResultOperators[i], queryModel, i);
+
+                    if (seenConcat && (ro is TakeResultOperator || ro is SkipResultOperator))
+                    {
+                        throw new NotSupportedException("A top level Take or Skip operator is not supported after using Concat of two streams. To pull a number of objects from each stream and add them, use TakePerSource or SkipPerSource.");
+                    }
                 }
 
                 _allModels.AddRange(SplitQMByConcatResultOperator(queryModel));
@@ -257,8 +262,35 @@ namespace LINQToTTreeLib.QueryVisitors
         /// <returns></returns>
         public static QueryModel Flatten(this QueryModel qm)
         {
-            _flattener.Value.VisitQueryModel(qm);
+            if (CanBeFlattened(qm))
+            {
+                _flattener.Value.VisitQueryModel(qm);
+            }
             return qm;
+        }
+
+        /// <summary>
+        /// return true if it can be flattened by looking for result operators in
+        /// the From clause.
+        /// </summary>
+        /// <param name="qm"></param>
+        /// <returns></returns>
+        private static bool CanBeFlattened(QueryModel qm)
+        {
+            var fclause = qm.MainFromClause.FromExpression as SubQueryExpression;
+            if (fclause == null)
+            {
+                return true;
+            }
+
+            // See if the sub-clause has any result operators.
+            var subQM = fclause.QueryModel;
+            if (subQM.ResultOperators.Any())
+            {
+                return false;
+            }
+
+            return CanBeFlattened(subQM);
         }
     }
 }
