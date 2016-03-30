@@ -353,6 +353,20 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void RunSimpleConcatWithLatetake()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+            ntuple._gProxyFile = proxyFile.FullName;
+
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile }, "dude", typeof(ntuple));
+            var dude = q.Concat(q).TakePerSource(6).Count();
+
+            Assert.AreEqual(12, dude);
+        }
+
+        [TestMethod]
         public void RunSimpleConcatTwoSourceCountResult()
         {
             const int numberOfIter = 10;

@@ -196,6 +196,7 @@ namespace LINQToTTreeLib
             mreg.Register(AsCSVExpressionNode.SupportedMethods, typeof(AsCSVExpressionNode));
             mreg.Register(AsTTreeExpressionNode.SupportedMethods, typeof(AsTTreeExpressionNode));
             mreg.Register(ConcatExpressionNode.GetSupportedMethods(), typeof(ConcatExpressionNode));
+            mreg.Register(TakeSkipExpressionNode.SupportedMethods, typeof(TakeSkipExpressionNode));
 
             var defaultNodeTypeProvider = ExpressionTreeParser.CreateDefaultNodeTypeProvider();
 
