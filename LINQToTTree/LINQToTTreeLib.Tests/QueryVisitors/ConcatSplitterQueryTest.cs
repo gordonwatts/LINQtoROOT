@@ -121,21 +121,23 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var qm = QMExtractorExecutor.LastQM;
             var qmList = ConcatSplitterQueryVisitor.Split(qm)
                 .DumpToConsole();
-#if false
+        }
+
+        [TestMethod]
+        public void QMWith2ConcatsAndOneLateTakePerSource()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            // THis is not allowed as the current infrastructure doesn't know how to do the Take properly (yet).
+            // So this should cause an exception.
+            var r1 = q1.Concat(q2).TakePerSource(300).Count();
+
             var qm = QMExtractorExecutor.LastQM;
             var qmList = ConcatSplitterQueryVisitor.Split(qm)
                 .DumpToConsole();
 
             Assert.AreEqual(2, qmList.Length);
-            CheckForQuery(() => q1.Take(500).Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
-            CheckForQuery(() => q1.Take(700).Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
-
-            // Make sure the query providers are correct! Since we don't care about the order.
-            var providersUsed = ExtractProviders<ntup>(qmList);
-            Assert.IsTrue(providersUsed.Contains(q1.Provider));
-            Assert.IsTrue(providersUsed.Contains(q2.Provider));
-            Assert.AreEqual(2, providersUsed.Count);
-#endif
+            CheckForQuery(() => q1.Take(300).Count(), qmList, 2); // Can't really tell the difference between q1 and q2.
         }
 
         /// <summary>

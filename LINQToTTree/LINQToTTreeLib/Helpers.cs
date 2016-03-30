@@ -10,6 +10,21 @@ namespace LINQToTTreeLib
     public static class Helpers
     {
         /// <summary>
+        /// Implement the Take operator, and do it just as we would the normal take operator, but we are explicitly allowing it
+        /// to happen after a Concat operator that joins multiple sources (e.g. 3000 jets from each different MC sample).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public static IQueryable<T> TakePerSource<T> (this IQueryable<T> source, int count)
+        {
+            return source.Provider.CreateQuery<T>(
+                Expression.Call(((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
+                source.Expression, Expression.Constant(count)));
+        }
+
+        /// <summary>
         /// A helper function that allows one to pop this into our LINQ translation. This way h.Fill() can be done
         /// s.t. it returns h (and use the Aggregate function). This is translated magically by our translator!! and
         /// should not be used inline!
