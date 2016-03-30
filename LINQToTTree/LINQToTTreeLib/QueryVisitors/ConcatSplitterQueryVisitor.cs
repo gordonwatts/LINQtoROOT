@@ -1,4 +1,5 @@
-﻿using Remotion.Linq;
+﻿using LINQToTTreeLib.relinq;
+using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Clauses.ResultOperators;
@@ -38,6 +39,9 @@ namespace LINQToTTreeLib.QueryVisitors
             return qvr._allModels.ToArray();
         }
 
+        /// <summary>
+        /// A query model visitor that will split multiple concat's up into their proper form.
+        /// </summary>
         private class SplitResultClauses : QueryModelVisitorBase
         {
 
@@ -60,12 +64,29 @@ namespace LINQToTTreeLib.QueryVisitors
                 {
                     var ro = queryModel.ResultOperators[i];
                     seenConcat = seenConcat || (ro is ConcatResultOperator);
-                    VisitResultOperator(queryModel.ResultOperators[i], queryModel, i);
-
                     if (seenConcat && (ro is TakeResultOperator || ro is SkipResultOperator))
                     {
                         throw new NotSupportedException("A top level Take or Skip operator is not supported after using Concat of two streams. To pull a number of objects from each stream and add them, use TakePerSource or SkipPerSource.");
                     }
+                    
+                    // If the operator is the special kind of take or skip, then we should replace it with a normal take or skip
+                    // as the user has, effectively, told us they know what they are doing.
+
+                    if (ro is TakeSkipResultOperator)
+                    {
+                        var ts = ro as TakeSkipResultOperator;
+                        if (ts.IsTake)
+                        {
+                            queryModel.ResultOperators[i] = new TakeResultOperator(ts.Count);
+                        } else
+                        {
+                            queryModel.ResultOperators[i] = new SkipResultOperator(ts.Count);
+                        }
+                        ro = queryModel.ResultOperators[i];
+                    }
+
+                    // Now visit the particular result operator.
+                    VisitResultOperator(ro, queryModel, i);
                 }
 
                 _allModels.AddRange(SplitQMByConcatResultOperator(queryModel));
