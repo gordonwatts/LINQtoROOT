@@ -18,7 +18,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using LINQToTTreeLib.Tests.QueryVisitors;
 
 namespace LINQToTTreeLib
 {

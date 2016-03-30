@@ -50,6 +50,94 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             Assert.AreEqual(2, providersUsed.Count);
         }
 
+        [TestMethod]
+        public void QMWithConcatAndEarlyTake()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var r1 = q1.Take(10).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(1, qmList.Length);
+            CheckForQuery(() => q1.Take(10).Count(), qmList);
+        }
+
+        [TestMethod]
+        public void QMWith2ConcatsAndOneEarlyTake()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            var r1 = q1.Take(500).Concat(q2).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            CheckForQuery(() => q1.Take(500).Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
+            CheckForQuery(() => q1.Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
+
+            // Make sure the query providers are correct! Since we don't care about the order.
+            var providersUsed = ExtractProviders<ntup>(qmList);
+            Assert.IsTrue(providersUsed.Contains(q1.Provider));
+            Assert.IsTrue(providersUsed.Contains(q2.Provider));
+            Assert.AreEqual(2, providersUsed.Count);
+        }
+
+        [TestMethod]
+        public void QMWith2ConcatsAndTwoEarlyTake()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            var r1 = q1.Take(500).Concat(q2.Take(700)).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            CheckForQuery(() => q1.Take(500).Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
+            CheckForQuery(() => q1.Take(700).Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
+
+            // Make sure the query providers are correct! Since we don't care about the order.
+            var providersUsed = ExtractProviders<ntup>(qmList);
+            Assert.IsTrue(providersUsed.Contains(q1.Provider));
+            Assert.IsTrue(providersUsed.Contains(q2.Provider));
+            Assert.AreEqual(2, providersUsed.Count);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void QMWith2ConcatsAndOneLateTake()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            // THis is not allowed as the current infrastructure doesn't know how to do the Take properly (yet).
+            // So this should cause an exception.
+            var r1 = q1.Concat(q2).Take(300).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+#if false
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            CheckForQuery(() => q1.Take(500).Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
+            CheckForQuery(() => q1.Take(700).Count(), qmList, 1); // Can't really tell the difference between q1 and q2.
+
+            // Make sure the query providers are correct! Since we don't care about the order.
+            var providersUsed = ExtractProviders<ntup>(qmList);
+            Assert.IsTrue(providersUsed.Contains(q1.Provider));
+            Assert.IsTrue(providersUsed.Contains(q2.Provider));
+            Assert.AreEqual(2, providersUsed.Count);
+#endif
+        }
+
         /// <summary>
         /// Extract the providers from each query sent in.
         /// </summary>
