@@ -140,6 +140,23 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             CheckForQuery(() => q1.Take(300).Count(), qmList, 2); // Can't really tell the difference between q1 and q2.
         }
 
+        [TestMethod]
+        public void QMWith2ConcatsAndOneLateSkipPerSource()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            // THis is not allowed as the current infrastructure doesn't know how to do the Take properly (yet).
+            // So this should cause an exception.
+            var r1 = q1.Concat(q2).SkipPerSource(300).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            CheckForQuery(() => q1.Skip(300).Count(), qmList, 2); // Can't really tell the difference between q1 and q2.
+        }
+
         /// <summary>
         /// Extract the providers from each query sent in.
         /// </summary>
@@ -298,35 +315,6 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         [TestMethod]
         public void QMWithMixedSelecAndConcats()
         {
-            // This produces a rather nasty combination: one of the Concat operators ends
-            // up in the main from clause, and the other one ends up in one of the result operators
-            // of the main query model.
-            var q1 = new QMExtractorQueriable<ntup>();
-            var q2 = new QMExtractorQueriable<ntup>();
-            var q3 = new QMExtractorQueriable<ntup>();
-
-            var r1 = q1
-                .Select(r => r.run)
-                .Concat(q2.Select(r => r.run))
-                .Select(r => r * 2)
-                .Concat(q3.Select(r => r.run))
-                .Count();
-
-            var qm = QMExtractorExecutor.LastQM;
-            var qmList = ConcatSplitterQueryVisitor.Split(qm)
-                .DumpToConsole();
-
-            Assert.AreEqual(3, qmList.Length);
-            CheckForQuery(() => q3.Select(r => r.run).Count(), qmList);
-            CheckForQuery(() => q1.Select(r => r.run).Select(r => r * 2).Count(), qmList, 2);
-        }
-
-        [TestMethod]
-        [Ignore]
-        public void QMWithMixedSelecAndConcatsAndTakes()
-        {
-            // Heck what happens here when the queries fail.
-
             // This produces a rather nasty combination: one of the Concat operators ends
             // up in the main from clause, and the other one ends up in one of the result operators
             // of the main query model.

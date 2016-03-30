@@ -14,10 +14,25 @@ namespace LINQToTTreeLib
         /// to happen after a Concat operator that joins multiple sources (e.g. 3000 jets from each different MC sample).
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="count"></param>
+        /// <param name="source">The series of objects to count.</param>
+        /// <param name="count">The number of events to count per source. If there are n sources, then n*count is number of objects that will make it through.</param>
         /// <returns></returns>
         public static IQueryable<T> TakePerSource<T> (this IQueryable<T> source, int count)
+        {
+            return source.Provider.CreateQuery<T>(
+                Expression.Call(((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
+                source.Expression, Expression.Constant(count)));
+        }
+
+        /// <summary>
+        /// Implement the Skip operator, and do it just as we would the normal take operator, but we are explicitly allowing it
+        /// to happen after a Concat operator that joins multiple sources (e.g. skip the first 3000 jets from each different MC sample).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The series of objects to count.</param>
+        /// <param name="count">The number of events to skip at the start of each source.</param>
+        /// <returns></returns>
+        public static IQueryable<T> SkipPerSource<T>(this IQueryable<T> source, int count)
         {
             return source.Provider.CreateQuery<T>(
                 Expression.Call(((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),

@@ -22,6 +22,7 @@ namespace LINQToTTreeLib.relinq
         public static MethodInfo[] SupportedMethods = new[]
             {
                 TypeUtils.GetSupportedMethod (() => Helpers.TakePerSource<object>((IQueryable<object>) null, (int) 0)),
+                TypeUtils.GetSupportedMethod (() => Helpers.SkipPerSource<object>((IQueryable<object>) null, (int) 0)),
             };
 
         /// <summary>
