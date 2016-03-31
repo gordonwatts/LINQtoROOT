@@ -47,20 +47,30 @@ namespace LINQToTTreeLib.ResultOperators
 
             target.ProcessResultOperator(resultOperator, queryModel, codeEnv, c, MEFUtilities.MEFContainer);
 
+            codeEnv.DumpCodeToConsole();
+
             ///
             /// First, there should be a counter now declared and ready to go in the current variable block - which will
-            /// be the outer one for this test
+            /// be the outer one for this test. If this is the outter most, then this is going to be burried.
             /// 
 
             var declBlock = inlineBlock.Parent.Parent as IBookingStatementBlock;
             Assert.IsNotNull(declBlock, "Expecting a declaration block above!");
-            Assert.AreEqual(1, declBlock.DeclaredVariables.Count(), "Expected only 1 variable to be declared");
-            Assert.IsInstanceOfType(declBlock.DeclaredVariables.First(), typeof(DeclarableParameter), "Expected it to be a counter");
 
             Assert.AreEqual(1, inlineBlock.Statements.Count(), "Expected an if block/increment!");
             Assert.IsInstanceOfType(inlineBlock.Statements.First(), typeof(StatementIfOnCount), "if statement not found!");
 
             var s = inlineBlock.Statements.First() as StatementIfOnCount;
+
+            bool isTopLevel = codeEnv.DumpCode().Where(l => l.Contains("static int")).Any();
+            if (!isTopLevel)
+            {
+                Assert.AreEqual(1, declBlock.DeclaredVariables.Count(), "Expected only 1 variable to be declared");
+                Assert.IsInstanceOfType(declBlock.DeclaredVariables.First(), typeof(DeclarableParameter), "Expected it to be a counter");
+            } else
+            {
+                Assert.AreEqual(1, (s.Parent as IBookingStatementBlock).DeclaredVariables.Count());
+            }
 
             string count = "";
             if (resultOperator is SkipResultOperator)
@@ -143,11 +153,6 @@ namespace LINQToTTreeLib.ResultOperators
         [TestMethod]
         public void TestTakeSkipAtSource()
         {
-            ///
-            /// The below is invalid because the "Take" is at the top level - we are taking only a certain
-            /// number of events. That is not legal! So we need to throw when that happens!
-            /// 
-
             var q = new QueriableDummy<ntup>();
             var c = q.Take(5).Count();
 
@@ -171,8 +176,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             res.DumpCodeToConsole();
 
-            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Where(v => v.DeclareAsStatic).Count());
-            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, res.DumpCode().Where(l => l.Contains("static int")).Count());
         }
 
         [TestMethod]

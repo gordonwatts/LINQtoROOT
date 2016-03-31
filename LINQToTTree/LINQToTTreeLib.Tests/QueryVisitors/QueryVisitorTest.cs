@@ -450,6 +450,8 @@ namespace LINQToTTreeLib
 
             qv.VisitQueryModel(model);
 
+            gc.DumpCodeToConsole();
+
             /// At the top level we assume there will be a loop over the vals.
 
             Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "Unexpected # of statements");

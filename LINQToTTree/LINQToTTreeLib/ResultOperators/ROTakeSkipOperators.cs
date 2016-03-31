@@ -61,7 +61,7 @@ namespace LINQToTTreeLib.ResultOperators
             // If this is a "global" take, then we need to declare the variable a bit specially.
             // Global: we have a limit on the number of objects that goes across events. We test this by seeing if this
             // is a sub-query that is registered (or not).
-            var isGlobalTake = codeEnv.FindQMFunction(queryModel) == null;
+            var isGlobalTake = codeContext.IsTopLevelQueryModel(queryModel);
 
             // Now, we create a count variable and that is how we will tell if we are still skipping or
             // taking. It must be declared in the current block, before our current code! :-)

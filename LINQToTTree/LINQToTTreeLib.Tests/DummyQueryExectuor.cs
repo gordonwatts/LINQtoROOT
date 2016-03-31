@@ -107,7 +107,9 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new AdderInt());
             }
 
-            var qv = new QueryVisitor(Result, new CodeContext() { BaseNtupleObjectType = _baseType }, MEFUtilities.MEFContainer);
+            var cc = new CodeContext() { BaseNtupleObjectType = _baseType };
+            cc.SetTopLevelQuery(queryModel);
+            var qv = new QueryVisitor(Result, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
             MEFInitialPartCount = MEFUtilities.CountParts();

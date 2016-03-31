@@ -421,6 +421,7 @@ namespace LINQToTTreeLib
 
             var result = new GeneratedCode();
             var codeContext = new CodeContext() { BaseNtupleObjectType = _baseNtupleObjectType };
+            codeContext.SetTopLevelQuery(queryModel);
 
             // Future to return the cache key. Put some coding protection in there.
             IQueryResultCacheKey key = null;

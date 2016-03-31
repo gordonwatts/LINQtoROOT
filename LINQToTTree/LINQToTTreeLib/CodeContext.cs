@@ -451,6 +451,36 @@ namespace LINQToTTreeLib
             get { return _cachedCookies; }
         }
 
+        #region Top Level Query Model
+        /// <summary>
+        /// Set this QM as the top level query model.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        internal void SetTopLevelQuery(QueryModel queryModel)
+        {
+            if (_topLevelQueryModel != null)
+            {
+                throw new InvalidOperationException("Can't set the top level query model twice.");
+            }
+            _topLevelQueryModel = queryModel;
+        }
+
+        /// <summary>
+        /// Save the QM that is top level.
+        /// </summary>
+        private QueryModel _topLevelQueryModel = null;
+
+        /// <summary>
+        /// Return true if this is the top level query model.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <returns></returns>
+        public bool IsTopLevelQueryModel(QueryModel queryModel)
+        {
+            return queryModel == _topLevelQueryModel;
+        }
+        #endregion
+
         /// <summary>
         /// The base type for the ntuple we are looping over.
         /// </summary>
@@ -507,7 +537,6 @@ namespace LINQToTTreeLib
             }
             _cachedScopeVars.Clear();
         }
-
         #endregion
 
     }
