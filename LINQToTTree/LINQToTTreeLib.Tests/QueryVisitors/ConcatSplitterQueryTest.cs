@@ -124,6 +124,21 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         }
 
         [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void QMWith2ConcatsAndOneBurriedLateTake()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            // THis is not allowed as the current infrastructure doesn't know how to do the Take properly (yet).
+            // So this should cause an exception.
+            var r1 = q1.Concat(q2).Where(x => x.run > 10).Take(300).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+        }
+
+        [TestMethod]
         public void QMWith2ConcatsAndOneLateTakePerSource()
         {
             var q1 = new QMExtractorQueriable<ntup>();
@@ -138,6 +153,23 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
 
             Assert.AreEqual(2, qmList.Length);
             CheckForQuery(() => q1.Take(300).Count(), qmList, 2); // Can't really tell the difference between q1 and q2.
+        }
+
+        [TestMethod]
+        public void QMWith2ConcatsAndOneBurriedLateTakePerSource()
+        {
+            var q1 = new QMExtractorQueriable<ntup>();
+            var q2 = new QMExtractorQueriable<ntup>();
+            // THis is not allowed as the current infrastructure doesn't know how to do the Take properly (yet).
+            // So this should cause an exception.
+            var r1 = q1.Concat(q2).Where(x => x.run > 10).TakePerSource(300).Count();
+
+            var qm = QMExtractorExecutor.LastQM;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            CheckForQuery(() => q1.Where(x => x.run > 10).Take(300).Count(), qmList, 2, "x"); // Can't really tell the difference between q1 and q2.
         }
 
         [TestMethod]

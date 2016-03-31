@@ -161,6 +161,36 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [TestMethod]
+        public void TestTakeSkipAtTopLevelBurreid()
+        {
+            var q = new QueriableDummy<ntup>();
+            var c = q.Where(x => x.run > 10).Take(5).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Where(v => v.DeclareAsStatic).Count());
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count());
+        }
+
+        [TestMethod]
+        public void TestTakeSkipLevelBurreid()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var c = q.Where(x => x.run > 10).SelectMany(x => x.valC1D).Take(5).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Where(v => v.DeclareAsStatic).Count());
+            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count());
+        }
+
+        [TestMethod]
         public void TestTakeSkipAtSubLevel()
         {
             ///
