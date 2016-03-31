@@ -186,8 +186,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             res.DumpCodeToConsole();
 
-            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Where(v => v.DeclareAsStatic).Count());
-            Assert.AreEqual(1, res.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, res.DumpCode().Where(l => l.Contains("static int")).Count());
         }
 
         [TestMethod]
