@@ -30,7 +30,7 @@ namespace LINQToTTreeLib.QueryVisitors
             var qvf = new SplitFromClauses();
             qvf.VisitQueryModel(source);
 
-            var qvr = new SplitResultClauses();
+            var qvr = new SplitResultClauses(qvf._models.Count > 1);
             foreach(var q in qvf._models)
             {
                 qvr.VisitQueryModel(q);
@@ -51,6 +51,21 @@ namespace LINQToTTreeLib.QueryVisitors
             public List<QueryModel> _allModels = new List<QueryModel>();
 
             /// <summary>
+            /// This is set to true when we run into a concat.
+            /// </summary>
+            bool _seenConcat = false;
+
+            /// <summary>
+            /// Setup the splitter. Most important to us here is: did we already see a concat? This
+            /// will help us force an error when we need to see one.
+            /// </summary>
+            /// <param name="seenConcat">True if a Concat operator at top level was previously seen</param>
+            public SplitResultClauses(bool seenConcat)
+            {
+                _seenConcat = seenConcat;
+            }
+
+            /// <summary>
             /// Look at all the result operators. The Concat operators can affect what happens before and after their
             /// position in the RO list. So we have to look at it as a collection, rather than individually.
             /// </summary>
@@ -59,12 +74,11 @@ namespace LINQToTTreeLib.QueryVisitors
             protected override void VisitResultOperators(ObservableCollection<ResultOperatorBase> resultOperators, QueryModel queryModel)
             {
                 // First, visit each individual result operator.
-                bool seenConcat = false;
                 for (int i = 0; i < queryModel.ResultOperators.Count; i++)
                 {
                     var ro = queryModel.ResultOperators[i];
-                    seenConcat = seenConcat || (ro is ConcatResultOperator);
-                    if (seenConcat && (ro is TakeResultOperator || ro is SkipResultOperator))
+                    _seenConcat = _seenConcat || (ro is ConcatResultOperator);
+                    if (_seenConcat && (ro is TakeResultOperator || ro is SkipResultOperator))
                     {
                         throw new NotSupportedException("A top level Take or Skip operator is not supported after using Concat of two streams. To pull a number of objects from each stream and add them, use TakePerSource or SkipPerSource.");
                     }

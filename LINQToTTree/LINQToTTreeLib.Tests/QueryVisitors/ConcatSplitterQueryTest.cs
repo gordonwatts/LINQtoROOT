@@ -130,7 +130,7 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             var q1 = new QMExtractorQueriable<ntup>();
             var q2 = new QMExtractorQueriable<ntup>();
             // THis is not allowed as the current infrastructure doesn't know how to do the Take properly (yet).
-            // So this should cause an exception.
+            // So this should cause an exception. It will print out, however, a way around this.
             var r1 = q1.Concat(q2).Where(x => x.run > 10).Take(300).Count();
 
             var qm = QMExtractorExecutor.LastQM;
