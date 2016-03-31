@@ -194,6 +194,24 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [TestMethod]
+        public void TestTakeSkipLevelInFromExpression()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var c1 = from evt in q.Where(x => x.run > 10).Take(5).SelectMany(x => x.valC1D)
+                     where evt > 50
+                     select evt;
+
+            var c = c1.Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.DumpCode().Where(l => l.Contains("static int")).Count());
+        }
+
+        [TestMethod]
         public void TestTakeSkipLevelBurreidTwice()
         {
             var q = new QueriableDummy<dummyntup>();
