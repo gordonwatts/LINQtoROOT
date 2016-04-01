@@ -205,6 +205,7 @@ namespace LINQToTTreeLib.ResultOperators
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
+            Console.WriteLine(DummyQueryExectuor.LastQueryModel.ToString());
 
             res.DumpCodeToConsole();
 

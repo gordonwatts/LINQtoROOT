@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
 using System;
@@ -475,9 +476,9 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="queryModel"></param>
         /// <returns></returns>
-        public bool IsTopLevelQueryModel(QueryModel queryModel)
+        public bool IsInTopLevelQueryModel(QueryModel queryModel)
         {
-            return queryModel == _topLevelQueryModel;
+            return _topLevelQueryModel.QMAllMainOnly().Where(qm => qm == queryModel).Any();
         }
         #endregion
 

@@ -61,7 +61,7 @@ namespace LINQToTTreeLib.ResultOperators
             // If this is a "global" take, then we need to declare the variable a bit specially.
             // Global: we have a limit on the number of objects that goes across events. We test this by seeing if this
             // is a sub-query that is registered (or not).
-            var isGlobalTake = codeContext.IsTopLevelQueryModel(queryModel);
+            var isGlobalTake = codeContext.IsInTopLevelQueryModel(queryModel);
 
             // Now, we create a count variable and that is how we will tell if we are still skipping or
             // taking. It must be declared in the current block, before our current code! :-)
@@ -91,7 +91,7 @@ namespace LINQToTTreeLib.ResultOperators
             codeEnv.Add(new StatementIfOnCount(counter, limit, comparison));
 
             ///
-            /// We are particlarly fortunate here. We don't have to update the Loop variable - whatever it is is
+            /// We are particularly fortunate here. We don't have to update the Loop variable - whatever it is, is
             /// still the right one! Normally we'd have to futz with the LoopVariable in code context because we
             /// were iterating over something new. :-) Easy peasy.
             /// 

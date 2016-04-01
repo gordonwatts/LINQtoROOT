@@ -153,11 +153,11 @@ namespace LINQToTTreeLib
         /// <param name="queryModel"></param>
         public override void VisitMainFromClause(MainFromClause fromClause, QueryModel queryModel)
         {
-            //
-            // For the main clause we will just define the variable as "this".
-            // 
+            // If the fromClause is a complex expression, then we will have to parse it out.
+            // If it is just the value type for the TTree we are looping over, then we have to
+            // do something slightly different.
 
-            if (fromClause.ItemType == _codeContext.BaseNtupleObjectType)
+            if (fromClause.ItemType == _codeContext.BaseNtupleObjectType && (fromClause.FromExpression is ConstantExpression))
             {
                 MainIndexScope = new OutterLoopArrayInfo(fromClause.ItemType).CodeLoopOverArrayInfo(fromClause, _codeEnv, _codeContext, MEFContainer);
             }

@@ -76,7 +76,7 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="queryModel"></param>
         /// <returns></returns>
-        bool IsTopLevelQueryModel(QueryModel queryModel);
+        bool IsInTopLevelQueryModel(QueryModel queryModel);
 
         /// <summary>
         /// Returns a list of query expressions that have been referenced via GetReplacement (IQuerySource).
