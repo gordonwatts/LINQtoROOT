@@ -186,7 +186,7 @@ private:
 			std::cout << "Unable to find object '" << name << "' in the input list!" << std::endl;
 			std::cout << "Found the following objects in the input list: " << std::endl;
 			TIter next(fInput);
-			TNamed *obj;
+			TObject *obj;
 			while ((obj = (TNamed*)next()) != nullptr)
 			{
 				std::cout << "  " << obj->GetName() << endl;
