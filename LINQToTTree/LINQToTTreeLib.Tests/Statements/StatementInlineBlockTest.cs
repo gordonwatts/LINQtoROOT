@@ -175,9 +175,18 @@ namespace LINQToTTreeLib.Statements
         {
             StatementInlineBlock b = new StatementInlineBlock();
             b.Add(DeclarableParameter.CreateDeclarableParameterExpression(typeof(int)));
-            b.Add(new Statements.StatementSimpleStatement("bork"));
+            b.Add(new Statements.StatementSimpleStatement("Bork"));
             var r = b.CodeItUp().ToArray();
             Assert.AreEqual(4, r.Length, "# of statements");
+        }
+
+        [TestMethod]
+        public void SingleStatementCodeWithNoBrackets()
+        {
+            StatementInlineBlock b = new StatementInlineBlock(blockShouldBeBraced: false);
+            b.Add(new Statements.StatementSimpleStatement("Bork"));
+            var r = b.CodeItUp().ToArray();
+            Assert.AreEqual(1, r.Length, "# of statements");
         }
 
         /// <summary>
@@ -233,6 +242,19 @@ namespace LINQToTTreeLib.Statements
             public bool DeclareAsStatic
             {
                 get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public IExecutableCode InitialValueCode
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
                 {
                     throw new NotImplementedException();
                 }

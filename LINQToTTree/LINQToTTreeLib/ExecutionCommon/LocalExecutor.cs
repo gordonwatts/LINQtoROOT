@@ -284,6 +284,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (Environment.CompileDebug)
             {
                 buildFlags += "g";
+                gSystem.FlagsDebug = "-Zi";
+                gSystem.FlagsOpt = "-Zi";
             }
 
             var result = gSystem.CompileMacro(templateRunner.FullName, buildFlags);

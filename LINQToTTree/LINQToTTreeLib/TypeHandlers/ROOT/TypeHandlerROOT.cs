@@ -62,8 +62,9 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             // variable. This isn't so pretty when there is a one-time initialization, but it shouldn't add too much.
             //
 
-            var staticCache = DeclarableParameter.CreateDeclarableParameterExpression(rootObject.GetType());
+            var staticCache = new ROOTObjectStaticHolder(rootObject.GetType(), rootObject);
             staticCache.DeclareAsStatic = true;
+            staticCache.InitialValue = new ValSimple("nullptr", staticCache.Type);
             codeEnv.Add(staticCache);
 
             codeEnv.Add(new Statements.StatementFilter(new ValSimple($"{staticCache.RawValue} == nullptr", typeof(bool), new IDeclaredParameter[] { staticCache })));
@@ -74,6 +75,19 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
             // And the rest of the code should use the static cache.
             return staticCache;
+        }
+
+        public class ROOTObjectStaticHolder : DeclarableParameter
+        {
+            public ROOTObjectStaticHolder(Type holderForType, ROOTNET.Interface.NTNamed obj)
+                : base(holderForType, holderForType.CreateUniqueVariableName())
+            {
+                OriginalName = obj.Name;
+                OriginalTitle = obj.Title;
+            }
+
+            public string OriginalName { get; private set; }
+            public string OriginalTitle { get; private set; }
         }
 
         /// <summary>

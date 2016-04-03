@@ -56,18 +56,19 @@ namespace LINQToTTreeLib.ResultOperators
                 throw new NotImplementedException("Can't do a selector function yet");
             }
 
-            ///
-            /// We need to declare a variable to hold the seed and its updates - the accumulator
-            /// We then need to write the code that does the update to the seed.
-            /// Finally, if there is a final function, we need to call that after the loop is done!
-            ///
-
+            // We need to declare a variable to hold the seed and its updates - the accumulator
+            // We then need to write the code that does the update to the seed.
+            // Finally, if there is a final function, we need to call that after the loop is done!
             var accumulator = DeclarableParameter.CreateDeclarableParameterExpression(a.Seed.Type);
 
-            var newGC = new GeneratedCode();
+            var newGC = new GeneratedCode(blockShouldBeBraced: false);
             var newCC = new CodeContext();
-            //accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
             accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, newGC, newCC, container);
+            if (newGC.CodeBody.Statements.Count() > 0)
+            {
+                accumulator.InitialValueCode = newGC;
+            }
+            _codeEnv.QueueForTransferFromGC(newGC);
 
             ///
             /// Now, parse the lambda expression, doing a substitution with this guy! Note that the only argument is our

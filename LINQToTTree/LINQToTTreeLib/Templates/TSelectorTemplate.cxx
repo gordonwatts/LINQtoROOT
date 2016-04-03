@@ -47,6 +47,9 @@ public:
 
 		/// initialize the variables that we are going to be carrying along with us.
 #foreach($v in $ResultVariables)
+#foreach($l in $v.VarInitCode)
+		$l
+#end
 		$v.VariableName = $v.InitialValue;
 #end
 

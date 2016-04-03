@@ -91,7 +91,7 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="varType"></param>
         /// <param name="varName"></param>
-        private DeclarableParameter(Type varType, string varName)
+        protected DeclarableParameter(Type varType, string varName)
         {
             _type = varType;
             if (varName == null)
@@ -173,6 +173,11 @@ namespace LINQToTTreeLib.Expressions
         /// Declare a variable as a static item
         /// </summary>
         public bool DeclareAsStatic { get; set; }
+
+        /// <summary>
+        /// Save some initial context in case it is needed before the initial values is required.
+        /// </summary>
+        public IExecutableCode InitialValueCode { get; set; }
 
         /// <summary>
         /// Rename the raw value.

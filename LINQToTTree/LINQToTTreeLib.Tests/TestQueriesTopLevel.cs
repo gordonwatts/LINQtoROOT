@@ -158,8 +158,6 @@ namespace LINQToTTreeLib.Tests
             var varToTrans = res.VariablesToTransfer.ToArray();
             Assert.AreEqual(1, varToTrans.Length, "variables to transfer incorrect");
             Assert.IsInstanceOfType(varToTrans[0], typeof(KeyValuePair<string, object>), "bad object type to transfer");
-            var ro = (KeyValuePair<string, object>)varToTrans[0];
-            Assert.IsTrue((res.ResultValue as IDeclaredParameter).InitialValue.RawValue.Contains(ro.Key), "variable name ('" + ro.Key + ") is not in the lookup ('" + (res.ResultValue as IDeclaredParameter).InitialValue.RawValue + ")");
         }
     }
 }

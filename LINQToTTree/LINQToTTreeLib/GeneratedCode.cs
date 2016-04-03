@@ -18,9 +18,9 @@ namespace LINQToTTreeLib
     /// </summary>
     public class GeneratedCode : IGeneratedQueryCode, IExecutableCode
     {
-        public GeneratedCode()
+        public GeneratedCode(bool blockShouldBeBraced = true)
         {
-            CodeBody = new StatementInlineBlock();
+            CodeBody = new StatementInlineBlock(blockShouldBeBraced: blockShouldBeBraced);
             CurrentScopePointer = CodeBody;
             CurrentDeclarationScopePointer = CodeBody;
             PreviousDeclarationScopePointer = null;
@@ -341,6 +341,18 @@ namespace LINQToTTreeLib
                 _variablesToTransfer[name] = val;
 
                 return name;
+            }
+        }
+
+        /// <summary>
+        /// Transfer from another block.
+        /// </summary>
+        /// <param name="gc"></param>
+        public void QueueForTransferFromGC(IExecutableCode gc)
+        {
+            foreach (var v in gc.VariablesToTransfer)
+            {
+                _variablesToTransfer[v.Key] = v.Value;
             }
         }
 

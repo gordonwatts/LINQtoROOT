@@ -114,7 +114,7 @@ namespace LINQToTTreeLib
 
         /// <summary>
         /// Helper var that we send off to the macro processor. We have to massage to get from our internal rep into
-        /// somethign that can be used directly by the C++ code.
+        /// something that can be used directly by the C++ code.
         /// </summary>
         public class VarInfo
         {
@@ -128,10 +128,12 @@ namespace LINQToTTreeLib
             public string VariableName { get { return _iVariable.ParameterName; } }
             public string VariableType { get { return Variables.VarUtils.AsCPPType(_iVariable.Type); } } // C++ type
             public string InitialValue { get { return _iVariable.InitialValue.RawValue; } }
+
+            public IEnumerable<string> VarInitCode { get { return _iVariable.InitialValueCode == null ? Enumerable.Empty<string>() : _iVariable.InitialValueCode.QueryCode().SelectMany(s => s.CodeItUp()); } }
         }
 
         /// <summary>
-        /// Trnaslate the variable type/name into something for our output code. If this variable requires an
+        /// Translate the variable type/name into something for our output code. If this variable requires an
         /// include file, then we need to make sure it goes in here!
         /// </summary>
         /// <param name="vars"></param>

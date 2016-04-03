@@ -132,6 +132,19 @@ namespace LINQToTTreeLib.Tests
                 }
             }
 
+            public IExecutableCode InitialValueCode
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public void RenameRawValue(string oldname, string newname)
             {
                 throw new NotImplementedException();

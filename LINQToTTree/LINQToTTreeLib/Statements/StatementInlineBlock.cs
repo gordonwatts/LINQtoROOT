@@ -11,6 +11,11 @@ namespace LINQToTTreeLib.Statements
     /// </summary>
     public class StatementInlineBlock : StatementInlineBlockBase
     {
+        public StatementInlineBlock(bool blockShouldBeBraced = true)
+        {
+            BlockShouldBeBraced = blockShouldBeBraced;
+        }
+
         /// <summary>
         /// Any statement can pop out that wants to - nothing is protected.
         /// </summary>

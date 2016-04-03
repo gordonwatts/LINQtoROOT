@@ -692,6 +692,7 @@ namespace LINQToTTreeLib
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Plot("hi", "there", 10, 0.0, 20.0, d => d.run);
             var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             var result = exe.ExecuteScalar<ROOTNET.Interface.NTH1>(query);
 
@@ -2440,6 +2441,7 @@ namespace LINQToTTreeLib
             holder.Directory = null;
             var dude = q.ApplyToObject(holder, (h, n) => h.Fill(n.run));
             var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             ///
             /// Ok, now we can actually see if we can make it "go".

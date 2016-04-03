@@ -20,6 +20,14 @@ namespace LinqToTTreeInterfacesLib
         IValue InitialValue { get; set; }
 
         /// <summary>
+        /// If the initial value needs some code generated along side it
+        /// </summary>
+        /// <remarks>
+        /// Sometimes generating an expression requires sometimes generating extra statements.
+        /// </remarks>
+        IExecutableCode InitialValueCode { get; set; }
+
+        /// <summary>
         /// Return the type of this parameter.
         /// </summary>
         new Type Type { get; }

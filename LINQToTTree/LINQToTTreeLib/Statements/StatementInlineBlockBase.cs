@@ -24,6 +24,19 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Setup things to their default values.
+        /// </summary>
+        public StatementInlineBlockBase()
+        {
+            BlockShouldBeBraced = true;
+        }
+
+        /// <summary>
+        /// True if we should be emitted the { and } that surround this, false otherwise.
+        /// </summary>
+        protected bool BlockShouldBeBraced { get; set; }
+
+        /// <summary>
         /// Keep track of the statements we know about!
         /// </summary>
         private List<IStatement> _statements = new List<IStatement>();
@@ -169,10 +182,21 @@ namespace LINQToTTreeLib.Statements
         {
             if (_statements.Count > 0)
             {
-                yield return "{";
+                string indent = "  ";
+                if (BlockShouldBeBraced)
+                {
+                    yield return "{";
+                } else
+                {
+                    indent = "";
+                }
 
                 foreach (var v in _variables)
                 {
+                    if (v.InitialValueCode != null)
+                    {
+                        throw new InvalidOperationException("Initialization code for block variables not yet supported");
+                    }
                     var defaultValue = GenerateDefaultValue(v);
                     if (!string.IsNullOrWhiteSpace(defaultValue))
                     {
@@ -183,7 +207,7 @@ namespace LINQToTTreeLib.Statements
                         defaultValue = "";
                     }
                     var storageSpecifier = v.DeclareAsStatic ? "static " : "";
-                    yield return $"  {storageSpecifier}{Variables.VarUtils.AsCPPType(v.Type)} {v.ParameterName}{defaultValue};";
+                    yield return $"{indent}{storageSpecifier}{Variables.VarUtils.AsCPPType(v.Type)} {v.ParameterName}{defaultValue};";
                 }
 
                 var sublines = from s in _statements
@@ -191,9 +215,13 @@ namespace LINQToTTreeLib.Statements
                                select l;
                 foreach (var l in sublines)
                 {
-                    yield return "  " + l;
+                    yield return indent + l;
                 }
-                yield return "}";
+
+                if (BlockShouldBeBraced)
+                {
+                    yield return "}";
+                }
             }
         }
 

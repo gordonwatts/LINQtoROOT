@@ -78,7 +78,7 @@ namespace LINQToTTreeLib.Variables.Savers
             if (iVariable == null)
                 throw new ArgumentNullException("Variable can't be null");
 
-            var rootObjInfo = iVariable.InitialValue as ROOTObjectCopiedValue;
+            var rootObjInfo = iVariable.InitialValue as TypeHandlerROOT.ROOTObjectStaticHolder;
             if (rootObjInfo == null)
                 throw new InvalidOperationException("iVariable must be a ROOTObjectCopiedValue!");
 
