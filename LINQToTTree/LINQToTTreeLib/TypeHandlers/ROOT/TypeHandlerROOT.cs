@@ -33,7 +33,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         }
 
         /// <summary>
-        /// For a root variable we create a special variable which holds onto the inital value, and
+        /// For a root variable we create a special variable which holds onto the initial value, and
         /// also will get loaded at the correct time.
         /// </summary>
         /// <param name="expr"></param>
@@ -58,12 +58,22 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
 
             //
             // Now, we need to generate an IValue for the object that can be used in our expression parsing.
+            // When in the middle of a tight loop, since finding the object is a "slow" linear lookup, we will cache it in a static
+            // variable. This isn't so pretty when there is a one-time initialization, but it shouldn't add too much.
             //
 
+            var staticCache = DeclarableParameter.CreateDeclarableParameterExpression(rootObject.GetType());
+            staticCache.DeclareAsStatic = true;
+            codeEnv.Add(staticCache);
+
+            codeEnv.Add(new Statements.StatementFilter(new ValSimple($"{staticCache.RawValue} == nullptr", typeof(bool), new IDeclaredParameter[] { staticCache })));
             var CPPType = rootObject.GetType().AsCPPType();
             var val = new ROOTObjectCopiedValue(varNameForTransport, rootObject.GetType(), CPPType, rootObject.Name, rootObject.Title);
+            codeEnv.Add(new Statements.StatementAssign(staticCache, val));
+            codeEnv.Pop();
 
-            return val;
+            // And the rest of the code should use the static cache.
+            return staticCache;
         }
 
         /// <summary>
@@ -183,7 +193,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             gc.AddIncludeFile(string.Format("{0}.h", tname));
 
             ///
-            /// Now, build the ctor, and add it to the statement list.
+            /// Now, build the constructor, and add it to the statement list.
             /// 
 
             var ctor = new StringBuilder();
@@ -220,7 +230,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <param name="builtArgs"></param>
-        /// <returns>List of dependent variables usd in the arguments</returns>
+        /// <returns>List of dependent variables used in the arguments</returns>
         private IEnumerable<IDeclaredParameter> AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, CompositionContainer container, StringBuilder builtArgs)
         {
             builtArgs.Append("(");
@@ -242,7 +252,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         }
 
         /// <summary>
-        /// Processed later on in the stack usign the default symbols.
+        /// Processed later on in the stack using the default symbols.
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="gc"></param>

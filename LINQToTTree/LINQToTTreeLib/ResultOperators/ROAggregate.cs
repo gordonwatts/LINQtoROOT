@@ -59,11 +59,15 @@ namespace LINQToTTreeLib.ResultOperators
             ///
             /// We need to declare a variable to hold the seed and its updates - the accumulator
             /// We then need to write the code that does the update to the seed.
-            /// Finally, if there is a final funciton, we need to call that after the loop is done!
+            /// Finally, if there is a final function, we need to call that after the loop is done!
             ///
 
             var accumulator = DeclarableParameter.CreateDeclarableParameterExpression(a.Seed.Type);
-            accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
+
+            var newGC = new GeneratedCode();
+            var newCC = new CodeContext();
+            //accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, _codeEnv, context, container);
+            accumulator.InitialValue = ExpressionToCPP.GetExpression(a.Seed, newGC, newCC, container);
 
             ///
             /// Now, parse the lambda expression, doing a substitution with this guy! Note that the only argument is our
