@@ -72,6 +72,19 @@ namespace LINQToTreeHelpers
             /// <param name="goodEvents">A list of the events along with any additional weights to apply</param>
             /// <returns></returns>
             ROOTNET.Interface.NTH1 MakePlot(string nameString, string titleString, IQueryable<Tuple<T, double>> goodEvents);
+
+            /// <summary>
+            /// Return a IPlotSpec of the same type, but with the weight function reset to 1.
+            /// </summary>
+            /// <returns></returns>
+            IPlotSpec<T> ResetWeight();
+
+            /// <summary>
+            /// Make an exact copy of this plot spec. This is to keep in tune with the
+            /// functional nature of the new world! This is a shallow copy.
+            /// </summary>
+            /// <returns></returns>
+            IPlotSpec<T> Clone();
         }
 
         /// <summary>
@@ -104,6 +117,22 @@ namespace LINQToTreeHelpers
             /// Make a future plot from the sequence.
             /// </summary>
             public IPlotSpec<T> Plotter { get; set; }
+
+            /// <summary>
+            /// Make a copy of this
+            /// </summary>
+            /// <returns></returns>
+            public IPlotSpec<IEnumerable<T>> Clone()
+            {
+                return new PlotSpecSequence<T>()
+                {
+                    NameFormat = this.NameFormat,
+                    TitleFormat = this.TitleFormat,
+                    Filter = this.Filter,
+                    Weight = this.Weight,
+                    Plotter = this.Plotter
+                };
+            }
 
             /// <summary>
             /// Getting a single bin for a histogram that comes from a sequence doesn't
@@ -146,6 +175,17 @@ namespace LINQToTreeHelpers
                     .SelectMany(seq => seq.Item1.Select(e => new Tuple<T, double>(e, seq.Item2)))
                     .Plot(nameString, titleString, Plotter);
             }
+
+            /// <summary>
+            /// Reset the weight function to 1 by default.
+            /// </summary>
+            /// <returns></returns>
+            public IPlotSpec<IEnumerable<T>> ResetWeight()
+            {
+                var r = Clone() as PlotSpecSequence<T>;
+                r.Weight = e => 1.0;
+                return r;
+            }
         }
 
         /// <summary>
@@ -164,6 +204,28 @@ namespace LINQToTreeHelpers
             public IPlotSpec<T> Plotter { get; set; }
 
             public Expression<Func<U, T>> Converter { get; set; }
+
+            /// <summary>
+            /// An additional weight function to add in.
+            /// </summary>
+            public Expression<Func<U, double>> Weight { get; set; }
+
+            /// <summary>
+            /// Make a clone of this.
+            /// </summary>
+            /// <returns></returns>
+            public IPlotSpec<U> Clone()
+            {
+                return new PlotSpecConverter<T, U>()
+                {
+                    NameFormat = this.NameFormat,
+                    TitleFormat = this.TitleFormat,
+                    Filter = this.Filter,
+                    Plotter = this.Plotter,
+                    Converter = this.Converter,
+                    Weight = this.Weight
+                };
+            }
 
             public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<Tuple<U, double>> goodEvents)
             {
@@ -187,9 +249,15 @@ namespace LINQToTreeHelpers
             }
 
             /// <summary>
-            /// An additional weight function to add in.
+            /// Return a version of this plotter with the weight reset to 1.0
             /// </summary>
-            public Expression<Func<U, double>> Weight { get; set; }
+            /// <returns></returns>
+            public IPlotSpec<U> ResetWeight()
+            {
+                var r = Clone() as PlotSpecConverter<T, U>;
+                r.Weight = e => 1.0;
+                return r;
+            }
 
             /// <summary>
             /// Get the bin for this guy by running the object through the converter.
@@ -236,18 +304,6 @@ namespace LINQToTreeHelpers
             public Expression<Func<T, double>> getter;
 
             /// <summary>
-            /// Return an expression that will extract the bin
-            /// </summary>
-            public Expression<Func<T, NTH1, int>> Bin
-            {
-                get
-                {
-                    Expression<Func<T, NTH1, int>> r = (o, h) => h.FindBin(getter.Invoke(o));
-                    return r;
-                }
-            }
-
-            /// <summary>
             /// Only events in the sequence of T that pass this filter will be plotted.
             /// Null if everything should be plotted.
             /// </summary>
@@ -267,6 +323,33 @@ namespace LINQToTreeHelpers
             /// Format for the plot title string.
             /// </summary>
             public string TitleFormat { get; set; }
+
+            public IPlotSpec<T> Clone()
+            {
+                return new PlotSpec1D<T>()
+                {
+                    Filter = this.Filter,
+                    NameFormat = this.NameFormat,
+                    nbins = this.nbins,
+                    Weight = this.Weight,
+                    TitleFormat = this.TitleFormat,
+                    xmax = this.xmax,
+                    xmin = this.xmin,
+                    getter = this.getter
+                };
+            }
+
+            /// <summary>
+            /// Return an expression that will extract the bin
+            /// </summary>
+            public Expression<Func<T, NTH1, int>> Bin
+            {
+                get
+                {
+                    Expression<Func<T, NTH1, int>> r = (o, h) => h.FindBin(getter.Invoke(o));
+                    return r;
+                }
+            }
 
             /// <summary>
             /// Return a future value for the plot over the sequence of good events.
@@ -299,6 +382,17 @@ namespace LINQToTreeHelpers
             {
                 return goodEvents
                     .Plot(nameString, titleString, nbins, xmin, xmax, e => getter.Invoke(e.Item1), weight: e => Weight.Invoke(e.Item1) * e.Item2);
+            }
+
+            /// <summary>
+            /// return a version of this with the weight reset to 1.
+            /// </summary>
+            /// <returns></returns>
+            public IPlotSpec<T> ResetWeight()
+            {
+                var r = Clone() as PlotSpec1D<T>;
+                r.Weight = e => 1.0;
+                return r;
             }
         }
 
@@ -406,6 +500,40 @@ namespace LINQToTreeHelpers
             {
                 return goodEvents
                     .Plot(nameString, titleString, nxbins, xmin, xmax, e => xgetter.Invoke(e.Item1), nybins, ymin, ymax, e => ygetter.Invoke(e.Item1), weight: e => Weight.Invoke(e.Item1) * e.Item2);
+            }
+
+            /// <summary>
+            /// Return a version of this with weight set to 1.0
+            /// </summary>
+            /// <returns></returns>
+            public IPlotSpec<T> ResetWeight()
+            {
+                var r = Clone() as PlotSpec2D<T>;
+                r.Weight = e => 1.0;
+                return r;
+            }
+
+            /// <summary>
+            /// Clone an exact copy of this guy
+            /// </summary>
+            /// <returns></returns>
+            public IPlotSpec<T> Clone()
+            {
+                return new PlotSpec2D<T>()
+                {
+                    Filter = this.Filter,
+                    NameFormat = this.NameFormat,
+                    nxbins = this.nxbins,
+                    nybins = this.nybins,
+                    Weight = this.Weight,
+                    TitleFormat = this.TitleFormat,
+                    xgetter = this.xgetter,
+                    xmax = this.xmax,
+                    xmin = this.xmin,
+                    ygetter = this.ygetter,
+                    ymax = this.ymax,
+                    ymin = this.ymin
+                };
             }
         }
 
