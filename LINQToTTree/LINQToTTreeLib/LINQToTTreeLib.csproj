@@ -253,6 +253,7 @@
     <Compile Include="Statements\StatementForLoop.cs" />
     <Compile Include="TraceHelpers.cs" />
     <Compile Include="TTreeQueryExecutor.cs" />
+    <Compile Include="TypeHandlers\CPPCode\CPPCodeStatement.cs" />
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerCPPCode.cs" />
     <Compile Include="TypeHandlers\CPPCode\TypeHandlerOnTheFlyCPP.cs" />
     <Compile Include="TypeHandlers\ReplacementMethodCalls\TypeHandlerReplacementCall.cs" />

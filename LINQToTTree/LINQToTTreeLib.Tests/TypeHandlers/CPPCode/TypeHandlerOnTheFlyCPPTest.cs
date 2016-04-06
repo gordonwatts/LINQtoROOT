@@ -29,6 +29,22 @@ namespace LINQToTTreeLib.Tests.TypeHandlers.CPPCode
         /// </summary>
         class MyCode : IOnTheFlyCPPObject
         {
+            public string[] IncludeFiles()
+            {
+                return null;
+            }
+
+            /// <summary>
+            /// Return the lines of code
+            /// </summary>
+            /// <param name="methodName"></param>
+            /// <returns></returns>
+            public IEnumerable<string> LinesOfCode(string methodName)
+            {
+                Assert.AreEqual("MultBy2", methodName);
+                yield return "MultBy2 = i*2;";
+            }
+
             /// <summary>
             /// Do a simple times 2
             /// </summary>

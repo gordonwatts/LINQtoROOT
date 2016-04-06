@@ -7,6 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq.Expressions;
+using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
+using LINQToTTreeLib.Variables;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
@@ -37,7 +41,20 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         /// <returns></returns>
         public IValue CodeMethodCall(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
-            throw new NotImplementedException();
+            if (expr == null)
+                throw new ArgumentNullException("expr");
+
+            // Get a reference to the object so we can code the call to get back the C++ code.
+            var onTheFly = (expr?.Object as ConstantExpression)?.Value as IOnTheFlyCPPObject;
+            if (onTheFly == null)
+            {
+                throw new InvalidOperationException("Unable to find the IOnTheFlyCPPObject!");
+            }
+
+            var includeFiles = onTheFly.IncludeFiles();
+            var loc = onTheFly.LinesOfCode(expr.Method.Name).ToArray();
+
+            return CPPCodeStatement.BuildCPPCodeStatement(expr, gc, container, includeFiles, loc);
         }
 
         /// <summary>
