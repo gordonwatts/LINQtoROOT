@@ -17,7 +17,7 @@ namespace LINQToTTreeLib.Tests
             TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new TypeHandlerROOT());
             MEFUtilities.AddPart(new TypeHandlerHelpers());
-            MEFUtilities.Compose(new TypeHandlers.TypeHandlerCache());
+            MEFUtilities.Compose(new TypeHandlerCache());
         }
 
         [TestCleanup]

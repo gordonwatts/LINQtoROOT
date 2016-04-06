@@ -93,6 +93,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new TypeHandlerReplacementCall());
                 MEFUtilities.AddPart(new TypeHandlerCache());
                 MEFUtilities.AddPart(new TypeHandlerCPPCode());
+                MEFUtilities.AddPart(new TypeHandlerOnTheFlyCPP());
                 MEFUtilities.AddPart(new TypeHandlerTranslationClass());
                 MEFUtilities.AddPart(new GroupByArrayFactor());
                 MEFUtilities.AddPart(new GroupByFactory());

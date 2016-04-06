@@ -113,7 +113,7 @@ namespace LINQToTTreeLib.TypeHandlers
         private ITypeHandler FindHandler(Type type, bool throwIfNotThere = true)
         {
             if (_handlers == null)
-                throw new InvalidOperationException("TypeHandlerCache has not been initalized via MEF!");
+                throw new InvalidOperationException("TypeHandlerCache has not been initialized via MEF!");
 
             var h = (from t in _handlers
                      where t.CanHandle(type)
