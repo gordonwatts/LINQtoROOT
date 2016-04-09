@@ -2,6 +2,8 @@
 // This file is almost completely copied, word-for-word, from the re-linq distribution. 
 // 
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.Utils;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
 using System;
@@ -87,7 +89,30 @@ namespace LINQToTTreeLib.Expressions
                 var rep = r.ToString()
                     .Replace(node.Method.Name, $"{node.Method.Name}-{bld.ToString().GetHashCode()}");
                 return Expression.Parameter(node.Type, rep);
+
+            } else if (node.Method.DeclaringType.TypeHasAttribute<CPPHelperClassAttribute>() != null)
+            {
+                var attr = node.Method.TypeHasAttribute<CPPCodeAttribute>();
+                var bld = new StringBuilder();
+                foreach (var l in attr.Code)
+                {
+                    bld.Append(l);
+                }
+                if (attr.IncludeFiles != null)
+                {
+                    foreach (var i in attr.IncludeFiles)
+                    {
+                        bld.Append(i);
+                    }
+                }
+
+                var r = base.VisitMethodCall(node);
+                var rep = r.ToString()
+                    .Replace(node.Method.Name, $"{node.Method.Name}-{bld.ToString().GetHashCode()}");
+                return Expression.Parameter(node.Type, rep);
             }
+
+            // Just do the default work.
             return base.VisitMethodCall(node);
         }
 
