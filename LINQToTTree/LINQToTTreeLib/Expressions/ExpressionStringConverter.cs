@@ -1,9 +1,11 @@
 ﻿//
 // This file is almost completely copied, word-for-word, from the re-linq distribution. 
 // 
+using LinqToTTreeInterfacesLib;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -53,6 +55,40 @@ namespace LINQToTTreeLib.Expressions
         protected override Expression VisitExtension(Expression node)
         {
             return Expression.Parameter(node.Type, node.ToString());
+        }
+
+        /// <summary>
+        /// If the method call is over an on-the-fly object, then we need to look
+        /// at the C++ code when turning this into an expression.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        protected override Expression VisitMethodCall(MethodCallExpression node)
+        {
+            if (node.Object is ConstantExpression && node.Object.Type.GetInterfaces().Contains(typeof(IOnTheFlyCPPObject)))
+            {
+                // Get the C++ code and the include file listing, and turn it into a hash.
+                var bld = new StringBuilder();
+                var codeGenerator = (node.Object as ConstantExpression).Value as IOnTheFlyCPPObject;
+                foreach (var l in codeGenerator.LinesOfCode(node.Method.Name))
+                {
+                    bld.Append(l);
+                }
+                if (codeGenerator.IncludeFiles() != null)
+                {
+                    foreach (var i in codeGenerator.IncludeFiles())
+                    {
+                        bld.Append(i);
+                    }
+                }
+
+                // We alter the method name in the final string in order to deal with this.
+                var r = base.VisitMethodCall(node);
+                var rep = r.ToString()
+                    .Replace(node.Method.Name, $"{node.Method.Name}-{bld.ToString().GetHashCode()}");
+                return Expression.Parameter(node.Type, rep);
+            }
+            return base.VisitMethodCall(node);
         }
 
         /// <summary>
