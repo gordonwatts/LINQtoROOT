@@ -1,6 +1,7 @@
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Utils;
@@ -11,6 +12,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
@@ -715,6 +717,23 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             Assert.IsFalse(gc.DumpCode().Where(l => l.Contains(p_pt_1.RawValue)).Any(), "the pt variable should be there.");
             Assert.IsTrue(gc.DumpCode().Where(l => l.Contains(p_pt_2.RawValue)).Any(), "the pt variable should be there.");
         }
+
+        [TestMethod]
+        public void CacheObjectWhenCPPChanges()
+        {
+            TestUtils.ResetLINQLibrary();
+            // Make sure that when the C++ code changes, the cache key for lookup of results will also change.
+            var q = new QueriableDummy<ntup>();
+            var i = q.Select(e => DoItClass.DoIt(e.run)).Where(x => x > 2).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Look for a hash value.
+            var str1 = FormattingQueryVisitor.Format(query);
+            Console.WriteLine(str1);
+            var m = Regex.Match(str1, @"DoIt([^\(]+)");
+            Assert.IsTrue(m.Success);
+        }
+
 
         private class OptTest : ICodeOptimizationService
         {
