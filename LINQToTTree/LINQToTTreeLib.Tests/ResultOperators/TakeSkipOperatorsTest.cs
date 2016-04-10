@@ -180,10 +180,52 @@ namespace LINQToTTreeLib.ResultOperators
         }
 
         [TestMethod]
+        public void TestTakeSkipAtTopLevelBurreidTwice()
+        {
+            var q = new QueriableDummy<ntup>();
+            var c = q.Where(x => x.run > 10).Where(x => x.run > 20).Take(5).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.DumpCode().Where(l => l.Contains("static int")).Count());
+        }
+
+        [TestMethod]
         public void TestTakeSkipLevelBurreid()
         {
             var q = new QueriableDummy<dummyntup>();
             var c = q.Where(x => x.run > 10).SelectMany(x => x.valC1D).Take(5).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.DumpCode().Where(l => l.Contains("static int")).Count());
+        }
+
+        [TestMethod]
+        public void TestTakeSkipLevelBurreidWithTest()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var c = q.SelectMany(x => x.valC1D).Where(x => x > 10).Take(5).Count();
+
+            Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
+            var res = DummyQueryExectuor.FinalResult;
+
+            res.DumpCodeToConsole();
+
+            Assert.AreEqual(1, res.DumpCode().Where(l => l.Contains("static int")).Count());
+        }
+
+        [TestMethod]
+        public void TestTakeSkipLevelBurreidWith2Tests()
+        {
+            var q = new QueriableDummy<dummyntup>();
+            var c = q.SelectMany(x => x.valC1D).Where(x => x > 10).Where(x => x < 20).Take(5).Count();
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;

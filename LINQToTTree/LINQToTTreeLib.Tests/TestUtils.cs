@@ -128,6 +128,39 @@ namespace LINQToTTreeLib.Tests
             }
         }
 
+        /// <summary>
+        /// Given a QM, turn it into code, and then dump it.
+        /// </summary>
+        /// <param name="qm"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> DumpCode<T>(this QueryModel qm)
+        {
+            var qp = (qm.FindQueryProvider() as DefaultQueryProvider)?.Executor as DummyQueryExectuor;
+            Assert.IsNotNull(qp);
+
+            var r = qp.ExecuteScalar<T>(qm);
+
+            return DummyQueryExectuor
+                .FinalResult
+                .DumpCode();
+        }
+
+        /// <summary>
+        /// Given a QM, turn it into code, and then dump it.
+        /// </summary>
+        /// <param name="qm"></param>
+        /// <returns></returns>
+        public static GeneratedCode GenerateCode<T>(this QueryModel qm)
+        {
+            var qp = (qm.FindQueryProvider() as DefaultQueryProvider)?.Executor as DummyQueryExectuor;
+            Assert.IsNotNull(qp, "We need the dummy query executor for this to work otherwise we can't get at the query!");
+
+            var r = qp.ExecuteScalar<T>(qm);
+
+            return DummyQueryExectuor
+                .FinalResult;
+        }
+
         public static IEnumerable<string> DumpCode(this IBookingStatementBlock block)
         {
             return block.CodeItUp();

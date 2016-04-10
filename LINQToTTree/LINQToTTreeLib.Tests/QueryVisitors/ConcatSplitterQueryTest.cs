@@ -15,6 +15,18 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
     [TestClass]
     public class ConcatQuerySplitterTest
     {
+        [TestInitialize]
+        public void TestInit()
+        {
+            TestUtils.ResetLINQLibrary();
+        }
+
+        [TestCleanup]
+        public void TestDone()
+        {
+            MEFUtilities.MyClassDone();
+        }
+
         [TestMethod]
         public void QMWithNoConcats()
         {
@@ -106,6 +118,138 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
             Assert.IsTrue(providersUsed.Contains(q1.Provider));
             Assert.IsTrue(providersUsed.Contains(q2.Provider));
             Assert.AreEqual(2, providersUsed.Count);
+        }
+
+        [TestMethod]
+        public void QMWith2ConcatsAndTwoEarlyTakesAndTests()
+        {
+            var q1 = new QueriableDummy<ntup>();
+            var q2 = new QueriableDummy<ntup>();
+
+            var s1 = q1.Where(x => x.run > 10).Take(500);
+            var s2 = q2.Where(x => x.run > 20).Take(100);
+
+            try
+            {
+                var r1 = s1.Concat(s2).Count();
+            } catch (InvalidOperationException e) when (e.Message.Contains("can't translate"))
+            {
+            }
+
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            CheckForQuery(() => q1.Where(x => x.run > 10).Take(500).Count(), qmList, 1, useDummy: true);
+            CheckForQuery(() => q1.Where(x => x.run > 20).Take(100).Count(), qmList, 1, useDummy: true);
+
+            // Dump the code
+            var code1 = qmList[0].GenerateCode<int>();
+            var code2 = qmList[1].GenerateCode<int>();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            code1.DumpCodeToConsole();
+            Console.WriteLine();
+            Console.WriteLine();
+            code2.DumpCodeToConsole();
+
+            // Next, produce code to make sure that we have a static definition.
+            Assert.IsTrue(code1.DumpCode().Where(l => l.Contains("static int")).Any());
+            Assert.IsTrue(code1.DumpCode().Where(l => l.Contains("static int")).Any());
+        }
+
+        [TestMethod]
+        public void QMWith2ConcatsAndTwoEarlyTakesAndPostLoopTests()
+        {
+            var q1 = new QueriableDummy<dummyntup>();
+            var q2 = new QueriableDummy<dummyntup>();
+
+            var s1 = q1.SelectMany(r => r.valC1D).Where(r => r > 10).Where(r => Math.Abs(r) < 200).Take(500);
+            var s2 = q2.SelectMany(r => r.valC1D).Where(r => r > 20).Where(r => Math.Abs(r) < 200).Take(300);
+
+            try
+            {
+                var r1 = s1.Concat(s2).Count();
+            }
+            catch (InvalidOperationException e) when (e.Message.Contains("can't translate"))
+            {
+            }
+
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            CheckForQuery(() => q1.SelectMany(r => r.valC1D).Where(r => r > 10).Where(r => Math.Abs(r) < 200).Take(500).Count(), qmList, 1, useDummy: true);
+            CheckForQuery(() => q2.SelectMany(r => r.valC1D).Where(r => r > 20).Where(r => Math.Abs(r) < 200).Take(300).Count(), qmList, 1, useDummy: true);
+
+            // Dump the code
+            var code1 = qmList[0].GenerateCode<int>();
+            var code2 = qmList[1].GenerateCode<int>();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            code1.DumpCodeToConsole();
+            Console.WriteLine();
+            Console.WriteLine();
+            code2.DumpCodeToConsole();
+
+            // Next, produce code to make sure that we have a static definition.
+            Assert.IsTrue(code1.DumpCode().Where(l => l.Contains("static int")).Any());
+            Assert.IsTrue(code1.DumpCode().Where(l => l.Contains("static int")).Any());
+        }
+
+        public class ComplexObjectForTest1
+        {
+            public int i;
+        }
+
+        public class ComplexObjectForTest2
+        {
+            public int j;
+        }
+
+        [TestMethod]
+        public void TwoConcatsWithComplexObjectsAndGlobalTakes()
+        {
+            var q1 = new QueriableDummy<dummyntup>();
+            var q2 = new QueriableDummy<dummyntup>();
+
+            var s1 = q1.SelectMany(r => r.valC1D).Select(r => new ComplexObjectForTest1() { i = r }).Where(r => r.i > 10).Select(r => new ComplexObjectForTest2() { j = r.i }).Where(r => Math.Abs(r.j) < 200).Take(500);
+            var s2 = q2.SelectMany(r => r.valC1D).Select(r => new ComplexObjectForTest1() { i = r }).Where(r => r.i > 20).Select(r => new ComplexObjectForTest2() { j = r.i }).Where(r => Math.Abs(r.j) < 200).Take(300);
+
+            try
+            {
+                var r1 = s1.Concat(s2).Count();
+            }
+            catch (InvalidOperationException e) when (e.Message.Contains("can't translate"))
+            {
+            }
+
+            var qm = DummyQueryExectuor.LastQueryModel;
+            var qmList = ConcatSplitterQueryVisitor.Split(qm)
+                .DumpToConsole();
+
+            Assert.AreEqual(2, qmList.Length);
+            //CheckForQuery(() => q1.SelectMany(r => r.valC1D).Select(r => new ComplexObjectForTest1() { i = r }).Where(r => r.i > 10).Where(r => Math.Abs(r.i) < 200).Take(500).Count(), qmList, 1, useDummy: true);
+            //CheckForQuery(() => q2.SelectMany(r => r.valC1D).Select(r => new ComplexObjectForTest1() { i = r }).Where(r => r.i > 20).Where(r => Math.Abs(r.i) < 200).Take(300).Count(), qmList, 1, useDummy: true);
+
+            // Dump the code
+            var code1 = qmList[0].GenerateCode<int>();
+            var code2 = qmList[1].GenerateCode<int>();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            code1.DumpCodeToConsole();
+            Console.WriteLine();
+            Console.WriteLine();
+            code2.DumpCodeToConsole();
+
+            // Next, produce code to make sure that we have a static definition.
+            Assert.IsTrue(code1.DumpCode().Where(l => l.Contains("static int")).Any());
+            Assert.IsTrue(code1.DumpCode().Where(l => l.Contains("static int")).Any());
         }
 
         [TestMethod]
@@ -418,10 +562,10 @@ namespace LINQToTTreeLib.Tests.QueryVisitors
         /// </summary>
         /// <param name="mq1"></param>
         /// <param name="qmList"></param>
-        private void CheckForQuery<T>(Func<T> generateQuery, QueryModel[] qmList, int count = 1, string generatedReplacement = null)
+        private void CheckForQuery<T>(Func<T> generateQuery, QueryModel[] qmList, int count = 1, string generatedReplacement = null, bool useDummy = false)
         {
             generateQuery();
-            var qm = QMExtractorExecutor.LastQM.CleanQMString();
+            var qm = (useDummy ? DummyQueryExectuor.LastQueryModel : QMExtractorExecutor.LastQM).CleanQMString();
 
             Assert.AreEqual(count, qmList.Where(q => q.CleanQMString().ReplaceGenerated(generatedReplacement) == qm).Count(), $"Could not find {count} instances of the query model {qm}.");
         }

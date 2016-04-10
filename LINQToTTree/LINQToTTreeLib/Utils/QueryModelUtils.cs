@@ -38,15 +38,10 @@ namespace LINQToTTreeLib.Utils
         /// <returns></returns>
         public static IEnumerable<QueryModel> QMAllMainOnly(this QueryModel q)
         {
-            if (q != null)
+            while (q != null)
             {
                 yield return q;
-                var mfc = q.MainFromClause;
-                if (mfc.FromExpression is SubQueryExpression)
-                {
-                    var sq = mfc.FromExpression as SubQueryExpression;
-                    yield return sq.QueryModel;
-                }
+                q = (q.MainFromClause.FromExpression as SubQueryExpression)?.QueryModel;
             }
         }
     }
