@@ -10,13 +10,18 @@ namespace LINQToTreeHelpers.FutureUtils
     {
         private static ROOTNET.Interface.NTFile CreateOpenFile(string name)
         {
-            var f = ROOTNET.NTFile.Open(name, "RECREATE");
-            if (!f.IsOpen())
+            try
             {
-                throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
+                var f = ROOTNET.NTFile.Open(name, "RECREATE");
+                if (!f.IsOpen())
+                {
+                    throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
+                }
+                return f;
             }
-            ROOTNET.NTDirectory.CurrentDirectory().cd("root:");
-            return f;
+            finally
+            {
+            }
         }
 
         /// <summary>
