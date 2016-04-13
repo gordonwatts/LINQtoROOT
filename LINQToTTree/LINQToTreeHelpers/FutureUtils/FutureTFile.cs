@@ -10,6 +10,7 @@ namespace LINQToTreeHelpers.FutureUtils
     {
         private static ROOTNET.Interface.NTFile CreateOpenFile(string name)
         {
+            var oldDir = ROOTNET.NTDirectory.CurrentDirectory();
             try
             {
                 var f = ROOTNET.NTFile.Open(name, "RECREATE");
@@ -21,6 +22,7 @@ namespace LINQToTreeHelpers.FutureUtils
             }
             finally
             {
+                oldDir.cd();
             }
         }
 
