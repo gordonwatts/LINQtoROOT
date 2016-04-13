@@ -324,6 +324,10 @@ namespace LINQToTreeHelpers
             /// </summary>
             public string TitleFormat { get; set; }
 
+            /// <summary>
+            /// Make a shallow clone of this PlotSpec1D object.
+            /// </summary>
+            /// <returns></returns>
             public IPlotSpec<T> Clone()
             {
                 return new PlotSpec1D<T>()

@@ -59,11 +59,6 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
         }
 
         /// <summary>
-        /// Keep track of how many unique variables we've replaced!
-        /// </summary>
-        private int _uniqueCounter = 0;
-
-        /// <summary>
         /// Expressions that are actually code are left alone at the early stage.
         /// </summary>
         /// <param name="expr"></param>
