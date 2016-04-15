@@ -548,9 +548,10 @@ namespace TTreeParser.Tests
         }
 
         /// <summary>
-        /// WARNING - you must start devenv in a vs 2012 command line window so that "cl" is availible.
+        /// WARNING - you must start devenv in a vs 2013 command line window so that "cl" is available.
         /// </summary>
         [TestMethod]
+        [Ignore]
         public void TestProxyBuild()
         {
             /// Make sure the header file that gets generated is basically "ok" for use. These are simple tests.
