@@ -23,7 +23,7 @@ namespace LINQToTTreeLib.relinq
             };
 
         /// <summary>
-        /// Create the expresson node parser
+        /// Create the expression node parser
         /// </summary>
         /// <param name="parseInfo"></param>
         public AsQueriableExpressionNode(MethodCallExpressionParseInfo parseInfo)

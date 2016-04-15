@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.relinq
         }
 
         /// <summary>
-        /// We need to translfor the variables we are holding onto. Since we don't have
+        /// We need to translator the variables we are holding onto. Since we don't have
         /// any, we do nothing!
         /// </summary>
         /// <param name="transformation"></param>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using LinqToTTreeInterfacesLib;
+using Remotion.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -37,6 +38,28 @@ namespace LINQToTTreeLib
             return source.Provider.CreateQuery<T>(
                 Expression.Call(((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(T)),
                 source.Expression, Expression.Constant(count)));
+        }
+
+        /// <summary>
+        /// Make a nicely formatted print of the complete query up to this point. This is useful when you are trying
+        /// to archive for later lookup how a value was calculated. It is not meant to be machine readable - human
+        /// readable.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string PrettyPrintQuery<T>(this IQueryable<T> source)
+        {
+            // If we can't figure out how to get to the query parser, then return a simple string.
+            var qp = source.Provider as DefaultQueryProvider;
+            if (qp == null)
+            {
+                return source.Expression.ToString();
+            }
+
+            // Parse the query
+            var query = qp.QueryParser.GetParsedQuery(source.Expression);
+            return query.ToString();
         }
 
         /// <summary>

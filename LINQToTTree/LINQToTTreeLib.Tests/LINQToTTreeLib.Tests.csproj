@@ -421,6 +421,7 @@
     <Compile Include="FutureResultOperatorsTest.cs" />
     <Compile Include="FutureValueTTest.cs" />
     <Compile Include="GeneratedCodeTest.cs" />
+    <Compile Include="HelpersTest.cs" />
     <Compile Include="MEFUtilities.cs" />
     <Compile Include="Optimization\OptimizationUtilsTest.cs" />
     <Compile Include="Optimization\StatementLifterTest.cs" />
