@@ -82,6 +82,18 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void AsCSVCanDoAnonymousType()
+        {
+            // If this crashes, then bad things!
+            var gc = RunQueryForSingleColumnTTree(QuerySimpleSingleRunWithCustomObject);
+
+            // Look for Col1 and Col2 in the resulting text, and make sure Col2 comes first (so decl order is preserved).
+            Assert.AreEqual(1, gc.Length);
+            var lines = gc[0].ReadAllLines().ToArray();
+            Assert.AreEqual("Col2, Col1", lines[0]);
+        }
+
+        [TestMethod]
         public void DummyFileShouldBeUpdated()
         {
             // Remove file if it exists
@@ -312,6 +324,17 @@ namespace LINQToTTreeLib.Tests.Files
             q
                 .Select(e => e.run)
                 .AsCSV(new FileInfo("hi.csv"), "firstCol");
+        }
+
+        /// <summary>
+        /// Create a AsCSV from an anonymous object.
+        /// </summary>
+        private static void QuerySimpleSingleRunWithCustomObject()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new { Col2 = e.run, Col1 = e.run * 2 })
+                .AsCSV(new FileInfo("hi.csv"));
         }
 
         /// <summary>

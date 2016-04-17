@@ -75,9 +75,9 @@ namespace LINQToTTreeLib.Files
                     itemValues.Add(Expression.PropertyOrField(streamSelector, $"Item{templateType.Item2}"));
                 }
             }
-            else if (streamType.GetFields().Length > 0)
+            else if ((streamType.GetFields().Length + streamType.GetProperties().Length) > 0)
             {
-                foreach (var fName in streamType.GetFieldsInDeclOrder().Select(f => f.Name))
+                foreach (var fName in(streamType.GetFieldsInDeclOrder().Select(f => f.Name).Concat(streamType.GetProperties().Select(p => p.Name))))
                 {
                     itemValues.Add(Expression.PropertyOrField(streamSelector, fName));
                 }

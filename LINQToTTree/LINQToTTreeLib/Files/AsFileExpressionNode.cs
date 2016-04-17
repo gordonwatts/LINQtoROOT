@@ -62,13 +62,17 @@ namespace LINQToTTreeLib.Files
             }
             else
             {
-                foreach (var f in objectTypeToDump.GetFieldsInDeclOrder())
+                // Get a list of all field and property names
+                var allNames = objectTypeToDump.GetFieldsInDeclOrder().Select(f => Tuple.Create(f.FieldType, f.Name))
+                    .Concat(objectTypeToDump.GetProperties().Select(p => Tuple.Create(p.PropertyType, p.Name)));
+
+                foreach (var f in allNames)
                 {
-                    if (!TypeIsEasilyDumped(f.FieldType))
+                    if (!TypeIsEasilyDumped(f.Item1))
                     {
-                        throw new ArgumentException($"Unable to serialize type {f.FieldType.Name} in {objectTypeToDump.Name}");
+                        throw new ArgumentException($"Unable to serialize type {f.Item1.Name} in {objectTypeToDump.Name}");
                     }
-                    defaultColumnNames.Add(f.Name);
+                    defaultColumnNames.Add(f.Item2);
                 }
             }
 
