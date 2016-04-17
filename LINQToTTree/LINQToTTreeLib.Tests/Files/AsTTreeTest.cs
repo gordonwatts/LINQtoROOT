@@ -43,9 +43,38 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void QueryAnonymousObjectToTTree()
+        {
+            GeneratedCode query1 = GeneratedCodeFor(QueryTupleAnonyoumsObject);
+
+            // Check that we have a Fill somewhere in the statement.
+            Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("->Fill()")).Any(), "At least one Fill statement.");
+        }
+        
+        [TestMethod]
         public void QuerySimple()
         {
             var q1 = GeneratedCodeFor(ASimpleQuery);
+
+        }
+
+        [TestMethod]
+        public void TupleTitleAndItemsForAnonymousObject()
+        {
+            var f = NTFile.Open(RunQueryForSingleColumnTTree(QueryTupleOurCustomObject).FullName, "READ");
+            try
+            {
+                var t = f.Get("DataTree") as ROOTNET.Interface.NTTree;
+                var blist = t.ListOfBranches.Select(b => b.Name).ToArray();
+                Assert.AreEqual(3, blist.Length);
+                Assert.IsTrue(blist.Contains("col1"));
+                Assert.IsTrue(blist.Contains("col2"));
+                Assert.IsTrue(blist.Contains("col3"));
+            }
+            finally
+            {
+                f.Close();
+            }
 
         }
 
@@ -219,6 +248,20 @@ namespace LINQToTTreeLib.Tests.Files
                 .AsTTree(outputROOTFile: new FileInfo("hi.root"));
         }
 
+        /// <summary>
+        /// Create a query with an anonymous object.
+        /// </summary>
+        private static void QueryTupleAnonyoumsObject()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new { col2 = (int)e.run + 1, col3 = e.run + 2, col1 = e.run})
+                .AsTTree(outputROOTFile: new FileInfo("hi.root"));
+        }
+
+        /// <summary>
+        /// Simple pass-through request
+        /// </summary>
         private static void ASimpleQuery()
         {
             var q = new QueriableDummy<singleIntNtuple>();
