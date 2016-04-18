@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Files
         /// <summary>
         /// Get the output file spec
         /// </summary>
-        public FileInfo OutputFile
+        public Func<FileInfo> OutputFile
         {
             get; private set;
         }
@@ -30,6 +30,15 @@ namespace LINQToTTreeLib.Files
         /// <param name="outputFile"></param>
         public OutputCSVTextFileType(FileInfo outputFile)
         {
+            this.OutputFile = () => outputFile;
+        }
+
+        /// <summary>
+        /// Delayed resolution (for query hash names,etc.)
+        /// </summary>
+        /// <param name="outputFile"></param>
+        public OutputCSVTextFileType(Func<FileInfo> outputFile)
+        {
             this.OutputFile = outputFile;
         }
 
@@ -37,7 +46,13 @@ namespace LINQToTTreeLib.Files
         /// The actual value of the object, which in this case is the
         /// file stream constructor
         /// </summary>
-        public string RawValue { get { return $"std::ofstream(\"{OutputFile.FullName.AddCPPEscapeCharacters()}\")"; } }
+        public string RawValue
+        {
+            get
+            {
+                return $"std::ofstream(\"{OutputFile().FullName.AddCPPEscapeCharacters()}\")";
+            }
+        }
 
         /// <summary>
         /// Get the type this object is holding. Which is just us.
@@ -165,7 +180,7 @@ namespace LINQToTTreeLib.Files
             yield return $"{v.RawValue}.close();";
 
             // Write out the path.
-            var fileAsCPPString = (v.InitialValue as OutputCSVTextFileType).OutputFile.FullName.AddCPPEscapeCharacters();
+            var fileAsCPPString = (v.InitialValue as OutputCSVTextFileType).OutputFile().FullName.AddCPPEscapeCharacters();
             yield return string.Format("TH1I *{0}_hist = new TH1I(\"{0}\", \"{1}\", 1, 0.0, 1.0);", v.RawValue, fileAsCPPString);
             yield return v.RawValue + "_hist->SetDirectory(0);";
             yield return "Book(" + v.RawValue + "_hist);";

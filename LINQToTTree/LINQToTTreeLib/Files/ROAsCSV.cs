@@ -57,8 +57,11 @@ namespace LINQToTTreeLib.Files
             gc.AddIncludeFile("<fstream>");
             gc.AddIncludeFile("<iostream>");
 
+            // The output filename. How we do this is a little funny because we need the hash from the completely
+            // done query, which isn't ready just yet.
+            var outputFile = GenerateUniqueFile(asCSV.OutputFile, cc);
             var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputCSVTextFileType));
-            stream.InitialValue = new OutputCSVTextFileType(asCSV.OutputFile);
+            stream.InitialValue = new OutputCSVTextFileType(outputFile);
 
             var headerline = new StringBuilder();
             bool first = true;

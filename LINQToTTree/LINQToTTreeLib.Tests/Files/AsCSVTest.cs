@@ -76,9 +76,6 @@ namespace LINQToTTreeLib.Tests.Files
             // Check that the QM returns a "good" result.
             var gc = GeneratedCodeFor(QuerySimpleSingleRun);
             Assert.IsNotNull(gc.ResultValueAsVaraible);
-            Assert.IsNotNull(gc.ResultValueAsVaraible.InitialValue);
-            Assert.IsTrue(gc.ResultValueAsVaraible.InitialValue.RawValue.Contains("hi.csv"), $"Initial value doesn't have hi.csv in it: {gc.ResultValueAsVaraible.InitialValue.RawValue}");
-            Assert.IsTrue(gc.ResultValueAsVaraible.InitialValue.RawValue.Contains("\\\\"), "No double back slashes in file path - that seems... odd");
         }
 
         [TestMethod]
@@ -94,25 +91,15 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
-        public void DummyFileShouldBeUpdated()
+        public void AsCSVUniqueFileComesBack()
         {
-            // Remove file if it exists
-            var hiFile = new FileInfo("hi.csv");
-            CleanUpFile(hiFile);
-
-            // Create dummy file.
-            using (var wr = hiFile.CreateText())
-            {
-                wr.WriteLine("hi there");
-            }
-
-            var result = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
-            Assert.AreEqual(1, result.Length);
-            Assert.IsTrue(result[0].Exists, "File exists");
-
-            // Make sure file contains something reasonable.
-            var lines = result[0].ReadAllLines().ToArray();
-            Assert.AreEqual(11, lines.Length);
+            // Each file has to include a query hash so we can be sure that it is unique. This
+            // mostly matters when a Concat is involved.
+            var gc = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            Assert.AreEqual(1, gc.Length);
+            Assert.AreNotEqual("hi.csv", gc[0].Name);
+            Assert.IsTrue(gc[0].Name.StartsWith("hi"));
+            Assert.IsTrue(gc[0].Name.EndsWith(".csv"));
         }
 
         [TestMethod]
@@ -176,7 +163,6 @@ namespace LINQToTTreeLib.Tests.Files
 
             var result = RunQueryForSingleColumnTTree(QueryTupleTwoDoubles);
 
-            Assert.AreEqual("hi.csv", result[0].Name);
             Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
@@ -195,7 +181,6 @@ namespace LINQToTTreeLib.Tests.Files
 
             var result = RunQueryForSingleColumnTTree(QueryTupleFourDoubles);
 
-            Assert.AreEqual("hi.csv", result[0].Name);
             Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
@@ -214,7 +199,6 @@ namespace LINQToTTreeLib.Tests.Files
 
             var result = RunQueryForSingleColumnTTree(QueryTupleSevenDoubles);
 
-            Assert.AreEqual("hi.csv", result[0].Name);
             Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
@@ -233,7 +217,6 @@ namespace LINQToTTreeLib.Tests.Files
 
             var result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObject);
 
-            Assert.AreEqual("hi.csv", result[0].Name);
             Assert.IsTrue(result[0].Exists, "File exists");
 
             // Check the contents of the resulting file. It should have the 10 lines from the root
@@ -277,8 +260,13 @@ namespace LINQToTTreeLib.Tests.Files
         /// <param name="fileInfo"></param>
         private void CleanUpFile(FileInfo fileInfo)
         {
-            if (fileInfo.Exists)
-                fileInfo.Delete();
+            // This clean up might be for something that has a cache, so...
+            var d = fileInfo.Directory;
+            var filesToDelete = d.EnumerateFiles().Where(f => f.Name.StartsWith(fileInfo.Name) && f.Extension == fileInfo.Extension);
+            foreach (var f in filesToDelete)
+            {
+                f.Delete();
+            }
         }
 
         #region Test Query Generation
