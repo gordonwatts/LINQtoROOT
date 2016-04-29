@@ -155,33 +155,6 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
-        /// 1. a = 10
-        /// 2. b = 10
-        /// 3. if con1
-        /// 4.   a = 20
-        /// 5. if con2
-        /// 6.   b = 20
-        /// No combinations should occur.
-        /// </summary>
-        [TestMethod]
-        public void NoCombineDifferentHistories()
-        {
-            var gc = new GeneratedCode();
-
-            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
-            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("20", typeof(int)));
-
-            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: a);
-            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: b);
-
-            DoOptimizationAndConsoleDump(gc);
-
-            Assert.AreEqual(3, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
-            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
-            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
-        }
-
-        /// <summary>
         /// Two statements that are indtical should be combined.
         /// </summary>
         [TestMethod]
@@ -275,6 +248,240 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(2, gc.CodeBody.AllDeclaredVariables.Count(), "# of declared variables");
         }
 
+        [TestMethod]
+        public void IdenticalFilters()
+        {
+            var gc = new GeneratedCode();
+
+            var test = DeclarableParameter.CreateDeclarableParameterExpression("mt", typeof(bool));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "# of if statements");
+            Assert.AreEqual(1, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().First().Statements.Count(), "# of statements in the if statement");
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "#of declared varaibles");
+        }
+
+        /// <summary>
+        /// The same thing twice:
+        /// double v1, v2;
+        /// if (t) {
+        ///   var u1 = 0;
+        ///   u1 = 10;
+        ///   v1 = u1;
+        /// }
+        /// Only use v2 in the second one, and u2 too (which is locally declared).
+        /// </summary>
+        [TestMethod]
+        public void IdenticalFiltersWithTwoStepAssignments()
+        {
+            var gc = new GeneratedCode();
+
+            var test = DeclarableParameter.CreateDeclarableParameterExpression("mt", typeof(bool));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalSetAndReturn(gc, gc.CodeBody.Statements.Take(1).Cast<StatementFilter>().First());
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalSetAndReturn(gc, gc.CodeBody.Statements.Skip(1).Take(1).Cast<StatementFilter>().First());
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count());
+        }
+
+        /// <summary>
+        /// two of the following:
+        /// var v;
+        /// if (test) {
+        ///   bool u;
+        ///   var u2
+        ///   u = 10 > 10;
+        ///   if (u) {
+        ///     u2 = 1;
+        ///   }
+        ///   v = u2;
+        /// }
+        /// </summary>
+        [TestMethod]
+        public void IdenticalFiltersWithNestedIfs()
+        {
+            var gc = new GeneratedCode();
+
+            var test = DeclarableParameter.CreateDeclarableParameterExpression("mt", typeof(bool));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIf(gc, gc.CodeBody.Statements.Take(1).Cast<StatementFilter>().First());
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIf(gc, gc.CodeBody.Statements.Skip(1).Take(1).Cast<StatementFilter>().First());
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count());
+        }
+
+        [TestMethod]
+        public void IdenticalFiltersWithNestedIfAndElses()
+        {
+            var gc = new GeneratedCode();
+
+            var test = DeclarableParameter.CreateDeclarableParameterExpression("mt", typeof(bool));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIfAndElse(gc, gc.CodeBody.Statements.Take(1).Cast<StatementFilter>().First());
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIfAndElse(gc, gc.CodeBody.Statements.Skip(1).Take(1).Cast<StatementFilter>().First());
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count());
+        }
+
+        /// <summary>
+        /// Pretty close to something we are seeing in the wild... that isn't working at all.
+        /// </summary>
+        [TestMethod]
+        public void IdenticalFiltersWithNestedIfAndElseWithInbetweenStatement()
+        {
+            var gc = new GeneratedCode();
+
+            var test = DeclarableParameter.CreateDeclarableParameterExpression("mt", typeof(bool));
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            var topLevelVar = AddLocalInteriorIfAndElse(gc, gc.CodeBody.Statements.Take(1).Cast<StatementFilter>().First());
+
+            gc.Add(new StatementAssign(result, topLevelVar));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIfAndElse(gc, gc.CodeBody.Statements.Skip(2).Take(1).Cast<StatementFilter>().First(), finalSetVar: topLevelVar);
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count());
+        }
+
+        /// <summary>
+        /// an internor if statement.
+        /// </summary>
+        /// <param name="gc"></param>
+        /// <param name="statementFilter"></param>
+        private void AddLocalInteriorIf(GeneratedCode gc, StatementFilter statementFilter)
+        {
+            // Add at top level the variable we will set down one.
+            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(v);
+
+            var t = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            statementFilter.Add(t);
+
+            var filt = new StatementFilter(t);
+            statementFilter.Add(new StatementAssign(t, new ValSimple("10 > 5", typeof(bool))));
+            statementFilter.Add(filt);
+
+            var u = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            statementFilter.Add(u);
+
+            var s1 = new StatementAssign(u, new ValSimple("10", typeof(int)));
+            var s2 = new StatementAssign(v, new ValSimple($"{u.RawValue}", typeof(int), new IDeclaredParameter[] { u }));
+            filt.Add(s1);
+            filt.Add(s2);
+        }
+
+        /// <summary>
+        /// an internor if statement.
+        /// </summary>
+        /// <param name="gc"></param>
+        /// <param name="statementFilter"></param>
+        private IDeclaredParameter AddLocalInteriorIfAndElse(GeneratedCode gc, StatementFilter statementFilter, IDeclaredParameter finalSetVar = null)
+        {
+            // Add at top level the variable we will set down one.
+            var v = finalSetVar;
+            if (v == null)
+            {
+                v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+                gc.Add(v);
+            }
+
+            var t = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            statementFilter.Add(t);
+
+            var filt = new StatementFilter(t);
+            statementFilter.Add(new StatementAssign(t, new ValSimple("10 > 5", typeof(bool))));
+            statementFilter.Add(filt);
+
+            var u = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            statementFilter.Add(u);
+
+            var s1 = new StatementAssign(u, new ValSimple("10", typeof(int)));
+            filt.Add(s1);
+
+            var filtE = new StatementFilter(new ValSimple($"!{t.RawValue}", typeof(bool), new IDeclaredParameter[] { t }));
+            statementFilter.Add(filtE);
+            var s3 = new StatementAssign(u, new ValSimple("20", typeof(int)));
+            filtE.Add(s3);
+
+            var s2 = new StatementAssign(v, new ValSimple($"{u.RawValue}", typeof(int), new IDeclaredParameter[] { u }));
+            statementFilter.Add(s2);
+
+            return v;
+        }
+
+        /// <summary>
+        /// Add an external declared param, and then local and a set.
+        /// </summary>
+        /// <param name="gc"></param>
+        /// <param name="statementFilter"></param>
+        private void AddLocalSetAndReturn(GeneratedCode gc, IBookingStatementBlock statementFilter)
+        {
+            // Add at top level the variable we will set down one.
+            var v = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            gc.Add(v);
+
+            var u = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var s1 = new StatementAssign(u, new ValSimple("10", typeof(int)));
+            var s2 = new StatementAssign(v, new ValSimple($"{u.RawValue}", typeof(int), new IDeclaredParameter[] { u }));
+            statementFilter.Add(u);
+            statementFilter.Add(s1);
+            statementFilter.Add(s2);
+        }
+
+        /// <summary>
+        /// 1. a = 10
+        /// 2. b = 10
+        /// 3. if con1
+        /// 4.   a = 20
+        /// 5. if con2
+        /// 6.   b = 20
+        /// No combinations should occur.
+        /// </summary>
+        [TestMethod]
+        public void NoCombineDifferentHistories()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("20", typeof(int)));
+
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: a);
+            AddConditionalExpr(gc, doElseClause: false, mainSettingParam: b);
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
+            Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
+        }
+
         /// <summary>
         /// 1. a = 10
         /// 2. b = 10
@@ -318,7 +525,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(ifstatement);
             var assign2 = new StatementAssign(p1, new ValSimple("f", typeof(int)));
             gc.Add(assign2);
-
 
             var cc = new CombinedGeneratedCode();
             cc.AddGeneratedCode(gc);
