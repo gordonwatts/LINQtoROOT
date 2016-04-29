@@ -326,6 +326,23 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(1, gc.CodeBody.Statements.Count());
         }
 
+        /// <summary>
+        /// repeat this twice:
+        /// var v
+        /// if (mt) {
+        ///   bool test
+        ///   int u
+        ///   test = 10 > 5
+        ///   if (test) {
+        ///     u = 10
+        ///   }
+        ///   if (!test) {
+        ///     u = 20
+        ///   }
+        ///   v = u
+        /// }
+        /// The second time goes for the same v
+        /// </summary>
         [TestMethod]
         public void IdenticalFiltersWithNestedIfAndElses()
         {
