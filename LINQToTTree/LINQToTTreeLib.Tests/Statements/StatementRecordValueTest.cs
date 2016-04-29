@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LINQToTTreeLib.Tests
+namespace LINQToTTreeLib.Tests.Statements
 {
     /// <summary>
     ///This is a test class for TestStatementRecordValue and is intended
@@ -104,7 +104,7 @@ namespace LINQToTTreeLib.Tests
             var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, true);
             var s2 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen, false);
 
-            Assert.IsFalse(s1.TryCombineStatement(s2, new dummyOpt()), "combine with different recording");
+            Assert.IsFalse(s1.TryCombineStatement(s2, new DummyTrackingOptimizationService()), "combine with different recording");
         }
 
         [TestMethod]
@@ -117,7 +117,7 @@ namespace LINQToTTreeLib.Tests
             var s1 = new StatementRecordValue(index1, new ValSimple("i", typeof(int)), seen1, true);
             var s2 = new StatementRecordValue(index2, new ValSimple("i", typeof(int)), seen2, true);
 
-            Assert.IsTrue(s1.TryCombineStatement(s2, new dummyOpt()), "combine with different recording");
+            Assert.IsTrue(s1.TryCombineStatement(s2, new DummyTrackingOptimizationService()), "combine with different recording");
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace LINQToTTreeLib.Tests
             var s2 = new StatementRecordValue(index2, new ValSimple("i", typeof(int)), seen2, true);
             s2.AddNewSaver(index4, new ValSimple("j", typeof(int)));
 
-            var dop = new dummyOpt();
+            var dop = new DummyTrackingOptimizationService();
             Assert.IsTrue(s1.TryCombineStatement(s2, dop), "Combined 2 multi-saver guys");
 
             Assert.AreEqual(3, dop._renameRequests.Count, "# of rename requests");
@@ -243,21 +243,5 @@ namespace LINQToTTreeLib.Tests
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsFalse(r.Item1);
         }
-
-        class dummyOpt : ICodeOptimizationService
-        {
-            public List<Tuple<string, string>> _renameRequests = new List<Tuple<string, string>>();
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
-            {
-                _renameRequests.Add(Tuple.Create(oldName, newVariable.RawValue));
-                return true;
-            }
-
-            public void ForceRenameVariable(string originalName, string newName)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
     }
 }

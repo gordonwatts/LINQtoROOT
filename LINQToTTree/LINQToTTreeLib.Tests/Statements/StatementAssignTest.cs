@@ -6,7 +6,7 @@ using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace LINQToTTreeLib.Tests
+namespace LINQToTTreeLib.Tests.Statements
 {
     /// <summary>
     ///This is a test class for StatementAssignTest and is intended
@@ -19,92 +19,6 @@ namespace LINQToTTreeLib.Tests
         public void initTest()
         {
             TestUtils.ResetLINQLibrary();
-        }
-
-#if false
-        /// <summary>
-        ///A test for StatementAssign Constructor
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementAssign StatementAssignConstructorTest(IDeclaredParameter dest, IValue source)
-        {
-            StatementAssign target = new StatementAssign(dest, source, null);
-            return target;
-        }
-
-        /// <summary>
-        ///A test for CodeItUp
-        ///</summary>
-        [PexMethod]
-        public string CodeItUpTest([PexAssumeUnderTest] StatementAssign target)
-        {
-            var result = target.CodeItUp().ToArray();
-
-            var expectedCode = 0;
-            if (target.Expression.RawValue != target.ResultVariable.RawValue)
-                expectedCode = 1;
-
-            Assert.AreEqual(expectedCode, result.Length, "Too many lines for an equals!");
-
-            if (expectedCode > 0)
-            {
-                Assert.IsTrue(result[0].Contains("="), "missing equal sign");
-                return result[0];
-            }
-            return "";
-        }
-
-        /// <summary>
-        ///A test for RenameVariable
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public StatementAssign RenameVariableTest([PexAssumeUnderTest] StatementAssign target, string originalName, string newName)
-        {
-            target.RenameVariable(originalName, newName);
-
-            return target;
-        }
-
-        /// <summary>
-        ///A test for TryCombineStatement
-        ///</summary>
-        [PexMethod, PexAllowedException(typeof(ArgumentNullException))]
-        public bool TryCombineStatementTest([PexAssumeUnderTest] StatementAssign target, IStatement statement)
-        {
-            var result = target.TryCombineStatement(statement, null);
-
-            if (statement == null)
-                Assert.Fail("Statement was null");
-
-            if (statement.CodeItUp().Count() != target.CodeItUp().Count())
-            {
-                Assert.IsFalse(result, "Different number of items");
-            }
-            else
-            {
-                var allsame = target.CodeItUp().Zip(statement.CodeItUp(), (f, s) => f == s).All(t => t);
-                Assert.AreEqual(allsame, result, "incorrect result");
-            }
-
-            return result;
-        }
-#endif
-
-        class DummyOptService : ICodeOptimizationService
-        {
-            private bool ReturnWhenTry;
-            public DummyOptService(bool whatToReturnWhenTry = true)
-            {
-                this.ReturnWhenTry = whatToReturnWhenTry;
-            }
-            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
-            {
-                return ReturnWhenTry;
-            }
-
-            public void ForceRenameVariable(string originalName, string newName)
-            {
-            }
         }
 
         /// <summary>
@@ -120,7 +34,7 @@ namespace LINQToTTreeLib.Tests
             var s1 = new StatementAssign(i1, sv);
             var s2 = new StatementAssign(i2, sv);
 
-            Assert.IsFalse(s1.TryCombineStatement(s2, new DummyOptService(false)), "Combine when no decl found");
+            Assert.IsFalse(s1.TryCombineStatement(s2, new DummyTrackingOptimizationService(false)), "Combine when no decl found");
         }
 
         /// <summary>
@@ -135,7 +49,7 @@ namespace LINQToTTreeLib.Tests
             var s1 = new StatementAssign(i, sv);
             var s2 = new StatementAssign(i, sv);
 
-            Assert.IsTrue(s1.TryCombineStatement(s2, new DummyOptService(true)), "Combine when no decl found");
+            Assert.IsTrue(s1.TryCombineStatement(s2, new DummyTrackingOptimizationService(true)), "Combine when no decl found");
         }
 
         [TestMethod]

@@ -452,6 +452,7 @@
     <Compile Include="ResultOperators\TestCount.cs" />
     <Compile Include="ResultOperators\ROCountTest.cs" />
     <Compile Include="SimpleTTreeExecutorQueriable.cs" />
+    <Compile Include="Statements\DummyTrackingOptimizationService.cs" />
     <Compile Include="Statements\StatementAggregateTest.cs" />
     <Compile Include="Statements\IStatementCombineTest.cs" />
     <Compile Include="Statements\StatementFilterTest.cs" />
