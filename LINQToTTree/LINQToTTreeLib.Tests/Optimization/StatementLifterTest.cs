@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static LINQToTTreeLib.Tests.TestUtils;
+using static LINQToTTreeLib.Tests.Optimization.CommonStatementLifterTest;
 
 namespace LINQToTTreeLib.Tests.Optimization
 {
@@ -297,6 +298,51 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.IsInstanceOfType(firstStatement, typeof(StatementNonOptimizing), "first statement");
             var secondStatement = v.CodeBody.Statements.Skip(1).First();
             Assert.IsInstanceOfType(secondStatement, typeof(StatementWithNoSideEffects), "Second statement");
+        }
+
+        /// <summary>
+        /// repeat this twice:
+        /// var v
+        /// if (mt) {
+        ///   bool test
+        ///   int u
+        ///   test = 10 > 5
+        ///   if (test) {
+        ///     u = 10
+        ///   }
+        ///   if (!test) {
+        ///     u = 20
+        ///   }
+        ///   v = u
+        /// }
+        /// Then go for a second level down from that, enclosed in an if statement
+        /// that is unrelated.
+        /// </summary>
+        [TestMethod]
+        public void IdenticalFiltersWithNestedIfAndElsesNested()
+        {
+            var gc = new GeneratedCode();
+
+            var test = DeclarableParameter.CreateDeclarableParameterExpression("mt", typeof(bool));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIfAndElse(gc, gc.CodeBody.Statements.Take(1).Cast<StatementFilter>().First());
+
+            var loopP = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var loop = new StatementForLoop(loopP, new LINQToTTreeLib.Variables.ValSimple("10", typeof(int)));
+            gc.Add(loop);
+
+            //var test2 = DeclarableParameter.CreateDeclarableParameterExpression("test2", typeof(bool));
+            //var hiderif = new StatementFilter(test2);
+            //gc.Add(hiderif);
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIfAndElse(gc, loop.Statements.Take(1).Cast<StatementFilter>().First());
+
+            DoOptimizeTest(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count());
         }
 
         private static void DoOptimizeTest(GeneratedCode v)

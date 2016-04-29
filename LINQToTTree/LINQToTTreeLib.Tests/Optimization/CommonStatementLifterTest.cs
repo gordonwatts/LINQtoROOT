@@ -363,6 +363,47 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// repeat this twice:
+        /// var v
+        /// if (mt) {
+        ///   bool test
+        ///   int u
+        ///   test = 10 > 5
+        ///   if (test) {
+        ///     u = 10
+        ///   }
+        ///   if (!test) {
+        ///     u = 20
+        ///   }
+        ///   v = u
+        /// }
+        /// Then go for a second level down from that, enclosed in an if statement
+        /// that is unrelated.
+        /// </summary>
+        [TestMethod]
+        public void IdenticalFiltersWithNestedIfAndElsesNested()
+        {
+            var gc = new GeneratedCode();
+
+            var test = DeclarableParameter.CreateDeclarableParameterExpression("mt", typeof(bool));
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIfAndElse(gc, gc.CodeBody.Statements.Take(1).Cast<StatementFilter>().First());
+
+            var test2 = DeclarableParameter.CreateDeclarableParameterExpression("test2", typeof(bool));
+            var hiderif = new StatementFilter(test2);
+            gc.Add(hiderif);
+
+            AddConditionalExpr(gc, doElseClause: false, ifStatementTest: test);
+            AddLocalInteriorIfAndElse(gc, gc.CodeBody.Statements.Skip(1).Take(1).Cast<StatementFilter>().First());
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count());
+        }
+
+        /// <summary>
         /// Pretty close to something we are seeing in the wild... that isn't working at all.
         /// </summary>
         [TestMethod]
@@ -419,7 +460,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// </summary>
         /// <param name="gc"></param>
         /// <param name="statementFilter"></param>
-        private IDeclaredParameter AddLocalInteriorIfAndElse(GeneratedCode gc, StatementFilter statementFilter, IDeclaredParameter finalSetVar = null)
+        public static IDeclaredParameter AddLocalInteriorIfAndElse(GeneratedCode gc, StatementFilter statementFilter, IDeclaredParameter finalSetVar = null)
         {
             // Add at top level the variable we will set down one.
             var v = finalSetVar;
@@ -1870,7 +1911,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Helper function to add a conditional statement.
         /// </summary>
         /// <param name="gc"></param>
-        private IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IValue mainSettingValue = null, IStatement addInFirst = null, IStatement addInFirstAfter = null, IDeclaredParameter ifStatementTest = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
+        public static IDeclaredParameter AddConditionalExpr(GeneratedCode gc, IValue mainSettingValue = null, IStatement addInFirst = null, IStatement addInFirstAfter = null, IDeclaredParameter ifStatementTest = null, IStatement addInSecond = null, bool doElseClause = true, IDeclaredParameter mainSettingParam = null)
         {
             if (mainSettingParam == null)
             {
@@ -1917,7 +1958,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// <param name="useParam"></param>
         /// <param name="valToAssign"></param>
         /// <returns></returns>
-        private IDeclaredParameter AddSimpleAssign(GeneratedCode gc, IDeclaredParameter useParam = null, IValue valToAssign = null, Type t = null)
+        private static IDeclaredParameter AddSimpleAssign(GeneratedCode gc, IDeclaredParameter useParam = null, IValue valToAssign = null, Type t = null)
         {
             if (useParam == null)
             {
