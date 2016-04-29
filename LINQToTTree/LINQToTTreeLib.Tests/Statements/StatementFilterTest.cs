@@ -78,7 +78,6 @@ namespace LINQToTTreeLib.Statements
 
             Assert.IsTrue(s1.TryCombineStatement(s2, null), "statement should have combined");
             Assert.AreEqual(2, s1.Statements.Count(), "# of combined statements");
-
         }
 
         [TestMethod]
