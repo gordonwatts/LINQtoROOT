@@ -45,8 +45,8 @@ namespace LINQToTTreeLib.Tests
 
             var sr = r.PrettyPrintQuery();
             Console.WriteLine(sr);
-
         }
+
         [TestMethod]
         public void PrettyPrintComplexQueryII()
         {
@@ -60,5 +60,17 @@ namespace LINQToTTreeLib.Tests
             var sr = r.PrettyPrintQuery();
             Console.WriteLine(sr);
         }
-    }
+
+        [TestMethod]
+        public void PrettyPrintHideTuples()
+        {
+            var q = new QueriableDummy<ntup>();
+
+            var r = q.Select(rq => Tuple.Create(rq.run * 2, 1)).Select(rq => rq.Item1).PrettyPrintQuery();
+            Console.WriteLine(r);
+            Assert.IsFalse(r.Contains("Tuple"));
+            Assert.IsTrue(r.Contains("[rq].run * 2"));
+
+        }
+}
 }
