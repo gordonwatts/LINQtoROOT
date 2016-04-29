@@ -34,6 +34,12 @@ namespace LINQToTTreeLib.Tests.Optimization
             StatementLifter.Optimize(v);
         }
 
+        /// <summary>
+        /// for
+        ///   No side effect statement
+        ///   
+        /// Should be lifted out.
+        /// </summary>
         [TestMethod]
         public void TestLiftSimpleStatement()
         {

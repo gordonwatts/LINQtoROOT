@@ -179,7 +179,100 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(3, gc.CodeBody.Statements.TakeWhile(s => !(s is StatementFilter)).WhereCast<IStatement, StatementAssign>().Count(), "# of top level assign statements");
             Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Count(), "# of if statements");
             Assert.AreEqual(2, gc.CodeBody.Statements.WhereCast<IStatement, StatementFilter>().Where(ifs => ifs.Statements.Count() == 1).Count(), "# of if statements with a statement inside them");
+        }
 
+        /// <summary>
+        /// Two statements that are indtical should be combined.
+        /// </summary>
+        [TestMethod]
+        public void RepeatedStatementsCombined()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(1, gc.CodeBody.Statements.Count(), "should have combined into a single statement.");
+            Assert.AreEqual(1, gc.CodeBody.AllDeclaredVariables.Count(), "# of declared variables");
+        }
+
+        /// <summary>
+        /// Two identical assignment statements that look like they could be combined, but later on in the code
+        /// they are used for different things (e.g. modified). Make sure they aren't combined.
+        /// </summary>
+        [TestMethod]
+        public void RepeatedStatementsWithLaterModification()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+
+            var c = AddSimpleAssign(gc, useParam: a, valToAssign: new ValSimple($"10+{a.RawValue}", typeof(int), new IDeclaredParameter[] { a }));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "should have combined into a single statement.");
+            Assert.AreEqual(2, gc.CodeBody.AllDeclaredVariables.Count(), "# of declared variables");
+        }
+
+        [TestMethod]
+        public void RepeatedStatementsWithLaterModificationHidingAnOptimization()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var b = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var c = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+
+            AddSimpleAssign(gc, useParam: a, valToAssign: new ValSimple($"10+{a.RawValue}", typeof(int), new IDeclaredParameter[] { a }));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(3, gc.CodeBody.Statements.Count(), "should have combined into a single statement.");
+            Assert.AreEqual(2, gc.CodeBody.AllDeclaredVariables.Count(), "# of declared variables");
+        }
+
+        /// <summary>
+        /// 1. a = a + 1
+        /// 2. a = a + 1
+        /// should not be combined.
+        /// </summary>
+        [TestMethod]
+        public void RepeatedSelfReferenctialStatments()
+        {
+            var gc = new GeneratedCode();
+            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+
+            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
+            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count());
+        }
+
+        /// <summary>
+        /// a = 10
+        /// b = a
+        /// a = 10
+        /// You could combine those two a stements.
+        /// </summary>
+        [TestMethod]
+        public void IdenticalStatementsSeperatedByUserStatement()
+        {
+            var gc = new GeneratedCode();
+
+            var a = AddSimpleAssign(gc, valToAssign: new ValSimple("10", typeof(int)));
+            var c = AddSimpleAssign(gc, valToAssign: new ValSimple($"{a.RawValue}", typeof(int), new IDeclaredParameter[] { a }));
+            var b = AddSimpleAssign(gc, useParam: a, valToAssign: new ValSimple("10", typeof(int)));
+
+            DoOptimizationAndConsoleDump(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "should have combined into a single statement.");
+            Assert.AreEqual(2, gc.CodeBody.AllDeclaredVariables.Count(), "# of declared variables");
         }
 
         /// <summary>
@@ -934,26 +1027,6 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Make sure it is two if statements, nested.
             Assert.AreEqual(1, v.CodeBody.Statements.WhereCast<IStatement, StatementAssign>().Count());
         }
-
-        /// <summary>
-        /// 1. a = a + 1
-        /// 2. a = a + 1
-        /// should not be combined.
-        /// </summary>
-        [TestMethod]
-        public void RepeatedSelfReferenctialStatments()
-        {
-            var gc = new GeneratedCode();
-            var p1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
-
-            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
-            gc.Add(new StatementAssign(p1, new ValSimple($"{p1.RawValue}+1", typeof(int), new IDeclaredParameter[] { p1 })));
-
-            DoOptimizationAndConsoleDump(gc);
-
-            Assert.AreEqual(2, gc.CodeBody.Statements.Count());
-        }
-
 
         /// <summary>
         /// Make sure lift occurs when identical loops are present
