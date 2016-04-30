@@ -74,7 +74,7 @@ namespace LINQToTTreeLib.Files
                 headerline.Append(h);
                 first = false;
             }
-            gc.AddInitalizationStatement(new Statements.StatementSimpleStatement($"{stream.RawValue} << \"{headerline.ToString()}\" << std::endl;"));
+            gc.AddInitalizationStatement(new Statements.StatementSimpleStatement($"{stream.RawValue} << \"{headerline.ToString()}\" << std::endl;", dependentVars: new string[0], resultVars: new string[] { stream.RawValue }));
 
             // Get the list of item values we are going to need here.
             List<Expression> itemValues = ExtractItemValueExpressions(queryModel);

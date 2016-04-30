@@ -93,7 +93,7 @@ namespace LINQToTTreeLib.TypeHandlers
                 p1.Pop();
                 p2.Pop();
 
-                gc.Add(new Statements.StatementSimpleStatement(statementBody.RawValue));
+                gc.Add(new Statements.StatementSimpleStatement(statementBody.RawValue, resultVars: new string[0] { }, dependentVars: statementBody.Dependants.Select(i => i.RawValue).ToArray()));
 
                 ///
                 /// Finally, what we will return if this is the last thing we are doing!

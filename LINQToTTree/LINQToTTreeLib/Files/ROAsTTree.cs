@@ -75,8 +75,8 @@ namespace LINQToTTreeLib.Files
             var outputFilePromise = GenerateUniqueFile(outputFile, cc);
 
             // Open the file and declare the tree
-            gc.AddInitalizationStatement(new StatementSimpleStatement(() => $"{stream.RawValue}.first = new TFile(\"{outputFilePromise().FullName.AddCPPEscapeCharacters()}\",\"RECREATE\")"));
-            gc.AddInitalizationStatement(new StatementSimpleStatement($"{stream.RawValue}.second = new TTree(\"{asTTree.TreeName}\", \"{asTTree.TreeTitle}\")"));
+            gc.AddInitalizationStatement(new StatementSimpleStatement(() => $"{stream.RawValue}.first = new TFile(\"{outputFilePromise().FullName.AddCPPEscapeCharacters()}\",\"RECREATE\")", dependentVars: new string[0], resultVars: new string[] { stream.RawValue }));
+            gc.AddInitalizationStatement(new StatementSimpleStatement($"{stream.RawValue}.second = new TTree(\"{asTTree.TreeName}\", \"{asTTree.TreeTitle}\")", dependentVars: new string[0],  resultVars: new string[] { stream.RawValue }));
 
             // Get the list of item values we are going to need here.
             List<Expression> itemValues = ExtractItemValueExpressions(queryModel);

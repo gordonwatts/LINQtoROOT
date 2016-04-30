@@ -629,7 +629,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// a1 = 10;
         /// a2 = 10;
         /// bogus;
-        /// Where bogus is a SimpleStatement. The combination shoudl still occur.
+        /// Where bogus is a SimpleStatement. The combination should still occur.
         /// </summary>
         [TestMethod]
         public void TwoSimilarAssignStatementsWithSimpleStatement()

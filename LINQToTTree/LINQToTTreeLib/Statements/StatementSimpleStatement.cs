@@ -9,20 +9,24 @@ namespace LINQToTTreeLib.Statements
     /// Statement that holds onto a generic line. This could be, for example, a single line with side-effects that
     /// has been processed by GetExpression.
     /// </summary>
-    public class StatementSimpleStatement : IStatement
+    public class StatementSimpleStatement : IStatement, ICMStatementInfo
     {
         /// <summary>
         /// Create a simple statement line, with a future to generate the actual line.
         /// </summary>
         /// <param name="futureLine"></param>
         /// <param name="addSemicolon"></param>
-        public StatementSimpleStatement(Func<string> futureLine, bool addSemicolon = true)
+        public StatementSimpleStatement(Func<string> futureLine, bool addSemicolon = true, string[] dependentVars = null, string[] resultVars = null)
         {
             futureLine
                 .ThrowIfNull(() => new ArgumentException("StatemeintSimpleStatment should not be called with a null input line"));
 
             AddSemicolon = addSemicolon;
             _statementGenerator = new EvalStringOnce(() => CleanLine(futureLine(), AddSemicolon));
+
+            NeverLift = false;
+            DependentVariables = dependentVars == null ? new string[0] : dependentVars;
+            ResultVariables = resultVars == null ? new string[0] : resultVars;
         }
 
         /// <summary>
@@ -30,7 +34,7 @@ namespace LINQToTTreeLib.Statements
         /// </summary>
         /// <param name="line"></param>
         /// <param name="addSemicolon"></param>
-        public StatementSimpleStatement(string line, bool addSemicolon = true)
+        public StatementSimpleStatement(string line, bool addSemicolon = true, string[] dependentVars = null, string[] resultVars = null)
         {
             if (line == null)
                 throw new ArgumentNullException("line can't be null!");
@@ -38,6 +42,10 @@ namespace LINQToTTreeLib.Statements
             AddSemicolon = addSemicolon;
 
             _statementGenerator = new EvalStringOnce(() => CleanLine(line, AddSemicolon));
+
+            NeverLift = false;
+            DependentVariables = dependentVars == null ? new string[0] : dependentVars;
+            ResultVariables = resultVars == null ? new string[0] : resultVars;
         }
 
         /// <summary>
@@ -181,9 +189,38 @@ namespace LINQToTTreeLib.Statements
                 && other.AddSemicolon == AddSemicolon;
         }
 
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// A list of all variables used as input
+        /// </summary>
+        public IEnumerable<string> DependentVariables
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// A list of all variables that this guy changes
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// We are ok with this being lifted.
+        /// </summary>
+        public bool NeverLift
+        {
+            get; set;
+        }
     }
 }

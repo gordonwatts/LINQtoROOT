@@ -214,9 +214,9 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var ctorName = expression.Type.CreateUniqueVariableName();
             ctor.AppendFormat("{0} {1}", tname, ctorName);
 
-            var argDep = AddMethodArguments(expression.Arguments, gc, container, ctor);
+            var argDep = AddMethodArguments(expression.Arguments, gc, container, ctor).ToArray();
 
-            gc.Add(new Statements.StatementSimpleStatement(ctor.ToString()));
+            gc.Add(new Statements.StatementSimpleStatement(ctor.ToString(), dependentVars: argDep.Select(i => i.RawValue).ToArray(), resultVars: new string[] { ctorName }));
 
             ///
             /// Now, everything in the C++ translation is a pointer, so we will
@@ -226,7 +226,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
             var ptrDecl = new StringBuilder();
             var ptrName = expression.Type.CreateUniqueVariableName();
             ptrDecl.AppendFormat("{0} *{1} = &{2}", tname, ptrName, ctorName);
-            gc.Add(new Statements.StatementSimpleStatement(ptrDecl.ToString()));
+            gc.Add(new Statements.StatementSimpleStatement(ptrDecl.ToString(), dependentVars: new string[] { ctorName }, resultVars: new string[] { ptrName }));
 
             ///
             /// That pointer is what we return for later use!
