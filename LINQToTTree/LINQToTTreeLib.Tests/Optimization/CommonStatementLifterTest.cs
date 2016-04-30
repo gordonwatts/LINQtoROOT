@@ -231,7 +231,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// a = 10
         /// b = a
         /// a = 10
-        /// You could combine those two a stements.
+        /// You could combine those two a statements.
         /// </summary>
         [TestMethod]
         public void IdenticalStatementsSeperatedByUserStatement()
@@ -1958,7 +1958,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// <param name="useParam"></param>
         /// <param name="valToAssign"></param>
         /// <returns></returns>
-        private static IDeclaredParameter AddSimpleAssign(GeneratedCode gc, IDeclaredParameter useParam = null, IValue valToAssign = null, Type t = null)
+        public static IDeclaredParameter AddSimpleAssign(GeneratedCode gc, IDeclaredParameter useParam = null, IValue valToAssign = null, Type t = null)
         {
             if (useParam == null)
             {
