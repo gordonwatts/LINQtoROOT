@@ -458,6 +458,12 @@ namespace LINQToTTreeLib.Statements
             {
                 v.RenameRawValue(originalName, newName);
             }
+
+            // Did that cause any duplicates? If so, remove them.
+            if (DeclaredVariables.Where(d => d.RawValue == newName).Count() > 1)
+            {
+                _variables.Remove(_variables.Where(d => d.RawValue == newName).First());
+            }
 #endif
             foreach (var s in _statements)
             {

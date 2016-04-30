@@ -647,6 +647,28 @@ namespace LINQToTTreeLib.Tests.Optimization
         }
 
         /// <summary>
+        /// Say we have:
+        /// a1 = 10;
+        /// a2 = 10;
+        /// bogus;
+        /// Where bogus is a SimpleStatement. The combination should still occur.
+        /// </summary>
+        [TestMethod]
+        public void CombinationKilledByICMPStatement()
+        {
+            var gc = new GeneratedCode();
+
+            var s1 = AddSimpleAssign(gc);
+            var s2 = AddSimpleAssign(gc);
+            gc.Add(new StatementNonOptimizing());
+
+            DoOptimizeTest(gc);
+
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count(), "# of statements");
+            Assert.AreEqual(1, gc.CodeBody.DeclaredVariables.Count(), "# of vars");
+        }
+
+        /// <summary>
         /// A loop repeated can be combined
         /// 1. loop A
         /// 2. loop A
@@ -1367,7 +1389,6 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             public void RenameVariable(string originalName, string newName)
             {
-                throw new NotImplementedException();
             }
 
             public bool TryCombineStatement(IStatement statement, ICodeOptimizationService optimize)

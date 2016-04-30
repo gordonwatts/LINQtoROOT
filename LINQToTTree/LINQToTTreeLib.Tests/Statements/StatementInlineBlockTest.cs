@@ -394,6 +394,24 @@ namespace LINQToTTreeLib.Statements
             public IStatement Parent { get; set; }
         }
 
+        /// <summary>
+        /// Seen in the wild. During combination we force a rename, which causes two variables of the same name
+        /// to be hanging around. Bad.
+        /// </summary>
+        [TestMethod]
+        public void RenameVariablesToCauseDuplicate()
+        {
+            var inline1 = new StatementInlineBlock();
+            var v1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var v2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            inline1.Add(v1);
+            inline1.Add(v2);
+
+            inline1.RenameBlockVariables(v1.RawValue, v2.RawValue);
+
+            Assert.AreEqual(1, inline1.DeclaredVariables.Count());
+        }
+
         [TestMethod]
         public void TestCombineWithRenameSimple()
         {
