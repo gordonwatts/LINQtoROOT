@@ -124,12 +124,24 @@ namespace LINQToTTreeLib.Statements
                 return new HashSet<string>(dependents);
             }
         }
-        
+
         /// <summary>
-                 /// We don't have the code to do the combination yet, so we have to bail!
-                 /// </summary>
-                 /// <param name="statement"></param>
-                 /// <returns></returns>
+        /// Return the variables that we modify in this block.
+        /// </summary>
+        public override IEnumerable<string> ResultVariables
+        {
+            get
+            {
+                return base.ResultVariables
+                    .Concat(Counter.Dependants.Select(p => p.RawValue));
+            }
+        }
+
+        /// <summary>
+        /// We don't have the code to do the combination yet, so we have to bail!
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns></returns>
         public override bool TryCombineStatement(IStatement statement, ICodeOptimizationService opt)
         {
             if (statement == null)
@@ -160,6 +172,31 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
+#if false
+        /// <summary>
+        /// Make an attempt to combine if statements.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public override Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            // Quick check.
+            if (!(other is StatementFilter))
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            var s2 = other as StatementFilter;
+
+            // Do the test expression.
+            var renames = Tuple.Create(true, replaceFirst)
+                .RequireAreSame(TestExpression, s2.TestExpression);
+
+            // And do everything in the block
+            return RequiredForEquivalenceForBase(other, renames)
+                .ExceptFor(replaceFirst);
+        }
+#endif
         /// <summary>
         /// Rename everything
         /// </summary>

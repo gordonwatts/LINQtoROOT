@@ -2,14 +2,17 @@
 using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using System.Linq;
+using LINQToTTreeLib.Utils;
+
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Sits inside a loop and records the integer that it is given on each call by pushing it onto a vector. It *does not*
     /// check for uniqueness of that integer that is pushed on - this is pretty simple. The vector it is pushing onto should
-    /// be declared at an outter level to be of any use. :-)
+    /// be declared at an outer level to be of any use. :-)
     /// </summary>
-    public class StatementRecordIndicies : IStatement
+    public class StatementRecordIndicies : IStatement, ICMStatementInfo
     {
         /// <summary>
         /// The integer to record
@@ -49,6 +52,26 @@ namespace LINQToTTreeLib.Statements
         public IEnumerable<string> CodeItUp()
         {
             yield return string.Format("{0}.push_back({1});", _storageArray.ParameterName, _intToRecord.RawValue);
+        }
+
+        /// <summary>
+        /// To make the same, what renames are required?
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherS = other as StatementRecordIndicies;
+            if (otherS == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            return Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(_storageArray, otherS._storageArray)
+                .RequireForEquivForExpression(_intToRecord, otherS._intToRecord)
+                .ExceptFor(replaceFirst);
         }
 
         /// <summary>
@@ -95,5 +118,29 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// We are self modifying, sadly (e.g. not idempotent)
+        /// </summary>
+        public IEnumerable<string> DependentVariables
+        {
+            get { return _storageArray.Dependants.Concat(_intToRecord.Dependants).Select(v => v.RawValue); }
+        }
+
+        /// <summary>
+        /// We update the storage array.
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get { return _intToRecord.Dependants.Select(s => s.RawValue); }
+        }
+
+        /// <summary>
+        /// Life as long as it is ok.
+        /// </summary>
+        public bool NeverLift
+        {
+            get { return false; }
+        }
     }
 }

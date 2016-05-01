@@ -1,14 +1,16 @@
 ﻿using LinqToTTreeInterfacesLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
-    /// A statement that looks for any or all - and breaks the loop when it finds somethign that allows it to pop-out
+    /// A statement that looks for any or all - and breaks the loop when it finds something that allows it to pop-out
     /// early.
     /// </summary>
-    public class StatementAnyAllDetector : IStatement
+    public class StatementAnyAllDetector : IStatement, ICMStatementInfo
     {
         /// <summary>
         /// The predicate to test for.
@@ -36,12 +38,12 @@ namespace LINQToTTreeLib.Statements
         /// current loop.
         /// </summary>
         /// <param name="predicate">The test that needs to be done. Null if it is "any" test</param>
-        /// <param name="aresult">The result that should be altered, and testsed against.</param>
-        /// <param name="aresultFastTest">A text expression we can use to short-curit the predicate if it has already gone.</param>
+        /// <param name="aresult">The result that should be altered, and tested against.</param>
+        /// <param name="aresultFastTest">A text expression we can use to short-circuit the predicate if it has already gone.</param>
         /// <param name="markedValue">How we should set the result when the if statement fires</param>
         /// <param name="addBreak">Add a break statement to terminate loop early  - this is dangerous as when loops are combined...</param>
         /// <remarks>
-        /// We keep the aresultFastTest seperate so that we can make sure try-combine works properly when we have two
+        /// We keep the aresultFastTest separate so that we can make sure try-combine works properly when we have two
         /// identical guys.
         /// </remarks>
         public StatementAnyAllDetector(IValue predicate, IDeclaredParameter aresult, IValue aresultFastTest, string markedValue)
@@ -59,9 +61,6 @@ namespace LINQToTTreeLib.Statements
             ResultFastTest = aresultFastTest;
         }
 
-        //ifstatement.Add(new Statements.StatementAssign(aresult, new Variables.ValSimple(markedValue, typeof(bool))));
-        //ifstatement.Add(new Statements.StatementBreak());
-
         /// <summary>
         /// Return the code for this guy!
         /// </summary>
@@ -74,6 +73,35 @@ namespace LINQToTTreeLib.Statements
             yield return string.Format("if ({0}{1}) {{", ResultFastTest.RawValue, prv);
             yield return string.Format("  {0} = {1};", Result.RawValue, ResultValueToBe);
             yield return "}";
+        }
+
+        /// <summary>
+        /// Collect renames required in order to turn this into another any/all statement
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherS = other as StatementAnyAllDetector;
+            if (otherS == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            if (ResultValueToBe != otherS.ResultValueToBe)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            var r = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(ResultFastTest, otherS.ResultFastTest)
+                .RequireForEquivForExpression(Result, otherS.Result);
+            if (Predicate != null)
+            {
+                r = r
+                    .RequireForEquivForExpression(Predicate, otherS.Predicate);
+            }
+            return r.ExceptFor(replaceFirst);
         }
 
         /// <summary>
@@ -121,7 +149,7 @@ namespace LINQToTTreeLib.Statements
 
             //
             // As long as nothing crazy is going on with result, then we
-            // can definately combine these two!
+            // can definitely combine these two!
             //
 
             if (optimize == null)
@@ -131,8 +159,40 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Track the envinroment this statement is embedded in.
+        /// Track the environment this statement is embedded in.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// If there is a predicate, include that too.
+        /// </summary>
+        public IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var r = ResultFastTest.Dependants;
+                if (Predicate != null)
+                {
+                    r = r.Concat(Predicate.Dependants);
+                }
+                return r.Select(v => v.RawValue);
+            }
+        }
+
+        /// <summary>
+        /// Result variables are just one thing.
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get { return Result.Dependants.Select(v => v.RawValue); }
+        }
+
+        /// <summary>
+        /// fine to move this around.
+        /// </summary>
+        public bool NeverLift
+        {
+            get { return false; }
+        }
     }
 }

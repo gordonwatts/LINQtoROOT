@@ -86,10 +86,10 @@ namespace LINQToTTreeLib.Optimization
             var r = sc1.RequiredForEquivalence(sc2);
             if (r.Item1)
             {
-                // There is one condition underwhich this combination should not happen:
-                // The statements are identical and they are not idempotent. That measn we would
+                // There is one condition under which this combination should not happen:
+                // The statements are identical and they are not idempotent. That means we would
                 // have "a = a + 1" twice in a row, and we can't combine those.
-                if (r.Item2.Count() == 0 && !StatementIdempotent(s2))
+                if ((r.Item2 == null || r.Item2.Count() == 0) && !StatementIdempotent(s2))
                 {
                     return false;
                 }
@@ -105,7 +105,8 @@ namespace LINQToTTreeLib.Optimization
 
                 // We can't lift unless we can get at the declarations of all variables we want to rename.
                 var allVarsDeclaredInS2 = s2Parent.AllDeclaredVariables.Select(v => v.RawValue).ToHashSet();
-                if (!r.Item2.Select(p => p.Item1).All(v => allVarsDeclaredInS2.Contains(v)))
+                var renames = r.Item2 == null ? Enumerable.Empty<Tuple<string, string>>() : r.Item2;
+                if (!renames.Select(p => p.Item1).All(v => allVarsDeclaredInS2.Contains(v)))
                 {
                     return false;
                 }
@@ -114,8 +115,8 @@ namespace LINQToTTreeLib.Optimization
                 // variables that we are going to rename. If there are more than one, then we can't modify
                 // unless we somehow know the modifications are identical.
 
-                if (CheckForVariableAsResult(s2, r.Item2.Select(i => i.Item1))
-                    || CheckForVariableAsResult(s1, r.Item2.Select(i => i.Item2)))
+                if (CheckForVariableAsResult(s2, renames.Select(i => i.Item1))
+                    || CheckForVariableAsResult(s1, renames.Select(i => i.Item2)))
                 {
                     return false;
                 }
@@ -123,7 +124,7 @@ namespace LINQToTTreeLib.Optimization
                 // Remove the statement, and then do the renaming.
                 var opt = new BlockRenamer(s2Parent, s1Parent);
                 s2Parent.Remove(s2);
-                foreach (var item in r.Item2)
+                foreach (var item in renames)
                 {
                     opt.ForceRemoveDeclaration(item.Item1, s2Parent);
                     opt.ForceRenameVariable(item.Item1, item.Item2);

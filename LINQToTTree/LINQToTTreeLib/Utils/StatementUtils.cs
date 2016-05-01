@@ -183,7 +183,8 @@ namespace LINQToTTreeLib.Utils
                 return renames;
             }
 
-            return Tuple.Create(true, renames.Item2.Concat(r.Item2));
+            var renamesItem = renames.Item2 == null ? Enumerable.Empty<Tuple<string, string>>() : renames.Item2;
+            return Tuple.Create(true, renamesItem.Concat(r.Item2));
         }
 
         public static Tuple<bool, IEnumerable<Tuple<string,string>>> FilterRenames (this Tuple<bool, IEnumerable<Tuple<string, string>>> renames, Func<Tuple<string,string>, bool> filter)
@@ -251,6 +252,36 @@ namespace LINQToTTreeLib.Utils
             }
 
             return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+        }
+
+        /// <summary>
+        /// After applying the renames, make sure the two statements are the same.
+        /// </summary>
+        /// <param name="renames"></param>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static Tuple<bool, IEnumerable<Tuple<string, string>>> RequireAreSame(this Tuple<bool, IEnumerable<Tuple<string, string>>> renames, IValue p1, IValue p2)
+        {
+            return renames
+                .RequireAreSame(p1.RawValue, p2.RawValue);
+        }
+
+        /// <summary>
+        /// After applying the renames, make sure the two statements are the same.
+        /// </summary>
+        /// <param name="renames"></param>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static Tuple<bool, IEnumerable<Tuple<string, string>>> RequireAreSame(this Tuple<bool, IEnumerable<Tuple<string, string>>> renames, string p1, string p2)
+        {
+            var p1T = p1.ReplaceVariableNames(renames.Item2);
+            var p2T = p2.ReplaceVariableNames(renames.Item2);
+
+            return p1T == p2T
+                ? renames
+                : Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
         }
 
         /// <summary>

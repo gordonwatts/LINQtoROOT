@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -9,7 +12,7 @@ namespace LINQToTTreeLib.Statements
     /// code lines of its own - which will cause some scoping problems if we aren't
     /// careful!
     /// </summary>
-    class StatementTestLoopPairwise : IStatement
+    class StatementTestLoopPairwise : IStatement, ICMStatementInfo
     {
         private IDeclaredParameter _whatIsGood;
         private IValue _test;
@@ -47,6 +50,24 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// See what would be needed to combine these two things.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherS = other as StatementTestLoopPairwise;
+            if (otherS == null)
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+
+            return Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(_whatIsGood, otherS._whatIsGood)
+                .RequireForEquivForExpression(_test, otherS._test)
+                .ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
         /// We can only combine if everything is the same!
         /// </summary>
         /// <param name="statement"></param>
@@ -76,5 +97,29 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        public IEnumerable<string> DependentVariables
+        {
+            get { return _test.Dependants.Concat(_whatIsGood.Dependants).Select(v => v.RawValue); }
+        }
+
+        /// <summary>
+        /// We change the array, but that is it.
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get { return _whatIsGood.Dependants.Select(v => v.RawValue); }
+        }
+
+        /// <summary>
+        /// Ok to lift us out if we don't depend on anything!
+        /// </summary>
+        public bool NeverLift
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

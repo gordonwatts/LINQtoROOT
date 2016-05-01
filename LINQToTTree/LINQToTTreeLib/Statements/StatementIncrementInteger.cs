@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
+using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Increment an integer
     /// </summary>
-    public class StatementIncrementInteger : IStatement
+    public class StatementIncrementInteger : IStatement, ICMStatementInfo
     {
         /// <summary>
         /// Create a statement that will increment this integer.
@@ -75,8 +77,42 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Can this statement be made the same as some other statement?
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherS = other as StatementIncrementInteger;
+            if (otherS == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            return Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(Integer, otherS.Integer)
+                .ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        public IEnumerable<string> DependentVariables
+        {
+            get { return Integer.Dependants.Select(v => v.RawValue); }
+        }
+
+        public IEnumerable<string> ResultVariables
+        {
+            get { return Integer.Dependants.Select(v => v.RawValue); }
+        }
+
+        public bool NeverLift
+        {
+            get { return false; }
+        }
     }
 }

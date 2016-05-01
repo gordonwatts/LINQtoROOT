@@ -148,7 +148,7 @@ namespace LINQToTTreeLib.Statements
 
             // Do the test expression.
             var renames = Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(TestExpression, s2.TestExpression);
+                .RequireAreSame(TestExpression, s2.TestExpression);
 
             // And do everything in the block
             return RequiredForEquivalenceForBase(other, renames)

@@ -504,7 +504,7 @@ namespace LINQToTTreeLib.Statements
         /// Return the list of variables that are altered by this code block. Override if
         /// there is another source somewhere!
         /// </summary>
-        public IEnumerable<string> ResultVariables
+        public virtual IEnumerable<string> ResultVariables
         {
             get
             {

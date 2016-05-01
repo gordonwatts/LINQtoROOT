@@ -1,4 +1,8 @@
-﻿using LinqToTTreeInterfacesLib;
+﻿using System;
+using System.Collections.Generic;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
+using System.Linq;
 using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
@@ -6,20 +10,20 @@ namespace LINQToTTreeLib.Statements
     /// <summary>
     /// Throw a runtime error if the IValue is true (it should be of type bool).
     /// </summary>
-    class StatementThrowIfTrue : IStatement
+    class StatementThrowIfTrue : IStatement, ICMStatementInfo
     {
-        private string _testValue;
+        private IValue _testValue;
         private string _message;
 
         public StatementThrowIfTrue(IValue valueWasSeen, string message)
         {
-            this._testValue = valueWasSeen.RawValue;
+            this._testValue = valueWasSeen;
             this._message = message;
         }
 
         public System.Collections.Generic.IEnumerable<string> CodeItUp()
         {
-            yield return string.Format("if ({0}) {{", _testValue);
+            yield return string.Format("if ({0}) {{", _testValue.RawValue);
             yield return string.Format("  throw std::runtime_error(\"{0}\");", _message);
             yield return "}";
         }
@@ -31,7 +35,7 @@ namespace LINQToTTreeLib.Statements
         /// <param name="newName"></param>
         public void RenameVariable(string originalName, string newName)
         {
-            _testValue = _testValue.ReplaceVariableNames(originalName, newName);
+            _testValue.RenameRawValue(originalName, newName);
         }
 
         /// <summary>
@@ -53,8 +57,57 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Can we make these two things identical?
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherThrow = other as StatementThrowIfTrue;
+            if (otherThrow == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string,string>>());
+            }
+
+            if (_message != otherThrow._message)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            // Last, see if the tests can be made the same.
+            return Tuple.Create(true, replaceFirst)
+                .RequireAreSame(_testValue, otherThrow._testValue)
+                .ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
         /// Get the parent so we can climb.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        /// <summary>
+        /// What are our dependent variables?
+        /// </summary>
+        public IEnumerable<string> DependentVariables
+        {
+            get { return _testValue.Dependants.Select(v => v.RawValue); }
+        }
+
+        /// <summary>
+        /// Result variables.
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get { return new string[0]; }
+        }
+
+        /// <summary>
+        /// Ok to lift, as long as we can move past that test expression out!
+        /// </summary>
+        public bool NeverLift
+        {
+            get { return false; }
+        }
     }
 }

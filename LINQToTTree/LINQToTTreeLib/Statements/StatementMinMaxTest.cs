@@ -2,13 +2,16 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Variables;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// A statement that looks for a min/max
     /// </summary>
-    public class StatementMinMaxTest : IStatement
+    public class StatementMinMaxTest : IStatement, ICMStatementInfo
     {
         private IDeclaredParameter vIsFilled;
         public IDeclaredParameter MaxMinVariable { get; set; }
@@ -24,7 +27,6 @@ namespace LINQToTTreeLib.Statements
         /// <param name="exprToMinOrMaximize"></param>
         public StatementMinMaxTest(IDeclaredParameter vIsFilled, IDeclaredParameter vMaxMin, IValue exprToMinOrMaximize, bool doMax)
         {
-            // TODO: Complete member initialization
             this.vIsFilled = vIsFilled;
             this.MaxMinVariable = vMaxMin;
             this.exprToMinOrMaximize = exprToMinOrMaximize;
@@ -55,6 +57,31 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// Check to see what it would take to make this and another statement look identical.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherS = other as StatementMinMaxTest;
+            if (otherS == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            if (CompareOperator != otherS.CompareOperator)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            return Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(exprToMinOrMaximize, otherS.exprToMinOrMaximize)
+                .RequireForEquivForExpression(vIsFilled, otherS.vIsFilled)
+                .RequireForEquivForExpression(MaxMinVariable, otherS.MaxMinVariable)
+                .ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
         /// Rename a variable
         /// </summary>
         /// <param name="originalName"></param>
@@ -67,7 +94,7 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// Try to combine two of these statements. The key is what we are trying to minimize or mazimize.
+        /// Try to combine two of these statements. The key is what we are trying to minimize or maximize.
         /// </summary>
         /// <param name="statement"></param>
         /// <param name="opt"></param>
@@ -103,5 +130,31 @@ namespace LINQToTTreeLib.Statements
         /// Points to the statement that holds onto us.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        public IEnumerable<string> DependentVariables
+        {
+            get {
+                return exprToMinOrMaximize.Dependants
+                  .Concat(vIsFilled.Dependants)
+                  .Concat(MaxMinVariable.Dependants)
+                  .Select(v => v.RawValue);
+            }
+        }
+
+        /// <summary>
+        /// We update only the fact that the thing has been altered.
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get { return vIsFilled.Dependants.Select(v => v.RawValue); }
+        }
+
+        /// <summary>
+        /// Ok to lift as long as it satisfies everything else.
+        /// </summary>
+        public bool NeverLift
+        {
+            get { return false; }
+        }
     }
 }

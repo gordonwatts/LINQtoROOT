@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
     /// <summary>
     /// Record everything into a map - pair-values for later lookup.
     /// </summary>
-    public class StatementRecordPairValues : IStatement
+    public class StatementRecordPairValues : IStatement, ICMStatementInfo
     {
         private IValue _index;
 
@@ -64,6 +65,37 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
+        /// If we can make it all look the same...
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherS = other as StatementRecordPairValues;
+            if (otherS == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+            if (_savers.Count != otherS._savers.Count)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            var r = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(_index, otherS._index);
+
+            foreach (var spair in _savers.Zip(otherS._savers, (us, them) => Tuple.Create(us, them)))
+            {
+                r = r
+                    .RequireForEquivForExpression(spair.Item1.indexValue, spair.Item2.indexValue)
+                    .RequireForEquivForExpression(spair.Item1.mapRecord, spair.Item2.mapRecord);
+            }
+
+            return r.ExceptFor(replaceFirst);
+        }
+
+        /// <summary>
         /// Rename a variable we are using.
         /// </summary>
         /// <param name="originalName"></param>
@@ -108,6 +140,40 @@ namespace LINQToTTreeLib.Statements
         /// Get/Set the statement we are sitting in.
         /// </summary>
         public IStatement Parent { get; set; }
+
+        public IEnumerable<string> DependentVariables
+        {
+            get
+            {
+                var sIndex = _savers.SelectMany(s => s.indexValue.Dependants);
+                var sMap = _savers.SelectMany(s => s.mapRecord.Dependants);
+                return sIndex.Concat(sMap).Concat(new IValue[] { _index }).Select(v => v.RawValue);
+            }
+        }
+
+        /// <summary>
+        /// We only change the mapping variable.
+        /// </summary>
+        public IEnumerable<string> ResultVariables
+        {
+            get
+            {
+                return _savers.SelectMany(s => s.mapRecord.Dependants).Select(v => v.RawValue);
+            }
+        }
+
+        /// <summary>
+        /// Ok to lift if there are no crazy dependencies.
+        /// </summary>
+        public bool NeverLift
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public IEnumerable<Tuple<string, string>> Emuerable { get; private set; }
 
         /// <summary>
         /// Add a new saver to the list of things we are saving.
