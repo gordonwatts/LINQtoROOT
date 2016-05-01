@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using System.Linq;
 
 namespace LINQToTTreeLib.Statements
 {
@@ -189,9 +190,32 @@ namespace LINQToTTreeLib.Statements
                 && other.AddSemicolon == AddSemicolon;
         }
 
+        /// <summary>
+        /// Can we make these two statements identical.
+        /// In this case, we will do the substitution, and if they are the same, then we will indicate so.
+        /// But if they aren't we will make no attempt to make them the same. So, this works only in a trivial case.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns>Tests if we can do the replacement</returns>
+        /// <remarks>
+        /// This will cause evaluation of the stored function.
+        /// </remarks>
         public Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
         {
-            throw new NotImplementedException();
+            var otherSimple = other as StatementSimpleStatement;
+            if (otherSimple == null)
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+
+            // Compare - if the same then we are in good shape!
+            var ourline = Line;
+            var thereline = otherSimple.Line;
+
+            if (ourline.ReplaceVariableNames(replaceFirst) == thereline)
+            {
+                return Tuple.Create(true, Enumerable.Empty<Tuple<string, string>>());
+            }
+            return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
         }
 
         /// <summary>

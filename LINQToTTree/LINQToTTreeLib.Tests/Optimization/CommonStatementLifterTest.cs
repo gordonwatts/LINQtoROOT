@@ -362,6 +362,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(1, gc.CodeBody.Statements.Count());
         }
 
+#if false
         /// <summary>
         /// repeat this twice:
         /// var v
@@ -402,6 +403,7 @@ namespace LINQToTTreeLib.Tests.Optimization
             Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
             Assert.AreEqual(1, gc.CodeBody.Statements.Count());
         }
+#endif
 
         /// <summary>
         /// Pretty close to something we are seeing in the wild... that isn't working at all.

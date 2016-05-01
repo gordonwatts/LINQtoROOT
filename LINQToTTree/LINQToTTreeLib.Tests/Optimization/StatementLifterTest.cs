@@ -342,7 +342,8 @@ namespace LINQToTTreeLib.Tests.Optimization
             DoOptimizeTest(gc);
 
             Assert.AreEqual(2, gc.CodeBody.DeclaredVariables.Count());
-            Assert.AreEqual(1, gc.CodeBody.Statements.Count());
+            Assert.AreEqual(2, gc.CodeBody.Statements.Count());
+            Assert.AreEqual(0, loop.Statements.Count());
         }
 
         private static void DoOptimizeTest(GeneratedCode v)
