@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static LINQToTTreeLib.Tests.TestUtils;
 
 namespace LINQToTTreeLib.Tests.Optimization
 {
@@ -1462,20 +1463,38 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// Make the output and test a little more uniform.
         /// </summary>
         /// <param name="gc"></param>
-        private static void DoOptimizationAndConsoleDump(IExecutableCode gc)
+        private static CombinedGeneratedCode DoOptimizationAndConsoleDump(params IExecutableCode[] gc)
         {
             Console.WriteLine("Before Optimization");
             Console.WriteLine("");
-            gc.DumpCodeToConsole();
 
-            CommonStatementLifter.Optimize(gc);
+            var cc = new CombinedGeneratedCode();
+            foreach (var block in gc)
+            {
+                Console.WriteLine("Code Block:");
+                Console.WriteLine("===========");
+                block.DumpCodeToConsole();
+                cc.AddGeneratedCode(block);
+                Console.WriteLine();
+            }
+
+            if (gc.Length > 1)
+            {
+                Console.WriteLine("Combined Code Block:");
+                Console.WriteLine("===========");
+                cc.DumpCodeToConsole();
+            }
+
+            CommonStatementLifter.Optimize(cc);
 
             Console.WriteLine("");
             Console.WriteLine("");
             Console.WriteLine("");
             Console.WriteLine("After Optimization");
             Console.WriteLine("");
-            gc.DumpCodeToConsole();
+            cc.DumpCodeToConsole();
+
+            return cc;
         }
 
         /// <summary>
@@ -1661,6 +1680,37 @@ namespace LINQToTTreeLib.Tests.Optimization
             // the generated code.
 
             Assert.IsTrue(query.DumpCode().Any(l => l.Contains("aInt32_14++")), "The second if statement was optimized away!");
+        }
+
+        /// <summary>
+        /// Found in the wild in another test (actually), and isolating it here to help debug it.
+        /// </summary>
+        [TestMethod]
+        public void DontLiftEmbededIfWithDifferentOutcome()
+        {
+            // Generate the two close, but not identical calls.
+            var q = new QueriableDummy<TestNtupeArr>();
+            q.DOQueryFunctions = false;
+
+            var dudeQ1 = from evt in q
+                         where (evt.myvectorofint.First() > 0)
+                         select evt;
+            var dude1 = dudeQ1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query1);
+
+            var dudeQ2 = from evt in q
+                         where (evt.myvectorofint.Skip(1).First() > 0)
+                         select evt;
+            var dude2 = dudeQ2.Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query2);
+
+            // SHove them into a combined guy.
+            var cc = DoOptimizationAndConsoleDump(query1, query2);
+
+            // Now, take a look at this and look for there to be both the Take and the Skip in there.
+            Assert.IsTrue(cc.DumpCode().Where(l => l.Contains("++;")).Any(), "Some evidence of auto-increment");
         }
 
         /// <summary>

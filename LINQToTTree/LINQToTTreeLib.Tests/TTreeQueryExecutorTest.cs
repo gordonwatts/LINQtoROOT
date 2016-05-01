@@ -1166,6 +1166,7 @@ namespace LINQToTTreeLib
                          select evt;
             var dude2 = dudeQ2.Count();
             var query2 = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             ///
             /// Ok, now we can actually see if we can make it "go".

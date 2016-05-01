@@ -22,5 +22,11 @@ namespace LINQToTTreeLib.Tests
             : base(provider, expr)
         {
         }
+
+        public bool DOQueryFunctions
+        {
+            get { return ((base.Provider as DefaultQueryProvider).Executor as DummyQueryExectuor).DoQMFunctions; }
+            set { ((base.Provider as DefaultQueryProvider).Executor as DummyQueryExectuor).DoQMFunctions = value; }
+        }
     }
 }

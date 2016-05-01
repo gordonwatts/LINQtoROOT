@@ -31,7 +31,13 @@ namespace LINQToTTreeLib.Tests
         {
             _doExecution = doExecution;
             _baseType = baseType;
+            DoQMFunctions = true;
         }
+
+        /// <summary>
+        /// Should we parse QM functions?
+        /// </summary>
+        public bool DoQMFunctions { get; set; }
 
         /// <summary>
         /// The result of the query
@@ -61,10 +67,13 @@ namespace LINQToTTreeLib.Tests
             LastQueryModel = queryModel;
 
             Result = new GeneratedCode();
-            foreach (var f in LINQToTTreeLib.QMFunctions.QMFuncFinder.FindQMFunctions(queryModel))
+            if (DoQMFunctions)
             {
-                if (!f.Arguments.Any())
-                    Result.Add(new QMFuncSource(f));
+                foreach (var f in LINQToTTreeLib.QMFunctions.QMFuncFinder.FindQMFunctions(queryModel))
+                {
+                    if (!f.Arguments.Any())
+                        Result.Add(new QMFuncSource(f));
+                }
             }
 
             if (!_doExecution)
