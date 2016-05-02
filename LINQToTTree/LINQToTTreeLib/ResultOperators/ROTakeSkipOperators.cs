@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Statements;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
@@ -66,7 +67,7 @@ namespace LINQToTTreeLib.ResultOperators
             // Now, we create a count variable and that is how we will tell if we are still skipping or
             // taking. It must be declared in the current block, before our current code! :-)
 
-            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var counter = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int), otherDependencies: codeContext.LoopIndexVariable.Return<IDeclaredParameter>());
             if (isGlobalTake)
             {
                 counter.DeclareAsStatic = true;

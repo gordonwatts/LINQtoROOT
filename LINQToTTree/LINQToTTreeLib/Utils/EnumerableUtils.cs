@@ -11,13 +11,36 @@ namespace LINQToTTreeLib.Utils
     {
         /// <summary>
         /// Wrap a single object into a sequence of one.
+        /// Return the empty sequence if the object is null.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static IEnumerable<T> Return<T>(this T obj)
         {
+            if (obj == null)
+            {
+                return Enumerable.Empty<T>();
+            }
+
             return new T[] { obj };
+        }
+
+        /// <summary>
+        /// Apply a function to the sequence if this isn't null.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="obj"></param>
+        /// <param name="doIfNotNull"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> IfNotNull<T> (this IEnumerable<T> source, object obj, Func<IEnumerable<T>, IEnumerable<T>> doIfNotNull)
+        {
+            if (obj == null)
+            {
+                return source;
+            }
+            return doIfNotNull(source);
         }
 
         /// <summary>

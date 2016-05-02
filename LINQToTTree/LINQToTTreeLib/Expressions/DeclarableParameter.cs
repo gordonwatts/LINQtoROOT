@@ -1,10 +1,10 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using LINQToTTreeLib.Variables;
-using Remotion.Linq.Clauses.Expressions;
 using System;
-using System.Linq.Expressions;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Expressions
 {
@@ -45,9 +45,9 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="varType"></param>
         /// <returns></returns>
-        public static DeclarableParameter CreateDeclarableParameterExpression(Type varType)
+        public static DeclarableParameter CreateDeclarableParameterExpression(Type varType, IEnumerable<IDeclaredParameter> otherDependencies = null)
         {
-            return new DeclarableParameter(varType, varType.CreateUniqueVariableName());
+            return new DeclarableParameter(varType, varType.CreateUniqueVariableName(), otherDependencies);
         }
 
 
@@ -72,6 +72,11 @@ namespace LINQToTTreeLib.Expressions
         private Type _type;
 
         /// <summary>
+        /// The list of things that depend on this variable.
+        /// </summary>
+        private readonly IEnumerable<IDeclaredParameter> _dependants;
+
+        /// <summary>
         /// Return the expression type
         /// </summary>
         public override ExpressionType NodeType { get { return ExpressionType; } }
@@ -91,13 +96,17 @@ namespace LINQToTTreeLib.Expressions
         /// </summary>
         /// <param name="varType"></param>
         /// <param name="varName"></param>
-        protected DeclarableParameter(Type varType, string varName)
+        protected DeclarableParameter(Type varType, string varName, IEnumerable<IDeclaredParameter> otherDependencies = null)
         {
             _type = varType;
             if (varName == null)
                 throw new ArgumentNullException("varName");
             ParameterName = varName;
             DeclareAsStatic = false;
+
+            _dependants = this.Return<IDeclaredParameter>()
+                .IfNotNull(otherDependencies, t => t.Concat(otherDependencies))
+                .ToArray();
         }
 
         /// <summary>
@@ -165,7 +174,7 @@ namespace LINQToTTreeLib.Expressions
         {
             get
             {
-                return new IDeclaredParameter[] { this };
+                return _dependants;
             }
         }
 

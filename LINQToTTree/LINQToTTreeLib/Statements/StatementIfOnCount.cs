@@ -216,8 +216,10 @@ namespace LINQToTTreeLib.Statements
         /// <returns></returns>
         public override bool CommutesWithGatingExpressions(ICMStatementInfo followStatement)
         {
-            var varsAffected = followStatement.ResultVariables.Intersect(Limit.Dependants.Select(s => s.RawValue));
-            return !varsAffected.Any();
+            var varsAffectedResults = followStatement.ResultVariables.Intersect(Limit.Dependants.Concat(Counter.Dependants).Select(s => s.RawValue));
+            var varsAffectedDependents = followStatement.DependentVariables.Intersect(Counter.Dependants.Select(s => s.RawValue));
+
+            return !varsAffectedDependents.Any() || !varsAffectedDependents.Any();
         }
     }
 }
