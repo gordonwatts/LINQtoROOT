@@ -172,9 +172,15 @@ namespace LINQToTTreeLib.Optimization
             }
 
             // If this there is a variable declared in the block internally, then we can't lift it up and out.
+            // Also make sure that we can lift it past if there is a gating expression.
             if (block is ICMCompoundStatementInfo)
             {
-                if ((block as ICMCompoundStatementInfo).InternalResultVarialbes.Select(p => p.RawValue).Intersect(sDependent).Any())
+                var compoundInfo = block as ICMCompoundStatementInfo;
+                if (compoundInfo.InternalResultVarialbes.Select(p => p.RawValue).Intersect(sDependent).Any())
+                {
+                    return false;
+                }
+                if (!compoundInfo.CommutesWithGatingExpressions(sInfo))
                 {
                     return false;
                 }
