@@ -5,7 +5,7 @@ using System.Linq;
 namespace LINQToTTreeLib.Utils
 {
     /// <summary>
-    /// Help with enumerables to make life easier.
+    /// Help with enumerable objects to make life easier.
     /// </summary>
     static class EnumerableUtils
     {

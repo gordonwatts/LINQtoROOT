@@ -94,7 +94,7 @@ namespace LINQToTTreeLib.ResultOperators
             ///
             /// We are particularly fortunate here. We don't have to update the Loop variable - whatever it is, is
             /// still the right one! Normally we'd have to futz with the LoopVariable in code context because we
-            /// were iterating over something new. :-) Easy peasy.
+            /// were iterating over something new. :-) Easy!
             /// 
         }
     }

@@ -167,7 +167,7 @@ namespace LINQToTTreeLib.Statements
         }
 
         /// <summary>
-        /// We have a statement tha twe want to move out of this if statement. Make sure it isn't going to alter
+        /// We have a statement that we want to move out of this if statement. Make sure it isn't going to alter
         /// anything we are looking at in our if statement!
         /// </summary>
         /// <param name="followStatement"></param>
