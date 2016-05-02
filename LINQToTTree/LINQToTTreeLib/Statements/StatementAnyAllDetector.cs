@@ -88,18 +88,18 @@ namespace LINQToTTreeLib.Statements
             {
                 return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
             }
-            if (ResultValueToBe != otherS.ResultValueToBe)
+            if ((ResultValueToBe != otherS.ResultValueToBe) || ((Predicate == null && otherS.Predicate == null) || (Predicate != null && otherS.Predicate != null)))
             {
                 return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
             }
 
             var r = Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(ResultFastTest, otherS.ResultFastTest)
                 .RequireForEquivForExpression(Result, otherS.Result);
+
             if (Predicate != null)
             {
                 r = r
-                    .RequireForEquivForExpression(Predicate, otherS.Predicate);
+                    .RequireAreSame(Predicate, otherS.Predicate);
             }
             return r.ExceptFor(replaceFirst);
         }

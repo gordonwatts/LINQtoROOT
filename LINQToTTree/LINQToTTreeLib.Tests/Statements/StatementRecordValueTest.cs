@@ -182,6 +182,7 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.IsFalse(r.Item1);
         }
 
+#if false
         [TestMethod]
         public void RecordValueEquivDiffCalc()
         {
@@ -243,5 +244,6 @@ namespace LINQToTTreeLib.Tests.Statements
             var r = s1.RequiredForEquivalence(s2);
             Assert.IsFalse(r.Item1);
         }
+#endif
     }
 }

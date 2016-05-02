@@ -151,13 +151,12 @@ namespace LINQToTTreeLib.Statements
             }
             var s2 = other as StatementForLoop;
 
-            // Make sure the limit is the same, after applying the replacements.
+            // Make sure the limit is the same, along with the initial value, after applying the replacements. Then figure out the rename
+            // for the loop variable.
             var renames = Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(ArrayLength.RawValue, DependentVariables, s2.ArrayLength.RawValue, s2.DependentVariables);
-
-            // Now, the initial list of renames includes the loop variable and anything handed to us.
-            renames = renames
-                .RequireForEquivForExpression(_loopVariable.RawValue, s2._loopVariable.RawValue);
+                .RequireAreSame(ArrayLength, s2.ArrayLength)
+                .RequireAreSame(InitialValue, s2.InitialValue)
+                .RequireForEquivForExpression(_loopVariable, s2._loopVariable);
 
             // And do everything in the block
             return RequiredForEquivalenceForBase(other, renames)

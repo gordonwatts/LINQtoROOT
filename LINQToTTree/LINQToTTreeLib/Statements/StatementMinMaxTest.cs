@@ -75,7 +75,7 @@ namespace LINQToTTreeLib.Statements
             }
 
             return Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(exprToMinOrMaximize, otherS.exprToMinOrMaximize)
+                .RequireAreSame(exprToMinOrMaximize, otherS.exprToMinOrMaximize)
                 .RequireForEquivForExpression(vIsFilled, otherS.vIsFilled)
                 .RequireForEquivForExpression(MaxMinVariable, otherS.MaxMinVariable)
                 .ExceptFor(replaceFirst);

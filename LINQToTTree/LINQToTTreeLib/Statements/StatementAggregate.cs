@@ -135,11 +135,9 @@ namespace LINQToTTreeLib.Statements
             }
             var s2 = other as StatementAggregate;
 
-            return StatementUtils.MakeEquivalentSimpleExpressionAndResult(
-                ResultVariable.RawValue, s2.ResultVariable.RawValue,
-                Expression.RawValue, s2.Expression.RawValue,
-                DependentVariables, s2.DependentVariables,
-                replaceFirst);
+            return Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(ResultVariable, s2.ResultVariable)
+                .RequireAreSame(Expression, s2.Expression);
         }
 
         /// <summary>

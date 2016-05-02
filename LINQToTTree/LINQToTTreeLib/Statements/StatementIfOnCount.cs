@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LINQToTTreeLib.Utils;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Statements
@@ -170,6 +171,32 @@ namespace LINQToTTreeLib.Statements
             Combine(other, opt);
 
             return true;
+        }
+
+        /// <summary>
+        /// See if we can combine two of these.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="replaceFirst"></param>
+        /// <returns></returns>
+        public override Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
+        {
+            var otherS = other as StatementIfOnCount;
+            if (otherS == null)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            if (Comparison != otherS.Comparison)
+            {
+                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+            }
+
+            var renames = Tuple.Create(true, replaceFirst)
+                .RequireForEquivForExpression(Counter, otherS.Counter)
+                .RequireAreSame(Limit, otherS.Limit);
+
+            return RequiredForEquivalenceForBase(otherS, renames);
         }
 
         /// <summary>

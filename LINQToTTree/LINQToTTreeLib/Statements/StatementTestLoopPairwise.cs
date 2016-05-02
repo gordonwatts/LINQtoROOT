@@ -62,8 +62,8 @@ namespace LINQToTTreeLib.Statements
                 return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
 
             return Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(_whatIsGood, otherS._whatIsGood)
-                .RequireForEquivForExpression(_test, otherS._test)
+                .RequireAreSame(_whatIsGood, otherS._whatIsGood)
+                .RequireAreSame(_test, otherS._test)
                 .ExceptFor(replaceFirst);
         }
 

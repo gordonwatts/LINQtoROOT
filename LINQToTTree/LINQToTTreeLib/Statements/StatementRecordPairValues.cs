@@ -83,12 +83,12 @@ namespace LINQToTTreeLib.Statements
             }
 
             var r = Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(_index, otherS._index);
+                .RequireAreSame(_index, otherS._index);
 
             foreach (var spair in _savers.Zip(otherS._savers, (us, them) => Tuple.Create(us, them)))
             {
                 r = r
-                    .RequireForEquivForExpression(spair.Item1.indexValue, spair.Item2.indexValue)
+                    .RequireAreSame(spair.Item1.indexValue, spair.Item2.indexValue)
                     .RequireForEquivForExpression(spair.Item1.mapRecord, spair.Item2.mapRecord);
             }
 
@@ -126,6 +126,10 @@ namespace LINQToTTreeLib.Statements
                 return false;
 
             var isTheSame = _savers.Zip(other._savers, (f, s) => f.indexValue.RawValue == s.indexValue.RawValue && f.mapRecord.Type == s.mapRecord.Type).All(b => b);
+            if (!isTheSame)
+            {
+                return false;
+            }
 
             // Now we can do them all.
             foreach (var saver in _savers.Zip(other._savers, (f, s) => Tuple.Create(f, s)))

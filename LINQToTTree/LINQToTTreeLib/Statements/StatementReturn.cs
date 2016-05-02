@@ -53,7 +53,7 @@ namespace LINQToTTreeLib.Statements
             }
 
             return Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(_rtnValue, otherS._rtnValue)
+                .RequireAreSame(_rtnValue, otherS._rtnValue)
                 .ExceptFor(replaceFirst);
         }
 

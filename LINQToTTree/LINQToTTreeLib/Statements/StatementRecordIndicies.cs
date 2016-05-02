@@ -70,7 +70,7 @@ namespace LINQToTTreeLib.Statements
 
             return Tuple.Create(true, replaceFirst)
                 .RequireForEquivForExpression(_storageArray, otherS._storageArray)
-                .RequireForEquivForExpression(_intToRecord, otherS._intToRecord)
+                .RequireAreSame(_intToRecord, otherS._intToRecord)
                 .ExceptFor(replaceFirst);
         }
 

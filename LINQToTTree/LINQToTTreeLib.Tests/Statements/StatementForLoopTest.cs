@@ -314,6 +314,7 @@ namespace LINQToTTreeLib.Tests.Statements
             Assert.AreEqual(0, renames.Length, "# of renames");
         }
 
+#if false
         [TestMethod]
         public void ForLoopPropagateRenameToSecondStatement()
         {
@@ -390,6 +391,7 @@ namespace LINQToTTreeLib.Tests.Statements
             var renames = r.Item2.ToArray();
             Assert.AreEqual(1, renames.Length, "# of renames");
         }
+#endif
 
         [TestMethod]
         public void ForLoopRenameTwiceAsTarget()

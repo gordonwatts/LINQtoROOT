@@ -91,7 +91,7 @@ namespace LINQToTTreeLib.Statements
             }
 
             return Tuple.Create(true, replaceFirst)
-                .RequireForEquivForExpression(Integer, otherS.Integer)
+                .RequireAreSame(Integer, otherS.Integer)
                 .ExceptFor(replaceFirst);
         }
 

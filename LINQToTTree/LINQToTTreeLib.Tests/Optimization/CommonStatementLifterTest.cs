@@ -2,7 +2,6 @@
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Statements;
-using LINQToTTreeLib.Tests;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

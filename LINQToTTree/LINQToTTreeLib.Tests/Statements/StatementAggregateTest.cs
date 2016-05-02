@@ -113,6 +113,7 @@ namespace LINQToTTreeLib.Tests
             Assert.IsFalse(result, "Expected combination would work");
         }
 
+#if false
         [TestMethod]
         public void AggregateEquivalentSame()
         {
@@ -150,6 +151,7 @@ namespace LINQToTTreeLib.Tests
             var renames = r.Item2.ToArray();
             Assert.AreEqual(3, renames.Length);
         }
+#endif
 
         [TestMethod]
         public void AggregateEquivalentNotSame()
@@ -166,6 +168,7 @@ namespace LINQToTTreeLib.Tests
             Assert.IsFalse(r.Item1);
         }
 
+#if false
         [TestMethod]
         public void AggregateEquivalentSameWithPreRenames()
         {
@@ -183,6 +186,7 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(1, renames.Length);
             Assert.AreEqual(r1.RawValue, renames.Where(p => p.Item1 == r2.RawValue).First().Item2);
         }
+#endif
 
         /// <summary>
         /// Test object
