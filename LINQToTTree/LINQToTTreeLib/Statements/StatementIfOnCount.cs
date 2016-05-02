@@ -52,9 +52,9 @@ namespace LINQToTTreeLib.Statements
             /// 
 
             if (counter == null)
-                throw new ArgumentNullException("Can't have a lefthand value that is null");
+                throw new ArgumentNullException("Can't have a left hand value that is null");
             if (limit == null)
-                throw new ArgumentNullException("Cant have a righthand value that is null!");
+                throw new ArgumentNullException("Cant have a right hand value that is null!");
 
             ///
             /// Remember!
@@ -172,31 +172,6 @@ namespace LINQToTTreeLib.Statements
             return true;
         }
 
-#if false
-        /// <summary>
-        /// Make an attempt to combine if statements.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <param name="replaceFirst"></param>
-        /// <returns></returns>
-        public override Tuple<bool, IEnumerable<Tuple<string, string>>> RequiredForEquivalence(ICMStatementInfo other, IEnumerable<Tuple<string, string>> replaceFirst = null)
-        {
-            // Quick check.
-            if (!(other is StatementFilter))
-            {
-                return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
-            }
-            var s2 = other as StatementFilter;
-
-            // Do the test expression.
-            var renames = Tuple.Create(true, replaceFirst)
-                .RequireAreSame(TestExpression, s2.TestExpression);
-
-            // And do everything in the block
-            return RequiredForEquivalenceForBase(other, renames)
-                .ExceptFor(replaceFirst);
-        }
-#endif
         /// <summary>
         /// Rename everything
         /// </summary>
