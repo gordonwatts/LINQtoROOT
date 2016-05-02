@@ -194,7 +194,7 @@ namespace LINQToTTreeLib.Statements
             var varsAffectedResults = followStatement.ResultVariables.Intersect(Limit.Dependants.Concat(Counter.Dependants).Select(s => s.RawValue));
             var varsAffectedDependents = followStatement.DependentVariables.Intersect(Counter.Dependants.Select(s => s.RawValue));
 
-            return !varsAffectedDependents.Any() || !varsAffectedDependents.Any();
+            return !varsAffectedResults.Any() && !varsAffectedDependents.Any();
         }
     }
 }
