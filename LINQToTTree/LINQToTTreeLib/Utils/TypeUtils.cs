@@ -94,6 +94,16 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
+        /// We can trivially write this type out into a tree or similar.
+        /// </summary>
+        /// <param name="objectToDump"></param>
+        /// <returns></returns>
+        public static bool TypeIsEasilyDumped(this Type objectToDump)
+        {
+            return IsNumberType(objectToDump);
+        }
+
+        /// <summary>
         /// Extract a generic method burried inside an expression. Allows us to write somethign that makes sense,
         /// and have the computer pull everything out.
         /// </summary>

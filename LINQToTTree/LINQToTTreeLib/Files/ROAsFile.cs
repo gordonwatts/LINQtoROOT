@@ -51,6 +51,48 @@ namespace LINQToTTreeLib.Files
         public abstract Expression ProcessResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, IGeneratedQueryCode _codeEnv, ICodeContext _codeContext, CompositionContainer container);
 
         /// <summary>
+        /// Recursivly scan the types to build up a list of expressions to access everything.
+        /// </summary>
+        /// <param name="streamType"></param>
+        /// <param name="expressionToAccess"></param>
+        /// <param name="visitor"></param>
+        protected static void ScanExpressions (Type streamType, Expression expressionToAccess, Action<Expression> visitor)
+        {
+            // If this is a leaf, then dump it.
+            if (streamType.TypeIsEasilyDumped())
+            {
+                visitor(expressionToAccess);
+            }
+
+            // If it is a tuple, then we will have to go down one.
+            else if (streamType.Name.StartsWith("Tuple"))
+            {
+                var targs = streamType.GenericTypeArguments.Zip(Enumerable.Range(1, 100), (t, c) => Tuple.Create(t, c));
+                foreach (var templateType in targs)
+                {
+                    var access = Expression.PropertyOrField(expressionToAccess, $"Item{templateType.Item2}");
+                    ScanExpressions(templateType.Item1, access, visitor);
+                }
+            }
+
+            // Now look at the fields and properties.
+            else if ((streamType.GetFields().Length + streamType.GetProperties().Length) > 0)
+            {
+                foreach (var fName in (streamType.GetFieldsInDeclOrder().Select(f => f.Name).Concat(streamType.GetProperties().Select(p => p.Name))))
+                {
+                    var access = Expression.PropertyOrField(expressionToAccess, fName);
+                    ScanExpressions(access.Type, access, visitor);
+                }
+            }
+
+            // Really bad if we get here!
+            else
+            {
+                throw new InvalidOperationException($"Do not know how to generate values for a file from a sequence of {streamType.Name} objects!");
+            }
+        }
+
+        /// <summary>
         /// Helper function that extracts all expressions needed to calculate each value.
         /// </summary>
         /// <param name="queryModel"></param>
@@ -61,31 +103,7 @@ namespace LINQToTTreeLib.Files
             var streamSelector = queryModel.SelectClause.Selector;
 
             var itemValues = new List<Expression>();
-            if (streamType == typeof(double) || streamType == typeof(int))
-            {
-                // A single stream of doubles
-                itemValues.Add(queryModel.SelectClause.Selector);
-
-            }
-            else if (streamType.Name.StartsWith("Tuple"))
-            {
-                var targs = streamType.GenericTypeArguments.Zip(Enumerable.Range(1, 100), (t, c) => Tuple.Create(t, c));
-                foreach (var templateType in targs)
-                {
-                    itemValues.Add(Expression.PropertyOrField(streamSelector, $"Item{templateType.Item2}"));
-                }
-            }
-            else if ((streamType.GetFields().Length + streamType.GetProperties().Length) > 0)
-            {
-                foreach (var fName in(streamType.GetFieldsInDeclOrder().Select(f => f.Name).Concat(streamType.GetProperties().Select(p => p.Name))))
-                {
-                    itemValues.Add(Expression.PropertyOrField(streamSelector, fName));
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException($"Do not know how to generate values for a file from a sequence of {streamType.Name} objects!");
-            }
+            ScanExpressions(streamType, streamSelector, e => itemValues.Add(e));
 
             return itemValues;
         }

@@ -56,6 +56,13 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void CustomObjectInsideTuple()
+        {
+            var query1 = GeneratedCodeFor(QueryTupleOurCustomObjectWithTuple);
+            Assert.IsTrue(query1.DumpCode().Where(l => l.Contains("<<") && l.Contains(".run")).Any(), "At least one cout statement.");
+        }
+
+        [TestMethod]
         public void AsCSVSetsResultVariable()
         {
             // Check that the QM returns a "good" result.
@@ -365,11 +372,21 @@ namespace LINQToTTreeLib.Tests.Files
             public int col2;
             public double col3;
         }
+
         private static void QueryTupleOurCustomObject()
         {
             var q = new QueriableDummy<singleIntNtuple>();
             q
                 .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int) e.run, col3 = e.run})
+                .AsCSV(new FileInfo("hi.csv"));
+        }
+
+        private static void QueryTupleOurCustomObjectWithTuple()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run, col3 = e.run })
+                .Select(co => Tuple.Create(co, co.col1, co.col2))
                 .AsCSV(new FileInfo("hi.csv"));
         }
         #endregion

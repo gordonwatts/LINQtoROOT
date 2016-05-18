@@ -28,6 +28,52 @@ namespace LINQToTTreeLib.Files
         /// </summary>
         protected Expression _fileInfo;
 
+        private static int _counter = 0;
+
+        /// <summary>
+        /// Traverse the leaves of a type. Blow up if we can't figure out how to traverse it.
+        /// </summary>
+        /// <param name="outputType"></param>
+        /// <param name="visitor"></param>
+        protected void TraverseColumnsForOutput(Type outputType, Action<string> visitor, string prefix = null)
+        {
+            var namingPrefix = string.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}.";
+
+            if (outputType.TypeIsEasilyDumped())
+            {
+                // Simple leaf node.
+                if (string.IsNullOrWhiteSpace(prefix))
+                {
+                    visitor($"{outputType.Name}_{_counter}");
+                    _counter++;
+                } else
+                {
+                    visitor(prefix);
+                }
+            }
+            else if (outputType.Name.StartsWith("Tuple"))
+            {
+                // Tuple - Loop through all its internal bits
+                var genericArgs = outputType.GetGenericArguments();
+                foreach (var pIndex in genericArgs.Zip(Enumerable.Range(1, genericArgs.Length), (a, c) => Tuple.Create(a, c)))
+                {
+                    TraverseColumnsForOutput(pIndex.Item1, visitor, $"{namingPrefix}Item{pIndex.Item2}");
+                }
+            }
+            else
+            {
+                // Get a list of all field and property names, and go down one level.
+                var allNames = outputType.GetFieldsInDeclOrder().Select(f => Tuple.Create(f.FieldType, f.Name))
+                    .Concat(outputType.GetProperties().Select(p => Tuple.Create(p.PropertyType, p.Name)));
+
+                foreach (var f in allNames)
+                {
+                    TraverseColumnsForOutput(f.Item1, visitor, $"{namingPrefix}{f.Item2}");
+                }
+            }
+
+        }
+
         /// <summary>
         /// The expression node parser.
         /// </summary>
@@ -42,39 +88,7 @@ namespace LINQToTTreeLib.Files
             // information.
             var objectTypeToDump = parseInfo.ParsedExpression.Arguments[0].Type.GetGenericArguments()[0];
             var defaultColumnNames = new List<string>();
-
-            if (TypeIsEasilyDumped(objectTypeToDump))
-            {
-                defaultColumnNames.Add("col1");
-            }
-            else if (objectTypeToDump.Name.StartsWith("Tuple"))
-            {
-                // Tuple - so just name it something random.
-                var genericArgs = objectTypeToDump.GetGenericArguments();
-                foreach (var pIndex in Enumerable.Range(1, genericArgs.Length))
-                {
-                    if (!TypeIsEasilyDumped(genericArgs[pIndex - 1]))
-                    {
-                        throw new ArgumentException($"Unable to serialize type {genericArgs[pIndex - 1].Name} in Tuple");
-                    }
-                    defaultColumnNames.Add($"col{pIndex}");
-                }
-            }
-            else
-            {
-                // Get a list of all field and property names
-                var allNames = objectTypeToDump.GetFieldsInDeclOrder().Select(f => Tuple.Create(f.FieldType, f.Name))
-                    .Concat(objectTypeToDump.GetProperties().Select(p => Tuple.Create(p.PropertyType, p.Name)));
-
-                foreach (var f in allNames)
-                {
-                    if (!TypeIsEasilyDumped(f.Item1))
-                    {
-                        throw new ArgumentException($"Unable to serialize type {f.Item1.Name} in {objectTypeToDump.Name}");
-                    }
-                    defaultColumnNames.Add(f.Item2);
-                }
-            }
+            TraverseColumnsForOutput(objectTypeToDump, n => defaultColumnNames.Add(n));
 
             // Next, look at the columns that were given to us. Make sure there aren't too many.
             var finalColNames = new List<string>();
@@ -92,17 +106,6 @@ namespace LINQToTTreeLib.Files
             }
             finalColNames.AddRange(defaultColumnNames.Skip(finalColNames.Count));
             _columnNames = finalColNames.ToArray();
-        }
-
-        /// <summary>
-        /// Is this something that is easy to dump? Only int and long fit this for now.
-        /// </summary>
-        /// <param name="objectToDump"></param>
-        /// <returns></returns>
-        protected virtual bool TypeIsEasilyDumped(Type objectToDump)
-        {
-            return objectToDump == typeof(int)
-                || objectToDump == typeof(double);
         }
 
         /// <summary>
