@@ -270,6 +270,7 @@ namespace LINQToTTreeLib.Expressions
             bool CastToFinalType = false;
             string format = "{0}{1}{2}";
             bool treatAsPointers = false;
+            bool protectRHS = false;
 
             Type resultType = null;
             switch (expression.NodeType)
@@ -326,6 +327,7 @@ namespace LINQToTTreeLib.Expressions
                 case ExpressionType.Subtract:
                     op = "-";
                     resultType = expression.Type;
+                    protectRHS = true;
                     break;
 
                 // How we do array lookup depends on the array type we are looking up!
@@ -368,13 +370,11 @@ namespace LINQToTTreeLib.Expressions
             if (expression.Right.Type.Name.Contains("Anonymous"))
                 throw new ArgumentException(string.Format("Binary operators on Anonymous types are not supported: '{0}' - '{1}'", expression.Right.Type.Name, expression.Right.ToString()));
 
-            ///
-            /// Run the expression
-            /// 
-
-            var RHS = GetExpression(expression.Right);
+            // Get the LHS and RHS processed
             var LHS = GetExpression(expression.Left);
+            var RHS = GetExpression(expression.Right);
 
+            // Now build the expression as a string
             string sRHS, sLHS;
             if (CastToFinalType)
             {
@@ -388,7 +388,7 @@ namespace LINQToTTreeLib.Expressions
             }
 
             StringBuilder bld = new StringBuilder();
-            bld.AppendFormat(format, sLHS.ApplyParensIfNeeded(), op, sRHS.ApplyParensIfNeeded());
+            bld.AppendFormat(format, sLHS.ApplyParensIfNeeded(), op, sRHS.ApplyParensIfNeeded(protectRHS));
             _result = new ValSimple(bld.ToString(), resultType, RHS.Dependants.Concat(LHS.Dependants));
 
             return expression;

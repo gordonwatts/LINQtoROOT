@@ -59,7 +59,7 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="rv"></param>
         /// <returns></returns>
-        public static string ApplyParensIfNeeded(this string rv)
+        public static string ApplyParensIfNeeded(this string rv, bool protectNegativeNumbers = false)
         {
             if (string.IsNullOrWhiteSpace(rv))
                 throw new ArgumentNullException("Value must not be null");
@@ -72,12 +72,13 @@ namespace LINQToTTreeLib.Utils
                 return rv;
 
             // If it is just a number or similar, then match that
-
             if (gNumberFinder.Match(rv).Success)
-                return rv;
+            {
+                if (!protectNegativeNumbers || !rv.StartsWith("-"))
+                    return rv;
+            }
 
             // Special case where we already have this thing surrounded by parens.
-
             if (rv[0] == '(')
             {
                 int depth = 1;
