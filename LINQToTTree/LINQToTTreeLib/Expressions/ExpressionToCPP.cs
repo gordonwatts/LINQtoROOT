@@ -220,7 +220,8 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         protected override Expression VisitConstant(ConstantExpression expression)
         {
-            if (expression.Type == typeof(int))
+            if (expression.Type == typeof(int)
+                || expression.Type == typeof(uint))
             {
                 _result = new ValSimple(expression.Value.ToString(), expression.Type, null);
             }

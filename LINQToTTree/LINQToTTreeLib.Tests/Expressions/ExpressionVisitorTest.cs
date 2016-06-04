@@ -71,6 +71,7 @@ namespace LINQToTTreeLib
             new ConstantTestTemplate(){ ExpectedType=typeof(int), ExpectedValue="-10", expr = Expression.Constant(-10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(float), ExpectedValue="10.0", expr = Expression.Constant((float)10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(double), ExpectedValue="10.0", expr = Expression.Constant((double)10)},
+            new ConstantTestTemplate(){ ExpectedType=typeof(uint), ExpectedValue="10", expr = Expression.Constant((uint)10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(double), ExpectedValue="-10.0", expr = Expression.Constant((double)-10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="true", expr = Expression.Constant(true)},
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="false", expr = Expression.Constant(false)},
