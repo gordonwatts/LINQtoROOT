@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using LinqToTTreeInterfacesLib;
 using Remotion.Linq;
+using LINQToTTreeLib.QueryVisitors;
 
 namespace LINQToTTreeLib
 {
@@ -59,7 +60,7 @@ namespace LINQToTTreeLib
 
             // Parse the query
             var query = qp.QueryParser.GetParsedQuery(source.Expression);
-            return query.ToString();
+            return PrettyFormattingQueryVisitor.Format(query);
         }
 
         /// <summary>

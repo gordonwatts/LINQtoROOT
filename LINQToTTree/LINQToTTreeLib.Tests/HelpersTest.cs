@@ -45,6 +45,7 @@ namespace LINQToTTreeLib.Tests
 
             var sr = r.PrettyPrintQuery();
             Console.WriteLine(sr);
+            Assert.AreEqual(4, CountLines(sr));
         }
 
         [TestMethod]
@@ -72,5 +73,15 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(r.Contains("[rq].run * 2"));
 
         }
-}
+
+        /// <summary>
+        /// Count the number of lines.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        private int CountLines (string text)
+        {
+            return text.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).Count();
+        }
+    }
 }

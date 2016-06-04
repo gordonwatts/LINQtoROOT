@@ -206,6 +206,7 @@
     <Compile Include="QueryVisitors\EnumerableRangeExpression.cs" />
     <Compile Include="QueryVisitors\EnumerableRangeExpressionTransformer.cs" />
     <Compile Include="QueryVisitors\ExpressionVariableInvokeExpressionTransformer.cs" />
+    <Compile Include="QueryVisitors\PrettyFormattingQueryVisitor.cs" />
     <Compile Include="QueryVisitors\PropertyExpressionTransformer.cs" />
     <Compile Include="QueryVisitors\QueryVisitor.cs" />
     <Compile Include="QueryVisitors\FormattingQueryVisitor.cs" />
