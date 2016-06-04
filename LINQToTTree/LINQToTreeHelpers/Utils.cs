@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 namespace LINQToTreeHelpers
 {
     /// <summary>
@@ -55,6 +56,43 @@ namespace LINQToTreeHelpers
             result = result.Replace("<", "lt");
             result = result.Replace(">", "gt");
             return result;
+        }
+
+        /// <summary>
+        /// Do a string.Format, but if there is something like this "hi {0} there" and param[0] is "", then replace it
+        /// with "hi there" (only a single space).
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="replacements"></param>
+        /// <returns></returns>
+        public static string FormatStringWithoutDoubleSpaces(string format, params string[] replacements)
+        {
+            foreach (var p in replacements.ZipWithNumber())
+            {
+                if (string.IsNullOrEmpty(p.Item1))
+                {
+                    var refFmt = "{" + p.Item2.ToString() + "}";
+                    format = format.Replace($" {refFmt} ", $" ");
+                }
+            }
+
+            return string.Format(format, replacements);
+        }
+
+        /// <summary>
+        /// Return a tuple of the items, labeled with a number
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static IEnumerable<Tuple<T, int>> ZipWithNumber<T>(this IEnumerable<T> source)
+        {
+            int index = 0;
+            foreach (var item in source)
+            {
+                yield return Tuple.Create(item, index);
+                index++;
+            }
         }
 
         /// <summary>
@@ -113,6 +151,7 @@ namespace LINQToTreeHelpers
                 gLatexReplacements = new List<Tuple<Regex, string>>()
                 {
                     Tuple.Create(new Regex(@"\bpT\b"), "p_{T}"),
+                    Tuple.Create(new Regex(@"\bLxy\b"), "L_{xy}"),
                     Tuple.Create(new Regex(@"\bET\b"), "E_{T}"),
                     Tuple.Create(new Regex(@"\bMET\b"), "#slash{E}_{T}"),
                     Tuple.Create(new Regex(@"\bDR\b"), "#DeltaR"),

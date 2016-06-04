@@ -792,7 +792,7 @@ namespace LINQToTreeHelpers
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException("Title is null");
 
-            var titleString = string.Format(title, nameAndTitleFormatArgs);
+            var titleString = Utils.FormatStringWithoutDoubleSpaces(title, nameAndTitleFormatArgs);
             var nameString = string.Format(name, nameAndTitleFormatArgs).FixupForROOTName();
 
             var goodEvents = source;
@@ -819,7 +819,7 @@ namespace LINQToTreeHelpers
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException("Title is null");
 
-            var titleString = string.Format(title, nameAndTitleFormatArgs);
+            var titleString = Utils.FormatStringWithoutDoubleSpaces(title, nameAndTitleFormatArgs);
             var nameString = string.Format(name, nameAndTitleFormatArgs).FixupForROOTName();
 
             var goodEvents = sourceWithWeights;
@@ -864,7 +864,7 @@ namespace LINQToTreeHelpers
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException("Title is null");
 
-            var titleString = string.Format(title, nameAndTitleFormatArgs);
+            var titleString = Utils.FormatStringWithoutDoubleSpaces(title, nameAndTitleFormatArgs);
             var nameString = string.Format(name, nameAndTitleFormatArgs).FixupForROOTName();
 
             var goodEvents = source;
@@ -892,7 +892,7 @@ namespace LINQToTreeHelpers
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException("Title is null");
 
-            var titleString = string.Format(title, nameAndTitleFormatArgs);
+            var titleString = Utils.FormatStringWithoutDoubleSpaces(title, nameAndTitleFormatArgs);
             var nameString = string.Format(name, nameAndTitleFormatArgs).FixupForROOTName();
 
             var goodEvents = sourceWithWeights;

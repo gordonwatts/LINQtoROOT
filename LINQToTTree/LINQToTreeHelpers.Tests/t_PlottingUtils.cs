@@ -1,10 +1,12 @@
 ﻿using LINQToTTreeLib;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
 using System;
 using System.IO;
 using System.Linq;
+using static LINQToTTreeLib.TypeHandlers.ROOT.TypeHandlerROOT;
 
 namespace LINQToTreeHelpers.Tests
 {
@@ -119,6 +121,74 @@ namespace LINQToTreeHelpers.Tests
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
             Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
+        }
+
+        [TestMethod]
+        public void RemoveSpacesFromNames()
+        {
+            // Create the plot
+            var p = PlottingUtils.MakePlotterSpec<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>(10, 0.0, 10.0, evt => evt.jets.Select(j => j.myvectorofint).First(), "dude{0}", "fork {0}");
+
+            // Create the query. We aren't very intersted in the result, but rather the result.
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(p, " is hell");
+
+            var resultVar = DummyQueryExectuor.FinalResult.ResultValue as DeclarableParameter;
+            var rootObj = resultVar.InitialValue as ROOTObjectStaticHolder;
+
+            Assert.AreEqual("dudeishell", rootObj.OriginalName);
+            Assert.AreEqual("fork  is hell", rootObj.OriginalTitle);
+        }
+
+        [TestMethod]
+        public void DealwithAnEmptySubs()
+        {
+            // Create the plot
+            var p = PlottingUtils.MakePlotterSpec<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>(10, 0.0, 10.0, evt => evt.jets.Select(j => j.myvectorofint).First(), "dude{0}abides", "fork {0} this over");
+
+            // Create the query. We aren't very intersted in the result, but rather the result.
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(p, "");
+
+            var resultVar = DummyQueryExectuor.FinalResult.ResultValue as DeclarableParameter;
+            var rootObj = resultVar.InitialValue as ROOTObjectStaticHolder;
+
+            Assert.AreEqual("dudeabides", rootObj.OriginalName);
+            Assert.AreEqual("fork this over", rootObj.OriginalTitle);
+        }
+
+        [TestMethod]
+        public void DealwithTwoEmptySubs()
+        {
+            // Create the plot
+            var p = PlottingUtils.MakePlotterSpec<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>(10, 0.0, 10.0, evt => evt.jets.Select(j => j.myvectorofint).First(), "dude{0}{1}abides", "fork {0} {1} this over");
+
+            // Create the query. We aren't very intersted in the result, but rather the result.
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(p, "", "");
+
+            var resultVar = DummyQueryExectuor.FinalResult.ResultValue as DeclarableParameter;
+            var rootObj = resultVar.InitialValue as ROOTObjectStaticHolder;
+
+            Assert.AreEqual("dudeabides", rootObj.OriginalName);
+            Assert.AreEqual("fork this over", rootObj.OriginalTitle);
+        }
+
+        [TestMethod]
+        public void DealwithTwoEmptySubsAndKeepSpacesCorrectly()
+        {
+            // Create the plot
+            var p = PlottingUtils.MakePlotterSpec<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>(10, 0.0, 10.0, evt => evt.jets.Select(j => j.myvectorofint).First(), "dude{0}{1}abides", "fork {0}{1} this over");
+
+            // Create the query. We aren't very intersted in the result, but rather the result.
+            var q = new QueriableDummy<LINQToTTreeLib.TTreeQueryExecutorTest.TestNtupeArrEvents>();
+            var r = q.Plot(p, "", "hi");
+
+            var resultVar = DummyQueryExectuor.FinalResult.ResultValue as DeclarableParameter;
+            var rootObj = resultVar.InitialValue as ROOTObjectStaticHolder;
+
+            Assert.AreEqual("dudehiabides", rootObj.OriginalName);
+            Assert.AreEqual("fork hi this over", rootObj.OriginalTitle);
         }
 
         [TestMethod]
