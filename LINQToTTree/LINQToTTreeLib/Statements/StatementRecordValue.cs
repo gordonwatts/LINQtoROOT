@@ -165,7 +165,11 @@ namespace LINQToTTreeLib.Statements
 
             foreach (var o in s2._savers)
             {
-                var ms = _savers.Where(s => s.Item2.RawValue == o.Item2.RawValue).First();
+                var ms = _savers.Where(s => s.Item2.RawValue == o.Item2.RawValue).FirstOrDefault();
+                if (ms == null)
+                {
+                    return Tuple.Create(false, Enumerable.Empty<Tuple<string, string>>());
+                }
                 renames = renames
                     .RequireForEquivForExpression(o.Item1, ms.Item1);
             }

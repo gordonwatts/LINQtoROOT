@@ -171,6 +171,19 @@ namespace LINQToTTreeLib.Tests.Statements
         }
 
         [TestMethod]
+        public void RecordValueNotEquivalent()
+        {
+            var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
+            var seen1 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s1 = new StatementRecordValue(index, new ValSimple("i", typeof(int)), seen1, true);
+            var seen2 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            var s2 = new StatementRecordValue(index, new ValSimple("j", typeof(int)), seen2, true);
+
+            var r = s1.RequiredForEquivalence(s2);
+            Assert.IsFalse(r.Item1);
+        }
+
+        [TestMethod]
         public void RecordValueEquivDiffRecord()
         {
             var index = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
