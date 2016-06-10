@@ -6,10 +6,12 @@ using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
 using Remotion.Linq.Clauses;
+using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing.Structure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.Tests
@@ -36,8 +38,12 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.AddPart(new EnumerableRangeArrayTypeFactory());
             MEFUtilities.AddPart(new GroupByFactory());
             MEFUtilities.AddPart(new GroupByArrayFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
 
-            MEFUtilities.AddPart(new LINQToTTreeLib.ResultOperators.ROTakeSkipOperators());
+            MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new ROFirstLast());
+            MEFUtilities.AddPart(new ROCount());
+
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
@@ -155,42 +161,85 @@ namespace LINQToTTreeLib.Tests
         public void IEnumerableFromCustomObjectDirect()
         {
             // Custom object backed by a straight array.
-
-            Expression<Func<int[], IEnumerable<int>>> f = d => new ObjWithEnumerable() { a = d }.a;
-            var l = f as LambdaExpression;
-            var e = l.Body;
-
-            var gc = new GeneratedCode();
-            var cc = new CodeContext();
-            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
-            var r = ArrayExpressionParser.ParseArrayExpression(s, e, gc, cc, MEFUtilities.MEFContainer);
-            Assert.IsNotNull(r);
-            Assert.IsNotNull(cc.LoopVariable, "loop variable");
+            var e = GenerateExpression(d => new ObjWithEnumerable() { a = d }.a);
+            ExecuteArrayParseOnExpression(e);
         }
 
         [TestMethod]
         public void IEnumerableOverLocalArray()
         {
-            // Custom object backed by a straight array.
+            // Double check local array argument works.
+            var e = GenerateExpression(d => d);
+            ExecuteArrayParseOnExpression(e);
+        }
 
-            Expression<Func<int[], IEnumerable<int>>> f = d => d;
-            var l = f as LambdaExpression;
-            var e = l.Body;
+        [TestMethod]
+        public void IEnumerableAsQuery()
+        {
+            var e = GetModel(d => d.Where(t => t > 5));
+            ExecuteArrayParseOnExpression(e);
+        }
 
+        [TestMethod]
+        public void IEnumerableCustomObjectWithSubQuery()
+        {
+            var e = GetModel(d => new ObjWithEnumerable() { a = d.Where(t => t > 5) }.a);
+            ExecuteArrayParseOnExpression(e);
+        }
+
+        [TestMethod]
+        public void IEnumerableCustomObjectGenerated()
+        {
+            var e = GetModel(d => d.Select(t => new ObjWithEnumerable() { a = d }).First().a);
+            ExecuteArrayParseOnExpression(e);
+        }
+
+        [TestMethod]
+        public void IEnumerableCustomObjectWithComplexQueryGenerated()
+        {
+            var e = GetModel(d => d.Select(t => new ObjWithEnumerable() { a = d.Where(ft => ft > 5) }).Where(jt => jt.a.Count() > 15).First().a);
+            var gc = ExecuteArrayParseOnExpression(e);
+            Assert.IsTrue(gc.DumpCode().Where(l => l.Contains(">15")).Any(), "Missing a '>15' in the code");
+        }
+
+        /// <summary>
+        /// Do the work of executing the array parse
+        /// </summary>
+        /// <param name="e"></param>
+        private static GeneratedCode ExecuteArrayParseOnExpression(Expression e)
+        {
             var gc = new GeneratedCode();
             var cc = new CodeContext();
             IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
             var r = ArrayExpressionParser.ParseArrayExpression(s, e, gc, cc, MEFUtilities.MEFContainer);
 
             gc.DumpCodeToConsole();
-            Assert.IsNotNull(r);
             Assert.IsNotNull(cc.LoopVariable, "loop variable");
+
+            return gc;
         }
 
-        private QueryModel GetModel<T>(Expression<Func<T>> expr)
+        /// <summary>
+        /// Shortcut to extract an arbitrary expression.
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private Expression GenerateExpression(Expression<Func<int[], IEnumerable<int>>> func)
+        {
+            var l = func as LambdaExpression;
+            return l.Body;
+        }
+
+        /// <summary>
+        /// Return a SQE for a given model.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        private SubQueryExpression GetModel(Expression<Func<int[], IEnumerable<int>>> expr)
         {
             var parser = QueryParser.CreateDefault();
-            return parser.GetParsedQuery(expr.Body);
+            return new SubQueryExpression(parser.GetParsedQuery(expr.Body));
         }
 
         class dummyntup

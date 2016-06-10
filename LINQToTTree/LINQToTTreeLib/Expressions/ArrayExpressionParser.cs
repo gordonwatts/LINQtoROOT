@@ -224,6 +224,40 @@ namespace LINQToTTreeLib.Expressions
     }
 
     /// <summary>
+    /// User has something that ends in an array that is a member access. For example, if we see something like the following:
+    /// new ObjWithEnumerable() { a = d.Where(t => t > 5) }.a
+    /// </summary>
+    [Export(typeof(IArrayInfoFactory))]
+    internal class MemberAccessArrayTypeFactory : IArrayInfoFactory
+    {
+        /// <summary>
+        /// Look to see if this is a member access, and if so, then attempt to decode it.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="gc"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <param name="ReGetIArrayInfo"></param>
+        /// <returns></returns>
+        public IArrayInfo GetIArrayInfo(Expression expr, IGeneratedQueryCode gc, ICodeContext cc, CompositionContainer container, Func<Expression, IArrayInfo> ReGetIArrayInfo)
+        {
+            // Make sure this is an expression we expect to be dealing with!
+            if (expr.NodeType != ExpressionType.MemberAccess)
+                return null;
+
+            // get the root expression, and decode it.
+            var ma = expr as MemberExpression;
+            var resolved = ma.Expression.Resolve(gc, cc, container);
+            if (resolved == ma.Expression)
+                return null;
+
+            // Create a new member access and attempt to resolve that mess.
+            var maNew = Expression.MakeMemberAccess(resolved, ma.Member);
+            return ReGetIArrayInfo(maNew);
+        }
+    }
+
+    /// <summary>
     /// The person is trying to loop over an Enumerable.Range expression. Bring it.
     /// </summary>
     [Export(typeof(IArrayInfoFactory))]

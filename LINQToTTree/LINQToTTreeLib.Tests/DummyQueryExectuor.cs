@@ -111,6 +111,7 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new EnumerableRangeArrayTypeFactory());
                 MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
                 MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+                MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
                 MEFUtilities.AddPart(new HandleGroupType());
                 MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
 

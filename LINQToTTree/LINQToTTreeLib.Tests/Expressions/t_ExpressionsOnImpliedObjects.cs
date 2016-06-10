@@ -26,6 +26,7 @@ namespace LINQToTTreeLib.Tests.Expressions
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             MEFUtilities.AddPart(new HandleGroupType());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
         }
 

@@ -58,6 +58,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
@@ -109,6 +110,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
@@ -127,6 +129,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
@@ -278,6 +281,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new TakeOperatorTestLoopVar());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             GeneratedCode gc = new GeneratedCode();
@@ -364,6 +368,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
@@ -401,6 +406,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROCount());
             MEFUtilities.AddPart(new ROAggregate());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new ROTakeSkipOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
@@ -443,6 +449,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(dummyntup) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
@@ -984,6 +991,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
@@ -1011,6 +1019,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
@@ -1038,6 +1047,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
@@ -1065,6 +1075,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
@@ -1090,6 +1101,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new ROAggregate());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
@@ -1120,6 +1132,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             var myth = new TypeHandlerCache();
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());

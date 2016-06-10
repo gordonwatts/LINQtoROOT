@@ -30,6 +30,7 @@ namespace LINQToTTreeLib
             TestUtils.ResetLINQLibrary();
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
             MEFUtilities.AddPart(new HandleGroupType());
             MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
