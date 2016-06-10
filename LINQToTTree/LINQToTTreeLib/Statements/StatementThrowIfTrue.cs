@@ -1,9 +1,8 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
+using System;
 using System.Collections.Generic;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.Utils;
 using System.Linq;
-using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.Statements
 {
