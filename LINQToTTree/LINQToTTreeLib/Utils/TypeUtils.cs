@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -139,6 +140,36 @@ namespace LINQToTTreeLib.Utils
         {
             return obj.GetFields()
                 .OrderBy(f => f.MetadataToken);
+        }
+
+        /// <summary>
+        /// Returns the fully qualified name, including for generic parameters.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string FullyQualifiedName(this Type obj)
+        {
+            if (!obj.IsGenericType && !obj.IsGenericTypeDefinition)
+            {
+                return obj.Name;
+            }
+
+            var bld = new StringBuilder();
+            bld.Append(obj.Name.Substring(0, obj.Name.IndexOf("`")));
+            bld.Append("<");
+            bool first = true;
+            foreach (var arg in obj.GenericTypeArguments)
+            {
+                if (!first)
+                {
+                    bld.Append(",");
+                }
+                first = false;
+                bld.Append(arg.FullyQualifiedName());
+            }
+            bld.Append(">");
+
+            return bld.ToString();
         }
     }
 }

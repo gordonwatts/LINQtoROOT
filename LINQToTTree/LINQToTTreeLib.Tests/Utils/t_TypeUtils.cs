@@ -28,7 +28,24 @@ namespace LINQToTTreeLib.Tests
             var name = typeof(int[]).CreateUniqueVariableName();
             Console.WriteLine(name);
             Assert.IsFalse(name.Contains("["), "Name contains a [");
+        }
 
+        [TestMethod]
+        public void NameSimple()
+        {
+            Assert.AreEqual("Int32", typeof(int).FullyQualifiedName());
+        }
+
+        [TestMethod]
+        public void NameGeneric()
+        {
+            Assert.AreEqual("IEnumerable<Int32>", typeof(IEnumerable<int>).FullyQualifiedName());
+        }
+
+        [TestMethod]
+        public void NameNestedeneric()
+        {
+            Assert.AreEqual("IEnumerable<IList<Int32>>", typeof(IEnumerable<IList<int>>).FullyQualifiedName());
         }
     }
 }

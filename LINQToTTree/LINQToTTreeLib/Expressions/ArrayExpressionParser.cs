@@ -60,7 +60,7 @@ namespace LINQToTTreeLib.Expressions
             var result = _parser.GetIArrayInfo(expr, gc, cc, container);
 
             if (result == null)
-                throw new InvalidOperationException(string.Format("Unable to turn expression '{0}' (type: '{1}') into a sequence we can deal with in C++", expr.ToString(), expr.Type.Name));
+                throw new InvalidOperationException(string.Format("Unable to turn expression '{0}' (type: '{1}') into a sequence we can deal with in C++", expr.ToString(), expr.Type.FullyQualifiedName()));
 
             //
             // Turn it into code - any code that we need.
