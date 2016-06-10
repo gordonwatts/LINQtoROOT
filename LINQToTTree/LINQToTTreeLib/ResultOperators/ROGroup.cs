@@ -174,7 +174,7 @@ namespace LINQToTTreeLib.ResultOperators
     /// Deal with the group by type. Const References come down here (because we create them above).
     /// </summary>
     [Export(typeof(IArrayInfoFactory))]
-    internal class GroupByArrayFactor : IArrayInfoFactory
+    internal class GroupByArrayFactory : IArrayInfoFactory
     {
         /// <summary>
         /// See if we can't resolve a group-by object into a looper of some sort.
