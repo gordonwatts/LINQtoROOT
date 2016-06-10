@@ -60,7 +60,7 @@ namespace LINQToTTreeLib.Expressions
             var result = _parser.GetIArrayInfo(expr, gc, cc, container);
 
             if (result == null)
-                throw new InvalidOperationException(string.Format("Unable to turn expression '{0}' (type: '{1}') into a sequence we can deal with in C++", expr.ToString(), expr.Type.FullyQualifiedName()));
+                throw new InvalidOperationException($"Can't figure out how to loop over this array: '{expr.ToString()}' (expression: '{expr.NodeType}', type: '{expr.Type.FullyQualifiedName()}')");
 
             //
             // Turn it into code - any code that we need.
@@ -70,7 +70,7 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// Given an array expression return an array info that cna be used
+        /// Given an array expression return an array info that can be used
         /// for the various needed things. Throws if it can't figure out how to do
         /// a loop. It might return null, in which case the array index context has
         /// just been "setup".

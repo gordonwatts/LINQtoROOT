@@ -120,8 +120,23 @@ namespace LINQToTTreeLib.Tests
             IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
             var arr = Expression.Variable(typeof(int[]), "d");
             var cvt = Expression.Convert(arr, typeof(IEnumerable<int>));
-            ArrayExpressionParser.ParseArrayExpression(s, cvt, gc, cc, MEFUtilities.MEFContainer);
+            var r = ArrayExpressionParser.ParseArrayExpression(s, cvt, gc, cc, MEFUtilities.MEFContainer);
+            Assert.IsNotNull(r);
             Assert.IsNotNull(cc.LoopVariable, "loop variable");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void IEnumerableWithNothingBehindItCheck()
+        {
+            // We can't loop over a random ienumerable - that isn't enough infomration
+            // about where the loop came from (so we can't build the loop unless we know what we
+            // are looping over!).
+            var gc = new GeneratedCode();
+            var cc = new CodeContext();
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
+            var arr = Expression.Variable(typeof(IEnumerable<int>), "d");
+            var r = ArrayExpressionParser.ParseArrayExpression(s, arr, gc, cc, MEFUtilities.MEFContainer);
         }
 
         private QueryModel GetModel<T>(Expression<Func<T>> expr)
