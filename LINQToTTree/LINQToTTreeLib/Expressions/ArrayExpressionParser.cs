@@ -164,7 +164,11 @@ namespace LINQToTTreeLib.Expressions
         {
             var preplacements = ParameterReplacementExpressionVisitor.ReplaceParameters(expr, cc);
             var r = TranslatingExpressionVisitor.Translate(preplacements, cc.CacheCookies, e => e);
-            return r as SubQueryExpression;
+            if (r == preplacements)
+            {
+                return null;
+            }
+            return r;
         }
     }
 

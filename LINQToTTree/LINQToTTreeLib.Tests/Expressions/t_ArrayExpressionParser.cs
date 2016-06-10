@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.ResultOperators;
 using LINQToTTreeLib.TypeHandlers;
 using LINQToTTreeLib.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,9 +28,15 @@ namespace LINQToTTreeLib.Tests
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new TypeHandlerCache());
             MEFUtilities.AddPart(new DealWithInt32());
+
             MEFUtilities.AddPart(new ArrayArrayInfoFactory());
             MEFUtilities.AddPart(new SubQueryArrayTypeFactory());
+            MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
             MEFUtilities.AddPart(new TranslatedArrayInfoFactory());
+            MEFUtilities.AddPart(new EnumerableRangeArrayTypeFactory());
+            MEFUtilities.AddPart(new GroupByFactory());
+            MEFUtilities.AddPart(new GroupByArrayFactory());
+
             MEFUtilities.AddPart(new LINQToTTreeLib.ResultOperators.ROTakeSkipOperators());
             GeneratedCode gc = new GeneratedCode();
             CodeContext cc = new CodeContext();
@@ -137,6 +144,47 @@ namespace LINQToTTreeLib.Tests
             IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
             var arr = Expression.Variable(typeof(IEnumerable<int>), "d");
             var r = ArrayExpressionParser.ParseArrayExpression(s, arr, gc, cc, MEFUtilities.MEFContainer);
+        }
+
+        class ObjWithEnumerable
+        {
+            public IEnumerable<int> a;
+        }
+
+        [TestMethod]
+        public void IEnumerableFromCustomObjectDirect()
+        {
+            // Custom object backed by a straight array.
+
+            Expression<Func<int[], IEnumerable<int>>> f = d => new ObjWithEnumerable() { a = d }.a;
+            var l = f as LambdaExpression;
+            var e = l.Body;
+
+            var gc = new GeneratedCode();
+            var cc = new CodeContext();
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
+            var r = ArrayExpressionParser.ParseArrayExpression(s, e, gc, cc, MEFUtilities.MEFContainer);
+            Assert.IsNotNull(r);
+            Assert.IsNotNull(cc.LoopVariable, "loop variable");
+        }
+
+        [TestMethod]
+        public void IEnumerableOverLocalArray()
+        {
+            // Custom object backed by a straight array.
+
+            Expression<Func<int[], IEnumerable<int>>> f = d => d;
+            var l = f as LambdaExpression;
+            var e = l.Body;
+
+            var gc = new GeneratedCode();
+            var cc = new CodeContext();
+            IQuerySource s = new DummyQueryReference() { ItemName = "q", ItemType = typeof(int) };
+            var r = ArrayExpressionParser.ParseArrayExpression(s, e, gc, cc, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+            Assert.IsNotNull(r);
+            Assert.IsNotNull(cc.LoopVariable, "loop variable");
         }
 
         private QueryModel GetModel<T>(Expression<Func<T>> expr)
