@@ -1,6 +1,7 @@
 ﻿using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Utils;
+using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing;
 using System;
@@ -269,11 +270,17 @@ namespace LINQToTTreeLib
                 sourceIndex = Expression.ArrayIndex(sourceIndex, arrayExpression);
             }
 
+            // The array indexer must be an integer. Force the issue if it wasn't already. The reason this
+            // may not have been previously done is sometimes the indexer contains a fairly complex query expression
+            // for which simple resolution isn't possible.
             if (sourceIndex.Type != typeof(int))
-                throw new NotImplementedException("Array index expression is not an integer (it is a '" + sourceIndex.Type.Name + "') - failed with '" + expression.ToString() + "'");
+            {
+                sourceIndex = VisitExpressionImplemented(Resolver(sourceIndex));
+                if (sourceIndex.Type != typeof(int))
+                    throw new NotImplementedException("Array index expression is not an integer (it is a '" + sourceIndex.Type.Name + "') - failed with '" + expression.ToString() + "'");
+            }
 
-            // Now we are ready to build up our results.
-
+            // Now we are ready to build up our results and return the information as a summary.
             return new ArrayPointerInfo()
             {
                 TargetMemberExpression = Expression.MakeMemberAccess(rootObject, indexTargetMember),
@@ -320,17 +327,11 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private Expression FindObjectOfType(Expression sourceExpression, Type type)
         {
-            ///
-            /// Is it easy??
-            /// 
-
+            // Are we done and don't know it?
             if (sourceExpression.Type == type)
                 return sourceExpression;
 
-            ///
-            /// ok, check for each type that we know how to unravel...
-            /// 
-
+            // Now, go down a level as best we can.
             if (sourceExpression.NodeType == ExpressionType.MemberAccess)
             {
                 var memberAccess = sourceExpression as MemberExpression;
@@ -343,7 +344,13 @@ namespace LINQToTTreeLib
                 return FindObjectOfType(arrayAccess.Left, type);
             }
 
-            throw new NotImplementedException("Don't know how to get back into '" + sourceExpression.NodeType.ToString() + "'");
+            if (sourceExpression is SubQueryExpression)
+            {
+                var sqe = sourceExpression as SubQueryExpression;
+                return FindObjectOfType(sqe.QueryModel.MainFromClause.FromExpression, type);
+            }
+
+            throw new NotImplementedException($"Don't know how to get back into '{sourceExpression.NodeType.ToString()}' ({sourceExpression.GetType().FullyQualifiedName()})");
         }
 
         /// <summary>
