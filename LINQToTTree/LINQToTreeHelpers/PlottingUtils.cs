@@ -55,6 +55,16 @@ namespace LINQToTreeHelpers
             Expression<Func<T, ROOTNET.Interface.NTH1, int>> Bin { get; }
 
             /// <summary>
+            /// Returns the expression used to fill the plot's x Axis.
+            /// </summary>
+            Expression<Func<T, double>> ValueExpressionX { get; }
+
+            /// <summary>
+            /// Gets the expression used to fill the plot's y axis. 0 if there is none.
+            /// </summary>
+            Expression<Func<T, double>> ValueExpressionY { get; }
+
+            /// <summary>
             /// Combine the plots to make a new plot. For example, combine two 1D plots.
             /// </summary>
             /// <param name="otherPlot"></param>
@@ -176,6 +186,22 @@ namespace LINQToTreeHelpers
                 {
                     throw new InvalidOperationException("Don't know how to get the bin number for a sequence of items.");
                 }
+            }
+
+            /// <summary>
+            /// Get the expression for the x value
+            /// </summary>
+            public Expression<Func<IEnumerable<T>, double>> ValueExpressionX
+            {
+                get { throw new InvalidOperationException("Don't know how to get the value for a sequence of items."); }
+            }
+
+            /// <summary>
+            /// Get the expression for the y value
+            /// </summary>
+            public Expression<Func<IEnumerable<T>, double>> ValueExpressionY
+            {
+                get { throw new InvalidOperationException("Don't know how to get the value for a sequence of items."); }
             }
 
             /// <summary>
@@ -338,6 +364,22 @@ namespace LINQToTreeHelpers
 
                 }
             }
+
+            /// <summary>
+            /// Get the expression for the x value
+            /// </summary>
+            public Expression<Func<U, double>> ValueExpressionX
+            {
+                get { return t => Plotter.ValueExpressionX.Invoke(Converter.Invoke(t)); }
+            }
+
+            /// <summary>
+            /// Get the expression for the y value
+            /// </summary>
+            public Expression<Func<U, double>> ValueExpressionY
+            {
+                get { return t => Plotter.ValueExpressionY.Invoke(Converter.Invoke(t)); }
+            }
         }
 
         /// <summary>
@@ -440,6 +482,22 @@ namespace LINQToTreeHelpers
                     Expression<Func<T, NTH1, int>> r = (o, h) => h.FindBin(getter.Invoke(o));
                     return r;
                 }
+            }
+
+            /// <summary>
+            /// Get the expression for the x value
+            /// </summary>
+            public Expression<Func<T, double>> ValueExpressionX
+            {
+                get { return getter; }
+            }
+
+            /// <summary>
+            /// Get the value for y - since this is 1d, return zer0.
+            /// </summary>
+            public Expression<Func<T, double>> ValueExpressionY
+            {
+                get { return t => 0.0; }
             }
 
             /// <summary>
@@ -563,6 +621,22 @@ namespace LINQToTreeHelpers
                     Expression<Func<T, NTH1, int>> r = (o, h) => h.FindBin(xgetter.Invoke(o), ygetter.Invoke(o));
                     return r;
                 }
+            }
+
+            /// <summary>
+            /// Get the expression for the x value
+            /// </summary>
+            public Expression<Func<T, double>> ValueExpressionX
+            {
+                get { return xgetter; }
+            }
+
+            /// <summary>
+            /// Get the expression for the y value
+            /// </summary>
+            public Expression<Func<T, double>> ValueExpressionY
+            {
+                get { return ygetter; }
             }
 
             /// <summary>
