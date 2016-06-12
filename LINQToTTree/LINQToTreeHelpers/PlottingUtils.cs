@@ -299,13 +299,17 @@ namespace LINQToTreeHelpers
                     throw new InvalidOperationException($"Do not know how to combine a PlotSpecConverter with ${otherPlot.GetType().FullyQualifiedName()}.");
                 }
 
+                // Sort out the title
+                var xInfo = TitleFormat.ExtractHistoTitleInfo();
+                var yInfo = oth.TitleFormat.ExtractHistoTitleInfo();
+                string title = $"{xInfo.Title} vs {yInfo.Title}; {xInfo.AxisTitle}; {yInfo.AxisTitle}";
 
                 // Ok, combine the plotters, and then do the conversion.
                 var newPlotter = Plotter.CombinePlotAxes(oth.Plotter);
                 return new PlotSpecConverter<T, U>()
                 {
-                    NameFormat = this.NameFormat,
-                    TitleFormat = this.TitleFormat,
+                    NameFormat = $"{this.NameFormat}{oth.NameFormat}",
+                    TitleFormat = title,
                     Filter = this.Filter,
                     Plotter = newPlotter,
                     Converter = this.Converter,
@@ -468,8 +472,7 @@ namespace LINQToTreeHelpers
                 // Simple builder
                 var xInfo = TitleFormat.ExtractHistoTitleInfo();
                 var yInfo = other1D.TitleFormat.ExtractHistoTitleInfo();
-
-                string title = $"{xInfo.Title} vs {yInfo.Title}; {xInfo.AxisTitle}; {yInfo.Title}";
+                string title = $"{xInfo.Title} vs {yInfo.Title}; {xInfo.AxisTitle}; {yInfo.AxisTitle}";
 
                 return MakePlotterSpec(nbins, xmin, xmax, getter,
                     other1D.nbins, other1D.xmin, other1D.xmax, other1D.getter,
