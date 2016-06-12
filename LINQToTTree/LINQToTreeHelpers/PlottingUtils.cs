@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using ROOTNET.Interface;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTreeHelpers
 {
@@ -52,6 +53,13 @@ namespace LINQToTreeHelpers
             /// Get the bin function. This applied to T will give you the bin number in the histogram.
             /// </summary>
             Expression<Func<T, ROOTNET.Interface.NTH1, int>> Bin { get; }
+
+            /// <summary>
+            /// Combine the plots to make a new plot. For example, combine two 1D plots.
+            /// </summary>
+            /// <param name="otherPlot"></param>
+            /// <returns></returns>
+            IPlotSpec<T> CombinePlotAxes(IPlotSpec<T> otherPlot);
 
             /// <summary>
             /// Return a future value for the plot, with a full name and title as specified, from
@@ -131,6 +139,30 @@ namespace LINQToTreeHelpers
                     Filter = this.Filter,
                     Weight = this.Weight,
                     Plotter = this.Plotter
+                };
+            }
+
+            /// <summary>
+            /// Combine this plotter along two axes. We do the one below us, and then build this guy up.
+            /// </summary>
+            /// <param name="otherPlot"></param>
+            /// <returns></returns>
+            public IPlotSpec<IEnumerable<T>> CombinePlotAxes(IPlotSpec<IEnumerable<T>> otherPlot)
+            {
+                var oth = otherPlot as PlotSpecSequence<T>;
+                if (oth == null)
+                {
+                    throw new InvalidOperationException($"Do not know how to combine axies with a PlotSpecSequence and {otherPlot.GetType().FullyQualifiedName()}.");
+                }
+
+                var newPlotter = Plotter.CombinePlotAxes(oth.Plotter);
+                return new PlotSpecSequence<T>()
+                {
+                    NameFormat = this.NameFormat,
+                    TitleFormat = this.TitleFormat,
+                    Filter = this.Filter,
+                    Weight = this.Weight,
+                    Plotter = newPlotter
                 };
             }
 
@@ -227,6 +259,41 @@ namespace LINQToTreeHelpers
                 };
             }
 
+            /// <summary>
+            /// Given two plots, see if we can combine them.
+            /// </summary>
+            /// <param name="otherPlot"></param>
+            /// <returns></returns>
+            public IPlotSpec<U> CombinePlotAxes(IPlotSpec<U> otherPlot)
+            {
+                // See if the other one is a converter too. If not, then we have to give up.
+                var oth = otherPlot as PlotSpecConverter<T, U>;
+                if (oth == null)
+                {
+                    throw new InvalidOperationException($"Do not know how to combine a PlotSpecConverter with ${otherPlot.GetType().FullyQualifiedName()}.");
+                }
+
+
+                // Ok, combine the plotters, and then do the conversion.
+                var newPlotter = Plotter.CombinePlotAxes(oth.Plotter);
+                return new PlotSpecConverter<T, U>()
+                {
+                    NameFormat = this.NameFormat,
+                    TitleFormat = this.TitleFormat,
+                    Filter = this.Filter,
+                    Plotter = newPlotter,
+                    Converter = this.Converter,
+                    Weight = this.Weight
+                };
+            }
+
+            /// <summary>
+            /// Make a future plot - this is mostly doing the conversion and passing it on down.
+            /// </summary>
+            /// <param name="nameString"></param>
+            /// <param name="titleString"></param>
+            /// <param name="goodEvents"></param>
+            /// <returns></returns>
             public IFutureValue<ROOTNET.Interface.NTH1> MakeFuturePlot(string nameString, string titleString, IQueryable<Tuple<U, double>> goodEvents)
             {
                 return ConvertEvents(goodEvents)
@@ -343,6 +410,26 @@ namespace LINQToTreeHelpers
                 };
             }
 
+            /// <summary>
+            /// Combine another plot into this one to make a new one.
+            /// </summary>
+            /// <param name="otherPlot"></param>
+            /// <returns></returns>
+            public IPlotSpec<T> CombinePlotAxes(IPlotSpec<T> otherPlot)
+            {
+                var other1D = otherPlot as PlotSpec1D<T>;
+                if (other1D == null)
+                {
+                    throw new InvalidOperationException($"Do not know how to combine a 1D plot and a {otherPlot.GetType().FullyQualifiedName()}.");
+                }
+
+                // Simple builder
+                return MakePlotterSpec(nbins, xmin, xmax, getter,
+                    other1D.nbins, other1D.xmin, other1D.xmax, other1D.getter,
+                    nameFormat: NameFormat, titleFormat: TitleFormat,
+                    filter: Filter,
+                    weight: Weight);
+            }
             /// <summary>
             /// Return an expression that will extract the bin
             /// </summary>
@@ -538,6 +625,16 @@ namespace LINQToTreeHelpers
                     ymax = this.ymax,
                     ymin = this.ymin
                 };
+            }
+
+            /// <summary>
+            /// Since we don't support anything more than a 2D plot at the moment, we fail here.
+            /// </summary>
+            /// <param name="otherPlot"></param>
+            /// <returns></returns>
+            public IPlotSpec<T> CombinePlotAxes(IPlotSpec<T> otherPlot)
+            {
+                throw new InvalidOperationException("Do not know how to build a new plot starting from a 2D plot!");
             }
         }
 
