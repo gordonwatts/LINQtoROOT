@@ -160,5 +160,28 @@ namespace LINQToTreeHelpers
                 };
             }
         }
+
+        internal class AxisInfo
+        {
+            public string Title;
+            public string AxisTitle;
+        }
+
+        /// <summary>
+        /// Return the title info split by the ";" to remove axis info.
+        /// </summary>
+        /// <param name="htitle"></param>
+        /// <returns></returns>
+        internal static AxisInfo ExtractHistoTitleInfo (this string htitle)
+        {
+            var info = new AxisInfo() { Title = htitle, AxisTitle = "" };
+            var semi = htitle.IndexOf(";");
+            if (semi >= 0)
+            {
+                info.Title = htitle.Substring(0, semi).Trim();
+                info.AxisTitle = htitle.Substring(semi + 1).Trim();
+            }
+            return info;
+        }
     }
 }

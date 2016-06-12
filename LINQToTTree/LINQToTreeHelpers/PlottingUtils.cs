@@ -466,9 +466,14 @@ namespace LINQToTreeHelpers
                 }
 
                 // Simple builder
+                var xInfo = TitleFormat.ExtractHistoTitleInfo();
+                var yInfo = other1D.TitleFormat.ExtractHistoTitleInfo();
+
+                string title = $"{xInfo.Title} vs {yInfo.Title}; {xInfo.AxisTitle}; {yInfo.Title}";
+
                 return MakePlotterSpec(nbins, xmin, xmax, getter,
                     other1D.nbins, other1D.xmin, other1D.xmax, other1D.getter,
-                    nameFormat: NameFormat, titleFormat: TitleFormat,
+                    nameFormat: NameFormat + other1D.NameFormat, titleFormat: title,
                     filter: Filter,
                     weight: Weight);
             }
