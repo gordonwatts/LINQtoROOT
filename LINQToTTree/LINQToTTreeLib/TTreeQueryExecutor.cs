@@ -110,10 +110,8 @@ namespace LINQToTTreeLib
                 throw new FileNotFoundException(bld.ToString());
             }
 
-            ///
-            /// Make sure the object we are using is correct, and that it has non-null values
-            /// for the things passed in. We do this now so we don't have to have checks later on.
-            /// 
+            // Make sure the object we are using is correct, and that it has non-null values
+            // for the things passed in. We do this now so we don't have to have checks later on.
 
             if (baseNtupleObject.GetField("_gProxyFile") == null)
                 throw new ArgumentException("_gProxyFile - object is not a member of " + baseNtupleObject.ToString());
@@ -125,8 +123,15 @@ namespace LINQToTTreeLib
             var proxyFileName = baseNtupleObject.GetField("_gProxyFile").GetValue(null) as string;
             if (string.IsNullOrWhiteSpace(proxyFileName))
                 throw new ArgumentException("_gProxyFile - points to a null file - must be a real file");
-            _proxyFile = new FileInfo(proxyFileName);
-            if (!File.Exists(proxyFileName))
+
+            var bpname = new FileInfo(proxyFileName);
+            _proxyFile = new[] { bpname.Directory, new DirectoryInfo(".") }
+                .SelectMany(dir => dir.AllParentDirectories())
+                .Select(d => new FileInfo(Path.Combine(d.FullName, bpname.Name)))
+                .Where(f => f.Exists)
+                .FirstOrDefault();
+
+            if (_proxyFile == null)
                 throw new FileNotFoundException("_gProxyFile - '" + proxyFileName + "' was not found.");
 
             var extraFiles = baseNtupleObject.GetField("_gObjectFiles").GetValue(null) as string[];

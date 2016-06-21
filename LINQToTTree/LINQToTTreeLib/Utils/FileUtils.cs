@@ -140,6 +140,20 @@ namespace LINQToTTreeLib.Utils
                 }
             }
         }
+
+        /// <summary>
+        /// Return all parent directories, one after the other.
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        public static IEnumerable<DirectoryInfo> AllParentDirectories(this DirectoryInfo dir)
+        {
+            while (dir.Parent != null)
+            {
+                yield return dir;
+                dir = dir.Parent;
+            }
+        }
     }
 
 }
