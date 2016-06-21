@@ -126,7 +126,7 @@ namespace LINQToTTreeLib
 
             var bpname = new FileInfo(proxyFileName);
             _proxyFile = new[] { bpname.Directory, new DirectoryInfo(".") }
-                .SelectMany(dir => dir.AllParentDirectories())
+                .SelectMany(dir => dir.AllParentDirectories(bpname.Directory.Name))
                 .Select(d => new FileInfo(Path.Combine(d.FullName, bpname.Name)))
                 .Where(f => f.Exists)
                 .FirstOrDefault();

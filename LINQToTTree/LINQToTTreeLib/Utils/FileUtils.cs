@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace LINQToTTreeLib.Utils
 {
@@ -146,11 +147,16 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="dir"></param>
         /// <returns></returns>
-        public static IEnumerable<DirectoryInfo> AllParentDirectories(this DirectoryInfo dir)
+        public static IEnumerable<DirectoryInfo> AllParentDirectories(this DirectoryInfo dir, string possibleStub = null)
         {
+            var initialDirectory = dir;
             while (dir.Parent != null)
             {
                 yield return dir;
+                if (possibleStub != null)
+                {
+                    yield return new DirectoryInfo(Path.Combine(dir.FullName, possibleStub));
+                }
                 dir = dir.Parent;
             }
         }
