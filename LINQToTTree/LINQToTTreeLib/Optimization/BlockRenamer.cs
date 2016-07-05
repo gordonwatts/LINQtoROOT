@@ -113,14 +113,17 @@ namespace LINQToTTreeLib.Optimization
         /// Remove a variable declaration totally. Do it without checking that it is being
         /// used (or not).
         /// </summary>
-        /// <param name="item2"></param>
-        internal void ForceRemoveDeclaration(string v, IStatement s)
+        /// <param name="v">Variable name</param>
+        /// <param name="s">Statement to start looking for the decl in</param>
+        /// <remarks>The statement where the decl was found</remarks>
+        internal IBookingStatementBlock ForceRemoveDeclaration(string v, IStatement s)
         {
             var p = FindDeclaredVariable(v, s);
             if (p != null)
             {
                 p.Item2.Remove(p.Item1);
             }
+            return p?.Item2;
         }
     }
 }

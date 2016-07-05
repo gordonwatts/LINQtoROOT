@@ -126,8 +126,14 @@ namespace LINQToTTreeLib.Optimization
                 s2Parent.Remove(s2);
                 foreach (var item in renames)
                 {
-                    opt.ForceRemoveDeclaration(item.Item1, s2Parent);
-                    opt.ForceRenameVariable(item.Item1, item.Item2);
+                    var declStatement = opt.ForceRemoveDeclaration(item.Item1, s2Parent);
+                    if (declStatement == null)
+                    {
+                        opt.ForceRenameVariable(item.Item1, item.Item2);
+                    } else
+                    {
+                        declStatement.RenameVariable(item.Item1, item.Item2);
+                    }
                 }
 
                 return true;
