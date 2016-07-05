@@ -94,6 +94,39 @@ namespace LINQToTTreeLib
             }
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ConstantNaN()
+        {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
+            var g = new GeneratedCode();
+            var r = GetExpression(Expression.Constant(double.NaN), g);
+            Console.WriteLine(r.RawValue);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ConstantPosInfinity()
+        {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
+            var g = new GeneratedCode();
+            var r = GetExpression(Expression.Constant(double.PositiveInfinity), g);
+            Console.WriteLine(r.RawValue);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ConstanNegtInfinity()
+        {
+            var t = new TypeHandlerCache();
+            MEFUtilities.Compose(t);
+            var g = new GeneratedCode();
+            var r = GetExpression(Expression.Constant(double.NegativeInfinity), g);
+            Console.WriteLine(r.RawValue);
+        }
+
         public class BinaryExpressionTestCase
         {
             public ExpressionType BinaryType;

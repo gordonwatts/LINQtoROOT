@@ -228,6 +228,12 @@ namespace LINQToTTreeLib.Expressions
             else if (expression.Type == typeof(float)
               || expression.Type == typeof(double))
             {
+                // Make sure it is a legal expression. 
+                if ((expression.Type == typeof(double) && (double.IsNaN((double)expression.Value) || double.IsInfinity((double)expression.Value)))
+                    || (expression.Type == typeof(float) && (float.IsNaN((float)expression.Value) || float.IsInfinity((float)expression.Value)))) {
+                    throw new ArgumentException($"Can't translate {expression.Value.ToString()} to C++. Illegal number.");
+                }
+
                 var s = expression.Value.ToString();
                 if (!s.Contains("."))
                     s += ".0";
