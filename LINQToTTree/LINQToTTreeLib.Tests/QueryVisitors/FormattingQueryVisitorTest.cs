@@ -4,6 +4,7 @@ using Remotion.Linq;
 // <copyright file="FormattingQueryVisitorTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LINQToTTreeLib.QueryVisitors
 {
@@ -211,6 +212,22 @@ namespace LINQToTTreeLib.QueryVisitors
             var str = FormattingQueryVisitor.Format(qm);
             Console.WriteLine("result: {0}", str);
             Assert.IsTrue(str.Contains("orderby"), "Missing vals in '" + str + "'.");
+        }
+
+        [TestMethod]
+        public void FormatFunctionExpression()
+        {
+            Expression<Func<int[], int>> doit = a => a.First();
+            var q = new QueriableDummy<arrayntup>();
+            var result = from evt in q
+                         where doit.Invoke(evt.vals) > 10
+                         select evt;
+            var r = result.Count();
+            var qm = DummyQueryExectuor.LastQueryModel;
+
+            var str = FormattingQueryVisitor.Format(qm);
+            Console.WriteLine(str);
+            Assert.IsFalse(str.Contains("doit"), "Should not contian function name");
         }
     }
 }
