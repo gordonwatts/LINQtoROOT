@@ -984,9 +984,13 @@ namespace LINQToTTreeLib
 
         /// <summary>
         /// Get the directory for the current query in progress. If this is the first time
-        /// we attempt to first clean up from the last program run.
+        /// we attempt to first clean up from old runs.
         /// </summary>
         /// <returns></returns>
+        /// <remarks>
+        /// Don't kill off recent queires - as we may have multiple copies of this program running on this
+        /// machine.
+        /// </remarks>
         private DirectoryInfo GetQueryDirectory()
         {
             if (_queryDirectory == null)
@@ -997,7 +1001,13 @@ namespace LINQToTTreeLib
                     gFirstQuerySetup = false;
                     try
                     {
-                        baseQueryDirectory.Delete(true);
+                        var removeDirectories = baseQueryDirectory
+                            .EnumerateDirectories()
+                            .Where(d => (DateTime.Now - d.CreationTime) > TimeSpan.FromDays(7));
+                        foreach (var d in removeDirectories)
+                        {
+                            d.Delete(true);
+                        }
                     }
                     catch { }
                 }
