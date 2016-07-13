@@ -13,6 +13,19 @@ using LINQToTTreeLib.Utils;
 namespace LINQToTTreeLib.Files
 {
     /// <summary>
+    /// Thrown when we have a bad type we have to deal with
+    /// </summary>
+    [Serializable]
+    public class BadTypeForFileOrTreeTranslationException : Exception
+    {
+        public BadTypeForFileOrTreeTranslationException() { }
+        public BadTypeForFileOrTreeTranslationException(string message) : base(message) { }
+        public BadTypeForFileOrTreeTranslationException(string message, Exception inner) : base(message, inner) { }
+        protected BadTypeForFileOrTreeTranslationException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+    /// <summary>
     /// Base class for dealing with expressions that result in some sort of file
     /// with columns being written out.
     /// </summary>
@@ -60,7 +73,7 @@ namespace LINQToTTreeLib.Files
                     TraverseColumnsForOutput(pIndex.Item1, visitor, $"{namingPrefix}Item{pIndex.Item2}");
                 }
             }
-            else
+            else if (outputType.IsClass)
             {
                 // Get a list of all field and property names, and go down one level.
                 var allNames = outputType.GetFieldsInDeclOrder().Select(f => Tuple.Create(f.FieldType, f.Name))
@@ -70,6 +83,9 @@ namespace LINQToTTreeLib.Files
                 {
                     TraverseColumnsForOutput(f.Item1, visitor, $"{namingPrefix}{f.Item2}");
                 }
+            } else
+            {
+                throw new BadTypeForFileOrTreeTranslationException($"Unable (or do not know how) to convert type '{outputType.Name}' for output in a CSV or TTree file.");
             }
 
         }
