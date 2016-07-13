@@ -155,6 +155,22 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(5, (result as ConstantExpression).Value, "value incorrect");
         }
 
+        struct customObjectWithBool
+        {
+            public bool Var1;
+        }
+
+        [TestMethod]
+        public void CustomObjectWithBool()
+        {
+            Expression<Func<bool>> lambdaExpr = () => new customObjectWithBool() { Var1 = true }.Var1;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+            Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
+            Assert.AreEqual(typeof(bool), result.Type, "result type not right");
+            Assert.AreEqual(true, (result as ConstantExpression).Value, "value incorrect");
+        }
+
         class customObjectTuple
         {
             public Tuple<int, int> var1;
