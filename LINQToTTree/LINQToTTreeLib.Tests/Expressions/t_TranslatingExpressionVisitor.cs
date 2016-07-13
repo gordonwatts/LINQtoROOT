@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using LINQToTTreeLib.CodeAttributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -141,6 +142,15 @@ namespace LINQToTTreeLib.Tests
             Assert.IsInstanceOfType(result, typeof(ConstantExpression), "Expression type");
             Assert.AreEqual(typeof(int), result.Type, "result type not right");
             Assert.AreEqual(10, (result as ConstantExpression).Value, "value incorrect");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(BadPropertyReferenceException))]
+        public void CustomObjectPropertyNotSet()
+        {
+            Expression<Func<int>> lambaExpr = () => new customObject() { Var1 = 5 }.Var2;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambaExpr.Body, caches, e => e);
         }
 
         [TestMethod]

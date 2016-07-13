@@ -6,6 +6,20 @@ using Remotion.Linq.Parsing;
 namespace LINQToTTreeLib.Expressions
 {
     /// <summary>
+    /// Thrown when there is a bad property translation
+    /// </summary>
+    [Serializable]
+    public class BadPropertyReferenceException : Exception
+    {
+        public BadPropertyReferenceException() { }
+        public BadPropertyReferenceException(string message) : base(message) { }
+        public BadPropertyReferenceException(string message, Exception inner) : base(message, inner) { }
+        protected BadPropertyReferenceException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+
+    /// <summary>
     /// Sometimes you'll find things like "new Tuple<int, int>(5, 10).Item1" or
     /// "new CustomObject(){Val1 = 5}.Val1" in our code.
     /// The job of this translator is to replace the above with "5". Called by
@@ -80,19 +94,19 @@ namespace LINQToTTreeLib.Expressions
                     }
                 }
 
-                //
                 // If a user declared object is created and referenced (and the members are inited)
                 // then we can use them as something to do translation in.
-                //
-
+                // If this is an init expression, and the variable is not set, then that
+                // is really bad - no one else is going to set it. Give the user enough infomration to debug it.
                 if (expression.Expression.NodeType == ExpressionType.MemberInit)
                 {
                     var result = TranslateUserObjectMemberInitReference(expression);
-                    if (result != null)
+                    if (result == null)
                     {
-                        DidRemove = true;
-                        return result;
+                        throw new BadPropertyReferenceException($"Reference to property {expression.Member.Name} on object {expression.Expression.Type.Name} can't be translated because it isn't set in the initalizer expression.");
                     }
+                    DidRemove = true;
+                    return result;
                 }
 
                 //
