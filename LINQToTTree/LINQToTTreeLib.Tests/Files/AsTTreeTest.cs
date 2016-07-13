@@ -10,6 +10,7 @@ using Remotion.Linq;
 using ROOTNET;
 
 using static System.Console;
+using System.Reflection;
 
 namespace LINQToTTreeLib.Tests.Files
 {
@@ -123,6 +124,19 @@ namespace LINQToTTreeLib.Tests.Files
             finally
             {
                 f.Close();
+            }
+        }
+
+        [TestMethod]
+        public void BadTypeInNtuple()
+        {
+            try
+            {
+                FileInfo result = RunQueryForSingleColumnTTree(QueryTupleWithBadType);
+                Assert.Fail("Shoudl have thrown");
+            } catch (TargetInvocationException e)
+            {
+                Assert.IsInstanceOfType(e.InnerException, typeof(BadTypeForFileOrTreeTranslationException));
             }
         }
 
@@ -278,6 +292,21 @@ namespace LINQToTTreeLib.Tests.Files
             q
                 .Select(e => new ourCustomObject() { col1 = e.run, col2 = (int)e.run + 1, col3 = e.run + 2 })
                 .AsTTree("DataTree", "this is a test", null, "c1", "c2");
+        }
+
+        class customObjectWithByte
+        {
+            public byte Var1;
+        }
+        /// <summary>
+        /// Generate a tree against a byte, a type that we don't currently support.
+        /// </summary>
+        private static void QueryTupleWithBadType()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new customObjectWithByte() { Var1 = (byte)(e.run + 1) })
+                .AsTTree("DataTree", "not going to happen", null, "c1", "c2");
         }
 
         /// <summary>
