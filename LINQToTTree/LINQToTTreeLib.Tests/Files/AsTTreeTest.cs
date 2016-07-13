@@ -11,6 +11,7 @@ using ROOTNET;
 
 using static System.Console;
 using System.Reflection;
+using LINQToTTreeLib.Expressions;
 
 namespace LINQToTTreeLib.Tests.Files
 {
@@ -141,6 +142,19 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        [ExpectedException(typeof(BadPropertyReferenceException))]
+        public void MissingVariableInCustomObject()
+        {
+            var result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObjectMissingVar);
+        }
+
+        [TestMethod]
+        public void AllTypesPossible()
+        {
+            var result = RunQueryForSingleColumnTTree(QueryTupleAllTypes);
+        }
+
+        [TestMethod]
         public void TupleStreamCompiled()
         {
             FileInfo result = RunQueryForSingleColumnTTree(QueryTupleOurCustomObject);
@@ -263,6 +277,18 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         /// <summary>
+        /// We forget to initalize a varaible. Use to make sure the system gives a good
+        /// error so the user can figure out what is going on.
+        /// </summary>
+        private static void QueryTupleOurCustomObjectMissingVar()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new ourCustomObject() { col2 = (int)e.run + 1, col3 = e.run + 2 })
+                .AsTTree(outputROOTFile: new FileInfo("hi.root"));
+        }
+
+        /// <summary>
         /// Create a query with an anonymous object.
         /// </summary>
         private static void QueryTupleAnonyoumsObject()
@@ -271,6 +297,27 @@ namespace LINQToTTreeLib.Tests.Files
             q
                 .Select(e => new { col2 = (int)e.run + 1, col3 = e.run + 2, col1 = e.run})
                 .AsTTree(outputROOTFile: new FileInfo("hi.root"));
+        }
+
+        /// <summary>
+        /// Add each type here that we should be able to put into a csv or a TTree.
+        /// </summary>
+        class customObjectAllValidTypes
+        {
+            public double vDouble;
+            public int vInt;
+            public bool vBool;
+        }
+
+        /// <summary>
+        /// Generage a query that fills all variable type.
+        /// </summary>
+        private static void QueryTupleAllTypes()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new customObjectAllValidTypes() { vDouble = (double)e.run, vBool = e.run == 10, vInt = (int)e.run })
+                .AsTTree(outputROOTFile: new FileInfo("allguys.root"));
         }
 
         /// <summary>

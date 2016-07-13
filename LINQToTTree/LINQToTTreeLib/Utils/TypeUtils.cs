@@ -101,7 +101,7 @@ namespace LINQToTTreeLib.Utils
         /// <returns></returns>
         public static bool TypeIsEasilyDumped(this Type objectToDump)
         {
-            return IsNumberType(objectToDump);
+            return IsNumberType(objectToDump) || objectToDump == typeof(bool);
         }
 
         /// <summary>
