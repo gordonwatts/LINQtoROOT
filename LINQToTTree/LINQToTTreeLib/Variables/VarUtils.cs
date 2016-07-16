@@ -251,6 +251,10 @@ namespace LINQToTTreeLib.Variables
                 {
                     return "int";
                 }
+                if (t == typeof(uint))
+                {
+                    return "unsigned int";
+                }
                 else if (t == typeof(double))
                 {
                     return "double";
