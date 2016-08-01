@@ -19,7 +19,7 @@ namespace LINQToTTreeLib.Expressions
         /// <summary>
         /// Create a new array info, using expr as the base for our work.
         /// </summary>
-        /// <param name="expr"></param>
+        /// <param name="expr">The array we are to index into as we move along. Must also have a .size() like operator.</param>
         public ArrayInfoVector(Expression expr)
         {
             this._arrayExpression = expr;
