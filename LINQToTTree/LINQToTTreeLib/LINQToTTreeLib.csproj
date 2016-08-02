@@ -147,6 +147,7 @@
     <Compile Include="CodeAttributes\TClonesArrayImpliedClassAttribute.cs" />
     <Compile Include="CodeAttributes\TranslateToClassAttribute.cs" />
     <Compile Include="CodeAttributes\TTreeVariableGroupingAttribute.cs" />
+    <Compile Include="CodeAttributes\UseAsArrayLengthVariableAttribute.cs" />
     <Compile Include="CodeContext.cs" />
     <Compile Include="CombinedGeneratedCode.cs" />
     <Compile Include="CPPTranslator.cs" />

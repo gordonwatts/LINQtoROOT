@@ -552,7 +552,10 @@ namespace TTreeClassGenerator
                 output.WriteLine("#pragma warning disable 0649");
                 foreach (var v in grp.Variables)
                 {
-                    WriteVariableRenameDefinition(output, v, varTypes, className, true, tTreeUserInfo, "[TTreeVariableGrouping]");
+                    var attrs = v.NETName == grp.NETNameOfVariableToUseAsArrayLength
+                        ? new[] { "[TTreeVariableGrouping]", "[UseAsArrayLengthVariable]" }
+                        : new[] { "[TTreeVariableGrouping]" };
+                    WriteVariableRenameDefinition(output, v, varTypes, className, true, tTreeUserInfo, attrs);
                 }
                 output.WriteLine("#pragma warning restore 0649");
 

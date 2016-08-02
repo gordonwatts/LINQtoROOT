@@ -756,6 +756,17 @@ namespace LINQToTTreeLib
                                 where field != null
                                 orderby field.Name ascending
                                 select field;
+
+            // Look to see if anything is marked as a prefered index varaiable.
+            var specialArrayLengthVars = firstNonArray
+                .Where(m => m.GetCustomAttribute<UseAsArrayLengthVariableAttribute>() != null)
+                .FirstOrDefault();
+            if (specialArrayLengthVars != null)
+            {
+                return specialArrayLengthVars;
+            }
+
+            // Ok, just take the first one in that case.
             return firstNonArray.FirstOrDefault();
         }
 
