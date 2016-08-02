@@ -13,7 +13,7 @@ namespace LINQToTTreeLib.CodeAttributes
     /// Normally generated automatically from XML by the parser code
     /// </remarks>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class UseAsArrayLengthVariableAttribute : Attribute
+    public sealed class UseAsArrayLengthVariableAttribute : Attribute
     {
         public UseAsArrayLengthVariableAttribute()
         {
