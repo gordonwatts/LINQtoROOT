@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
-    /// <summary>This class contains parameterized unit tests for TypeHandlerCPPCode</summary>
+    /// <summary>This class contains tests TypeHandlerCPPCode</summary>
     [TestClass]
     public partial class TypeHandlerCPPCodeTest
     {
