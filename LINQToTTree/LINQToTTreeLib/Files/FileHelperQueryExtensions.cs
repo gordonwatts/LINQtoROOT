@@ -50,9 +50,9 @@ namespace LINQToTTreeLib.Files
 
             // Build up the AsCSV expression.
 
-            var countMethodGeneric = typeof(FileHelperQueryExtensions).GetMethods().Where(m => m.Name == "AsCSV").First();
-            var countMethod = countMethodGeneric.MakeGenericMethod(typeof(T));
-            var expr = Expression.Call(null, countMethod, q.Expression);
+            var asCSVMethodGeneric = typeof(FileHelperQueryExtensions).GetMethods().Where(m => m.Name == "AsCSV").First();
+            var asCSVMethod = asCSVMethodGeneric.MakeGenericMethod(typeof(T));
+            var expr = Expression.Call(null, asCSVMethod, q.Expression, Expression.Constant(outputFile), Expression.Constant(columnHeader));
 
             return FutureResultOperators.FutureExecuteScalarHelper<T, FileInfo[]>(q, expr);
         }
