@@ -254,7 +254,7 @@ function build-LINQToTTree-nuget-packages ($SolutionDirectory, $BuildDir, $Versi
         "SourceRootDirectories" = $allSourceDirectories
     }
     
-    $pkg = build-nuget-package -PackageSpecification $packageSpec -BuildDir $buildDir -NuGetExe "nuget.exe"
+    $pkg = build-nuget-package -PackageSpecification $packageSpec -BuildDir $buildDir -NuGetExe "nuget"
     
     #
     # Copy it over if requested. Return the final location of the file.
@@ -328,8 +328,8 @@ function configure-nuget ($BuildPath, $URL, $nuget)
 #
 function configure-nuget-all ($BuildPath)
 {
-    # See if we can figure out where nuget.exe is.
-    $nuget = "nuget.exe"
+    # See if we can figure out where nuget is.
+    $nuget = "nuget"
     #if (-not (Test-Path $nuget))
     #{
     #    throw "Unable to locate nuget.exe - though it would be here: $nuget"
