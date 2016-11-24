@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQToTTreeLib", "LINQToTTreeLib\LINQToTTreeLib.csproj", "{A1A955AD-BC56-4413-92BC-581C35A78522}"
 EndProject
@@ -67,9 +67,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQToTreeHelpers.Tests", "LINQToTreeHelpers.Tests\LINQToTreeHelpers.Tests.csproj", "{2EB9FD3A-D41F-40E2-BDCF-B8DBB2EC17F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8F45C60A-43AF-4DC5-8C78-90EDDB2863A1}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetupPROOFServer", "SetupPROOFServer\SetupPROOFServer.csproj", "{FB22907E-BFAE-4D3A-B2C3-70CF5DA8800F}"
 EndProject
