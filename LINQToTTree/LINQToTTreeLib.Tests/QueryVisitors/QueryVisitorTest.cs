@@ -222,6 +222,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void IsIndexGoodRemotePointer()
+        {
+            var q = new QueriableDummy<TestTranslatingExpressionVisitor.SourceType3>();
+
+            var r1 = from evt in q
+                     from j in evt.jets
+                     where j.specialIndex.IsGoodIndex()
+                     select j;
+            var r = r1.Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            var lines = query1.DumpCode().ToArray();
+            Assert.IsTrue(lines.Any(l => l.Contains("size())>")), "Missing length comparison");
+        }
+
+        [TestMethod]
         public void TestCountOnArrayWithIf()
         {
             var q = new QueriableDummy<ntupArray>();

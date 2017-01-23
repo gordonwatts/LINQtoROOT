@@ -708,10 +708,22 @@ namespace LINQToTTreeLib
 
                 var indexExpr = VisitExpressionImplemented(arrayInfo.TargetIndexExpression);
 
-                return Expression.AndAlso(
+                var indexCheck = Expression.AndAlso(
                     Expression.GreaterThanOrEqual(indexExpr, zeroExpr),
                     Expression.LessThan(indexExpr, lengthExpr)
                     );
+
+                // If the array index is an array leaf itself, then make sure that it also exists.
+                if (indexExpr.NodeType == ExpressionType.ArrayIndex)
+                {
+                    var indexArray = (indexExpr as BinaryExpression).Left;
+                    var indexArrayIndex = (indexExpr as BinaryExpression).Right;
+                    var indexArraySize = Expression.ArrayLength(indexArray);
+                    var checkIndexArray = Expression.GreaterThan(indexArraySize, indexArrayIndex);
+                    indexCheck = Expression.AndAlso(checkIndexArray, indexCheck);
+                }
+
+                return indexCheck;
             }
 
             return base.VisitMethodCall(expression);

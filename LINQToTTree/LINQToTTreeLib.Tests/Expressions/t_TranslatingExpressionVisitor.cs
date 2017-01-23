@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using LINQToTTreeLib.CodeAttributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Expressions;
+using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -668,15 +669,21 @@ namespace LINQToTTreeLib.Tests
             public SourceType3Container2[] muons;
         }
 
-        public class ResultType3
+        public class ResultType3 : IExpressionHolder
         {
             public ResultType3(Expression holder)
             {
+                HeldExpression = holder;
             }
             public int[] val;
             public int[] specialIndex;
             public int[] specialIndexSecond;
             public int[][] specialIndicies;
+
+            public Expression HeldExpression
+            {
+                get; private set;
+            }
         }
 
         [TestMethod]
@@ -783,6 +790,7 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(result.ToString().Contains("specialIndex[0] >= 0"), result.ToString().Trim());
             Assert.IsTrue(result.ToString().Contains("specialIndex[0] < ArrayLength"), result.ToString().Trim());
             Assert.IsTrue(result.ToString().Contains("val))"), result.ToString().Trim());
+            Assert.IsTrue(result.ToString().Contains("specialIndex"), result.ToString().Trim());
         }
 
         [TestMethod]
