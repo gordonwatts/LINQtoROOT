@@ -1397,6 +1397,12 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+            [CPPCode(Code = new string[] { "GetArrayListing = vector<float>();" }, IncludeFiles = new string[] { "vector" })]
+            public static float[] GetArrayListing(int i)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -1414,6 +1420,21 @@ namespace LINQToTTreeLib
 
             var lm = query.DumpCode().Where(l => l.Contains("\"hi\"")).Count();
             Assert.AreEqual(1, lm, "# of times the hi appears in quotes");
+        }
+
+        [TestMethod]
+        public void CPPCodeThatReturnsVector()
+        {
+            // Seen in wild - accessing return value of vector has an extra indirect.
+            var q = new QueriableDummy<dummyntup>();
+            var listing = from evt in q
+                          where CPPHelperFunctions.GetArrayListing(evt.run)[0] > 4
+                          select evt;
+            var dude = listing.Count();
+            var query = DummyQueryExectuor.FinalResult;
+            query.DumpCodeToConsole();
+            var line = query.DumpCode().Where(l => l.Contains("*aSingle")).FirstOrDefault();
+            Assert.IsNull(line, $"Bad reference to result found: {line}");
         }
 
         /// <summary>

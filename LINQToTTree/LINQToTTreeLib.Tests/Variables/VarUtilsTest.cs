@@ -1,4 +1,5 @@
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 // <copyright file="VarUtilsTest.cs" company="Microsoft">Copyright © Microsoft 2010</copyright>
 using System;
@@ -85,6 +86,7 @@ namespace LINQToTTreeLib.Variables
         public void TestCPPArrayType()
         {
             Assert.AreEqual("vector<int>", AsCPPType(typeof(int[])), "int array");
+            Assert.AreEqual("vector<float>", AsCPPType(typeof(float[])), "int array");
         }
 
         [TestMethod]
@@ -229,6 +231,7 @@ namespace LINQToTTreeLib.Variables
             Assert.IsFalse(typeof(int).IsROOTClass(), "type int");
             Assert.IsTrue(typeof(ROOTNET.NTH1F).IsROOTClass(), "type ROOTNET.NTH1F");
             Assert.IsTrue(typeof(ROOTNET.Interface.NTH1F).IsROOTClass(), "type ROOTNET.Interface.NTH1F");
+            Assert.IsFalse(typeof(float[]).IsROOTClass(), "type float[]");
         }
 
         [TestMethod]
@@ -283,6 +286,23 @@ namespace LINQToTTreeLib.Variables
             var r = Expression.Constant(1);
             var arr = Expression.ArrayIndex(p, r);
             Assert.AreEqual("main", sv.AsObjectReference(arr), "deref param");
+        }
+
+        static class helperFunctions
+        {
+            public static float[] CallMe()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void ArrayReturnFromFunction()
+        {
+            var method = typeof(helperFunctions).GetMethod("CallMe");
+            var callExpr = Expression.Call(null, method);
+            var result = new ValSimple("main", typeof(float[]));
+            Assert.AreEqual("main", result.AsObjectReference(callExpr));
         }
     }
 }

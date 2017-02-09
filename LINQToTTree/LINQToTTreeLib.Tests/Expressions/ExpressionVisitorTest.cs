@@ -985,12 +985,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestSimpleArrayAccess()
+        public void TestSimpleIntArrayAccess()
         {
             var myvar = Expression.Variable(typeof(int[]), "d");
             var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
 
             var result = RunArrayLengthOnExpression(myaccess, typeof(int));
+            Assert.AreEqual("d.at(1)", result.RawValue, "C++ incorrectly translated");
+        }
+
+        [TestMethod]
+        public void TestSimpleFloatArrayAccess()
+        {
+            // Seen in wild - under some circumstances the float array isn't getting translated correctly.
+            var myvar = Expression.Variable(typeof(float[]), "d");
+            var myaccess = Expression.ArrayIndex(myvar, Expression.Constant(1));
+
+            var result = RunArrayLengthOnExpression(myaccess, typeof(float));
             Assert.AreEqual("d.at(1)", result.RawValue, "C++ incorrectly translated");
         }
 
