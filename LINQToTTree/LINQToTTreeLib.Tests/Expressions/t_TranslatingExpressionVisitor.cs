@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using LINQToTTreeLib.CodeAttributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Expressions;
+using LinqToTTreeInterfacesLib;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -481,6 +482,61 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual("val", me.Member.Name, "member access bad");
         }
 
+        public class SourceType9Container
+        {
+            [TTreeVariableGrouping]
+            public int aval;
+            [TTreeVariableGrouping]
+            [UseAsArrayLengthVariable]
+            public int bval;
+
+            [TTreeVariableGrouping]
+            public int[] val2D;
+        }
+
+        public class SourceType9Container1
+        {
+            [TTreeVariableGrouping]
+            [RenameVariable("val2D")]
+            public int[] others;
+        }
+
+        [TranslateToClass(typeof(ResultType9))]
+        public class SourceType9
+        {
+            [TTreeVariableGrouping]
+            public SourceType9Container[] jets;
+
+            [TTreeVariableGrouping]
+            public SourceType9Container1[] others;
+        }
+
+        public class ResultType9
+        {
+            public ResultType9(Expression holder)
+            {
+            }
+
+            public int[] aval;
+            public int[] bval;
+            public int[][] val2D;
+        }
+
+        [TestMethod]
+        public void TestArrayLengthWithAssignedIndexVariable()
+        {
+            Expression<Func<SourceType9, int>> lambdaExpr = arr => arr.jets.Length;
+            List<string> caches = new List<string>();
+            var result = TranslatingExpressionVisitor.Translate(lambdaExpr.Body, caches, e => e);
+            Assert.AreEqual(ExpressionType.ArrayLength, result.NodeType, "expression node");
+            var ue = result as UnaryExpression;
+            Assert.IsNotNull(ue, "not unaryexpression");
+            var me = ue.Operand as MemberExpression;
+            Assert.IsNotNull(me, "unary operand type");
+            Assert.AreEqual(typeof(ResultType9), me.Expression.Type, "type of member we are applying val to");
+            Assert.AreEqual("bval", me.Member.Name, "member access bad");
+        }
+
         [TestMethod]
         public void TestArrayLengthFor2D()
         {
@@ -613,15 +669,21 @@ namespace LINQToTTreeLib.Tests
             public SourceType3Container2[] muons;
         }
 
-        public class ResultType3
+        public class ResultType3 : IExpressionHolder
         {
             public ResultType3(Expression holder)
             {
+                HeldExpression = holder;
             }
             public int[] val;
             public int[] specialIndex;
             public int[] specialIndexSecond;
             public int[][] specialIndicies;
+
+            public Expression HeldExpression
+            {
+                get; private set;
+            }
         }
 
         [TestMethod]
@@ -728,6 +790,7 @@ namespace LINQToTTreeLib.Tests
             Assert.IsTrue(result.ToString().Contains("specialIndex[0] >= 0"), result.ToString().Trim());
             Assert.IsTrue(result.ToString().Contains("specialIndex[0] < ArrayLength"), result.ToString().Trim());
             Assert.IsTrue(result.ToString().Contains("val))"), result.ToString().Trim());
+            Assert.IsTrue(result.ToString().Contains("specialIndex"), result.ToString().Trim());
         }
 
         [TestMethod]

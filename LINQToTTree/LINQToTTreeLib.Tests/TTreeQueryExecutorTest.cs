@@ -563,6 +563,17 @@ namespace LINQToTTreeLib
             {
                 throw new NotImplementedException();
             }
+
+            /// <summary>
+            /// Simple custom function in an include file. The include file must be written locally.
+            /// </summary>
+            /// <param name="arg"></param>
+            /// <returns></returns>
+            [CPPCode(Code = new string[] { "ReturnCustomFuncValue = bogus();" }, IncludeFiles = new string[] { "bogus_function.h" })]
+            public static int ReturnCustomFuncValue()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -593,6 +604,37 @@ namespace LINQToTTreeLib
 
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public void LocalIncludeFile()
+        {
+            // Write out the local include file. The system should pick it up from here.
+            using (var writer = File.CreateText("bogus_function.h"))
+            {
+                writer.WriteLine("int bogus() { return 15; }");
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            // Run on ints, though for this test it won't matter.
+            var rootFile = TestUtils.CreateFileOfInt(10);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Run the special function.
+            var q = new QueriableDummy<TestNtupe>();
+            var listing = from evt in q
+                          where CPPHelperFunctions.ReturnCustomFuncValue() > 10.0
+                          select evt;
+            var dude = listing.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Run the execution environment.
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CleanupQuery = false;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }

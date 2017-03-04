@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.TypeHandlers.CPPCode
 {
-    /// <summary>This class contains parameterized unit tests for TypeHandlerCPPCode</summary>
+    /// <summary>This class contains tests TypeHandlerCPPCode</summary>
     [TestClass]
     public partial class TypeHandlerCPPCodeTest
     {
@@ -72,6 +72,12 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
             {
                 throw new NotImplementedException();
             }
+
+            [CPPCode(Code = new string[] { "DoItWithArray = vector<float>();" }, IncludeFiles = new string[] { "vector" })]
+            public static float[] DoItWithArray(int i)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
@@ -87,6 +93,23 @@ namespace LINQToTTreeLib.TypeHandlers.CPPCode
 
         [TestMethod]
         public void TestSimpleCodeAddon()
+        {
+            // See problems referencing return variables
+            var target = new TypeHandlerCPPCode();
+            var gc = new GeneratedCode();
+
+            var param = Expression.Parameter(typeof(int), "p");
+            var expr = Expression.Call(typeof(DoItClass).GetMethod("DoItWithArray"), param);
+
+            var result = target.CodeMethodCall(expr, gc, MEFUtilities.MEFContainer);
+
+            gc.DumpCodeToConsole();
+
+            Assert.AreEqual(typeof(float[]), result.Type);
+        }
+
+        [TestMethod]
+        public void CheckArrayReturnType()
         {
             var target = new TypeHandlerCPPCode();
             var gc = new GeneratedCode();

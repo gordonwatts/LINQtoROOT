@@ -97,6 +97,10 @@ namespace LINQToTTreeLib.Variables
                     {
                         // Same wiht a declarable parameter - don't defreference it.
                         isObject = false;
+                    } else if (destExpression.NodeType != ExpressionType.MemberAccess)
+                    {
+                        // An array that is getting returned from a function.
+                        isObject = false;
                     }
                 }
             }

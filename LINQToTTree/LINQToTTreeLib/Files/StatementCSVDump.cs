@@ -41,7 +41,7 @@ namespace LINQToTTreeLib.Files
                 {
                     bld.Append(" \", \" <<");
                 }
-                bld.AppendFormat($"{item} <<");
+                bld.AppendFormat($"({item}) <<");
             }
             yield return $"{_stream.RawValue} << {bld.ToString()} std::endl;";
         }

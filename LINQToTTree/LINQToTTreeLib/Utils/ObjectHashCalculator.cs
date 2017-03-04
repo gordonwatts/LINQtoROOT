@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Collections.Generic;
+
 namespace LINQToTTreeLib.Utils
 {
     /// <summary>
@@ -10,7 +12,7 @@ namespace LINQToTTreeLib.Utils
         /// <summary>
         /// Initalize to calculate a hash.
         /// </summary>
-        public ObjectHashCalculator()
+        internal ObjectHashCalculator()
         {
             unchecked
             {
@@ -67,14 +69,46 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
+        /// Dip into and return the buffer data. Avoids a memory allocation.
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        private static IEnumerable<SByte> BufferAsBytes(ROOTNET.Interface.NTBuffer buffer)
+        {
+            int l = buffer.Length();
+            var bufferData = buffer.Buffer();
+            for (int i = 0; i < l; i++)
+            {
+                // Access the byte, but make sure to bomb with a clear error message if something
+                // funny happens (we've seen real problems in the field).
+                SByte r;
+                try
+                {
+                    r = bufferData[i];
+                } catch (Exception e)
+                {
+                    throw new InvalidOperationException($"Fatal error accessing the {i} element of an array that is {l} long.", e);
+                }
+                yield return r;
+            }
+        }
+
+        /// <summary>
         /// Do the accumulation for a root object.
         /// </summary>
         /// <param name="nTObject"></param>
         private void InternalAccumulateHash(ROOTNET.Interface.NTObject nTObject)
         {
+            if (nTObject == null)
+                throw new ArgumentNullException("The argument to InternalAccumulateHash was null - not allowed.");
+
+            // Write it to a ROOT buffer
             var buffer = new ROOTNET.NTBufferFile(ROOTNET.Interface.NTBuffer.EMode.kWrite);
             buffer.WriteObject(nTObject);
-            var result = buffer.Buffer().as_array(buffer.Length());
+            //var result = buffer.Buffer().as_array(buffer.Length());
+            var result = BufferAsBytes(buffer);
+
+            // And update the hash value we are holding onto.
             ComputeHash(result);
         }
 
@@ -88,14 +122,16 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public void ComputeHash(params SByte[] data)
-        {
+        private void ComputeHash(IEnumerable<SByte> data)
+        { 
             unchecked
             {
                 const int p = 16777619;
                 int hash = Hash;
-                for (int i = 0; i < data.Length; i++)
-                    hash = (hash ^ data[i]) * p;
+                foreach (var d in data)
+                {
+                    hash = (hash ^ d) * p;
+                }
                 hash += hash << 13;
                 hash ^= hash >> 7;
                 hash += hash << 3;

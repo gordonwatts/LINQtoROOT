@@ -303,6 +303,43 @@ namespace TTreeClassGenerator
         }
 
         [TestMethod]
+        public void GroupWithArrayLengthSpecification()
+        {
+            ItemSimpleType simple1 = new ItemSimpleType("avar", "int[]");
+            ItemSimpleType simple2 = new ItemSimpleType("bvar", "int[]");
+            FileInfo proxyFile = new FileInfo("TestColonsInVarNameWRename.cpp");
+            using (var writer = proxyFile.CreateText())
+            {
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            ROOTClassShell mainClass = new ROOTClassShell("GroupWithArrayLengthSpecification") { NtupleProxyPath = proxyFile.FullName };
+            mainClass.Add(simple1);
+            mainClass.Add(simple2);
+            var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
+
+            var userinfo = new TTreeUserInfo() { Groups = new ArrayGroup[] {
+                new ArrayGroup() {
+                    Name = "jets",
+                    NETNameOfVariableToUseAsArrayLength ="b",
+                    Variables = new VariableInfo[] {
+                        new VariableInfo() { NETName = "a", TTreeName = "avar" },
+                        new VariableInfo() { NETName = "b", TTreeName = "bvar" },
+                    }
+                } } };
+
+            var cg = new ClassGenerator();
+            var outputFile = new FileInfo("GroupWithArrayLengthSpecification.cs");
+            cg.GenerateClasss(ntup, outputFile, "junk", new Dictionary<string, TTreeUserInfo>() { { "GroupWithArrayLengthSpecification", userinfo } });
+
+            DumpOutputFile(outputFile);
+
+            /// Look through this to see if we can make sure there are no renames!
+            Assert.IsTrue(FindInFile(outputFile, "UseAsArrayLength"), "Missing the UseAsArrayLength attribute!!");
+        }
+
+        [TestMethod]
         public void TestColonsInVarName()
         {
             ItemSimpleType simple = new ItemSimpleType("dude::fork", "int[]");
