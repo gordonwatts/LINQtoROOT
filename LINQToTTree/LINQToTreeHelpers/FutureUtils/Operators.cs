@@ -575,5 +575,16 @@ namespace LINQToTreeHelpers.FutureUtils
                 get { return _getResult(); }
             }
         }
+
+        /// <summary>
+        /// Return a constant as a future
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static IFutureValue<T> AsFuture<T> (this T value)
+        {
+            return new DoFutureOperator<T>(() => value, () => true);
+        }
     }
 }

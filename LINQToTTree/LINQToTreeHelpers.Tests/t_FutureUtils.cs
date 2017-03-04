@@ -256,5 +256,13 @@ namespace LINQToTreeHelpers.Tests
             var t3 = t1.Cast().To<ROOTNET.Interface.NTNamed>();
             Assert.IsNull(t3.Value, "value is null");
         }
+
+        [TestMethod]
+        public void AsFuture()
+        {
+            var f = 5.AsFuture();
+            Assert.IsTrue(f.HasValue);
+            Assert.AreEqual(5, f.Value);
+        }
     }
 }
