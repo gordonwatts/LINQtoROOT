@@ -2060,6 +2060,23 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void AllInSubExpression()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+
+            var seq1 = from evt in q
+                       from j in evt.jets
+                       where evt.jets.All(j1 => j1.v3 > j.v3)
+                       select j;
+            var r1 = seq1.Count();
+
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            Assert.AreEqual(0, query1.QMFunctions.Count(), "No sub-functions because all interconnected");
+        }
+
+        [TestMethod]
         public void TestInternalCountCombine()
         {
             var q = new QueriableDummy<ntupWithObjects>();
