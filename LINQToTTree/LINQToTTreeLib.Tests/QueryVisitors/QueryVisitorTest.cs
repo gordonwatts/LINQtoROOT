@@ -196,6 +196,48 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void ConditionalAndAlsoGuard()
+        {
+            var q = new QueriableDummy<TestTranslatingExpressionVisitor.SourceType3>();
+
+            var r1 = (from evt in q
+                      from j in evt.jets
+                      where evt.muons.Where(m => m.val > j.val).Count() > 1 && evt.muons.Where(m => m.val > j.val*2).Count() < 10
+                      select 1
+                );
+            var answer = r1.Aggregate(0, (acc, va) => acc + va);
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            var code = query1.CodeBody.Statements;
+            Assert.AreEqual(1, code.Count());
+            var outterLoop = code.First() as IStatementCompound;
+            Assert.AreEqual(1, outterLoop.Statements.Where(s => s is Statements.StatementForLoop).Count(), "Expect only one unprotected loop.");
+            Assert.AreEqual(2, outterLoop.Statements.Where(s => s is Statements.StatementFilter).Count(), "Expect only one unprotected loop.");
+        }
+
+        [TestMethod]
+        public void ConditionalOrElseGuard()
+        {
+            var q = new QueriableDummy<TestTranslatingExpressionVisitor.SourceType3>();
+
+            var r1 = (from evt in q
+                      from j in evt.jets
+                      where evt.muons.Where(m => m.val > j.val).Count() > 1 || evt.muons.Where(m => m.val > j.val * 2).Count() < 10
+                      select 1
+                );
+            var answer = r1.Aggregate(0, (acc, va) => acc + va);
+            var query1 = DummyQueryExectuor.FinalResult;
+            query1.DumpCodeToConsole();
+
+            var code = query1.CodeBody.Statements;
+            Assert.AreEqual(1, code.Count());
+            var outterLoop = code.First() as IStatementCompound;
+            Assert.AreEqual(1, outterLoop.Statements.Where(s => s is Statements.StatementForLoop).Count(), "Expect only one unprotected loop.");
+            Assert.AreEqual(2, outterLoop.Statements.Where(s => s is Statements.StatementFilter).Count(), "Expect only one unprotected loop.");
+        }
+
+        [TestMethod]
         public void TestConditionalEvaluationInBranchWithComplexSubQuery()
         {
             var q = new QueriableDummy<ntupArray>();
@@ -2640,7 +2682,7 @@ namespace LINQToTTreeLib
             query.DumpCodeToConsole();
 
             Assert.AreEqual(1, query.QueryCode().Count(), "# of query blocks");
-            Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
+            Assert.AreEqual(4, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
         [TestMethod]

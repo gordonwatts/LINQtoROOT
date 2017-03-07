@@ -29,6 +29,7 @@ namespace LINQToTTreeLib.Expressions
         {
             try
             {
+                // Get setup and deal with simple cases.
                 Debug.WriteLine("ExpressionToCPP: Parsing {0}{1}", expr.ToString(), "");
                 Debug.Indent();
                 if (expr == null)
@@ -37,6 +38,14 @@ namespace LINQToTTreeLib.Expressions
                 if (cc == null)
                 {
                     cc = new CodeContext();
+                }
+
+                // Special case we can deal with seperately - when there is a bool and an AndAlso or OrElse.
+                // We want to make sure we guard the second expression so it isn't executed if it isn't needed.
+                if (expr.Type == typeof(bool)
+                    && (expr.NodeType == ExpressionType.AndAlso || expr.NodeType == ExpressionType.OrElse))
+                {
+                    return GetExpressionForBoolAndOr(expr, ce, cc, container);
                 }
 
                 // Cache the list of variables that need to be eliminated when CPP is done.
@@ -57,8 +66,43 @@ namespace LINQToTTreeLib.Expressions
         }
 
         /// <summary>
-        /// Internal expression resolver. This routine is temporary - needed as we move
-        /// to the new system...
+        /// We are looking at a&&b or a||b. We wnat to make sure we evaluate b iff we need it, depending on the result of a.
+        /// </summary>
+        /// <param name="expr"></param>
+        /// <param name="ce"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        private static IValue GetExpressionForBoolAndOr(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
+        {
+            // Create a variable to hold the result of this test
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            result.InitialValue = new ValSimple("false", typeof(bool));
+            ce.Add(result);
+            var currentScope = ce.CurrentScope;
+
+            // Set its value equal to the lefthand operand.
+            var binaryExpression = expr as BinaryExpression;
+            ce.Add(new Statements.StatementAssign(result, GetExpression(binaryExpression.Left, ce, cc, container)));
+
+            // Now, see if we need to evalute the right hand operand.
+            if (expr.NodeType == ExpressionType.AndAlso)
+            {
+                ce.Add(new Statements.StatementFilter(result));
+            } else
+            {
+                var notYet = new ValSimple($"!{result.RawValue}", typeof(bool), new IDeclaredParameter[] { result });
+                ce.Add(new Statements.StatementFilter(notYet));
+            }
+            ce.Add(new Statements.StatementAssign(result, GetExpression(binaryExpression.Right, ce, cc, container)));
+            ce.CurrentScope = currentScope;
+
+            // Return the value we've now filled.
+            return result;
+        }
+
+        /// <summary>
+        /// Internal expression resolver. 
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="ce"></param>
@@ -70,9 +114,12 @@ namespace LINQToTTreeLib.Expressions
         /// </remarks>
         public static IValue InternalGetExpression(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
+            // If we are looking at a null expression, then we resolve to a null value
             if (expr == null)
                 return null;
 
+            // If this is a known sub-expression, then we should return
+            // the cached value.
             if (ce != null)
             {
                 var v = ce.LookupSubExpression(expr);
@@ -80,8 +127,8 @@ namespace LINQToTTreeLib.Expressions
                     return v;
             }
 
-            // We have to do the visit - make sure everything is prepared.
-
+            // We are going to do the visit. Create the resolver we are going to use
+            // and configure it.
             if (cc == null)
             {
                 cc = new CodeContext();
@@ -95,10 +142,10 @@ namespace LINQToTTreeLib.Expressions
                 container.SatisfyImportsOnce(visitor);
             }
 
-            // Do the visit, cache the result.
-
+            // Do the visit
             visitor.Visit(expr);
 
+            // Cache the result.
             if (ce != null)
             {
                 ce.RememberSubExpression(expr, visitor.Result);

@@ -111,14 +111,15 @@ namespace LINQToTTreeLib.Tests
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var res = DummyQueryExectuor.FinalResult;
+            res.DumpCodeToConsole();
 
             ///
             /// We expect a single top level statement
             /// 
 
-            var ifStatement = res.CodeBody.Statements.First() as StatementFilter;
-            Assert.IsNotNull(ifStatement, "if statement isn't an if statement!");
-            Assert.AreEqual("(((*this).run)>10)&&(((*this).run)<100)", ifStatement.TestExpression.RawValue, "incorrect if statement");
+            var assStatement = res.CodeBody.Statements.First() as StatementAssign;
+            Assert.IsNotNull(assStatement, "if statement isn't an if statement!");
+            Assert.AreEqual("((*this).run)>10", assStatement.Expression.RawValue, "incorrect if statement");
         }
 
         [TestMethod]
