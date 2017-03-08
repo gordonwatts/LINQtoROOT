@@ -243,6 +243,23 @@ namespace LINQToTTreeLib.QMFunctions
             }
 
             /// <summary>
+            /// Look for references inside a result operator
+            /// </summary>
+            /// <param name="resultOperator"></param>
+            /// <param name="queryModel"></param>
+            /// <param name="index"></param>
+            public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
+            {
+                // Do this by a trick - running through the transform of expressions.
+                resultOperator.TransformExpressions(expr =>
+                {
+                    _exprVisitor.Visit(expr);
+                    return expr;
+                });
+                base.VisitResultOperator(resultOperator, queryModel, index);
+            }
+
+            /// <summary>
             /// While parsing an expression (or similar) we are referencing a query expression. This
             /// is potentially an argument.
             /// </summary>

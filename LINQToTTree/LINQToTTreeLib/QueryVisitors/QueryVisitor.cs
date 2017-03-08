@@ -351,7 +351,6 @@ namespace LINQToTTreeLib
                 }
 
                 // If we drop through here, then let the full machinery parse the thing
-
                 base.VisitQueryModel(queryModel);
             }
             finally

@@ -120,7 +120,7 @@ namespace LINQToTreeHelpers.Tests
 
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
+            Assert.IsTrue(DummyQueryExectuor.FinalResult.CodeBody.CodeItUp().Concat(DummyQueryExectuor.FinalResult.QMFunctions.SelectMany(qmf => qmf.StatementBlock.CodeItUp())).Where(l => l.Contains("(*(*this).myvectorofint).size()")).Any(), "no line contains the proper size call!");
         }
 
         [TestMethod]
