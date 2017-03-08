@@ -4,6 +4,7 @@ using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NVelocity.App;
+using LINQToTTreeLib.ResultOperators;
 
 namespace LINQToTTreeLib
 {
@@ -82,6 +83,31 @@ namespace LINQToTTreeLib
             var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+
+            var result = exe.ExecuteScalarAsFuture<int>(query);
+
+            Assert.IsNotNull(result, "future should exist!");
+            Assert.IsFalse(result.HasValue, "future shoudl not have executed by now!");
+
+            var val = result.Value;
+            Assert.AreEqual(numberOfIter, val, "incorrect result came back.");
+            Assert.IsTrue(result.HasValue, "value should be marked by now!");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(AverageNotAllowedAtTopLevelException))]
+        public void AverageAsFutureQuery()
+        {
+            int numberOfIter = 10;
+
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Select(e => e.run).Average();
             var query = DummyQueryExectuor.LastQueryModel;
 
             ntuple._gProxyFile = proxyFile.FullName;

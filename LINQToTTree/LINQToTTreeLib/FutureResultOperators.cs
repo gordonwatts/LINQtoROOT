@@ -13,6 +13,21 @@ namespace LINQToTTreeLib
     /// </summary>
     public static class FutureResultOperators
     {
+
+        /// <summary>
+        /// Thrown when there is no such average method
+        /// </summary>
+        [Serializable]
+        public class NoSuchAverageMethodException : Exception
+        {
+            public NoSuchAverageMethodException() { }
+            public NoSuchAverageMethodException(string message) : base(message) { }
+            public NoSuchAverageMethodException(string message, Exception inner) : base(message, inner) { }
+            protected NoSuchAverageMethodException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// Returns a future that will give the number of elements in a sequence.
         /// </summary>
@@ -23,16 +38,31 @@ namespace LINQToTTreeLib
         {
             var q = CheckSource<TSource>(query);
 
-            ///
-            /// Build up the count expression.
-            /// typeof(Queryable).GetMethod("Count", new Type[] { typeof(IQueryable<>) }) doesn't work?
-            /// 
-
+            // Build up the count expression.
             var countMethodGeneric = typeof(Queryable).GetMethods().Where(m => m.Name == "Count").Where(m => m.GetParameters().Length == 1).First();
             var countMethod = countMethodGeneric.MakeGenericMethod(new Type[] { typeof(TSource) });
             var expr = Expression.Call(null, countMethod, query.Expression);
 
+            // And return a future for the scalar.
             return FutureExecuteScalarHelper<TSource, int>(q, expr);
+        }
+
+        /// <summary>
+        /// Returns a future that will calculate the average, and return a double.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static IFutureValue<double> FutureAverage<TSource>(this IQueryable<TSource> query)
+        {
+            var q = CheckSource<TSource>(query);
+
+            // Build up the count expression.
+            var queriableType = typeof(IQueryable<>).MakeGenericType(typeof(TSource));
+            var averageMethod = typeof(Queryable).GetMethods().Where(m => m.Name == "Average").Where(m => m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == queriableType).First();
+            var expr = Expression.Call(null, averageMethod, query.Expression);
+
+            return FutureExecuteScalarHelper<TSource, double>(q, expr);
         }
 
         /// <summary>

@@ -1333,7 +1333,21 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestAverageSimple()
+        public void SumAtTopLevel()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var result = q.Select(evt => 10).Sum();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            Assert.AreEqual(1, code.CodeBody.Statements.Count());
+            Assert.IsInstanceOfType(code.CodeBody.Statements.First(), typeof(Statements.StatementAggregate));
+            Assert.AreEqual(1, code.ResultValues.Count());
+        }
+
+        [TestMethod]
+        public void AverageInSubQuery()
         {
             // Make sure we can process it!
             var q = new QueriableDummy<ntupWithObjects>();
@@ -1360,7 +1374,7 @@ namespace LINQToTTreeLib
         /// is invalid.
         /// </summary>
         [TestMethod]
-        public void TestAverageWithFilter()
+        public void AverageInSubQueryWithFilter()
         {
             // Make sure we can process it!
             var q = new QueriableDummy<ntupWithObjects>();
@@ -1380,7 +1394,7 @@ namespace LINQToTTreeLib
         /// is invalid.
         /// </summary>
         [TestMethod]
-        public void TestAverageWithLoopFilter()
+        public void AverageInSubQueryWithLoopFilter()
         {
             // Make sure we can process it!
             var q = new QueriableDummy<ntupWithObjects>();
@@ -1396,6 +1410,19 @@ namespace LINQToTTreeLib
             var openBrace = linesbefore.Where(l => l.Contains("{")).Count();
 
             Assert.AreEqual(openBrace - 1, closeBrace, "# of close braces");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(AverageNotAllowedAtTopLevelException))]
+        public void AverageAtTopLevel()
+        {
+            var q = new QueriableDummy<ntupWithObjects>();
+            var result = q.Select(evt => 10).Average();
+
+            var code = DummyQueryExectuor.FinalResult;
+            code.DumpCodeToConsole();
+
+            Assert.Inconclusive();
         }
 
         [CPPHelperClass]
