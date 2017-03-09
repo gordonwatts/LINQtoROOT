@@ -48,6 +48,29 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Run the Sum predicate as a future value at a top level.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static IFutureValue<TSource> FutureSum<TSource>(this IQueryable<TSource> query)
+        {
+            var q = CheckSource<TSource>(query);
+
+            // Build up the sum expression.
+            var queriableType = typeof(IQueryable<TSource>);
+            var sumMethod = typeof(Queryable).GetMethods()
+                .Where(m => m.Name == "Sum")
+                .Where(m => m.GetParameters().Length == 1)
+                .Where(m => m.GetParameters()[0].ParameterType == queriableType)
+                .First();
+            var expr = Expression.Call(null, sumMethod, query.Expression);
+
+            // And return a future for the scalar.
+            return FutureExecuteScalarHelper<TSource, TSource>(q, expr);
+        }
+
+        /// <summary>
         /// Returns a future that will calculate the average, and return a double.
         /// </summary>
         /// <typeparam name="TSource"></typeparam>

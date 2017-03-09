@@ -99,6 +99,30 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void SumInFutureQuery()
+        {
+            int numberOfIter = 10;
+
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Select(evt => evt.run).Sum();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+
+            var result = exe.ExecuteScalarAsFuture<int>(query);
+
+            Assert.IsNotNull(result, "future should exist!");
+            Assert.IsFalse(result.HasValue, "future shoudl not have executed by now!");
+
+            var val = result.Value;
+            Assert.AreEqual(numberOfIter*10, val, "incorrect result came back.");
+            Assert.IsTrue(result.HasValue, "value should be marked by now!");
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(AverageNotAllowedAtTopLevelException))]
         public void AverageAsFutureQuery()
         {
