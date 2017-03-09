@@ -1534,6 +1534,10 @@ namespace LINQToTTreeLib
 
             Assert.IsNotNull(DummyQueryExectuor.FinalResult, "Expecting some code to have been generated!");
             var query = DummyQueryExectuor.FinalResult;
+
+            // There should be a function and a call to that function.
+            Optimization.Optimizer.Optimize(query);
+            Optimization.CommonStatementLifter.Optimize(query);
             query.DumpCodeToConsole();
 
             var lm = query.DumpCode().Where(l => l.Contains("TLorentzVector* ")).Count();
