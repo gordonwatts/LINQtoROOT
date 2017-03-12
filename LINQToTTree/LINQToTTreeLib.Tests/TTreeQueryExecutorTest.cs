@@ -518,6 +518,39 @@ namespace LINQToTTreeLib
             Assert.AreEqual(10, result);
         }
 
+
+        [TestMethod]
+        public void WhereProtectedConditionalWithComplexStatement()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            // Generate a proxy .h file that we can use
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // A query that uses a conditional or.
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        select (from v in evt.myvectorofint
+                                where v > 0 && v < 100
+                                orderby v ascending
+                                select v).Take(2).Sum();
+
+            // The first two elements are 0 and 1, so 0 + 1 == 1.
+            var dude = dudeQ.Where(x => x == 1).Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            //
+            // Ok, now we can actually see if we can make it "go".
+            // 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(result, numberOfIter);
+        }
+
         [TestMethod]
         public void TestCreateTupleWithCreate()
         {
