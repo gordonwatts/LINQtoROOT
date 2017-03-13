@@ -103,6 +103,7 @@ namespace LINQToTTreeLib
             public IBookingStatementBlock PreviousBookingScope;
             public IBookingStatementBlock ResultScope;
             public IDictionary<string, IValue> RememberedExpressions;
+            public Stack<IScopeInfo> ScopeState;
             public int oldDepth;
         }
 
@@ -113,7 +114,15 @@ namespace LINQToTTreeLib
         {
             get
             {
-                return new CurrentScopeInfo() { Scope = CurrentScopePointer, BookingScope = CurrentDeclarationScopePointer, PreviousBookingScope = PreviousDeclarationScopePointer, oldDepth = Depth, ResultScope = CurrentResultScope, RememberedExpressions = new Dictionary<string, IValue>(CurrentRememberedExpressions) };
+                return new CurrentScopeInfo() {
+                    Scope = CurrentScopePointer,
+                    BookingScope = CurrentDeclarationScopePointer,
+                    PreviousBookingScope = PreviousDeclarationScopePointer,
+                    oldDepth = Depth,
+                    ResultScope = CurrentResultScope,
+                    RememberedExpressions = new Dictionary<string, IValue>(CurrentRememberedExpressions),
+                    ScopeState = new Stack<IScopeInfo>(_scopeState)
+                };
             }
             set
             {
@@ -127,6 +136,7 @@ namespace LINQToTTreeLib
                 Depth = info.oldDepth;
                 CurrentResultScope = info.ResultScope;
                 CurrentRememberedExpressions = new Dictionary<string, IValue>(info.RememberedExpressions);
+                _scopeState = new Stack<IScopeInfo>(info.ScopeState);
             }
         }
 

@@ -177,6 +177,41 @@ namespace LINQToTTreeLib
             }
         }
 
+        /// <summary>
+        /// Seen in the wild... the internal scope stack isn't getting tracked.
+        /// </summary>
+        [TestMethod]
+        public void CheckPopAndCurrentScopeWorkTogether()
+        {
+            GeneratedCode target = new GeneratedCode();
+            IStatement s1 = new StatementInlineBlock();
+            target.Add(s1);
+            var depth = target.Depth;
+            var s2 = new StatementInlineBlock();
+            target.Add(s2);
+            var firstTwoDown = target.CurrentScope;
+
+            var s3 = new StatementInlineBlock();
+            target.Add(s3);
+
+            target.CurrentScope = firstTwoDown;
+            // This pop should put us at the s1 level.
+            target.Pop();
+            Assert.AreEqual(depth, target.Depth);
+        }
+
+        [TestMethod]
+        public void CheckDepthAndPopWorkTogether()
+        {
+            var target = new GeneratedCode();
+            var s1 = new StatementInlineBlock();
+            target.Add(s1);
+            var s2 = new StatementInlineBlock();
+            target.Add(s2);
+            Assert.AreEqual(3, target.Depth);
+            target.Pop();
+            Assert.AreEqual(2, target.Depth);
+        }
 
         [TestMethod]
         public void TestChangeScopeSpecificTopLevel()
