@@ -75,6 +75,9 @@ namespace LINQToTTreeLib.Expressions
         /// <returns></returns>
         private static IValue GetExpressionForBoolAndOr(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
+            // Svae to make sure we can get back.
+            var outterScope = ce.CurrentScope;
+
             // Create a variable to hold the result of this test
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             result.InitialValue = new ValSimple("false", typeof(bool));
@@ -94,7 +97,7 @@ namespace LINQToTTreeLib.Expressions
                 ce.Add(new Statements.StatementFilter(notYet));
             }
             ce.Add(new Statements.StatementAssign(result, GetExpression(binaryExpression.Right, ce, cc, container)));
-            ce.Pop();
+            ce.CurrentScope = outterScope;
 
             // Return the value we've now filled.
             return result;
