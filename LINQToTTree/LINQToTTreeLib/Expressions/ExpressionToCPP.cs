@@ -79,7 +79,6 @@ namespace LINQToTTreeLib.Expressions
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             result.InitialValue = new ValSimple("false", typeof(bool));
             ce.Add(result);
-            var currentScope = ce.CurrentScope;
 
             // Set its value equal to the lefthand operand.
             var binaryExpression = expr as BinaryExpression;
@@ -95,7 +94,7 @@ namespace LINQToTTreeLib.Expressions
                 ce.Add(new Statements.StatementFilter(notYet));
             }
             ce.Add(new Statements.StatementAssign(result, GetExpression(binaryExpression.Right, ce, cc, container)));
-            ce.CurrentScope = currentScope;
+            ce.Pop();
 
             // Return the value we've now filled.
             return result;

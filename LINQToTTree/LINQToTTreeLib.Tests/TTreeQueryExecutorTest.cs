@@ -532,7 +532,7 @@ namespace LINQToTTreeLib
             var q = new QueriableDummy<TestNtupeArr>();
             var dudeQ = from evt in q
                         select (from v in evt.myvectorofint
-                                where v > 0 && v < 100
+                                where v >= 0 && v < 100
                                 orderby v ascending
                                 select v).Take(2).Sum();
 
@@ -547,6 +547,7 @@ namespace LINQToTTreeLib
 
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            exe.CleanupQuery = false;
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(result, numberOfIter);
         }
