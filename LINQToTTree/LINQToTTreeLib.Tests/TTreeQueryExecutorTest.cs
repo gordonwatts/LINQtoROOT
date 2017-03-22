@@ -2939,6 +2939,44 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void TestCArrayIndexedSum()
+        {
+            // Test arr[5].
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOf("TestCArrayIndexed.root", () => TTreeParserCPPTests.CreateTrees.CreateTreeWithIndexedSimpleVector(numberOfIter));
+
+            ///
+            /// Generate a proxy .h file that we can use
+            /// 
+
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            ///
+            /// Get a simple query we can "play" with. That this works
+            /// depends on each event having 10 entries in the array, which contains
+            /// the numbers 0-10.
+            /// 
+
+            var q = new QueriableDummy<TestNtupeCIndexedArr>();
+            var dudeQ = from evt in q
+                        where (evt.arr.Sum() > 10)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeCIndexedArr));
+            var result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(25, result, "Incorrect number of iterations found");
+        }
+
+        [TestMethod]
         public void TestCArrayConstEnumerable()
         {
             // Test arr[5].
