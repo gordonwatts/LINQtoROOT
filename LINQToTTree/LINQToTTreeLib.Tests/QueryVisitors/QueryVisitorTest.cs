@@ -747,10 +747,10 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Look at the statements, make sure they are all the same size.
-        /// </summary>
-        /// <param name="iEnumerable"></param>
-        /// <param name="iEnumerable_2"></param>
+                 /// Look at the statements, make sure they are all the same size.
+                 /// </summary>
+                 /// <param name="iEnumerable"></param>
+                 /// <param name="iEnumerable_2"></param>
         private void CompareNumbersOfStatements(System.Collections.Generic.IEnumerable<IStatement> sExpected, System.Collections.Generic.IEnumerable<IStatement> sActual, int statementsToCheck)
         {
             Assert.AreEqual(sExpected.Count(), sActual.Count(), "# of statements incorrect");
