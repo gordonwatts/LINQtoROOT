@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Statements;
 using System;
 using System.Linq;
 
@@ -43,20 +44,20 @@ namespace LINQToTTreeLib.Optimization
         /// </remarks>
         public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newParam)
         {
-            //
+            // Dummy check.
+            if (oldName == newParam.ParameterName)
+                return true;
+
             // First, see if we can find the block where the variable is declared.
-            //
 
             var vr = FindDeclaredVariable(oldName, _holderBlockOld);
 
             if (vr == null)
                 return false;
 
-            //
             // Make sure that the variable we are switching to is also declared. If it is an "external" then we
             // are going to have a problem here! And, the variables had better be declared the same "scope" above, or
             // that means they are also being used for something different.
-            //
 
             var vrNew = FindDeclaredVariable(newParam.ParameterName, _holderBlockNew);
             if (vrNew == null || vrNew.Item3 != vr.Item3)
@@ -68,10 +69,57 @@ namespace LINQToTTreeLib.Optimization
             if (!initValueSame)
                 return false;
 
-            // Rename the variable!
+            // So, then the next question is - is the variable used in the same way below? Tracking this carefully
+            // requires a real data flow. So we are going to do this simply - if the variables are used downstream
+            // for any reason and are altered or changed/updated - then we won't combine them.
+            var newModified = vrNew.Item2
+                .Statements
+                .SelectMany(s => s is IStatementCompound ? (s as IStatementCompound).Statements : new IStatement[] { s })
+                .Where(s => s is ICMStatementInfo)
+                .Where(s => (s as ICMStatementInfo).ResultVariables.Where(v => v == newParam.ParameterName).Any());
+
+            var oldModified = vr.Item2
+                .Statements
+                .SelectMany(s => s is IStatementCompound ? (s as IStatementCompound).Statements : new IStatement[] { s })
+                .Where(s => s is ICMStatementInfo)
+                .Where(s => (s as ICMStatementInfo).ResultVariables.Where(v => v == oldName).Any());
+
+            if (newModified.Count() != oldModified.Count())
+                return false;
+
+            var pairedStatements = oldModified.Zip(newModified, (oldS, newS) => Tuple.Create(oldS, newS)).ToArray();
+            if (pairedStatements.Where(sp => sp.Item1.GetType() != sp.Item2.GetType()).Any())
+                return false;
+
+            // Rename the variable - we need to do this to do the next level of checks.
             vr.Item2.RenameVariable(oldName, newParam.ParameterName);
 
+            var nonMatchingAssignments = pairedStatements
+                .Where(sp => !sp.Item2.TryCombineStatement(sp.Item1, this));
+            if (nonMatchingAssignments.Any())
+            {
+                // Replace the renaming.
+                vr.Item2.RenameVariable(newParam.ParameterName, oldName);
+                return false;
+            }
+
             return true;
+        }
+
+        /// <summary>
+        /// Simple dummy optimization service.
+        /// </summary>
+        private class SimpleOptimizer : ICodeOptimizationService
+        {
+            public void ForceRenameVariable(string originalName, string newName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool TryRenameVarialbeOneLevelUp(string oldName, IDeclaredParameter newVariable)
+            {
+                return false;
+            }
         }
 
         /// <summary>
