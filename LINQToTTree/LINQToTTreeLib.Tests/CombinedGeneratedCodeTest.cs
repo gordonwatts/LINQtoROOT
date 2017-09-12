@@ -273,6 +273,46 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void CombineSameQueriesWithDifferentPredonditions()
+        {
+            var q = new QueriableDummy<ntupWithObjectsDest>();
+
+            var r = from evt in q
+                    let j1 = evt.var1.Skip(1).First()
+                    let a1 = j1 > 0 ? evt.var2[j1] : 0.0
+                    select a1;
+            var r1 = r.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+            Console.WriteLine();
+            Console.WriteLine("**** First Query");
+            query1.DumpCodeToConsole();
+
+            var rr = from evt in q
+                     let j1 = evt.var1.First()
+                     let a1 = j1 > 0 ? evt.var2[j1] : 0.0
+                     select a1;
+            var r2 = rr.Sum();
+            var query2 = DummyQueryExectuor.FinalResult;
+            Console.WriteLine();
+            Console.WriteLine("**** Second Query");
+            query2.DumpCodeToConsole();
+
+            var query = CombineQueries(query2, query1);
+
+            Console.WriteLine();
+            Console.WriteLine("**** Combined Query");
+            query.DumpCodeToConsole();
+
+            // Find the if-statement protected code to see what the values are we are looking at.
+            var ifStatementCount = query.QueryCode()
+                .First()
+                .Statements
+                .Where(s => s is StatementFilter)
+                .Count();
+            Assert.AreEqual(4, ifStatementCount);
+        }
+
+        [TestMethod]
         public void CombineSlightlyQueries()
         {
             var q = new QueriableDummy<ntupWithObjectsDest>();
