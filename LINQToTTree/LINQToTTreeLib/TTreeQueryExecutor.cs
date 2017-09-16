@@ -209,7 +209,7 @@ namespace LINQToTTreeLib
             if (f.Scheme == "proof")
                 return true;
 
-            if (f.Scheme != "file")
+            if (f.Scheme != "file" && f.Scheme != "localwin")
                 return false;
 
             if (!File.Exists(f.LocalPath))
@@ -599,6 +599,10 @@ namespace LINQToTTreeLib
             else if (_exeReq.RootFiles.All(t => t.Scheme == "proof"))
             {
                 local = new ProofExecutor() { Environment = _exeReq };
+            }
+            else if (_exeReq.RootFiles.All(t => t.Scheme == "localwin"))
+            {
+                local = new CommandLineExecutor() { Environment = _exeReq };
             }
             else
             {

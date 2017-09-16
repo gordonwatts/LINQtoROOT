@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static LINQToTTreeLib.TTreeQueryExecutorTest;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon
 {
@@ -59,6 +60,27 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.AreEqual(2000, (int)h.GetBinContent(1), "Answer from query");
         }
 
+        [TestMethod]
+        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
+        public void LocalWinCmdLineCountOperator()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Generate a proxy .h file that we can use
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(20, result);
+        }
+
         /// <summary>
         /// Create a dirt simple query environment so we can see what running is like.
         /// </summary>
@@ -107,6 +129,18 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             dest.Refresh();
             return dest;
         }
+    }
 
+    public static class Helpers
+    {
+        /// <summary>
+        /// Return a new uri that is the same as the old uri, but using the localwin guy specifier
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static Uri AsLocalWinUri(this Uri source)
+        {
+            return new Uri($"localwin://{source.LocalPath}");
+        }
     }
 }
