@@ -151,6 +151,7 @@
     <Compile Include="CodeContext.cs" />
     <Compile Include="CombinedGeneratedCode.cs" />
     <Compile Include="CPPTranslator.cs" />
+    <Compile Include="ExecutionCommon\CommandLineExecutor.cs" />
     <Compile Include="ExecutionCommon\ExecutionEnvironment.cs" />
     <Compile Include="ExecutionCommon\ExecutionUtilities.cs" />
     <Compile Include="ExecutionCommon\IQueryExectuor.cs" />
