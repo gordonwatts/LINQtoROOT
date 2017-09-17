@@ -119,7 +119,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // To move them back we need to use a TFile.
             var resultfileFullName = queryResultsFile.FullName.Replace("\\", "\\\\");
             cmds.AppendLine($"rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
-            cmds.AppendLine("rf->Write(selector->OutputList);");
+            cmds.AppendLine("rf->WriteTObject(selector->GetOutputList(), \"output\");");
             cmds.AppendLine("rf->Close();");
         }
 
@@ -134,15 +134,21 @@ namespace LINQToTTreeLib.ExecutionCommon
                 throw new FileNotFoundException($"Unable to find the file ");
             }
 
-            // Also, since we want the results to live beyond this guy, make sure that when
-            // the selector is deleted the objects don't go away!
-
+            // Read the data from the file.
             var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
-            //foreach (var o in selector.OutputList)
-            //{
-            //    results[o.Name] = o;
-            //}
-            //selector.OutputList.SetOwner(false);
+            var f = ROOTNET.NTFile.Open(queryResultsFile.FullName);
+            try
+            {
+                var list = f.Get("output") as NTList;
+                foreach (var o in list)
+                {
+                    results[o.Name] = o;
+                }
+            }
+            finally
+            {
+                f.Close();
+            }
 
             return results;
         }

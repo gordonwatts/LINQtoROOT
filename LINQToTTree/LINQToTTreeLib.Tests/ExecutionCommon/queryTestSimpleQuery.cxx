@@ -83,7 +83,7 @@ private:
 	void ExecuteQueryBlock0 ()
 	{
 		{
-		  if (((*this).RunNumber)>10)
+		  if (((*this).RunNumber)>0)
 		  {
 		    aInt32_1=aInt32_1+1;
 		  }

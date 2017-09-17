@@ -56,7 +56,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var o = r["aInt32_1"];
             Assert.IsInstanceOfType(o, typeof(ROOTNET.NTH1I), "return histo type");
             var h = o as ROOTNET.NTH1I;
-            Assert.AreEqual(2000, (int)h.GetBinContent(1), "Answer from query");
+            Assert.AreEqual(20, (int)h.GetBinContent(1), "Answer from query");
         }
 
         [TestMethod]
@@ -136,6 +136,12 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.Inconclusive();
         }
 
+        [TestMethod]
+        public void LocalWinCmdLineOtherTypes()
+        {
+            Assert.Inconclusive("Test other types of data that go back and forth than histograms - like dictionaries, etc. ");
+        }
+
         /// <summary>
         /// Create a dirt simple query environment so we can see what running is like.
         /// </summary>
@@ -143,7 +149,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         private ExecutionEnvironment CreateSimpleEnvironment()
         {
             var result = new ExecutionEnvironment();
-            result.RootFiles = new[] { CreateDatasetRef("LINQTest") };
+            var rootFile = TestUtils.CreateFileOfInt(20);
+            result.RootFiles = new[] { rootFile.AsLocalWinUri()};
 
             return result;
         }
@@ -156,19 +163,9 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         {
             var result = CreateSimpleEnvironment();
 
-            result.TreeName = "btagd3pd";
+            result.TreeName = "dude";
 
             return result;
-        }
-
-        /// <summary>
-        /// Create a reference to a dataset that uses the local windows cmdline.
-        /// </summary>
-        /// <param name="dsName"></param>
-        /// <returns></returns>
-        static Uri CreateDatasetRef(string dsName)
-        {
-            return new Uri(string.Format("localwin://{0}", dsName));
         }
 
         /// <summary>

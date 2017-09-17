@@ -906,7 +906,7 @@ public :
          msvinjet_normDist                         (&fDirector,"msvinjet_normDist"),
          msvinjet_trk_n                            (&fDirector,"msvinjet_trk_n"),
          msvinjet_trk_index                        (&fDirector,"msvinjet_trk_index"),
-         RunNumber                                 (&fDirector,"RunNumber"),
+         RunNumber                                 (&fDirector,"run"),
          EventNumber                               (&fDirector,"EventNumber"),
          timestamp                                 (&fDirector,"timestamp"),
          timestamp_ns                              (&fDirector,"timestamp_ns"),
@@ -4056,7 +4056,7 @@ public :
       htemp(0),
       fDirector(tree,-1),
       fClass                (TClass::GetClass("ntuple_CollectionTree")),
-      RunNumber                                 (&fDirector,"RunNumber")
+      RunNumber                                 (&fDirector,"run")
       { }
    ~ntuple_CollectionTree();
    Int_t   Version() const {return 1;}
