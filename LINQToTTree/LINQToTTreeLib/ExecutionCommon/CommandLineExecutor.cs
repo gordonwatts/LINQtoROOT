@@ -68,7 +68,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Code up the call
             var tmpFName = templateRunner.FullName.Replace("\\", "\\\\");
             cmds.AppendLine($"int r = gSystem->CompileMacro(\"{tmpFName}\", \"{buildFlags}\");");
-            cmds.AppendLine("if (r != 1) { exit(r); }");
+            cmds.AppendLine("if (r != 1) { exit(1); }");
         }
 
         /// <summary>

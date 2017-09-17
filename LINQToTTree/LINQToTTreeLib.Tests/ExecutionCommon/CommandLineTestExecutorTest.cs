@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static LINQToTTreeLib.ExecutionCommon.CommandLineExecutor;
 using static LINQToTTreeLib.TTreeQueryExecutorTest;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon
@@ -61,10 +62,40 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
+        [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
+        [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
         public void LocalWinCmdLineBadCPPGeneration()
         {
-            // Check that the returned error message has the C++ error in it
-            Assert.Inconclusive();
+            // Make sure a C++ error makes its way back up the line so we can see the error!
+            FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
+            using (var app = runner.AppendText())
+            {
+                app.WriteLine("blah blah blah;");
+                app.Close();
+            }
+
+            // Get the rest of the stuff in there.
+            CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
+            CopyToTempDir("ntuple_CollectionTree.h");
+            Assert.IsTrue(runner.Exists, "Main C++ file missing");
+            var targetr = new CommandLineExecutor();
+            var env = CreateSimpleQueryEnvironment();
+
+            targetr.Environment = env;
+            Exception err = null;
+            try
+            {
+                var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
+            } catch (Exception e)
+            {
+                err = e;
+            }
+
+            Assert.IsNotNull(err);
+            Assert.IsInstanceOfType(err, typeof(CommandLineExecutionException));
+            var cl = (CommandLineExecutionException)err;
+            Assert.IsTrue(cl.Message.Contains("blah"), $"word Blah is missing from error message {cl.Message}.");
         }
 
         [TestMethod]
