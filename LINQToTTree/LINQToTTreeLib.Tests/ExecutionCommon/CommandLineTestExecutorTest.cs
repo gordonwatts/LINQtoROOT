@@ -28,8 +28,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         [TestCleanup]
         public void TestCleanup()
         {
-            if (Directory.Exists(tempDir))
-                Directory.Delete(tempDir, true);
             TestUtils.ResetLINQLibrary();
         }
 
@@ -105,6 +103,12 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        public void LocalWinCmdLineSendObjectsToSelector()
+        {
+            Assert.Inconclusive("Send an input histogram out there");
+        }
+
+        [TestMethod]
         [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalWinCmdLineCountOperator()
         {
@@ -123,6 +127,13 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
+        }
+
+        [TestMethod]
+        public void LocalWinCmdLineCheckDebugDumps()
+        {
+            // When we run in debug mode, make sure the command line dumps are there.
+            Assert.Inconclusive();
         }
 
         /// <summary>

@@ -39,12 +39,112 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Compile the macro
             CompileAndLoad(queryFile, cmds);
 
+            // Run the query
+            var localFiles = Environment.RootFiles.Select(u => new FileInfo(u.LocalPath)).ToArray();
+            var resultsFile = new FileInfo(Path.Combine(queryDirectory.FullName, "selector_results.root"));
+            RunNtupleQuery(cmds, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer, Environment.TreeName, localFiles);
+
             // Run the root script
             cmds.AppendLine("exit(0);");
             ExecuteRootScript("RunTSelector", cmds, queryDirectory);
 
             // Get back results
-            return null;
+            return LoadSelectorResults(resultsFile);
+        }
+
+        /// <summary>
+        /// Emit the code to run the actual query
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="varsToTransfer"></param>
+        /// <param name="treeName"></param>
+        /// <param name="localFiles"></param>
+        /// <returns></returns>
+        private void RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, FileInfo[] localFiles)
+        {
+            cmds.AppendLine($"selector = new {selectClass}();");
+
+            // Next, the root files have to all be opened up.
+            cmds.AppendLine($"t = new TChain(\"{treeName}\");");
+            foreach (var f in localFiles)
+            {
+                var fname = f.FullName.Replace("\\", "\\\\");
+                cmds.AppendLine($"t->Add(\"{fname}\");");
+            }
+
+            // Objects that are headed over need to be correctly loaded.
+            //TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
+            //var objInputList = new ROOTNET.NTList();
+            //selector.InputList = objInputList;
+
+            //var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+            //ROOTNET.NTH1.AddDirectory(false);
+            //foreach (var item in variablesToLoad)
+            //{
+            //    var obj = item.Value as ROOTNET.Interface.NTNamed;
+            //    if (obj == null)
+            //        throw new InvalidOperationException("Can only deal with named objects");
+            //    var cloned = obj.Clone(item.Key);
+            //    objInputList.Add(cloned);
+            //}
+            //ROOTNET.NTH1.AddDirectory(oldHSet);
+
+            //tree.CacheSize = 1024 * 1024 * 100; // 100 MB cache
+            //if (LeafNames == null)
+            //{
+            //    tree.AddBranchToCache("*", true);
+            //}
+            //else
+            //{
+            //    foreach (var leaf in LeafNames)
+            //    {
+            //        tree.AddBranchToCache(leaf, true);
+            //    }
+            //}
+            //tree.StopCacheLearningPhase();
+
+            // Always Do the async prefetching (this is off by default for some reason, but...).
+            //ROOTNET.Globals.gEnv.Value.SetValue("TFile.AsynchPrefetching", 1);
+
+            // Run the whole thing
+            cmds.AppendLine($"t->Process(selector);");
+
+            // If debug, dump some stats...
+            if (Environment.CompileDebug)
+            {
+                cmds.AppendLine("t->PrintCacheStats()");
+            }
+
+            // Get the results and put them into a map for safe keeping!
+            // To move them back we need to use a TFile.
+            var resultfileFullName = queryResultsFile.FullName.Replace("\\", "\\\\");
+            cmds.AppendLine($"rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
+            cmds.AppendLine("rf->Write(selector->OutputList);");
+            cmds.AppendLine("rf->Close();");
+        }
+
+        /// <summary>
+        /// Called after running to load the results.
+        /// </summary>
+        /// <returns></returns>
+        private IDictionary<string, NTObject> LoadSelectorResults(FileInfo queryResultsFile)
+        {
+            if (!queryResultsFile.Exists)
+            {
+                throw new FileNotFoundException($"Unable to find the file ");
+            }
+
+            // Also, since we want the results to live beyond this guy, make sure that when
+            // the selector is deleted the objects don't go away!
+
+            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+            //foreach (var o in selector.OutputList)
+            //{
+            //    results[o.Name] = o;
+            //}
+            //selector.OutputList.SetOwner(false);
+
+            return results;
         }
 
         /// <summary>
@@ -105,7 +205,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         private void ExecuteRootScript(string prefix, StringBuilder cmds, DirectoryInfo tmpDir)
         {
             // Dump the script
-            var cmdFile = $"{System.IO.Path.GetTempPath()}{prefix}.C";
+            var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");
             using (var writer = File.CreateText(cmdFile))
             {
                 writer.WriteLine($"void {prefix}() {{");
