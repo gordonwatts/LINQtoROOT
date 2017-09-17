@@ -26,24 +26,49 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Package everythiing up and run it.
         /// </summary>
-        /// <param name="templateFile">The C++ file we are going to run the query against</param>
+        /// <param name="queryFile">The C++ file we are going to run the query against</param>
         /// <param name="queryDirectory">Directory where we run the query</param>
         /// <param name="varsToTransfer">Variables we need to move over to the query</param>
         /// <returns></returns>
-        public IDictionary<string, NTObject> Execute(FileInfo templateFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public IDictionary<string, NTObject> Execute(FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
             ExecutionUtilities.Init();
             var cmds = new StringBuilder();
 
-            // xxx
-            cmds.AppendLine("root -q");
+            // Compile the macro
+            CompileAndLoad(queryFile, cmds);
 
-            // Run the script
-            ExecuteScript("execute-root", cmds, queryDirectory);
+            // Run the root script
+            cmds.AppendLine("exit(0);");
+            ExecuteRootScript("RunTSelector", cmds, queryDirectory);
 
             // Get back results
             return null;
+        }
+
+        /// <summary>
+        /// Generate commands to build and load the template
+        /// </summary>
+        /// <param name="templateRunner"></param>
+        /// <param name="cmds"></param>
+        private void CompileAndLoad(FileInfo templateRunner, StringBuilder cmds)
+        {
+            var gSystem = ROOTNET.NTSystem.gSystem;
+
+            // Extra compile flags
+            string buildFlags = "k";
+            if (Environment.CompileDebug)
+            {
+                buildFlags += "g";
+                gSystem.FlagsDebug = "-Zi";
+                gSystem.FlagsOpt = "-Zi";
+            }
+
+            // Code up the call
+            var tmpFName = templateRunner.FullName.Replace("\\", "\\\\");
+            cmds.AppendLine($"int r = gSystem->CompileMacro(\"{tmpFName}\", \"{buildFlags}\");");
+            cmds.AppendLine("if (r != 1) { exit(r); }");
         }
 
         /// <summary>
@@ -60,25 +85,47 @@ namespace LINQToTTreeLib.ExecutionCommon
               System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         }
 
+
+        [Serializable]
+        public class ROOTExecutableNotFoundException : Exception
+        {
+            public ROOTExecutableNotFoundException() { }
+            public ROOTExecutableNotFoundException(string message) : base(message) { }
+            public ROOTExecutableNotFoundException(string message, Exception inner) : base(message, inner) { }
+            protected ROOTExecutableNotFoundException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// A list of commands are written to a script and then executed.
         /// We throw if we don't return success
         /// </summary>
         /// <param name="cmds"></param>
-        private void ExecuteScript(string prefix, StringBuilder cmds, DirectoryInfo tmpDir)
+        private void ExecuteRootScript(string prefix, StringBuilder cmds, DirectoryInfo tmpDir)
         {
             // Dump the script
-            var cmdFile = $"{System.IO.Path.GetTempPath()}{prefix}-{Guid.NewGuid().ToString()}.cmd";
+            var cmdFile = $"{System.IO.Path.GetTempPath()}{prefix}.C";
             using (var writer = File.CreateText(cmdFile))
             {
+                writer.WriteLine($"void {prefix}() {{");
                 writer.Write(cmds.ToString());
+                writer.WriteLine("}");
+            }
+
+            // Figure out where root is that we should be executing against
+            var rootPath = System.Environment.ExpandEnvironmentVariables($"%ROOTSYS%\\bin\\root.exe");
+            if (!File.Exists(rootPath))
+            {
+                throw new ROOTExecutableNotFoundException("Unable to find root.exe. This is probably because ROOTSYS is not defined.");
             }
 
             // Create the process info.
             var proc = new Process();
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.ErrorDialog = false;
-            proc.StartInfo.FileName = cmdFile;
+            proc.StartInfo.FileName = rootPath;
+            proc.StartInfo.Arguments = $"-q {cmdFile}";
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;

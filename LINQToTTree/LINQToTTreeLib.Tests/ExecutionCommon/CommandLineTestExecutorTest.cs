@@ -61,10 +61,16 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void CommandLineBadCPPGeneration()
+        public void LocalWinCmdLineBadCPPGeneration()
         {
             // Check that the returned error message has the C++ error in it
             Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void LocalWinCmdLineDictifyClasses()
+        {
+            Assert.Inconclusive("Make sure we dictify classes necessary");
         }
 
         [TestMethod]
