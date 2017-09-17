@@ -39,7 +39,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
         [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
         [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
-        public void TestSimpleQuery()
+        public void LocalWinCmdLineSimpleQuery()
         {
             FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
             CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
@@ -58,6 +58,13 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.IsInstanceOfType(o, typeof(ROOTNET.NTH1I), "return histo type");
             var h = o as ROOTNET.NTH1I;
             Assert.AreEqual(2000, (int)h.GetBinContent(1), "Answer from query");
+        }
+
+        [TestMethod]
+        public void CommandLineBadCPPGeneration()
+        {
+            // Check that the returned error message has the C++ error in it
+            Assert.Inconclusive();
         }
 
         [TestMethod]
