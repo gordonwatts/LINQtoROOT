@@ -602,7 +602,7 @@ namespace LINQToTTreeLib
             }
             else if (_exeReq.RootFiles.All(t => t.Scheme == "localwin"))
             {
-                local = new CommandLineExecutor() { Environment = _exeReq };
+                local = new CommandLineExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
             }
             else
             {

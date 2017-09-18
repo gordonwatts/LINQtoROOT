@@ -24,6 +24,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         public ExecutionEnvironment Environment { get; set; }
 
         /// <summary>
+        /// Get/Set the list of leaf names that this query references. Used to configure the cache
+        /// more efficiently.
+        /// </summary>
+        public string[] LeafNames { get; set; }
+
+        /// <summary>
         /// List of things to do with log info coming back
         /// </summary>
         private static List<Action<string>> _logDumpers = new List<Action<string>>();
@@ -111,19 +117,21 @@ namespace LINQToTTreeLib.ExecutionCommon
             //}
             //ROOTNET.NTH1.AddDirectory(oldHSet);
 
-            //tree.CacheSize = 1024 * 1024 * 100; // 100 MB cache
-            //if (LeafNames == null)
-            //{
-            //    tree.AddBranchToCache("*", true);
-            //}
-            //else
-            //{
-            //    foreach (var leaf in LeafNames)
-            //    {
-            //        tree.AddBranchToCache(leaf, true);
-            //    }
-            //}
-            //tree.StopCacheLearningPhase();
+            // We know what branches we need to work on - so no need for us
+            // to use the training.
+            cmds.AppendLine("t->SetCacheSize(1024 * 1024 * 100); // 100 MB cache");
+            if (LeafNames == null)
+            {
+                cmds.AppendLine("t->AddBranchToCache(\"*\", true);");
+            }
+            else
+            {
+                foreach (var leaf in LeafNames)
+                {
+                    cmds.AppendLine($"t->AddBranchToCache(\"{leaf}\", true);");
+                }
+            }
+            cmds.AppendLine("t->StopCacheLearningPhase();");
 
             // Always Do the async prefetching (this is off by default for some reason, but...).
             //ROOTNET.Globals.gEnv.Value.SetValue("TFile.AsynchPrefetching", 1);
