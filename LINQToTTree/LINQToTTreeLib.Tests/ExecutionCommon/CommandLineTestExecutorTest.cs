@@ -29,6 +29,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         public void TestCleanup()
         {
             TestUtils.ResetLINQLibrary();
+            MEFUtilities.MyClassDone();
             CommandLineExecutor.ResetCommandLineExecutor();
         }
 
@@ -104,9 +105,32 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalWinCmdLineSendObjectsToSelector()
         {
-            Assert.Inconclusive("Send an input histogram out there");
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Generate a proxy .h file that we can use
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Get a simple query that includes packing over a histogram.
+            // The funny way we do the bin content is to make sure the histogram is accessed
+            // in a query data dependent way - otherwise the system optimizes the histogram access
+            // to the host!
+            var q = new QueriableDummy<TestNtupe>();
+            var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h.Directory = null;
+            h.Fill(5,3.0);
+            GC.WaitForPendingFinalizers();
+            var dude = q.Select(i => h.GetBinContent(i.run != 1 ? 1 : i.run)).Where(i => i > 2.5).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CleanupQuery = false;
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(20, result);
         }
 
         [TestMethod]

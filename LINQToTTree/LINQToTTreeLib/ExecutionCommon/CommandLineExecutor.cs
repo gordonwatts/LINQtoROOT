@@ -109,6 +109,37 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             cmds.AppendLine($"selector = new {selectClass}();");
 
+            // Objects that are headed over need to be stored in a file and then loaded into the selector.
+            if (varsToTransfer != null && varsToTransfer.Count() > 0)
+            {
+                TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
+                var inputFilesFilename = new FileInfo(Path.Combine(queryResultsFile.DirectoryName, "TSelectorInputFiles.root"));
+                var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
+
+                var safeInputFilename = inputFilesFilename.FullName.Replace("\\", "\\\\");
+                cmds.AppendLine($"varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
+                cmds.AppendLine("selector->SetInputList(new TList());");
+
+                var objInputList = new ROOTNET.NTList();
+                var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+                try
+                {
+                    ROOTNET.NTH1.AddDirectory(false);
+                    foreach (var item in varsToTransfer)
+                    {
+                        var obj = item.Value as ROOTNET.Interface.NTObject;
+                        var cloned = obj.Clone(item.Key);
+                        outgoingVariables.WriteTObject(cloned);
+                        cmds.AppendLine($"selector->GetInputList()->Add(varsInFile->Get(\"{item.Key}\"));");
+                    }
+                }
+                finally
+                {
+                    ROOTNET.NTH1.AddDirectory(oldHSet);
+                    outgoingVariables.Close();
+                }
+            }
+
             // Next, the root files have to all be opened up.
             cmds.AppendLine($"t = new TChain(\"{treeName}\");");
             foreach (var f in localFiles)
@@ -116,23 +147,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var fname = f.FullName.Replace("\\", "\\\\");
                 cmds.AppendLine($"t->Add(\"{fname}\");");
             }
-
-            // Objects that are headed over need to be correctly loaded.
-            //TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
-            //var objInputList = new ROOTNET.NTList();
-            //selector.InputList = objInputList;
-
-            //var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
-            //ROOTNET.NTH1.AddDirectory(false);
-            //foreach (var item in variablesToLoad)
-            //{
-            //    var obj = item.Value as ROOTNET.Interface.NTNamed;
-            //    if (obj == null)
-            //        throw new InvalidOperationException("Can only deal with named objects");
-            //    var cloned = obj.Clone(item.Key);
-            //    objInputList.Add(cloned);
-            //}
-            //ROOTNET.NTH1.AddDirectory(oldHSet);
 
             // We know what branches we need to work on - so no need for us
             // to use the training.
@@ -154,7 +168,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("gEnv->SetValue(\"TFile.AsynchPrefetching\", 1);");
 
             // Run the whole thing
+            cmds.AppendLine("cout << \"Starting run...\" << endl;");
             cmds.AppendLine($"t->Process(selector);");
+            cmds.AppendLine("cout << \"Done with run...\" << endl;");
 
             // If debug, dump some stats...
             if (Environment.CompileDebug)
