@@ -107,8 +107,63 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         private void RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, FileInfo[] localFiles)
         {
+            // Init the selector
             cmds.AppendLine($"selector = new {selectClass}();");
+            WriteInputVariablesForTransfer(cmds, queryResultsFile, varsToTransfer);
 
+            // Get the root files all into a chain
+            cmds.AppendLine($"t = new TChain(\"{treeName}\");");
+            foreach (var f in localFiles)
+            {
+                var fname = f.FullName.Replace("\\", "\\\\");
+                cmds.AppendLine($"t->Add(\"{fname}\");");
+            }
+
+            // Configure the TTree cache
+            ConfigureTTreeReaderCache(cmds);
+
+            // Always Do the async prefetching (this is off by default for some reason, but...).
+            cmds.AppendLine("gEnv->SetValue(\"TFile.AsynchPrefetching\", 1);");
+
+            // Run the whole thing
+            cmds.AppendLine("cout << \"Starting run...\" << endl;");
+            cmds.AppendLine($"t->Process(selector);");
+            cmds.AppendLine("cout << \"Done with run...\" << endl;");
+
+            // If debug, dump some stats...
+            if (Environment.CompileDebug)
+            {
+                cmds.AppendLine("cout << \"Printing TTree Cache Statistics\" << endl;");
+                cmds.AppendLine("t->PrintCacheStats();");
+            }
+
+            // Get the results and put them into a map for safe keeping!
+            // To move them back we need to use a TFile.
+            var resultfileFullName = queryResultsFile.FullName.Replace("\\", "\\\\");
+            cmds.AppendLine($"rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
+            cmds.AppendLine("rf->WriteTObject(selector->GetOutputList(), \"output\");");
+            cmds.AppendLine("rf->Close();");
+        }
+
+        private void ConfigureTTreeReaderCache(StringBuilder cmds)
+        {
+            cmds.AppendLine("t->SetCacheSize(1024 * 1024 * 100); // 100 MB cache");
+            if (LeafNames == null)
+            {
+                cmds.AppendLine("t->AddBranchToCache(\"*\", true);");
+            }
+            else
+            {
+                foreach (var leaf in LeafNames)
+                {
+                    cmds.AppendLine($"t->AddBranchToCache(\"{leaf}\", true);");
+                }
+            }
+            cmds.AppendLine("t->StopCacheLearningPhase();");
+        }
+
+        private static void WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        {
             // Objects that are headed over need to be stored in a file and then loaded into the selector.
             if (varsToTransfer != null && varsToTransfer.Count() > 0)
             {
@@ -139,52 +194,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                     outgoingVariables.Close();
                 }
             }
-
-            // Next, the root files have to all be opened up.
-            cmds.AppendLine($"t = new TChain(\"{treeName}\");");
-            foreach (var f in localFiles)
-            {
-                var fname = f.FullName.Replace("\\", "\\\\");
-                cmds.AppendLine($"t->Add(\"{fname}\");");
-            }
-
-            // We know what branches we need to work on - so no need for us
-            // to use the training.
-            cmds.AppendLine("t->SetCacheSize(1024 * 1024 * 100); // 100 MB cache");
-            if (LeafNames == null)
-            {
-                cmds.AppendLine("t->AddBranchToCache(\"*\", true);");
-            }
-            else
-            {
-                foreach (var leaf in LeafNames)
-                {
-                    cmds.AppendLine($"t->AddBranchToCache(\"{leaf}\", true);");
-                }
-            }
-            cmds.AppendLine("t->StopCacheLearningPhase();");
-
-            // Always Do the async prefetching (this is off by default for some reason, but...).
-            cmds.AppendLine("gEnv->SetValue(\"TFile.AsynchPrefetching\", 1);");
-
-            // Run the whole thing
-            cmds.AppendLine("cout << \"Starting run...\" << endl;");
-            cmds.AppendLine($"t->Process(selector);");
-            cmds.AppendLine("cout << \"Done with run...\" << endl;");
-
-            // If debug, dump some stats...
-            if (Environment.CompileDebug)
-            {
-                cmds.AppendLine("cout << \"Printing TTree Cache Statistics\" << endl;");
-                cmds.AppendLine("t->PrintCacheStats();");
-            }
-
-            // Get the results and put them into a map for safe keeping!
-            // To move them back we need to use a TFile.
-            var resultfileFullName = queryResultsFile.FullName.Replace("\\", "\\\\");
-            cmds.AppendLine($"rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
-            cmds.AppendLine("rf->WriteTObject(selector->GetOutputList(), \"output\");");
-            cmds.AppendLine("rf->Close();");
         }
 
         /// <summary>

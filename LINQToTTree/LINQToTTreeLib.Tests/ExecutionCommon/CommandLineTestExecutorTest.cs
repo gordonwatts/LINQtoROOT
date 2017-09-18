@@ -235,12 +235,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.IsTrue(seenCacheInfo);
         }
 
-        [TestMethod]
-        public void LocalWinCmdLineOtherTypes()
-        {
-            Assert.Inconclusive("Test other types of data that go back and forth than histograms - like dictionaries, etc. ");
-        }
-
         /// <summary>
         /// Create a dirt simple query environment so we can see what running is like.
         /// </summary>
