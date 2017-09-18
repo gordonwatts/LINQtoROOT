@@ -64,6 +64,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             ExecutionUtilities.Init();
             var cmds = new StringBuilder();
 
+            // Load up extra objects
+            LoadExtraObjects(queryDirectory, cmds);
+
             // Compile the macro
             CompileAndLoad(queryFile, cmds);
 
@@ -83,6 +86,27 @@ namespace LINQToTTreeLib.ExecutionCommon
             CleanUpQuery(queryDirectory);
 
             return results;
+        }
+
+        /// <summary>
+        /// Load in the private objects.
+        /// </summary>
+        /// <param name="queryDirectory"></param>
+        private void LoadExtraObjects(DirectoryInfo queryDirectory, StringBuilder cmds)
+        {
+            // Move everything over, and then compile!
+            foreach (var fd in Environment.ExtraComponentFiles)
+            {
+                var output = ExecutionUtilities.CopyToDirectory(fd, queryDirectory);
+                try
+                {
+                    CompileAndLoad(output, cmds);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
+                }
+            }
         }
 
         /// <summary>

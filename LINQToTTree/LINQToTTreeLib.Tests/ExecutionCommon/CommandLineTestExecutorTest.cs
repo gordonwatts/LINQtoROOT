@@ -1,4 +1,5 @@
-﻿using LINQToTTreeLib.ExecutionCommon;
+﻿using LINQToTTreeLib.CodeAttributes;
+using LINQToTTreeLib.ExecutionCommon;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
                 Directory.Delete(tempDir, true);
             Directory.CreateDirectory(tempDir);
             TestUtils.ResetLINQLibrary();
+            ntuple.Reset();
         }
 
         [TestCleanup]
@@ -98,10 +100,46 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.IsTrue(cl.Message.Contains("blah"), $"word Blah is missing from error message {cl.Message}.");
         }
 
+        [CPPHelperClass]
+        static class LocalWinCmdLineDictifyClassesHelpers
+        {
+            [CPPCode(
+                Code = new string[] {
+                    "auto h = new TestLoadingCommonFilesObj();" +
+                    "DoObjectLookup = 1;"
+                },
+                IncludeFiles = new[] {
+                    "TestLoadingCommonFilesObj.hpp"
+                })]
+            public static int DoObjectLookup()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         [TestMethod]
         public void LocalWinCmdLineDictifyClasses()
         {
-            Assert.Inconclusive("Make sure we dictify classes necessary");
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Setup an extra file to be loaded.
+            string fnamebase = "TestLoadingCommonFilesObj";
+            var f = TTreeQueryExecutorTest.CreateCommonObject(fnamebase, new DirectoryInfo("."));
+            ntuple._gObjectFiles = new[] { f.FullName };
+
+            // Generate a proxy .h file that we can use
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Where(r => LocalWinCmdLineDictifyClassesHelpers.DoObjectLookup() > 0).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(20, result);
         }
 
         [TestMethod]

@@ -940,7 +940,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="objName"></param>
         /// <returns></returns>
-        private FileInfo CreateCommonObject(string objName, DirectoryInfo baseDir)
+        public static FileInfo CreateCommonObject(string objName, DirectoryInfo baseDir)
         {
             FileInfo result = new FileInfo(baseDir + "\\" + objName + ".cpp");
             using (var writer = result.CreateText())
