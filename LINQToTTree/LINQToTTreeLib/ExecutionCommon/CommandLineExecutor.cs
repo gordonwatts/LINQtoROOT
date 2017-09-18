@@ -134,7 +134,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("t->StopCacheLearningPhase();");
 
             // Always Do the async prefetching (this is off by default for some reason, but...).
-            //ROOTNET.Globals.gEnv.Value.SetValue("TFile.AsynchPrefetching", 1);
+            cmds.AppendLine("gEnv->SetValue(\"TFile.AsynchPrefetching\", 1);");
 
             // Run the whole thing
             cmds.AppendLine($"t->Process(selector);");
