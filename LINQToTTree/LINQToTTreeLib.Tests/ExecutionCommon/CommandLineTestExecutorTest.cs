@@ -29,6 +29,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         public void TestCleanup()
         {
             TestUtils.ResetLINQLibrary();
+            CommandLineExecutor.ResetCommandLineExecutor();
         }
 
         /// <summary>
@@ -130,10 +131,84 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
+        public void LocalWinCmdLineCheckWarningsAndErrors()
+        {
+            RunSimpleTestForErrorsAndWarnings(exe => { });
+        }
+
+        [TestMethod]
+        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
+        public void LocalWinCmdLineCheckWarningsAndErrorsDebug()
+        {
+            RunSimpleTestForErrorsAndWarnings(exe => { exe.CompileDebug = true; });
+        }
+
+        /// <summary>
+        /// Run a simple test that looks for errors and warnings
+        /// </summary>
+        /// <param name="configureMe"></param>
+        private static void RunSimpleTestForErrorsAndWarnings(Action<TTreeQueryExecutor> configureMe)
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Generate a proxy .h file that we can use
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            configureMe(exe);
+
+            // Look for warning or error
+            var errorLines = new List<string>();
+            CommandLineExecutor.AddLogEndpoint(s =>
+            {
+                if (s.ToLower().Contains("warning") || s.ToLower().Contains("error"))
+                {
+                    errorLines.Add(s);
+                }
+            });
+            int result = exe.ExecuteScalar<int>(query);
+
+            foreach (var l in errorLines)
+            {
+                Console.WriteLine("************ Contains error or warning: " + l);
+            }
+
+            Assert.AreEqual(0, errorLines.Count, "See std out for list of error liens");
+        }
+
+        [TestMethod]
         public void LocalWinCmdLineCheckDebugDumps()
         {
             // When we run in debug mode, make sure the command line dumps are there.
-            Assert.Inconclusive();
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Generate a proxy .h file that we can use
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+
+            // Capture the lines
+            bool seenCacheInfo = false;
+            CommandLineExecutor.AddLogEndpoint(s => seenCacheInfo |= s.ToLower().Contains("cache"));
+            exe.CompileDebug = true;
+            int result = exe.ExecuteScalar<int>(query);
+
+            Assert.IsTrue(seenCacheInfo);
         }
 
         [TestMethod]

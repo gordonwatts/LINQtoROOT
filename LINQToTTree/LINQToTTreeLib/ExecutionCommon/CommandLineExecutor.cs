@@ -24,6 +24,28 @@ namespace LINQToTTreeLib.ExecutionCommon
         public ExecutionEnvironment Environment { get; set; }
 
         /// <summary>
+        /// List of things to do with log info coming back
+        /// </summary>
+        private static List<Action<string>> _logDumpers = new List<Action<string>>();
+
+        /// <summary>
+        /// Add a line dumper
+        /// </summary>
+        /// <param name="logger"></param>
+        public static void AddLogEndpoint (Action<string> logger)
+        {
+            _logDumpers.Add(logger);
+        }
+
+        /// <summary>
+        /// Reset the executor to its initial state.
+        /// </summary>
+        public static void ResetCommandLineExecutor()
+        {
+            _logDumpers = new List<Action<string>>();
+        }
+
+        /// <summary>
         /// Package everythiing up and run it.
         /// </summary>
         /// <param name="queryFile">The C++ file we are going to run the query against</param>
@@ -112,7 +134,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             // If debug, dump some stats...
             if (Environment.CompileDebug)
             {
-                cmds.AppendLine("t->PrintCacheStats()");
+                cmds.AppendLine("cout << \"Printing TTree Cache Statistics\" << endl;");
+                cmds.AppendLine("t->PrintCacheStats();");
             }
 
             // Get the results and put them into a map for safe keeping!
@@ -262,9 +285,20 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="line">Line of text to record</param>
         private void RecordLine(StringBuilder resultData, string line)
         {
+            if (line == null)
+                return;
+
             lock(resultData)
             {
                 resultData.AppendLine(line);
+                if (Environment.CompileDebug)
+                {
+                    Console.WriteLine(line);
+                }
+                foreach (var logger in _logDumpers)
+                {
+                    logger(line);
+                }
             }
         }
     }
