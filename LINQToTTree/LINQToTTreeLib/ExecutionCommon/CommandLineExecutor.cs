@@ -77,7 +77,24 @@ namespace LINQToTTreeLib.ExecutionCommon
             ExecuteRootScript("RunTSelector", cmds, queryDirectory);
 
             // Get back results
-            return LoadSelectorResults(resultsFile);
+            var results = LoadSelectorResults(resultsFile);
+
+            // Clean up
+            CleanUpQuery(queryDirectory);
+
+            return results;
+        }
+
+        /// <summary>
+        /// Clean up the query - keep user's disk clean!
+        /// </summary>
+        private void CleanUpQuery(DirectoryInfo queryDirectory)
+        {
+            TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
+            if (Environment.CleanupQuery)
+            {
+                queryDirectory.Delete(true);
+            }
         }
 
         /// <summary>
