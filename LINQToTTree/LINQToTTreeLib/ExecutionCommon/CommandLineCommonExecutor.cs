@@ -181,11 +181,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         private void RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, FileInfo[] localFiles)
         {
             // Init the selector
-            cmds.AppendLine($"selector = new {selectClass}();");
+            cmds.AppendLine($"TSelector *selector = new {selectClass}();");
             WriteInputVariablesForTransfer(cmds, queryResultsFile, varsToTransfer);
 
             // Get the root files all into a chain
-            cmds.AppendLine($"t = new TChain(\"{treeName}\");");
+            cmds.AppendLine($"TChain *t = new TChain(\"{treeName}\");");
             foreach (var f in localFiles)
             {
                 var fname = f.FullName.Replace("\\", "\\\\");
@@ -213,7 +213,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get the results and put them into a map for safe keeping!
             // To move them back we need to use a TFile.
             var resultfileFullName = queryResultsFile.FullName.Replace("\\", "\\\\");
-            cmds.AppendLine($"rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
+            cmds.AppendLine($"TFile *rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
             cmds.AppendLine("rf->WriteTObject(selector->GetOutputList(), \"output\");");
             cmds.AppendLine("rf->Close();");
         }
