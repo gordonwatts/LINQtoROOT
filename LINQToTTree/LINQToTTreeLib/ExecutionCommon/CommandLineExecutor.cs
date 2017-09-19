@@ -191,6 +191,10 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("rf->Close();");
         }
 
+        /// <summary>
+        /// Configure the TTree cache for fast operation.
+        /// </summary>
+        /// <param name="cmds"></param>
         private void ConfigureTTreeReaderCache(StringBuilder cmds)
         {
             cmds.AppendLine("t->SetCacheSize(1024 * 1024 * 100); // 100 MB cache");
@@ -208,6 +212,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("t->StopCacheLearningPhase();");
         }
 
+        /// <summary>
+        /// Put all variables we have to move over to the running root in a file so it can be open and read.
+        /// </summary>
+        /// <param name="cmds"></param>
+        /// <param name="queryResultsFile"></param>
+        /// <param name="varsToTransfer"></param>
         private static void WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Objects that are headed over need to be stored in a file and then loaded into the selector.
