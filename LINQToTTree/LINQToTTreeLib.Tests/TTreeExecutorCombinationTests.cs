@@ -14,6 +14,8 @@ namespace LINQToTTreeLib.Tests
         public static string _gProxyFile = "";
         public static string[] _gObjectFiles = { };
         public static string[] _gCINTLines = { };
+        public static string[] _gClassesToDeclare = { };
+        public static string[] _gClassesToDeclareIncludes = { };
 
         internal static void Reset()
         {

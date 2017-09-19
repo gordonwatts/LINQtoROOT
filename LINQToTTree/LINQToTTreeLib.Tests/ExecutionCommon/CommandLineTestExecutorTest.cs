@@ -101,7 +101,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [CPPHelperClass]
-        static class LocalWinCmdLineDictifyClassesHelpers
+        static class LocalWinCmdLineLoadExtraClassFilesHelpers
         {
             [CPPCode(
                 Code = new string[] {
@@ -118,7 +118,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void LocalWinCmdLineDictifyClasses()
+        public void LocalWinCmdLineLoadExtraClassFiles()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
 
@@ -132,7 +132,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
-            var dude = q.Where(r => LocalWinCmdLineDictifyClassesHelpers.DoObjectLookup() > 0).Count();
+            var dude = q.Where(r => LocalWinCmdLineLoadExtraClassFilesHelpers.DoObjectLookup() > 0).Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
@@ -140,6 +140,56 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
+        }
+
+        [CPPHelperClass]
+        static class LocalWinCmdLineDictifyClassesHelpers
+        {
+            [CPPCode(
+                Code = new string[] {
+                    "auto d = TDictionary::GetDictionary(\"vector<vector<vector<float>>>\");",
+                    "d->Dump();",
+                    "DoDictDump = 1;"
+                },
+                IncludeFiles = new[] {
+                    "TDictionary.h"
+                })]
+            public static int DoDictDump()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [TestMethod]
+        public void LocalWinCmdLineDictifyClasses()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Load up an extra dictionary
+            ntuple._gClassesToDeclare = new[] { "vector<vector<vector<float>>>" };
+            ntuple._gClassesToDeclareIncludes = new[] { "vector" };
+
+            // Generate a proxy .h file that we can use
+            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Where(r => LocalWinCmdLineDictifyClassesHelpers.DoDictDump() > 0).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            ntuple._gProxyFile = proxyFile.FullName;
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+
+            bool seenTDataType = false;
+            CommandLineExecutor.AddLogEndpoint(s =>
+            {
+                seenTDataType |= s.Contains("TDataType");
+                Console.WriteLine(s);
+            });
+
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.IsTrue(seenTDataType);
         }
 
         [TestMethod]

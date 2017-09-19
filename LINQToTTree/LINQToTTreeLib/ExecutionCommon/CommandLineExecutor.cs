@@ -64,8 +64,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             ExecutionUtilities.Init();
             var cmds = new StringBuilder();
 
-            // Load up extra objects
-            LoadExtraObjects(queryDirectory, cmds);
+            // Load up extra objects & dictionaries
+            LoadExtraCPPFiles(queryDirectory, cmds);
+            LoadExtraDictionaries(Environment.ClassesToDictify, cmds);
 
             // Compile the macro
             CompileAndLoad(queryFile, cmds);
@@ -89,10 +90,31 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
-        /// Load in the private objects.
+        /// Sometimes we have to generate some class dictionaries on the fly. This code will do that.
         /// </summary>
-        /// <param name="queryDirectory"></param>
-        private void LoadExtraObjects(DirectoryInfo queryDirectory, StringBuilder cmds)
+        /// <param name="classesToDictify"></param>
+        /// <param name="cmds"></param>
+        private void LoadExtraDictionaries(string[][] classesToDictify, StringBuilder cmds)
+        {
+            foreach (var clsPair in classesToDictify)
+            {
+                if (string.IsNullOrWhiteSpace(clsPair[1]))
+                {
+                    cmds.AppendLine($"gInterpreter->GenerateDictionary(\"{clsPair[0]}\");");
+                }
+                else
+                {
+                    cmds.AppendLine($"gInterpreter->GenerateDictionary(\"{clsPair[0]}\", \"{clsPair[1]}\");");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Compile/Load in extra C++ files and move the include files locally so they can be easily
+        /// referenced by the query code.
+        /// </summary>
+        /// <param name="queryDirectory">Location where we move the files to compiling</param>
+        private void LoadExtraCPPFiles(DirectoryInfo queryDirectory, StringBuilder cmds)
         {
             // Move everything over, and then compile!
             foreach (var fd in Environment.ExtraComponentFiles)
