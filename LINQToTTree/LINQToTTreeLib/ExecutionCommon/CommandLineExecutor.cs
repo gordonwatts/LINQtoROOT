@@ -96,15 +96,18 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="cmds"></param>
         private void LoadExtraDictionaries(string[][] classesToDictify, StringBuilder cmds)
         {
-            foreach (var clsPair in classesToDictify)
+            if (classesToDictify != null)
             {
-                if (string.IsNullOrWhiteSpace(clsPair[1]))
+                foreach (var clsPair in classesToDictify)
                 {
-                    cmds.AppendLine($"gInterpreter->GenerateDictionary(\"{clsPair[0]}\");");
-                }
-                else
-                {
-                    cmds.AppendLine($"gInterpreter->GenerateDictionary(\"{clsPair[0]}\", \"{clsPair[1]}\");");
+                    if (string.IsNullOrWhiteSpace(clsPair[1]))
+                    {
+                        cmds.AppendLine($"gInterpreter->GenerateDictionary(\"{clsPair[0]}\");");
+                    }
+                    else
+                    {
+                        cmds.AppendLine($"gInterpreter->GenerateDictionary(\"{clsPair[0]}\", \"{clsPair[1]}\");");
+                    }
                 }
             }
         }
@@ -117,16 +120,19 @@ namespace LINQToTTreeLib.ExecutionCommon
         private void LoadExtraCPPFiles(DirectoryInfo queryDirectory, StringBuilder cmds)
         {
             // Move everything over, and then compile!
-            foreach (var fd in Environment.ExtraComponentFiles)
+            if (Environment.ExtraComponentFiles != null)
             {
-                var output = ExecutionUtilities.CopyToDirectory(fd, queryDirectory);
-                try
+                foreach (var fd in Environment.ExtraComponentFiles)
                 {
-                    CompileAndLoad(output, cmds);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
+                    var output = ExecutionUtilities.CopyToDirectory(fd, queryDirectory);
+                    try
+                    {
+                        CompileAndLoad(output, cmds);
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
+                    }
                 }
             }
         }
@@ -364,6 +370,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.WorkingDirectory = tmpDir.FullName;
 
             // Start it.
             var resultData = new StringBuilder();
