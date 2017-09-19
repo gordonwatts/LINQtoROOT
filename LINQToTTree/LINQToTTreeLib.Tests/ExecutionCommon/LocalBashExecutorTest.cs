@@ -5,15 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static LINQToTTreeLib.ExecutionCommon.CommandLineCommonExecutor;
-using static LINQToTTreeLib.TTreeQueryExecutorTest;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon
 {
+    /// <summary>
+    /// Test out a local run on bash
+    /// </summary>
     [TestClass]
-    public class CommandLineTestExecutorTest
+    public class LocalBashExecutorTest
     {
-        public string tempDir = Path.GetTempPath() + "\\TestLINQToROOTDummyDir";
+        public string tempDir = Path.GetTempPath() + "\\LocalBashExecutorTestDir";
 
         [TestInitialize]
         public void TestSetup()
@@ -22,6 +25,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
                 Directory.Delete(tempDir, true);
             Directory.CreateDirectory(tempDir);
             TestUtils.ResetLINQLibrary();
+            CommandLineCommonExecutor.ResetCommandLineExecutor();
             ntuple.Reset();
         }
 
@@ -30,7 +34,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         {
             TestUtils.ResetLINQLibrary();
             MEFUtilities.MyClassDone();
-            CommandLineExecutor.ResetCommandLineExecutor();
         }
 
         /// <summary>
@@ -40,16 +43,17 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
         [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
         [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
-        public void LocalWinCmdLineSimpleQuery()
+        public void LocalBashCmdLineSimpleQuery()
         {
             FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
             CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
             CopyToTempDir("ntuple_CollectionTree.h");
             Assert.IsTrue(runner.Exists, "Main C++ file missing");
-            var targetr = new CommandLineExecutor();
+            var targetr = new LocalBashExecutor();
             var env = CreateSimpleQueryEnvironment();
 
             targetr.Environment = env;
+            CommandLineCommonExecutor.AddLogEndpoint(s => Console.WriteLine(s));
             var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
 
             Assert.IsNotNull(r, "nothing came back!");
@@ -61,11 +65,12 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.AreEqual(20, (int)h.GetBinContent(1), "Answer from query");
         }
 
+#if false
         [TestMethod]
         [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
         [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
         [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
-        public void LocalWinCmdLineBadCPPGeneration()
+        public void LocalBashCmdLineBadCPPGeneration()
         {
             // Make sure a C++ error makes its way back up the line so we can see the error!
             FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
@@ -87,7 +92,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             try
             {
                 var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 err = e;
             }
@@ -99,7 +105,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [CPPHelperClass]
-        static class LocalWinCmdLineLoadExtraClassFilesHelpers
+        static class LocalBashCmdLineLoadExtraClassFilesHelpers
         {
             [CPPCode(
                 Code = new string[] {
@@ -116,7 +122,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void LocalWinCmdLineLoadExtraClassFiles()
+        public void LocalBashCmdLineLoadExtraClassFiles()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
 
@@ -135,13 +141,13 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
         }
 
         [CPPHelperClass]
-        static class LocalWinCmdLineDictifyClassesHelpers
+        static class LocalBashCmdLineDictifyClassesHelpers
         {
             [CPPCode(
                 Code = new string[] {
@@ -159,7 +165,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void LocalWinCmdLineDictifyClasses()
+        public void LocalBashCmdLineDictifyClasses()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
 
@@ -177,7 +183,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             bool seenTDataType = false;
             CommandLineExecutor.AddLogEndpoint(s =>
@@ -192,7 +198,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
         [TestMethod]
         [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
-        public void LocalWinCmdLineSendObjectsToSelector()
+        public void LocalBashCmdLineSendObjectsToSelector()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
 
@@ -206,14 +212,14 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var q = new QueriableDummy<TestNtupe>();
             var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
             h.Directory = null;
-            h.Fill(5,3.0);
+            h.Fill(5, 3.0);
             GC.WaitForPendingFinalizers();
             var dude = q.Select(i => h.GetBinContent(i.run != 1 ? 1 : i.run)).Where(i => i > 2.5).Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             exe.CleanupQuery = false;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
@@ -221,7 +227,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
         [TestMethod]
         [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
-        public void LocalWinCmdLineCountOperator()
+        public void LocalBashCmdLineCountOperator()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
 
@@ -235,21 +241,21 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
         }
 
         [TestMethod]
         [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
-        public void LocalWinCmdLineCheckWarningsAndErrors()
+        public void LocalBashCmdLineCheckWarningsAndErrors()
         {
             RunSimpleTestForErrorsAndWarnings(exe => { });
         }
 
         [TestMethod]
         [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
-        public void LocalWinCmdLineCheckWarningsAndErrorsDebug()
+        public void LocalBashCmdLineCheckWarningsAndErrorsDebug()
         {
             RunSimpleTestForErrorsAndWarnings(exe => { exe.CompileDebug = true; });
         }
@@ -272,7 +278,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             configureMe(exe);
 
             // Look for warning or error
@@ -295,7 +301,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void LocalWinCmdLineCheckDebugDumps()
+        public void LocalBashCmdLineCheckDebugDumps()
         {
             // When we run in debug mode, make sure the command line dumps are there.
             var rootFile = TestUtils.CreateFileOfInt(20);
@@ -310,7 +316,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             // Capture the lines
             bool seenCacheInfo = false;
@@ -321,6 +327,9 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.IsTrue(seenCacheInfo);
         }
 
+
+#endif
+
         /// <summary>
         /// Create a dirt simple query environment so we can see what running is like.
         /// </summary>
@@ -329,7 +338,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         {
             var result = new ExecutionEnvironment();
             var rootFile = TestUtils.CreateFileOfInt(20);
-            result.RootFiles = new[] { rootFile.AsLocalWinUri()};
+            result.RootFiles = new[] { rootFile.AsLocalBashUri() };
 
             return result;
         }
@@ -362,16 +371,16 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
     }
 
-    public static class Helpers
+    public static class HelpersBash
     {
         /// <summary>
         /// Return a new uri that is the same as the old uri, but using the localwin guy specifier
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static Uri AsLocalWinUri(this Uri source)
+        public static Uri AsLocalBashUri(this Uri source)
         {
-            return new Uri($"localwin://{source.LocalPath}");
+            return new Uri($"localbash://{source.LocalPath}");
         }
     }
 }
