@@ -51,18 +51,12 @@ namespace TTreeParser
 
 
             ///
-            /// Last thing we need to do is create a proxy for the class.
-            /// 
-
-            FileInfo f = MakeProxy(tree);
-            masterClass.NtupleProxyPath = f.FullName;
-
-            ///
             /// Work around a ROOT bug that doesn't allow for unloading of classes
             /// in the STL after a query is run. Actually, it will unload them, but somehow keeps
             /// references in memory.
             /// 
 
+            var f = MakeProxy(tree);
             masterClass.ClassesToGenerate = ExtractSTLDictionaryReferences(f);
 
             ///

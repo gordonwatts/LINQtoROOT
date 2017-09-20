@@ -30,104 +30,6 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
-#if false
-        [PexMethod, PexAllowedException(typeof(FileNotFoundException))]
-        public TTreeQueryExecutor Constructor(Uri rootFile, string proxyLocation, string[] extraLocations, string treeName)
-        {
-#if false
-            FileInfo rootFile;
-            switch (rootFileIndex)
-            {
-                case 0:
-                    rootFile = null;
-                    break;
-
-                case 1:
-                    rootFile = new FileInfo("stupid.root");
-                    break;
-
-                case 2:
-                    rootFile = new FileInfo(@"..\..\..\..\DemosAndTests\output.root");
-                    break;
-
-                default:
-                    rootFile = null;
-                    break;
-            }
-#endif
-            ntuple._gProxyFile = proxyLocation;
-#if false
-
-            FileInfo proxyFile = new FileInfo("Constructor_Test\\bogus.cpp");
-            if (proxyFile.Directory.Exists)
-                proxyFile.Directory.Delete(true);
-            proxyFile.Directory.Create();
-            switch (ntupleProxyIndex)
-            {
-                case 0:
-                    ntuple._gProxyFile = "";
-                    break;
-
-                case 1:
-                    ntuple._gProxyFile = proxyFile.FullName;
-                    break;
-
-                case 2:
-                    using (var w = proxyFile.CreateText())
-                    {
-                        w.Close();
-                    }
-                    ntuple._gProxyFile = proxyFile.FullName;
-                    break;
-
-                default:
-                    ntuple._gProxyFile = "";
-                    break;
-            }
-#endif
-
-#if false
-            FileInfo extraFile = new FileInfo("Constructor_Test\\extra.cpp");
-            switch (ntupleExtraIndex)
-            {
-                case 0:
-                    ntuple._gObjectFiles = new string[0];
-                    break;
-
-                case 1:
-                    ntuple._gObjectFiles = new string[] { extraFile.FullName };
-                    break;
-
-                case 2:
-                    using (var w = extraFile.CreateText())
-                    {
-                        w.Close();
-                    }
-                    ntuple._gObjectFiles = new string[] { extraFile.FullName };
-                    break;
-
-                default:
-                    ntuple._gObjectFiles = new string[0];
-                    break;
-            }
-#endif
-            ntuple._gObjectFiles = extraLocations;
-
-            TTreeQueryExecutor target = new TTreeQueryExecutor(new Uri[] { rootFile }, treeName, typeof(ntuple));
-
-            Assert.IsNotNull(rootFile, "rootfile can't be null here");
-            Assert.IsTrue(File.Exists(rootFile.LocalPath), "root file must exist");
-            Assert.IsFalse(string.IsNullOrWhiteSpace(ntuple._gProxyFile), "proxy must be there");
-            Assert.IsTrue(File.Exists(ntuple._gProxyFile), "proxy file must exist");
-            if (ntuple._gObjectFiles != null)
-            {
-                Assert.IsTrue(ntuple._gObjectFiles.All(f => File.Exists(f)), "extra files must all exist");
-            }
-
-            return target;
-        }
-#endif
-
         /// <summary>
         /// Dirt simply test ntuple. Actually matches one that exists on disk.
         /// </summary>
@@ -151,7 +53,6 @@ namespace LINQToTTreeLib
         /// </summary>
         public class ntuple_with_proxy
         {
-            public static string _gProxyFile;
         }
 
         /// <summary>
@@ -1674,46 +1575,6 @@ namespace LINQToTTreeLib
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }
-
-#if false
-        [TestMethod]
-        public void TestProofSimple()
-        {
-            const int numberOfIter = 25;
-            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
-
-            ///
-            /// Generate a proxy .h file that we can use
-            /// 
-
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
-            rootFile = new Uri("proof://tev99.phys.washington.edu/LINQToLINQ");
-
-            ///
-            /// Get a simple query we can "play" with. That this works
-            /// depends on each event having 10 entries in the array, which contains
-            /// the numbers 0-10.
-            /// 
-
-            var q = new QueriableDummy<TestNtupeArr>();
-            var dudeQ = from evt in q
-                        where (evt.myvectorofint.First() > 0)
-                        select evt;
-            var dude = dudeQ.Count();
-
-            var query = DummyQueryExectuor.LastQueryModel;
-            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
-
-            ///
-            /// Ok, now we can actually see if we can make it "go".
-            /// 
-
-            ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
-            var result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(0, result);
-        }
-#endif
 
         [TestMethod]
         public void TestSortAscending()

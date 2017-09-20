@@ -291,7 +291,6 @@ namespace TTreeParser.Tests
 
             Assert.AreEqual(1, result.Length, "# of classes");
             var obj = result[0];
-            Assert.IsFalse(obj.NtupleProxyPath.Contains("#"), "proxy path: " + obj.NtupleProxyPath);
             Assert.IsFalse(obj.UserInfoPath.Contains("#"), "user path: " + obj.UserInfoPath);
         }
 
@@ -522,7 +521,6 @@ namespace TTreeParser.Tests
 
             Assert.IsTrue(fhpp.Exists, "check for hpp file existance");
 
-            Assert.AreEqual(fhpp.FullName, result[0].NtupleProxyPath, "ntuple proxy path incorrect");
             Assert.IsTrue(File.Exists(result[0].UserInfoPath), "user info file missing");
         }
 
@@ -543,8 +541,6 @@ namespace TTreeParser.Tests
             FileInfo fhpp = new FileInfo(newdir.FullName + "\\ntuple_dude.h");
 
             Assert.IsTrue(fhpp.Exists, "check for hpp file existance");
-
-            Assert.AreEqual(fhpp.FullName, result[0].NtupleProxyPath, "ntuple proxy path incorrect");
         }
 
         /// <summary>
