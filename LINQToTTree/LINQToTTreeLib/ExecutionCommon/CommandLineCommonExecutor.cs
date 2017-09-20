@@ -92,10 +92,21 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Compile the macro
             CompileAndLoad(queryFile, cmds);
 
-            // Run the query
+            // Run the query in a second file.
+            var subfileCommands = new StringBuilder();
             var localFiles = Environment.RootFiles.Select(u => new FileInfo(u.LocalPath)).ToArray();
             var resultsFile = new FileInfo(Path.Combine(queryDirectory.FullName, "selector_results.root"));
-            RunNtupleQuery(cmds, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer, Environment.TreeName, localFiles);
+            RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer, Environment.TreeName, localFiles);
+
+            // Write out the temp file.
+            using (var secondFile = File.CreateText(Path.Combine(queryDirectory.FullName, "RunTSelector1.C")))
+            {
+                secondFile.WriteLine("void RunTSelector1() {");
+                secondFile.Write("  " + subfileCommands.ToString());
+                secondFile.WriteLine("}");
+                secondFile.Close();
+            }
+            cmds.AppendLine("gROOT->ProcessLine(\".X RunTSelector1.C\");");
 
             // Run the root script
             cmds.AppendLine("exit(0);");
@@ -249,7 +260,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine($"TChain *t = new TChain(\"{treeName}\");");
             foreach (var f in localFiles)
             {
-                var fname = f.FullName.Replace("\\", "\\\\");
+                var fname = NormalizeFileForTarget(f);
                 cmds.AppendLine($"t->Add(\"{fname}\");");
             }
 
@@ -268,12 +279,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (Environment.CompileDebug)
             {
                 cmds.AppendLine("cout << \"Printing TTree Cache Statistics\" << endl;");
-                cmds.AppendLine("t->PrintCacheStats();");
+                //cmds.AppendLine("t->PrintCacheStats();");
             }
 
             // Get the results and put them into a map for safe keeping!
             // To move them back we need to use a TFile.
-            var resultfileFullName = queryResultsFile.FullName.Replace("\\", "\\\\");
+            var resultfileFullName = NormalizeFileForTarget(queryResultsFile);
             cmds.AppendLine($"TFile *rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
             cmds.AppendLine("rf->WriteTObject(selector->GetOutputList(), \"output\");");
             cmds.AppendLine("rf->Close();");

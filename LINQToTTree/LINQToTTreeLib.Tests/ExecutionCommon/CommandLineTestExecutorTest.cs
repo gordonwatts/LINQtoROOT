@@ -297,6 +297,36 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.IsTrue(seenCacheInfo);
         }
 
+        [TestMethod]
+        public void LocalWinCmdLineLocalIncludeFile()
+        {
+            // Write out the local include file. The system should pick it up from here.
+            using (var writer = File.CreateText("bogus_function.h"))
+            {
+                writer.WriteLine("int bogus() { return 15; }");
+                writer.WriteLine();
+                writer.Close();
+            }
+
+            // Run on ints, though for this test it won't matter.
+            var rootFile = TestUtils.CreateFileOfInt(10);
+
+            // Run the special function.
+            var q = new QueriableDummy<TestNtupe>();
+            var listing = from evt in q
+                          where CPPHelperFunctions.ReturnCustomFuncValue() > 10.0
+                          select evt;
+            var dude = listing.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Run the execution environment.
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CleanupQuery = false;
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
+        }
+
+
         /// <summary>
         /// Create a dirt simple query environment so we can see what running is like.
         /// </summary>

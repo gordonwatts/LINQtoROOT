@@ -188,7 +188,7 @@ namespace LINQToTTreeLib
             if (f.Scheme == "proof")
                 return true;
 
-            if (f.Scheme != "file" && f.Scheme != "localwin")
+            if (f.Scheme != "file" && f.Scheme != "localwin" && f.Scheme != "localbash")
                 return false;
 
             if (!File.Exists(f.LocalPath))
@@ -603,6 +603,10 @@ namespace LINQToTTreeLib
             else if (_exeReq.RootFiles.All(t => t.Scheme == "localwin"))
             {
                 return new CommandLineExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+            }
+            else if (_exeReq.RootFiles.All(t => t.Scheme == "localbash"))
+            {
+                return new LocalBashExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
             }
             else
             {

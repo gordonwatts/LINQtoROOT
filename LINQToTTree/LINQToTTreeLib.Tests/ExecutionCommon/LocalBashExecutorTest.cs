@@ -49,6 +49,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CompileDebug = true;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
         }
@@ -128,7 +129,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
-            ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
@@ -170,7 +170,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
-            ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             bool seenTDataType = false;
@@ -206,7 +205,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
-            ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             exe.CleanupQuery = false;
             int result = exe.ExecuteScalar<int>(query);
@@ -244,7 +242,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
-            ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             configureMe(exe);
 
@@ -282,7 +279,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
-            ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             // Capture the lines
@@ -294,7 +290,34 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.IsTrue(seenCacheInfo);
         }
 
+        [TestMethod]
+        public void LocalIncludeFile()
+        {
+            // Write out the local include file. The system should pick it up from here.
+            using (var writer = File.CreateText("bogus_function.h"))
+            {
+                writer.WriteLine("int bogus() { return 15; }");
+                writer.WriteLine();
+                writer.Close();
+            }
 
+            // Run on ints, though for this test it won't matter.
+            var rootFile = TestUtils.CreateFileOfInt(10);
+
+            // Run the special function.
+            var q = new QueriableDummy<TestNtupe>();
+            var listing = from evt in q
+                          where CPPHelperFunctions.ReturnCustomFuncValue() > 10.0
+                          select evt;
+            var dude = listing.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Run the execution environment.
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CleanupQuery = false;
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(10, result);
+        }
 #endif
 
         /// <summary>
