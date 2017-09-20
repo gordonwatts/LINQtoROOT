@@ -382,6 +382,11 @@ namespace LINQToTTreeLib.ExecutionCommon
             var mgr = proof.Manager;
             mgr.PutFile(file, masterLocation);
         }
+
+        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>

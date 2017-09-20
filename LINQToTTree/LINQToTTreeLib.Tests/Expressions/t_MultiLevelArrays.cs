@@ -146,7 +146,6 @@ namespace LINQToTTreeLib.Tests.Expressions
             [RenameVariable("McEventCollection_p4_GEN_EVENT")]
             public McEventCollection_p4 mc;
 #pragma warning restore 0649
-            public static string _gProxyFile = @"C:\Users\gwatts\Documents\Visual Studio 2010\Projects\HVAssociatedTests\MCAccess\ntuple_CollectionTree.h";
             public static string[] _gObjectFiles = {
     };
             public static string[] _gCINTLines = {
@@ -172,7 +171,6 @@ namespace LINQToTTreeLib.Tests.Expressions
             [NotAPointer]
             public McEventCollection_p4 McEventCollection_p4_GEN_EVENT;
 #pragma warning restore 0649
-            public static string _gProxyFile = @"C:\Users\gwatts\Documents\Visual Studio 2010\Projects\HVAssociatedTests\MCAccess\ntuple_CollectionTree.h";
             public static string[] _gObjectFiles = {
     };
             public static string[] _gCINTLines = {

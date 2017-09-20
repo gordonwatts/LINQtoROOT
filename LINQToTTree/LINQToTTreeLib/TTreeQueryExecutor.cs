@@ -29,11 +29,6 @@ namespace LINQToTTreeLib
         private ExecutionEnvironment _exeReq = new ExecutionEnvironment();
 
         /// <summary>
-        /// The header file make by the MakeProxy macro.
-        /// </summary>
-        private FileInfo _proxyFile;
-
-        /// <summary>
         /// CINT commands we want to make sure are in our headers
         /// </summary>
         private string[] _cintLines;
@@ -113,26 +108,10 @@ namespace LINQToTTreeLib
             // Make sure the object we are using is correct, and that it has non-null values
             // for the things passed in. We do this now so we don't have to have checks later on.
 
-            if (baseNtupleObject.GetField("_gProxyFile") == null)
-                throw new ArgumentException("_gProxyFile - object is not a member of " + baseNtupleObject.ToString());
             if (baseNtupleObject.GetField("_gObjectFiles") == null)
                 throw new ArgumentException("_gObjectFiles - object is not a member of " + baseNtupleObject.ToString());
             if (baseNtupleObject.GetField("_gCINTLines") == null)
                 throw new ArgumentException("_gCINTLines - object is not a member of " + baseNtupleObject.ToString());
-
-            var proxyFileName = baseNtupleObject.GetField("_gProxyFile").GetValue(null) as string;
-            if (string.IsNullOrWhiteSpace(proxyFileName))
-                throw new ArgumentException("_gProxyFile - points to a null file - must be a real file");
-
-            var bpname = new FileInfo(proxyFileName);
-            _proxyFile = new[] { bpname.Directory, new DirectoryInfo(".") }
-                .SelectMany(dir => dir.AllParentDirectories(bpname.Directory.Name))
-                .Select(d => new FileInfo(Path.Combine(d.FullName, bpname.Name)))
-                .Where(f => f.Exists)
-                .FirstOrDefault();
-
-            if (_proxyFile == null)
-                throw new FileNotFoundException("_gProxyFile - '" + proxyFileName + "' was not found.");
 
             var extraFiles = baseNtupleObject.GetField("_gObjectFiles").GetValue(null) as string[];
             if (extraFiles == null)
@@ -550,10 +529,7 @@ namespace LINQToTTreeLib
         /// </summary>
         internal void ExecuteQueuedQueries()
         {
-            ///
-            /// Get all the queries together, combined, and ready to run.
-            /// 
-
+            // Get all the queries together, combined, and ready to run.
             TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
             var combinedInfo = new CombinedGeneratedCode();
             foreach (var cq in _queuedQueries)
@@ -562,52 +538,27 @@ namespace LINQToTTreeLib
             }
 
             // Optimize the whole thing...
-
             if (UseStatementOptimizer)
                 Optimizer.Optimize(combinedInfo);
 
-            ///
-            /// Keep track of how often we run. Mostly for testing reasons, actually.
-            /// 
-
+            // Keep track of how often we run. Mostly for testing reasons, actually.
             CountExecutionRuns++;
 
-            ///
-            /// Now that those are loaded, we need to go after the
-            /// proxy. We create a new file which is dependent on the
-            /// one we have been given.
-            /// 
-
+            // Get the query executor
             TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
             var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
-            SlimProxyFile(referencedLeafNames);
+            IQueryExectuor local = CreateQueryExecutor(referencedLeafNames);
+
+            // Next, generate and slim the proxy file.
+            var proxyFile = local.GenerateProxyFile(_exeReq.RootFiles, _exeReq.TreeName, GetQueryDirectory());
+            var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile);
             TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
-            var templateRunner = WriteTSelector(_proxyFile.Name, Path.GetFileNameWithoutExtension(_proxyFile.Name), combinedInfo);
+            var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo);
 
             ///
             /// Fantastic! We've made sure everything now can be built locally. Next job, get the run instructions packet
             /// together in order to have them run remotely!
             /// 
-
-            IQueryExectuor local = null;
-            if (_exeReq.RootFiles.Length == 0)
-                throw new InvalidOperationException("Not root files or datasets to run this query on");
-            if (_exeReq.RootFiles.All(t => t.Scheme == "file"))
-            {
-                local = new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
-            }
-            else if (_exeReq.RootFiles.All(t => t.Scheme == "proof"))
-            {
-                local = new ProofExecutor() { Environment = _exeReq };
-            }
-            else if (_exeReq.RootFiles.All(t => t.Scheme == "localwin"))
-            {
-                local = new CommandLineExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
-            }
-            else
-            {
-                throw new InvalidOperationException("ROOT Files must be all PROOF or all locally accessible files! Nothing else is understood.");
-            }
 
             var results = local.Execute(templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
 
@@ -633,6 +584,33 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Create the query executor
+        /// </summary>
+        /// <param name="referencedLeafNames">List of leaves that are referenced by the query</param>
+        /// <returns></returns>
+        private IQueryExectuor CreateQueryExecutor(string[] referencedLeafNames)
+        {
+            if (_exeReq.RootFiles.Length == 0)
+                throw new InvalidOperationException("Not root files or datasets to run this query on");
+            if (_exeReq.RootFiles.All(t => t.Scheme == "file"))
+            {
+                return new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+            }
+            else if (_exeReq.RootFiles.All(t => t.Scheme == "proof"))
+            {
+                return new ProofExecutor() { Environment = _exeReq };
+            }
+            else if (_exeReq.RootFiles.All(t => t.Scheme == "localwin"))
+            {
+                return new CommandLineExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+            }
+            else
+            {
+                throw new InvalidOperationException("ROOT Files must be all PROOF or all locally accessible files! Nothing else is understood.");
+            }
+        }
+
+        /// <summary>
         /// Build the execution request - the info that someone else (or us) will need in order to run this request!
         /// </summary>
         /// <returns></returns>
@@ -648,7 +626,7 @@ namespace LINQToTTreeLib
         /// proxy file so that only those leaves are defined. In a large ntuple (with 100's of items) this can
         /// change compile times from 45 seconds to 8 seconds - so is a big deal during incremental testing, etc.
         /// </summary>
-        private void SlimProxyFile(string[] leafNames)
+        private FileInfo SlimProxyFile(string[] leafNames, FileInfo proxyFile)
         {
             //
             // Create search's for the various proxy names
@@ -661,7 +639,7 @@ namespace LINQToTTreeLib
             // Copy over the file, emitting only the lines we need to emit.
             //
 
-            FileInfo destFile = new FileInfo(GetQueryDirectory().FullName + "\\" + _proxyFile.Name);
+            FileInfo destFile = new FileInfo($"{GetQueryDirectory().FullName}\\slim-{proxyFile.Name}");
             using (var writer = destFile.CreateText())
             {
                 // State variables
@@ -670,7 +648,7 @@ namespace LINQToTTreeLib
 
                 List<string> proxyInitStatements = new List<string>();
 
-                foreach (var line in _proxyFile.EnumerateTextFile())
+                foreach (var line in proxyFile.EnumerateTextFile())
                 {
                     bool writeLine = true;
 
@@ -744,7 +722,8 @@ namespace LINQToTTreeLib
             // Finally, copy over any included files
             //
 
-            ExecutionUtilities.CopyIncludedFilesToDirectory(_proxyFile, GetQueryDirectory());
+            ExecutionUtilities.CopyIncludedFilesToDirectory(proxyFile, GetQueryDirectory());
+            return destFile;
         }
 
         /// <summary>

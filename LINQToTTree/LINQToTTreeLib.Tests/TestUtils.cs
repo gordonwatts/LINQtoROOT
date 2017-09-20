@@ -574,39 +574,6 @@ namespace LINQToTTreeLib.Tests
         }
 
         /// <summary>
-        /// Given the root file and the root-tuple name, generate a proxy file 
-        /// </summary>
-        /// <param name="rootFile"></param>
-        /// <returns></returns>
-        public static FileInfo GenerateROOTProxy(Uri rootFile, string rootTupleName)
-        {
-            ///
-            /// First, load up the TTree
-            /// 
-
-            var tfile = new ROOTNET.NTFile(rootFile.LocalPath, "READ");
-            var tree = tfile.Get(rootTupleName) as ROOTNET.Interface.NTTree;
-            Assert.IsNotNull(tree, "Tree couldn't be found");
-
-            ///
-            /// Create the proxy sub-dir if not there already, and put the dummy macro in there
-            /// 
-
-            using (var w = File.CreateText("junk.C"))
-            {
-                w.Write("int junk() {return 10.0;}");
-                w.Close();
-            }
-
-            ///
-            /// Create the macro proxy now
-            /// 
-
-            tree.MakeProxy("scanner", "junk.C", null, "nohist");
-            return new FileInfo("scanner.h");
-        }
-
-        /// <summary>
         /// Delete everything that is in the query cache directory
         /// </summary>
         public static void ResetCacheDir()

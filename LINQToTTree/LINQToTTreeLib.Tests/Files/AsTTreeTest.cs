@@ -200,12 +200,6 @@ namespace LINQToTTreeLib.Tests.Files
             var rootFile = TestUtils.CreateFileOfInt(10);
 
             ///
-            /// Generate a proxy .h file that we can use
-            /// 
-
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
-
-            ///
             /// Get a simple query we can "play" with
             /// 
 
@@ -215,7 +209,6 @@ namespace LINQToTTreeLib.Tests.Files
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(singleIntNtuple));
             var result = exe.ExecuteScalar<FileInfo[]>(query);
             Assert.AreEqual(1, result.Length);

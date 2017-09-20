@@ -110,6 +110,67 @@ namespace LINQToTTreeLib.ExecutionCommon
             return results;
         }
 
+
+        [Serializable]
+        public class ProxyGenerationException : Exception
+        {
+            public ProxyGenerationException() { }
+            public ProxyGenerationException(string message) : base(message) { }
+            public ProxyGenerationException(string message, Exception inner) : base(message, inner) { }
+            protected ProxyGenerationException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
+        /// <summary>
+        /// Generate a proxy file for a root file.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <param name="treeName"></param>
+        /// <param name="queryDirectory"></param>
+        /// <returns></returns>
+        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        {
+            // Simple argument checks
+            // Argument checks
+            if (rootFiles == null || rootFiles.Length == 0)
+            {
+                throw new ArgumentException("Query must be run on some files - argument to GenerateProxyFile was null or zero length");
+            }
+            if (queryDirectory == null || !queryDirectory.Exists)
+            {
+                throw new ArgumentException("The directory were we should create a TTree proxy file should not be null or non-existant!");
+            }
+
+
+            // Commands to generate a proxy
+            var cmds = new StringBuilder();
+            var rootFilePath = NormalizeFileForTarget(new FileInfo(rootFiles.First().LocalPath));
+            cmds.AppendLine($"TFile *f = TFile::Open(\"{rootFilePath}\", \"READ\");");
+            cmds.AppendLine($"TTree *t = (TTree*) f->Get(\"{treeName}\");");
+            cmds.AppendLine("t->MakeProxy(\"runquery\", \"junk.C\", 0, \"nohist\");");
+
+            // Write the dummy selection file that is required (WHY!!!???).
+            var fname = Path.Combine(queryDirectory.FullName, "junk.C");
+            using (var w = File.CreateText(fname))
+            {
+                w.Write("int junk() {return 10.0;}");
+                w.Close();
+            }
+
+            // Run the commands
+            ExecuteRootScript("proxy", cmds, queryDirectory);
+
+            // Return the file.
+            var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
+            if (!header.Exists)
+            {
+                throw new ProxyGenerationException($"Failed to generate a proxy from the command line");
+            }
+            return header;
+        }
+
+
         /// <summary>
         /// Sometimes we have to generate some class dictionaries on the fly. This code will do that.
         /// </summary>

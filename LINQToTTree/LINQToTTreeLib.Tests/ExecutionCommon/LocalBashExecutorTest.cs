@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static LINQToTTreeLib.FutureResultOperatorsTest;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon
 {
@@ -36,33 +37,20 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             MEFUtilities.MyClassDone();
         }
 
-        /// <summary>
-        /// Simple run a file and see what happens
-        /// </summary>
         [TestMethod]
-        [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
-        [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
-        [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
-        public void LocalBashCmdLineSimpleQuery()
+        public void LocalBashCmdLineCountOperator()
         {
-            FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
-            CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
-            CopyToTempDir("ntuple_CollectionTree.h");
-            Assert.IsTrue(runner.Exists, "Main C++ file missing");
-            var targetr = new LocalBashExecutor();
-            var env = CreateSimpleQueryEnvironment();
+            var rootFile = TestUtils.CreateFileOfInt(20);
 
-            targetr.Environment = env;
-            CommandLineCommonExecutor.AddLogEndpoint(s => Console.WriteLine(s));
-            var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
 
-            Assert.IsNotNull(r, "nothing came back!");
-            Assert.AreEqual(1, r.Count, "# of returned values from query");
-            Assert.AreEqual("aInt32_1", r.Keys.First(), "Key name incorrect");
-            var o = r["aInt32_1"];
-            Assert.IsInstanceOfType(o, typeof(ROOTNET.NTH1I), "return histo type");
-            var h = o as ROOTNET.NTH1I;
-            Assert.AreEqual(20, (int)h.GetBinContent(1), "Answer from query");
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(20, result);
         }
 
 #if false
@@ -221,27 +209,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             exe.CleanupQuery = false;
-            int result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(20, result);
-        }
-
-        [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
-        public void LocalBashCmdLineCountOperator()
-        {
-            var rootFile = TestUtils.CreateFileOfInt(20);
-
-            // Generate a proxy .h file that we can use
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
-
-            // Get a simple query we can "play" with
-            var q = new QueriableDummy<TestNtupe>();
-            var dude = q.Count();
-            var query = DummyQueryExectuor.LastQueryModel;
-
-            // Ok, now we can actually see if we can make it "go".
-            ntuple._gProxyFile = proxyFile.FullName;
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
         }
