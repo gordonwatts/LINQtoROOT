@@ -45,5 +45,15 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             return finfo.FullName.Replace("\\", "\\\\");
         }
+
+        /// <summary>
+        /// Convert a file path for writing out.
+        /// </summary>
+        /// <param name="finfo"></param>
+        /// <returns></returns>
+        protected override string NormalizeFileForTarget(DirectoryInfo finfo)
+        {
+            return finfo.FullName.Replace("\\", "\\\\");
+        }
     }
 }

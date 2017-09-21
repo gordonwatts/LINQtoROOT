@@ -42,6 +42,16 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             return finfo.ConvertToBash();
         }
+
+        /// <summary>
+        /// Convert a filename into a bash path.
+        /// </summary>
+        /// <param name="finfo"></param>
+        /// <returns></returns>
+        protected override string NormalizeFileForTarget(DirectoryInfo finfo)
+        {
+            return finfo.ConvertToBash();
+        }
     }
     static class LocalBashExecutorHelpers
     {
@@ -51,6 +61,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="path"></param>
         /// <returns></returns>
         public static string ConvertToBash(this FileInfo path)
+        {
+            var splt = path.FullName.Split(':');
+            var rootPath = splt[1].Replace('\\', '/');
+            return $"/mnt/{splt[0].ToLower()}{rootPath}";
+        }
+
+        public static string ConvertToBash(this DirectoryInfo path)
         {
             var splt = path.FullName.Split(':');
             var rootPath = splt[1].Replace('\\', '/');

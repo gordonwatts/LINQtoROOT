@@ -85,6 +85,10 @@ namespace LINQToTTreeLib.ExecutionCommon
             ExecutionUtilities.Init();
             var cmds = new StringBuilder();
 
+            // Put our run-directory in the list of includes.
+            var includePath = NormalizeFileForTarget(new DirectoryInfo(System.Environment.CurrentDirectory));
+            cmds.AppendLine($"gSystem->AddIncludePath(\"-I{includePath}\");");
+
             // Load up extra objects & dictionaries
             LoadExtraCPPFiles(queryDirectory, cmds);
             LoadExtraDictionaries(Environment.ClassesToDictify, cmds);
@@ -143,7 +147,6 @@ namespace LINQToTTreeLib.ExecutionCommon
         public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             // Simple argument checks
-            // Argument checks
             if (rootFiles == null || rootFiles.Length == 0)
             {
                 throw new ArgumentException("Query must be run on some files - argument to GenerateProxyFile was null or zero length");
@@ -152,7 +155,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             {
                 throw new ArgumentException("The directory were we should create a TTree proxy file should not be null or non-existant!");
             }
-
 
             // Commands to generate a proxy
             var cmds = new StringBuilder();
@@ -317,7 +319,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="cmds"></param>
         /// <param name="queryResultsFile"></param>
         /// <param name="varsToTransfer"></param>
-        private static void WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        private void WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Objects that are headed over need to be stored in a file and then loaded into the selector.
             if (varsToTransfer != null && varsToTransfer.Count() > 0)
@@ -326,7 +328,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var inputFilesFilename = new FileInfo(Path.Combine(queryResultsFile.DirectoryName, "TSelectorInputFiles.root"));
                 var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
 
-                var safeInputFilename = inputFilesFilename.FullName.Replace("\\", "\\\\");
+                var safeInputFilename = NormalizeFileForTarget(inputFilesFilename);
                 cmds.AppendLine($"varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
@@ -382,6 +384,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Track the number of results we get back. So we never repeat.
+        /// </summary>
+        private int _result_index = 0;
+
+        /// <summary>
         /// Generate commands to build and load the template
         /// </summary>
         /// <param name="templateRunner"></param>
@@ -401,8 +408,9 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Code up the call
             var tmpFName = NormalizeFileForTarget(templateRunner);
-            cmds.AppendLine($"int r = gSystem->CompileMacro(\"{tmpFName}\", \"{buildFlags}\");");
-            cmds.AppendLine("if (r != 1) { exit(1); }");
+            cmds.AppendLine($"int r{_result_index} = gSystem->CompileMacro(\"{tmpFName}\", \"{buildFlags}\");");
+            cmds.AppendLine($"if (r{_result_index} != 1) {{ exit(1); }}");
+            _result_index++;
         }
 
         /// <summary>
@@ -411,6 +419,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="finfo"></param>
         /// <returns></returns>
         protected abstract string NormalizeFileForTarget(FileInfo finfo);
+
+        /// <summary>
+        /// Return a directory path suitable for including in a string
+        /// </summary>
+        /// <param name="finfo"></param>
+        /// <returns></returns>
+        protected abstract string NormalizeFileForTarget(DirectoryInfo finfo);
 
         /// <summary>
         /// This happens when we can't successfully execute a command

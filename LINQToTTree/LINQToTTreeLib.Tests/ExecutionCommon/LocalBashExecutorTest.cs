@@ -54,45 +54,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.AreEqual(20, result);
         }
 
-#if false
-        [TestMethod]
-        [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
-        [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
-        [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
-        public void LocalBashCmdLineBadCPPGeneration()
-        {
-            // Make sure a C++ error makes its way back up the line so we can see the error!
-            FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
-            using (var app = runner.AppendText())
-            {
-                app.WriteLine("blah blah blah;");
-                app.Close();
-            }
-
-            // Get the rest of the stuff in there.
-            CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
-            CopyToTempDir("ntuple_CollectionTree.h");
-            Assert.IsTrue(runner.Exists, "Main C++ file missing");
-            var targetr = new CommandLineExecutor();
-            var env = CreateSimpleQueryEnvironment();
-
-            targetr.Environment = env;
-            Exception err = null;
-            try
-            {
-                var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
-            }
-            catch (Exception e)
-            {
-                err = e;
-            }
-
-            Assert.IsNotNull(err);
-            Assert.IsInstanceOfType(err, typeof(CommandLineExecutionException));
-            var cl = (CommandLineExecutionException)err;
-            Assert.IsTrue(cl.Message.Contains("blah"), $"word Blah is missing from error message {cl.Message}.");
-        }
-
         [CPPHelperClass]
         static class LocalBashCmdLineLoadExtraClassFilesHelpers
         {
@@ -120,12 +81,9 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var f = TTreeQueryExecutorTest.CreateCommonObject(fnamebase, new DirectoryInfo("."));
             ntuple._gObjectFiles = new[] { f.FullName };
 
-            // Generate a proxy .h file that we can use
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
-
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
-            var dude = q.Where(r => LocalWinCmdLineLoadExtraClassFilesHelpers.DoObjectLookup() > 0).Count();
+            var dude = q.Where(r => LocalBashCmdLineLoadExtraClassFilesHelpers.DoObjectLookup() > 0).Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
@@ -152,6 +110,10 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             }
         }
 
+        /// <summary>
+        /// In root 6 this dictifying doesn't seem to have an effect. Need to ask about it.
+        /// </summary>
+        [Ignore]
         [TestMethod]
         public void LocalBashCmdLineDictifyClasses()
         {
@@ -161,16 +123,14 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             ntuple._gClassesToDeclare = new[] { "vector<vector<vector<float>>>" };
             ntuple._gClassesToDeclareIncludes = new[] { "vector" };
 
-            // Generate a proxy .h file that we can use
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
-
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
-            var dude = q.Where(r => LocalWinCmdLineDictifyClassesHelpers.DoDictDump() > 0).Count();
+            var dude = q.Where(r => LocalBashCmdLineDictifyClassesHelpers.DoDictDump() > 0).Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Ok, now we can actually see if we can make it "go".
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CleanupQuery = false;
 
             bool seenTDataType = false;
             CommandLineExecutor.AddLogEndpoint(s =>
@@ -184,13 +144,9 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalBashCmdLineSendObjectsToSelector()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
-
-            // Generate a proxy .h file that we can use
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             // Get a simple query that includes packing over a histogram.
             // The funny way we do the bin content is to make sure the histogram is accessed
@@ -206,20 +162,18 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
-            exe.CleanupQuery = false;
+            exe.CompileDebug = true;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
         }
 
         [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalBashCmdLineCheckWarningsAndErrors()
         {
             RunSimpleTestForErrorsAndWarnings(exe => { });
         }
 
         [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalBashCmdLineCheckWarningsAndErrorsDebug()
         {
             RunSimpleTestForErrorsAndWarnings(exe => { exe.CompileDebug = true; });
@@ -232,9 +186,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         private static void RunSimpleTestForErrorsAndWarnings(Action<TTreeQueryExecutor> configureMe)
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
-
-            // Generate a proxy .h file that we can use
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
@@ -270,9 +221,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             // When we run in debug mode, make sure the command line dumps are there.
             var rootFile = TestUtils.CreateFileOfInt(20);
 
-            // Generate a proxy .h file that we can use
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
-
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Count();
@@ -291,7 +239,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void LocalIncludeFile()
+        public void LocalBashCmdLocalIncludeFile()
         {
             // Write out the local include file. The system should pick it up from here.
             using (var writer = File.CreateText("bogus_function.h"))
@@ -307,7 +255,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             // Run the special function.
             var q = new QueriableDummy<TestNtupe>();
             var listing = from evt in q
-                          where CPPHelperFunctions.ReturnCustomFuncValue() > 10.0
+                          where TTreeQueryExecutorTest.CPPHelperFunctions.ReturnCustomFuncValue() > 10.0
                           select evt;
             var dude = listing.Count();
             var query = DummyQueryExectuor.LastQueryModel;
@@ -318,7 +266,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }
-#endif
 
         /// <summary>
         /// Create a dirt simple query environment so we can see what running is like.
