@@ -87,7 +87,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Put our run-directory in the list of includes.
             var includePath = NormalizeFileForTarget(new DirectoryInfo(System.Environment.CurrentDirectory));
-            cmds.AppendLine($"gSystem->AddIncludePath(\"-I{includePath}\");");
+            cmds.AppendLine($"gSystem->AddIncludePath(\"-I\\\"{includePath}\\\"\");");
 
             // Load up extra objects & dictionaries
             LoadExtraCPPFiles(queryDirectory, cmds);
@@ -240,7 +240,13 @@ namespace LINQToTTreeLib.ExecutionCommon
             TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
             if (Environment.CleanupQuery)
             {
-                queryDirectory.Delete(true);
+                // If we can't do the clean up, don't worry about it.
+                try
+                {
+                    queryDirectory.Delete(true);
+                }
+                catch
+                { }
             }
         }
 
