@@ -35,6 +35,15 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Reset to default values. Used mostly for testing.
+        /// </summary>
+        internal static void ResetLocalBashExecutor()
+        {
+            ROOTVersionNumber = "v6.10.02";
+            ROOTInstallArea = "~/root-binaries";
+        }
+
+        /// <summary>
         /// Return the path where the binaries for ROOT are located.
         /// </summary>
         /// <returns></returns>
@@ -67,6 +76,18 @@ namespace LINQToTTreeLib.ExecutionCommon
             return false;
         }
 
+
+        [Serializable]
+        public class FailedToInstallROOTException : Exception
+        {
+            public FailedToInstallROOTException() { }
+            public FailedToInstallROOTException(string message) : base(message) { }
+            public FailedToInstallROOTException(string message, Exception inner) : base(message, inner) { }
+            protected FailedToInstallROOTException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// Download the approprate version of root and unpack it in the proper area.
         /// </summary>
@@ -85,7 +106,13 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.Append($"tar -xf {archiveName} root/ --strip-components=1\n");
             cmds.Append($"rm {archiveName}\n");
 
-            ExecuteBashScript("downlaodroot", cmds);
+            try
+            {
+                ExecuteBashScript("downlaodroot", cmds);
+            } catch (Exception e)
+            {
+                throw new FailedToInstallROOTException($"Unable to download and install ROOT version {ROOTVersionNumber}.", e);
+            }
         }
 
         /// <summary>

@@ -28,6 +28,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Directory.CreateDirectory(tempDir);
             TestUtils.ResetLINQLibrary();
             CommandLineCommonExecutor.ResetCommandLineExecutor();
+            LocalBashExecutor.ResetLocalBashExecutor();
             ntuple.Reset();
         }
 
@@ -36,6 +37,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         {
             TestUtils.ResetLINQLibrary();
             MEFUtilities.MyClassDone();
+            LocalBashExecutor.ResetLocalBashExecutor();
         }
 
         [TestMethod]
@@ -56,7 +58,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        [ExpectedException(typeof(CantFindROOTException))]
+        [ExpectedException(typeof(LocalBashExecutor.FailedToInstallROOTException))]
         public void LocalBashNoROOTFound()
         {
             // This should cause a hard fail.
