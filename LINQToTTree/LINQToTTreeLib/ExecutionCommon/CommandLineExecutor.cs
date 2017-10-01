@@ -78,5 +78,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             return finfo.FullName.Replace("\\", "\\\\");
         }
+
+        /// <summary>
+        /// We are being asked to install ROOT. This is impossible.
+        /// </summary>
+        protected override void InstallROOT()
+        {
+            throw new InvalidOperationException("ROOT not found in the PATH - but in order to run this code it must have loaded root libraries from the PATH - so this is impossible!");
+        }
     }
 }

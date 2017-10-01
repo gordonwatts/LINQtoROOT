@@ -207,9 +207,18 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (!CheckForROOTInstall())
             {
-                throw new CantFindROOTException($"ROOT isn't installed on target machine ({ExecutorName}).");
+                InstallROOT();
+                if (!CheckForROOTInstall())
+                {
+                    throw new CantFindROOTException($"ROOT isn't installed on target machine ({ExecutorName}).");
+                }
             }
         }
+
+        /// <summary>
+        /// Attempt to install ROOT.
+        /// </summary>
+        protected abstract void InstallROOT();
 
         /// <summary>
         /// Return the name of the executor - to be used in error messages and the like.

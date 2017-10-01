@@ -18,12 +18,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Version of ROOT we will be using.
         /// </summary>
-        public static string ROOTVersionNumber { get; set; } = "v6-08-06";
+        public static string ROOTVersionNumber { get; set; } = "v6.10.02";
 
         /// <summary>
         /// Install area where ROOT is located. The version number is the next directory.
         /// </summary>
-        public static string ROOTInstallArea { get; set; } = "/home/gwatts/ATLAS/root-source";
+        public static string ROOTInstallArea { get; set; } = "~/root-binaries";
 
         /// <summary>
         /// Build the root location
@@ -31,7 +31,16 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         private string GetROOTExeucatblePath()
         {
-            return $"{ROOTInstallArea}/{ROOTVersionNumber}/bin/root.exe";
+            return $"{GetROOTBinaryPath()}/root.exe";
+        }
+
+        /// <summary>
+        /// Return the path where the binaries for ROOT are located.
+        /// </summary>
+        /// <returns></returns>
+        private string GetROOTBinaryPath()
+        {
+            return $"{ROOTInstallArea}/{ROOTVersionNumber}/bin";
         }
 
         /// <summary>
@@ -59,6 +68,72 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Download the approprate version of root and unpack it in the proper area.
+        /// </summary>
+        /// <remarks>
+        /// We are called only if CheckInstall has returned false.
+        /// </remarks>
+        protected override void InstallROOT()
+        {
+            var cmds = new StringBuilder();
+            cmds.Append($"mkdir {ROOTInstallArea}\n");
+            cmds.Append($"cd {ROOTInstallArea}\n");
+            cmds.Append($"mkdir {ROOTVersionNumber}\n");
+            cmds.Append($"cd {ROOTVersionNumber}\n");
+            var archiveName = $"root_{ROOTVersionNumber}.Linux-ubuntu16-x86_64-gcc5.4.tar.gz";
+            cmds.Append($"wget https://root.cern.ch/download/{archiveName}\n");
+            cmds.Append($"tar -xf {archiveName} root/ --strip-components=1\n");
+            cmds.Append($"rm {archiveName}\n");
+
+            ExecuteBashScript("downlaodroot", cmds);
+        }
+
+        /// <summary>
+        /// Run a short bash script
+        /// </summary>
+        /// <param name="cmds"></param>
+        private void ExecuteBashScript(string reason, StringBuilder cmds)
+        {
+            // Dump the script
+            var tmpDir = new DirectoryInfo(System.IO.Path.GetTempPath());
+            var cmdFile = Path.Combine(tmpDir.FullName, $"{reason}.sh");
+            using (var writer = File.CreateText(cmdFile))
+            {
+                writer.Write(cmds.ToString());
+            }
+
+            // Create the process info.
+            var proc = new Process();
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.ErrorDialog = false;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.WorkingDirectory = tmpDir.FullName;
+
+            proc.StartInfo.FileName = System.Environment.ExpandEnvironmentVariables(@"%windir%\sysnative\bash.exe");
+            proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh";
+
+            // Start it.
+            var resultData = new StringBuilder();
+            proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data);
+            proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data);
+
+            proc.Start();
+            proc.BeginOutputReadLine();
+            proc.BeginErrorReadLine();
+
+            // Wait for it to end.
+            proc.WaitForExit();
+
+            // Make sure the result is "good"
+            if (proc.ExitCode != 0)
+            {
+                throw new CommandLineExecutionException($"Failed to execute step {reason} - process executed with error code {proc.ExitCode}. Text dump from process: {resultData.ToString()}");
+            }
+        }
+
+        /// <summary>
         /// Configure the process that is going to run the actual root thing.
         /// </summary>
         /// <param name="startInfo"></param>
@@ -69,7 +144,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             startInfo.FileName = System.Environment.ExpandEnvironmentVariables(@"%windir%\sysnative\bash.exe");
 
             // Run root with the path as an argument.
-            startInfo.Arguments = $"-c \"{GetROOTExeucatblePath()} -b -q {new FileInfo(rootMacroFilePath).ConvertToBash()}\"";
+            startInfo.Arguments = $"-c \". {GetROOTBinaryPath()}/thisroot.sh; root -b -q {new FileInfo(rootMacroFilePath).ConvertToBash()}\"";
         }
 
         /// <summary>
