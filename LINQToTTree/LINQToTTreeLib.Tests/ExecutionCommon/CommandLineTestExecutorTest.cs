@@ -33,71 +33,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             CommandLineExecutor.ResetCommandLineExecutor();
         }
 
-        /// <summary>
-        /// Simple run a file and see what happens
-        /// </summary>
-        [TestMethod]
-        [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
-        [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
-        [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
-        public void LocalWinCmdLineSimpleQuery()
-        {
-            FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
-            CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
-            CopyToTempDir("ntuple_CollectionTree.h");
-            Assert.IsTrue(runner.Exists, "Main C++ file missing");
-            var targetr = new CommandLineExecutor();
-            var env = CreateSimpleQueryEnvironment();
-
-            targetr.Environment = env;
-            var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
-
-            Assert.IsNotNull(r, "nothing came back!");
-            Assert.AreEqual(1, r.Count, "# of returned values from query");
-            Assert.AreEqual("aInt32_1", r.Keys.First(), "Key name incorrect");
-            var o = r["aInt32_1"];
-            Assert.IsInstanceOfType(o, typeof(ROOTNET.NTH1I), "return histo type");
-            var h = o as ROOTNET.NTH1I;
-            Assert.AreEqual(20, (int)h.GetBinContent(1), "Answer from query");
-        }
-
-        [TestMethod]
-        [DeploymentItem("ExecutionCommon\\queryTestSimpleQuery.cxx")]
-        [DeploymentItem("ExecutionCommon\\junk_macro_parsettree_CollectionTree.C")]
-        [DeploymentItem("ExecutionCommon\\ntuple_CollectionTree.h")]
-        public void LocalWinCmdLineBadCPPGeneration()
-        {
-            // Make sure a C++ error makes its way back up the line so we can see the error!
-            FileInfo runner = CopyToTempDir("queryTestSimpleQuery.cxx");
-            using (var app = runner.AppendText())
-            {
-                app.WriteLine("blah blah blah;");
-                app.Close();
-            }
-
-            // Get the rest of the stuff in there.
-            CopyToTempDir("junk_macro_parsettree_CollectionTree.C");
-            CopyToTempDir("ntuple_CollectionTree.h");
-            Assert.IsTrue(runner.Exists, "Main C++ file missing");
-            var targetr = new CommandLineExecutor();
-            var env = CreateSimpleQueryEnvironment();
-
-            targetr.Environment = env;
-            Exception err = null;
-            try
-            {
-                var r = targetr.Execute(runner, new DirectoryInfo(tempDir), null);
-            } catch (Exception e)
-            {
-                err = e;
-            }
-
-            Assert.IsNotNull(err);
-            Assert.IsInstanceOfType(err, typeof(CommandLineExecutionException));
-            var cl = (CommandLineExecutionException)err;
-            Assert.IsTrue(cl.Message.Contains("blah"), $"word Blah is missing from error message {cl.Message}.");
-        }
-
         [CPPHelperClass]
         static class LocalWinCmdLineLoadExtraClassFilesHelpers
         {
@@ -183,7 +118,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalWinCmdLineSendObjectsToSelector()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
@@ -208,7 +142,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalWinCmdLineCountOperator()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
@@ -225,14 +158,12 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalWinCmdLineCheckWarningsAndErrors()
         {
             RunSimpleTestForErrorsAndWarnings(exe => { });
         }
 
         [TestMethod]
-        [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
         public void LocalWinCmdLineCheckWarningsAndErrorsDebug()
         {
             RunSimpleTestForErrorsAndWarnings(exe => { exe.CompileDebug = true; });
