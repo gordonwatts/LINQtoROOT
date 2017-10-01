@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static LINQToTTreeLib.ExecutionCommon.CommandLineCommonExecutor;
 using static LINQToTTreeLib.FutureResultOperatorsTest;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon
@@ -52,6 +53,27 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             exe.CompileDebug = true;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(CantFindROOTException))]
+        public void LocalBashNoROOTFound()
+        {
+            // This should cause a hard fail.
+            LocalBashExecutor.ROOTVersionNumber = "22322";
+
+            // Set it up to look for something else.
+
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
         }
 
         [CPPHelperClass]

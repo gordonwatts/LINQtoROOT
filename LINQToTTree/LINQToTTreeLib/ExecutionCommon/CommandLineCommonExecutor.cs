@@ -125,7 +125,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             return results;
         }
 
-
+        /// <summary>
+        /// Unable to generate a proxy for this root tuple.
+        /// </summary>
         [Serializable]
         public class ProxyGenerationException : Exception
         {
@@ -146,6 +148,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
+            // Check the environment
+            MakeSureROOTIsInstalled();
+
             // Simple argument checks
             if (rootFiles == null || rootFiles.Length == 0)
             {
@@ -183,6 +188,39 @@ namespace LINQToTTreeLib.ExecutionCommon
             return header;
         }
 
+
+        [Serializable]
+        public class CantFindROOTException : Exception
+        {
+            public CantFindROOTException() { }
+            public CantFindROOTException(string message) : base(message) { }
+            public CantFindROOTException(string message, Exception inner) : base(message, inner) { }
+            protected CantFindROOTException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
+        /// <summary>
+        /// Make sure ROOT is installed. If not, attempt to install it.
+        /// </summary>
+        private void MakeSureROOTIsInstalled()
+        {
+            if (!CheckForROOTInstall())
+            {
+                throw new CantFindROOTException($"ROOT isn't installed on target machine ({ExecutorName}).");
+            }
+        }
+
+        /// <summary>
+        /// Return the name of the executor - to be used in error messages and the like.
+        /// </summary>
+        protected abstract string ExecutorName { get; }
+
+        /// <summary>
+        /// Check to see if ROOT has been installed or not. Return TRUE if it has, FALSE otherwise.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract bool CheckForROOTInstall();
 
         /// <summary>
         /// Sometimes we have to generate some class dictionaries on the fly. This code will do that.
@@ -464,7 +502,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We throw if we don't return success
         /// </summary>
         /// <param name="cmds"></param>
-        private void ExecuteRootScript(string prefix, StringBuilder cmds, DirectoryInfo tmpDir)
+        protected void ExecuteRootScript(string prefix, StringBuilder cmds, DirectoryInfo tmpDir)
         {
             // Dump the script
             var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");

@@ -14,10 +14,49 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// </summary>
     class LocalBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
+
         /// <summary>
-        /// Location of the root executable
+        /// Version of ROOT we will be using.
         /// </summary>
-        const string _rootExeLocation = @"/home/gwatts/ATLAS/root-source/v6-08-06/bin/root.exe";
+        public static string ROOTVersionNumber { get; set; } = "v6-08-06";
+
+        /// <summary>
+        /// Install area where ROOT is located. The version number is the next directory.
+        /// </summary>
+        public static string ROOTInstallArea { get; set; } = "/home/gwatts/ATLAS/root-source";
+
+        /// <summary>
+        /// Build the root location
+        /// </summary>
+        /// <returns></returns>
+        private string GetROOTExeucatblePath()
+        {
+            return $"{ROOTInstallArea}/{ROOTVersionNumber}/bin/root.exe";
+        }
+
+        /// <summary>
+        /// Return the name of this executor so in an error message the user can tell
+        /// where the error occured.
+        /// </summary>
+        protected override string ExecutorName => "Local bash shell on this machine";
+
+        /// <summary>
+        /// Is ROOT installed on this machine?
+        /// </summary>
+        /// <returns></returns>
+        protected override bool CheckForROOTInstall()
+        {
+            var cmd = new StringBuilder();
+            cmd.AppendLine("int i = 10;");
+
+            try
+            {
+                ExecuteRootScript("testForRoot", cmd, new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)));
+                return true;
+            }
+            catch { }
+            return false;
+        }
 
         /// <summary>
         /// Configure the process that is going to run the actual root thing.
@@ -30,7 +69,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             startInfo.FileName = System.Environment.ExpandEnvironmentVariables(@"%windir%\sysnative\bash.exe");
 
             // Run root with the path as an argument.
-            startInfo.Arguments = $"-c \"{_rootExeLocation} -b -q {new FileInfo(rootMacroFilePath).ConvertToBash()}\"";
+            startInfo.Arguments = $"-c \"{GetROOTExeucatblePath()} -b -q {new FileInfo(rootMacroFilePath).ConvertToBash()}\"";
         }
 
         /// <summary>

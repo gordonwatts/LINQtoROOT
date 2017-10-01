@@ -18,6 +18,20 @@ namespace LINQToTTreeLib.ExecutionCommon
     public class CommandLineExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
         /// <summary>
+        /// Return a string so that error messages know what kind of executor this is.
+        /// </summary>
+        protected override string ExecutorName => "Windows Command Line Executor";
+
+        /// <summary>
+        /// Can we locate ROOT?
+        /// </summary>
+        /// <returns></returns>
+        protected override bool CheckForROOTInstall()
+        {
+            return File.Exists(GetROOTPath());
+        }
+
+        /// <summary>
         /// Configure the remote execution guy
         /// </summary>
         /// <param name="startInfo"></param>
@@ -25,7 +39,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         protected override void ConfigureProcessExecution(ProcessStartInfo startInfo, string rootMacroFilePath)
         {
             // Figure out where root is that we should be executing against
-            var rootPath = System.Environment.ExpandEnvironmentVariables($"%ROOTSYS%\\bin\\root.exe");
+            var rootPath = GetROOTPath();
             if (!File.Exists(rootPath))
             {
                 throw new ROOTExecutableNotFoundException("Unable to find root.exe. This is probably because ROOTSYS is not defined.");
@@ -34,6 +48,15 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Configure it to run directly.
             startInfo.FileName = rootPath;
             startInfo.Arguments = $"-b -q {rootMacroFilePath}";
+        }
+
+        /// <summary>
+        /// Return the path where we expect to find the ROOT executable
+        /// </summary>
+        /// <returns></returns>
+        private static string GetROOTPath()
+        {
+            return System.Environment.ExpandEnvironmentVariables($"%ROOTSYS%\\bin\\root.exe");
         }
 
         /// <summary>
