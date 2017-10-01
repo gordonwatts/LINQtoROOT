@@ -596,10 +596,6 @@ namespace LINQToTTreeLib
             {
                 return new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
             }
-            else if (_exeReq.RootFiles.All(t => t.Scheme == "proof"))
-            {
-                return new ProofExecutor() { Environment = _exeReq };
-            }
             else if (_exeReq.RootFiles.All(t => t.Scheme == "localwin"))
             {
                 return new CommandLineExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
