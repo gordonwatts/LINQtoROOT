@@ -382,7 +382,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
 
                 var safeInputFilename = NormalizeFileForTarget(inputFilesFilename);
-                cmds.AppendLine($"varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
+                cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
                 var objInputList = new ROOTNET.NTList();
