@@ -63,19 +63,6 @@ namespace TTreeClassGenerator
             }
 
             ///
-            /// See if we can track down all the class files...
-            /// 
-
-            foreach (var c in classSpec.Classes)
-            {
-                var f = FindFileInDefaultPaths(c.NtupleProxyPath, inputXMLFile);
-                if (f != null)
-                {
-                    c.NtupleProxyPath = f.FullName;
-                }
-            }
-
-            ///
             /// Now do the actual work!
             /// 
 
@@ -151,17 +138,6 @@ namespace TTreeClassGenerator
 
             if (classSpec.Classes == null)
                 throw new ArgumentNullException("classSpec.Classes");
-
-            foreach (var c in classSpec.Classes)
-            {
-                if (c.IsTopLevelClass)
-                {
-                    if (c.NtupleProxyPath == null)
-                        throw new ArgumentNullException("Class '" + c.Name + "' has no ntuple proxy. Can't generate a class for it.");
-                    if (!File.Exists(c.NtupleProxyPath))
-                        throw new ArgumentNullException("Class '" + c.Name + "'s ntuple proxy does not exist at " + c.NtupleProxyPath + ". Can't generate a class for it.");
-                }
-            }
 
             var classByName = (from c in classSpec.Classes
                                group c by c.Name into g
@@ -293,8 +269,6 @@ namespace TTreeClassGenerator
                         {
                             if (cls.IsTopLevelClass)
                             {
-                                output.WriteLine("    public static string _gProxyFile=@\"" + cls.NtupleProxyPath + "\";");
-
                                 output.WriteLine("    public static string[] _gObjectFiles= {");
                                 foreach (var item in classSpec.ClassImplimintationFiles)
                                 {

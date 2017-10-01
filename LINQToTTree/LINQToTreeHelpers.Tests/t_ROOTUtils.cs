@@ -30,7 +30,6 @@ namespace LINQToTreeHelpers.Tests
 
             ntuple._gCINTLines = null;
             ntuple._gObjectFiles = null;
-            ntuple._gProxyFile = null;
 
             var eng = new VelocityEngine();
             eng.Init();

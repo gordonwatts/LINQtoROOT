@@ -151,11 +151,13 @@
     <Compile Include="CodeContext.cs" />
     <Compile Include="CombinedGeneratedCode.cs" />
     <Compile Include="CPPTranslator.cs" />
+    <Compile Include="ExecutionCommon\CommandLineCommonExecutor.cs" />
+    <Compile Include="ExecutionCommon\CommandLineExecutor.cs" />
     <Compile Include="ExecutionCommon\ExecutionEnvironment.cs" />
     <Compile Include="ExecutionCommon\ExecutionUtilities.cs" />
     <Compile Include="ExecutionCommon\IQueryExectuor.cs" />
+    <Compile Include="ExecutionCommon\LocalBashExecutor.cs" />
     <Compile Include="ExecutionCommon\LocalExecutor.cs" />
-    <Compile Include="ExecutionCommon\ProofExecutor.cs" />
     <Compile Include="Expressions\ArrayExpressionParser.cs" />
     <Compile Include="Expressions\ArrayInfoVector.cs" />
     <Compile Include="Expressions\DeclarableParameter.cs" />

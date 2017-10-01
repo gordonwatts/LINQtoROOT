@@ -11,13 +11,13 @@ namespace LINQToTTreeLib.Tests
     /// </summary>
     public class ntuple
     {
-        public static string _gProxyFile = "";
         public static string[] _gObjectFiles = { };
         public static string[] _gCINTLines = { };
+        public static string[] _gClassesToDeclare = { };
+        public static string[] _gClassesToDeclareIncludes = { };
 
         internal static void Reset()
         {
-            _gProxyFile = "";
             _gObjectFiles = new string[0];
         }
     }
@@ -38,7 +38,6 @@ namespace LINQToTTreeLib.Tests
             ntuple.Reset();
             ntuple._gCINTLines = null;
             ntuple._gObjectFiles = null;
-            ntuple._gProxyFile = null;
         }
 
         [TestCleanup]
@@ -52,12 +51,6 @@ namespace LINQToTTreeLib.Tests
         {
             const int numberOfIter = 25;
             var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
-
-            ///
-            /// Generate a proxy .h file that we can use
-            /// 
-
-            var proxyFile = TestUtils.GenerateROOTProxy(rootFile, "dude");
 
             ///
             /// Get a simple query we can "play" with. That this works
@@ -82,7 +75,6 @@ namespace LINQToTTreeLib.Tests
             // Convert to future's
             //
 
-            ntuple._gProxyFile = proxyFile.FullName;
             var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestUtils.TestNtupeArr));
             var q1future = exe.ExecuteScalarAsFuture<int>(query1);
             var q2future = exe.ExecuteScalarAsFuture<int>(query2);

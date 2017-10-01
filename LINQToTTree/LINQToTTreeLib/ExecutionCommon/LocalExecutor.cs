@@ -297,6 +297,76 @@ namespace LINQToTTreeLib.ExecutionCommon
             _loadedModuleNames.Add(templateRunner.Name.Replace(".", "_"));
         }
 
+        /// <summary>
+        /// Thrown if we can't find a tree we need to fine.
+        /// </summary>
+        [Serializable]
+        public class TreeDoesNotExistException : Exception
+        {
+            public TreeDoesNotExistException() { }
+            public TreeDoesNotExistException(string message) : base(message) { }
+            public TreeDoesNotExistException(string message, Exception inner) : base(message, inner) { }
+            protected TreeDoesNotExistException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
+        /// <summary>
+        /// We must build a proxy file for use with a query. Use the MakeProxy guy to do this.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <param name="queryDirectory"></param>
+        /// <returns></returns>
+        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        {
+            // Argument checks
+            if (rootFiles == null || rootFiles.Length == 0)
+            {
+                throw new ArgumentException("Query must be run on some files - argument to GenerateProxyFile was null or zero length");
+            }
+            if (queryDirectory == null || !queryDirectory.Exists)
+            {
+                throw new ArgumentException("The directory were we should create a TTree proxy file should not be null or non-existant!");
+            }
+
+            // Open the first file and generate the proxy from that.
+            var rootFilePath = rootFiles.First().LocalPath;
+            var tfile = ROOTNET.NTFile.Open(rootFilePath, "READ");
+            try
+            {
+                var tree = tfile.Get(treeName) as ROOTNET.Interface.NTTree;
+                if (tree == null)
+                {
+                    throw new TreeDoesNotExistException($"Unable to fine tree '{treeName}' in file '{rootFilePath}'");
+                }
+
+                // Root does everything local, so...
+                var oldEnv = System.Environment.CurrentDirectory;
+                try
+                {
+                    System.Environment.CurrentDirectory = queryDirectory.FullName;
+
+                    // Write the dummy selection file that is required (WHY!!!???).
+                    using (var w = File.CreateText("junk.C"))
+                    {
+                        w.Write("int junk() {return 10.0;}");
+                        w.Close();
+                    }
+
+                    tree.MakeProxy("runquery", "junk.C", null, "nohist");
+                    return new FileInfo("runquery.h");
+                }
+                finally
+                {
+                    System.Environment.CurrentDirectory = oldEnv;
+                }
+            }
+            finally
+            {
+                tfile.Close();
+            }
+        }
+
         #endregion
     }
 }

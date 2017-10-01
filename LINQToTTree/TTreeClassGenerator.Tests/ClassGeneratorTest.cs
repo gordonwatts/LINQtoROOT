@@ -53,7 +53,6 @@ namespace TTreeClassGenerator
             int numExtraFiles,
             int numExtraFilesToCreate,
             int extraFileIndexNull,
-            int proxyPathChoice,
             string nameSName,
             int NumObjectCollection)
         {
@@ -61,7 +60,6 @@ namespace TTreeClassGenerator
                 || numExtraFilesToCreate < 0
                 || extraFileIndexNull < 0
                 || outputChoice < 0
-                || proxyPathChoice < 0
                 || NumObjectCollection < 0)
                 return;
 
@@ -130,40 +128,6 @@ namespace TTreeClassGenerator
                     }
                     objs.Add(rcs);
                 }
-
-                if (NumObjectCollection > 0)
-                {
-                    if (proxyPathChoice == 1)
-                    {
-                        var proxyFile = new FileInfo(testDir.FullName + "\\GenerateClassFromClasses_" + proxyPathChoice.ToString() + ".h");
-                        using (var w = proxyFile.CreateText())
-                        {
-                            w.WriteLine("hi");
-                            w.Close();
-                        }
-                        objs[0].NtupleProxyPath = proxyFile.FullName;
-                    }
-
-                    if (proxyPathChoice == 2)
-                    {
-                        var proxyFile = new FileInfo(testDir.FullName + "\\GenerateClassFromClasses_" + proxyPathChoice.ToString() + ".h");
-                        objs[0].NtupleProxyPath = proxyFile.FullName;
-                    }
-
-                    if (proxyPathChoice == 3)
-                    {
-                        var proxyFile = new FileInfo(testDir.FullName + "\\GenerateClassFromClasses_" + proxyPathChoice.ToString() + ".h");
-                        using (var w = proxyFile.CreateText())
-                        {
-                            w.WriteLine("hi");
-                            w.Close();
-                        }
-                        foreach (var item in objs)
-                        {
-                            item.NtupleProxyPath = proxyFile.FullName;
-                        }
-                    }
-                }
                 objCollect = objs.ToArray();
             }
 
@@ -199,18 +163,11 @@ namespace TTreeClassGenerator
 
             target.GenerateClasss(info, outputCSFile, nameSName);
 
-            Assert.IsFalse(info.Classes.Any(c => c.NtupleProxyPath == null), "No null proxy paths allowed");
-            Assert.IsFalse(info.Classes.Any(c => !File.Exists(c.NtupleProxyPath)), "proxy files must exist");
-
             Assert.IsFalse(info.ClassImplimintationFiles.Any(c => c == null), "no null implementation files allowed");
             Assert.IsFalse(info.ClassImplimintationFiles.Any(c => !File.Exists(c)), "all implimntation files must exist");
 
             /// Check that all the ntuple proxy guys and the temp file guys appear in the file
 
-            foreach (var item in info.Classes.Where(c => c.IsTopLevelClass))
-            {
-                Assert.IsTrue(FindInFile(outputCSFile, item.NtupleProxyPath), "Could not find the proxy path '" + item.NtupleProxyPath + "'");
-            }
             foreach (var item in info.ClassImplimintationFiles)
             {
                 Assert.IsTrue(FindInFile(outputCSFile, item), "coul dnot find impl file '" + item + "'");
@@ -223,13 +180,7 @@ namespace TTreeClassGenerator
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
             Assert.IsFalse(simple.NotAPointer, "not a pointer");
-            FileInfo proxyFile = new FileInfo("TestNoGroupsProxy.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") {};
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
@@ -249,13 +200,7 @@ namespace TTreeClassGenerator
         {
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
-            FileInfo proxyFile = new FileInfo("TestSimpleRename.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { };
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
@@ -278,14 +223,8 @@ namespace TTreeClassGenerator
         public void TestColonsInVarNameWRename()
         {
             ItemSimpleType simple = new ItemSimpleType("dude::fork", "int[]");
-            FileInfo proxyFile = new FileInfo("TestColonsInVarNameWRename.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
 
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { };
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
@@ -307,14 +246,8 @@ namespace TTreeClassGenerator
         {
             ItemSimpleType simple1 = new ItemSimpleType("avar", "int[]");
             ItemSimpleType simple2 = new ItemSimpleType("bvar", "int[]");
-            FileInfo proxyFile = new FileInfo("TestColonsInVarNameWRename.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
 
-            ROOTClassShell mainClass = new ROOTClassShell("GroupWithArrayLengthSpecification") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("GroupWithArrayLengthSpecification") { };
             mainClass.Add(simple1);
             mainClass.Add(simple2);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -343,14 +276,8 @@ namespace TTreeClassGenerator
         public void TestColonsInVarName()
         {
             ItemSimpleType simple = new ItemSimpleType("dude::fork", "int[]");
-            FileInfo proxyFile = new FileInfo("TestColonsInVarName.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
 
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { };
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
@@ -371,14 +298,8 @@ namespace TTreeClassGenerator
         public void TestCharactersInClassName()
         {
             ItemSimpleType simple = new ItemSimpleType("fork", "int");
-            FileInfo proxyFile = new FileInfo("TestColonsInVarName.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
 
-            ROOTClassShell mainClass = new ROOTClassShell("##Shapes") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("##Shapes") { };
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
@@ -398,13 +319,8 @@ namespace TTreeClassGenerator
         {
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
-            FileInfo proxyFile = new FileInfo("TestSimpleGroupAndRename.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { };
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
@@ -431,13 +347,7 @@ namespace TTreeClassGenerator
         {
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simple = new ItemSimpleType("var1", "int[]");
-            FileInfo proxyFile = new FileInfo("TestSimpleGroupAndRename.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleGroupAndRename") { };
             mainClass.Add(simple);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
 
@@ -466,13 +376,7 @@ namespace TTreeClassGenerator
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simpleIndex = new ItemSimpleType("index", "int[]");
             ItemSimpleType simpleVal = new ItemSimpleType("var1", "float[]");
-            FileInfo proxyFile = new FileInfo("TestSimpleIndexing.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleIndexing") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleIndexing") { };
             mainClass.Add(simpleIndex);
             mainClass.Add(simpleVal);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -520,13 +424,7 @@ namespace TTreeClassGenerator
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simpleIndex = new ItemSimpleType("index", "int[][]");
             ItemSimpleType simpleVal = new ItemSimpleType("var1", "float[]");
-            FileInfo proxyFile = new FileInfo("TestRenameIndexArray.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestRenameIndexArray") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestRenameIndexArray") { };
             mainClass.Add(simpleIndex);
             mainClass.Add(simpleVal);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -574,13 +472,7 @@ namespace TTreeClassGenerator
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simpleIndex = new ItemSimpleType("index", "float[]");
             ItemSimpleType simpleVal = new ItemSimpleType("var1", "float[]");
-            FileInfo proxyFile = new FileInfo("TestNonIntIndex.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestNonIntIndex") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestNonIntIndex") { };
             mainClass.Add(simpleIndex);
             mainClass.Add(simpleVal);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -616,13 +508,7 @@ namespace TTreeClassGenerator
             /// Create simple user info - but don't do anything with it!
             ItemSimpleType simpleIndex = new ItemSimpleType("index", "int[]");
             ItemSimpleType simpleVal = new ItemSimpleType("var1", "float[]");
-            FileInfo proxyFile = new FileInfo("TestRenamedIndex.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestRenamedIndex") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestRenamedIndex") { };
             mainClass.Add(simpleIndex);
             mainClass.Add(simpleVal);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -670,13 +556,7 @@ namespace TTreeClassGenerator
             var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "n", false);
             var vIndex = new ItemSimpleType("n", "int");
-            FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { };
             mainClass.Add(vIndex);
             mainClass.Add(vArray);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -727,14 +607,8 @@ namespace TTreeClassGenerator
             var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "10", true);
             var vIndex = new ItemSimpleType("n", "int");
-            FileInfo proxyFile = new FileInfo("TestConstCStyleArray.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
 
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { };
             mainClass.Add(vIndex);
             mainClass.Add(vArray);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -769,13 +643,8 @@ namespace TTreeClassGenerator
             var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "n", false);
             var vIndex = new ItemSimpleType("n", "float");
-            FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { };
             mainClass.Add(vIndex);
             mainClass.Add(vArray);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -803,13 +672,8 @@ namespace TTreeClassGenerator
             var vArray = new ItemCStyleArray("int[]", new ItemSimpleType("arr", "int"));
             vArray.Add(0, "i", false);
             var vIndex = new ItemSimpleType("n", "int");
-            FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { };
             mainClass.Add(vIndex);
             mainClass.Add(vArray);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass }, ClassImplimintationFiles = new string[0] };
@@ -834,16 +698,11 @@ namespace TTreeClassGenerator
         public void TestDuplicateClassNames()
         {
             var vIndex = new ItemSimpleType("n", "int");
-            FileInfo proxyFile = new FileInfo("TestCStyleArray.cpp");
-            using (var writer = proxyFile.CreateText())
-            {
-                writer.WriteLine();
-                writer.Close();
-            }
-            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+
+            ROOTClassShell mainClass = new ROOTClassShell("TestSimpleRename") { };
             mainClass.Add(vIndex);
 
-            ROOTClassShell mainClass1 = new ROOTClassShell("TestSimpleRename") { NtupleProxyPath = proxyFile.FullName };
+            ROOTClassShell mainClass1 = new ROOTClassShell("TestSimpleRename") { };
             mainClass1.Add(vIndex);
             var ntup = new NtupleTreeInfo() { Classes = new ROOTClassShell[] { mainClass, mainClass1 }, ClassImplimintationFiles = new string[0] };
 
@@ -877,7 +736,6 @@ namespace TTreeClassGenerator
                 2, // Number of extra files
                 2, // number of extra files to create
                 10, // Null file index
-                3, // Proxy path choice
                 "junk", // Namespace
                 2 // # of output objects to create
                 );

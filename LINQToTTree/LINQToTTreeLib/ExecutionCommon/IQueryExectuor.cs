@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 namespace LINQToTTreeLib.ExecutionCommon
@@ -25,5 +26,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// change after the first setting.
         /// </summary>
         ExecutionEnvironment Environment { set; }
+
+        /// <summary>
+        /// Generate a set of proxy files for these root files in the given directory, and return the main .h file.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <param name="queryDirectory"></param>
+        /// <returns></returns>
+        FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory);
     }
 }

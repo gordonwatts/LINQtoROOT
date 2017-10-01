@@ -204,7 +204,7 @@ namespace LINQToTTreeLib
             if (attemptDateRecheck || !_uriToFileInfo.ContainsKey(u))
             {
                 DateTime result;
-                if (u.Scheme == "file")
+                if (u.Scheme == "file" || u.Scheme == "localwin" || u.Scheme == "localbash")
                 {
                     result = File.GetLastWriteTime(u.LocalPath);
                 }
