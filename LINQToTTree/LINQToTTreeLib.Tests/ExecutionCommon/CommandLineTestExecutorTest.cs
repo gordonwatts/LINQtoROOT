@@ -1,5 +1,6 @@
 ﻿using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ExecutionCommon;
+using LINQToTTreeLib.Files;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -257,6 +258,47 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.AreEqual(10, result);
         }
 
+        [TestMethod]
+        public void LocalWinCSVFileResult()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.AsCSV(new FileInfo("bogus.csv"), "run");
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CompileDebug = true;
+            exe.CleanupQuery = false;
+            var result = exe.ExecuteScalar<FileInfo[]>(query);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, result.Length);
+            result[0].Refresh();
+            Assert.IsTrue(result[0].Exists);
+        }
+
+        [TestMethod]
+        public void LocalWinROOTFileResult()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.AsTTree("mytree");
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CompileDebug = true;
+            exe.CleanupQuery = false;
+            var result = exe.ExecuteScalar<FileInfo[]>(query);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, result.Length);
+            result[0].Refresh();
+            Assert.IsTrue(result[0].Exists);
+        }
 
         /// <summary>
         /// Create a dirt simple query environment so we can see what running is like.
