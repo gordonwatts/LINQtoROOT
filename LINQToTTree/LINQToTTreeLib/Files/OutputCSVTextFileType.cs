@@ -50,7 +50,7 @@ namespace LINQToTTreeLib.Files
         {
             get
             {
-                return $"std::ofstream(\"{OutputFile().FullName.AddCPPEscapeCharacters()}\")";
+                return $"std::ofstream(\"<><>{OutputFile().FullName.AddCPPEscapeCharacters()}<><>\")";
             }
         }
 
@@ -188,7 +188,7 @@ namespace LINQToTTreeLib.Files
             // Write out the mod time and the file size.
             yield return $"Long_t {v.RawValue}_size;";
             yield return $"Long_t {v.RawValue}_modification_time;";
-            yield return $"gSystem->GetPathInfo(\"{fileAsCPPString}\", 0, &{v.RawValue}_size, 0, &{v.RawValue}_modification_time);";
+            yield return $"gSystem->GetPathInfo(\"<><>{fileAsCPPString}<><>\", 0, &{v.RawValue}_size, 0, &{v.RawValue}_modification_time);";
 
             foreach (var s in SaveIntValue($"{v.RawValue}_size"))
             {

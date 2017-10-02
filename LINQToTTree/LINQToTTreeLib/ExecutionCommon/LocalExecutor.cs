@@ -1,8 +1,10 @@
 ﻿
+using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -25,17 +27,17 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Given a request, run it. No need to clean up afterwards as we are already there.
         /// </summary>
-        /// <param name="remotePacket">The basic info about this run</param>
         /// <returns></returns>
-        public System.Collections.Generic.IDictionary<string, ROOTNET.Interface.NTObject> Execute(
+        public IDictionary<string, ROOTNET.Interface.NTObject> Execute(
             FileInfo templateFile,
             DirectoryInfo queryDirectory,
             IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
-            //
-            // Get the environment setup for this call
-            //
+            // Remove flag characters in teh source file - parse for clean up subsitutions we can do
+            // only when we know how we are going to do the execution.
+            ReWritePathsInQuery(templateFile);
 
+            // Get the environment setup for this call
             ExecutionUtilities.Init();
             PreExecutionInit(Environment.ClassesToDictify);
 
@@ -82,6 +84,33 @@ namespace LINQToTTreeLib.ExecutionCommon
             return results;
         }
 
+        /// <summary>
+        /// Look through each input line for a path in the query that needs to be "fixed up".
+        /// </summary>
+        /// <param name="queryFile"></param>
+        private void ReWritePathsInQuery(FileInfo queryFile)
+        {
+            var tmpFile = new FileInfo($"{queryFile.FullName}-tmp");
+            var replacement = new Regex("<><>(.*)<><>");
+            using (var writer = tmpFile.CreateText())
+            {
+                foreach (var line in queryFile.EnumerateTextFile())
+                {
+                    var wline = line;
+                    var m = replacement.Match(line);
+                    if (m.Success)
+                    {
+                        var fixedFile = m.Groups[1].Value;
+                        wline = wline.Replace(m.Value, fixedFile);
+                    }
+                    writer.WriteLine(wline);
+                }
+                writer.Close();
+            }
+            queryFile.Delete();
+            tmpFile.MoveTo(queryFile.FullName);
+        }
+        
         /// <summary>
         /// The detailed code that runs the query.
         /// </summary>

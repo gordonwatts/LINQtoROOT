@@ -64,18 +64,18 @@ namespace LINQToTTreeLib.Files
                 ? asTTree.OutputFile
                 : new FileInfo($"{asTTree.TreeName}.root");
 
-            // Declare the TTree and the file we will be using!
-            // Initialization is not important as we will over-write this directly.
-            var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputTTreeFileType));
-            stream.InitialValue = new OutputTTreeFileType(outputFile);
-
             // Generate a real filename. We are going to key the file by the cache key. Unfortunately, at this
             // point in the generation the cache key isn't known. So we have to have a 'promise' that can be used
             // for later when the code is actually generated.
             var outputFilePromise = GenerateUniqueFile(outputFile, cc);
 
+            // Declare the TTree and the file we will be using!
+            // Initialization is not important as we will over-write this directly.
+            var stream = DeclarableParameter.CreateDeclarableParameterExpression(typeof(OutputTTreeFileType));
+            stream.InitialValue = new OutputTTreeFileType(outputFilePromise);
+
             // Open the file and declare the tree
-            gc.AddInitalizationStatement(new StatementSimpleStatement(() => $"{stream.RawValue}.first = new TFile(\"{outputFilePromise().FullName.AddCPPEscapeCharacters()}\",\"RECREATE\")", dependentVars: new string[0], resultVars: new string[] { stream.RawValue }));
+            gc.AddInitalizationStatement(new StatementSimpleStatement(() => $"{stream.RawValue}.first = new TFile(\"<><>{outputFilePromise().FullName.AddCPPEscapeCharacters()}<><>\",\"RECREATE\")", dependentVars: new string[0], resultVars: new string[] { stream.RawValue }));
             gc.AddInitalizationStatement(new StatementSimpleStatement($"{stream.RawValue}.second = new TTree(\"{asTTree.TreeName}\", \"{asTTree.TreeTitle}\")", dependentVars: new string[0],  resultVars: new string[] { stream.RawValue }));
 
             // Get the list of item values we are going to need here.

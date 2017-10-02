@@ -6,6 +6,8 @@ using System.Text;
 using ROOTNET.Interface;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using LINQToTTreeLib.Utils;
+using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -85,6 +87,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             ExecutionUtilities.Init();
             var cmds = new StringBuilder();
 
+            // Rewrite the query if it contains special file paths
+            ReWritePathsInQuery(queryFile);
+
             // Put our run-directory in the list of includes.
             var includePath = NormalizeFileForTarget(new DirectoryInfo(System.Environment.CurrentDirectory));
             cmds.AppendLine($"gSystem->AddIncludePath(\"-I\\\"{includePath}\\\"\");");
@@ -123,6 +128,33 @@ namespace LINQToTTreeLib.ExecutionCommon
             CleanUpQuery(queryDirectory);
 
             return results;
+        }
+
+        /// <summary>
+        /// Look through each input line for a path in the query that needs to be "fixed up".
+        /// </summary>
+        /// <param name="queryFile"></param>
+        private void ReWritePathsInQuery(FileInfo queryFile)
+        {
+            var tmpFile = new FileInfo($"{queryFile.FullName}-tmp");
+            var replacement = new Regex("<><>(.*)<><>");
+            using (var writer = tmpFile.CreateText())
+            {
+                foreach (var line in queryFile.EnumerateTextFile())
+                {
+                    var wline = line;
+                    var m = replacement.Match(line);
+                    if (m.Success)
+                    {
+                        var fixedFile = NormalizeFileForTarget(new FileInfo(m.Groups[1].Value));
+                        wline = wline.Replace(m.Value, fixedFile);
+                    }
+                    writer.WriteLine(wline);
+                }
+                writer.Close();
+            }
+            queryFile.Delete();
+            tmpFile.MoveTo(queryFile.FullName);
         }
 
         /// <summary>

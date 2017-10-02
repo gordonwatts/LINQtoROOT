@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.Files
         /// <summary>
         /// Get the output file spec for the ROOT file.
         /// </summary>
-        public FileInfo OutputFile
+        public Func<FileInfo> OutputFileFunc
         {
             get; private set;
         }
@@ -30,9 +30,9 @@ namespace LINQToTTreeLib.Files
         /// Initialize with the proper file to stash.
         /// </summary>
         /// <param name="outputFile"></param>
-        public OutputTTreeFileType(FileInfo outputFile)
+        public OutputTTreeFileType(Func<FileInfo> outputFile)
         {
-            this.OutputFile = outputFile;
+            this.OutputFileFunc = outputFile;
         }
 
         /// <summary>
@@ -161,13 +161,14 @@ namespace LINQToTTreeLib.Files
             {
                 throw new InvalidOperationException($"Unable to save OutputTextFileType because it's parameter has no declared value!");
             }
+            var rootFileInfo = v.InitialValue as OutputTTreeFileType;
 
             // Close the file.
             yield return $"{v.RawValue}.first->Write();";
             yield return $"{v.RawValue}.first->Close();";
 
             // Write out the path.
-            yield return $"TH1I *{v.RawValue}_hist = new TH1I(\"{v.RawValue}\", {v.RawValue}.first->GetName(), 1, 0.0, 1.0);";
+            yield return $"TH1I *{v.RawValue}_hist = new TH1I(\"{v.RawValue}\", \"{rootFileInfo.OutputFileFunc().FullName.AddCPPEscapeCharacters()}\", 1, 0.0, 1.0);";
             yield return v.RawValue + "_hist->SetDirectory(0);";
             yield return "Book(" + v.RawValue + "_hist);";
 
