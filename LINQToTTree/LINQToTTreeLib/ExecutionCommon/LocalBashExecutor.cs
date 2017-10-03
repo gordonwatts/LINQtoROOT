@@ -62,21 +62,23 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Is ROOT installed on this machine?
         /// </summary>
         /// <returns></returns>
-        protected override bool CheckForROOTInstall()
+        internal override bool CheckForROOTInstall()
         {
             var cmd = new StringBuilder();
             cmd.AppendLine("int i = 10;");
 
             try
             {
-                ExecuteRootScript("testForRoot", cmd, new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)));
+                ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)));
                 return true;
             }
             catch { }
             return false;
         }
 
-
+        /// <summary>
+        /// Thrown when we cna't install ROOT for some reason.
+        /// </summary>
         [Serializable]
         public class FailedToInstallROOTException : Exception
         {
@@ -94,7 +96,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <remarks>
         /// We are called only if CheckInstall has returned false.
         /// </remarks>
-        protected override void InstallROOT()
+        internal override void InstallROOT()
         {
             var cmds = new StringBuilder();
             cmds.Append($"mkdir {ROOTInstallArea}\n");
@@ -108,7 +110,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                ExecuteBashScript("downlaodroot", cmds);
+                ExecuteBashScript("downlaodroot", cmds.ToString());
             } catch (Exception e)
             {
                 throw new FailedToInstallROOTException($"Unable to download and install ROOT version {ROOTVersionNumber}.", e);
@@ -119,14 +121,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Run a short bash script
         /// </summary>
         /// <param name="cmds"></param>
-        private void ExecuteBashScript(string reason, StringBuilder cmds)
+        internal void ExecuteBashScript(string reason, string cmds)
         {
             // Dump the script
             var tmpDir = new DirectoryInfo(System.IO.Path.GetTempPath());
             var cmdFile = Path.Combine(tmpDir.FullName, $"{reason}.sh");
             using (var writer = File.CreateText(cmdFile))
             {
-                writer.Write(cmds.ToString());
+                writer.Write(cmds);
             }
 
             // Create the process info.

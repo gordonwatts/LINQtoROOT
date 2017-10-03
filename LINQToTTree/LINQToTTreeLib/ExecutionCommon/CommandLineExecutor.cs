@@ -26,7 +26,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Can we locate ROOT?
         /// </summary>
         /// <returns></returns>
-        protected override bool CheckForROOTInstall()
+        internal override bool CheckForROOTInstall()
         {
             return File.Exists(GetROOTPath());
         }
@@ -82,7 +82,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// We are being asked to install ROOT. This is impossible.
         /// </summary>
-        protected override void InstallROOT()
+        internal override void InstallROOT()
         {
             throw new InvalidOperationException("ROOT not found in the PATH - but in order to run this code it must have loaded root libraries from the PATH - so this is impossible!");
         }

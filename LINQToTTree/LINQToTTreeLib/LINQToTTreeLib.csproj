@@ -157,6 +157,7 @@
     <Compile Include="ExecutionCommon\ExecutionUtilities.cs" />
     <Compile Include="ExecutionCommon\IQueryExectuor.cs" />
     <Compile Include="ExecutionCommon\LocalBashExecutor.cs" />
+    <Compile Include="ExecutionCommon\LocalBashHelpers.cs" />
     <Compile Include="ExecutionCommon\LocalExecutor.cs" />
     <Compile Include="Expressions\ArrayExpressionParser.cs" />
     <Compile Include="Expressions\ArrayInfoVector.cs" />

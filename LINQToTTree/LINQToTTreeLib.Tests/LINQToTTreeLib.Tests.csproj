@@ -413,6 +413,7 @@
     <Compile Include="DummyQueryExectuor.cs" />
     <Compile Include="ExecutionCommon\CommandLineTestExecutorTest.cs" />
     <Compile Include="ExecutionCommon\LocalBashExecutorTest.cs" />
+    <Compile Include="ExecutionCommon\LocalBashHelpersTest.cs" />
     <Compile Include="Expressions\ExpressionStringConverterTest.cs" />
     <Compile Include="Expressions\ParameterReplacementExpressionVisitorTest.cs" />
     <Compile Include="Expressions\ExpressionVisitorMethodCallTests.cs" />

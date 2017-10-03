@@ -119,7 +119,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Run the root script
             cmds.AppendLine("exit(0);");
-            ExecuteRootScript("RunTSelector", cmds, queryDirectory);
+            ExecuteRootScript("RunTSelector", cmds.ToString(), queryDirectory);
 
             // Get back results
             var results = LoadSelectorResults(resultsFile);
@@ -209,7 +209,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Run the commands
-            ExecuteRootScript("proxy", cmds, queryDirectory);
+            ExecuteRootScript("proxy", cmds.ToString(), queryDirectory);
 
             // Return the file.
             var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
@@ -250,7 +250,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Attempt to install ROOT.
         /// </summary>
-        protected abstract void InstallROOT();
+        internal abstract void InstallROOT();
 
         /// <summary>
         /// Return the name of the executor - to be used in error messages and the like.
@@ -261,7 +261,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Check to see if ROOT has been installed or not. Return TRUE if it has, FALSE otherwise.
         /// </summary>
         /// <returns></returns>
-        protected abstract bool CheckForROOTInstall();
+        internal abstract bool CheckForROOTInstall();
 
         /// <summary>
         /// Sometimes we have to generate some class dictionaries on the fly. This code will do that.
@@ -543,14 +543,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We throw if we don't return success
         /// </summary>
         /// <param name="cmds"></param>
-        protected void ExecuteRootScript(string prefix, StringBuilder cmds, DirectoryInfo tmpDir)
+        internal void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir)
         {
             // Dump the script
             var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");
             using (var writer = File.CreateText(cmdFile))
             {
                 writer.WriteLine($"void {prefix}() {{");
-                writer.Write(cmds.ToString());
+                writer.Write(cmds);
                 writer.WriteLine("}");
             }
 
