@@ -134,27 +134,73 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Look through each input line for a path in the query that needs to be "fixed up".
         /// </summary>
         /// <param name="queryFile"></param>
-        private void ReWritePathsInQuery(FileInfo queryFile)
+        internal void ReWritePathsInQuery(FileInfo queryFile)
         {
             var tmpFile = new FileInfo($"{queryFile.FullName}-tmp");
-            var replacement = new Regex("<><>(.*)<><>");
             using (var writer = tmpFile.CreateText())
             {
-                foreach (var line in queryFile.EnumerateTextFile())
+                foreach (var line in ReWritePathInQueryIterator(queryFile.EnumerateTextFile()))
                 {
-                    var wline = line;
-                    var m = replacement.Match(line);
-                    if (m.Success)
-                    {
-                        var fixedFile = NormalizeFileForTarget(new FileInfo(m.Groups[1].Value));
-                        wline = wline.Replace(m.Value, fixedFile);
-                    }
-                    writer.WriteLine(wline);
+                    writer.WriteLine(line);
                 }
                 writer.Close();
             }
             queryFile.Delete();
             tmpFile.MoveTo(queryFile.FullName);
+        }
+
+        /// <summary>
+        /// Rewrite the "file" in memory.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        internal string ReWritePathsInQuery(string line)
+        {
+            var writer = new StringBuilder();
+            foreach (var tline in ReWritePathInQueryIterator(ChunkStringAsLines(line)))
+            {
+                writer.AppendLine(tline);
+            }
+            return writer.ToString();
+        }
+
+        /// <summary>
+        /// Chunk a string as lines.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private IEnumerable<string> ChunkStringAsLines (string input)
+        {
+            using (var reader = new StringReader(input))
+            {
+                var line = reader.ReadLine();
+                while (line != null)
+                {
+                    yield return line;
+                    line = reader.ReadLine();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Iterator to help abstract the above
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private IEnumerable<string> ReWritePathInQueryIterator(IEnumerable<string> source)
+        {
+            var replacement = new Regex("<><>(.*)<><>");
+            foreach (var line in source)
+            {
+                var wline = line;
+                var m = replacement.Match(line);
+                if (m.Success)
+                {
+                    var fixedFile = NormalizeFileForTarget(new FileInfo(m.Groups[1].Value));
+                    wline = wline.Replace(m.Value, fixedFile);
+                }
+                yield return wline;
+            }
         }
 
         /// <summary>

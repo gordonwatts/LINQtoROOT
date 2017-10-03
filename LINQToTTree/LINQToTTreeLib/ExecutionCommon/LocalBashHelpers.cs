@@ -29,8 +29,11 @@ namespace LINQToTTreeLib.ExecutionCommon
                 le.InstallROOT();
             }
 
+            // Rewrite any paths in the source file.
+            var tcommands = le.ReWritePathsInQuery(commands);
+
             // Run in ROOT.
-            le.ExecuteRootScript(prefix, commands, tempDirectory);
+            le.ExecuteRootScript(prefix, tcommands, tempDirectory);
         }
 
         /// <summary>
