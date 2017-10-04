@@ -127,7 +127,7 @@ namespace LINQToTTreeLib.Statements
                 // Now, loop over the sublist...
                 //
 
-                yield return string.Format("  for (int i_sindex = 0; i_sindex < sublist{0}.size(); i_sindex++) {{", first.sequence);
+                yield return string.Format("  for (unsigned int i_sindex = 0; i_sindex < sublist{0}.size(); i_sindex++) {{", first.sequence);
 
                 //
                 // The value of the sequence is used by everyone, so we need to pop it out here.
