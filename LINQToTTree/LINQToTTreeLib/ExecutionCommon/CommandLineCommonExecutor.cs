@@ -589,7 +589,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We throw if we don't return success
         /// </summary>
         /// <param name="cmds"></param>
-        internal void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir)
+        internal void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null)
         {
             // Dump the script
             var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");
@@ -612,8 +612,8 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Start it.
             var resultData = new StringBuilder();
-            proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data);
-            proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data);
+            proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
+            proc.OutputDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
 
             proc.Start();
             proc.BeginOutputReadLine();

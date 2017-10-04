@@ -19,7 +19,8 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="prefix"></param>
         /// <param name="commands"></param>
         /// <param name="tempDirectory"></param>
-        public static void RunROOTInBash (string prefix, string commands, DirectoryInfo tempDirectory)
+        /// <param name="dumpLine">Called with each output line</param>
+        public static void RunROOTInBash (string prefix, string commands, DirectoryInfo tempDirectory, Action<string> dumpLine = null)
         {
             // Get ROOT installed if it hasn't been already.
             var le = BuildExecutor();
@@ -33,7 +34,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             var tcommands = le.ReWritePathsInQuery(commands);
 
             // Run in ROOT.
-            le.ExecuteRootScript(prefix, tcommands, tempDirectory);
+            le.ExecuteRootScript(prefix, tcommands, tempDirectory, dumpLine);
         }
 
         /// <summary>
@@ -53,10 +54,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="fnameRoot">Root of the script filename we should use (prebuild, or install, etc.)</param>
         /// <param name="commands">Bash script, using \n as the seperator</param>
-        public static void RunBashCommand(string fnameRoot, string commands)
+        public static void RunBashCommand(string fnameRoot, string commands, Action<string> dumpLine = null)
         {
             var le = BuildExecutor();
-            le.ExecuteBashScript(fnameRoot, commands);
+            le.ExecuteBashScript(fnameRoot, commands, dumpLine);
         }
     }
 }

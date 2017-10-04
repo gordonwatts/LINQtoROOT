@@ -121,7 +121,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Run a short bash script
         /// </summary>
         /// <param name="cmds"></param>
-        internal void ExecuteBashScript(string reason, string cmds)
+        internal void ExecuteBashScript(string reason, string cmds, Action<string> dumpLine = null)
         {
             // Dump the script
             var tmpDir = new DirectoryInfo(System.IO.Path.GetTempPath());
@@ -145,8 +145,8 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Start it.
             var resultData = new StringBuilder();
-            proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data);
-            proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data);
+            proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
+            proc.OutputDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
 
             proc.Start();
             proc.BeginOutputReadLine();
