@@ -12,6 +12,12 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// <summary>
     /// Run on a root installed under bash
     /// </summary>
+    /// <remarks>
+    /// In WSL you need to execute the following commands:
+    ///   apt install libxpm-dev
+    ///   apt install libatlas-base-dev
+    ///   apt install build-essential
+    /// </remarks>
     class LocalBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
 
