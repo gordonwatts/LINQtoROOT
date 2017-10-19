@@ -68,17 +68,20 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Is ROOT installed on this machine?
         /// </summary>
         /// <returns></returns>
-        internal override bool CheckForROOTInstall()
+        internal override bool CheckForROOTInstall(Action<string> dumpLine = null, bool verbose = false)
         {
             var cmd = new StringBuilder();
             cmd.AppendLine("int i = 10;");
 
             try
             {
-                ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)));
+                if (verbose) dumpLine?.Invoke("Testing for ROOT");
+                ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+                if (verbose) dumpLine?.Invoke("ROOT is present in the system");
                 return true;
             }
             catch { }
+            if (verbose) dumpLine?.Invoke("ROOT is NOT present in the system");
             return false;
         }
 
@@ -102,7 +105,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <remarks>
         /// We are called only if CheckInstall has returned false.
         /// </remarks>
-        internal override void InstallROOT()
+        internal override void InstallROOT(Action<string> dumpLine, bool verbose)
         {
             var cmds = new StringBuilder();
             cmds.Append($"mkdir {ROOTInstallArea}\n");
@@ -116,7 +119,8 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                ExecuteBashScript("downlaodroot", cmds.ToString());
+                if (verbose) { dumpLine?.Invoke("About to run the download ROOT command"); }
+                ExecuteBashScript("downlaodroot", cmds.ToString(), dumpLine, verbose);
             } catch (Exception e)
             {
                 throw new FailedToInstallROOTException($"Unable to download and install ROOT version {ROOTVersionNumber}.", e);
@@ -127,7 +131,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Run a short bash script
         /// </summary>
         /// <param name="cmds"></param>
-        internal void ExecuteBashScript(string reason, string cmds, Action<string> dumpLine = null)
+        internal void ExecuteBashScript(string reason, string cmds, Action<string> dumpLine = null, bool verbose = false)
         {
             // Dump the script
             var tmpDir = new DirectoryInfo(System.IO.Path.GetTempPath());
@@ -149,6 +153,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.FileName = System.Environment.ExpandEnvironmentVariables(@"%windir%\sysnative\bash.exe");
             proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh";
 
+            if (verbose) { dumpLine?.Invoke($"About to execute {proc.StartInfo.FileName} with arguments '{proc.StartInfo.Arguments}'."); }
+
             // Start it.
             var resultData = new StringBuilder();
             proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
@@ -159,7 +165,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.BeginErrorReadLine();
 
             // Wait for it to end.
+            if (verbose) { dumpLine?.Invoke("Waiting for the command to finish"); }
             proc.WaitForExit();
+            if (verbose) { dumpLine?.Invoke($"Command finished with exit code of {proc.ExitCode}."); }
 
             // Make sure the result is "good"
             if (proc.ExitCode != 0)

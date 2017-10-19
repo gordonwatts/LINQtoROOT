@@ -281,12 +281,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Make sure ROOT is installed. If not, attempt to install it.
         /// </summary>
-        private void MakeSureROOTIsInstalled()
+        private void MakeSureROOTIsInstalled(Action<string> dumpLine = null, bool verbose = false)
         {
-            if (!CheckForROOTInstall())
+            if (!CheckForROOTInstall(dumpLine, verbose))
             {
-                InstallROOT();
-                if (!CheckForROOTInstall())
+                InstallROOT(dumpLine, verbose);
+                if (!CheckForROOTInstall(dumpLine, verbose))
                 {
                     throw new CantFindROOTException($"ROOT isn't installed on target machine ({ExecutorName}).");
                 }
@@ -296,7 +296,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Attempt to install ROOT.
         /// </summary>
-        internal abstract void InstallROOT();
+        internal abstract void InstallROOT(Action<string> dumpLine, bool verbose);
 
         /// <summary>
         /// Return the name of the executor - to be used in error messages and the like.
@@ -307,7 +307,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Check to see if ROOT has been installed or not. Return TRUE if it has, FALSE otherwise.
         /// </summary>
         /// <returns></returns>
-        internal abstract bool CheckForROOTInstall();
+        internal abstract bool CheckForROOTInstall(Action<string> dumpLine, bool verbose);
 
         /// <summary>
         /// Sometimes we have to generate some class dictionaries on the fly. This code will do that.
@@ -589,7 +589,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We throw if we don't return success
         /// </summary>
         /// <param name="cmds"></param>
-        internal void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null)
+        internal void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false)
         {
             // Dump the script
             var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");
@@ -610,6 +610,11 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
             ConfigureProcessExecution(proc.StartInfo, cmdFile);
 
+            if (verbose)
+            {
+                dumpLine?.Invoke($"About to run program {proc.StartInfo.FileName} with arguments {proc.StartInfo.Arguments}.");
+            }
+
             // Start it.
             var resultData = new StringBuilder();
             proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
@@ -620,7 +625,9 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.BeginErrorReadLine();
 
             // Wait for it to end.
+            if (verbose) dumpLine?.Invoke("Waiting for process to exit");
             proc.WaitForExit();
+            if (verbose) dumpLine?.Invoke($"Process result is {proc.ExitCode}.");
 
             // Make sure the result is "good"
             if (proc.ExitCode != 0)
