@@ -36,7 +36,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             List<string> results = new List<string>();
             LocalBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            LocalBashHelpers.RunBashCommand("testmeout", bashCmds);
+            LocalBashHelpers.RunBashCommand("testmeout", bashCmds, s => Console.WriteLine(s), verbose: true);
 
             Assert.AreNotEqual(0, results.Count);
         }
