@@ -608,7 +608,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
-            ConfigureProcessExecution(proc.StartInfo, cmdFile);
+            var context = ConfigureProcessExecution(proc.StartInfo, cmdFile);
 
             if (verbose)
             {
@@ -628,6 +628,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (verbose) dumpLine?.Invoke("Waiting for process to exit");
             proc.WaitForExit();
             if (verbose) dumpLine?.Invoke($"Process result is {proc.ExitCode}.");
+            PostProcessExecution(resultData, context);
 
             // Make sure the result is "good"
             if (proc.ExitCode != 0)
@@ -637,10 +638,17 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Called after the process has finished, in case there are other things that need to be done.
+        /// </summary>
+        /// <param name="proc"></param>
+        /// <param name="cmdFile"></param>
+        abstract protected void PostProcessExecution(StringBuilder resultData, object context);
+
+        /// <summary>
         /// This must configure the process StartInfo object. It has been pre-configured
         /// before this call for everything but the filename and arguments. Those should be filled in.
         /// </summary>
         /// <param name="p"></param>
-        abstract protected void ConfigureProcessExecution(ProcessStartInfo p, string rootMacroFilePath);
+        abstract protected object ConfigureProcessExecution(ProcessStartInfo p, string rootMacroFilePath);
     }
 }

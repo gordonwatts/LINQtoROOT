@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ROOTNET.Interface;
 using LINQToTTreeLib.Utils;
+using Polly;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -213,13 +214,37 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="startInfo"></param>
         /// <param name="rootMacroFilePath"></param>
-        protected override void ConfigureProcessExecution(ProcessStartInfo startInfo, string rootMacroFilePath)
+        protected override object ConfigureProcessExecution(ProcessStartInfo startInfo, string rootMacroFilePath)
         {
             // Run bash directly.
             startInfo.FileName = FindBash();
 
+            // We are going to write out a log file
+
             // Run root with the path as an argument.
-            startInfo.Arguments = $"-c \". {GetROOTBinaryPath()}/thisroot.sh; root -b -q {new FileInfo(rootMacroFilePath).ConvertToBash()}\"";
+            FileInfo macroFile = new FileInfo(rootMacroFilePath);
+            var logFile = new FileInfo(macroFile.FullName + "-log");
+            startInfo.Arguments = $"-c \". {GetROOTBinaryPath()}/thisroot.sh; root -b -q {macroFile.ConvertToBash()} &> {logFile.ConvertToBash()}\"";
+
+            return logFile;
+        }
+
+        /// <summary>
+        /// Called to do clean up.
+        /// </summary>
+        /// <param name="context"></param>
+        protected override void PostProcessExecution(StringBuilder resultData, object context)
+        {
+            var logFile = context as FileInfo;
+
+            // Now, just dump it!
+            Polly.Policy
+                .Handle<IOException>()
+                .WaitAndRetry(new[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200)})
+            foreach (var line in logFile.EnumerateTextFile())
+            {
+                RecordLine(resultData, line);
+            }
         }
 
         /// <summary>

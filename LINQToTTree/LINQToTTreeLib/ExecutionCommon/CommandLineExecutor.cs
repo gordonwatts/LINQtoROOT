@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="startInfo"></param>
         /// <param name="rootMacroFilePath"></param>
-        protected override void ConfigureProcessExecution(ProcessStartInfo startInfo, string rootMacroFilePath)
+        protected override object ConfigureProcessExecution(ProcessStartInfo startInfo, string rootMacroFilePath)
         {
             // Figure out where root is that we should be executing against
             var rootPath = GetROOTPath();
@@ -49,6 +49,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Configure it to run directly.
             startInfo.FileName = rootPath;
             startInfo.Arguments = $"-b -q {rootMacroFilePath}";
+
+            return null;
         }
 
         /// <summary>
@@ -86,6 +88,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         internal override void InstallROOT(Action<string> dumpLine, bool verbose = false)
         {
             throw new InvalidOperationException("ROOT not found in the PATH - but in order to run this code it must have loaded root libraries from the PATH - so this is impossible!");
+        }
+
+        /// <summary>
+        /// Called after the command has run so we can do any required clean up.
+        /// </summary>
+        /// <param name="context"></param>
+        protected override void PostProcessExecution(StringBuilder resultData, object context)
+        {
         }
     }
 }
