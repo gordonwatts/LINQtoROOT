@@ -238,13 +238,17 @@ namespace LINQToTTreeLib.ExecutionCommon
             var logFile = context as FileInfo;
 
             // Now, just dump it!
+            Console.WriteLine("going to dump the file now");
             Polly.Policy
                 .Handle<IOException>()
-                .WaitAndRetry(new[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200)})
-            foreach (var line in logFile.EnumerateTextFile())
-            {
-                RecordLine(resultData, line);
-            }
+                .WaitAndRetry(new[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200) })
+                .Execute(() =>
+                {
+                    foreach (var line in logFile.EnumerateTextFile())
+                    {
+                        RecordLine(resultData, line);
+                    }
+                });
         }
 
         /// <summary>
