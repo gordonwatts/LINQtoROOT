@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ROOTNET.Interface;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -141,6 +142,9 @@ namespace LINQToTTreeLib.ExecutionCommon
                 writer.Write(cmds);
             }
 
+            // We will write a log file out
+            var logFile = new FileInfo($"{tmpDir.FullName}\\{reason}.log");
+
             // Create the process info.
             var proc = new Process();
             proc.StartInfo.CreateNoWindow = true;
@@ -150,8 +154,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
 
-            proc.StartInfo.FileName = System.Environment.ExpandEnvironmentVariables(@"%windir%\sysnative\bash.exe");
-            proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh";
+            proc.StartInfo.FileName = FindBash();
+            proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {NormalizeFileForTarget(logFile)}";
 
             if (verbose) { dumpLine?.Invoke($"About to execute {proc.StartInfo.FileName} with arguments '{proc.StartInfo.Arguments}'."); }
 
@@ -169,6 +173,13 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.WaitForExit();
             if (verbose) { dumpLine?.Invoke($"Command finished with exit code of {proc.ExitCode}."); }
 
+            dumpLine?.Invoke("Now looking at log file");
+            // Now, pick up the file
+            foreach (var line in logFile.EnumerateTextFile())
+            {
+                RecordLine(resultData, line);
+            }
+
             // Make sure the result is "good"
             if (proc.ExitCode != 0)
             {
@@ -177,6 +188,27 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Locate bash on our system
+        /// </summary>
+        /// <returns></returns>
+        static string FindBash()
+        {
+            var path = Path.GetFullPath(System.Environment.ExpandEnvironmentVariables(@"%windir%\SysWow64\bash.exe"));
+            if (File.Exists(path))
+                return path;
+
+            path = Path.GetFullPath(System.Environment.ExpandEnvironmentVariables(@"%windir%\sysnative\bash.exe"));
+            if (File.Exists(path))
+                return path;
+
+            path = Path.GetFullPath(System.Environment.ExpandEnvironmentVariables(@"%windir%\System32\bash.exe"));
+            if (File.Exists(path))
+                return path;
+
+            throw new FileNotFoundException("Could not find a path to the bash executable");
+        }
+        
+        /// <summary>
         /// Configure the process that is going to run the actual root thing.
         /// </summary>
         /// <param name="startInfo"></param>
@@ -184,7 +216,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         protected override void ConfigureProcessExecution(ProcessStartInfo startInfo, string rootMacroFilePath)
         {
             // Run bash directly.
-            startInfo.FileName = System.Environment.ExpandEnvironmentVariables(@"%windir%\sysnative\bash.exe");
+            startInfo.FileName = FindBash();
 
             // Run root with the path as an argument.
             startInfo.Arguments = $"-c \". {GetROOTBinaryPath()}/thisroot.sh; root -b -q {new FileInfo(rootMacroFilePath).ConvertToBash()}\"";
