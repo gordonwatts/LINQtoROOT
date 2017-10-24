@@ -150,15 +150,18 @@ namespace LINQToTTreeLib.ExecutionCommon
             var proc = new Process();
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.ErrorDialog = false;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardError = true;
-            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.UseShellExecute = true;
+            proc.StartInfo.RedirectStandardError = false;
+            proc.StartInfo.RedirectStandardOutput = false;
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
 
             // Get the start info stuff configured properly
             proc.StartInfo.LoadUserProfile = true;
             proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.UseShellExecute = true;
+            proc.StartInfo.RedirectStandardError = false;
+            proc.StartInfo.RedirectStandardInput = false;
+            proc.StartInfo.RedirectStandardOutput = false;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             proc.StartInfo.FileName = FindBash();
@@ -172,8 +175,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.OutputDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
 
             proc.Start();
-            proc.BeginOutputReadLine();
-            proc.BeginErrorReadLine();
+            //proc.BeginOutputReadLine();
+            //proc.BeginErrorReadLine();
 
             // Wait for it to end.
             if (verbose) { dumpLine?.Invoke("Waiting for the command to finish"); }
@@ -235,8 +238,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get the start info stuff configured properly
             startInfo.LoadUserProfile = true;
             startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = false;
+            startInfo.UseShellExecute = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            startInfo.RedirectStandardError = false;
+            startInfo.RedirectStandardInput = false;
+            startInfo.RedirectStandardOutput = false;
 
             return logFile;
         }
