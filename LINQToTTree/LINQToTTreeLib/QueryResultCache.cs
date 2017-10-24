@@ -208,6 +208,10 @@ namespace LINQToTTreeLib
                 {
                     result = File.GetLastWriteTime(u.LocalPath);
                 }
+                else if (u.Scheme == "remotebash")
+                {
+                    result = File.GetLastWriteTime(u.LocalPath.Substring(1));
+                }
                 else if (u.Scheme == "proof")
                 {
                     result = new DateTime(1990, 12, 1);

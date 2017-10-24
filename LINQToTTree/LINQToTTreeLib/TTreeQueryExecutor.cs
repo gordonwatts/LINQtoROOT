@@ -188,10 +188,17 @@ namespace LINQToTTreeLib
             if (f.Scheme == "proof")
                 return true;
 
-            if (f.Scheme != "file" && f.Scheme != "localwin" && f.Scheme != "localbash")
+            if (f.Scheme != "file" && f.Scheme != "localwin" && f.Scheme != "localbash" && f.Scheme != "remotebash")
                 return false;
 
-            if (!File.Exists(f.LocalPath))
+            // Clean the file path out if we need to have it cleaned
+            var localPath = f.LocalPath;
+            if (localPath.StartsWith("/") && localPath.Contains(":"))
+            {
+                localPath = localPath.Substring(1);
+            }
+
+            if (!File.Exists(localPath))
                 return false;
 
             return true;
@@ -603,6 +610,10 @@ namespace LINQToTTreeLib
             else if (_exeReq.RootFiles.All(t => t.Scheme == "localbash"))
             {
                 return new LocalBashExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+            }
+            else if (_exeReq.RootFiles.All(t => t.Scheme == "remotebash"))
+            {
+                return new RemoteBashExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
             }
             else
             {
