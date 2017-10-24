@@ -37,6 +37,12 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        public void MyTestMethod()
+        {
+
+        }
+
+        [TestMethod]
         public void RemoteBashCmdLineCountOperator()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);
