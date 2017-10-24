@@ -155,6 +155,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
 
+            // Get the start info stuff configured properly
+            proc.StartInfo.LoadUserProfile = true;
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
             proc.StartInfo.FileName = FindBash();
             proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {NormalizeFileForTarget(logFile)}";
 
@@ -220,11 +226,17 @@ namespace LINQToTTreeLib.ExecutionCommon
             startInfo.FileName = FindBash();
 
             // We are going to write out a log file
-
-            // Run root with the path as an argument.
             FileInfo macroFile = new FileInfo(rootMacroFilePath);
             var logFile = new FileInfo(macroFile.FullName + "-log");
+
+            // Run root with the path as an argument.
             startInfo.Arguments = $"-c \". {GetROOTBinaryPath()}/thisroot.sh; root -b -q {macroFile.ConvertToBash()} &> {logFile.ConvertToBash()}\"";
+
+            // Get the start info stuff configured properly
+            startInfo.LoadUserProfile = true;
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             return logFile;
         }
