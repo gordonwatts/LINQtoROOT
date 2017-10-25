@@ -275,9 +275,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(FileInfo finfo)
+        protected override string NormalizeFileForTarget(Uri finfo)
         {
-            return finfo.ConvertToBash();
+            return new FileInfo(finfo.LocalPath).ConvertToBash();
         }
 
         /// <summary>

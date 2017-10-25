@@ -67,9 +67,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(FileInfo finfo)
+        protected override string NormalizeFileForTarget(Uri finfo)
         {
-            return finfo.FullName.Replace("\\", "\\\\");
+            return finfo.LocalPath.Replace("\\", "\\\\");
         }
 
         /// <summary>

@@ -37,9 +37,9 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void MyTestMethod()
+        public void ROOTNotInstalledTestMethod()
         {
-
+            Assert.Inconclusive("Fail to install ROOT and catch the right exception");
         }
 
         [TestMethod]
@@ -101,13 +101,13 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.IsTrue(result[0].Exists);
         }
 
-#if false
         [TestMethod]
-        [ExpectedException(typeof(RemoteBashExecutor.FailedToInstallROOTException))]
+        //[ExpectedException(typeof(RemoteBashExecutor.FailedToInstallROOTException))]
         public void RemoteBashNoROOTFound()
         {
+            Assert.Inconclusive("Have to figure uot how to do the root versio number");
             // This should cause a hard fail.
-            RemoteBashExecutor.ROOTVersionNumber = "22322";
+            //RemoteBashExecutor.ROOTVersionNumber = "22322";
 
             // Set it up to look for something else.
 
@@ -122,7 +122,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
         }
-#endif
 
         [CPPHelperClass]
         static class RemoteBashCmdLineLoadExtraClassFilesHelpers

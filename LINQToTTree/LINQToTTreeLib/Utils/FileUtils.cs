@@ -133,12 +133,25 @@ namespace LINQToTTreeLib.Utils
         {
             using (var reader = input.OpenText())
             {
-                var line = reader.ReadLine();
-                while (line != null)
+                foreach (var l in reader.EnumerateLines())
                 {
-                    yield return line;
-                    line = reader.ReadLine();
+                    yield return l;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Given a stream reader, return one line at a time.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> EnumerateLines (this TextReader reader)
+        {
+            var line = reader.ReadLine();
+            while (line != null)
+            {
+                yield return line;
+                line = reader.ReadLine();
             }
         }
 

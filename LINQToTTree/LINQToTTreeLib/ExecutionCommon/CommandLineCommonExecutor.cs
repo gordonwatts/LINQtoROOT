@@ -81,11 +81,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="queryDirectory">Directory where we run the query</param>
         /// <param name="varsToTransfer">Variables we need to move over to the query</param>
         /// <returns></returns>
-        public IDictionary<string, NTObject> Execute(FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public virtual IDictionary<string, NTObject> Execute(FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
             ExecutionUtilities.Init();
             var cmds = new StringBuilder();
+            cmds.AppendLine("{");
 
             // Rewrite the query if it contains special file paths
             ReWritePathsInQuery(queryFile);
@@ -103,9 +104,9 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Run the query in a second file.
             var subfileCommands = new StringBuilder();
-            var localFiles = Environment.RootFiles.Select(u => new FileInfo(u.LocalPath)).ToArray();
             var resultsFile = new FileInfo(Path.Combine(queryDirectory.FullName, "selector_results.root"));
-            RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer, Environment.TreeName, localFiles);
+            RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer,
+                Environment.TreeName, Environment.RootFiles);
 
             // Write out the temp file.
             using (var secondFile = File.CreateText(Path.Combine(queryDirectory.FullName, "RunTSelector1.C")))
@@ -119,7 +120,11 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Run the root script
             cmds.AppendLine("exit(0);");
-            ExecuteRootScript("RunTSelector", cmds.ToString(), queryDirectory);
+            cmds.AppendLine("}");
+            NormalizeFileForTarget(queryDirectory);
+            ExecuteRootScript("RunTSelector", cmds.ToString(), queryDirectory,
+                dumpLine: Environment.CompileDebug ? s => Console.WriteLine(s) : (Action<string>) null,
+                fetchFiles: new[] { new Uri(resultsFile.FullName) });
 
             // Get back results
             var results = LoadSelectorResults(resultsFile);
@@ -196,7 +201,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var m = replacement.Match(line);
                 if (m.Success)
                 {
-                    var fixedFile = NormalizeFileForTarget(new FileInfo(m.Groups[1].Value));
+                    var fixedFile = NormalizeFileForTarget(new Uri(m.Groups[1].Value));
                     wline = wline.Replace(m.Value, fixedFile);
                 }
                 yield return wline;
@@ -224,10 +229,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        public virtual FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
+            Action<string> dumpLine = Environment.CompileDebug ? s => Console.WriteLine(s) : (Action<string>)null;
             // Check the environment
-            MakeSureROOTIsInstalled();
+            MakeSureROOTIsInstalled(dumpLine);
 
             // Simple argument checks
             if (rootFiles == null || rootFiles.Length == 0)
@@ -241,10 +247,12 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Commands to generate a proxy
             var cmds = new StringBuilder();
-            var rootFilePath = NormalizeFileForTarget(new FileInfo(rootFiles.First().LocalPath));
+            var rootFilePath = NormalizeFileForTarget(rootFiles.First());
+            cmds.AppendLine("{");
             cmds.AppendLine($"TFile *f = TFile::Open(\"{rootFilePath}\", \"READ\");");
             cmds.AppendLine($"TTree *t = (TTree*) f->Get(\"{treeName}\");");
             cmds.AppendLine("t->MakeProxy(\"runquery\", \"junk.C\", 0, \"nohist\");");
+            cmds.AppendLine("}");
 
             // Write the dummy selection file that is required (WHY!!!???).
             var fname = Path.Combine(queryDirectory.FullName, "junk.C");
@@ -255,10 +263,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Run the commands
-            ExecuteRootScript("proxy", cmds.ToString(), queryDirectory);
+            var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
+            ExecuteRootScript("proxy", cmds.ToString(), queryDirectory, dumpLine,
+                extraFiles: new[] { new Uri(fname)},
+                fetchFiles: new[] { new Uri(header.FullName)});
 
             // Return the file.
-            var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
             if (!header.Exists)
             {
                 throw new ProxyGenerationException($"Failed to generate a proxy from the command line");
@@ -383,7 +393,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="localFiles"></param>
         /// <returns></returns>
-        private void RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, FileInfo[] localFiles)
+        private void RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, Uri[] localFiles)
         {
             // Init the selector
             cmds.AppendLine($"TSelector *selector = new {selectClass}();");
@@ -549,7 +559,17 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected abstract string NormalizeFileForTarget(FileInfo finfo);
+        protected abstract string NormalizeFileForTarget(Uri finfo);
+
+        /// <summary>
+        /// Helper function to speed the conversion.
+        /// </summary>
+        /// <param name="finfo"></param>
+        /// <returns></returns>
+        protected string NormalizeFileForTarget(FileInfo finfo)
+        {
+            return NormalizeFileForTarget(new Uri(finfo.FullName));
+        }
 
         /// <summary>
         /// Return a directory path suitable for including in a string
@@ -589,7 +609,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We throw if we don't return success
         /// </summary>
         /// <param name="cmds"></param>
-        internal void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false)
+        /// <param name="extraFiles">List of extra files that might be needed.</param>
+        /// <param name="fetchFiles">List of files that should be fetched. Assuemd to be written in the local area</param>
+        internal virtual void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null)
         {
             // Dump the script
             var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");
@@ -642,13 +664,18 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="proc"></param>
         /// <param name="cmdFile"></param>
-        abstract protected void PostProcessExecution(StringBuilder resultData, object context);
+        virtual protected void PostProcessExecution(StringBuilder resultData, object context)
+        {
+        }
 
         /// <summary>
         /// This must configure the process StartInfo object. It has been pre-configured
         /// before this call for everything but the filename and arguments. Those should be filled in.
         /// </summary>
         /// <param name="p"></param>
-        abstract protected object ConfigureProcessExecution(ProcessStartInfo p, string rootMacroFilePath);
+        virtual protected object ConfigureProcessExecution(ProcessStartInfo p, string rootMacroFilePath)
+        {
+            return null;
+        }
     }
 }
