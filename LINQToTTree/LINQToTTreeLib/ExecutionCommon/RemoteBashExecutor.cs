@@ -205,7 +205,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="tempDir"></param>
         /// <param name="act"></param>
         /// <param name="dumpLine"></param>
-        private T ExecuteRemoteWithTemp<T>(string tempDir, Func<SSHTunneledConnection, T> act, Action<string> dumpLine = null)
+        internal T ExecuteRemoteWithTemp<T>(string tempDir, Func<SSHTunneledConnection, T> act, Action<string> dumpLine = null)
         {
             var sshConnection = MakeSSHConnection(dumpLine);
             var oldLinuxTempDir = linuxTempDir;
@@ -344,7 +344,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Disposable holder for the full connection
         /// </summary>
-        private class SSHTunneledConnection : IDisposable
+        internal class SSHTunneledConnection : IDisposable
         {
             /// <summary>
             /// List of our connections.

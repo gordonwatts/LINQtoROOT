@@ -22,17 +22,22 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get ROOT installed if it hasn't been already.
             var le = BuildExecutor();
 
-            if (!le.CheckForROOTInstall(dumpLine, verbose))
+            le.ExecuteRemoteWithTemp($"/tmp/{prefix}", connection =>
             {
-                le.InstallROOT(dumpLine, verbose);
-            }
+                if (!le.CheckForROOTInstall(dumpLine, verbose))
+                {
+                    le.InstallROOT(dumpLine, verbose);
+                }
 
-            // Rewrite any paths in the source file.
-            var tcommands = le.ReWritePathsInQuery(commands);
+                // Rewrite any paths in the source file.
+                var tcommands = le.ReWritePathsInQuery(commands);
 
-            // Run in ROOT.
-            le.ExecuteRootScript(prefix, tcommands, tempDirectory, dumpLine, verbose,
-                extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)));
+                // Run in ROOT.
+                le.ExecuteRootScript(prefix, tcommands, tempDirectory, dumpLine, verbose,
+                    extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)));
+
+                return (object)null;
+            }, dumpLine);
         }
 
         /// <summary>
