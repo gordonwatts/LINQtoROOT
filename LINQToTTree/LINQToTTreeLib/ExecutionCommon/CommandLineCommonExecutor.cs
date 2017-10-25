@@ -639,12 +639,12 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Start it.
             var resultData = new StringBuilder();
-            //proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
-            //proc.OutputDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
+            proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
+            proc.OutputDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
 
             proc.Start();
-            //proc.BeginOutputReadLine();
-            //proc.BeginErrorReadLine();
+            proc.BeginOutputReadLine();
+            proc.BeginErrorReadLine();
 
             // Wait for it to end.
             if (verbose) dumpLine?.Invoke("Waiting for process to exit");
