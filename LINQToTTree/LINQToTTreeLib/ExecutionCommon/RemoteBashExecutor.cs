@@ -17,7 +17,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// </summary>
     class RemoteBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
-        protected override string ExecutorName => throw new NotImplementedException();
+        protected override string ExecutorName => "RemoteBashExecutor";
 
         /// <summary>
         /// Reset all of our internal variables. Used for
