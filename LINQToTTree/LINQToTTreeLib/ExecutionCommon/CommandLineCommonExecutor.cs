@@ -56,10 +56,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="resultData">Where we shoudl record it</param>
         /// <param name="line">Line of text to record</param>
-        protected void RecordLine(StringBuilder resultData, string line)
+        protected void RecordLine(StringBuilder resultData, string line, Action<string> dumpLine = null)
         {
             if (line == null)
                 return;
+
+            dumpLine?.Invoke(line);
 
             lock (resultData)
             {

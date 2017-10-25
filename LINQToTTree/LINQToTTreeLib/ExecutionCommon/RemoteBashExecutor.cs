@@ -32,6 +32,21 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         string linuxTempDir = null;
 
+
+        /// <summary>
+        /// Blast this out when we fail to execute some sort of command.
+        /// </summary>
+        [Serializable]
+        public class RemoteBashCommandFailureException : Exception
+        {
+            public RemoteBashCommandFailureException() { }
+            public RemoteBashCommandFailureException(string message) : base(message) { }
+            public RemoteBashCommandFailureException(string message, Exception inner) : base(message, inner) { }
+            protected RemoteBashCommandFailureException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// Given a ROOT script, run it on the remote machine.
         /// </summary>
@@ -85,13 +100,64 @@ namespace LINQToTTreeLib.ExecutionCommon
                 SendAllFiles(sshConnection, dumpLine);
 
                 // Next, lets see if we can't run the file against root.
-                sshConnection.Connection.ExecuteLinuxCommand($"cd {linuxTempDir}", processLine: dumpLine);
-                sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name}", processLine: dumpLine);
+                var logForError = new StringBuilder();
+                try
+                {
+                    sshConnection.Connection.ExecuteLinuxCommand($"cd {linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
+                    sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name}", processLine: s => RecordLine(logForError, s, dumpLine));
+                } catch (Exception e)
+                {
+                    throw new RemoteBashCommandFailureException($"Failed to execute script: {logForError}", e);
+                }
 
                 // Finally, if there are any files to bring back, we should!
                 ReceiveAllFiles(sshConnection, dumpLine);
 
                 return (object) null;
+            }, dumpLine);
+        }
+
+        /// <summary>
+        /// Run a bash script on the remote node
+        /// </summary>
+        /// <param name="fnameRoot"></param>
+        /// <param name="commands"></param>
+        /// <param name="dumpLine"></param>
+        /// <param name="verbose"></param>
+        internal void ExecuteBashScript(string fnameRoot, string commands, Action<string> dumpLine, bool verbose)
+        {
+            // Create the file that will contain the scripts
+            var tmpDir = new DirectoryInfo(Path.GetTempPath());
+            var scriptFile = new FileInfo(Path.Combine(tmpDir.FullName, $"{fnameRoot}.sh"));
+            using (var rdr = new StringReader(commands))
+            {
+                using (var wtr = scriptFile.CreateText())
+                {
+                    foreach (var line in rdr.EnumerateLines())
+                    {
+                        wtr.Write($"{line}\n");
+                    }
+                }
+            }
+
+            // Now, run with the remote stuff setup.
+            ExecuteRemoteWithTemp($"/tmp/{fnameRoot}", connection =>
+            {
+                // Queue up files to send and recv
+                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = linuxTempDir });
+
+                // Run, pushing and pulling files we need
+                SendAllFiles(connection, dumpLine);
+                var logForError = new StringBuilder();
+                try
+                {
+                    connection.Connection.ExecuteLinuxCommand($"bash {linuxTempDir}/{scriptFile.Name}", s => RecordLine(logForError, s, dumpLine));
+                } catch (Exception e)
+                {
+                    throw new RemoteBashCommandFailureException($"Failed to execute bash script: {logForError.ToString()}.", e);
+                }
+                ReceiveAllFiles(connection, dumpLine);
+                return (object)null;
             }, dumpLine);
         }
 
@@ -259,9 +325,16 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 if (minfo.ConfigureLines != null)
                 {
-                    foreach (var line in minfo.ConfigureLines)
+                    var logForError = new StringBuilder();
+                    try
                     {
-                        _connection.Connection.ExecuteLinuxCommand(line, processLine: dumpLine);
+                        foreach (var line in minfo.ConfigureLines)
+                        {
+                            _connection.Connection.ExecuteLinuxCommand(line, processLine: s => RecordLine(logForError, s, dumpLine));
+                        }
+                    } catch (Exception e)
+                    {
+                        throw new RemoteBashCommandFailureException($"Error making a SSH connection: {logForError.ToString()}", e);
                     }
                 }
             }

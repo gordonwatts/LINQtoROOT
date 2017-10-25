@@ -184,6 +184,7 @@
     <Compile Include="ExecutionCommon\LocalBashHelpers.cs" />
     <Compile Include="ExecutionCommon\LocalExecutor.cs" />
     <Compile Include="ExecutionCommon\RemoteBashExecutor.cs" />
+    <Compile Include="ExecutionCommon\RemoteBashHelpers.cs" />
     <Compile Include="Expressions\ArrayExpressionParser.cs" />
     <Compile Include="Expressions\ArrayInfoVector.cs" />
     <Compile Include="Expressions\DeclarableParameter.cs" />
