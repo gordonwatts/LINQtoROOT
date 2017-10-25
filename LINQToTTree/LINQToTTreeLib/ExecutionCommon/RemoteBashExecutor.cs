@@ -335,7 +335,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             // Simple script to execute
             var cmd = new StringBuilder();
-            cmd.AppendLine("int i = 10;");
+            cmd.AppendLine("void testForRoot() {int i = 10;}");
 
             try
             {
