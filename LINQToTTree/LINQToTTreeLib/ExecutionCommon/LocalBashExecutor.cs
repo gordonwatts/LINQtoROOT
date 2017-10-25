@@ -150,7 +150,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             var proc = new Process();
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.ErrorDialog = false;
-            proc.StartInfo.UseShellExecute = true;
+            proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardError = false;
             proc.StartInfo.RedirectStandardOutput = false;
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
