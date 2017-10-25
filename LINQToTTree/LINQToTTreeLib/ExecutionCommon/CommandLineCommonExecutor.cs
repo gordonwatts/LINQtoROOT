@@ -469,10 +469,12 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var inputFilesFilename = new FileInfo(Path.Combine(queryResultsFile.DirectoryName, "TSelectorInputFiles.root"));
                 var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
 
+                // Write out the code to load them and stash them remotely if need be.
                 var safeInputFilename = NormalizeFileForTarget(inputFilesFilename);
                 cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
+                // Next, move through and actually write everything out.
                 var objInputList = new ROOTNET.NTList();
                 var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
                 try
@@ -491,6 +493,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     ROOTNET.NTH1.AddDirectory(oldHSet);
                     outgoingVariables.Close();
                 }
+
             }
         }
 

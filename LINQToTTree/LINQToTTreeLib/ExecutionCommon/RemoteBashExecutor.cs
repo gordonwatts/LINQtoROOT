@@ -8,6 +8,7 @@ using System.Text;
 using LINQToTTreeLib.Utils;
 using System.Threading.Tasks;
 using ROOTNET.Interface;
+using Polly;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -63,14 +64,17 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Send the file to the remote host
             ExecuteRemoteWithTemp($"/tmp/{tmpDir.Name}", sshConnection => {
-                SendFile(scriptFile, linuxTempDir, sshConnection, dumpLine);
+                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = linuxTempDir });
                 if (extraFiles != null)
                 {
                     foreach (var f in extraFiles)
                     {
-                        SendFile(new FileInfo(f.LocalPath), linuxTempDir, sshConnection, dumpLine);
+                        _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(f.LocalPath), remoteLinuxDirectory = linuxTempDir });
                     }
                 }
+
+                // Send over all files
+                SendAllFile(sshConnection, dumpLine);
 
                 // Next, lets see if we can't run the file against root.
                 sshConnection.Connection.ExecuteLinuxCommand($"cd {linuxTempDir}", processLine: dumpLine);
@@ -154,15 +158,18 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
-        /// Low level routine that will send a file to the remote host
+        /// Send all files over to the remote client.
         /// </summary>
-        /// <param name="fileToCopy">The local file that should be sent</param>
-        /// <param name="dirName">Directory name where the file should be copied</param>
-        /// <param name="connection">Connection over which to do the copy</param>
-        private void SendFile(FileInfo fileToCopy, string dirName, SSHTunneledConnection connection, Action<string> statusUpdate = null)
+        /// <param name="connection"></param>
+        /// <param name="dumpLine"></param>
+        private void SendAllFile(SSHTunneledConnection connection, Action<string> dumpLine)
         {
-            string linuxPath = $"{dirName}/{fileToCopy.Name}";
-            connection.Connection.CopyLocalFileRemotely(fileToCopy, linuxPath, statusUpdate);
+            foreach (var f in _filesToCopyOver)
+            {
+                string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
+                connection.Connection.CopyLocalFileRemotely(f.localFileName, linuxPath, dumpLine);
+            }
+            _filesToCopyOver.Clear();
         }
 
         /// <summary>
@@ -182,6 +189,31 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Cache the connection
         /// </summary>
         private SSHTunneledConnection _connection = null;
+
+        class RemoteFileCopyInfo
+        {
+            public FileInfo localFileName;
+            public string remoteLinuxDirectory;
+
+            public override int GetHashCode()
+            {
+                return localFileName.FullName.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is RemoteFileCopyInfo))
+                {
+                    return false;
+                }
+                return localFileName.FullName == (obj as RemoteFileCopyInfo).localFileName.FullName;
+            }
+        }
+
+        /// <summary>
+        /// Track all the files we need to move over to the remote area.
+        /// </summary>
+        private HashSet<RemoteFileCopyInfo> _filesToCopyOver = new HashSet<RemoteFileCopyInfo>();
 
         /// <summary>
         /// Create an SSH connection.
@@ -298,8 +330,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     throw new InvalidOperationException($"Attempt to copy over file {f.Name} when we aren't in the middle of an operation!");
                 }
-                var c = MakeSSHConnection();
-                c.Connection.CopyLocalFileRemotely(f, linuxTempDir);
+                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = linuxTempDir });
             }
 
             // It will just be in the local directory where we live.
@@ -319,7 +350,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var c = MakeSSHConnection();
                 foreach (var f in finfo.EnumerateFiles().Where(sf => goodExtensiosn.Contains(sf.Extension.ToLower())))
                 {
-                    SendFile(f, linuxTempDir, c);
+                    _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = linuxTempDir });
                 }
             }
             return linuxTempDir;
