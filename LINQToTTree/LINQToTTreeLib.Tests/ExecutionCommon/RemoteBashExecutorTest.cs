@@ -157,6 +157,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Ok, now we can actually see if we can make it "go".
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.CompileDebug = true;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
         }
@@ -252,6 +253,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        [Ignore]
         public void RemoteBashCmdLineCheckDebugDumps()
         {
             // When we run in debug mode, make sure the command line dumps are there.

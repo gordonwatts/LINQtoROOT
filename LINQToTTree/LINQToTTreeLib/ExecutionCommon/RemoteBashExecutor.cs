@@ -64,6 +64,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Send the file to the remote host
             ExecuteRemoteWithTemp($"/tmp/{tmpDir.Name}", sshConnection => {
+                // Files we want to send or recv first.
                 _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = linuxTempDir });
                 if (extraFiles != null)
                 {
@@ -72,22 +73,24 @@ namespace LINQToTTreeLib.ExecutionCommon
                         _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(f.LocalPath), remoteLinuxDirectory = linuxTempDir });
                     }
                 }
+                if (receiveFiles != null)
+                {
+                    foreach (var f in receiveFiles)
+                    {
+                        _filesToBringBack.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(f.LocalPath), remoteLinuxDirectory = linuxTempDir });
+                    }
+                }
 
                 // Send over all files
-                SendAllFile(sshConnection, dumpLine);
+                SendAllFiles(sshConnection, dumpLine);
 
                 // Next, lets see if we can't run the file against root.
                 sshConnection.Connection.ExecuteLinuxCommand($"cd {linuxTempDir}", processLine: dumpLine);
                 sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name}", processLine: dumpLine);
 
                 // Finally, if there are any files to bring back, we should!
-                if (receiveFiles != null)
-                {
-                    foreach (var f in receiveFiles)
-                    {
-                        ReceiveFile(new FileInfo(f.LocalPath), linuxTempDir, sshConnection, dumpLine);
-                    }
-                }
+                ReceiveAllFiles(sshConnection, dumpLine);
+
                 return (object) null;
             }, dumpLine);
         }
@@ -120,6 +123,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             Action<string> dumper = Environment.CompileDebug ? s => Console.WriteLine(s) : (Action<string>)null;
             return ExecuteRemoteWithTemp($"/tmp/{queryDirectory.Name}", SSHConnection =>
             {
+                // Load up extra files that need to be shipped over.
+                foreach (var f in Environment.ExtraComponentFiles)
+                {
+                    _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = linuxTempDir });
+                }
+
                 return base.Execute(queryFile, queryDirectory, varsToTransfer);
             }, dumper);
         }
@@ -162,7 +171,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="dumpLine"></param>
-        private void SendAllFile(SSHTunneledConnection connection, Action<string> dumpLine)
+        private void SendAllFiles(SSHTunneledConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToCopyOver)
             {
@@ -171,6 +180,22 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
             _filesToCopyOver.Clear();
         }
+
+        /// <summary>
+        /// Fetch back all files we probably need to know about.
+        /// </summary>
+        /// <param name="sshConnection"></param>
+        /// <param name="dumpLine"></param>
+        private void ReceiveAllFiles(SSHTunneledConnection connection, Action<string> dumpLine)
+        {
+            foreach (var f in _filesToBringBack)
+            {
+                string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
+                connection.Connection.CopyRemoteFileLocally(linuxPath, f.localFileName.Directory, dumpLine);
+            }
+            _filesToBringBack.Clear();
+        }
+
 
         /// <summary>
         /// Fetch a file from the remote location down here.
@@ -214,6 +239,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Track all the files we need to move over to the remote area.
         /// </summary>
         private HashSet<RemoteFileCopyInfo> _filesToCopyOver = new HashSet<RemoteFileCopyInfo>();
+
+        /// <summary>
+        /// A list of files we should bring back
+        /// </summary>
+        private HashSet<RemoteFileCopyInfo> _filesToBringBack = new HashSet<RemoteFileCopyInfo>();
 
         /// <summary>
         /// Create an SSH connection.
@@ -331,6 +361,10 @@ namespace LINQToTTreeLib.ExecutionCommon
                     throw new InvalidOperationException($"Attempt to copy over file {f.Name} when we aren't in the middle of an operation!");
                 }
                 _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = linuxTempDir });
+            } else
+            {
+                // Perhaps it doesn't exist because we want to copy it back here?
+                _filesToBringBack.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(finfo.LocalPath), remoteLinuxDirectory = linuxTempDir});
             }
 
             // It will just be in the local directory where we live.
@@ -346,7 +380,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (finfo.Exists)
             {
-                var goodExtensiosn = new[] { ".h", ".root", ".c", ".cxx" };
+                var goodExtensiosn = new[] { ".h", ".hpp", ".root", ".c", ".cxx" };
                 var c = MakeSSHConnection();
                 foreach (var f in finfo.EnumerateFiles().Where(sf => goodExtensiosn.Contains(sf.Extension.ToLower())))
                 {
