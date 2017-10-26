@@ -63,19 +63,36 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             dumpLine?.Invoke(line);
 
-            lock (resultData)
+            if (resultData != null)
             {
-                resultData.AppendLine(line);
-                if (Environment.CompileDebug)
+                lock (resultData)
                 {
-                    Console.WriteLine(line);
+                    RecordLineUnprotected(resultData, line);
                 }
-                foreach (var logger in _logDumpers)
-                {
-                    logger(line);
-                }
+            } else
+            {
+                RecordLineUnprotected(null, line);
             }
         }
+
+        /// <summary>
+        /// In case we aren't worried about locking.. NO ONE ELSE SHOULD CALL THIS.
+        /// </summary>
+        /// <param name="resultData"></param>
+        /// <param name="line"></param>
+        private void RecordLineUnprotected(StringBuilder resultData, string line)
+        {
+            resultData?.AppendLine(line);
+            if (Environment.CompileDebug)
+            {
+                Console.WriteLine(line);
+            }
+            foreach (var logger in _logDumpers)
+            {
+                logger(line);
+            }
+        }
+
         /// <summary>
         /// Package everythiing up and run it.
         /// </summary>
@@ -233,7 +250,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public virtual FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
-            Action<string> dumpLine = Environment.CompileDebug ? s => Console.WriteLine(s) : (Action<string>)null;
+            Action<string> dumpLine = l => RecordLine(null, l);
             // Check the environment
             MakeSureROOTIsInstalled(dumpLine);
 

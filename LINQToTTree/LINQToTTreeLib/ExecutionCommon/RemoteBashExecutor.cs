@@ -170,11 +170,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public override FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
-            Action<string> dumper = Environment.CompileDebug ? s => Console.WriteLine(s) : (Action<string>) null;
+            Action<string> dumpLine = l =>
+            {
+                RecordLine(null, l);
+            };
             return ExecuteRemoteWithTemp("/tmp/proxygen", SSHConnection =>
             {
                 return base.GenerateProxyFile(rootFiles, treeName, queryDirectory);
-            }, dumper);
+            }, dumpLine);
         }
 
         /// <summary>
@@ -242,7 +245,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             foreach (var f in _filesToCopyOver)
             {
                 string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
-                connection.Connection.CopyLocalFileRemotely(f.localFileName, linuxPath, dumpLine);
+                dumpLine?.Invoke($"Copying {f.localFileName.Name} -> {f.remoteLinuxDirectory}");
+                connection.Connection.CopyLocalFileRemotely(f.localFileName, linuxPath);
             }
             _filesToCopyOver.Clear();
         }
