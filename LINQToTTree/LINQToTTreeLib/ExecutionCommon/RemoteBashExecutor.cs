@@ -324,7 +324,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (_connection == null)
             {
-                var minfo = GetMachineInfo();
+                var minfo = GetMachineInfo("bogus");
                 _connection = CreateSSHConnectionTo(minfo.RemoteSSHConnectionString);
 
                 if (minfo.ConfigureLines != null)
@@ -492,7 +492,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// The config for a machine. We load it and hold it in memory.
         /// </summary>
-        private class MachineConfig
+        public class MachineConfig
         {
             /// <summary>
             /// Contains the connection string that we will use to "dial" up the other location
@@ -505,13 +505,23 @@ namespace LINQToTTreeLib.ExecutionCommon
             /// the remote machine to be ready to run ROOT.
             /// </summary>
             public string[] ConfigureLines;
+
+            /// <summary>
+            /// Add a pattern for a file that isn't coiped over to the remote machine
+            /// </summary>
+            /// <param name="localPath"></param>
+            /// <param name="v"></param>
+            internal void AddFileNoCopyPattern(string localPath, string v)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         /// <summary>
-        /// Find the config for a particular machine
+        /// Find the config for a particular machine.
         /// </summary>
         /// <returns></returns>
-        private MachineConfig GetMachineInfo()
+        public static MachineConfig GetMachineInfo(string clusterName)
         {
             return new MachineConfig()
             {
