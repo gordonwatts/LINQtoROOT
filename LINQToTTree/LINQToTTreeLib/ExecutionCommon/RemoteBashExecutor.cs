@@ -440,6 +440,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         protected override string NormalizeFileForTarget(Uri finfo)
         {
+            // See if this file has already been setup as local
+            if (finfo.Scheme == "remotebash")
+            {
+                // TODO: with new version of AtlasSSH we can remove this line.
+                return finfo.AbsolutePath.Replace("//", "/");
+            }
+
             // See if this file matches a remote file.
             var f = new FileInfo(finfo.LocalPath.StartsWith("/") ? finfo.LocalPath.Substring(1) : finfo.LocalPath);
             var remoteFile = MatchToRemoteFile(f.FullName);

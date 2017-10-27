@@ -172,6 +172,58 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void SimpleResultOperatorWithGridDSLocationLocal()
+        {
+            // Use a file that is on the GRID. This might change over time,
+            // so this may file as files are deleted and need to be updated.
+
+            const string dsName = "user.gwatts.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.DAOD_EXOT15.p2711.DiVertAnalysis_v15_C448D50D_22DCBF53_hist";
+            var files = AtlasWorkFlows.DatasetManager.ListOfFilesInDataset(dsName);
+            var gfile = files.First();
+            var places = AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFiles(new[] { gfile });
+            Assert.IsTrue(places.Contains("Local"));
+            var gfileUri = AtlasWorkFlows.DatasetManager.LocalPathToFile("Local", gfile);
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { gfileUri }, "recoTree", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(98600, result);
+        }
+
+        [TestMethod]
+        public void SimpleResultOperatorWithGridDSLocationRemote()
+        {
+            // Use a file that is on the GRID. This might change over time,
+            // so this may file as files are deleted and need to be updated.
+
+            const string dsName = "user.gwatts.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.DAOD_EXOT15.p2711.DiVertAnalysis_v15_C448D50D_22DCBF53_hist";
+            var files = AtlasWorkFlows.DatasetManager.ListOfFilesInDataset(dsName);
+            var gfile = files.First();
+            var places = AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFiles(new[] { gfile });
+            Assert.IsTrue(places.Contains("UWTeV-linux"));
+            var gfileUriR = AtlasWorkFlows.DatasetManager.LocalPathToFile("UWTeV-linux", gfile);
+            var gfileUri = new UriBuilder(gfileUriR)
+            {
+                Scheme = "remotebash"
+            };
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { gfileUri.Uri}, "recoTree", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(98600, result);
+        }
+
+        [TestMethod]
         public void RunSimpleConcatSameSourceCountResult()
         {
             const int numberOfIter = 10;

@@ -186,9 +186,16 @@ namespace LINQToTTreeLib
         private bool UriGood(Uri f)
         {
             if (f.Scheme == "proof")
+            {
                 return true;
+            }
 
-            if (f.Scheme != "file" && f.Scheme != "localwin" && f.Scheme != "localbash" && f.Scheme != "remotebash")
+            if (f.Scheme == "remotebash")
+            {
+                return true;
+            }
+
+            if (f.Scheme != "file" && f.Scheme != "localwin" && f.Scheme != "localbash")
                 return false;
 
             // Clean the file path out if we need to have it cleaned
