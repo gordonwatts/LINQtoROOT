@@ -495,7 +495,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (finfo.Exists)
             {
-                var goodExtensiosn = new[] { ".h", ".hpp", ".root", ".c", ".cxx" };
+                var goodExtensiosn = new[] { ".h", ".hpp", ".c", ".cxx" };
                 var c = MakeSSHConnection();
                 foreach (var f in finfo.EnumerateFiles().Where(sf => goodExtensiosn.Contains(sf.Extension.ToLower())))
                 {
