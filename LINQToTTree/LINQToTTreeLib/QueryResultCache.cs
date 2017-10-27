@@ -210,7 +210,13 @@ namespace LINQToTTreeLib
                 }
                 else if (u.Scheme == "remotebash")
                 {
-                    result = File.GetLastWriteTime(u.LocalPath.Substring(1));
+                    if (u.Host == "")
+                    {
+                        result = File.GetLastWriteTime(u.LocalPath.Substring(1));
+                    } else
+                    {
+                        result = new DateTime(1990, 12, 1);
+                    }
                 }
                 else if (u.Scheme == "proof")
                 {
