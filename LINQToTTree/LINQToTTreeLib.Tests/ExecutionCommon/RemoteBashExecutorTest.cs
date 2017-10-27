@@ -62,6 +62,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        [DeploymentItem("testmachine.txt")]
         public void RemoteBashCmdLineCountOperatorWithRemoveFile()
         {
             // Put a file over on the remote machine, and then remove it locally, so it can't be sent over.
@@ -91,7 +92,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Next, for this machine, create a pattern that says this file doesn't need to be copied, and where it is located.
             var m = RemoteBashExecutor.GetMachineInfo("tev.machines");
-            m.AddFileNoCopyPattern(rootFile.LocalPath, $"/tmp/fname");
+            m.AddFileNoCopyPattern(rootFile.LocalPath, $"/tmp/{fname}");
 
             // Ok, now we can actually see if we can make it "go".
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));

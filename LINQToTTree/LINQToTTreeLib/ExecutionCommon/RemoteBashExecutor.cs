@@ -118,6 +118,19 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Return the machine config
+        /// </summary>
+        private MachineConfig Machine
+        {
+            get
+            {
+                // This will use the URI's to determine what machine config (once) and then cache it.
+                // Not implemented yet.
+                return GetMachineInfo("bogus");
+            }
+        }
+
+        /// <summary>
         /// Run a bash script on the remote node
         /// </summary>
         /// <param name="fnameRoot"></param>
@@ -324,15 +337,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (_connection == null)
             {
-                var minfo = GetMachineInfo("bogus");
-                _connection = CreateSSHConnectionTo(minfo.RemoteSSHConnectionString);
+                _connection = CreateSSHConnectionTo(Machine.RemoteSSHConnectionString);
 
-                if (minfo.ConfigureLines != null)
+                if (Machine.ConfigureLines != null)
                 {
                     var logForError = new StringBuilder();
                     try
                     {
-                        foreach (var line in minfo.ConfigureLines)
+                        foreach (var line in Machine.ConfigureLines)
                         {
                             _connection.Connection.ExecuteLinuxCommand(line, processLine: s => RecordLine(logForError, s, dumpLine));
                         }
@@ -428,8 +440,15 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         protected override string NormalizeFileForTarget(Uri finfo)
         {
-            // See if the file exists or not locally.
+            // See if this file matches a remote file.
             var f = new FileInfo(finfo.LocalPath.StartsWith("/") ? finfo.LocalPath.Substring(1) : finfo.LocalPath);
+            var remoteFile = MatchToRemoteFile(f.FullName);
+            if (remoteFile != null)
+            {
+                return remoteFile;
+            }
+
+            // See if the file exists or not locally.
             if (f.Exists)
             {
                 // Push it to the remote host.
@@ -446,6 +465,18 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // It will just be in the local directory where we live.
             return $"{linuxTempDir}/{f.Name}";
+        }
+
+        /// <summary>
+        /// Look at the machine definition to see if this makes sense or not.
+        /// </summary>
+        /// <param name="localPath"></param>
+        /// <returns></returns>
+        private string MatchToRemoteFile(string localPath)
+        {
+            return Machine.Matches
+                .Select(m => m.ReplaceWithThis(localPath))
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -506,28 +537,64 @@ namespace LINQToTTreeLib.ExecutionCommon
             /// </summary>
             public string[] ConfigureLines;
 
+            public class FileMatchPattern
+            {
+                private string _matchString;
+                private string _replaceString;
+
+                public FileMatchPattern (string matchString, string replaceString)
+                {
+                    _matchString = matchString;
+                    _replaceString = replaceString;
+                }
+
+                /// <summary>
+                /// Return the remote file location or null if we don't match
+                /// </summary>
+                /// <param name="localFile"></param>
+                /// <returns></returns>
+                public string ReplaceWithThis (string localFile)
+                {
+                    if (localFile == _matchString)
+                    {
+                        return _replaceString;
+                    }
+                    return null;
+                }
+            }
+
+            /// <summary>
+            /// List of matches
+            /// </summary>
+            public List<FileMatchPattern> Matches { get; } = new List<FileMatchPattern>();
+
             /// <summary>
             /// Add a pattern for a file that isn't coiped over to the remote machine
             /// </summary>
-            /// <param name="localPath"></param>
-            /// <param name="v"></param>
-            internal void AddFileNoCopyPattern(string localPath, string v)
+            /// <param name="localPath">Match string on this local machine we want to conver</param>
+            /// <param name="remotePath">The location on the remote host that should get returned</param>
+            internal void AddFileNoCopyPattern(string localPath, string remotePath)
             {
-                throw new NotImplementedException();
+                Matches.Add(new FileMatchPattern(localPath, remotePath));
             }
         }
 
+        static MachineConfig _s_global_config = null;
         /// <summary>
         /// Find the config for a particular machine.
         /// </summary>
         /// <returns></returns>
         public static MachineConfig GetMachineInfo(string clusterName)
         {
-            return new MachineConfig()
+            if (_s_global_config == null)
             {
-                RemoteSSHConnectionString = "gwatts@tev01.phys.washington.edu",
-                ConfigureLines = new[] { "setupATLAS", "lsetup root" }
-            };
+                _s_global_config = new MachineConfig()
+                {
+                    RemoteSSHConnectionString = "gwatts@tev01.phys.washington.edu",
+                    ConfigureLines = new[] { "setupATLAS", "lsetup root" }
+                };
+            }
+            return _s_global_config;
         }
 
 
