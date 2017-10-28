@@ -384,7 +384,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         /// <returns></returns>
         public static Uri AsLocalWinUri(this Uri source)
         {
-            return new Uri($"localwin://{source.LocalPath}");
+            return new UriBuilder(source) { Scheme = "localwin" }.Uri;
         }
     }
 }
