@@ -69,7 +69,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         protected override string NormalizeFileForTarget(Uri finfo)
         {
-            return finfo.LocalPath.Replace("\\", "\\\\");
+            // Make sure the Uri is in the file scheme. This is b.c. otherwise
+            // a UNC path (in particlar) isn't rendered the same way.
+            var u = finfo.Scheme == "file"
+                ? finfo
+                : new UriBuilder(finfo) { Scheme = "file" }.Uri;
+            return u.LocalPath.Replace("\\", "\\\\");
         }
 
         /// <summary>
