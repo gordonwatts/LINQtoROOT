@@ -199,7 +199,10 @@ namespace LINQToTTreeLib
                 return false;
 
             // Clean the file path out if we need to have it cleaned
-            var localPath = f.LocalPath;
+            // Convert the URI to a file URI first as we may have some issues with 
+            // how URI's parse UNC paths.
+            var localPath = f.Scheme == "file" ? f.LocalPath
+                : new UriBuilder(f) { Scheme = "file" }.Uri.LocalPath;
             if (localPath.StartsWith("/") && localPath.Contains(":"))
             {
                 localPath = localPath.Substring(1);
