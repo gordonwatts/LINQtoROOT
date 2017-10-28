@@ -12,6 +12,7 @@ using static LINQToTTreeLib.TTreeQueryExecutorTest;
 namespace LINQToTTreeLib.Tests.ExecutionCommon
 {
     [TestClass]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public class CommandLineTestExecutorTest
     {
         public string tempDir = Path.GetTempPath() + "\\TestLINQToROOTDummyDir";
@@ -156,6 +157,39 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
+        }
+
+        [TestMethod]
+        [DeploymentItem("unc_location.txt")]
+        public void LocalWinCmdLineCountOperatorOnUNCPath()
+        {
+            var rootFileSource = TestUtils.CreateFileOfInt(20);
+            var rootFile = MoveToUNC(rootFileSource);
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { rootFile.AsLocalWinUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(20, result);
+        }
+
+        /// <summary>
+        /// Move this to some UNC path or similar.
+        /// </summary>
+        /// <param name="rootFileSource"></param>
+        /// <returns></returns>
+        private Uri MoveToUNC(Uri rootFileSource)
+        {
+            var f = new FileInfo(rootFileSource.LocalPath);
+            var uncPath = new DirectoryInfo(File.ReadLines("unc_location.txt").First());
+            var fDest = new FileInfo($"{uncPath.FullName}\\{f.Name}");
+            f.CopyTo(fDest.FullName, overwrite: true);
+            fDest.Refresh();
+            return new Uri(fDest.FullName);
         }
 
         [TestMethod]

@@ -200,3 +200,4 @@ DemosAndTests/start_DemosAndTests.bat
 DemosAndTests/SimpleNugetPackageDependencyTest/ROOTLINQ/junk_macro_parsettree_CollectionTree.C
 *.opendb
 /LINQToTTree/LINQToTTree.VC.db
+/LINQToTTree/LINQToTTreeLib.Tests/unc_location.txt
