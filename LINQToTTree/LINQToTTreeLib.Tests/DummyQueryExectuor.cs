@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition;
 using System.Linq;
+using LINQToTTreeLib.ExecutionCommon;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -124,6 +125,9 @@ namespace LINQToTTreeLib.Tests
                 b.AddPart(new DataSchemeHandlerLocalBash());
                 b.AddPart(new DataSchemeHandlerLocalWin());
                 b.AddPart(new DataSchemeHandlerProof());
+                b.AddPart(new CommandLineExecutorFactory());
+                b.AddPart(new LocalBashExecutorFactory());
+                b.AddPart(new RemoteBashExecutorFactory());
                 TTreeQueryExecutor.CContainer.Compose(b);
 
                 MEFUtilities.AddPart(new AdderInt());

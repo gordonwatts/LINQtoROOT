@@ -1,16 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ROOTNET.Interface;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using Polly;
+using System;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
+    /// <summary>
+    /// Craete the executor when needed
+    /// </summary>
+    [Export(typeof(IQueryExecutorFactory))]
+    class LocalBashExecutorFactory : IQueryExecutorFactory
+    {
+        public string Scheme => "localbash";
+
+        public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
+        {
+            return new LocalBashExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
+        }
+    }
+
     /// <summary>
     /// Run on a root installed under bash
     /// </summary>

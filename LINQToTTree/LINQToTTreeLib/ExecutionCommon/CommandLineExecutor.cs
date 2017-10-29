@@ -1,13 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LinqToTTreeInterfacesLib;
+using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
+    /// <summary>
+    /// Craete the executor when needed
+    /// </summary>
+    [Export(typeof(IQueryExecutorFactory))]
+    public class CommandLineExecutorFactory : IQueryExecutorFactory
+    {
+        public string Scheme => "localwin";
+
+        public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
+        {
+            return new CommandLineExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
+        }
+    }
+
     /// <summary>
     /// Execute via the command line ROOT locally.
     /// 1. Move files to a set of locally known placeses

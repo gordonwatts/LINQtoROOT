@@ -1,13 +1,29 @@
 ﻿
+using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
+    /// <summary>
+    /// Craete the executor when needed
+    /// </summary>
+    [Export(typeof(IQueryExecutorFactory))]
+    public class LocalExecutorFactory : IQueryExecutorFactory
+    {
+        public string Scheme => "file";
+
+        public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
+        {
+            return new LocalBashExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
+        }
+    }
+
     /// <summary>
     /// Runs single threaded, in the local process, and does all the ntuples we need.
     /// </summary>
@@ -16,7 +32,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// The execution environment
         /// </summary>
-        public ExecutionEnvironment Environment { set; get; }
+        public IExecutionEnvironment Environment { set; get; }
 
         /// <summary>
         /// Get/Set the list of leaf names that this query references. Used to configure the cache

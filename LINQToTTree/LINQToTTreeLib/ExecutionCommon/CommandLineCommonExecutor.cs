@@ -1,12 +1,12 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
+using ROOTNET.Interface;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ROOTNET.Interface;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using LINQToTTreeLib.Utils;
 using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.ExecutionCommon
@@ -21,7 +21,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// The execution environment - config for a job we are running
         /// </summary>
-        public ExecutionEnvironment Environment { set; get; }
+        public IExecutionEnvironment Environment { set; get; }
 
         /// <summary>
         /// Get/Set the list of leaf names that this query references. Used to configure the cache

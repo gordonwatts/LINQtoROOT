@@ -607,35 +607,64 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
         }
 
+
+        [Serializable]
+        public class MustBeSameExecutorException : NotSupportedException
+        {
+            public MustBeSameExecutorException() { }
+            public MustBeSameExecutorException(string message) : base(message) { }
+            public MustBeSameExecutorException(string message, Exception inner) : base(message, inner) { }
+            protected MustBeSameExecutorException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
+
+        [Serializable]
+        public class UnsupportedUriSchemeException : NotSupportedException
+        {
+            public UnsupportedUriSchemeException() { }
+            public UnsupportedUriSchemeException(string message) : base(message) { }
+            public UnsupportedUriSchemeException(string message, Exception inner) : base(message, inner) { }
+            protected UnsupportedUriSchemeException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
-        /// Create the query executor
+        /// List of query exectuor factories
+        /// </summary>
+#pragma warning disable 0649
+        [ImportMany(typeof(IQueryExecutorFactory))]
+        IEnumerable<IQueryExecutorFactory> _queryExecutorList;
+#pragma warning restore 0649
+
+        /// <summary>
+        /// Create the query executor tha twill handle these files
         /// </summary>
         /// <param name="referencedLeafNames">List of leaves that are referenced by the query</param>
         /// <returns></returns>
         private IQueryExectuor CreateQueryExecutor(string[] referencedLeafNames)
         {
+            // Make sure this is a valid query
             if (_exeReq.RootFiles.Length == 0)
                 throw new InvalidOperationException("Not root files or datasets to run this query on");
-            if (_exeReq.RootFiles.All(t => t.Scheme == "file"))
+
+            var schemes = _exeReq.RootFiles
+                .GroupBy(u => u.Scheme);
+            if (schemes.Count() != 1)
             {
-                return new LocalExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
+                var lst = schemes.Aggregate("", (ac, g) => ac + " " + g.Key);
+                throw new MustBeSameExecutorException($"The list of files to run over require different executors - that isn't supported (${lst})");
             }
-            else if (_exeReq.RootFiles.All(t => t.Scheme == "localwin"))
-            {
-                return new CommandLineExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
-            }
-            else if (_exeReq.RootFiles.All(t => t.Scheme == "localbash"))
-            {
-                return new LocalBashExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
-            }
-            else if (_exeReq.RootFiles.All(t => t.Scheme == "remotebash"))
-            {
-                return new RemoteBashExecutor() { Environment = _exeReq, LeafNames = referencedLeafNames };
-            }
-            else
-            {
-                throw new InvalidOperationException("ROOT Files must be all PROOF or all locally accessible files! Nothing else is understood.");
-            }
+            var sch = schemes.First().Key;
+
+            // Now find a query executor.
+            var qefactory = _queryExecutorList
+                .Where(qex => qex.Scheme == sch).FirstOrDefault()
+                .ThrowIfNull(() => new UnsupportedUriSchemeException($"Unable to process files of scheme '{sch}' - no supported executor"));
+
+            return qefactory.Create(_exeReq, referencedLeafNames);
         }
 
         /// <summary>

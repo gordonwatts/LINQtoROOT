@@ -1,4 +1,5 @@
 ﻿
+using LinqToTTreeInterfacesLib;
 using System;
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -6,7 +7,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// A list of various things that are needed to actually run one of our runs. Hopefully,
     /// other than the stuff specific for a particular query, this is everything.
     /// </summary>
-    public class ExecutionEnvironment
+    public class ExecutionEnvironment : IExecutionEnvironment
     {
         /// <summary>
         /// Some classes will require a dict to be made in order for the loading

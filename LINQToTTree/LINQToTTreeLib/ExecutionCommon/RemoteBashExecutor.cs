@@ -1,17 +1,30 @@
 ﻿using AtlasSSH;
+using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
+using ROOTNET.Interface;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
-using LINQToTTreeLib.Utils;
-using System.Threading.Tasks;
-using ROOTNET.Interface;
-using Polly;
 
 namespace LINQToTTreeLib.ExecutionCommon
-{
+{    /// <summary>
+     /// Craete the executor when needed
+     /// </summary>
+    [Export(typeof(IQueryExecutorFactory))]
+    public class RemoteBashExecutorFactory : IQueryExecutorFactory
+    {
+        public string Scheme => "localbash";
+
+        public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
+        {
+            return new LocalBashExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
+        }
+    }
+
+
     /// <summary>
     /// Used to execute remotely (via an ssh connection)
     /// </summary>
