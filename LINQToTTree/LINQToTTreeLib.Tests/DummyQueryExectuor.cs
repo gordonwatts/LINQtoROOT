@@ -1,4 +1,5 @@
-﻿using LINQToTTreeLib.Expressions;
+﻿using LINQToTTreeLib.DataSchemeHandlers;
+using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Files;
 using LINQToTTreeLib.IAddResults;
 using LINQToTTreeLib.QMFunctions;
@@ -12,6 +13,8 @@ using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace LINQToTTreeLib.Tests
@@ -114,6 +117,14 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new MemberAccessArrayTypeFactory());
                 MEFUtilities.AddPart(new HandleGroupType());
                 MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
+
+                var b = new CompositionBatch();
+                b.AddPart(new DataSchemeHandlerFile());
+                b.AddPart(new DataSchemeHandlerRemoteBash());
+                b.AddPart(new DataSchemeHandlerLocalBash());
+                b.AddPart(new DataSchemeHandlerLocalWin());
+                b.AddPart(new DataSchemeHandlerProof());
+                TTreeQueryExecutor.CContainer.Compose(b);
 
                 MEFUtilities.AddPart(new AdderInt());
             }

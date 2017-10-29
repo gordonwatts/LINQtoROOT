@@ -177,6 +177,11 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(3, "Done Initializing TTreeQueryExecutor");
         }
 
+#pragma warning disable CS0649
+        [ImportMany(typeof(IDataFileSchemeHandler))]
+        IEnumerable<IDataFileSchemeHandler> _dataSchemeHandlers;
+#pragma warning disable CS0649
+
         /// <summary>
         /// Check to make sure the URI is a good one. Currently we only deal
         /// with file URI's, so this will x-check that.
@@ -185,33 +190,35 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private bool UriGood(Uri f)
         {
-            if (f.Scheme == "proof")
-            {
-                return true;
-            }
+            return GetDataHandler(f)
+                .GoodUri(f);
+        }
 
-            if (f.Scheme == "remotebash")
-            {
-                return true;
-            }
 
-            if (f.Scheme != "file" && f.Scheme != "localwin" && f.Scheme != "localbash")
-                return false;
+        [Serializable]
+        public class DataSchemeNotKnonwException : Exception
+        {
+            public DataSchemeNotKnonwException() { }
+            public DataSchemeNotKnonwException(string message) : base(message) { }
+            public DataSchemeNotKnonwException(string message, Exception inner) : base(message, inner) { }
+            protected DataSchemeNotKnonwException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
 
-            // Clean the file path out if we need to have it cleaned
-            // Convert the URI to a file URI first as we may have some issues with 
-            // how URI's parse UNC paths.
-            var localPath = f.Scheme == "file" ? f.LocalPath
-                : new UriBuilder(f) { Scheme = "file" }.Uri.LocalPath;
-            if (localPath.StartsWith("/") && localPath.Contains(":"))
-            {
-                localPath = localPath.Substring(1);
-            }
-
-            if (!File.Exists(localPath))
-                return false;
-
-            return true;
+        /// <summary>
+        /// Find a data scheme. Fail badly if we can't.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        private IDataFileSchemeHandler GetDataHandler(Uri f)
+        {
+            Init();
+            LocalInit();
+            return _dataSchemeHandlers
+                .Where(d => d.Scheme == f.Scheme)
+                .FirstOrDefault()
+                .ThrowIfNull(() => new DataSchemeNotKnonwException($"Uri with scheme '{f.Scheme}' can't be processed - don't know how to deal with the Uri scheme!"));
         }
 
         /// <summary>
@@ -1022,46 +1029,68 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// When the class has been initalized, we set this to true. Make sure we run MEF.
+        /// We compose ourselves out of this
         /// </summary>
         static CompositionContainer _gContainer = null;
 
         /// <summary>
-        /// The base type of the ntuple we are looping over.
+        /// Return the container. Mostly for testing
         /// </summary>
-        private Type _baseNtupleObjectType;
+        public static CompositionContainer CContainer
+        {
+            get
+            {
+                InitContainer();
+                return _gContainer;
+            }
+        }
 
         /// <summary>
-        /// Run init for this class.
+        /// Reset the global state of the object. Designed for testing.
         /// </summary>
-        private void Init()
+        internal static void Reset()
+        {
+            _gContainer = null;
+        }
+
+        private static void InitContainer()
         {
             if (_gContainer != null)
                 return;
 
-            ///
-            /// Get MEF setup with everything in our assembly.
-            /// 
-
+            // Get MEF setup with everything in our assembly.
             AggregateCatalog aggCat = new AggregateCatalog();
             aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
             _gContainer = new CompositionContainer(aggCat);
             CompositionBatch b = new CompositionBatch();
             b.AddPart(new TypeHandlers.TypeHandlerCache());
             _gContainer.Compose(b);
+        }
 
-            ///
-            /// Make sure TApplication has been started. It will init a bunch of stuff
-            /// 
+        /// <summary>
+        /// The base type of the ntuple we are looping over.
+        /// </summary>
+        private Type _baseNtupleObjectType;
 
-            ROOTNET.NTApplication.CreateApplication();
+        private static bool _rootInited = false;
 
-            ///
-            /// Turn off ROOTMAP generation - since we are constantly unloading things it just gets things
-            /// confused. :-)
-            /// 
+        /// <summary>
+        /// Run init for this class.
+        /// </summary>
+        private void Init()
+        {
+            InitContainer();
 
-            ROOTNET.NTEnv.gEnv.SetValue("ACLiC.LinkLibs", 1);
+            if (!_rootInited)
+            {
+                _rootInited = true;
+                // Make sure TApplication has been started. It will init a bunch of stuff
+                ROOTNET.NTApplication.CreateApplication();
+
+                // Turn off ROOTMAP generation - since we are constantly unloading things it just gets things
+                // confused. :-)
+                ROOTNET.NTEnv.gEnv.SetValue("ACLiC.LinkLibs", 1);
+            }
         }
 
         /// <summary>

@@ -175,6 +175,11 @@
     <Compile Include="CodeContext.cs" />
     <Compile Include="CombinedGeneratedCode.cs" />
     <Compile Include="CPPTranslator.cs" />
+    <Compile Include="DataSchemeHandlers\DataSchemeHandlerFile.cs" />
+    <Compile Include="DataSchemeHandlers\DataSchemeHandlerLocalBash.cs" />
+    <Compile Include="DataSchemeHandlers\DataSchemeHandlerLocalWin.cs" />
+    <Compile Include="DataSchemeHandlers\DataSchemeHandlerProof.cs" />
+    <Compile Include="DataSchemeHandlers\DataSchemeHandlerRemoteBash.cs" />
     <Compile Include="ExecutionCommon\CommandLineCommonExecutor.cs" />
     <Compile Include="ExecutionCommon\CommandLineExecutor.cs" />
     <Compile Include="ExecutionCommon\ExecutionEnvironment.cs" />

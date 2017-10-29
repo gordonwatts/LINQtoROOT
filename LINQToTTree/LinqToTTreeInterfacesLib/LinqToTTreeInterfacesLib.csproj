@@ -99,6 +99,7 @@
     <Compile Include="IExpressionHolder.cs" />
     <Compile Include="IFutureValue.cs" />
     <Compile Include="IGeneratedQueryCode.cs" />
+    <Compile Include="IDataFileSchemeHandler.cs" />
     <Compile Include="IOnTheFlyCPPObject.cs" />
     <Compile Include="IQMArgument.cs" />
     <Compile Include="IQMFuncExecutable.cs" />

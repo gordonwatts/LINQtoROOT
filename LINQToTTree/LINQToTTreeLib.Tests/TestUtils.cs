@@ -597,6 +597,7 @@ namespace LINQToTTreeLib.Tests
             LINQToTTreeLib.TypeHandlers.ReplacementMethodCalls.TypeHandlerReplacementCall.ClearTypeList();
             var eng = new VelocityEngine();
             eng.Init();
+            TTreeQueryExecutor.Reset();
             ResetCacheDir();
         }
 
