@@ -7,6 +7,9 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Files;
+using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition;
 
 namespace LINQToTTreeLib
 {
@@ -233,6 +236,99 @@ namespace LINQToTTreeLib
             var dude = q.Concat(q).Count();
 
             Assert.AreEqual(numberOfIter*2, dude);
+        }
+
+        // Do a quick translation switching Uri's back and forth.
+        [Export(typeof(IDataFileSchemeHandler))]
+        class UriOneToOneTranslator : IDataFileSchemeHandler
+        {
+            public string Scheme => "test1to1scheme";
+
+            public bool GoodUri(Uri u)
+            {
+                return true;
+            }
+
+            /// <summary>
+            /// Return it to being a regular file
+            /// </summary>
+            /// <param name="u"></param>
+            /// <returns></returns>
+            public IEnumerable<Uri> ResolveUri(Uri u)
+            {
+                return new[] { new UriBuilder(u) { Scheme = "file" }.Uri };
+            }
+        }
+
+        [TestMethod]
+        public void UriTranslatedToOtherType()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var testUri = new UriBuilder(rootFile) { Scheme = "test1to1scheme" }.Uri;
+
+            // Query model
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Add the translator to the TTExecutor's
+            var myBatch = new CompositionBatch();
+            myBatch.AddPart(new UriOneToOneTranslator());
+            TTreeQueryExecutor.CContainer.Compose(myBatch);
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { testUri }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        // Do a quick translation switching Uri's back and forth.
+        [Export(typeof(IDataFileSchemeHandler))]
+        class UriOneToTwoTranslator : IDataFileSchemeHandler
+        {
+            public string Scheme => "test1to2scheme";
+
+            public bool GoodUri(Uri u)
+            {
+                return true;
+            }
+
+            /// <summary>
+            /// Return it to being a regular file
+            /// </summary>
+            /// <param name="u"></param>
+            /// <returns></returns>
+            public IEnumerable<Uri> ResolveUri(Uri u)
+            {
+                return new[] {
+                    new UriBuilder(u) { Scheme = "file" }.Uri,
+                    new UriBuilder(u) { Scheme = "file" }.Uri,
+                };
+            }
+        }
+
+        [TestMethod]
+        public void UriTranslatedToMultipleTypes()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var testUri = new UriBuilder(rootFile) { Scheme = "test1to2scheme" }.Uri;
+
+            // Query model
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Add the translator to the TTExecutor's
+            var myBatch = new CompositionBatch();
+            myBatch.AddPart(new UriOneToTwoTranslator());
+            TTreeQueryExecutor.CContainer.Compose(myBatch);
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { testUri }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter*2, result);
         }
 
         [TestMethod]

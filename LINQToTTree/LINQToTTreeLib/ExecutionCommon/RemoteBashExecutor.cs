@@ -20,7 +20,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
         public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
         {
-            return new LocalBashExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
+            return new RemoteBashExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
         }
     }
 

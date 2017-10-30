@@ -188,57 +188,10 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(3, "Done Initializing TTreeQueryExecutor");
         }
 
-        /// <summary>
-        /// Resolve the incoming Uri's into whatever they will get used for in the end.
-        /// </summary>
-        /// <param name="u"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Recursively try to resolve the Uri's until they stop changing their format.
-        /// </remarks>
-        private IEnumerable<Uri> ResolveDatasetUri(Uri u)
-        {
-            var scheme = u.Scheme;
-            var resolved = _dataSchemeHandlers
-                .Where(sh => sh.Scheme == scheme)
-                .FirstOrDefault()
-                .ThrowIfNull(() => new DataSchemeNotKnonwException($"We don't know how to deal with Uri of scheme '{scheme}' for a dataset!"))
-                .ResolveUri(u)
-                .ToArray();
-
-            // See if there were any changes. If not, then we just return it.
-            if (resolved.Length == 1 && resolved[0].OriginalString == u.OriginalString)
-            {
-                yield return resolved[0];
-            } else
-            {
-                foreach (var rUri in resolved)
-                {
-                    foreach (var rrUri in ResolveDatasetUri(rUri))
-                    {
-                        yield return rrUri;
-                    }
-                }
-            }
-        }
-
 #pragma warning disable CS0649
         [ImportMany(typeof(IDataFileSchemeHandler))]
         IEnumerable<IDataFileSchemeHandler> _dataSchemeHandlers;
 #pragma warning disable CS0649
-
-        /// <summary>
-        /// Check to make sure the URI is a good one. Currently we only deal
-        /// with file URI's, so this will x-check that.
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        private bool UriGood(Uri f)
-        {
-            return GetDataHandler(f)
-                .GoodUri(f);
-        }
-
 
         [Serializable]
         public class DataSchemeNotKnonwException : Exception
@@ -264,6 +217,50 @@ namespace LINQToTTreeLib
                 .Where(d => d.Scheme == f.Scheme)
                 .FirstOrDefault()
                 .ThrowIfNull(() => new DataSchemeNotKnonwException($"Uri with scheme '{f.Scheme}' can't be processed - don't know how to deal with the Uri scheme!"));
+        }
+
+        /// <summary>
+        /// Check to make sure the URI is a good one. Currently we only deal
+        /// with file URI's, so this will x-check that.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        private bool UriGood(Uri f)
+        {
+            return GetDataHandler(f)
+                .GoodUri(f);
+        }
+
+        /// <summary>
+        /// Resolve the incoming Uri's into whatever they will get used for in the end.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Recursively try to resolve the Uri's until they stop changing their format.
+        /// </remarks>
+        private IEnumerable<Uri> ResolveDatasetUri(Uri u)
+        {
+            var scheme = u.Scheme;
+            var resolved = GetDataHandler(u)
+                .ResolveUri(u)
+                .ToArray();
+
+            // See if there were any changes. If not, then we just return it.
+            if (resolved.Length == 1 && resolved[0].OriginalString == u.OriginalString)
+            {
+                yield return resolved[0];
+            }
+            else
+            {
+                foreach (var rUri in resolved)
+                {
+                    foreach (var rrUri in ResolveDatasetUri(rUri))
+                    {
+                        yield return rrUri;
+                    }
+                }
+            }
         }
 
         /// <summary>

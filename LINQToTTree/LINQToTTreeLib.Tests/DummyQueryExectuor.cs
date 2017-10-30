@@ -119,16 +119,16 @@ namespace LINQToTTreeLib.Tests
                 MEFUtilities.AddPart(new HandleGroupType());
                 MEFUtilities.AddPart(new SubQueryExpressionArrayInfoFactory());
 
-                var b = new CompositionBatch();
-                b.AddPart(new DataSchemeHandlerFile());
-                b.AddPart(new DataSchemeHandlerRemoteBash());
-                b.AddPart(new DataSchemeHandlerLocalBash());
-                b.AddPart(new DataSchemeHandlerLocalWin());
-                b.AddPart(new DataSchemeHandlerProof());
-                b.AddPart(new CommandLineExecutorFactory());
-                b.AddPart(new LocalBashExecutorFactory());
-                b.AddPart(new RemoteBashExecutorFactory());
-                TTreeQueryExecutor.CContainer.Compose(b);
+                //var b = new CompositionBatch();
+                //b.AddPart(new DataSchemeHandlerFile());
+                //b.AddPart(new DataSchemeHandlerRemoteBash());
+                //b.AddPart(new DataSchemeHandlerLocalBash());
+                //b.AddPart(new DataSchemeHandlerLocalWin());
+                //b.AddPart(new DataSchemeHandlerProof());
+                //b.AddPart(new CommandLineExecutorFactory());
+                //b.AddPart(new LocalBashExecutorFactory());
+                //b.AddPart(new RemoteBashExecutorFactory());
+                //TTreeQueryExecutor.CContainer.Compose(b);
 
                 MEFUtilities.AddPart(new AdderInt());
             }
