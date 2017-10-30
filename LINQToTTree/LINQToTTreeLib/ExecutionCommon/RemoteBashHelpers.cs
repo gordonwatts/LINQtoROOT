@@ -22,7 +22,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get ROOT installed if it hasn't been already.
             var le = BuildExecutor();
 
-            le.ExecuteRemoteWithTemp($"/tmp/{prefix}", connection =>
+            le.ExecuteRemoteWithTemp($"/tmp/{tempDirectory.Name}", connection =>
             {
                 if (!le.CheckForROOTInstall(dumpLine, verbose))
                 {
