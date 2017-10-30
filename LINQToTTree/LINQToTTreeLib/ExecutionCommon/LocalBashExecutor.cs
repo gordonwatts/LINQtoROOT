@@ -245,12 +245,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get the start info stuff configured properly
             startInfo.LoadUserProfile = true;
             startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = true;
+            startInfo.UseShellExecute = false;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-            startInfo.RedirectStandardError = false;
+            startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardInput = false;
-            startInfo.RedirectStandardOutput = false;
+            startInfo.RedirectStandardOutput = true;
 
             return logFile;
         }

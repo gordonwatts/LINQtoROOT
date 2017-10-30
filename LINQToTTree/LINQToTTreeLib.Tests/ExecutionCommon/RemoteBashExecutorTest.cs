@@ -63,16 +63,13 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
         [TestMethod]
         [DeploymentItem("testmachine.txt")]
-        public void RemoteBashCmdLineCountOperatorWithRemoveFile()
+        public void RemoteBashCmdLineCountOperatorWithRemoteFile()
         {
             // Put a file over on the remote machine, and then remove it locally, so it can't be sent over.
-            var rootFile = TestUtils.CreateFileOfInt(20);
-            MoveToBash(rootFile, File.ReadLines("testmachine.txt").First(), "/tmp");
-
-            // At some point it would be nice - but I suspect our URI's will be much more intersting before we
-            // can implement the below.
-            //var localFile = new FileInfo(rootFile.LocalPath);
-            //localFile.Delete();
+            var rootFileLocal = TestUtils.CreateFileOfInt(20);
+            var rootFileRemote = MoveToBash(rootFileLocal, File.ReadLines("testmachine.txt").First(), "/tmp");
+            var localFile = new FileInfo(rootFileLocal.LocalPath);
+            localFile.Delete();
 
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
@@ -80,7 +77,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Watch to see if the file is copied over.
-            var fname = Path.GetFileName(rootFile.LocalPath);
+            var fname = Path.GetFileName(rootFileLocal.LocalPath);
             var listOfBadLines = new List<string>();
             RemoteBashExecutor.AddLogEndpoint(l =>
             {
@@ -92,10 +89,10 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Next, for this machine, create a pattern that says this file doesn't need to be copied, and where it is located.
             var m = RemoteBashExecutor.GetMachineInfo("tev.machines");
-            m.AddFileNoCopyPattern(rootFile.LocalPath, $"/tmp/{fname}");
+            m.AddFileNoCopyPattern(rootFileLocal.LocalPath, $"/tmp/{fname}");
 
             // Ok, now we can actually see if we can make it "go".
-            var exe = new TTreeQueryExecutor(new[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple), typeof(TestNtupe));
+            var exe = new TTreeQueryExecutor(new[] { rootFileRemote }, "dude", typeof(ntuple), typeof(TestNtupe));
             exe.CompileDebug = true;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
@@ -116,12 +113,13 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         /// </summary>
         /// <param name="rootFile"></param>
         /// <returns></returns>
-        private void MoveToBash(Uri rootFile, string remoteInfo, string remoteDirectory)
+        private Uri MoveToBash(Uri rootFile, string remoteInfo, string remoteDirectory)
         {
             using (var t = new SSHConnectionTunnel(remoteInfo))
             {
                 var f = new FileInfo(rootFile.LocalPath);
                 t.Connection.CopyLocalFileRemotely(f, $"{remoteDirectory}/{f.Name}");
+                return new Uri($"remotebash://tev.machines/{remoteDirectory}/{f.Name}");
             }
         }
 
