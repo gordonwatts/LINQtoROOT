@@ -23,9 +23,14 @@ namespace LINQToTTreeLib.DataSchemeHandlers
             return true;
         }
 
+        /// <summary>
+        /// Resolve this Uri. We do nothing to it, so just return it.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
         public IEnumerable<Uri> ResolveUri(Uri u)
         {
-            throw new NotImplementedException();
+            return new[] { u };
         }
     }
 }

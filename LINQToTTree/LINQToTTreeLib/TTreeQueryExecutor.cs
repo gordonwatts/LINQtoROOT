@@ -51,6 +51,11 @@ namespace LINQToTTreeLib
         public bool RecheckFileDatesOnEachQuery { get; set; }
 
         /// <summary>
+        /// Hold onto the original root files before we did resolution.
+        /// </summary>
+        public Uri[] _originalRootFiles = null;
+
+        /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
         /// <param name="rootFiles"></param>
@@ -104,6 +109,11 @@ namespace LINQToTTreeLib
                 }
                 throw new FileNotFoundException(bld.ToString());
             }
+
+            // The Uri's that come in may not be the ones we actually need to run over. Resolve them.
+            var resolvedRootFiles = rootFiles
+                .SelectMany(u => ResolveDatasetUri(u))
+                .ToArray();
 
             // Make sure the object we are using is correct, and that it has non-null values
             // for the things passed in. We do this now so we don't have to have checks later on.
@@ -171,10 +181,45 @@ namespace LINQToTTreeLib
             /// Save the values
             /// 
 
-            _exeReq.RootFiles = rootFiles;
+            _exeReq.RootFiles = resolvedRootFiles;
+            _originalRootFiles = rootFiles;
             _exeReq.TreeName = treeName;
             _cintLines = cintLines;
             TraceHelpers.TraceInfo(3, "Done Initializing TTreeQueryExecutor");
+        }
+
+        /// <summary>
+        /// Resolve the incoming Uri's into whatever they will get used for in the end.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Recursively try to resolve the Uri's until they stop changing their format.
+        /// </remarks>
+        private IEnumerable<Uri> ResolveDatasetUri(Uri u)
+        {
+            var scheme = u.Scheme;
+            var resolved = _dataSchemeHandlers
+                .Where(sh => sh.Scheme == scheme)
+                .FirstOrDefault()
+                .ThrowIfNull(() => new DataSchemeNotKnonwException($"We don't know how to deal with Uri of scheme '{scheme}' for a dataset!"))
+                .ResolveUri(u)
+                .ToArray();
+
+            // See if there were any changes. If not, then we just return it.
+            if (resolved.Length == 1 && resolved[0].OriginalString == u.OriginalString)
+            {
+                yield return resolved[0];
+            } else
+            {
+                foreach (var rUri in resolved)
+                {
+                    foreach (var rrUri in ResolveDatasetUri(rUri))
+                    {
+                        yield return rrUri;
+                    }
+                }
+            }
         }
 
 #pragma warning disable CS0649

@@ -27,9 +27,14 @@ namespace LINQToTTreeLib.DataSchemeHandlers
             return File.Exists(new UriBuilder(u) { Scheme = "file" }.Uri.LocalPath);
         }
 
+        /// <summary>
+        /// Resolve this Uri. We do nothing to it, so just return it.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
         public IEnumerable<Uri> ResolveUri(Uri u)
         {
-            throw new NotImplementedException();
+            return new[] { u };
         }
     }
 }
