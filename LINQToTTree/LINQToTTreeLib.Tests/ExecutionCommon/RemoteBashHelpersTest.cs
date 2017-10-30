@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon
 {
@@ -70,6 +69,71 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             // Basically, there should be no crash.
             Assert.IsFalse(results.Where(s => s.Contains("Error")).Any());
+        }
+
+        [TestMethod]
+        public void BashRunSimpleROOTWithRelatuveInputFile()
+        {
+            var loc = new FileInfo("special/junk.root");
+            if (loc.Directory.Exists)
+            {
+                loc.Directory.Delete(true);
+            }
+            loc.Directory.Create();
+            loc.Directory.Refresh();
+            var f = ROOTNET.NTFile.Open(loc.FullName, "RECREATE");
+            f.Close();
+
+            var cmds = new StringBuilder();
+            cmds.AppendLine("{TFile *f = TFile::Open(\"special/junk.root\", \"READ\"); exit(0);}");
+            List<string> results = new List<string>();
+            RemoteBashExecutor.AddLogEndpoint(s =>
+            {
+                results.Add(s);
+                Console.WriteLine(s);
+            });
+
+            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new DirectoryInfo("."),
+                filesToSend: new[] { loc });
+
+            // Basically, there should be no crash.
+            Assert.IsFalse(results.Where(s => s.Contains("Error")).Any());
+        }
+
+        [TestMethod]
+        public void BashRunSimpleROOTWithRelatuveOutputFile()
+        {
+            var loc = new FileInfo("special/junk.root");
+            if (loc.Directory.Exists)
+            {
+                loc.Directory.Delete(true);
+            }
+            loc.Directory.Create();
+            loc.Directory.Refresh();
+            if (loc.Exists)
+            {
+                loc.Delete();
+            }
+            loc.Refresh();
+
+            var cmds = new StringBuilder();
+            cmds.AppendLine("{gSystem->mkdir(\"special\"); TFile *f = TFile::Open(\"special/junk.root\", \"RECREATE\"); exit(0);}");
+            List<string> results = new List<string>();
+            RemoteBashExecutor.AddLogEndpoint(s =>
+            {
+                results.Add(s);
+                Console.WriteLine(s);
+            });
+
+            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new DirectoryInfo("."),
+                filesToReceive: new[] { loc });
+
+            // Basically, there should be no crash.
+            Assert.IsFalse(results.Where(s => s.Contains("Error")).Any());
+
+            // And the file should come back
+            loc.Refresh();
+            Assert.IsTrue(loc.Exists);
         }
     }
 }

@@ -2,14 +2,11 @@
 using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ExecutionCommon;
 using LINQToTTreeLib.Files;
-using LINQToTTreeLib.Tests.Files;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static LINQToTTreeLib.TTreeQueryExecutorTest;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon

@@ -98,22 +98,22 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     foreach (var f in extraFiles)
                     {
-                        _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(f.LocalPath), remoteLinuxDirectory = linuxTempDir });
+                        _filesToCopyOver.Add(new RemoteFileCopyInfo(new FileInfo(f.LocalPath), tmpDir, linuxTempDir));
                     }
                 }
                 if (receiveFiles != null)
                 {
                     foreach (var f in receiveFiles)
                     {
-                        _filesToBringBack.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(f.LocalPath), remoteLinuxDirectory = linuxTempDir });
+                        _filesToBringBack.Add(new RemoteFileCopyInfo(new FileInfo(f.LocalPath), tmpDir, linuxTempDir));
                     }
                 }
 
                 // Send over all files
-                SendAllFiles(sshConnection, dumpLine);
+                var logForError = new StringBuilder();
+                SendAllFiles(sshConnection, s => RecordLine(logForError, s, dumpLine));
 
                 // Next, lets see if we can't run the file against root.
-                var logForError = new StringBuilder();
                 try
                 {
                     sshConnection.Connection.ExecuteLinuxCommand($"cd {linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
@@ -236,6 +236,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="dumpLine"></param>
         internal T ExecuteRemoteWithTemp<T>(string tempDir, Func<SSHTunneledConnection, T> act, Action<string> dumpLine = null)
         {
+            // Protection against stupid mistakes
+            if (!tempDir.StartsWith("/tmp"))
+            {
+                throw new InvalidOperationException($"Trying to execute linux commands in a place other than /tmp: '{tempDir}'.");
+            }
+
+            // Make the connection, and create the directory.
             var sshConnection = MakeSSHConnection(dumpLine);
             var oldLinuxTempDir = linuxTempDir;
             linuxTempDir = tempDir;
@@ -262,7 +269,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
-        /// Send all files over to the remote client.
+        /// Send all files over to the remote client. Make sure the directory exists.
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="dumpLine"></param>
@@ -271,7 +278,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             foreach (var f in _filesToCopyOver)
             {
                 string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
-                dumpLine?.Invoke($"Copying {f.localFileName.Name} -> {f.remoteLinuxDirectory}");
+                dumpLine?.Invoke($"Copying {f.localFileName.Name} -> {linuxPath}");
+                connection.Connection.ExecuteLinuxCommand($"mkdir -p {f.remoteLinuxDirectory}", dumpLine);
                 connection.Connection.CopyLocalFileRemotely(f.localFileName, linuxPath);
             }
             _filesToCopyOver.Clear();
@@ -315,6 +323,41 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             public FileInfo localFileName;
             public string remoteLinuxDirectory;
+
+            /// <summary>
+            /// Default ctor
+            /// </summary>
+            public RemoteFileCopyInfo()
+            {
+            }
+
+            /// <summary>
+            /// Create a copy over tag, calculate a relative directory if need be
+            /// </summary>
+            /// <param name="localFile"></param>
+            /// <param name="relativeDirectory"></param>
+            /// <param name="remoteLinuxPath"></param>
+            public RemoteFileCopyInfo(FileInfo localFile, DirectoryInfo relativeDirectory, string remoteLinuxPath)
+            {
+                localFileName = localFile;
+                
+                // Deal with a relative path trigger
+                if (localFile.Directory.FullName.StartsWith(relativeDirectory.FullName))
+                {
+                    var remoteLinuxPathStub = localFile.Directory.FullName
+                        .Substring(relativeDirectory.FullName.Length)
+                        .Replace(@"\", "/");
+                    if (remoteLinuxPathStub.StartsWith("/"))
+                    {
+                        remoteLinuxPathStub = remoteLinuxPathStub.Substring(1);
+                    }
+                    // Remove the filename - this is a directory we want to record!
+                    remoteLinuxDirectory = $"{remoteLinuxPath}/{remoteLinuxPathStub}";
+                } else
+                {
+                    remoteLinuxDirectory = remoteLinuxPath;
+                }
+            }
 
             public override int GetHashCode()
             {
