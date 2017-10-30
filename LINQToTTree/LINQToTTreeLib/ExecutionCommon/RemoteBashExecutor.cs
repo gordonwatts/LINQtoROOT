@@ -16,7 +16,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     [Export(typeof(IQueryExecutorFactory))]
     public class RemoteBashExecutorFactory : IQueryExecutorFactory
     {
-        public string Scheme => "localbash";
+        public string Scheme => "remotebash";
 
         public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
         {
