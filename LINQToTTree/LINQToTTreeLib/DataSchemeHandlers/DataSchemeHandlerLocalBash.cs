@@ -18,6 +18,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         public string Scheme => "localbash";
 
         /// <summary>
+        /// Return the last modification date of this file
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public DateTime GetUriLastModificationDate(Uri u)
+        {
+            return File.GetLastWriteTime(new UriBuilder(u) { Scheme = "file" }.Uri.LocalPath);
+        }
+
+        /// <summary>
         /// Check to see if the file exists
         /// </summary>
         /// <param name="u"></param>

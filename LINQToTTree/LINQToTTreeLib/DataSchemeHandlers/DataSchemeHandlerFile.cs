@@ -18,6 +18,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         public string Scheme => "file";
 
         /// <summary>
+        /// Return the last date of this file
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public DateTime GetUriLastModificationDate(Uri u)
+        {
+            return File.GetLastWriteTime(u.LocalPath);
+        }
+
+        /// <summary>
         /// Check to make sure the file exists!
         /// </summary>
         /// <param name="u"></param>

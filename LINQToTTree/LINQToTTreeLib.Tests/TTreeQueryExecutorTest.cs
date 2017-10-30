@@ -244,6 +244,11 @@ namespace LINQToTTreeLib
         {
             public string Scheme => "test1to1scheme";
 
+            public DateTime GetUriLastModificationDate(Uri u)
+            {
+                return DateTime.Now;
+            }
+
             public bool GoodUri(Uri u)
             {
                 return true;
@@ -288,6 +293,11 @@ namespace LINQToTTreeLib
         class UriOneToTwoTranslator : IDataFileSchemeHandler
         {
             public string Scheme => "test1to2scheme";
+
+            public DateTime GetUriLastModificationDate(Uri u)
+            {
+                return DateTime.Now;
+            }
 
             public bool GoodUri(Uri u)
             {

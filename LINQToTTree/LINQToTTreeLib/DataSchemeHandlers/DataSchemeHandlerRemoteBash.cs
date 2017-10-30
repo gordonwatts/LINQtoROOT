@@ -17,6 +17,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         public string Scheme => "remotebash";
 
         /// <summary>
+        /// We can't look at the file - so we will pretend it is a "certain" date.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public DateTime GetUriLastModificationDate(Uri u)
+        {
+            return new DateTime(1990, 12, 1);
+        }
+
+        /// <summary>
         /// We don't really have a way of checking fast right now, so we don't.
         /// </summary>
         /// <param name="u"></param>

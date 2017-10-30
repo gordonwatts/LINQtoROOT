@@ -14,6 +14,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         public string Scheme => "proof";
 
         /// <summary>
+        /// Since we can't look at the guy - we ignore it.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public DateTime GetUriLastModificationDate(Uri u)
+        {
+            return new DateTime(1990, 12, 1);
+        }
+
+        /// <summary>
         /// We have no way of checking, so we just return true.
         /// </summary>
         /// <param name="u"></param>

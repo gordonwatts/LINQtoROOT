@@ -64,7 +64,11 @@ namespace LINQToTTreeLib
         /// <param name="inputObjects"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public IQueryResultCacheKey GetKey(Uri[] unsortedRootfiles, string treename, object[] inputObjects, string[] unsortedCrumbs, QueryModel query, bool recheckDates = false)
+        public IQueryResultCacheKey GetKey(Uri[] unsortedRootfiles, string treename, object[] inputObjects,
+            string[] unsortedCrumbs,
+            QueryModel query,
+            bool recheckDates = false,
+            Func<Uri, DateTime> dateChecker = null)
         {
             ///
             /// Quick check to make sure everything is good
@@ -85,15 +89,15 @@ namespace LINQToTTreeLib
             /// 
 
             var rootfiles = (from r in unsortedRootfiles
-                             orderby r.AbsolutePath ascending
+                             orderby r.OriginalString ascending
                              select r).ToArray();
 
             TraceHelpers.TraceInfo(24, "GetKey: Creating big string file name and calculating hash");
-            int fnameLength = rootfiles.Select(f => f.AbsolutePath).Sum(w => w.Length) + 100;
+            int fnameLength = rootfiles.Select(f => f.OriginalString).Sum(w => w.Length) + 100;
             StringBuilder fullSourceName = new StringBuilder(fnameLength);
             foreach (var f in rootfiles)
             {
-                fullSourceName.Append(f.AbsolutePath);
+                fullSourceName.Append(f.OriginalString);
             }
 
             var flieHash = fullSourceName.ToString().GetHashCode();
@@ -152,7 +156,7 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(28, "GetKey: calculating the most recent file dates");
-            result.OldestSourceFileDate = GetRecentFileDates(rootfiles, recheckDates).Max();
+            result.OldestSourceFileDate = GetRecentFileDates(rootfiles, recheckDates, dateChecker).Max();
 
             ///
             /// And now the file that the query should be cached in
@@ -177,10 +181,10 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="rootfiles"></param>
         /// <returns></returns>
-        private IEnumerable<DateTime> GetRecentFileDates(Uri[] rootfiles, bool recheckDates)
+        private IEnumerable<DateTime> GetRecentFileDates(Uri[] rootfiles, bool recheckDates, Func<Uri, DateTime> dateChecker)
         {
             return from f in rootfiles
-                   select ConvertToLastUpdateTime(f, recheckDates);
+                   select ConvertToLastUpdateTime(f, recheckDates, dateChecker);
         }
 
         /// <summary>
@@ -199,39 +203,20 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="u"></param>
         /// <returns></returns>
-        private DateTime ConvertToLastUpdateTime(Uri u, bool attemptDateRecheck)
+        private DateTime ConvertToLastUpdateTime(Uri u, bool attemptDateRecheck, Func<Uri, DateTime> dateChecker)
         {
             if (attemptDateRecheck || !_uriToFileInfo.ContainsKey(u))
             {
-                DateTime result;
-                if (u.Scheme == "file" || u.Scheme == "localwin" || u.Scheme == "localbash")
+                if (dateChecker == null)
                 {
-                    result = File.GetLastWriteTime(u.LocalPath);
+                    throw new InvalidOperationException($"Attempt to look at DateTime for dataset {u.OriginalString}. But no method to check it provided!");
                 }
-                else if (u.Scheme == "remotebash")
-                {
-                    if (u.Host == "")
-                    {
-                        result = File.GetLastWriteTime(u.LocalPath.Substring(1));
-                    } else
-                    {
-                        result = new DateTime(1990, 12, 1);
-                    }
-                }
-                else if (u.Scheme == "proof")
-                {
-                    result = new DateTime(1990, 12, 1);
-                }
-                else
-                {
-                    throw new ArgumentException(string.Format("Do not know how to figure out the date for the URI '{0}'", u.OriginalString));
-                }
+                var result = dateChecker(u);
                 _uriToFileInfo[u] = result;
                 return result;
             }
 
             // Cached! Use it!
-
             return _uriToFileInfo[u];
         }
 

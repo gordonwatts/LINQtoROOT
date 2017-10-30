@@ -27,8 +27,11 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="treename"></param>
         /// <param name="inputObjects"></param>
         /// <param name="query"></param>
+        /// <param name="crumbs"></param>
+        /// <param name="dateChecker">Given a Uri, return a date for it</param>
         /// <returns></returns>
-        IQueryResultCacheKey GetKey(Uri[] rootfiles, string treename, object[] inputObjects, string[] crumbs, QueryModel query, bool recheckDates = false);
+        IQueryResultCacheKey GetKey(Uri[] rootfiles, string treename, object[] inputObjects, string[] crumbs, QueryModel query, bool recheckDates = false,
+            Func<Uri, DateTime> dateChecker = null);
 
         /// <summary>
         /// Have we made this query before? Check the file date, the query string. If there is a match,

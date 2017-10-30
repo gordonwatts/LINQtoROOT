@@ -501,7 +501,8 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(8, "ExecuteScalarAsFuture: Getting cache key");
             {
                 object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
-                key = _cache.GetKey(_exeReq.RootFiles, _exeReq.TreeName, inputs, codeContext.CacheCookies.ToArray(), queryModel);
+                key = _cache.GetKey(_originalRootFiles, _exeReq.TreeName, inputs, codeContext.CacheCookies.ToArray(), queryModel,
+                    dateChecker: u => GetDataHandler(u).GetUriLastModificationDate(u));
             }
             if (!IgnoreQueryCache)
             {

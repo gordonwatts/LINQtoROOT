@@ -18,6 +18,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         public string Scheme => "localwin";
 
         /// <summary>
+        /// When was this file last modified?
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public DateTime GetUriLastModificationDate(Uri u)
+        {
+            return File.GetLastWriteTime(new UriBuilder(u) { Scheme = "file" }.Uri.LocalPath);
+        }
+
+        /// <summary>
         /// Check to make sure the file exists.
         /// </summary>
         /// <param name="u"></param>
