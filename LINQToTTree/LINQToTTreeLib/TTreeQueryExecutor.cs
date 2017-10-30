@@ -607,7 +607,9 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
         }
 
-
+        /// <summary>
+        /// Executing files from multiple sources is not yet supported.
+        /// </summary>
         [Serializable]
         public class MustBeSameExecutorException : NotSupportedException
         {
@@ -619,7 +621,9 @@ namespace LINQToTTreeLib
               System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         }
 
-
+        /// <summary>
+        /// Thrown when we have no way to "execute" file.
+        /// </summary>
         [Serializable]
         public class UnsupportedUriSchemeException : NotSupportedException
         {
