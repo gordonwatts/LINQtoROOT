@@ -24,6 +24,14 @@ namespace TTreeParser.Tests
             SimpleLogging.ResetLogging();
         }
 
+        [TestCleanup]
+        public void CleanUp()
+        {
+            ROOTNET.NTApplication.GetApplications();
+            ROOTNET.NTSystem.gSystem.Load("libRIO");
+            SimpleLogging.ResetLogging();
+        }
+
         /// <summary>
         /// Make sure if the Tree is stupid that we get back something stupid! :-)
         ///</summary>
