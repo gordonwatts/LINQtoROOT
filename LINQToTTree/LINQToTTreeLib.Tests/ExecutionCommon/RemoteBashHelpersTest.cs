@@ -108,13 +108,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             {
                 loc.Directory.Delete(true);
             }
-            loc.Directory.Create();
             loc.Directory.Refresh();
-            if (loc.Exists)
-            {
-                loc.Delete();
-            }
-            loc.Refresh();
 
             var cmds = new StringBuilder();
             cmds.AppendLine("{gSystem->mkdir(\"special\"); TFile *f = TFile::Open(\"special/junk.root\", \"RECREATE\"); exit(0);}");
