@@ -110,11 +110,6 @@ namespace LINQToTTreeLib
                 throw new FileNotFoundException(bld.ToString());
             }
 
-            // The Uri's that come in may not be the ones we actually need to run over. Resolve them.
-            var resolvedRootFiles = rootFiles
-                .SelectMany(u => ResolveDatasetUri(u))
-                .ToArray();
-
             // Make sure the object we are using is correct, and that it has non-null values
             // for the things passed in. We do this now so we don't have to have checks later on.
 
@@ -181,11 +176,26 @@ namespace LINQToTTreeLib
             /// Save the values
             /// 
 
-            _exeReq.RootFiles = resolvedRootFiles;
             _originalRootFiles = rootFiles;
             _exeReq.TreeName = treeName;
             _cintLines = cintLines;
             TraceHelpers.TraceInfo(3, "Done Initializing TTreeQueryExecutor");
+        }
+
+        /// <summary>
+        /// Resolve the ROOT files from our current Uri's to real ones.
+        /// </summary>
+        private void ResolveROOTFiles()
+        {
+            if (_exeReq.RootFiles != null)
+            {
+                return;
+            }
+
+            // The Uri's that come in may not be the ones we actually need to run over. Resolve them.
+            _exeReq.RootFiles = _originalRootFiles
+                .SelectMany(u => ResolveDatasetUri(u))
+                .ToArray();
         }
 
 #pragma warning disable CS0649
@@ -596,6 +606,9 @@ namespace LINQToTTreeLib
         /// </summary>
         internal void ExecuteQueuedQueries()
         {
+            // We now need the actual root files - so resolve them.
+            ResolveROOTFiles();
+
             // Get all the queries together, combined, and ready to run.
             TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
             var combinedInfo = new CombinedGeneratedCode();
