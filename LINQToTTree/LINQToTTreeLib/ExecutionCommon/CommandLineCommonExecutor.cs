@@ -142,7 +142,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("}");
             NormalizeFileForTarget(queryDirectory);
             ExecuteRootScript("RunTSelector", cmds.ToString(), queryDirectory,
-                dumpLine: Environment.CompileDebug ? s => Console.WriteLine(s) : (Action<string>) null,
+                dumpLine: (Environment.CompileDebug || Environment.Verbose) ? s => Console.WriteLine(s) : (Action<string>) null,
                 fetchFiles: new[] { new Uri(resultsFile.FullName) });
 
             // Get back results
@@ -250,9 +250,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public virtual FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
-            Action<string> dumpLine = l => RecordLine(null, l);
+            Action<string> dumpLine = Environment.Verbose
+                ? (Action<string>) (l => RecordLine(null, l))
+                : (Action<string>) (l => { Console.WriteLine(l); RecordLine(null, l); });
+
             // Check the environment
-            MakeSureROOTIsInstalled(dumpLine);
+            MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
 
             // Simple argument checks
             if (rootFiles == null || rootFiles.Length == 0)

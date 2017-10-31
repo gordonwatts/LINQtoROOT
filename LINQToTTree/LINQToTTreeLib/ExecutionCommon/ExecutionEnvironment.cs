@@ -34,6 +34,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         public bool CompileDebug { get; set; }
 
         /// <summary>
+        /// If set, dump info to Console about our running
+        /// </summary>
+        public bool Verbose { get; set; }
+
+        /// <summary>
         /// Break into the debugger just before root's TTree::Process is invoked
         /// </summary>
         /// <remarks>Clearly hard to do when running remotely!</remarks>

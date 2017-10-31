@@ -119,6 +119,15 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Print verbose messges to stdout as we run things
+        /// </summary>
+        public bool Verbose
+        {
+            set { ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).Verbose = value; }
+            get { return ((Provider as DefaultQueryProvider).Executor as TTreeQueryExecutor).Verbose; }
+        }
+
+        /// <summary>
         /// Get/Set flag telling the query processor to re-check the dates of the input file list when deciding
         /// if a cache result is valie... This can
         /// dramatically slow down a run if the files are accross the network (and there are 100's of input files).

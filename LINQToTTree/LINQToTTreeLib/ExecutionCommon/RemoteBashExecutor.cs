@@ -295,6 +295,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             foreach (var f in _filesToBringBack)
             {
                 string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
+                dumpLine?.Invoke($"Copying {linuxPath} -> {f.localFileName.Directory}");
                 connection.Connection.CopyRemoteFileLocally(linuxPath, f.localFileName.Directory, dumpLine);
             }
             _filesToBringBack.Clear();

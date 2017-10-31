@@ -36,6 +36,11 @@ namespace LinqToTTreeInterfacesLib
         bool BreakToDebugger { get; }
 
         /// <summary>
+        /// If set emit verbose messages
+        /// </summary>
+        bool Verbose { get; }
+
+        /// <summary>
         /// Name of the tree we will be loading and processing.
         /// </summary>
         string TreeName { get; }

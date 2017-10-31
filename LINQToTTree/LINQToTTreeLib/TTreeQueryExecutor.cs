@@ -56,6 +56,53 @@ namespace LINQToTTreeLib
         public Uri[] _originalRootFiles = null;
 
         /// <summary>
+        /// Get/Set query cleanup control. If false, the files won't be deleted.
+        /// </summary>
+        public bool CleanupQuery
+        {
+            get { return _exeReq.CleanupQuery; }
+            set { _exeReq.CleanupQuery = value; }
+        }
+
+        /// <summary>
+        /// Compile with full debug infomration when possible.
+        /// </summary>
+        public bool CompileDebug
+        {
+            get { return _exeReq.CompileDebug; }
+            set { _exeReq.CompileDebug = value; }
+        }
+
+        /// <summary>
+        /// Should we dump verbose messages as we process something to Console?
+        /// </summary>
+        public bool Verbose
+        {
+            get { return _exeReq.Verbose; }
+            set { _exeReq.Verbose = value; }
+        }
+
+        /// <summary>
+        /// Get/Set query cache control. If set true then the query cache will be ignored and all quieries will be re-run.
+        /// </summary>
+        public bool IgnoreQueryCache { get; set; }
+
+        /// <summary>
+        /// Break into the debugger just before calling TTree::Process.
+        /// </summary>
+        /// <remarks>The break occurs just before the call to TTree::Process. The C++ code should be loaded at this point and this will allow you to load up the source file and set break points in the generated code.</remarks>
+        public bool BreakToDebugger
+        {
+            get { return _exeReq.BreakToDebugger; }
+            set { _exeReq.BreakToDebugger = value; }
+        }
+
+        /// <summary>
+        /// Statement optimization changes execution order. Use this for debugging, but code will run significantly longer.
+        /// </summary>
+        public bool UseStatementOptimizer { get; set; }
+
+        /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
         /// <param name="rootFiles"></param>
@@ -864,41 +911,6 @@ namespace LINQToTTreeLib
 
             _executorInited = true;
         }
-
-        /// <summary>
-        /// Get/Set query cleanup control. If false, the files won't be deleted.
-        /// </summary>
-        public bool CleanupQuery
-        {
-            get { return _exeReq.CleanupQuery; }
-            set { _exeReq.CleanupQuery = value; }
-        }
-
-        public bool CompileDebug
-        {
-            get { return _exeReq.CompileDebug; }
-            set { _exeReq.CompileDebug = value; }
-        }
-
-        /// <summary>
-        /// Get/Set query cache control. If set true then the query cache will be ignored and all quieries will be re-run.
-        /// </summary>
-        public bool IgnoreQueryCache { get; set; }
-
-        /// <summary>
-        /// Break into the debugger just before calling TTree::Process.
-        /// </summary>
-        /// <remarks>The break occurs just before the call to TTree::Process. The C++ code should be loaded at this point and this will allow you to load up the source file and set break points in the generated code.</remarks>
-        public bool BreakToDebugger
-        {
-            get { return _exeReq.BreakToDebugger; }
-            set { _exeReq.BreakToDebugger = value; }
-        }
-
-        /// <summary>
-        /// Statement optimization changes execution order. Use this for debugging, but code will run significantly longer.
-        /// </summary>
-        public bool UseStatementOptimizer { get; set; }
 
         /// <summary>
         /// Do the work of translating the code into C++
