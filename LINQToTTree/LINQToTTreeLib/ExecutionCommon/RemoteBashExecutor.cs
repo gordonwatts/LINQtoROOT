@@ -74,7 +74,8 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </remarks>
         internal override void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false,
             IEnumerable<Uri> extraFiles = null,
-            IEnumerable<Uri> receiveFiles = null)
+            IEnumerable<Uri> receiveFiles = null,
+            TimeSpan? timeout = null)
         {
             // First, create the file for output. This has to be done in Linux line endings (as we assume we are
             // going to a linux machine for this).
@@ -117,7 +118,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 try
                 {
                     sshConnection.Connection.ExecuteLinuxCommand($"cd {linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
-                    sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name}", processLine: s => RecordLine(logForError, s, dumpLine));
+                    sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name}", processLine: s => RecordLine(logForError, s, dumpLine),
+                        secondsTimeout: timeout.HasValue ? (int) timeout.Value.TotalSeconds : 60*60);
                 } catch (Exception e)
                 {
                     throw new RemoteBashCommandFailureException($"Failed to execute script: {logForError}", e);

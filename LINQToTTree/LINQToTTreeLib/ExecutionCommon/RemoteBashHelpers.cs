@@ -15,7 +15,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="tempDirectory"></param>
         /// <param name="dumpLine">Called with each output line</param>
         public static void RunROOTInBash(string prefix, string commands, DirectoryInfo tempDirectory, Action<string> dumpLine = null, bool verbose = false,
-            IEnumerable<FileInfo> filesToSend = null, IEnumerable<FileInfo> filesToReceive = null)
+            IEnumerable<FileInfo> filesToSend = null, IEnumerable<FileInfo> filesToReceive = null, TimeSpan? timeout = null)
         {
             // Get ROOT installed if it hasn't been already.
             var le = BuildExecutor();
@@ -32,7 +32,8 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 // Run in ROOT.
                 le.ExecuteRootScript(prefix, tcommands, tempDirectory, dumpLine, verbose,
-                    extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)));
+                    extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)),
+                    timeout: timeout);
 
                 return (object)null;
             }, dumpLine);

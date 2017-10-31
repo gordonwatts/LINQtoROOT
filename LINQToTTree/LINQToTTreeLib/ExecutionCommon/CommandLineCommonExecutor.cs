@@ -636,7 +636,8 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="cmds"></param>
         /// <param name="extraFiles">List of extra files that might be needed.</param>
         /// <param name="fetchFiles">List of files that should be fetched. Assuemd to be written in the local area</param>
-        internal virtual void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null)
+        internal virtual void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null,
+            TimeSpan? timeout = null)
         {
             // Dump the script
             var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");
@@ -673,7 +674,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Wait for it to end.
             if (verbose) dumpLine?.Invoke("Waiting for process to exit");
-            proc.WaitForExit();
+            proc.WaitForExit(timeout.HasValue ? (int) timeout.Value.TotalMilliseconds : int.MaxValue);
             if (verbose) dumpLine?.Invoke($"Process result is {proc.ExitCode}.");
             PostProcessExecution(resultData, context);
 
