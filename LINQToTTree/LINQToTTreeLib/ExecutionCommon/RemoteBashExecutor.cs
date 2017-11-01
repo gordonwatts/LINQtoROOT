@@ -36,9 +36,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         protected override string ExecutorName => "RemoteBashExecutor";
 
         /// <summary>
+        /// Alter to change the default setting for the root version number
+        /// </summary>
+        private const string DefaultROOTVersionString = "6.10.06-x86_64-slc6-gcc62-opt";
+
+        /// <summary>
         /// The version number for root
         /// </summary>
-        public static string ROOTVersionNumber { get; set; } = "6.10.06-x86_64-slc6-gcc62-opt";
+        public static string ROOTVersionNumber { get; set; } = DefaultROOTVersionString;
 
         /// <summary>
         /// Reset all of our internal variables. Used for
@@ -46,6 +51,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         internal static void ResetRemoteBashExecutor()
         {
+            ROOTVersionNumber = DefaultROOTVersionString;
         }
 
         /// <summary>
