@@ -226,7 +226,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             var logFile = new FileInfo(macroFile.FullName + "-log");
 
             // Run root with the path as an argument.
-            startInfo.Arguments = $"-c \". {GetROOTBinaryPath()}/thisroot.sh; root -b -q {macroFile.ConvertToBash()} &> {logFile.ConvertToBash()}\"";
+            startInfo.Arguments = $"-c \". {GetROOTBinaryPath()}/thisroot.sh; root -l -b -q {macroFile.ConvertToBash()} &> {logFile.ConvertToBash()}\"";
 
             // Get the start info stuff configured properly
             startInfo.LoadUserProfile = true;
