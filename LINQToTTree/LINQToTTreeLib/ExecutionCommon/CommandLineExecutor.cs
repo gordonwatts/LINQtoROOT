@@ -61,7 +61,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Configure it to run directly.
             startInfo.FileName = rootPath;
-            startInfo.Arguments = $"-b -q {rootMacroFilePath}";
+            startInfo.Arguments = $"-l -b -q {rootMacroFilePath}";
 
             return null;
         }
