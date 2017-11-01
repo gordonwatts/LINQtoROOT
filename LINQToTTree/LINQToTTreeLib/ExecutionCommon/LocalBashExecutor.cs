@@ -119,7 +119,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         internal override void InstallROOT(Action<string> dumpLine, bool verbose)
         {
             var cmds = new StringBuilder();
-            cmds.Append($"mkdir {ROOTInstallArea}\n");
+            cmds.Append($"mkdir -p {ROOTInstallArea}\n");
             cmds.Append($"cd {ROOTInstallArea}\n");
             cmds.Append($"mkdir {ROOTVersionNumber}\n");
             cmds.Append($"cd {ROOTVersionNumber}\n");

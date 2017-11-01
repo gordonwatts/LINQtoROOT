@@ -268,7 +268,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     _linuxTempDir = remoteDirectory;
                     sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
-                    sshConnection.Connection.ExecuteLinuxCommand($"mkdir {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    sshConnection.Connection.ExecuteLinuxCommand($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                 }
                 dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir}");
 
