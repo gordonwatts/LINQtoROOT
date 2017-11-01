@@ -667,6 +667,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
             var context = ConfigureProcessExecution(proc.StartInfo, cmdFile);
 

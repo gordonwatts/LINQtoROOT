@@ -160,11 +160,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.ErrorDialog = false;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.WorkingDirectory = tmpDir.FullName;
-
-            // Get the start info stuff configured properly
-            proc.StartInfo.LoadUserProfile = true;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.UseShellExecute = true;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             proc.StartInfo.FileName = FindBash();
