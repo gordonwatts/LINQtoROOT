@@ -18,7 +18,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             IEnumerable<FileInfo> filesToSend = null, IEnumerable<FileInfo> filesToReceive = null, TimeSpan? timeout = null)
         {
             // Get ROOT installed if it hasn't been already.
-            var le = BuildExecutor();
+            var le = BuildExecutor(verbose);
 
             le.ExecuteRemoteWithTemp($"/tmp/{tempDirectory.Name}", connection =>
             {
@@ -43,11 +43,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Build a local executor
         /// </summary>
         /// <returns></returns>
-        private static RemoteBashExecutor BuildExecutor()
+        private static RemoteBashExecutor BuildExecutor(bool verbose)
         {
             return new RemoteBashExecutor
             {
-                Environment = new ExecutionEnvironment() { CompileDebug = false }
+                Environment = new ExecutionEnvironment() { CompileDebug = false, Verbose = verbose }
             };
         }
 
@@ -58,7 +58,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="commands">Bash script, using \n as the seperator</param>
         public static void RunBashCommand(string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
         {
-            var le = BuildExecutor();
+            var le = BuildExecutor(verbose);
             le.ExecuteBashScript(fnameRoot, commands, dumpLine, verbose);
         }
     }

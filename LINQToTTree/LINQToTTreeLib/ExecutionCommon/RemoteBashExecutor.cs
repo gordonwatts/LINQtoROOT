@@ -417,9 +417,14 @@ namespace LINQToTTreeLib.ExecutionCommon
                     var logForError = new StringBuilder();
                     try
                     {
+                        // Don't dump setup unless the user really wants to see it!
+                        var localdumper = Environment.Verbose | Environment.CompileDebug
+                            ? dumpLine
+                            : (Action<string>)null;
+
                         foreach (var line in Machine.ConfigureLines)
                         {
-                            _connection.Connection.ExecuteLinuxCommand(line, processLine: s => RecordLine(logForError, s, dumpLine));
+                            _connection.Connection.ExecuteLinuxCommand(line, processLine: s => RecordLine(logForError, s, localdumper));
                         }
                     } catch (Exception e)
                     {

@@ -11,6 +11,11 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
     [TestClass]
     public class RemoteBashHelpersTest
     {
+        /// <summary>
+        /// This string should be present in the setupATLAS dump
+        /// </summary>
+        private const string LoginScreenMagicText = "show this menu";
+
         [TestInitialize]
         public void Setup()
         {
@@ -51,6 +56,35 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()));
 
             Assert.AreNotEqual(0, results.Count);
+        }
+
+        [TestMethod]
+        public void CheckForNoLoginInfo()
+        {
+            var cmds = new StringBuilder();
+            cmds.AppendLine("{TH1F *h = new TH1F(\"hi\", \"there\", 10, 0.0, 10.0);");
+            cmds.AppendLine("h->Print();}");
+
+            var results = new List<string>();
+            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()), dumpLine: s => results.Add(s));
+
+            Assert.AreNotEqual(0, results.Count);
+            Assert.IsFalse(results.Where(l => l.Contains(LoginScreenMagicText)).Any());
+        }
+
+        [TestMethod]
+        public void CheckForLoginInfo()
+        {
+            var cmds = new StringBuilder();
+            cmds.AppendLine("{TH1F *h = new TH1F(\"hi\", \"there\", 10, 0.0, 10.0);");
+            cmds.AppendLine("h->Print();}");
+
+            var results = new List<string>();
+            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
+                dumpLine: s => results.Add(s), verbose: true);
+
+            Assert.AreNotEqual(0, results.Count);
+            Assert.IsTrue(results.Where(l => l.Contains(LoginScreenMagicText)).Any());
         }
 
         [TestMethod]
