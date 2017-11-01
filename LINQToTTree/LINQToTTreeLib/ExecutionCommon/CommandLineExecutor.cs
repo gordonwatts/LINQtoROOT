@@ -107,13 +107,5 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             throw new InvalidOperationException("ROOT not found in the PATH - but in order to run this code it must have loaded root libraries from the PATH - so this is impossible!");
         }
-
-        /// <summary>
-        /// Called after the command has run so we can do any required clean up.
-        /// </summary>
-        /// <param name="context"></param>
-        protected override void PostProcessExecution(StringBuilder resultData, object context)
-        {
-        }
     }
 }

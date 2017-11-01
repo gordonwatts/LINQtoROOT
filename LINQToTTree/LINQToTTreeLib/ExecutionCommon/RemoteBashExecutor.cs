@@ -200,7 +200,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             Action<string> dumpLine = l =>
             {
-                RecordLine(null, l);
+                if (Environment.CompileDebug)
+                {
+                    Console.WriteLine(l);
+                }
             };
             return ExecuteRemoteWithTemp("/tmp/proxygen", SSHConnection =>
             {
@@ -217,7 +220,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public override IDictionary<string, NTObject> Execute(FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
-            Action<string> dumper = Environment.CompileDebug ? s => Console.WriteLine(s) : (Action<string>)null;
+            Action<string> dumper = l =>
+            {
+                if (Environment.CompileDebug)
+                {
+                    Console.WriteLine(l);
+                }
+            };
             return ExecuteRemoteWithTemp($"/tmp/{queryDirectory.Name}", SSHConnection =>
             {
                 // Load up extra files that need to be shipped over.
@@ -253,8 +262,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 // Get the temp directory setup and going
                 if (linuxTempDir != oldLinuxTempDir)
                 {
-                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {linuxTempDir}", processLine: dumpLine);
-                    sshConnection.Connection.ExecuteLinuxCommand($"mkdir {linuxTempDir}", processLine: dumpLine);
+                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    sshConnection.Connection.ExecuteLinuxCommand($"mkdir {linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                 }
                 dumpLine?.Invoke($"Executing commands in new directory {linuxTempDir}");
 
@@ -264,7 +273,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             {
                 if (linuxTempDir != oldLinuxTempDir)
                 {
-                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {linuxTempDir}", processLine: dumpLine);
+                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                     linuxTempDir = oldLinuxTempDir;
                 }
             }

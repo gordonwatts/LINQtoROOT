@@ -89,13 +89,10 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                if (verbose) dumpLine?.Invoke("Testing for ROOT");
                 ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
-                if (verbose) dumpLine?.Invoke("ROOT is present in the system");
                 return true;
             }
             catch { }
-            if (verbose) dumpLine?.Invoke("ROOT is NOT present in the system");
             return false;
         }
 
@@ -133,7 +130,6 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                if (verbose) { dumpLine?.Invoke("About to run the download ROOT command"); }
                 ExecuteBashScript("downlaodroot", cmds.ToString(), dumpLine, verbose);
             } catch (Exception e)
             {
@@ -174,27 +170,22 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.FileName = FindBash();
             proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {NormalizeFileForTarget(logFile)}";
 
-            if (verbose) { dumpLine?.Invoke($"About to execute {proc.StartInfo.FileName} with arguments '{proc.StartInfo.Arguments}'."); }
-
             // Start it.
             var resultData = new StringBuilder();
-            proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
-            proc.OutputDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
+            proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
+            proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
 
             proc.Start();
             //proc.BeginOutputReadLine();
             //proc.BeginErrorReadLine();
 
             // Wait for it to end.
-            if (verbose) { dumpLine?.Invoke("Waiting for the command to finish"); }
             proc.WaitForExit();
-            if (verbose) { dumpLine?.Invoke($"Command finished with exit code of {proc.ExitCode}."); }
 
-            dumpLine?.Invoke("Now looking at log file");
             // Now, pick up the file
             foreach (var line in logFile.EnumerateTextFile())
             {
-                RecordLine(resultData, line);
+                RecordLine(resultData, line, dumpLine);
             }
 
             // Make sure the result is "good"
@@ -259,12 +250,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Called to do clean up.
         /// </summary>
         /// <param name="context"></param>
-        protected override void PostProcessExecution(StringBuilder resultData, object context)
+        protected override void PostProcessExecution(StringBuilder resultData, object context, Action<string> dumpLine = null)
         {
             var logFile = context as FileInfo;
 
             // Now, just dump it!
-            Console.WriteLine("going to dump the file now");
             Polly.Policy
                 .Handle<IOException>()
                 .WaitAndRetry(new[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200) })
@@ -272,7 +262,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     foreach (var line in logFile.EnumerateTextFile())
                     {
-                        RecordLine(resultData, line);
+                        RecordLine(resultData, line, dumpLine);
                     }
                 });
         }

@@ -83,7 +83,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         private void RecordLineUnprotected(StringBuilder resultData, string line)
         {
             resultData?.AppendLine(line);
-            if (Environment.CompileDebug)
+            if (Environment.CompileDebug | Environment.Verbose)
             {
                 Console.WriteLine(line);
             }
@@ -142,7 +142,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("}");
             NormalizeFileForTarget(queryDirectory);
             ExecuteRootScript("RunTSelector", cmds.ToString(), queryDirectory,
-                dumpLine: (Environment.CompileDebug || Environment.Verbose) ? s => Console.WriteLine(s) : (Action<string>) null,
                 fetchFiles: new[] { new Uri(resultsFile.FullName) });
 
             // Get back results
@@ -251,8 +250,8 @@ namespace LINQToTTreeLib.ExecutionCommon
         public virtual FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             Action<string> dumpLine = Environment.Verbose
-                ? (Action<string>) (l => RecordLine(null, l))
-                : (Action<string>) (l => { Console.WriteLine(l); RecordLine(null, l); });
+                ? l => Console.WriteLine(l)
+                : (Action<string>)null;
 
             // Check the environment
             MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
@@ -665,8 +664,8 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Start it.
             var resultData = new StringBuilder();
-            proc.ErrorDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
-            proc.OutputDataReceived += (sender, e) => { RecordLine(resultData, e.Data); dumpLine?.Invoke(e.Data); };
+            proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
+            proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
 
             proc.Start();
             proc.BeginOutputReadLine();
@@ -676,7 +675,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (verbose) dumpLine?.Invoke("Waiting for process to exit");
             proc.WaitForExit(timeout.HasValue ? (int) timeout.Value.TotalMilliseconds : int.MaxValue);
             if (verbose) dumpLine?.Invoke($"Process result is {proc.ExitCode}.");
-            PostProcessExecution(resultData, context);
+            PostProcessExecution(resultData, context, dumpLine);
 
             // Make sure the result is "good"
             if (proc.ExitCode != 0)
@@ -690,7 +689,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="proc"></param>
         /// <param name="cmdFile"></param>
-        virtual protected void PostProcessExecution(StringBuilder resultData, object context)
+        virtual protected void PostProcessExecution(StringBuilder resultData, object context, Action<string> dumpLine = null)
         {
         }
 
