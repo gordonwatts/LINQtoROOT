@@ -58,53 +58,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             Assert.AreEqual(20, result);
         }
 
-        [TestMethod]
-        [DeploymentItem("testmachine.txt")]
-        public void RemoteBashCmdLineCountOperatorWithRemoteFile()
-        {
-            // Put a file over on the remote machine, and then remove it locally, so it can't be sent over.
-            var rootFileLocal = TestUtils.CreateFileOfInt(20);
-            var rootFileRemote = MoveToBash(rootFileLocal, File.ReadLines("testmachine.txt").First(), "/tmp");
-            var localFile = new FileInfo(rootFileLocal.LocalPath);
-            localFile.Delete();
-
-            // Get a simple query we can "play" with
-            var q = new QueriableDummy<TestNtupe>();
-            var dude = q.Count();
-            var query = DummyQueryExectuor.LastQueryModel;
-
-            // Watch to see if the file is copied over.
-            var fname = Path.GetFileName(rootFileLocal.LocalPath);
-            var listOfBadLines = new List<string>();
-            RemoteBashExecutor.AddLogEndpoint(l =>
-            {
-                if (l.Contains(fname))
-                {
-                    listOfBadLines.Add(l);
-                }
-            });
-
-            // Next, for this machine, create a pattern that says this file doesn't need to be copied, and where it is located.
-            var m = RemoteBashExecutor.GetMachineInfo("tev.machines");
-            m.AddFileNoCopyPattern(rootFileLocal.LocalPath, $"/tmp/{fname}");
-
-            // Ok, now we can actually see if we can make it "go".
-            var exe = new TTreeQueryExecutor(new[] { rootFileRemote }, "dude", typeof(ntuple), typeof(TestNtupe));
-            exe.CompileDebug = true;
-            int result = exe.ExecuteScalar<int>(query);
-            Assert.AreEqual(20, result);
-
-            // Check that there are no or few bad lines.
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Lines with the root file we saw:");
-            foreach (var l in listOfBadLines)
-            {
-                Console.WriteLine(l);
-            }
-            Assert.AreEqual(0, listOfBadLines.Count);
-        }
-
         /// <summary>
         /// Move a file to the remote machine
         /// </summary>

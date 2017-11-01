@@ -529,15 +529,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 }
             }
 
-            // See if this file matches a remote file.
-            var f = new FileInfo(finfo.LocalPath.StartsWith("/") ? finfo.LocalPath.Substring(1) : finfo.LocalPath);
-            var remoteFile = MatchToRemoteFile(f.FullName);
-            if (remoteFile != null)
-            {
-                return remoteFile;
-            }
-
             // See if the file exists or not locally.
+            var f = new FileInfo(finfo.LocalPath.StartsWith("/") ? finfo.LocalPath.Substring(1) : finfo.LocalPath);
             if (f.Exists)
             {
                 // Push it to the remote host.
@@ -554,18 +547,6 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // It will just be in the local directory where we live.
             return $"{linuxTempDir}/{f.Name}";
-        }
-
-        /// <summary>
-        /// Look at the machine definition to see if this makes sense or not.
-        /// </summary>
-        /// <param name="localPath"></param>
-        /// <returns></returns>
-        private string MatchToRemoteFile(string localPath)
-        {
-            return Machine.Matches
-                .Select(m => m.ReplaceWithThis(localPath))
-                .FirstOrDefault();
         }
 
         /// <summary>
@@ -625,47 +606,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             /// the remote machine to be ready to run ROOT.
             /// </summary>
             public string[] ConfigureLines;
-
-            public class FileMatchPattern
-            {
-                private string _matchString;
-                private string _replaceString;
-
-                public FileMatchPattern (string matchString, string replaceString)
-                {
-                    _matchString = matchString;
-                    _replaceString = replaceString;
-                }
-
-                /// <summary>
-                /// Return the remote file location or null if we don't match
-                /// </summary>
-                /// <param name="localFile"></param>
-                /// <returns></returns>
-                public string ReplaceWithThis (string localFile)
-                {
-                    if (localFile == _matchString)
-                    {
-                        return _replaceString;
-                    }
-                    return null;
-                }
-            }
-
-            /// <summary>
-            /// List of matches
-            /// </summary>
-            public List<FileMatchPattern> Matches { get; } = new List<FileMatchPattern>();
-
-            /// <summary>
-            /// Add a pattern for a file that isn't coiped over to the remote machine
-            /// </summary>
-            /// <param name="localPath">Match string on this local machine we want to conver</param>
-            /// <param name="remotePath">The location on the remote host that should get returned</param>
-            internal void AddFileNoCopyPattern(string localPath, string remotePath)
-            {
-                Matches.Add(new FileMatchPattern(localPath, remotePath));
-            }
         }
 
         static MachineConfig _s_global_config = null;
