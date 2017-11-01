@@ -57,8 +57,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Place holder for a temp directory
         /// </summary>
-        string linuxTempDir = null;
+        private string _linuxTempDir = null;
 
+        /// <summary>
+        /// Track the command phase - so we can see when we need to keep it the same or change it.
+        /// </summary>
+        private string _currentLinuxPhase = "";
 
         /// <summary>
         /// Blast this out when we fail to execute some sort of command.
@@ -106,21 +110,21 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Send the file to the remote host
-            ExecuteRemoteWithTemp($"/tmp/{tmpDir.Name}", sshConnection => {
+            ExecuteRemoteWithTemp(prefix, sshConnection => {
                 // Files we want to send or recv first.
-                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = linuxTempDir });
+                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = _linuxTempDir });
                 if (extraFiles != null)
                 {
                     foreach (var f in extraFiles)
                     {
-                        _filesToCopyOver.Add(new RemoteFileCopyInfo(new FileInfo(f.LocalPath), tmpDir, linuxTempDir));
+                        _filesToCopyOver.Add(new RemoteFileCopyInfo(new FileInfo(f.LocalPath), tmpDir, _linuxTempDir));
                     }
                 }
                 if (receiveFiles != null)
                 {
                     foreach (var f in receiveFiles)
                     {
-                        _filesToBringBack.Add(new RemoteFileCopyInfo(new FileInfo(f.LocalPath), tmpDir, linuxTempDir));
+                        _filesToBringBack.Add(new RemoteFileCopyInfo(new FileInfo(f.LocalPath), tmpDir, _linuxTempDir));
                     }
                 }
 
@@ -131,7 +135,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 // Next, lets see if we can't run the file against root.
                 try
                 {
-                    sshConnection.Connection.ExecuteLinuxCommand($"cd {linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
+                    sshConnection.Connection.ExecuteLinuxCommand($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
                     sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name}", processLine: s => RecordLine(logForError, s, dumpLine),
                         secondsTimeout: timeout.HasValue ? (int) timeout.Value.TotalSeconds : 60*60);
                 } catch (Exception e)
@@ -183,17 +187,17 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Now, run with the remote stuff setup.
-            ExecuteRemoteWithTemp($"/tmp/{fnameRoot}", connection =>
+            ExecuteRemoteWithTemp(fnameRoot, connection =>
             {
                 // Queue up files to send and recv
-                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = linuxTempDir });
+                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = _linuxTempDir });
 
                 // Run, pushing and pulling files we need
                 SendAllFiles(connection, dumpLine);
                 var logForError = new StringBuilder();
                 try
                 {
-                    connection.Connection.ExecuteLinuxCommand($"bash {linuxTempDir}/{scriptFile.Name}", s => RecordLine(logForError, s, dumpLine));
+                    connection.Connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name}", s => RecordLine(logForError, s, dumpLine));
                 } catch (Exception e)
                 {
                     throw new RemoteBashCommandFailureException($"Failed to execute bash script: {logForError.ToString()}.", e);
@@ -212,7 +216,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         protected override FileInfo GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine = null)
         {
-            return ExecuteRemoteWithTemp("/tmp/proxygen", SSHConnection =>
+            return ExecuteRemoteWithTemp("Proxy", SSHConnection =>
             {
                 return base.GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
             }, dumpLine);
@@ -234,12 +238,12 @@ namespace LINQToTTreeLib.ExecutionCommon
                     Console.WriteLine(l);
                 }
             };
-            return ExecuteRemoteWithTemp($"/tmp/{queryDirectory.Name}", SSHConnection =>
+            return ExecuteRemoteWithTemp($"Query", SSHConnection =>
             {
                 // Load up extra files that need to be shipped over.
                 foreach (var f in Environment.ExtraComponentFiles)
                 {
-                    _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = linuxTempDir });
+                    _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = _linuxTempDir });
                 }
 
                 return base.Execute(queryFile, queryDirectory, varsToTransfer);
@@ -252,36 +256,41 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="tempDir"></param>
         /// <param name="act"></param>
         /// <param name="dumpLine"></param>
-        internal T ExecuteRemoteWithTemp<T>(string tempDir, Func<SSHTunneledConnection, T> act, Action<string> dumpLine = null)
+        internal T ExecuteRemoteWithTemp<T>(string phase, Func<SSHTunneledConnection, T> act, Action<string> dumpLine = null)
         {
-            // Protection against stupid mistakes
-            if (!tempDir.StartsWith("/tmp"))
+            if (phase.Contains("/") || phase.Contains(" "))
             {
-                throw new InvalidOperationException($"Trying to execute linux commands in a place other than /tmp: '{tempDir}'.");
+                throw new InvalidOperationException($"Phase can't contain directory specications or spaces: '{phase}'");
             }
+
+            // Build the temp directory
+            var remoteDirectory = $"/tmp/{System.Environment.MachineName}/{phase}.{Guid.NewGuid().ToString()}";
 
             // Make the connection, and create the directory.
             var sshConnection = MakeSSHConnection(dumpLine);
-            var oldLinuxTempDir = linuxTempDir;
-            linuxTempDir = tempDir;
+            var oldLinuxTempDir = _linuxTempDir;
+            var oldLinuxPhase = _currentLinuxPhase;
+            _currentLinuxPhase = phase;
             try
             {
                 // Get the temp directory setup and going
-                if (linuxTempDir != oldLinuxTempDir)
+                if (_currentLinuxPhase != oldLinuxPhase)
                 {
-                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
-                    sshConnection.Connection.ExecuteLinuxCommand($"mkdir {linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    _linuxTempDir = remoteDirectory;
+                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    sshConnection.Connection.ExecuteLinuxCommand($"mkdir {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                 }
-                dumpLine?.Invoke($"Executing commands in new directory {linuxTempDir}");
+                dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir}");
 
                 return act(sshConnection);
             }
             finally
             {
-                if (linuxTempDir != oldLinuxTempDir)
+                if (_currentLinuxPhase != oldLinuxPhase)
                 {
-                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
-                    linuxTempDir = oldLinuxTempDir;
+                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    _linuxTempDir = oldLinuxTempDir;
+                    _currentLinuxPhase = oldLinuxPhase;
                 }
             }
         }
@@ -540,19 +549,19 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (f.Exists)
             {
                 // Push it to the remote host.
-                if (linuxTempDir == null)
+                if (_linuxTempDir == null)
                 {
                     throw new InvalidOperationException($"Attempt to copy over file {f.Name} when we aren't in the middle of an operation!");
                 }
-                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = linuxTempDir });
+                _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = _linuxTempDir });
             } else
             {
                 // Perhaps it doesn't exist because we want to copy it back here?
-                _filesToBringBack.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(finfo.LocalPath), remoteLinuxDirectory = linuxTempDir});
+                _filesToBringBack.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(finfo.LocalPath), remoteLinuxDirectory = _linuxTempDir});
             }
 
             // It will just be in the local directory where we live.
-            return $"{linuxTempDir}/{f.Name}";
+            return $"{_linuxTempDir}/{f.Name}";
         }
 
         /// <summary>
@@ -568,10 +577,10 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var c = MakeSSHConnection();
                 foreach (var f in finfo.EnumerateFiles().Where(sf => goodExtensiosn.Contains(sf.Extension.ToLower())))
                 {
-                    _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = linuxTempDir });
+                    _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = _linuxTempDir });
                 }
             }
-            return linuxTempDir;
+            return _linuxTempDir;
         }
 
         /// <summary>

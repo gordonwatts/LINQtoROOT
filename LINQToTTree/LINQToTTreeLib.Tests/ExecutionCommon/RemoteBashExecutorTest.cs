@@ -36,12 +36,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void ROOTNotInstalledTestMethod()
-        {
-            Assert.Inconclusive("Fail to install ROOT and catch the right exception");
-        }
-
-        [TestMethod]
         public void RemoteBashCmdLineCountOperator()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);

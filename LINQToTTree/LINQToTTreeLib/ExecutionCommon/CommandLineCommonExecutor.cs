@@ -141,7 +141,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("exit(0);");
             cmds.AppendLine("}");
             NormalizeFileForTarget(queryDirectory);
-            ExecuteRootScript("RunTSelector", cmds.ToString(), queryDirectory,
+            ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
                 fetchFiles: new[] { new Uri(resultsFile.FullName) });
 
             // Get back results
@@ -299,7 +299,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Run the commands
             var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
-            ExecuteRootScript("proxy", cmds.ToString(), queryDirectory, dumpLine,
+            ExecuteRootScript("Proxy", cmds.ToString(), queryDirectory, dumpLine,
                 extraFiles: new[] { new Uri(fname) },
                 fetchFiles: new[] { new Uri(header.FullName) });
 
