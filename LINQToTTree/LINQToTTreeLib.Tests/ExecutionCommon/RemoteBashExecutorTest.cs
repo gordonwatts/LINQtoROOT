@@ -163,12 +163,11 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        //[ExpectedException(typeof(RemoteBashExecutor.FailedToInstallROOTException))]
+        [ExpectedException(typeof(RemoteBashExecutor.ROOTCantBeInstalledRemotelyException))]
         public void RemoteBashNoROOTFound()
         {
-            Assert.Inconclusive("Have to figure uot how to do the root versio number");
             // This should cause a hard fail.
-            //RemoteBashExecutor.ROOTVersionNumber = "22322";
+            RemoteBashExecutor.ROOTVersionNumber = "22322";
 
             // Set it up to look for something else.
 

@@ -30,7 +30,15 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// </summary>
     class RemoteBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
+        /// <summary>
+        /// Return the executor name to help with error messages.
+        /// </summary>
         protected override string ExecutorName => "RemoteBashExecutor";
+
+        /// <summary>
+        /// The version number for root
+        /// </summary>
+        public static string ROOTVersionNumber { get; set; } = "6.10.06-x86_64-slc6-gcc62-opt";
 
         /// <summary>
         /// Reset all of our internal variables. Used for
@@ -196,18 +204,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        public override FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        protected override FileInfo GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine = null)
         {
-            Action<string> dumpLine = l =>
-            {
-                if (Environment.CompileDebug)
-                {
-                    Console.WriteLine(l);
-                }
-            };
             return ExecuteRemoteWithTemp("/tmp/proxygen", SSHConnection =>
             {
-                return base.GenerateProxyFile(rootFiles, treeName, queryDirectory);
+                return base.GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
             }, dumpLine);
         }
 
@@ -424,7 +425,8 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                         foreach (var line in Machine.ConfigureLines)
                         {
-                            _connection.Connection.ExecuteLinuxCommand(line, processLine: s => RecordLine(logForError, s, localdumper));
+                            var rep = line.Replace("ROOTVersionNumber", ROOTVersionNumber);
+                            _connection.Connection.ExecuteLinuxCommand(rep, processLine: s => RecordLine(logForError, s, localdumper));
                         }
                     } catch (Exception e)
                     {
@@ -601,7 +603,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             try
             {
                 ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
-            } catch (ArgumentOutOfRangeException)
+            } catch (RemoteBashCommandFailureException e) when (e.Message.Contains("version for root"))
             {
                 return false;
             }
@@ -679,7 +681,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 _s_global_config = new MachineConfig()
                 {
                     RemoteSSHConnectionString = "gwatts@tev01.phys.washington.edu",
-                    ConfigureLines = new[] { "setupATLAS", "lsetup root" }
+                    ConfigureLines = new[] { "setupATLAS", $"lsetup \"root ROOTVersionNumber\"" }
                 };
             }
             return _s_global_config;

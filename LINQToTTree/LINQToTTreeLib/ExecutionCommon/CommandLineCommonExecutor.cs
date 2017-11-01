@@ -247,7 +247,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        public virtual FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             Action<string> dumpLine = Environment.Verbose
                 ? l => Console.WriteLine(l)
@@ -256,6 +256,20 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Check the environment
             MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
 
+            // Generate the proxy.
+            return GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
+        }
+
+        /// <summary>
+        /// Generate the proxy. We are assured that ROOT exists on the remote system at this point.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <param name="treeName"></param>
+        /// <param name="queryDirectory"></param>
+        /// <param name="dumpLine"></param>
+        /// <returns></returns>
+        protected virtual FileInfo GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine)
+        {
             // Simple argument checks
             if (rootFiles == null || rootFiles.Length == 0)
             {
@@ -286,8 +300,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Run the commands
             var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
             ExecuteRootScript("proxy", cmds.ToString(), queryDirectory, dumpLine,
-                extraFiles: new[] { new Uri(fname)},
-                fetchFiles: new[] { new Uri(header.FullName)});
+                extraFiles: new[] { new Uri(fname) },
+                fetchFiles: new[] { new Uri(header.FullName) });
 
             // Return the file.
             if (!header.Exists)
@@ -296,7 +310,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
             return header;
         }
-
 
         [Serializable]
         public class CantFindROOTException : Exception
