@@ -525,8 +525,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             {
                 if (!finfo.AbsolutePath.Contains(":"))
                 {
-                    // TODO: with new version of AtlasSSH we can remove this line.
-                    return finfo.AbsolutePath.Replace("//", "/");
+                    return finfo.AbsolutePath;
                 }
             }
 
