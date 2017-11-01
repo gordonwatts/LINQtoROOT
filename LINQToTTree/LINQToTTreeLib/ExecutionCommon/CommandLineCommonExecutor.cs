@@ -282,9 +282,9 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Commands to generate a proxy
             var cmds = new StringBuilder();
-            var rootFilePath = NormalizeFileForTarget(rootFiles.First());
+            var rootFilePath = rootFiles.First();
             cmds.AppendLine("{");
-            cmds.AppendLine($"TFile *f = TFile::Open(\"{rootFilePath}\", \"READ\");");
+            cmds.AppendLine($"TFile *f = TFile::Open(\"<><>{rootFilePath.OriginalString}<><>\", \"READ\");");
             cmds.AppendLine($"TTree *t = (TTree*) f->Get(\"{treeName}\");");
             cmds.AppendLine("t->MakeProxy(\"runquery\", \"junk.C\", 0, \"nohist\");");
             cmds.AppendLine("}");
@@ -651,12 +651,15 @@ namespace LINQToTTreeLib.ExecutionCommon
         internal virtual void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null,
             TimeSpan? timeout = null)
         {
+            // Parse the commands for replacements
+            var tcommands = ReWritePathsInQuery(cmds);
+
             // Dump the script
             var cmdFile = Path.Combine(tmpDir.FullName, $"{prefix}.C");
             using (var writer = File.CreateText(cmdFile))
             {
                 writer.WriteLine($"void {prefix}() {{");
-                writer.Write(cmds);
+                writer.Write(tcommands);
                 writer.WriteLine("}");
             }
 

@@ -95,22 +95,27 @@ namespace LINQToTTreeLib.ExecutionCommon
             IEnumerable<Uri> receiveFiles = null,
             TimeSpan? timeout = null)
         {
-            // First, create the file for output. This has to be done in Linux line endings (as we assume we are
-            // going to a linux machine for this).
-            var scriptFile = new FileInfo(Path.Combine(tmpDir.FullName, $"{prefix}.C"));
-            using (var rdr = new StringReader(cmds))
-            {
-                using (var wtr = scriptFile.CreateText())
+            // Run against a temp directory on the remote host
+            ExecuteRemoteWithTemp(prefix, sshConnection => {
+
+                // Parse for <><> style file replacements. This will call normalize to send over
+                // files, so we need to do this inside the execution environment.
+                var tcommands = this.ReWritePathsInQuery(cmds);
+
+                // First, create the file for output. This has to be done in Linux line endings (as we assume we are
+                // going to a linux machine for this).
+                var scriptFile = new FileInfo(Path.Combine(tmpDir.FullName, $"{prefix}.C"));
+                using (var rdr = new StringReader(tcommands))
                 {
-                    foreach (var line in rdr.EnumerateLines())
+                    using (var wtr = scriptFile.CreateText())
                     {
-                        wtr.Write($"{line}\n");
+                        foreach (var line in rdr.EnumerateLines())
+                        {
+                            wtr.Write($"{line}\n");
+                        }
                     }
                 }
-            }
 
-            // Send the file to the remote host
-            ExecuteRemoteWithTemp(prefix, sshConnection => {
                 // Files we want to send or recv first.
                 _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = _linuxTempDir });
                 if (extraFiles != null)
@@ -204,21 +209,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                 }
                 ReceiveAllFiles(connection, dumpLine);
                 return (object)null;
-            }, dumpLine);
-        }
-
-        /// <summary>
-        /// Generate a proxy.
-        /// </summary>
-        /// <param name="rootFiles"></param>
-        /// <param name="treeName"></param>
-        /// <param name="queryDirectory"></param>
-        /// <returns></returns>
-        protected override FileInfo GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine = null)
-        {
-            return ExecuteRemoteWithTemp("Proxy", SSHConnection =>
-            {
-                return base.GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
             }, dumpLine);
         }
 

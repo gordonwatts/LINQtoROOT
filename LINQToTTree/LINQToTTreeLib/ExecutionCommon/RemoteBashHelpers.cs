@@ -25,11 +25,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 le.InstallROOT(dumpLine, verbose);
             }
 
-            // Rewrite any paths in the source file.
-            var tcommands = le.ReWritePathsInQuery(commands);
-
             // Run in ROOT.
-            le.ExecuteRootScript(prefix, tcommands, tempDirectory, dumpLine, verbose,
+            le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose,
                 extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)),
                 timeout: timeout);
         }
