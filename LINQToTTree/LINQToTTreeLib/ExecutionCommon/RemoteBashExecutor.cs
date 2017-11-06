@@ -28,7 +28,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// <summary>
     /// Used to execute remotely (via an ssh connection)
     /// </summary>
-    public RemoteBashExecutor : CommandLineCommonExecutor, IQueryExectuor
+    public class RemoteBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
         /// <summary>
         /// Return the executor name to help with error messages.
