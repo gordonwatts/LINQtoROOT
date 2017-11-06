@@ -32,7 +32,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     ///   apt install libatlas-base-dev
     ///   apt install build-essential
     /// </remarks>
-    class LocalBashExecutor : CommandLineCommonExecutor, IQueryExectuor
+    public class LocalBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
 
         /// <summary>
