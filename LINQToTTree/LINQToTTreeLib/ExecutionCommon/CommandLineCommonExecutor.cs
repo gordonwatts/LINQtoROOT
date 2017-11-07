@@ -142,7 +142,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("}");
             NormalizeFileForTarget(queryDirectory);
             ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
-                fetchFiles: new[] { new Uri(resultsFile.FullName) });
+                fetchFiles: new[] { new Uri(resultsFile.FullName) },
+                timeout: TimeSpan.FromHours(4));
 
             // Get back results
             var results = LoadSelectorResults(resultsFile);
