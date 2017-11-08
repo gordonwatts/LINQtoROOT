@@ -1,6 +1,7 @@
 ﻿using AtlasSSH;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Polly;
 using ROOTNET.Interface;
 using System;
 using System.Collections.Generic;
@@ -416,28 +417,37 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (_connection == null)
             {
-                _connection = CreateSSHConnectionTo(Machine.RemoteSSHConnectionString);
-
-                if (Machine.ConfigureLines != null)
-                {
-                    var logForError = new StringBuilder();
-                    try
+                Policy
+                    .Handle<SSHConnection.SSHConnectFailureException>()
+                    .WaitAndRetry(new[] { TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(60) })
+                    .Execute(() =>
                     {
-                        // Don't dump setup unless the user really wants to see it!
-                        var localdumper = Environment.Verbose | Environment.CompileDebug
-                            ? dumpLine
-                            : (Action<string>)null;
 
-                        foreach (var line in Machine.ConfigureLines)
+                        _connection = CreateSSHConnectionTo(Machine.RemoteSSHConnectionString);
+
+                        if (Machine.ConfigureLines != null)
                         {
-                            var rep = line.Replace("ROOTVersionNumber", ROOTVersionNumber);
-                            _connection.Connection.ExecuteLinuxCommand(rep, processLine: s => RecordLine(logForError, s, localdumper));
+                            var logForError = new StringBuilder();
+                            try
+                            {
+                                // Don't dump setup unless the user really wants to see it!
+                                var localdumper = Environment.Verbose | Environment.CompileDebug
+                                    ? dumpLine
+                                    : (Action<string>)null;
+
+                                foreach (var line in Machine.ConfigureLines)
+                                {
+                                    var rep = line.Replace("ROOTVersionNumber", ROOTVersionNumber);
+                                    _connection.Connection.ExecuteLinuxCommand(rep, processLine: s => RecordLine(logForError, s, localdumper));
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                throw new RemoteBashCommandFailureException($"Error making a SSH connection: {logForError.ToString()}", e);
+                            }
+
                         }
-                    } catch (Exception e)
-                    {
-                        throw new RemoteBashCommandFailureException($"Error making a SSH connection: {logForError.ToString()}", e);
-                    }
-                }
+                    });
             }
             return _connection;
         }
