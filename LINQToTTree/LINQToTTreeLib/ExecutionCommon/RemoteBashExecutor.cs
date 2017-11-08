@@ -141,7 +141,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 try
                 {
                     sshConnection.Connection.ExecuteLinuxCommand($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
-                    sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name}", processLine: s => RecordLine(logForError, s, dumpLine),
+                    sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
                         secondsTimeout: timeout.HasValue ? (int) timeout.Value.TotalSeconds : 60*60);
                 } catch (Exception e)
                 {
@@ -202,7 +202,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var logForError = new StringBuilder();
                 try
                 {
-                    connection.Connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name}", s => RecordLine(logForError, s, dumpLine));
+                    connection.Connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
                 } catch (Exception e)
                 {
                     throw new RemoteBashCommandFailureException($"Failed to execute bash script: {logForError.ToString()}.", e);
