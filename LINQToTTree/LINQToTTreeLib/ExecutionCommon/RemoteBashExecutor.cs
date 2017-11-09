@@ -146,7 +146,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                         secondsTimeout: timeout.HasValue ? (int) timeout.Value.TotalSeconds : 60*60);
                 } catch (Exception e)
                 {
-                    throw new RemoteBashCommandFailureException($"Failed to execute script: {logForError}", e);
+                    throw new RemoteBashCommandFailureException($"Failed to execute script: {ReformatLog(logForError)}", e);
                 }
 
                 // Finally, if there are any files to bring back, we should!
@@ -206,7 +206,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     connection.Connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
                 } catch (Exception e)
                 {
-                    throw new RemoteBashCommandFailureException($"Failed to execute bash script: {logForError.ToString()}.", e);
+                    throw new RemoteBashCommandFailureException($"Failed to execute bash script: {ReformatLog(logForError)}.", e);
                 }
                 ReceiveAllFiles(connection, dumpLine);
                 return (object)null;
@@ -443,7 +443,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                             }
                             catch (Exception e)
                             {
-                                throw new RemoteBashCommandFailureException($"Error making a SSH connection: {logForError.ToString()}", e);
+                                throw new RemoteBashCommandFailureException($"Error making a SSH connection: {ReformatLog(logForError)}", e);
                             }
 
                         }

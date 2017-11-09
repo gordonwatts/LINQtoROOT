@@ -186,7 +186,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Make sure the result is "good"
             if (proc.ExitCode != 0)
             {
-                throw new CommandLineExecutionException($"Failed to execute step {reason} - process executed with error code {proc.ExitCode}. Text dump from process: {resultData.ToString()}");
+                throw new CommandLineExecutionException($"Failed to execute step {reason} - process executed with error code {proc.ExitCode}. Text dump from process: {ReformatLog(resultData)}");
             }
         }
 

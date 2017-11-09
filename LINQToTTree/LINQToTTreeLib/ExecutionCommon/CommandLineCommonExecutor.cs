@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Polly;
 using ROOTNET.Interface;
 using System;
 using System.Collections.Generic;
@@ -94,12 +95,18 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
-        /// Package everythiing up and run it.
+        /// Execute a TSelector script on a group of files.
         /// </summary>
         /// <param name="queryFile">The C++ file we are going to run the query against</param>
         /// <param name="queryDirectory">Directory where we run the query</param>
         /// <param name="varsToTransfer">Variables we need to move over to the query</param>
-        /// <returns></returns>
+        /// <returns>The results from running the TSelector</returns>
+        /// <remarks>
+        /// Some exception conditions are handled:
+        ///   - Once in a while while executing we have a corrupt datafile that is corrupt due to networking, not because it is a bad
+        ///     file. This happens often when things are over shares. We will retry three time if we detect root is having trouble with
+        ///     bad data.
+        /// </remarks>
         public virtual IDictionary<string, NTObject> Execute(FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
@@ -137,13 +144,19 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
             cmds.AppendLine("gROOT->ProcessLine(\".X RunTSelector1.C\");");
 
-            // Run the root script
+            // Run the root script. Retry if we detect an understood error condition.
             cmds.AppendLine("exit(0);");
             cmds.AppendLine("}");
             NormalizeFileForTarget(queryDirectory);
-            ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
-                fetchFiles: new[] { new Uri(resultsFile.FullName) },
-                timeout: TimeSpan.FromHours(4));
+            Policy
+                .Handle<CommandLineExecutionException>(ex => ex.Message.Contains("error reading from file"))
+                .Retry(3)
+                .Execute(() =>
+                {
+                    ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
+                        fetchFiles: new[] { new Uri(resultsFile.FullName) },
+                        timeout: TimeSpan.FromHours(4));
+                });
 
             // Get back results
             var results = LoadSelectorResults(resultsFile);
@@ -698,8 +711,28 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Make sure the result is "good"
             if (proc.ExitCode != 0)
             {
-                throw new CommandLineExecutionException($"Failed to execute step {prefix} - process executed with error code {proc.ExitCode}. Text dump from process: {resultData.ToString()}");
+                throw new CommandLineExecutionException($"Failed to execute step {prefix} - process executed with error code {proc.ExitCode}. Text dump from process: {ReformatLog(resultData)}");
             }
+        }
+
+        /// <summary>
+        /// Reformat a log dump that has come back from some remote shell operation so that it can be cleanly put in
+        /// an error message.
+        /// </summary>
+        /// <param name="resultData">String containing the log that came back from the calling process</param>
+        /// <returns>Indented and formatted block of text</returns>
+        protected static string ReformatLog(StringBuilder resultData)
+        {
+            var result = new StringBuilder();
+            result.AppendLine();
+            using (var rdr = new StringReader(resultData.ToString()))
+            {
+                foreach (var line in rdr.EnumerateLines())
+                {
+                    result.AppendLine($"  -> {line}");
+                }
+            }
+            return result.ToString();
         }
 
         /// <summary>
