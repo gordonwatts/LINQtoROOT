@@ -142,8 +142,11 @@ namespace LINQToTTreeLib.ExecutionCommon
                 try
                 {
                     sshConnection.ExecuteLinuxCommand($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
-                    sshConnection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
-                        secondsTimeout: timeout.HasValue ? (int) timeout.Value.TotalSeconds : 60*60);
+                    using (var lck = sshConnection.EnterNoRecoverRegion())
+                    {
+                        sshConnection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
+                            secondsTimeout: timeout.HasValue ? (int)timeout.Value.TotalSeconds : 60 * 60);
+                    }
                 } catch (Exception e)
                 {
                     throw new RemoteBashCommandFailureException($"Failed to execute script: {ReformatLog(logForError)}", e);
@@ -247,7 +250,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="tempDir"></param>
         /// <param name="act"></param>
         /// <param name="dumpLine"></param>
-        internal T ExecuteRemoteWithTemp<T>(string phase, Func<ISSHConnection, T> act, Action<string> dumpLine = null)
+        internal T ExecuteRemoteWithTemp<T>(string phase, Func<SSHRecoveringConnection, T> act, Action<string> dumpLine = null)
         {
             if (phase.Contains("/") || phase.Contains(" "))
             {
@@ -262,6 +265,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             var oldLinuxTempDir = _linuxTempDir;
             var oldLinuxPhase = _currentLinuxPhase;
             _currentLinuxPhase = phase;
+            IDisposable lck = null;
             try
             {
                 // Get the temp directory setup and going
@@ -270,6 +274,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     _linuxTempDir = remoteDirectory;
                     sshConnection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                     sshConnection.ExecuteLinuxCommand($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    lck = sshConnection.EnterNoRecoverRegion();
                 }
                 dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir}");
 
@@ -277,6 +282,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
             finally
             {
+                lck?.Dispose();
                 if (_currentLinuxPhase != oldLinuxPhase)
                 {
                     sshConnection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
@@ -341,7 +347,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Cache the connection
         /// </summary>
-        private ISSHConnection _connection = null;
+        private SSHRecoveringConnection _connection = null;
 
         class RemoteFileCopyInfo
         {
@@ -413,7 +419,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="dumpLine">Dump output from running various setup lines</param>
         /// <returns></returns>
-        private ISSHConnection MakeSSHConnection(Action<string> dumpLine = null)
+        private SSHRecoveringConnection MakeSSHConnection(Action<string> dumpLine = null)
         {
             if (_connection == null)
             {
@@ -457,9 +463,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="remoteSSHConnectionString"></param>
         /// <returns></returns>
-        private ISSHConnection CreateSSHConnectionTo(string remoteSSHConnectionString)
+        private SSHRecoveringConnection CreateSSHConnectionTo(string remoteSSHConnectionString)
         {
-            return new SSHConnectionTunnel(remoteSSHConnectionString);
+            return new SSHRecoveringConnection(() =>
+            {
+                return new SSHConnectionTunnel(remoteSSHConnectionString);
+            });
         }
 
         /// <summary>
