@@ -141,8 +141,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 // Next, lets see if we can't run the file against root.
                 try
                 {
-                    sshConnection.Connection.ExecuteLinuxCommand($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
-                    sshConnection.Connection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
+                    sshConnection.ExecuteLinuxCommand($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
+                    sshConnection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
                         secondsTimeout: timeout.HasValue ? (int) timeout.Value.TotalSeconds : 60*60);
                 } catch (Exception e)
                 {
@@ -203,7 +203,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var logForError = new StringBuilder();
                 try
                 {
-                    connection.Connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
+                    connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
                 } catch (Exception e)
                 {
                     throw new RemoteBashCommandFailureException($"Failed to execute bash script: {ReformatLog(logForError)}.", e);
@@ -247,7 +247,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="tempDir"></param>
         /// <param name="act"></param>
         /// <param name="dumpLine"></param>
-        internal T ExecuteRemoteWithTemp<T>(string phase, Func<SSHTunneledConnection, T> act, Action<string> dumpLine = null)
+        internal T ExecuteRemoteWithTemp<T>(string phase, Func<ISSHConnection, T> act, Action<string> dumpLine = null)
         {
             if (phase.Contains("/") || phase.Contains(" "))
             {
@@ -268,8 +268,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 if (_currentLinuxPhase != oldLinuxPhase)
                 {
                     _linuxTempDir = remoteDirectory;
-                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
-                    sshConnection.Connection.ExecuteLinuxCommand($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    sshConnection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    sshConnection.ExecuteLinuxCommand($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                 }
                 dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir}");
 
@@ -279,7 +279,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             {
                 if (_currentLinuxPhase != oldLinuxPhase)
                 {
-                    sshConnection.Connection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    sshConnection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                     _linuxTempDir = oldLinuxTempDir;
                     _currentLinuxPhase = oldLinuxPhase;
                 }
@@ -291,14 +291,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="dumpLine"></param>
-        private void SendAllFiles(SSHTunneledConnection connection, Action<string> dumpLine)
+        private void SendAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToCopyOver)
             {
                 string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
                 dumpLine?.Invoke($"Copying {f.localFileName.Name} -> {linuxPath}");
-                connection.Connection.ExecuteLinuxCommand($"mkdir -p {f.remoteLinuxDirectory}", dumpLine);
-                connection.Connection.CopyLocalFileRemotely(f.localFileName, linuxPath);
+                connection.ExecuteLinuxCommand($"mkdir -p {f.remoteLinuxDirectory}", dumpLine);
+                connection.CopyLocalFileRemotely(f.localFileName, linuxPath);
             }
             _filesToCopyOver.Clear();
         }
@@ -308,7 +308,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="sshConnection"></param>
         /// <param name="dumpLine"></param>
-        private void ReceiveAllFiles(SSHTunneledConnection connection, Action<string> dumpLine)
+        private void ReceiveAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToBringBack)
             {
@@ -319,7 +319,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     f.localFileName.Directory.Create();
                 }
-                connection.Connection.CopyRemoteFileLocally(linuxPath, f.localFileName.Directory);
+                connection.CopyRemoteFileLocally(linuxPath, f.localFileName);
             }
             _filesToBringBack.Clear();
         }
@@ -332,16 +332,16 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="dirName"></param>
         /// <param name="connection"></param>
         /// <param name="statusUpdate"></param>
-        private void ReceiveFile (FileInfo fileToGet, string dirName, SSHTunneledConnection connection, Action<string>statusUpdate = null)
+        private void ReceiveFile (FileInfo fileToGet, string dirName, ISSHConnection connection, Action<string>statusUpdate = null)
         {
             string linuxPath = $"{dirName}/{fileToGet.Name}";
-            connection.Connection.CopyRemoteFileLocally(linuxPath, fileToGet.Directory, statusUpdate);
+            connection.CopyRemoteFileLocally(linuxPath, fileToGet, statusUpdate);
         }
 
         /// <summary>
         /// Cache the connection
         /// </summary>
-        private SSHTunneledConnection _connection = null;
+        private ISSHConnection _connection = null;
 
         class RemoteFileCopyInfo
         {
@@ -413,7 +413,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="dumpLine">Dump output from running various setup lines</param>
         /// <returns></returns>
-        private SSHTunneledConnection MakeSSHConnection(Action<string> dumpLine = null)
+        private ISSHConnection MakeSSHConnection(Action<string> dumpLine = null)
         {
             if (_connection == null)
             {
@@ -438,7 +438,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                                 foreach (var line in Machine.ConfigureLines)
                                 {
                                     var rep = line.Replace("ROOTVersionNumber", ROOTVersionNumber);
-                                    _connection.Connection.ExecuteLinuxCommand(rep, processLine: s => RecordLine(logForError, s, localdumper));
+                                    _connection.ExecuteLinuxCommand(rep, processLine: s => RecordLine(logForError, s, localdumper));
                                 }
                             }
                             catch (Exception e)
@@ -453,64 +453,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
-        /// Disposable holder for the full connection
-        /// </summary>
-        internal class SSHTunneledConnection : IDisposable
-        {
-            /// <summary>
-            /// List of our connections.
-            /// </summary>
-            List<SSHConnection> _connections = new List<SSHConnection>();
-
-            /// <summary>
-            /// Get the connection to the inner most tunnel
-            /// </summary>
-            public SSHConnection Connection { get; private set; }
-
-            /// <summary>
-            /// Add a new connection
-            /// </summary>
-            /// <param name="c"></param>
-            public void Add (SSHConnection c)
-            {
-                _connections.Add(c);
-                Connection = c;
-            }
-
-            /// <summary>
-            /// Make sure we exit everything outside and close off this connection!
-            /// </summary>
-            public void Dispose()
-            {
-                foreach (var t in _connections.Reverse<SSHConnection>())
-                {
-                    t.Dispose();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Create an SSH connection to a remote machine
+        /// Create an SSH connection to a remote machine.
         /// </summary>
         /// <param name="remoteSSHConnectionString"></param>
         /// <returns></returns>
-        private SSHTunneledConnection CreateSSHConnectionTo(string remoteSSHConnectionString)
+        private ISSHConnection CreateSSHConnectionTo(string remoteSSHConnectionString)
         {
-            var mlist = remoteSSHConnectionString
-                .Split(new[] { "->" }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Trim())
-                .Select(s => ExtractUserAndPassword(s));
-
-            var r = new SSHTunneledConnection();
-            var firstInfo = mlist.First();
-            var c = new SSHConnection(firstInfo.Item2, firstInfo.Item1);
-            r.Add(c);
-            foreach (var mConnection in mlist.Skip(1))
-            {
-                var newC = r.Connection.SSHTo(mConnection.Item2, mConnection.Item1);
-            }
-
-            return r;
+            return new SSHConnectionTunnel(remoteSSHConnectionString);
         }
 
         /// <summary>

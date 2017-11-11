@@ -62,7 +62,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             using (var t = new SSHConnectionTunnel(remoteInfo))
             {
                 var f = new FileInfo(rootFile.LocalPath);
-                t.Connection.CopyLocalFileRemotely(f, $"{remoteDirectory}/{f.Name}");
+                t.CopyLocalFileRemotely(f, $"{remoteDirectory}/{f.Name}");
                 return new Uri($"remotebash://tev.machines/{remoteDirectory}/{f.Name}");
             }
         }
