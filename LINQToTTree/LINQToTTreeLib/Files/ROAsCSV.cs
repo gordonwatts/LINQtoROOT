@@ -69,7 +69,7 @@ namespace LINQToTTreeLib.Files
             {
                 if (!first)
                 {
-                    headerline.Append(", ");
+                    headerline.Append(",");
                 }
                 headerline.Append(h);
                 first = false;

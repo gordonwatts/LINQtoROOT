@@ -94,7 +94,7 @@ namespace LINQToTTreeLib.Tests.Files
             // Look for Col1 and Col2 in the resulting text, and make sure Col2 comes first (so decl order is preserved).
             Assert.AreEqual(1, gc.Length);
             var lines = gc[0].ReadAllLines().ToArray();
-            Assert.AreEqual("Col2, Col1", lines[0]);
+            Assert.AreEqual("Col2,Col1", lines[0]);
         }
 
         [TestMethod]
@@ -198,7 +198,7 @@ namespace LINQToTTreeLib.Tests.Files
             // file plus a column header.
             var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
-            Assert.AreEqual("firstCol, second Col, col3, col4", lines[0]);
+            Assert.AreEqual("firstCol,second Col,col3,col4", lines[0]);
             Assert.AreEqual("10, 10, 10, 10", lines[1]);
         }
 
@@ -216,7 +216,7 @@ namespace LINQToTTreeLib.Tests.Files
             // file plus a column header.
             var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
-            Assert.AreEqual("firstCol, second Col, col3, col4, col5, col6, col7", lines[0]);
+            Assert.AreEqual("firstCol,second Col,col3,col4,col5,col6,col7", lines[0]);
             Assert.AreEqual("10, 10, 10, 10, 10, 10, 10", lines[1]);
         }
 
@@ -234,7 +234,7 @@ namespace LINQToTTreeLib.Tests.Files
             // file plus a column header.
             var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
-            Assert.AreEqual("col1, col2, col3", lines[0]);
+            Assert.AreEqual("col1,col2,col3", lines[0]);
             Assert.AreEqual("10, 10, 10", lines[1]);
         }
 
