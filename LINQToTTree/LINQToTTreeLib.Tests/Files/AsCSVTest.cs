@@ -175,8 +175,12 @@ namespace LINQToTTreeLib.Tests.Files
             // Check the contents of the resulting file. It should have the 10 lines from the root
             // file plus a column header.
             var lines = result[0].ReadAllLines().ToArray();
+            foreach (var l in lines)
+            {
+                Console.WriteLine(l);
+            }
             Assert.AreEqual(11, lines.Length);
-            Assert.AreEqual("firstCol, second Col", lines[0]);
+            Assert.AreEqual("firstCol,second Col", lines[0]);
             Assert.AreEqual("10, 10", lines[1]);
         }
 
