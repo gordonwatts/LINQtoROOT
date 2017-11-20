@@ -1196,7 +1196,9 @@ namespace LINQToTTreeLib
 
             // Get MEF setup with everything in our assembly.
             AggregateCatalog aggCat = new AggregateCatalog();
-            aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
+            var assemblyLocation = new FileInfo(Assembly.GetCallingAssembly().Location);
+            //aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
+            aggCat.Catalogs.Add(new DirectoryCatalog(assemblyLocation.DirectoryName));
             _gContainer = new CompositionContainer(aggCat);
             CompositionBatch b = new CompositionBatch();
             b.AddPart(new TypeHandlers.TypeHandlerCache());
