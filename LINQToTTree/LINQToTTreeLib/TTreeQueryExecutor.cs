@@ -273,7 +273,23 @@ namespace LINQToTTreeLib
             return _dataSchemeHandlers
                 .Where(d => d.Scheme == f.Scheme)
                 .FirstOrDefault()
-                .ThrowIfNull(() => new DataSchemeNotKnonwException($"Uri with scheme '{f.Scheme}' can't be processed - don't know how to deal with the Uri scheme!"));
+                .ThrowIfNull(() => new DataSchemeNotKnonwException($"Uri with scheme '{f.Scheme}' can't be processed - don't know how to deal with the Uri scheme (only know about {AllSchemes()}!"));
+        }
+
+        /// <summary>
+        /// Return pretty-printed copy of the schemes we know about.
+        /// </summary>
+        /// <returns></returns>
+        private string AllSchemes()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var d in _dataSchemeHandlers)
+            {
+                sb.Append(" " + d.Scheme);
+            }
+
+            return sb.ToString();
         }
 
         /// <summary>
