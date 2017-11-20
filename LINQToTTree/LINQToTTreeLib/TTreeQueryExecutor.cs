@@ -653,6 +653,7 @@ namespace LINQToTTreeLib
         /// </summary>
         internal void ExecuteQueuedQueries()
         {
+            LogExecutionStart();
             // We now need the actual root files - so resolve them.
             ResolveROOTFiles();
 
@@ -708,6 +709,22 @@ namespace LINQToTTreeLib
 
             _queryDirectory = null;
             TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
+        }
+
+        /// <summary>
+        /// Log that we are about to start query execution
+        /// </summary>
+        private void LogExecutionStart()
+        {
+            if (_originalRootFiles != null)
+            {
+                var m = new StringBuilder();
+                foreach (var f in _originalRootFiles)
+                {
+                    m.Append($" {f.OriginalString}");
+                }
+                Trace.Write("LINQTOTTree Query Execution", $"Starting query on {m.ToString()}");
+            }
         }
 
         /// <summary>
