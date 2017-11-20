@@ -468,7 +468,7 @@ namespace LINQToTTreeLib
 
             public Uri Normalize(Uri u)
             {
-                throw new NotImplementedException();
+                return new UriBuilder(u) { Query = "" }.Uri;
             }
 
             public IEnumerable<Uri> ResolveUri(Uri u)

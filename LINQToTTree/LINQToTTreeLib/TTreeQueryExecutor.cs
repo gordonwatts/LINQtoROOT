@@ -551,10 +551,12 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(7, "ExecuteScalarAsFuture: Visiting query model");
             qv.VisitQueryModel(queryModel);
 
-            ///
-            /// Next, see if we have a cache for this
-            /// 
+            // Normalize the root files for the query. These will be used for cache lookup, the query, etc.
+            _originalRootFiles = _originalRootFiles
+                .Select(u => GetDataHandler(u).Normalize(u))
+                .ToArray();
 
+            // see if we have a cache for this
             TraceHelpers.TraceInfo(8, "ExecuteScalarAsFuture: Getting cache key");
             {
                 object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
