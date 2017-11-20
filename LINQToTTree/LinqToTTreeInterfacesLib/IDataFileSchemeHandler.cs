@@ -38,6 +38,27 @@ namespace LinqToTTreeInterfacesLib
         bool GoodUri(Uri u);
 
         /// <summary>
+        /// Return a nromalize Uri. This Uri is used as part of the caching system's key. If there are default parameters, for example,
+        /// they should be removed.
+        /// </summary>
+        /// <param name="u">Original Uri</param>
+        /// <returns>Normalize Uri</returns>
+        /// <remarks>
+        /// If the Uri is unique by construction, then this would just return the same Uri
+        /// 
+        /// As an example, say you have a paramter called nFiles which takes the first nFiles. If the nFiles parameter is missing
+        /// or if it is 10000, or -1 means all files - all of those things mean the same thing - and the same results will be found.
+        /// So in all cases the same normalized Uri should be returned.
+        /// 
+        /// As another example, say a Uri referse to a list of datasamples in a sperate text file. You might add a hash computation
+        /// that will deal with the Uri being the same, but that seperate text file changing.
+        /// 
+        /// WARNING: this Uri might be used to lookup data accross machines - so it shouldn't use machine dependent algoritms.
+        /// In particular, GetHash from the framework is considered machine dependent.
+        /// </remarks>
+        Uri Normalize(Uri u);
+
+        /// <summary>
         /// Resolve the given uri. Return the new one. If the same one returned is the one given, then no further resolution
         /// is required. Otherwise, resolution with the appropriate Uri type will continue until changes top. A single Uri
         /// may also turn into multiple Uri's.

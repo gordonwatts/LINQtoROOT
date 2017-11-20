@@ -723,7 +723,7 @@ namespace LINQToTTreeLib
                 {
                     m.Append($" {f.OriginalString}");
                 }
-                Trace.Write("LINQTOTTree Query Execution", $"Starting query on {m.ToString()}");
+                TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: starting query on {m.ToString()}", TraceEventType.Start);
             }
         }
 

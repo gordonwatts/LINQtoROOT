@@ -38,6 +38,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         }
 
         /// <summary>
+        /// Return a normalized Uri. The Uri is unique, so just return ourselves.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public Uri Normalize(Uri u)
+        {
+            return u;
+        }
+
+        /// <summary>
         /// Resolve this Uri. We do nothing to it, so just return it.
         /// </summary>
         /// <param name="u"></param>

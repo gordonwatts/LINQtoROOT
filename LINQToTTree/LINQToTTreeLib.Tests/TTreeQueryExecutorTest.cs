@@ -10,6 +10,7 @@ using LINQToTTreeLib.Files;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 
 namespace LINQToTTreeLib
 {
@@ -254,6 +255,11 @@ namespace LINQToTTreeLib
                 return true;
             }
 
+            public Uri Normalize(Uri u)
+            {
+                return u;
+            }
+
             /// <summary>
             /// Return it to being a regular file
             /// </summary>
@@ -332,6 +338,11 @@ namespace LINQToTTreeLib
                 return true;
             }
 
+            public Uri Normalize(Uri u)
+            {
+                return u;
+            }
+
             public IEnumerable<Uri> ResolveUri(Uri u)
             {
                 var f = new UriBuilder(u) { Scheme = "file" }.Uri;
@@ -361,6 +372,11 @@ namespace LINQToTTreeLib
             public bool GoodUri(Uri u)
             {
                 return true;
+            }
+
+            public Uri Normalize(Uri u)
+            {
+                return u;
             }
 
             /// <summary>
@@ -398,6 +414,67 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new[] { testUri }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter*2, result);
+        }
+
+        [TestMethod]
+        public void UriTranslateWithNormalization()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var testUri = new UriBuilder(rootFile) { Scheme = "testnormalizeuri", Query = "nfiles=10" }.Uri;
+
+            // Query model
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Add the translator to the TTExecutor's
+            var myBatch = new CompositionBatch();
+            myBatch.AddPart(new UriNormalizer());
+            TTreeQueryExecutor.CContainer.Compose(myBatch);
+
+            // Ok, now we can actually see if we can make it "go".
+            var s = new System.IO.StringWriter();
+            var tracer = new TextWriterTraceListener(s);
+            TraceHelpers.Source.Switch = new SourceSwitch("console", "ActivityTracing");
+            var tidx = TraceHelpers.Source.Listeners.Add(tracer);
+            try
+            {
+                var exe = new TTreeQueryExecutor(new[] { testUri }, "dude", typeof(ntuple), typeof(TestNtupe));
+                int result = exe.ExecuteScalar<int>(query);
+                Assert.AreEqual(numberOfIter, result);
+            } finally
+            {
+                TraceHelpers.Source.Flush();
+                TraceHelpers.Source.Listeners.Remove(tracer);
+            }
+            Assert.IsFalse(s.ToString().Contains("nfiles"), s.ToString());
+        }
+
+        [Export(typeof(IDataFileSchemeHandler))]
+        class UriNormalizer : IDataFileSchemeHandler
+        {
+            public string Scheme => "testnormalizeuri";
+
+            public DateTime GetUriLastModificationDate(Uri u)
+            {
+                return DateTime.Now;
+            }
+
+            public bool GoodUri(Uri u)
+            {
+                return true;
+            }
+
+            public Uri Normalize(Uri u)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<Uri> ResolveUri(Uri u)
+            {
+                yield return new UriBuilder(u) { Scheme = "file" }.Uri;
+            }
         }
 
         [TestMethod]

@@ -37,6 +37,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         }
 
         /// <summary>
+        /// We are unique when it comes to files and locations - so return the Uri pushed in.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public Uri Normalize(Uri u)
+        {
+            return u;
+        }
+
+        /// <summary>
         /// Resolve this Uri. We do nothing to it, so just return it.
         /// </summary>
         /// <param name="u"></param>

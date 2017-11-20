@@ -34,6 +34,16 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         }
 
         /// <summary>
+        /// When running proof, we have no options on the uri. So just return ourselves.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <returns></returns>
+        public Uri Normalize(Uri u)
+        {
+            return u;
+        }
+
+        /// <summary>
         /// Resolve this Uri. We do nothing to it, so just return it.
         /// </summary>
         /// <param name="u"></param>
