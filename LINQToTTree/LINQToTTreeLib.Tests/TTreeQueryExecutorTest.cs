@@ -288,6 +288,65 @@ namespace LINQToTTreeLib
             Assert.AreEqual(numberOfIter, result);
         }
 
+        [TestMethod]
+        public void UriTranslatedDoesQuery()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var testUri = new UriBuilder(rootFile) { Scheme = "testsubqueryscheme" }.Uri;
+            UriSubQueryScheme.ROOTFile = rootFile;
+
+            // Query model
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Add the translator to the TTExecutor's
+            var myBatch = new CompositionBatch();
+            myBatch.AddPart(new UriSubQueryScheme());
+            TTreeQueryExecutor.CContainer.Compose(myBatch);
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { testUri }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        /// <summary>
+        /// Execute little sub-query to see if some order of recursiveness can be done by the system.
+        /// </summary>
+        [Export(typeof(IDataFileSchemeHandler))]
+        class UriSubQueryScheme : IDataFileSchemeHandler
+        {
+            public static Uri ROOTFile { get; internal set; }
+
+            public string Scheme => "testsubqueryscheme";
+
+            public DateTime GetUriLastModificationDate(Uri u)
+            {
+                return DateTime.Now;
+            }
+
+            public bool GoodUri(Uri u)
+            {
+                return true;
+            }
+
+            public IEnumerable<Uri> ResolveUri(Uri u)
+            {
+                var f = new UriBuilder(u) { Scheme = "file" }.Uri;
+
+                var q = new QueriableDummy<TestNtupe>();
+                var dude = q.Count();
+                var query = DummyQueryExectuor.LastQueryModel;
+
+                var exe = new TTreeQueryExecutor(new[] { f }, "dude", typeof(ntuple), typeof(TestNtupe));
+                int result = exe.ExecuteScalar<int>(query);
+                Assert.AreEqual(10, result);
+                yield return f;
+            }
+        }
+
         // Do a quick translation switching Uri's back and forth.
         [Export(typeof(IDataFileSchemeHandler))]
         class UriOneToTwoTranslator : IDataFileSchemeHandler
