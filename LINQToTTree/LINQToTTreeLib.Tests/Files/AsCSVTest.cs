@@ -181,7 +181,7 @@ namespace LINQToTTreeLib.Tests.Files
             }
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("firstCol,second Col", lines[0]);
-            Assert.AreEqual("10, 10", lines[1]);
+            Assert.AreEqual("10,10", lines[1]);
         }
 
         [TestMethod]
@@ -199,7 +199,7 @@ namespace LINQToTTreeLib.Tests.Files
             var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("firstCol,second Col,col3,col4", lines[0]);
-            Assert.AreEqual("10, 10, 10, 10", lines[1]);
+            Assert.AreEqual("10,10,10,10", lines[1]);
         }
 
         [TestMethod]
@@ -217,7 +217,7 @@ namespace LINQToTTreeLib.Tests.Files
             var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("firstCol,second Col,col3,col4,col5,col6,col7", lines[0]);
-            Assert.AreEqual("10, 10, 10, 10, 10, 10, 10", lines[1]);
+            Assert.AreEqual("10,10,10,10,10,10,10", lines[1]);
         }
 
         [TestMethod]
@@ -235,7 +235,7 @@ namespace LINQToTTreeLib.Tests.Files
             var lines = result[0].ReadAllLines().ToArray();
             Assert.AreEqual(11, lines.Length);
             Assert.AreEqual("col1,col2,col3", lines[0]);
-            Assert.AreEqual("10, 10, 10", lines[1]);
+            Assert.AreEqual("10,10,10", lines[1]);
         }
 
         private static FileInfo[] RunQueryForSingleColumnTTree(Action queryBuilder)

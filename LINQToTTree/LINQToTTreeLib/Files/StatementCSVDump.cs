@@ -39,7 +39,7 @@ namespace LINQToTTreeLib.Files
             {
                 if (bld.Length != 0)
                 {
-                    bld.Append(" \", \" <<");
+                    bld.Append(" \",\" <<");
                 }
                 bld.AppendFormat($"({item}) <<");
             }
