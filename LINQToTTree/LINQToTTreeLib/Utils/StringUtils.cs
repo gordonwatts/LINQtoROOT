@@ -79,5 +79,23 @@ namespace LINQToTTreeLib.Utils
             return original
                 .Replace("\\", "\\\\");
         }
+
+        /// <summary>
+        /// Sanitize a string to be allowed into the path system
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static string SanitizedPathName(this string n)
+        {
+            n = n.Replace("#", "_");
+            n = n.Replace(",", "_");
+            n = n.Replace("<", "");
+            n = n.Replace(">", "");
+            n = n.Replace(" ", "");
+            n = n.Replace(":", "");
+            n = n.Replace(".", "_");
+            n = n.Replace("?", "_");
+            return n;
+        }
     }
 }

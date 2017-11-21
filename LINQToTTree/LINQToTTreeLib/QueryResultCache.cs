@@ -149,7 +149,8 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(27, "GetKey: Getting the cache directory");
-            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + flieHash + " - " + treename + "-" + Path.GetFileNameWithoutExtension(rootfiles[0].PathAndQuery));
+            var fpathName = Path.GetFileNameWithoutExtension(rootfiles[0].PathAndQuery.SanitizedPathName());
+            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + flieHash + " - " + treename + "-" + fpathName);
 
             ///
             /// Scan the files that we are input and find the oldest one there

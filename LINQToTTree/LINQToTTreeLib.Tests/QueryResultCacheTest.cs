@@ -283,6 +283,15 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void CacheCanDealWithUriWithQueryString()
+        {
+            var q = new QueryResultCache();
+            var query = MakeQuery(0);
+            var f = new Uri("remotebash://bogus/dude?nFIles=1&DoItNow");
+            var key = q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => DateTime.Now);
+        }
+
+        [TestMethod]
         public void TestNoProofHit()
         {
             // Make sure that a new proof dataset works just fine.
