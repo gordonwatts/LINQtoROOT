@@ -341,8 +341,6 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         private ExecutionEnvironment CreateSimpleEnvironment()
         {
             var result = new ExecutionEnvironment();
-            var rootFile = TestUtils.CreateFileOfInt(20);
-            result.RootFiles = new[] { rootFile.AsLocalBashUri() };
 
             return result;
         }

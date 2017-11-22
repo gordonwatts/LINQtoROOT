@@ -223,7 +223,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="queryDirectory"></param>
         /// <param name="varsToTransfer"></param>
         /// <returns></returns>
-        public override IDictionary<string, NTObject> Execute(FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public override IDictionary<string, NTObject> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             Action<string> dumper = l =>
             {
@@ -240,7 +240,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = _linuxTempDir });
                 }
 
-                return base.Execute(queryFile, queryDirectory, varsToTransfer);
+                return base.Execute(files, queryFile, queryDirectory, varsToTransfer);
             }, dumper);
         }
 

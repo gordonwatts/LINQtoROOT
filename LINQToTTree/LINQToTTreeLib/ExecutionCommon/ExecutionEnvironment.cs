@@ -48,11 +48,5 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Name of the tree we will be loading and processing.
         /// </summary>
         public string TreeName { get; set; }
-
-        /// <summary>
-        /// List of the root files that need to be run over.
-        /// </summary>
-        public Uri[] RootFiles { get; set; }
-
     }
 }

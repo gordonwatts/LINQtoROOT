@@ -45,6 +45,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <returns></returns>
         public IDictionary<string, ROOTNET.Interface.NTObject> Execute(
+            Uri[] files,
             FileInfo templateFile,
             DirectoryInfo queryDirectory,
             IEnumerable<KeyValuePair<string, object>> varsToTransfer)
@@ -83,7 +84,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             //
 
             TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
-            var localFiles = Environment.RootFiles.Select(u => new FileInfo(u.LocalPath)).ToArray();
+            var localFiles = files.Select(u => new FileInfo(u.LocalPath)).ToArray();
             var results = RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
 
             //

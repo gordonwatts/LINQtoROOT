@@ -44,10 +44,5 @@ namespace LinqToTTreeInterfacesLib
         /// Name of the tree we will be loading and processing.
         /// </summary>
         string TreeName { get; }
-
-        /// <summary>
-        /// List of the root files that need to be run over.
-        /// </summary>
-        Uri[] RootFiles { get; }
     }
 }

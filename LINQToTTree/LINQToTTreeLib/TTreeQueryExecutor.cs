@@ -1,4 +1,13 @@
-﻿using System;
+﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.ExecutionCommon;
+using LINQToTTreeLib.Optimization;
+using LINQToTTreeLib.QueryVisitors;
+using LINQToTTreeLib.Utils;
+using NVelocity;
+using NVelocity.App;
+using Remotion.Linq;
+using ROOTNET.Interface;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -8,16 +17,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using LinqToTTreeInterfacesLib;
-using LINQToTTreeLib.ExecutionCommon;
-using LINQToTTreeLib.Optimization;
-using LINQToTTreeLib.Utils;
-using NVelocity;
-using NVelocity.App;
-using Remotion.Linq;
-using LINQToTTreeLib.QueryVisitors;
-using Remotion.Linq.Clauses.Expressions;
-using System.Linq.Expressions;
 
 namespace LINQToTTreeLib
 {
@@ -53,7 +52,13 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Hold onto the original root files before we did resolution.
         /// </summary>
-        public Uri[] _originalRootFiles = null;
+        private Uri[] _originalRootFiles = null;
+
+        /// <summary>
+        /// After the originalRootFiles are parsed and resolved into individual root files, we cache them here
+        /// for easy use, organised by scheme.
+        /// </summary>
+        private (string scheme, Uri[] files)[] _resolvedRootFiles = null;
 
         /// <summary>
         /// Get/Set query cleanup control. If false, the files won't be deleted.
@@ -246,14 +251,16 @@ namespace LINQToTTreeLib
         /// </summary>
         private void ResolveROOTFiles()
         {
-            if (_exeReq.RootFiles != null)
+            if (_resolvedRootFiles != null)
             {
                 return;
             }
 
             // The Uri's that come in may not be the ones we actually need to run over. Resolve them.
-            _exeReq.RootFiles = _originalRootFiles
+            _resolvedRootFiles = _originalRootFiles
                 .SelectMany(u => ResolveDatasetUri(u))
+                .GroupBy(u => u.Scheme)
+                .Select(grp => (grp.Key, grp.ToArray()))
                 .ToArray();
         }
 
@@ -700,47 +707,84 @@ namespace LINQToTTreeLib
             if (UseStatementOptimizer)
                 Optimizer.Optimize(combinedInfo);
 
-            // Keep track of how often we run. Mostly for testing reasons, actually.
-            CountExecutionRuns++;
+            // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
+            var combinedResults = _resolvedRootFiles
+                .Select(sch => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo))
+                .SelectMany(results => results)
+                .GroupBy(k => k.Key)
+                .Select(resultList => (key: resultList.Key, v: CombineResults(resultList.Select(k => k.Value).ToArray())))
+                .ToDictionary(sc => sc.key, sc => sc.v);
 
-            // Get the query executor
-            TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
-            var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
-            IQueryExectuor local = CreateQueryExecutor(referencedLeafNames);
-
-            // Next, generate and slim the proxy file.
-            var proxyFile = local.GenerateProxyFile(_exeReq.RootFiles, _exeReq.TreeName, GetQueryDirectory());
-            var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile);
-            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
-            var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo);
-
-            ///
-            /// Fantastic! We've made sure everything now can be built locally. Next job, get the run instructions packet
-            /// together in order to have them run remotely!
-            /// 
-
-            var results = local.Execute(templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
-
-            ///
-            /// Last job, extract all the variables! And save in the cache, and set the
-            /// future value so everyone else can use them!
-            /// 
-
+            // Extract all the variables! And save in the cache, and set the
+            // future value so everyone else can use them!
             TraceHelpers.TraceInfo(15, "ExecuteQueuedQueries: Extracting the query results");
             foreach (var cq in _queuedQueries)
             {
-                cq.ExtractResult(results);
+                cq.ExtractResult(combinedResults);
             }
             _queuedQueries.Clear();
 
-            ///
-            /// Ok, we are all done. Delete the directory that we were just using
-            /// after unloading all the modules
-            /// 
-
-            _queryDirectory = null;
-            TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
+            // Ok, we are all done. Delete the directory that we were just using
+            // after unloading all the modules
             LogExecutionFinish();
+        }
+
+        /// <summary>
+        /// We have results from several runs. Combine them into a single one using
+        /// our adder infrastructure.
+        /// </summary>
+        /// <param name="nTObject"></param>
+        /// <returns></returns>
+        private NTObject CombineResults(NTObject[] nTObject)
+        {
+            // The simple path.
+            if (nTObject.Length == 1)
+            {
+                return nTObject[0];
+            }
+
+            // Find an adder that can deal with this return type.
+            var dataType = nTObject[0].GetType();
+            var adder = _resultAdders
+                .ThrowIfNull(() => new InvalidOperationException("Result Adders has not be composed!"))
+                .Where(a => a.CanHandle(dataType))
+                .FirstOrDefault()
+                .ThrowIfNull(() => new InvalidOperationException($"Unable to find an IAddResult object for type '{dataType.Name}' - so can't add them together! Please provide MEF export."));
+
+            // Now, do the adding.
+            return nTObject.Skip(1).Aggregate(nTObject[0], (acc, newval) => adder.Update(acc, newval));
+        }
+
+        /// <summary>
+        /// Run a query over a single scheme of Uri's.
+        /// </summary>
+        /// <param name="scheme"></param>
+        /// <param name="files"></param>
+        /// <param name="combinedInfo"></param>
+        private IDictionary<string, ROOTNET.Interface.NTObject> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files, CombinedGeneratedCode combinedInfo)
+        {
+            try
+            {
+                // Keep track of how often we run. Mostly for testing reasons, actually.
+                CountExecutionRuns++;
+
+                // Get the query executor
+                TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
+                var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
+                IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
+
+                // Next, generate and slim the proxy file and the TSelector file
+                var proxyFile = local.GenerateProxyFile(files, _exeReq.TreeName, GetQueryDirectory());
+                var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile);
+                TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
+                var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo);
+
+                // Run the actual query.
+                return local.Execute(files, templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
+            } finally
+            {
+                CleanUpQuery();
+            }
         }
 
         /// <summary>
@@ -820,25 +864,12 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="referencedLeafNames">List of leaves that are referenced by the query</param>
         /// <returns></returns>
-        private IQueryExectuor CreateQueryExecutor(string[] referencedLeafNames)
+        private IQueryExectuor CreateQueryExecutor(string scheme, string[] referencedLeafNames)
         {
-            // Make sure this is a valid query
-            if (_exeReq.RootFiles.Length == 0)
-                throw new InvalidOperationException("Not root files or datasets to run this query on");
-
-            var schemes = _exeReq.RootFiles
-                .GroupBy(u => u.Scheme);
-            if (schemes.Count() != 1)
-            {
-                var lst = schemes.Aggregate("", (ac, g) => ac + (ac.Length > 0 ? ", " : "") + g.Key);
-                throw new MustBeSameExecutorException($"The list of files to run over require different executors - that isn't supported ({lst})");
-            }
-            var sch = schemes.First().Key;
-
             // Now find a query executor.
             var qefactory = _queryExecutorList
-                .Where(qex => qex.Scheme == sch).FirstOrDefault()
-                .ThrowIfNull(() => new UnsupportedUriSchemeException($"Unable to process files of scheme '{sch}' - no supported executor"));
+                .Where(qex => qex.Scheme == scheme).FirstOrDefault()
+                .ThrowIfNull(() => new UnsupportedUriSchemeException($"Unable to process files of scheme '{scheme}' - no supported executor"));
 
             return qefactory.Create(_exeReq, referencedLeafNames);
         }
@@ -1196,6 +1227,25 @@ namespace LINQToTTreeLib
                 _queryDirectory.Create();
             }
             return _queryDirectory;
+        }
+
+        /// <summary>
+        /// Clean up the query - keep user's disk clean!
+        /// </summary>
+        private void CleanUpQuery()
+        {
+            TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
+            if (_exeReq.CleanupQuery)
+            {
+                // If we can't do the clean up, don't worry about it.
+                try
+                {
+                    _queryDirectory.Delete(true);
+                }
+                catch
+                { }
+            }
+            _queryDirectory = null;
         }
 
         /// <summary>

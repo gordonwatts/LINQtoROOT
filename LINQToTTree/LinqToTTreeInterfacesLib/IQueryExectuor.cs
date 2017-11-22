@@ -12,11 +12,13 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// Run request, and return the results
         /// </summary>
+        /// <param name="rootFiles">The files we are to run over</param>
         /// <param name="queryDirectory"></param>
         /// <param name="templateFile">Path to the main runner file</param>
         /// <param name="varsToTransfer">A list of variables that are used as input to the routine.</param>
         /// <returns>A list of objects and names pulled from the output root file</returns>
         IDictionary<string, ROOTNET.Interface.NTObject> Execute(
+            Uri[] rootFiles,
             FileInfo templateFile,
             DirectoryInfo queryDirectory,
             IEnumerable<KeyValuePair<string, object>> varsToTransfer);

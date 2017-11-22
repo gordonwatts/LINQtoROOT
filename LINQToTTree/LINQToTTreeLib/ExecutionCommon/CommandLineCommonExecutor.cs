@@ -107,7 +107,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         ///     file. This happens often when things are over shares. We will retry three time if we detect root is having trouble with
         ///     bad data.
         /// </remarks>
-        public virtual IDictionary<string, NTObject> Execute(FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public virtual IDictionary<string, NTObject> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
             ExecutionUtilities.Init();
@@ -132,7 +132,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             var subfileCommands = new StringBuilder();
             var resultsFile = new FileInfo(Path.Combine(queryDirectory.FullName, "selector_results.root"));
             RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer,
-                Environment.TreeName, Environment.RootFiles);
+                Environment.TreeName, files);
 
             // Write out the temp file.
             using (var secondFile = File.CreateText(Path.Combine(queryDirectory.FullName, "RunTSelector1.C")))
@@ -160,9 +160,6 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Get back results
             var results = LoadSelectorResults(resultsFile);
-
-            // Clean up
-            CleanUpQuery(queryDirectory);
 
             return results;
         }
@@ -412,24 +409,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                         Console.WriteLine("Failed to build {0}. Ignoring and crossing fingers.", output.Name);
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Clean up the query - keep user's disk clean!
-        /// </summary>
-        private void CleanUpQuery(DirectoryInfo queryDirectory)
-        {
-            TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
-            if (Environment.CleanupQuery)
-            {
-                // If we can't do the clean up, don't worry about it.
-                try
-                {
-                    queryDirectory.Delete(true);
-                }
-                catch
-                { }
             }
         }
 

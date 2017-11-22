@@ -29,7 +29,7 @@ namespace LINQToTTreeLib
         public QueriableTTree(Uri rootFile, string treeName)
             : base(CreateLINQToTTreeParser(), new TTreeQueryExecutor(new Uri[] { rootFile }, treeName, typeof(T)))
         {
-            TraceHelpers.TraceInfo(1, string.Format("Creating new Queriable ttree with 1 file for tree '{0}'", treeName));
+            TraceHelpers.TraceInfo(1, $"Creating new Queriable ttree with 1 Uri for tree '{treeName}'");
         }
 
         /// <summary>
