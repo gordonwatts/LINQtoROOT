@@ -645,6 +645,32 @@ namespace LINQToTTreeLib
             Assert.AreEqual(numberOfIter * 10 + numberOfIter, dude);
         }
 #endif
+        [TestMethod]
+        public void ConcatByDifferentUris()
+        {
+            // We use Uri's from two places. The contact is done
+            // automatically as a result.
+
+            const int numberOfIter = 10;
+            var rootFileLocal = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFileBashLocal = new UriBuilder(rootFileLocal) { Scheme = "localbash" }.Uri;
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            ///
+            /// Ok, now we can actually see if we can make it "go".
+            /// 
+
+            var exe = new TTreeQueryExecutor(new[] { rootFileLocal, rootFileBashLocal }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter*2, result);
+        }
 
         [TestMethod]
         public void TestSimpleResultDebugCompile()
