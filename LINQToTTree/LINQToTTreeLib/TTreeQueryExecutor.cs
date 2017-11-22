@@ -1183,6 +1183,17 @@ namespace LINQToTTreeLib
         static CompositionContainer _gContainer = null;
 
         /// <summary>
+        /// Track assemblies that need to be added to this guy for composition.
+        /// </summary>
+        static Lazy<List<Assembly>> _gAssembliesToCompose = new Lazy<List<Assembly>>(() => new List<Assembly>());
+
+        public static void AddAssemblyForPlugins (Assembly a)
+        {
+            _gAssembliesToCompose.Value.Add(a);
+            Reset();
+        }
+
+        /// <summary>
         /// Return the container. Mostly for testing
         /// </summary>
         public static CompositionContainer CContainer
@@ -1202,6 +1213,9 @@ namespace LINQToTTreeLib
             _gContainer = null;
         }
 
+        /// <summary>
+        /// Get our compositon stuff setup
+        /// </summary>
         private static void InitContainer()
         {
             if (_gContainer != null)
@@ -1210,6 +1224,13 @@ namespace LINQToTTreeLib
             // Get MEF setup with everything in our assembly.
             AggregateCatalog aggCat = new AggregateCatalog();
             aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
+            if (_gAssembliesToCompose.IsValueCreated)
+            {
+                foreach (var a in _gAssembliesToCompose.Value)
+                {
+                    aggCat.Catalogs.Add(new AssemblyCatalog(a));
+                }
+            }
             _gContainer = new CompositionContainer(aggCat);
             CompositionBatch b = new CompositionBatch();
             b.AddPart(new TypeHandlers.TypeHandlerCache());
