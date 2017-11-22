@@ -65,11 +65,11 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AtlasSSH, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AtlasSSH.3.6.0\lib\net451\AtlasSSH.dll</HintPath>
+    <Reference Include="AtlasSSH, Version=3.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AtlasSSH.3.6.1\lib\net451\AtlasSSH.dll</HintPath>
     </Reference>
-    <Reference Include="AtlasWorkFlows, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AtlasSSH.3.6.0\lib\net451\AtlasWorkFlows.dll</HintPath>
+    <Reference Include="AtlasWorkFlows, Version=3.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AtlasSSH.3.6.1\lib\net451\AtlasWorkFlows.dll</HintPath>
     </Reference>
     <Reference Include="CredentialManagement, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CredentialManagement.1.0.2\lib\net35\CredentialManagement.dll</HintPath>
