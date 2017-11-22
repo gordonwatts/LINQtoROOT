@@ -164,7 +164,7 @@ namespace LINQToTTreeLib
                 bld.Append("The following URI(s) could not be processed by their scheme handlers: ");
                 foreach (var f in badFiles)
                 {
-                    bld.AppendFormat("{0} ", f.LocalPath);
+                    bld.AppendFormat("{0} ", f.OriginalString);
                 }
                 throw new BadUriException(bld.ToString());
             }
