@@ -802,7 +802,7 @@ namespace LINQToTTreeLib
                         m.Append(", ");
                     m.Append($"{f.OriginalString}");
                 }
-                TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: starting query on {m.ToString()}", TraceEventType.Start);
+                TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: running {_queuedQueries.Count} queries on {m.ToString()}", TraceEventType.Start);
             }
         }
 
