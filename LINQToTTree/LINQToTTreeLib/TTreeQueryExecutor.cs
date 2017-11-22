@@ -740,6 +740,7 @@ namespace LINQToTTreeLib
 
             _queryDirectory = null;
             TraceHelpers.TraceInfo(17, "ExecuteQueuedQueries: Done");
+            LogExecutionFinish();
         }
 
         /// <summary>
@@ -752,9 +753,29 @@ namespace LINQToTTreeLib
                 var m = new StringBuilder();
                 foreach (var f in _originalRootFiles)
                 {
-                    m.Append($" {f.OriginalString}");
+                    if (m.Length > 0)
+                        m.Append(", ");
+                    m.Append($"{f.OriginalString}");
                 }
                 TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: starting query on {m.ToString()}", TraceEventType.Start);
+            }
+        }
+
+        /// <summary>
+        /// Log to our event source that we are done.
+        /// </summary>
+        private void LogExecutionFinish()
+        {
+            if (_originalRootFiles != null)
+            {
+                var m = new StringBuilder();
+                foreach (var f in _originalRootFiles)
+                {
+                    if (m.Length > 0)
+                        m.Append(", ");
+                    m.Append($"{f.OriginalString}");
+                }
+                TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: starting query on {m.ToString()}", TraceEventType.Stop);
             }
         }
 
@@ -810,7 +831,7 @@ namespace LINQToTTreeLib
             if (schemes.Count() != 1)
             {
                 var lst = schemes.Aggregate("", (ac, g) => ac + " " + g.Key);
-                throw new MustBeSameExecutorException($"The list of files to run over require different executors - that isn't supported (${lst})");
+                throw new MustBeSameExecutorException($"The list of files to run over require different executors - that isn't supported ({lst})");
             }
             var sch = schemes.First().Key;
 
