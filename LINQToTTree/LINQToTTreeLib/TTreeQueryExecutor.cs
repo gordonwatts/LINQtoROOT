@@ -102,6 +102,18 @@ namespace LINQToTTreeLib
         /// </summary>
         public bool UseStatementOptimizer { get; set; }
 
+
+        [Serializable]
+        public class BadUriException : Exception
+        {
+            public BadUriException() { }
+            public BadUriException(string message) : base(message) { }
+            public BadUriException(string message, Exception inner) : base(message, inner) { }
+            protected BadUriException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// We are going to be executing over a particular file and tree
         /// </summary>
@@ -149,12 +161,12 @@ namespace LINQToTTreeLib
             if (badFiles.Length > 0)
             {
                 StringBuilder bld = new StringBuilder();
-                bld.Append("The following URI(s) do not exist or are not recognized and so can't be processed: ");
+                bld.Append("The following URI(s) could not be processed by their scheme handlers: ");
                 foreach (var f in badFiles)
                 {
                     bld.AppendFormat("{0} ", f.LocalPath);
                 }
-                throw new FileNotFoundException(bld.ToString());
+                throw new BadUriException(bld.ToString());
             }
 
             // Make sure the object we are using is correct, and that it has non-null values
@@ -251,12 +263,12 @@ namespace LINQToTTreeLib
 #pragma warning disable CS0649
 
         [Serializable]
-        public class DataSchemeNotKnonwException : Exception
+        public class DataSchemeNotKnownException : Exception
         {
-            public DataSchemeNotKnonwException() { }
-            public DataSchemeNotKnonwException(string message) : base(message) { }
-            public DataSchemeNotKnonwException(string message, Exception inner) : base(message, inner) { }
-            protected DataSchemeNotKnonwException(
+            public DataSchemeNotKnownException() { }
+            public DataSchemeNotKnownException(string message) : base(message) { }
+            public DataSchemeNotKnownException(string message, Exception inner) : base(message, inner) { }
+            protected DataSchemeNotKnownException(
               System.Runtime.Serialization.SerializationInfo info,
               System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         }
@@ -273,7 +285,7 @@ namespace LINQToTTreeLib
             return _dataSchemeHandlers
                 .Where(d => d.Scheme == f.Scheme)
                 .FirstOrDefault()
-                .ThrowIfNull(() => new DataSchemeNotKnonwException($"Uri with scheme '{f.Scheme}' can't be processed - don't know how to deal with the Uri scheme (only know about {AllSchemes()}!"));
+                .ThrowIfNull(() => new DataSchemeNotKnownException($"Uri with scheme '{f.Scheme}' can't be processed - don't know how to deal with the Uri scheme (only know about {AllSchemes()}!"));
         }
 
         /// <summary>
@@ -566,6 +578,7 @@ namespace LINQToTTreeLib
 
             TraceHelpers.TraceInfo(7, "ExecuteScalarAsFuture: Visiting query model");
             qv.VisitQueryModel(queryModel);
+
 
             // Normalize the root files for the query. These will be used for cache lookup, the query, etc.
             _originalRootFiles = _originalRootFiles
@@ -1196,9 +1209,7 @@ namespace LINQToTTreeLib
 
             // Get MEF setup with everything in our assembly.
             AggregateCatalog aggCat = new AggregateCatalog();
-            var assemblyLocation = new FileInfo(Assembly.GetCallingAssembly().Location);
-            //aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
-            aggCat.Catalogs.Add(new DirectoryCatalog(assemblyLocation.DirectoryName));
+            aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
             _gContainer = new CompositionContainer(aggCat);
             CompositionBatch b = new CompositionBatch();
             b.AddPart(new TypeHandlers.TypeHandlerCache());

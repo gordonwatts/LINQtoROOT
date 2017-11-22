@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using static LINQToTTreeLib.TTreeQueryExecutor;
 
 namespace LINQToTTreeLib
 {
@@ -253,6 +254,81 @@ namespace LINQToTTreeLib
             public bool GoodUri(Uri u)
             {
                 return true;
+            }
+
+            public Uri Normalize(Uri u)
+            {
+                return u;
+            }
+
+            /// <summary>
+            /// Return it to being a regular file
+            /// </summary>
+            /// <param name="u"></param>
+            /// <returns></returns>
+            public IEnumerable<Uri> ResolveUri(Uri u)
+            {
+                return new[] { new UriBuilder(u) { Scheme = "file" }.Uri };
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DataSchemeNotKnownException))]
+        public void UriTranslatedNoSchemeHandlerAtAll()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var testUri = new UriBuilder(rootFile) { Scheme = "test1to1scheme" }.Uri;
+
+            // Query model
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { testUri }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(BadUriException))]
+        public void UriTranslatedSchemeHandlerFalsesOut()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+            var testUri = new UriBuilder(rootFile) { Scheme = "test1to1scheme" }.Uri;
+
+            // Query model
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Add the translator to the TTExecutor's
+            var myBatch = new CompositionBatch();
+            myBatch.AddPart(new UriFalseScheme());
+            TTreeQueryExecutor.CContainer.Compose(myBatch);
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { testUri }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(numberOfIter, result);
+        }
+
+        // Do a quick translation switching Uri's back and forth.
+        [Export(typeof(IDataFileSchemeHandler))]
+        class UriFalseScheme : IDataFileSchemeHandler
+        {
+            public string Scheme => "test1to1scheme";
+
+            public DateTime GetUriLastModificationDate(Uri u)
+            {
+                return DateTime.Now;
+            }
+
+            public bool GoodUri(Uri u)
+            {
+                return false;
             }
 
             public Uri Normalize(Uri u)
