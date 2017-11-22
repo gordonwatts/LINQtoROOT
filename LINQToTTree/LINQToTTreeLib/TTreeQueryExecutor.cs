@@ -769,7 +769,7 @@ namespace LINQToTTreeLib
                 CountExecutionRuns++;
 
                 // Get the query executor
-                TraceHelpers.TraceInfo(13, "ExecuteQueuedQueries: Startup - copying over proxy file");
+                TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
                 var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
                 IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
 
@@ -784,6 +784,7 @@ namespace LINQToTTreeLib
             } finally
             {
                 CleanUpQuery();
+                TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Finished run on Uri scheme {scheme}.", opt: TraceEventType.Stop);
             }
         }
 
