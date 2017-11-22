@@ -830,7 +830,7 @@ namespace LINQToTTreeLib
                 .GroupBy(u => u.Scheme);
             if (schemes.Count() != 1)
             {
-                var lst = schemes.Aggregate("", (ac, g) => ac + " " + g.Key);
+                var lst = schemes.Aggregate("", (ac, g) => ac + (ac.Length > 0 ? ", " : "") + g.Key);
                 throw new MustBeSameExecutorException($"The list of files to run over require different executors - that isn't supported ({lst})");
             }
             var sch = schemes.First().Key;
