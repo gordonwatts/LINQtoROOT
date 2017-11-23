@@ -673,6 +673,27 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void ConcatAsTTreeByDifferentUris()
+        {
+            // We use Uri's from two places. The contact is done
+            // automatically as a result.
+
+            const int numberOfIter = 10;
+            var rootFileLocal = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFileBashLocal = new UriBuilder(rootFileLocal) { Scheme = "localbash" }.Uri;
+
+            ///
+            /// Get a simple query we can "play" with
+            /// 
+
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFileLocal, rootFileBashLocal }, "dude", typeof(ntuple));
+            var dude = q.AsTTree("recoTree", outputROOTFile: new FileInfo("ConcatAsTTreeByDifferentUris.root"));
+
+            Assert.IsNotNull(dude);
+            Assert.AreEqual(2, dude.Length);
+        }
+
+        [TestMethod]
         public void TestSimpleResultDebugCompile()
         {
             var rootFile = TestUtils.CreateFileOfInt(10);
