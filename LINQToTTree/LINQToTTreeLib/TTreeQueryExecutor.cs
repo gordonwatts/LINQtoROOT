@@ -405,7 +405,24 @@ namespace LINQToTTreeLib
 
             IExecutableCode Code { get; set; }
 
-            void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject> results);
+            /// <summary>
+            /// We have a list of results - add them all together and extract them.
+            /// </summary>
+            /// <param name="results"></param>
+            void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject>[] results);
+
+            /// <summary>
+            /// Rename an output object if it is a global resource so we don't step on anything else.
+            /// </summary>
+            /// <param name="result"></param>
+            /// <param name="cycle"></param>
+            void RenameForCycle(IDictionary<string, ROOTNET.Interface.NTObject> result, int cycle);
+
+            /// <summary>
+            /// Push the results into the cache
+            /// </summary>
+            /// <param name="results"></param>
+            void CacheResults(IDictionary<string, ROOTNET.Interface.NTObject>[] results);
         }
 
         /// <summary>
@@ -425,11 +442,49 @@ namespace LINQToTTreeLib
                 Future.TreeExecutor.ExecuteQueuedQueries();
             }
 
-
-            public void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject> results)
+            /// <summary>
+            /// Go through the list and extract the results that are needed
+            /// </summary>
+            /// <param name="results"></param>
+            public void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject>[] results)
             {
-                var final = Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), CacheKey, results);
-                Future.SetValue(final);
+
+                var finalResultList = results
+                    .Select((indR, index) => Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR, index))
+                    .ToArray();
+
+                if (finalResultList.Length == 1)
+                {
+                    Future.SetValue(finalResultList[0]);
+                } else
+                {
+                    var adder = Future.TreeExecutor._resultAdders
+                        .ThrowIfNull(() => new InvalidOperationException("Result Adders has not be composed!"))
+                        .Where(a => a.CanHandle(typeof(RType)))
+                        .FirstOrDefault()
+                        .ThrowIfNull(() => new InvalidOperationException($"Unable to find an IAddResult object for type '{typeof(RType).Name}' - so can't add them together! Please provide MEF export."));
+
+                    Future.SetValue(finalResultList.Skip(1).Aggregate(finalResultList[0], (acc, newval) => adder.Update(acc, newval)));
+                }
+            }
+
+            /// <summary>
+            /// Cache the results for everything.
+            /// </summary>
+            /// <param name="results"></param>
+            void IQueuedQuery.CacheResults(IDictionary<string, NTObject>[] results)
+            {
+                Future.TreeExecutor.CacheResults(Code.ResultValues.FirstOrDefault(), CacheKey, results);
+            }
+
+            /// <summary>
+            /// Run the rename on the varaible cycle.
+            /// </summary>
+            /// <param name="result"></param>
+            /// <param name="cycle"></param>
+            public void RenameForCycle(IDictionary<string, NTObject> result, int cycle)
+            {
+                Future.TreeExecutor.RenameForCycle<RType>(Code.ResultValues.FirstOrDefault(), result, cycle);
             }
         }
 
@@ -513,6 +568,9 @@ namespace LINQToTTreeLib
             /// </summary>
             public bool HasValue { get { return _held.HasValue; } }
 
+            /// <summary>
+            /// Clone the value in place if it is needed (we do a lazy clone).
+            /// </summary>
             public T Value
             {
                 get
@@ -687,7 +745,7 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Called when it is time to execute all the queries
+        /// Called when it is time to execute all the queries queued against this executor.
         /// </summary>
         internal void ExecuteQueuedQueries()
         {
@@ -709,18 +767,16 @@ namespace LINQToTTreeLib
 
             // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
             var combinedResults = _resolvedRootFiles
-                .Select(sch => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo))
-                .SelectMany(results => results)
-                .GroupBy(k => k.Key)
-                .Select(resultList => (key: resultList.Key, v: CombineResults(resultList.Select(k => k.Value).ToArray())))
-                .ToDictionary(sc => sc.key, sc => sc.v);
+                .Select((sch, index) => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo, index))
+                .ToArray();
 
             // Extract all the variables! And save in the cache, and set the
             // future value so everyone else can use them!
-            TraceHelpers.TraceInfo(15, "ExecuteQueuedQueries: Extracting the query results");
+            TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
             foreach (var cq in _queuedQueries)
             {
                 cq.ExtractResult(combinedResults);
+                cq.CacheResults(combinedResults);
             }
             _queuedQueries.Clear();
 
@@ -730,38 +786,13 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// We have results from several runs. Combine them into a single one using
-        /// our adder infrastructure.
-        /// </summary>
-        /// <param name="nTObject"></param>
-        /// <returns></returns>
-        private NTObject CombineResults(NTObject[] nTObject)
-        {
-            // The simple path.
-            if (nTObject.Length == 1)
-            {
-                return nTObject[0];
-            }
-
-            // Find an adder that can deal with this return type.
-            var dataType = nTObject[0].GetType();
-            var adder = _resultAdders
-                .ThrowIfNull(() => new InvalidOperationException("Result Adders has not be composed!"))
-                .Where(a => a.CanHandle(dataType))
-                .FirstOrDefault()
-                .ThrowIfNull(() => new InvalidOperationException($"Unable to find an IAddResult object for type '{dataType.Name}' - so can't add them together! Please provide MEF export."));
-
-            // Now, do the adding.
-            return nTObject.Skip(1).Aggregate(nTObject[0], (acc, newval) => adder.Update(acc, newval));
-        }
-
-        /// <summary>
         /// Run a query over a single scheme of Uri's.
         /// </summary>
         /// <param name="scheme"></param>
         /// <param name="files"></param>
         /// <param name="combinedInfo"></param>
-        private IDictionary<string, ROOTNET.Interface.NTObject> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files, CombinedGeneratedCode combinedInfo)
+        private IDictionary<string, ROOTNET.Interface.NTObject> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
+                CombinedGeneratedCode combinedInfo, int cycle)
         {
             try
             {
@@ -780,7 +811,16 @@ namespace LINQToTTreeLib
                 var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo);
 
                 // Run the actual query.
-                return local.Execute(files, templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
+                var r = local.Execute(files, templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
+
+                // Rename by cycle for those that need it.
+                foreach (var cq in _queuedQueries)
+                {
+                    cq.RenameForCycle(r, cycle);
+                }
+
+                // Done - return everything.
+                return r;
             } finally
             {
                 CleanUpQuery();
@@ -825,20 +865,6 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Executing files from multiple sources is not yet supported.
-        /// </summary>
-        [Serializable]
-        public class MustBeSameExecutorException : NotSupportedException
-        {
-            public MustBeSameExecutorException() { }
-            public MustBeSameExecutorException(string message) : base(message) { }
-            public MustBeSameExecutorException(string message, Exception inner) : base(message, inner) { }
-            protected MustBeSameExecutorException(
-              System.Runtime.Serialization.SerializationInfo info,
-              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-        }
-
-        /// <summary>
         /// Thrown when we have no way to "execute" file.
         /// </summary>
         [Serializable]
@@ -873,17 +899,6 @@ namespace LINQToTTreeLib
                 .ThrowIfNull(() => new UnsupportedUriSchemeException($"Unable to process files of scheme '{scheme}' - no supported executor"));
 
             return qefactory.Create(_exeReq, referencedLeafNames);
-        }
-
-        /// <summary>
-        /// Build the execution request - the info that someone else (or us) will need in order to run this request!
-        /// </summary>
-        /// <returns></returns>
-        private ExecutionEnvironment BuildRemoteExecutionRequest()
-        {
-            var result = new ExecutionEnvironment();
-
-            return result;
         }
 
         /// <summary>
@@ -1035,20 +1050,84 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject> results)
+        private T ExtractResult<T>(IDeclaredParameter iVariable, IDictionary<string, ROOTNET.Interface.NTObject> results, int cycle)
         {
             // Load the object and try to extract whatever info we need to from it
-
             var s = _varSaver.Get(iVariable);
+            NTObject[] objs = ExtractQueryReturnedObjectsForVariable(iVariable, results, s);
+
+            // Return the result in a form that the code wants.
+            return s.LoadResult<T>(iVariable, objs, cycle);
+        }
+
+        /// <summary>
+        /// Lets see fi we can cache the results for the object - write them all out!
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="key"></param>
+        /// <param name="results"></param>
+        private void CacheResults(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject>[] results)
+        {
+            // Get the results all out.
+            var s = _varSaver.Get(iVariable);
+            var objs = results
+                .Select(r => ExtractQueryReturnedObjectsForVariable(iVariable, r, s))
+                .ToArray();
+
+            if (results.Length == 1)
+            {
+                // Shove it into the cache.
+                _cache.CacheItem(key, objs.SelectMany(sflat => sflat).ToArray());
+            } else
+            {
+                // for cycles we do a bit more work to keep everything tracked.
+                var toSave = objs
+                    .Select((cycleObjects, cycle) =>
+                    {
+                        var a = new ROOTNET.NTObjArray();
+                        foreach (var o in cycleObjects)
+                        {
+                            a.Add(o);
+                        }
+                        a.Name = $"cycle array {cycle}";
+                        return a;
+                    })
+                    .ToArray();
+                _cache.CacheItem(key, toSave);
+            }
+        }
+
+        /// <summary>
+        /// Returns the objects from the queury that match the result object we are looking at.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="results"></param>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private static NTObject[] ExtractQueryReturnedObjectsForVariable(IDeclaredParameter iVariable, IDictionary<string, NTObject> results, IVariableSaver s)
+        {
             var allNames = s.GetCachedNames(iVariable);
 
             if (allNames.Where(n => !results.Keys.Contains(n)).Any())
                 throw new InvalidOperationException(string.Format("The result list from the query did not contains an object named '{0}'.", iVariable.RawValue));
 
             var objs = allNames.Select(n => results[n]).ToArray();
+            return objs;
+        }
 
-            _cache.CacheItem(key, objs);
-            return s.LoadResult<T>(iVariable, objs);
+        /// <summary>
+        /// Get the saver to rename the variable coming back to match the cycle.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="iVariable"></param>
+        /// <param name="result"></param>
+        /// <param name="cycle"></param>
+        private void RenameForCycle<T>(IDeclaredParameter iVariable, IDictionary<string, ROOTNET.Interface.NTObject> result, int cycle)
+        {
+            var s = _varSaver.Get(iVariable);
+            NTObject[] objs = ExtractQueryReturnedObjectsForVariable(iVariable, result, s);
+
+            s.RenameForQueryCycle(iVariable, objs, cycle);
         }
 
         /// <summary>

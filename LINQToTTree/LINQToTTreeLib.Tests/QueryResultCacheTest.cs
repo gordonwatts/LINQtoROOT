@@ -99,7 +99,7 @@ namespace LINQToTTreeLib
             /// <param name="iVariable"></param>
             /// <param name="obj"></param>
             /// <returns></returns>
-            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
             {
                 var h = obj[0] as ROOTNET.Interface.NTH1F;
                 if (h == null)
@@ -108,6 +108,10 @@ namespace LINQToTTreeLib
                 int result = (int)h.GetBinContent(1);
                 object i = result;
                 return (T)i;
+            }
+
+            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+            {
             }
         }
 
@@ -141,10 +145,13 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
             {
                 var h = obj[0].Clone();
                 return (T)h;
+            }
+            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+            {
             }
         }
 

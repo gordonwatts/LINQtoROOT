@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers.ROOT;
+using ROOTNET.Interface;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -66,7 +67,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle)
         {
             if (obj == null)
                 throw new ArgumentNullException("Obj cannot be null");
@@ -96,6 +97,16 @@ namespace LINQToTTreeLib.Variables.Savers
             result.Title = rootObjInfo.OriginalTitle;
 
             return (T)result;
+        }
+
+        /// <summary>
+        /// Since ROOT objects are in-memory objects, no need to do any renameing.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="obj"></param>
+        /// <param name="cycle"></param>
+        public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+        {
         }
     }
 }

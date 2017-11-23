@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using ROOTNET.Interface;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -81,7 +82,7 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle)
         {
             var h = obj[0] as ROOTNET.NTH1;
             if (h == null)
@@ -89,6 +90,16 @@ namespace LINQToTTreeLib.Variables.Savers
 
             object result = _types[iVariable.Type]._converter(h);
             return (T)result;
+        }
+
+        /// <summary>
+        /// Since we are an in-memory variable, no need to do anything.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="obj"></param>
+        /// <param name="cycle"></param>
+        public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+        {
         }
     }
 }

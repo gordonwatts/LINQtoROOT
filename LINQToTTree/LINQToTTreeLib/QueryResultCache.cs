@@ -276,7 +276,8 @@ namespace LINQToTTreeLib
 
                 var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj());
                 ROOTNET.NTROOT.gROOT.cd();
-                var v = varSaver.LoadResult<T>(theVar, cachedObjects.ToArray());
+                // Need to fix up the whole cached objects unpacking thing.
+                var v = varSaver.LoadResult<T>(theVar, cachedObjects.ToArray(), 0);
                 return new Tuple<bool, T>(v != null, v);
             }
             finally

@@ -105,7 +105,20 @@ namespace LINQToTTreeLib.Files
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] objs, int cycle)
+        {
+            var f = GetFileInfo(iVariable, objs, cycle);
+            return (T)(object)(new FileInfo[] { f });
+        }
+
+        /// <summary>
+        /// Return the file info for this output.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="obj"></param>
+        /// <param name="cycle">The cycle number for this file. If null, then the raw file as written by the code.</param>
+        /// <returns></returns>
+        private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int? cycle = null, bool doChecks = true)
         {
             // Fetch out the path and the size in bytes of the file.
             NTH1I hPath = null, hSize = null;
@@ -127,22 +140,44 @@ namespace LINQToTTreeLib.Files
                 throw new InvalidOperationException("Internal error - cache is missing either the path for a CSV file or its size");
             }
 
+            // Deal with the cycle - we just add an index onto the filename.
+            var name = hPath.Title;
+            if (cycle.HasValue)
+            {
+                name = $"{Path.GetDirectoryName(name)}\\{Path.GetFileNameWithoutExtension(name)}_{cycle.Value}.{Path.GetExtension(name)}";
+            }
+
             // See if the file is there, and make sure its size is the same.
             // That will have to do for the cache lookup.
             // Funny conversion are b.c. we are in the middle of a crazy generic here.
-
-            var f = new FileInfo(hPath.Title);
-            if (!f.Exists)
+            var f = new FileInfo(name);
+            if (doChecks
+                && ( !f.Exists || (f.Length != (int)hSize.GetBinContent(1))))
             {
-                return (T)(object)null;
+                return null;
             }
 
-            if (f.Length != (int)hSize.GetBinContent(1))
+            // Return the file
+            return f;
+        }
+
+        /// <summary>
+        /// We are going to do the rename here.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="obj"></param>
+        /// <param name="cycle"></param>
+        public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+        {
+            var currentFile = GetFileInfo(iVariable, obj);
+            var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
+
+            if (newFile.Exists)
             {
-                return (T)(object)null;
+                newFile.Delete();
             }
 
-            return (T)(object)(new FileInfo[] { f });
+            currentFile.MoveTo(newFile.FullName);
         }
 
         /// <summary>

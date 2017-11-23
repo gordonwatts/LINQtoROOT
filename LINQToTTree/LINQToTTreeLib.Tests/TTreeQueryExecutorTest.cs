@@ -12,6 +12,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using static LINQToTTreeLib.TTreeQueryExecutor;
+using Remotion.Linq;
 
 namespace LINQToTTreeLib
 {
@@ -691,6 +692,31 @@ namespace LINQToTTreeLib
 
             Assert.IsNotNull(dude);
             Assert.AreEqual(2, dude.Length);
+            Assert.AreNotEqual(dude[0].FullName, dude[1].FullName);
+        }
+
+        [TestMethod]
+        public void ConcatAsTTreeByDifferentUrisCache()
+        {
+            // We use Uri's from two places. The contact is done
+            // automatically as a result.
+
+            const int numberOfIter = 10;
+            var rootFileLocal = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFileBashLocal = new UriBuilder(rootFileLocal) { Scheme = "localbash" }.Uri;
+
+            // Get a simple query we can "play" with
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFileLocal, rootFileBashLocal }, "dude", typeof(ntuple));
+            var dude1 = q.AsTTree("recoTree", outputROOTFile: new FileInfo("ConcatAsTTreeByDifferentUris.root"));
+
+            var dude2 = q.AsTTree("recoTree", outputROOTFile: new FileInfo("ConcatAsTTreeByDifferentUris.root"));
+            Assert.IsNotNull(dude2);
+            Assert.AreEqual(2, dude2.Length);
+            Assert.AreNotEqual(dude2[0].FullName, dude2[1].FullName);
+
+            // Check the caching.
+            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(1, t.CountCacheHits);
         }
 
         [TestMethod]

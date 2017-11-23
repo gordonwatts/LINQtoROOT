@@ -120,7 +120,7 @@ namespace LINQToTTreeLib.Files
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj)
+        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
         {
             // Fetch out the path and the size in bytes of the file.
             NTH1I hPath = null, hSize = null;
@@ -157,6 +157,17 @@ namespace LINQToTTreeLib.Files
             }
 
             return (T)(object)(new FileInfo[] { f });
+        }
+
+        /// <summary>
+        /// Fix up the filename for the cycle we have to deal with.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="obj"></param>
+        /// <param name="cycle"></param>
+        public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

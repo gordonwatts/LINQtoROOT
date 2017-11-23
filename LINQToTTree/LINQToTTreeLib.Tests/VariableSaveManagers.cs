@@ -3,6 +3,8 @@ using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
+using ROOTNET.Interface;
+
 namespace LINQToTTreeLib.Tests
 {
     /// <summary>
@@ -35,12 +37,17 @@ namespace LINQToTTreeLib.Tests
                 return Enumerable.Empty<string>();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj)
+            public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle)
             {
                 throw new NotImplementedException();
             }
 
             public string[] GetCachedNames(IDeclaredParameter iVariable)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
             {
                 throw new NotImplementedException();
             }
