@@ -193,6 +193,33 @@ namespace LINQToTTreeLib.Tests.Files
             }
         }
 
+        [TestMethod]
+        public void TTreeWithZeroEntries()
+        {
+            // Test a full round trip for a really simple CSV dump.
+            var rootFile = TestUtils.CreateFileOfInt(10);
+
+            // Simple query that will return nothing.
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => new customObjectAllValidTypes() { vDouble = (double)e.run, vBool = e.run == 10, vInt = (int)e.run })
+                .Where(e => false)
+                .AsTTree(outputROOTFile: new FileInfo("allguys.root"));
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Run it.
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(singleIntNtuple));
+            exe.CleanupQuery = false;
+            var result = exe.ExecuteScalar<FileInfo[]>(query);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, result.Length);
+
+            var fout = ROOTNET.NTFile.Open(result[0].FullName, "READ");
+            var t = fout.Get("DataTree") as NTTree;
+            Assert.IsNotNull(t);
+            Assert.AreEqual(0, t.GetEntries());
+        }
+
         #region Test Query Generation
         private static FileInfo RunQueryForSingleColumnTTree(Action queryBuilder)
         {
