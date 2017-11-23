@@ -588,7 +588,7 @@ namespace LINQToTTreeLib
 
 
             // Normalize the root files for the query. These will be used for cache lookup, the query, etc.
-            _originalRootFiles = _originalRootFiles
+            var normalizedRootFiles = _originalRootFiles
                 .Select(u => GetDataHandler(u).Normalize(u))
                 .ToArray();
 
@@ -596,7 +596,7 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(8, "ExecuteScalarAsFuture: Getting cache key");
             {
                 object[] inputs = result.VariablesToTransfer.Select(x => x.Value).ToArray();
-                key = _cache.GetKey(_originalRootFiles, _exeReq.TreeName, inputs, codeContext.CacheCookies.ToArray(), queryModel,
+                key = _cache.GetKey(normalizedRootFiles, _exeReq.TreeName, inputs, codeContext.CacheCookies.ToArray(), queryModel,
                     dateChecker: u => GetDataHandler(u).GetUriLastModificationDate(u));
             }
             if (!IgnoreQueryCache)
