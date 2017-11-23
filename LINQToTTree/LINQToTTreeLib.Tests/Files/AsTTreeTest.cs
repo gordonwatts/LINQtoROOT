@@ -220,6 +220,24 @@ namespace LINQToTTreeLib.Tests.Files
             Assert.AreEqual(0, t.GetEntries());
         }
 
+        [TestMethod]
+        public void TTreeWithZeroEntriesButConcat()
+        {
+            const int numberOfIter = 10;
+            var rootFile = TestUtils.CreateFileOfInt(numberOfIter);
+
+            var q = new SimpleTTreeExecutorQueriable<singleIntNtuple>(new[] { rootFile }, "dude", typeof(ntuple));
+            var result = q.Where(e => false).Concat(q).AsTTree(outputROOTFile: new FileInfo("TTreeWithZeroEntriesButConcat.root"));
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2, result.Length);
+
+            var fout = ROOTNET.NTFile.Open(result[1].FullName, "READ");
+            var t = fout.Get("DataTree") as NTTree;
+            Assert.IsNotNull(t);
+            Assert.AreEqual(0, t.GetEntries());
+        }
+
         #region Test Query Generation
         private static FileInfo RunQueryForSingleColumnTTree(Action queryBuilder)
         {
