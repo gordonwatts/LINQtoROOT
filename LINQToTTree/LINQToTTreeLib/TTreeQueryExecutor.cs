@@ -660,7 +660,10 @@ namespace LINQToTTreeLib
             if (!IgnoreQueryCache)
             {
                 TraceHelpers.TraceInfo(9, "ExecuteScalarAsFuture: Looking for cache hit");
-                var cacheHit = _cache.Lookup<TResult>(key, _varSaver.Get(result.ResultValueAsVaraible), result.ResultValueAsVaraible);
+                var cacheHit = _cache.Lookup<TResult>(key,
+                    _varSaver.Get(result.ResultValueAsVaraible),
+                    result.ResultValueAsVaraible,
+                    () => _resultAdders.Where(a => a.CanHandle(typeof(TResult))).FirstOrDefault());
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;
@@ -1073,28 +1076,7 @@ namespace LINQToTTreeLib
             var objs = results
                 .Select(r => ExtractQueryReturnedObjectsForVariable(iVariable, r, s))
                 .ToArray();
-
-            if (results.Length == 1)
-            {
-                // Shove it into the cache.
-                _cache.CacheItem(key, objs.SelectMany(sflat => sflat).ToArray());
-            } else
-            {
-                // for cycles we do a bit more work to keep everything tracked.
-                var toSave = objs
-                    .Select((cycleObjects, cycle) =>
-                    {
-                        var a = new ROOTNET.NTObjArray();
-                        foreach (var o in cycleObjects)
-                        {
-                            a.Add(o);
-                        }
-                        a.Name = $"cycle array {cycle}";
-                        return a;
-                    })
-                    .ToArray();
-                _cache.CacheItem(key, toSave);
-            }
+            _cache.CacheItem(key, objs);
         }
 
         /// <summary>

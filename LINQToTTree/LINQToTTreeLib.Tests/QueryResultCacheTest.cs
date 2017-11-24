@@ -28,24 +28,6 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
-#if false
-        /// <summary>Test stub for CacheItem(FileInfo, QueryModel, NTObject)</summary>
-        [PexMethod]
-        internal void CacheItem(
-            [PexAssumeUnderTest]QueryResultCache target,
-            object[] inputObjs,
-            Uri _rootFile,
-            string[] cachecookies,
-            QueryModel qm,
-            NTObject o
-        )
-        {
-            target.CacheItem(target.GetKey(new Uri[] { _rootFile }, "test", inputObjs, cachecookies, qm), o);
-            // TODO: add assertions to method QueryResultCacheTest.CacheItem(QueryResultCache, FileInfo, QueryModel, NTObject)
-        }
-
-#endif
-
         internal Tuple<bool, T> Lookup<T>(
             QueryResultCache target,
             Uri _rootFile,
@@ -54,10 +36,11 @@ namespace LINQToTTreeLib
             string[] cacheStrings,
             QueryModel queryModel,
             IVariableSaver varSaver,
-            bool checkDates = false
+            bool checkDates = false,
+            Func<IAddResult> generateAdder = null
         )
         {
-            var result = target.Lookup<T>(target.GetKey(new Uri[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), varSaver, null);
+            var result = target.Lookup<T>(target.GetKey(new Uri[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), varSaver, null, generateAdder);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
         }
@@ -287,6 +270,75 @@ namespace LINQToTTreeLib
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
+        }
+
+        [TestMethod]
+        public void CacheSingleInteger()
+        {
+            // A simple query
+            var query = MakeQuery(0);
+            var f = new Uri("http://www.nytimes.com");
+
+            // Cache an integer
+            var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h.Directory = null;
+            h.SetBinContent(1, 5.0);
+            var q = new QueryResultCache();
+            var date = DateTime.Now;
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h });
+
+            // Now, do the lookup.
+            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
+            Assert.IsTrue(r.Item1, "expected hit");
+            Assert.AreEqual(5, r.Item2, "incorrect return value");
+        }
+
+        [TestMethod]
+        public void CacheCycledInteger()
+        {
+            // A simple query
+            var query = MakeQuery(0);
+            var f = new Uri("http://www.nytimes.com");
+
+            // Cache an integer
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h1.Directory = null;
+            h1.SetBinContent(1, 5.0);
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h2.Directory = null;
+            h2.SetBinContent(1, 2.0);
+
+            var cacheCycles = new NTObject[][] { new NTObject[] { h1 }, new NTObject[] { h2 } };
+
+            var q = new QueryResultCache();
+            var date = DateTime.Now;
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
+
+            // Now, do the lookup.
+            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), generateAdder: () => new DummyIntAdder());
+            Assert.IsTrue(r.Item1, "expected hit");
+            Assert.AreEqual(7, r.Item2, "incorrect return value");
+        }
+
+        class DummyIntAdder : IAddResult
+        {
+            public bool CanHandle(Type t)
+            {
+                throw new NotImplementedException();
+            }
+
+            public T Clone<T>(T o)
+            {
+                return o;
+            }
+
+            public T Update<T>(T accumulator, T o2)
+            {
+                var iacc = accumulator as int?;
+                var io2 = o2 as int?;
+
+                return (T) (object) (iacc.Value + io2.Value);
+            }
         }
 
         [TestMethod]
@@ -602,21 +654,18 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestNoStuckInOpenFile()
         {
-            ///
-            /// When we load up and return a cache, we are storing a histogram in the file - make sure it comes back w/out errors.
-            ///
-
+            // When we load up and return a cache, we are storing a histogram in the file - make sure it comes back w/out errors.
             var f = MakeRootFile("TestHitDriver");
             var query = MakeQuery(0);
 
-            /// Cache a result
-
+            // Cache a result
             var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
 
+            // Do the lookup.
             var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual("hi", r.Item2.Name, "improper histogram came back");

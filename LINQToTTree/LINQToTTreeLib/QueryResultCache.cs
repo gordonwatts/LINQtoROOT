@@ -9,6 +9,7 @@ using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using System.Diagnostics;
+using ROOTNET.Interface;
 
 namespace LINQToTTreeLib
 {
@@ -168,7 +169,7 @@ namespace LINQToTTreeLib
             TraceHelpers.TraceInfo(30, "GetKey: Calculating the input object hash");
             var inputObjectHash = CalcObjectHash(inputObjects);
             string queryNameBase = string.Format(@"\\query {0}-inp{1}-crm{2}", queryHash.ToString(), inputObjectHash, crumbHash);
-            result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + ".root");
+            result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + "_%%CYCLE%%.root");
 
             // And a complete unique hash string.
             result.UniqueHashString = $"files{flieHash.ToString()}-query{queryHash.ToString()}-objs{inputObjectHash}-crm{crumbHash}";
@@ -228,60 +229,89 @@ namespace LINQToTTreeLib
         /// <param name="sourceRootFiles"></param>
         /// <param name="queryModel"></param>
         /// <param name="varSaver"></param>
+        /// <param name="akey"></param>
         /// <returns></returns>
-        public Tuple<bool, T> Lookup<T>(IQueryResultCacheKey akey, IVariableSaver varSaver, IDeclaredParameter theVar)
+        public Tuple<bool, T> Lookup<T>(IQueryResultCacheKey akey, IVariableSaver varSaver, IDeclaredParameter theVar,
+            Func<IAddResult> generateAdder = null)
         {
             if (akey == null || (akey as KeyInfo) == null)
                 throw new ArgumentNullException("the key cannot be null");
             var key = akey as KeyInfo;
 
-            ///
-            /// First, check to make sure none of the source root files have actually be altered since
-            /// the cache line was written (if there is a cache line, indeed!).
-            /// 
-
+            // Check to make sure none of the source root files have actually be altered since
+            // the cache line was written (if there is a cache line, indeed!).
             if (!ROOTFileDatesOK(key))
                 return new Tuple<bool, T>(false, default(T));
 
-            ///
-            /// Ok. Next task is to see if the cache file exists right now
-            /// 
+            // Next, read in as many of the cycles of cache files as there are, 
+            // grabbing all the objects we need.
+            var cycleObjects =
+                Enumerable.Range(0, 1000)
+                .Select(index => LoadCacheData<T>(key, index, varSaver, theVar))
+                .TakeWhile(objs => objs.found)
+                .ToArray();
 
-            key.RootFile.Refresh();
-            if (!key.RootFile.Exists)
+            if (cycleObjects.Length == 0 && cycleObjects.All(cval => cval.found == true && cval.val != null))
+            {
                 return new Tuple<bool, T>(false, default(T));
+            }
 
-            ///
-            /// At this point we think that the file contains a valid cache line. As long as it isn't
-            /// corrupt! :-)
-            /// 
+            // Special case for where this a single cycle. We just read them in and push them through the saver
+            // and return them.
+            if (cycleObjects.Length == 1)
+            {
+                return new Tuple<bool, T>(true, cycleObjects[0].val);
+            }
+            else
+            {
+                // More than one cycle object. We will have to add things together before we can do anything with them.
+                if (generateAdder == null)
+                {
+                    throw new InvalidOperationException($"Unable to combine data types {typeof(T).Name} because an IAddResult wasn't passed to me!");
+                }
 
-            var tf = new ROOTNET.NTFile(key.RootFile.FullName, "READ");
-            if (!tf.IsOpen())
-                return new Tuple<bool, T>(false, default(T));
+                var adder = generateAdder();
+                var addedValue = cycleObjects.Skip(1)
+                    .Aggregate(adder.Clone(cycleObjects[0].val), (acc, newv) => adder.Update(acc, newv.val));
+                return new Tuple<bool, T>(true, addedValue);
+            }
+        }
 
-            ///
-            /// Find and load the object. Protect against an error in ROOT while this is going on
-            /// causing us to leave something open. Note b/c of the way ROOT works we need to disconnect
-            /// the object from the file. There is a uniform way to do this, but it involves a call-back
-            /// and the ROOT.NET translation wrapper doesn't implement this yet. So we have to use the clone
-            /// technique, after we change our default directory. :(
-            /// 
+        /// <summary>
+        /// Read in the data for a particular cycle. Return it along with the file. This does no work to clone the objects
+        /// or anything similar. Returns null if it couldn't find the cycle file or anythng at all went wrong.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private (bool found, T val) LoadCacheData<T>(KeyInfo key, int index, IVariableSaver svr, IDeclaredParameter prm)
+        {
+            // Get the file name for this cycle and see if it exists.
+            var cycleFilename = FileForCycle(key, index);
+            if (!File.Exists(cycleFilename))
+            {
+                return (false, default(T));
+            }
 
+            // Load all the objects in this file.
+            var tf = NTFile.Open(cycleFilename, "READ");
             try
             {
                 var keys = tf.ListOfKeys;
                 if (keys.Size == 0)
-                    return new Tuple<bool, T>(false, default(T));
+                    return (false, default(T));
 
-                var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj());
+                var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj()).ToArray();
+
+                // Now do the pick up. Make sure we are in the root directory when we do it, however!
+                // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
+                // it will be deleted when the file is closed on the way out of this routine.
                 ROOTNET.NTROOT.gROOT.cd();
-                // Need to fix up the whole cached objects unpacking thing.
-                var v = varSaver.LoadResult<T>(theVar, cachedObjects.ToArray(), 0);
-                return new Tuple<bool, T>(v != null, v);
+                return (true, svr.LoadResult<T>(prm, cachedObjects, index));
             }
             finally
             {
+                // In case bad things happened, try not to leave anything behind.
                 tf.Close();
             }
         }
@@ -352,15 +382,23 @@ namespace LINQToTTreeLib
         /// <param name="o"></param>
         public void CacheItem(IQueryResultCacheKey akey, ROOTNET.Interface.NTObject[] objs)
         {
-            var key = akey as KeyInfo;
-            if (key == null)
-                throw new ArgumentNullException("The key must be valid to cache an item");
+            CacheItem(akey, new[] { objs });
+        }
 
-            ///
-            /// Now, write out the text file that tells everyone what files are here. Do that only
-            /// if the thing isn't there already.
-            /// 
+        /// <summary>
+        /// Cache item with cycles - in short, the same thing several times.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="cycleOfItems"></param>
+        public void CacheItem(IQueryResultCacheKey akey, IEnumerable<NTObject[]> cycleOfItems)
+        {
+            // Fail if we can't get a key of our own type.
+            var key = (akey as KeyInfo)
+                .ThrowIfNull(() => new ArgumentNullException("The key must be valid to cache an item"));
 
+            // Now, write out the text file that tells everyone what files are here. Do that only
+            // if the thing isn't there already. If the contents of the file change, then th key has
+            // changed - we are assuming no hash collisions!
             var df = GetCacheInfoFileDescriptor(key);
             if (!df.Exists || !ROOTFileDatesOK(key))
             {
@@ -378,10 +416,8 @@ namespace LINQToTTreeLib
                 }
             }
 
-            ///
-            /// Write out the query and any extra info so the user can see when debugging.
-            /// 
-
+            // Write out the query and any extra info so the user can see when debugging. There is no use for
+            // the caching infrastructure for this file.
             using (var writer = File.CreateText(Path.ChangeExtension(key.RootFile.FullName, "txt")))
             {
                 writer.WriteLine(key.QueryText);
@@ -391,22 +427,40 @@ namespace LINQToTTreeLib
                 }
             }
 
-            // Ok, now save all of them to the root file
-
-            var clones = objs.Select(o => o.Clone()).ToArray();
-            var trf = new ROOTNET.NTFile(key.RootFile.FullName, "RECREATE");
-            try
+            // Next, write out the cache files themselves. We do one for each cycle.
+            foreach (var cycleItems in cycleOfItems.Zip(Enumerable.Range(0,1000), (c, idx) => (items: c, index:idx)))
             {
-                foreach (var obj in clones)
+                if (cycleItems.items.Length == 0)
                 {
-                    obj.Write();
+                    throw new InvalidOperationException("Can't deal with caching zero objects!");
+                }
+
+                var clones = cycleItems.items.Select(o => o.Clone()).ToArray();
+                var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.index), "RECREATE");
+                try
+                {
+                    foreach (var obj in clones)
+                    {
+                        obj.Write();
+                    }
+                }
+                finally
+                {
+                    trf.Write();
+                    trf.Close();
                 }
             }
-            finally
-            {
-                trf.Write();
-                trf.Close();
-            }
+        }
+
+        /// <summary>
+        /// Generate the filename for a particular cycle.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="cycle"></param>
+        /// <returns></returns>
+        private string FileForCycle(KeyInfo key, int cycle)
+        {
+            return key.RootFile.FullName.Replace("%%CYCLE%%", cycle.ToString());
         }
 
         /// <summary>

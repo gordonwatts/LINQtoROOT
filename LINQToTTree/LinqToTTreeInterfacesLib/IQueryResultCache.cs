@@ -1,5 +1,6 @@
 ﻿using System;
 using Remotion.Linq;
+using System.Collections.Generic;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -42,15 +43,30 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_rootFile"></param>
         /// <param name="queryModel"></param>
         /// <param name="iVariable"></param>
-        /// <returns></returns>
-        Tuple<bool, T> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IDeclaredParameter theVar);
+        /// <param name="generateAdder">Called to generate an adder if it is needed to sum together cycles</param>
+        /// <returns>The value</returns>
+        /// <remarks>
+        /// How the item is cached may be in a different type than T - this will use the variable saver infrastructure to do
+        /// the conversion.
+        /// 
+        /// Further, several results may have gone into this value - this will use the Adder framework to do the combination.
+        /// </remarks>
+        Tuple<bool, T> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IDeclaredParameter theVar,
+            Func<IAddResult> generateAdder = null);
 
         /// <summary>
-        /// Save an item for later lookup and retrieval.
+        /// Save a single item for later lookup and retrieval.
         /// </summary>
         /// <param name="_rootFile"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
         void CacheItem(IQueryResultCacheKey key, ROOTNET.Interface.NTObject[] o);
+
+        /// <summary>
+        /// A single item has a few results that go into it. Cache them all.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="cycleOfItems"></param>
+        void CacheItem(IQueryResultCacheKey key, IEnumerable<ROOTNET.Interface.NTObject[]> cycleOfItems);
     }
 }
