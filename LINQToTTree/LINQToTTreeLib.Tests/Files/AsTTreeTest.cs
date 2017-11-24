@@ -164,7 +164,6 @@ namespace LINQToTTreeLib.Tests.Files
             Assert.AreNotEqual("hi.root", result.Name);
             Assert.AreEqual(".root", result.Extension);
             Assert.IsTrue(result.Name.StartsWith("hi"));
-            Assert.IsFalse(result.FullName.Contains(".."));
 
             // Check the contents of the file. It should have a Tree in it with 10 entries.
             var f = NTFile.Open(result.FullName);

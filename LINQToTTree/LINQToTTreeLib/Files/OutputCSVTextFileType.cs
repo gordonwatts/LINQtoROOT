@@ -122,40 +122,7 @@ namespace LINQToTTreeLib.Files
         /// <returns></returns>
         public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
         {
-            // Fetch out the path and the size in bytes of the file.
-            NTH1I hPath = null, hSize = null;
-
-            foreach (var h in obj)
-            {
-                if (h.Name.EndsWith("_size"))
-                {
-                    hSize = h as NTH1I;
-                } else
-                {
-                    hPath = h as NTH1I;
-                }
-            }
-
-            if (hPath == null || hSize == null)
-            {
-                throw new InvalidOperationException("Internal error - cache is missing either the path for a CSV file or its size");
-            }
-
-            // See if the file is there, and make sure its size is the same.
-            // That will have to do for the cache lookup.
-            // Funny conversion are b.c. we are in the middle of a crazy generic here.
-
-            var f = new FileInfo(hPath.Title);
-            if (!f.Exists)
-            {
-                return (T) (object) null;
-            }
-
-            if (f.Length != (int) hSize.GetBinContent(1))
-            {
-                return (T)(object)null;
-            }
-
+            var f = GetFileInfo(iVariable, obj, cycle);
             return (T)(object)(new FileInfo[] { f });
         }
 
@@ -167,7 +134,65 @@ namespace LINQToTTreeLib.Files
         /// <param name="cycle"></param>
         public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
         {
-            throw new NotImplementedException();
+            var currentFile = GetFileInfo(iVariable, obj);
+            var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
+
+            if (newFile.Exists)
+            {
+                newFile.Delete();
+            }
+
+            currentFile.MoveTo(newFile.FullName);
+        }
+
+        /// <summary>
+        /// Return the file info for this output.
+        /// </summary>
+        /// <param name="iVariable"></param>
+        /// <param name="obj"></param>
+        /// <param name="cycle">The cycle number for this file. If null, then the raw file as written by the code.</param>
+        /// <returns></returns>
+        private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int? cycle = null, bool doChecks = true)
+        {
+            // Fetch out the path and the size in bytes of the file.
+            NTH1I hPath = null, hSize = null;
+
+            foreach (var h in obj)
+            {
+                if (h.Name.EndsWith("_size"))
+                {
+                    hSize = h as NTH1I;
+                }
+                else
+                {
+                    hPath = h as NTH1I;
+                }
+            }
+
+            if (hPath == null || hSize == null)
+            {
+                throw new InvalidOperationException("Internal error - cache is missing either the path for a CSV file or its size");
+            }
+
+            // Deal with the cycle - we just add an index onto the filename.
+            var name = hPath.Title;
+            if (cycle.HasValue)
+            {
+                name = $"{Path.GetDirectoryName(name)}\\{Path.GetFileNameWithoutExtension(name)}_{cycle.Value}.{Path.GetExtension(name)}";
+            }
+
+            // See if the file is there, and make sure its size is the same.
+            // That will have to do for the cache lookup.
+            // Funny conversion are b.c. we are in the middle of a crazy generic here.
+            var f = new FileInfo(name);
+            if (doChecks
+                && (!f.Exists || (f.Length != (int)hSize.GetBinContent(1))))
+            {
+                return null;
+            }
+
+            // Return the file
+            return f;
         }
 
         /// <summary>

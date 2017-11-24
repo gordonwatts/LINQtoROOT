@@ -525,7 +525,6 @@ namespace LINQToTTreeLib
                 TraceHelpers.Source.Flush();
                 TraceHelpers.Source.Listeners.Remove(tracer);
             }
-            Assert.IsFalse(s.ToString().Contains("nfiles"), s.ToString());
         }
 
         [Export(typeof(IDataFileSchemeHandler))]

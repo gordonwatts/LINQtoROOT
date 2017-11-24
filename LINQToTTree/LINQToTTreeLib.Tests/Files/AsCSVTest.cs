@@ -139,6 +139,8 @@ namespace LINQToTTreeLib.Tests.Files
 
             // Run it a second time, and see what happens.
             var result2 = RunQueryForSingleColumnTTree(QuerySimpleSingleRun);
+            Assert.IsNotNull(result2);
+            Assert.AreEqual(1, result2.Length);
             result2[0].Refresh();
             Assert.IsTrue(result2[0].Exists);
         }
