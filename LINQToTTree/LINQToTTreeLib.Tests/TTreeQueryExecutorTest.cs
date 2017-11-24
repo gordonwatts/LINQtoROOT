@@ -92,6 +92,110 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Create a file that can be loaded by ACLIC
+        /// </summary>
+        /// <param name="objName"></param>
+        /// <returns></returns>
+        public static FileInfo CreateCommonObject(string objName, DirectoryInfo baseDir)
+        {
+            FileInfo result = new FileInfo(baseDir + "\\" + objName + ".cpp");
+            using (var writer = result.CreateText())
+            {
+                writer.WriteLine("#include \"{0}.hpp\"", objName);
+                writer.WriteLine("ClassImp({0});", objName);
+                writer.Close();
+            }
+
+            FileInfo resulth = new FileInfo(baseDir + "\\" + objName + ".hpp");
+            using (var writer = resulth.CreateText())
+            {
+                writer.WriteLine("#ifndef __{0}__", objName);
+                writer.WriteLine("#define __{0}__", objName);
+                writer.WriteLine("#include <TObject.h>");
+                writer.WriteLine("class {0} : public TObject {{", objName);
+                writer.WriteLine("public:");
+                writer.WriteLine("  int j;");
+                writer.WriteLine("  ClassDef({0},2);", objName);
+                writer.WriteLine("};");
+                writer.WriteLine("#endif");
+                writer.WriteLine();
+
+                writer.Close();
+            }
+
+            return result;
+        }
+
+        [CPPHelperClass]
+        public static class CPPHelperFunctions
+        {
+            [CPPCode(Code = new string[] { "Calc = arg*2;" })]
+            public static int Calc(int arg)
+            {
+                throw new NotImplementedException();
+            }
+
+            [CPPCode(Code = new string[] { "CalcLen = strlen(arg);" }, IncludeFiles = new string[] { "stdlib.h" })]
+            public static int CalcLen(string arg)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <summary>
+            /// Simple custom function in an include file. The include file must be written locally.
+            /// </summary>
+            /// <param name="arg"></param>
+            /// <returns></returns>
+            [CPPCode(Code = new string[] { "ReturnCustomFuncValue = bogus();" }, IncludeFiles = new string[] { "bogus_function.h" })]
+            public static int ReturnCustomFuncValue()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Dirt simply test ntuple. Actually matches one that exists on disk.
+        /// </summary>
+        public class TestNtupeArr : IExpressionHolder
+        {
+            public TestNtupeArr(Expression holder)
+            {
+                HeldExpression = holder;
+            }
+#pragma warning disable 0169
+            public int[] myvectorofint;
+#pragma warning restore 0169
+
+            public System.Linq.Expressions.Expression HeldExpression { get; set; }
+        }
+
+        public class TestNtupeArrD : IExpressionHolder
+        {
+            public TestNtupeArrD(Expression holder)
+            {
+                HeldExpression = holder;
+            }
+#pragma warning disable 0169
+            public double[] myvectorofdouble;
+#pragma warning restore 0169
+
+            public System.Linq.Expressions.Expression HeldExpression { get; set; }
+        }
+
+        public class TestNtupeArrJets
+        {
+            [TTreeVariableGrouping]
+            public int myvectorofint;
+        }
+
+        [TranslateToClass(typeof(TestNtupeArr))]
+        public class TestNtupeArrEvents
+        {
+            [TTreeVariableGrouping]
+            public TestNtupeArrJets[] jets;
+        }
+
+        /// <summary>
         /// Test out a simple result base ntuple object base.
         /// </summary>
         [TestMethod]
@@ -645,6 +749,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(numberOfIter * 10 + numberOfIter, dude);
         }
 #endif
+
         [TestMethod]
         public void ConcatByDifferentUris()
         {
@@ -817,33 +922,6 @@ namespace LINQToTTreeLib
             var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
-        }
-
-        [CPPHelperClass]
-        public static class CPPHelperFunctions
-        {
-            [CPPCode(Code = new string[] { "Calc = arg*2;" })]
-            public static int Calc(int arg)
-            {
-                throw new NotImplementedException();
-            }
-
-            [CPPCode(Code = new string[] { "CalcLen = strlen(arg);" }, IncludeFiles =new string[] { "stdlib.h" })]
-            public static int CalcLen(string arg)
-            {
-                throw new NotImplementedException();
-            }
-
-            /// <summary>
-            /// Simple custom function in an include file. The include file must be written locally.
-            /// </summary>
-            /// <param name="arg"></param>
-            /// <returns></returns>
-            [CPPCode(Code = new string[] { "ReturnCustomFuncValue = bogus();" }, IncludeFiles = new string[] { "bogus_function.h" })]
-            public static int ReturnCustomFuncValue()
-            {
-                throw new NotImplementedException();
-            }
         }
 
         [TestMethod]
@@ -1125,41 +1203,6 @@ namespace LINQToTTreeLib
             return d;
         }
 
-        /// <summary>
-        /// Create a file that can be loaded by ACLIC
-        /// </summary>
-        /// <param name="objName"></param>
-        /// <returns></returns>
-        public static FileInfo CreateCommonObject(string objName, DirectoryInfo baseDir)
-        {
-            FileInfo result = new FileInfo(baseDir + "\\" + objName + ".cpp");
-            using (var writer = result.CreateText())
-            {
-                writer.WriteLine("#include \"{0}.hpp\"", objName);
-                writer.WriteLine("ClassImp({0});", objName);
-                writer.Close();
-            }
-
-            FileInfo resulth = new FileInfo(baseDir + "\\" + objName + ".hpp");
-            using (var writer = resulth.CreateText())
-            {
-                writer.WriteLine("#ifndef __{0}__", objName);
-                writer.WriteLine("#define __{0}__", objName);
-                writer.WriteLine("#include <TObject.h>");
-                writer.WriteLine("class {0} : public TObject {{", objName);
-                writer.WriteLine("public:");
-                writer.WriteLine("  int j;");
-                writer.WriteLine("  ClassDef({0},2);", objName);
-                writer.WriteLine("};");
-                writer.WriteLine("#endif");
-                writer.WriteLine();
-
-                writer.Close();
-            }
-
-            return result;
-        }
-
         [TestMethod]
         public void TestDualQueries()
         {
@@ -1308,47 +1351,6 @@ namespace LINQToTTreeLib
             Assert.AreEqual(result, numberOfIter);
         }
 
-        /// <summary>
-        /// Dirt simply test ntuple. Actually matches one that exists on disk.
-        /// </summary>
-        public class TestNtupeArr : IExpressionHolder
-        {
-            public TestNtupeArr(Expression holder)
-            {
-                HeldExpression = holder;
-            }
-#pragma warning disable 0169
-            public int[] myvectorofint;
-#pragma warning restore 0169
-
-            public System.Linq.Expressions.Expression HeldExpression { get; set; }
-        }
-
-        public class TestNtupeArrD : IExpressionHolder
-        {
-            public TestNtupeArrD(Expression holder)
-            {
-                HeldExpression = holder;
-            }
-#pragma warning disable 0169
-            public double[] myvectorofdouble;
-#pragma warning restore 0169
-
-            public System.Linq.Expressions.Expression HeldExpression { get; set; }
-        }
-
-        public class TestNtupeArrJets
-        {
-            [TTreeVariableGrouping]
-            public int myvectorofint;
-        }
-
-        [TranslateToClass(typeof(TestNtupeArr))]
-        public class TestNtupeArrEvents
-        {
-            [TTreeVariableGrouping]
-            public TestNtupeArrJets[] jets;
-        }
 
         [TestMethod]
         public void TestFirstCode()
@@ -1713,6 +1715,7 @@ namespace LINQToTTreeLib
             /// 
 
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+            exe.CleanupQuery = false;
             var result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(numberOfIter, result);
         }

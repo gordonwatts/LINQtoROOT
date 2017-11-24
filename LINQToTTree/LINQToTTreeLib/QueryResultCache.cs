@@ -307,7 +307,8 @@ namespace LINQToTTreeLib
                 // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
                 // it will be deleted when the file is closed on the way out of this routine.
                 ROOTNET.NTROOT.gROOT.cd();
-                return (true, svr.LoadResult<T>(prm, cachedObjects, index));
+                var t = svr.LoadResult<T>(prm, cachedObjects, index);
+                return (t != null, t);
             }
             finally
             {

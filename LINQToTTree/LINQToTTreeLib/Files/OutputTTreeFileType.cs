@@ -108,7 +108,9 @@ namespace LINQToTTreeLib.Files
         public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] objs, int cycle)
         {
             var f = GetFileInfo(iVariable, objs, cycle);
-            return (T)(object)(new FileInfo[] { f });
+            return f == null
+                ? (T)(object)null
+                : (T)(object)(new FileInfo[] { f });
         }
 
         /// <summary>
