@@ -101,7 +101,7 @@ namespace LINQToTTreeLib
                 fullSourceName.Append(f.OriginalString);
             }
 
-            var flieHash = fullSourceName.ToString().GetHashCode();
+            var fileHash = fullSourceName.ToString().GetHashCode();
 
             //
             // Next, the crumbs. They should also be sorted in order, and we will need
@@ -150,8 +150,8 @@ namespace LINQToTTreeLib
             /// 
 
             TraceHelpers.TraceInfo(27, "GetKey: Getting the cache directory");
-            var fpathName = Path.GetFileNameWithoutExtension(rootfiles[0].PathAndQuery.SanitizedPathName());
-            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + flieHash + " - " + treename + "-" + fpathName);
+            var fpathName = Path.GetFileNameWithoutExtension(rootfiles[0].PathAndQuery.SanitizedPathName(100));
+            result.CacheDirectory = new DirectoryInfo(CacheDirectory.FullName + "\\" + fileHash + " - " + treename + "-" + fpathName);
 
             ///
             /// Scan the files that we are input and find the oldest one there
@@ -172,7 +172,7 @@ namespace LINQToTTreeLib
             result.RootFile = new FileInfo(result.CacheDirectory.FullName + queryNameBase + "_%%CYCLE%%.root");
 
             // And a complete unique hash string.
-            result.UniqueHashString = $"files{flieHash.ToString()}-query{queryHash.ToString()}-objs{inputObjectHash}-crm{crumbHash}";
+            result.UniqueHashString = $"files{fileHash.ToString()}-query{queryHash.ToString()}-objs{inputObjectHash}-crm{crumbHash}";
 
             TraceHelpers.TraceInfo(31, "GetKey: Done");
             return result;

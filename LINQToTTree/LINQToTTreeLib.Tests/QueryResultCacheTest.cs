@@ -294,6 +294,27 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public void CacheWithVeryLongSourceFilename()
+        {
+            // A simple query
+            var query = MakeQuery(0);
+            var f = new Uri("http://www.nytimes.com/mc15_1111111111111111111111111111111111111111111111111111111111111111111111111113TeV_304810_MadGraphPythia8EvtGen_A14NNPDF23LO_HSS_LLP_mH400_mS50_lt5m_merge_DAOD_EXOT15_e5102_s2698_r7772_r7676_p2877?nFiles=1");
+
+            // Cache an integer
+            var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h.Directory = null;
+            h.SetBinContent(1, 5.0);
+            var q = new QueryResultCache();
+            var date = DateTime.Now;
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h });
+
+            // Now, do the lookup.
+            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
+            Assert.IsTrue(r.Item1, "expected hit");
+            Assert.AreEqual(5, r.Item2, "incorrect return value");
+        }
+
+        [TestMethod]
         public void CacheCycledInteger()
         {
             // A simple query

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LINQToTTreeLib.Utils
@@ -85,7 +87,7 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public static string SanitizedPathName(this string n)
+        public static string SanitizedPathName(this string n, int limitToLength = -1)
         {
             n = n.Replace("#", "_");
             n = n.Replace(",", "_");
@@ -95,6 +97,17 @@ namespace LINQToTTreeLib.Utils
             n = n.Replace(":", "");
             n = n.Replace(".", "_");
             n = n.Replace("?", "_");
+
+            // Limit to a certain length. Replace with a hash.
+            if (limitToLength > 0 && n.Length > limitToLength)
+            {
+                using (var md5 = MD5.Create())
+                {
+                    var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(n));
+                    var cutLen = limitToLength - 1 - 2 * hash.Length + 1;
+                    n = n.Substring(0, cutLen) + "_" + string.Join("", hash.Select(b => b.ToString("x2")));
+                }
+            }
             return n;
         }
     }
