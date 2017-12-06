@@ -136,8 +136,20 @@ namespace LINQToTTreeLib.Files
         /// <param name="cycle"></param>
         public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
         {
+            if (obj == null || iVariable == null)
+            {
+                return;
+            }
             var currentFile = GetFileInfo(iVariable, obj);
+            if (currentFile == null)
+            {
+                return;
+            }
             var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
+            if (newFile == null)
+            {
+                return;
+            }
 
             if (newFile.Exists)
             {
@@ -159,7 +171,7 @@ namespace LINQToTTreeLib.Files
             // Fetch out the path and the size in bytes of the file.
             NTH1I hPath = null, hSize = null;
 
-            foreach (var h in obj)
+            foreach (var h in obj.Where(o => o != null))
             {
                 if (h.Name.EndsWith("_size"))
                 {
