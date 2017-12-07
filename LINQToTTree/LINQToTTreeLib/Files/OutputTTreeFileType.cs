@@ -123,8 +123,36 @@ namespace LINQToTTreeLib.Files
         private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int cycle, bool doChecks = true)
         {
             // Fetch out the path and the size in bytes of the file.
-            NTH1I hPath = null, hSize = null;
+            GetFilePathFromObjects(obj, out NTH1I hPath, out NTH1I hSize);
 
+            // Deal with the cycle - we just add an index onto the filename.
+            var name = hPath.Title;
+            name = $"{Path.GetDirectoryName(name)}\\{Path.GetFileNameWithoutExtension(name)}_{cycle}.{Path.GetExtension(name)}";
+
+            // See if the file is there, and make sure its size is the same.
+            // That will have to do for the cache lookup.
+            // Funny conversion are b.c. we are in the middle of a crazy generic here.
+            var f = new FileInfo(name);
+            if (doChecks
+                && (!f.Exists || (f.Length != (int)hSize.GetBinContent(1))))
+            {
+                return null;
+            }
+
+            // Return the file
+            return f;
+        }
+
+        /// <summary>
+        /// Extract the file name from the NTObjects we are getting fed.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="hPath"></param>
+        /// <param name="hSize"></param>
+        private static void GetFilePathFromObjects(NTObject[] obj, out NTH1I hPath, out NTH1I hSize)
+        {
+            hPath = null;
+            hSize = null;
             foreach (var h in obj)
             {
                 if (h.Name.EndsWith("_size"))
@@ -141,23 +169,6 @@ namespace LINQToTTreeLib.Files
             {
                 throw new InvalidOperationException("Internal error - cache is missing either the path for a CSV file or its size");
             }
-
-            // Deal with the cycle - we just add an index onto the filename.
-            var name = hPath.Title;
-            name = $"{Path.GetDirectoryName(name)}\\{Path.GetFileNameWithoutExtension(name)}_{cycle}.{Path.GetExtension(name)}";
-
-            // See if the file is there, and make sure its size is the same.
-            // That will have to do for the cache lookup.
-            // Funny conversion are b.c. we are in the middle of a crazy generic here.
-            var f = new FileInfo(name);
-            if (doChecks
-                && ( !f.Exists || (f.Length != (int)hSize.GetBinContent(1))))
-            {
-                return null;
-            }
-
-            // Return the file
-            return f;
         }
 
         /// <summary>
@@ -169,6 +180,15 @@ namespace LINQToTTreeLib.Files
         public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
         {
             var currentFile = GetFileInfo(iVariable, obj, cycle);
+            if (currentFile == null)
+            {
+                // If there is no current file - that manes that we are being asked to rename something that doesn't exist!
+                GetFilePathFromObjects(obj, out NTH1I hPath, out NTH1I hSize);
+                var pname = hPath == null ? "<noname>" : hPath.Title;
+                var length = hSize == null ? 0 : hSize.GetBinContent(1);
+                throw new InvalidOperationException($"Unable to find the output file to rename (was looking for '{pname}' with cycle {cycle} and legnth {length}).");
+                return;
+            }
             var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
 
             if (newFile.Exists)
