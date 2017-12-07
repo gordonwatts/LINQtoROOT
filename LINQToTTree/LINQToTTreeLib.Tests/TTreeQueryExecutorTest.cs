@@ -727,6 +727,50 @@ namespace LINQToTTreeLib
             Assert.AreNotEqual(dude[0].Name, dude[1].Name);
         }
 
+        [TestMethod]
+        public void RunSimpleConcatTwoSourceAsCSVFile()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile2 = TestUtils.CreateFileOfInt(numberOfIter * 2);
+
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile1 }, "dude", typeof(ntuple));
+
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile2 }, "dude", typeof(ntuple));
+
+            var dude = q1.Concat(q2).AsCSV(new FileInfo("RunSimpleConcatTwoSourceAsCSVFile.csv"));
+
+            foreach (var f in dude)
+            {
+                Console.WriteLine(f.FullName);
+            }
+
+            Assert.AreEqual(2, dude.Length);
+            Assert.AreNotEqual(dude[0].Name, dude[1].Name);
+        }
+
+        [TestMethod]
+        public void RunSimpleConcatTwoSourceAsCSVFileNoItems()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var rootFile2 = TestUtils.CreateFileOfInt(numberOfIter * 2);
+
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile1 }, "dude", typeof(ntuple));
+
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile2 }, "dude", typeof(ntuple));
+
+            var dude = q1.Concat(q2).Where(q => q.run > 10000).AsCSV(new FileInfo("RunSimpleConcatTwoSourceAsCSVFile.csv"));
+
+            foreach (var f in dude)
+            {
+                Console.WriteLine(f.FullName);
+            }
+
+            Assert.AreEqual(2, dude.Length);
+            Assert.AreNotEqual(dude[0].Name, dude[1].Name);
+        }
+
 #if false
         This isn't working b.c. the SelectMany contains the Concat, and we don't have code yet that lifts that out.
 
