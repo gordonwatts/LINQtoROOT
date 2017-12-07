@@ -120,7 +120,7 @@ namespace LINQToTTreeLib.Files
         /// <param name="obj"></param>
         /// <param name="cycle">The cycle number for this file. If null, then the raw file as written by the code.</param>
         /// <returns></returns>
-        private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int? cycle = null, bool doChecks = true)
+        private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int cycle, bool doChecks = true)
         {
             // Fetch out the path and the size in bytes of the file.
             NTH1I hPath = null, hSize = null;
@@ -144,10 +144,7 @@ namespace LINQToTTreeLib.Files
 
             // Deal with the cycle - we just add an index onto the filename.
             var name = hPath.Title;
-            if (cycle.HasValue)
-            {
-                name = $"{Path.GetDirectoryName(name)}\\{Path.GetFileNameWithoutExtension(name)}_{cycle.Value}.{Path.GetExtension(name)}";
-            }
+            name = $"{Path.GetDirectoryName(name)}\\{Path.GetFileNameWithoutExtension(name)}_{cycle}.{Path.GetExtension(name)}";
 
             // See if the file is there, and make sure its size is the same.
             // That will have to do for the cache lookup.
@@ -171,7 +168,7 @@ namespace LINQToTTreeLib.Files
         /// <param name="cycle"></param>
         public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
         {
-            var currentFile = GetFileInfo(iVariable, obj);
+            var currentFile = GetFileInfo(iVariable, obj, cycle);
             var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
 
             if (newFile.Exists)
