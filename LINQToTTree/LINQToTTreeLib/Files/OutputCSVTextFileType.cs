@@ -109,7 +109,7 @@ namespace LINQToTTreeLib.Files
         public IEnumerable<string> IncludeFiles(IDeclaredParameter iVariable)
         {
             yield return "<fstream>";
-            yield return "TH1I.h";
+            yield return "TH1D.h";
             yield return "TSystem.h";
         }
 
@@ -145,8 +145,7 @@ namespace LINQToTTreeLib.Files
             if (currentFile == null)
             {
                 // If there is no current file - that manes that we are being asked to rename something that doesn't exist!
-                NTH1I hPath, hSize;
-                GetFilePathFromObjects(obj, out hPath, out hSize);
+                GetFilePathFromObjects(obj, out NTH1 hPath, out NTH1 hSize);
                 var pname = hPath == null ? "<noname>" : hPath.Title;
                 var length = hSize == null ? 0 : hSize.GetBinContent(1);
                 throw new InvalidOperationException($"Unable to find the output file to rename (was looking for '{pname}' with no cycle and legnth {length}).");
@@ -172,8 +171,7 @@ namespace LINQToTTreeLib.Files
         private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int? cycle = null, bool doChecks = true)
         {
             // Fetch out the path and the size in bytes of the file.
-            NTH1I hPath, hSize;
-            GetFilePathFromObjects(obj, out hPath, out hSize);
+            GetFilePathFromObjects(obj, out NTH1 hPath, out NTH1 hSize);
 
             if (hPath == null || hSize == null)
             {
@@ -201,7 +199,7 @@ namespace LINQToTTreeLib.Files
             return f;
         }
 
-        private static void GetFilePathFromObjects(NTObject[] obj, out NTH1I hPath, out NTH1I hSize)
+        private static void GetFilePathFromObjects(NTObject[] obj, out NTH1 hPath, out NTH1 hSize)
         {
             hPath = null;
             hSize = null;
@@ -209,11 +207,11 @@ namespace LINQToTTreeLib.Files
             {
                 if (h.Name.EndsWith("_size"))
                 {
-                    hSize = h as NTH1I;
+                    hSize = h as NTH1;
                 }
                 else
                 {
-                    hPath = h as NTH1I;
+                    hPath = h as NTH1;
                 }
             }
         }
@@ -240,7 +238,7 @@ namespace LINQToTTreeLib.Files
 
             // Write out the path.
             var fileAsCPPString = (v.InitialValue as OutputCSVTextFileType).OutputFile().FullName.AddCPPEscapeCharacters();
-            yield return string.Format("TH1I *{0}_hist = new TH1I(\"{0}\", \"{1}\", 1, 0.0, 1.0);", v.RawValue, fileAsCPPString);
+            yield return string.Format("TH1D *{0}_hist = new TH1D(\"{0}\", \"{1}\", 1, 0.0, 1.0);", v.RawValue, fileAsCPPString);
             yield return v.RawValue + "_hist->SetDirectory(0);";
             yield return "Book(" + v.RawValue + "_hist);";
 
@@ -257,7 +255,7 @@ namespace LINQToTTreeLib.Files
 
         private IEnumerable<string> SaveIntValue(string v)
         {
-            yield return string.Format("TH1I *{0}_hist = new TH1I(\"{0}\", \"var transport\", 1, 0.0, 1.0);",v);
+            yield return string.Format("TH1D *{0}_hist = new TH1D(\"{0}\", \"var transport\", 1, 0.0, 1.0);",v);
             yield return $"{v}_hist->SetBinContent(1, {v});";
             yield return v + "_hist->SetDirectory(0);";
             yield return $"Book({v}_hist);";
