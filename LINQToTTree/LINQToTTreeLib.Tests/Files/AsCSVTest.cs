@@ -251,21 +251,20 @@ namespace LINQToTTreeLib.Tests.Files
             Assert.AreEqual("10,10,10", lines[1]);
         }
 
+        /// <summary>
+        /// Run a query on a single file.
+        /// </summary>
+        /// <param name="queryBuilder"></param>
+        /// <returns></returns>
         private static FileInfo[] RunQueryForSingleColumnTTree(Action queryBuilder)
         {
             // Test a full round trip for a really simple CSV dump.
             var rootFile = TestUtils.CreateFileOfInt(10);
 
-            ///
             /// Get a simple query we can "play" with
-            /// 
-
             var query = QueryModelFor(queryBuilder);
 
-            ///
             /// OK, now we can actually see if we can make it "go".
-            /// 
-
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(singleIntNtuple));
             var result = exe.ExecuteScalar<FileInfo[]>(query);
             return result;
