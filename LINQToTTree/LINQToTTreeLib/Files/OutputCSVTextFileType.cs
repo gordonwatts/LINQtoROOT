@@ -138,18 +138,21 @@ namespace LINQToTTreeLib.Files
         {
             if (obj == null || iVariable == null)
             {
-                return;
+                throw new ArgumentException("Null argument not permitted");
             }
+
             var currentFile = GetFileInfo(iVariable, obj);
             if (currentFile == null)
             {
+                // If there is no current file - that manes that we are being asked to rename something that doesn't exist!
+                NTH1I hPath, hSize;
+                GetFilePathFromObjects(obj, out hPath, out hSize);
+                var pname = hPath == null ? "<noname>" : hPath.Title;
+                var length = hSize == null ? 0 : hSize.GetBinContent(1);
+                throw new InvalidOperationException($"Unable to find the output file to rename (was looking for '{pname}' with cycle {cycle} and legnth {length}).");
                 return;
             }
             var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
-            if (newFile == null)
-            {
-                return;
-            }
 
             if (newFile.Exists)
             {
@@ -169,19 +172,8 @@ namespace LINQToTTreeLib.Files
         private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int? cycle = null, bool doChecks = true)
         {
             // Fetch out the path and the size in bytes of the file.
-            NTH1I hPath = null, hSize = null;
-
-            foreach (var h in obj.Where(o => o != null))
-            {
-                if (h.Name.EndsWith("_size"))
-                {
-                    hSize = h as NTH1I;
-                }
-                else
-                {
-                    hPath = h as NTH1I;
-                }
-            }
+            NTH1I hPath, hSize;
+            GetFilePathFromObjects(obj, out hPath, out hSize);
 
             if (hPath == null || hSize == null)
             {
@@ -207,6 +199,23 @@ namespace LINQToTTreeLib.Files
 
             // Return the file
             return f;
+        }
+
+        private static void GetFilePathFromObjects(NTObject[] obj, out NTH1I hPath, out NTH1I hSize)
+        {
+            hPath = null;
+            hSize = null;
+            foreach (var h in obj.Where(o => o != null))
+            {
+                if (h.Name.EndsWith("_size"))
+                {
+                    hSize = h as NTH1I;
+                }
+                else
+                {
+                    hPath = h as NTH1I;
+                }
+            }
         }
 
         /// <summary>
