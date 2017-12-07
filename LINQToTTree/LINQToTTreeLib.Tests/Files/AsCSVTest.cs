@@ -110,6 +110,17 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void AsCSVNoEntriesPass()
+        {
+            var gc = RunQueryForSingleColumnTTree(QueryNothingLeft);
+            Assert.IsNotNull(gc);
+            Assert.AreEqual(1, gc.Length);
+            Assert.AreNotEqual("hi.csv", gc[0].Name);
+            Assert.IsTrue(gc[0].Name.StartsWith("hi"));
+            Assert.IsTrue(gc[0].Name.EndsWith(".csv"));
+        }
+
+        [TestMethod]
         public void AlreadyMadeFileShouldNotBeRemade()
         {
             // Remove file if it exists
@@ -317,6 +328,18 @@ namespace LINQToTTreeLib.Tests.Files
             var q = new QueriableDummy<singleIntNtuple>();
             q
                 .Select(e => e.run)
+                .AsCSV(new FileInfo("hi.csv"), "firstCol");
+        }
+
+        /// <summary>
+        /// Generate a simple single run query
+        /// </summary>
+        private static void QueryNothingLeft()
+        {
+            var q = new QueriableDummy<singleIntNtuple>();
+            q
+                .Select(e => e.run)
+                .Where(e => e > 100000000)
                 .AsCSV(new FileInfo("hi.csv"), "firstCol");
         }
 
