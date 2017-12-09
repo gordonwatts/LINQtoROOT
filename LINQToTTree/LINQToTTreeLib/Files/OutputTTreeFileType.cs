@@ -138,7 +138,7 @@ namespace LINQToTTreeLib.Files
             // Funny conversion are b.c. we are in the middle of a crazy generic here.
             var f = new FileInfo(name);
             if (doChecks
-                && (!f.Exists || (f.Length != (int)hSize.GetBinContent(1))))
+                && (!f.Exists || (f.Length != (long)hSize.GetBinContent(1))))
             {
                 return null;
             }
@@ -189,7 +189,7 @@ namespace LINQToTTreeLib.Files
                 // If there is no current file - that manes that we are being asked to rename something that doesn't exist!
                 GetFilePathFromObjects(obj, out NTH1 hPath, out NTH1 hSize);
                 var pname = hPath == null ? "<noname>" : hPath.Title;
-                var length = hSize == null ? 0 : hSize.GetBinContent(1);
+                var length = hSize == null ? 0 : (long) hSize.GetBinContent(1);
                 throw new InvalidOperationException($"Unable to find the output file to rename (was looking for '{pname}' with no cycle and legnth {length}).");
                 return;
             }
