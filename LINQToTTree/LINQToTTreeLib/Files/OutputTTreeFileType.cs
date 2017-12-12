@@ -231,7 +231,7 @@ namespace LINQToTTreeLib.Files
             yield return "Book(" + v.RawValue + "_hist);";
 
             // Write out the mod time and the file size.
-            yield return $"Long_t {v.RawValue}_size;";
+            yield return $"Long64_t {v.RawValue}_size;";
             yield return $"Long_t {v.RawValue}_modification_time;";
             yield return $"gSystem->GetPathInfo({v.RawValue}.first->GetName(), 0, &{v.RawValue}_size, 0, &{v.RawValue}_modification_time);";
 
