@@ -29,7 +29,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void BashRunBasicCommand()
+        public void LocalBashRunBasicCommand()
         {
             string bashCmds = "ls\n";
 
@@ -42,7 +42,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void BashRunSimpleROOT()
+        public void LocalBashRunSimpleROOT()
         {
             var cmds = new StringBuilder();
             cmds.AppendLine("TH1F *h = new TH1F(\"hi\", \"there\", 10, 0.0, 10.0);");
