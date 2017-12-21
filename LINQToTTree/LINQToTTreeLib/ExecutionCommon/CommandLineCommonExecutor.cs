@@ -108,7 +108,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         ///     file. This happens often when things are over shares. We will retry three time if we detect root is having trouble with
         ///     bad data.
         /// </remarks>
-        public virtual Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public virtual async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
             ExecutionUtilities.Init();
@@ -162,7 +162,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get back results
             var results = LoadSelectorResults(resultsFile);
 
-            return new Task<IDictionary<string, NTObject>>(() => results);
+            return results;
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        public Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        public async Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             Action<string> dumpLine = Environment.Verbose
                 ? l => Console.WriteLine(l)
@@ -269,7 +269,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
 
             // Generate the proxy.
-            return new Task<FileInfo>(() => GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine));
+            return await GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="queryDirectory"></param>
         /// <param name="dumpLine"></param>
         /// <returns></returns>
-        protected virtual FileInfo GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine)
+        protected virtual async Task<FileInfo> GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine)
         {
             // Simple argument checks
             if (rootFiles == null || rootFiles.Length == 0)
