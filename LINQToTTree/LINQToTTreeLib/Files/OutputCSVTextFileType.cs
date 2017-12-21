@@ -149,7 +149,6 @@ namespace LINQToTTreeLib.Files
                 var pname = hPath == null ? "<noname>" : hPath.Title;
                 var length = hSize == null ? 0 : (long) hSize.GetBinContent(1);
                 throw new InvalidOperationException($"Unable to find the output file to rename (was looking for '{pname}' with no cycle and legnth {length}).");
-                return;
             }
             var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
 
