@@ -7,6 +7,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -44,7 +45,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Given a request, run it. No need to clean up afterwards as we are already there.
         /// </summary>
         /// <returns></returns>
-        public IDictionary<string, ROOTNET.Interface.NTObject> Execute(
+        public Task<IDictionary<string, ROOTNET.Interface.NTObject>> Execute(
             Uri[] files,
             FileInfo templateFile,
             DirectoryInfo queryDirectory,
@@ -98,7 +99,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 queryDirectory.Delete(true);
             }
 
-            return results;
+            return new Task<IDictionary<string, ROOTNET.Interface.NTObject>>(() => results);
         }
 
         /// <summary>
@@ -363,7 +364,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="rootFiles"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        public Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             // Argument checks
             if (rootFiles == null || rootFiles.Length == 0)
@@ -400,7 +401,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     }
 
                     tree.MakeProxy("runquery", "junk.C", null, "nohist");
-                    return new FileInfo("runquery.h");
+                    return new Task<FileInfo>(() => new FileInfo("runquery.h"));
                 }
                 finally
                 {

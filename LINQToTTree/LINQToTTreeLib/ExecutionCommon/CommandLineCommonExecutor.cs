@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -107,7 +108,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         ///     file. This happens often when things are over shares. We will retry three time if we detect root is having trouble with
         ///     bad data.
         /// </remarks>
-        public virtual IDictionary<string, NTObject> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public virtual Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
             ExecutionUtilities.Init();
@@ -161,7 +162,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get back results
             var results = LoadSelectorResults(resultsFile);
 
-            return results;
+            return new Task<IDictionary<string, NTObject>>(() => results);
         }
 
         /// <summary>
@@ -258,7 +259,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        public Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             Action<string> dumpLine = Environment.Verbose
                 ? l => Console.WriteLine(l)
@@ -268,7 +269,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
 
             // Generate the proxy.
-            return GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
+            return new Task<FileInfo>(() => GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine));
         }
 
         /// <summary>

@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
 {
@@ -769,9 +770,12 @@ namespace LINQToTTreeLib
                 Optimizer.Optimize(combinedInfo);
 
             // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
-            var combinedResults = _resolvedRootFiles
+            var combinedResultsTasks = _resolvedRootFiles
                 .Select((sch, index) => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo, index))
                 .ToArray();
+
+            Task.WaitAll(combinedResultsTasks);
+            var combinedResults = combinedResultsTasks.Select(v => v.Result).ToArray();
 
             // Extract all the variables! And save in the cache, and set the
             // future value so everyone else can use them!
@@ -794,7 +798,7 @@ namespace LINQToTTreeLib
         /// <param name="scheme"></param>
         /// <param name="files"></param>
         /// <param name="combinedInfo"></param>
-        private IDictionary<string, ROOTNET.Interface.NTObject> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
+        private async Task<IDictionary<string, ROOTNET.Interface.NTObject>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
                 CombinedGeneratedCode combinedInfo, int cycle)
         {
             try
@@ -808,13 +812,13 @@ namespace LINQToTTreeLib
                 IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
 
                 // Next, generate and slim the proxy file and the TSelector file
-                var proxyFile = local.GenerateProxyFile(files, _exeReq.TreeName, GetQueryDirectory());
+                var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, GetQueryDirectory());
                 var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile);
                 TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
                 var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo);
 
                 // Run the actual query.
-                var r = local.Execute(files, templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
+                var r = await local.Execute(files, templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
 
                 // Rename by cycle for those that need it.
                 foreach (var cq in _queuedQueries)

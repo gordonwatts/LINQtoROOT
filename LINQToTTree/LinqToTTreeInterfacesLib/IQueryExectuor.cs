@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+
 namespace LinqToTTreeInterfacesLib
 {
     /// <summary>
@@ -17,17 +19,11 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="templateFile">Path to the main runner file</param>
         /// <param name="varsToTransfer">A list of variables that are used as input to the routine.</param>
         /// <returns>A list of objects and names pulled from the output root file</returns>
-        IDictionary<string, ROOTNET.Interface.NTObject> Execute(
+        Task<IDictionary<string, ROOTNET.Interface.NTObject>> Execute(
             Uri[] rootFiles,
             FileInfo templateFile,
             DirectoryInfo queryDirectory,
             IEnumerable<KeyValuePair<string, object>> varsToTransfer);
-
-        /// <summary>
-        /// Set the execution envrionment. Must be done before the call, should not
-        /// change after the first setting.
-        /// </summary>
-        IExecutionEnvironment Environment { set; }
 
         /// <summary>
         /// The leaves that are referenced by this query
@@ -40,6 +36,6 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="rootFiles"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory);
+        Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory);
     }
 }
