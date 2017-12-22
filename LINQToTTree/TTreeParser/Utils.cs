@@ -283,7 +283,6 @@ namespace TTreeParser
                         throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item names", f.Name));
                     if (item.Item1.ItemType != item.Item2.ItemType)
                         throw new InvalidDataException(string.Format("Duplicate classes {0} are defined with different item types", f.Name));
-
                 }
             }
 
