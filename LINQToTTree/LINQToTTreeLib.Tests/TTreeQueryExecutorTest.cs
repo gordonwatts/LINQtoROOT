@@ -1587,7 +1587,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [ExpectedException(typeof(AggregateException))]
+        [ExpectedException(typeof(System.Runtime.InteropServices.SEHException))]
         public void TestFirstButNothing()
         {
             const int numberOfIter = 25;
@@ -1612,8 +1612,14 @@ namespace LINQToTTreeLib
             /// Ok, now we can actually see if we can make it "go".
             /// 
 
-            var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
-            var result = exe.ExecuteScalar<int>(query);
+            try
+            {
+                var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+                var result = exe.ExecuteScalar<int>(query);
+            } catch (AggregateException exp)
+            {
+                throw exp.UnrollAggregateExceptions();
+            }
         }
 
         [TestMethod]

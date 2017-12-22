@@ -448,6 +448,7 @@
     <Compile Include="CombinedGeneratedCodeTest.cs" />
     <Compile Include="CPPTranslatorTest.cs" />
     <Compile Include="DummyQueryExectuor.cs" />
+    <Compile Include="ExceptionUtils.cs" />
     <Compile Include="ExecutionCommon\CommandLineTestExecutorTest.cs" />
     <Compile Include="ExecutionCommon\LocalBashExecutorTest.cs" />
     <Compile Include="ExecutionCommon\LocalBashHelpersTest.cs" />
