@@ -1587,7 +1587,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.Runtime.InteropServices.SEHException))]
+        [ExpectedException(typeof(AggregateException))]
         public void TestFirstButNothing()
         {
             const int numberOfIter = 25;
