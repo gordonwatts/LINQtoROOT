@@ -3,6 +3,7 @@ using LINQToTTreeLib.ExecutionCommon;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Utils;
+using Nito.AsyncEx;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Linq;
@@ -401,9 +402,6 @@ namespace LINQToTTreeLib
         /// </summary>
         interface IQueuedQuery
         {
-
-            void ExecuteQuery();
-
             IExecutableCode Code { get; set; }
 
             /// <summary>
@@ -437,11 +435,6 @@ namespace LINQToTTreeLib
             public IQueryResultCacheKey CacheKey { get; set; }
 
             public FutureValue<RType> Future { get; set; }
-
-            public void ExecuteQuery()
-            {
-                Future.TreeExecutor.ExecuteQueuedQueries();
-            }
 
             /// <summary>
             /// Go through the list and extract the results that are needed
@@ -749,47 +742,68 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Lock to prevent executing multiple times.
+        /// </summary>
+        private AsyncLock _queryExecuteLock = new AsyncLock();
+
+        /// <summary>
         /// Called when it is time to execute all the queries queued against this executor.
         /// </summary>
-        internal void ExecuteQueuedQueries()
+        /// <remarks>
+        /// All queued queries will be finished when this task completes.
+        /// </remarks>
+        internal async Task ExecuteQueuedQueries()
         {
-            LogExecutionStart();
-            // We now need the actual root files - so resolve them.
-            ResolveROOTFiles();
-
-            // Get all the queries together, combined, and ready to run.
-            TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
-            var combinedInfo = new CombinedGeneratedCode();
-            foreach (var cq in _queuedQueries)
+            // Because we can do many resultes, we might get asked from many places to actually run the queried results. So
+            // we need a way to make sure that we don't try to run multiple times. We do that here.
+            using (var exeLockWaiter = await _queryExecuteLock.LockAsync())
             {
-                combinedInfo.AddGeneratedCode(cq.Code);
+                // Make sure no one else has cleaned up the queue for us.
+                if (_queuedQueries.Count < 0)
+                {
+                    return;
+                }
+
+                // Log where we are.
+                LogExecutionStart();
+
+                // We now need the actual root files - so resolve them.
+                ResolveROOTFiles();
+
+                // Get all the queries together, combined, and ready to run.
+                TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
+                var combinedInfo = new CombinedGeneratedCode();
+                foreach (var cq in _queuedQueries)
+                {
+                    combinedInfo.AddGeneratedCode(cq.Code);
+                }
+
+                // Optimize the whole thing...
+                if (UseStatementOptimizer)
+                    Optimizer.Optimize(combinedInfo);
+
+                // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
+                var combinedResultsTasks = _resolvedRootFiles
+                    .Select((sch, index) => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo, index))
+                    .ToArray();
+
+                Task.WaitAll(combinedResultsTasks);
+                var combinedResults = combinedResultsTasks.Select(v => v.Result).ToArray();
+
+                // Extract all the variables! And save in the cache, and set the
+                // future value so everyone else can use them!
+                TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
+                foreach (var cq in _queuedQueries)
+                {
+                    cq.ExtractResult(combinedResults);
+                    cq.CacheResults(combinedResults);
+                }
+                _queuedQueries.Clear();
+
+                // Ok, we are all done. Delete the directory that we were just using
+                // after unloading all the modules
+                LogExecutionFinish();
             }
-
-            // Optimize the whole thing...
-            if (UseStatementOptimizer)
-                Optimizer.Optimize(combinedInfo);
-
-            // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
-            var combinedResultsTasks = _resolvedRootFiles
-                .Select((sch, index) => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo, index))
-                .ToArray();
-
-            Task.WaitAll(combinedResultsTasks);
-            var combinedResults = combinedResultsTasks.Select(v => v.Result).ToArray();
-
-            // Extract all the variables! And save in the cache, and set the
-            // future value so everyone else can use them!
-            TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
-            foreach (var cq in _queuedQueries)
-            {
-                cq.ExtractResult(combinedResults);
-                cq.CacheResults(combinedResults);
-            }
-            _queuedQueries.Clear();
-
-            // Ok, we are all done. Delete the directory that we were just using
-            // after unloading all the modules
-            LogExecutionFinish();
         }
 
         /// <summary>

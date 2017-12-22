@@ -83,7 +83,7 @@ namespace LINQToTTreeLib.Tests
             // Run them!
             //
 
-            exe.ExecuteQueuedQueries();
+            exe.ExecuteQueuedQueries().Wait();
 
             //
             // And check

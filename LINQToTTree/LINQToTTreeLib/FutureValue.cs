@@ -55,7 +55,8 @@ namespace LINQToTTreeLib
             {
                 if (!HasValue)
                 {
-                    TreeExecutor.ExecuteQueuedQueries();
+                    // We are running just one value - so wait.
+                    TreeExecutor.ExecuteQueuedQueries().Wait();
                     if (!HasValue)
                         throw new InvalidOperationException("Queued query was not executed when all queued queries were run! Can't do this query now!");
                 }
