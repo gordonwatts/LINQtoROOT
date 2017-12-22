@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTreeHelpers.FutureUtils;
 using LinqToTTreeInterfacesLib;
+using System.Threading.Tasks;
 
 namespace LINQToTreeHelpers.Tests
 {
@@ -31,6 +32,11 @@ namespace LINQToTreeHelpers.Tests
             public bool HasValue
             {
                 get { return true; }
+            }
+
+            public Task GetAvailibleTask()
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -62,6 +68,11 @@ namespace LINQToTreeHelpers.Tests
             public bool HasValue
             {
                 get { return _hasValue; }
+            }
+
+            public Task GetAvailibleTask()
+            {
+                throw new NotImplementedException();
             }
         }
 

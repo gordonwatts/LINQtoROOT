@@ -1,6 +1,7 @@
 ﻿using LinqToTTreeInterfacesLib;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LINQToTreeHelpers.FutureUtils
 {
@@ -21,7 +22,8 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<T>(
                 () => map(self.Value),
-                () => self.HasValue
+                () => self.HasValue,
+                () => self.GetAvailibleTask()
                 );
         }
 
@@ -82,7 +84,8 @@ namespace LINQToTreeHelpers.FutureUtils
                     var resV = project(resT, resU);
                     return resV;
                 },
-                () => self.HasValue && select(fvcache.GetValue()).HasValue
+                () => self.HasValue && select(fvcache.GetValue()).HasValue,
+                () => Task.WhenAll(self.GetAvailibleTask(), select(fvcache.GetValue()).GetAvailibleTask())
                 );
         }
 
@@ -96,8 +99,8 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => ((double)numerator.Value) / ((double)denominator.Value),
-                () => numerator.HasValue && denominator.HasValue
-                    );
+                () => numerator.HasValue && denominator.HasValue,
+                () => Task.WhenAll(numerator.GetAvailibleTask(), denominator.GetAvailibleTask()));
         }
 
         /// <summary>
@@ -110,8 +113,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => ((double)numerator.Value) / ((double)denominator.Value),
-                () => numerator.HasValue && denominator.HasValue
-                    );
+                numerator, denominator);
         }
 
         /// <summary>
@@ -124,8 +126,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => ((float)numerator.Value) / ((float)denominator.Value),
-                () => numerator.HasValue && denominator.HasValue
-                    );
+                numerator, denominator);
         }
 
         /// <summary>
@@ -138,7 +139,8 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => ((double)numerator.Value) / ((double)denominator),
-                () => numerator.HasValue
+                () => numerator.HasValue,
+                () => numerator.GetAvailibleTask()
                     );
         }
 
@@ -152,8 +154,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => ((float)numerator.Value) / ((float)denominator),
-                () => numerator.HasValue
-                    );
+                numerator);
         }
 
         /// <summary>
@@ -166,8 +167,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => ((double)numerator.Value) / ((double)denominator),
-                () => numerator.HasValue
-                    );
+                numerator);
         }
 
         /// <summary>
@@ -180,8 +180,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<int>(
                 () => v1.Value + v2.Value,
-                () => v1.HasValue && v2.HasValue
-                    );
+                v1, v2);
         }
 
         /// <summary>
@@ -194,8 +193,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => v1.Value + v2.Value,
-                () => v1.HasValue && v2.HasValue
-                    );
+                v1, v2);
         }
 
         /// <summary>
@@ -208,8 +206,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => v1.Value + v2.Value,
-                () => v1.HasValue && v2.HasValue
-                    );
+                v1, v2);
         }
 
         /// <summary>
@@ -222,8 +219,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => v1.Value + v2,
-                () => v1.HasValue
-                    );
+                v1);
         }
 
         /// <summary>
@@ -236,8 +232,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<int>(
                 () => v1.Value + v2,
-                () => v1.HasValue
-                    );
+                v1);
         }
 
         /// <summary>
@@ -250,8 +245,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => v1.Value + v2,
-                () => v1.HasValue
-                    );
+                v1);
         }
 
         /// <summary>
@@ -264,8 +258,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<int>(
                 () => (numerator.Value) * (denominator.Value),
-                () => numerator.HasValue && denominator.HasValue
-                    );
+                numerator, denominator);
         }
 
         /// <summary>
@@ -278,8 +271,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => ((double)numerator.Value) * ((double)denominator.Value),
-                () => numerator.HasValue && denominator.HasValue
-                    );
+                numerator, denominator);
         }
 
         /// <summary>
@@ -292,8 +284,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => ((float)numerator.Value) * ((float)denominator.Value),
-                () => numerator.HasValue && denominator.HasValue
-                    );
+                numerator, denominator);
         }
 
         /// <summary>
@@ -306,8 +297,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<int>(
                 () => (numerator.Value) * (denominator),
-                () => numerator.HasValue
-                    );
+                numerator);
         }
 
         /// <summary>
@@ -320,8 +310,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => ((float)numerator.Value) * ((float)denominator),
-                () => numerator.HasValue
-                    );
+                numerator);
         }
 
         /// <summary>
@@ -334,8 +323,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => ((double)numerator.Value) * ((double)denominator),
-                () => numerator.HasValue
-                    );
+                numerator);
         }
 
         /// <summary>
@@ -348,8 +336,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<int>(
                 () => v1.Value - v2.Value,
-                () => v1.HasValue && v2.HasValue
-                    );
+                v1, v2);
         }
 
         /// <summary>
@@ -362,8 +349,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => v1.Value - v2.Value,
-                () => v1.HasValue && v2.HasValue
-                    );
+                v1, v2);
         }
 
         /// <summary>
@@ -376,8 +362,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => v1.Value - v2.Value,
-                () => v1.HasValue && v2.HasValue
-                    );
+                v1, v2);
         }
 
         /// <summary>
@@ -390,8 +375,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<float>(
                 () => v1.Value - v2,
-                () => v1.HasValue
-                    );
+                v1);
         }
 
         /// <summary>
@@ -404,8 +388,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<int>(
                 () => v1.Value - v2,
-                () => v1.HasValue
-                    );
+                v1);
         }
 
         /// <summary>
@@ -418,8 +401,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<double>(
                 () => v1.Value - v2,
-                () => v1.HasValue
-                    );
+                v1);
         }
 
         /// <summary>
@@ -434,7 +416,8 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<TResult>(
                 () => extractor(source.Value),
-                () => source.HasValue
+                () => source.HasValue,
+                () => source.GetAvailibleTask()
                 );
         }
 
@@ -455,7 +438,8 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<TResult>(
                 () => extractor(source1.Value, source2.Value),
-                () => source2.HasValue && source1.HasValue
+                () => source2.HasValue && source1.HasValue,
+                () => Task.WhenAll(source1.GetAvailibleTask(), source2.GetAvailibleTask())
                 );
         }
 
@@ -472,7 +456,8 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<TResult>(
                 () => extractor(source.Select(s => s.Value).ToArray()),
-                () => source.All(s => s.HasValue)
+                () => source.All(s => s.HasValue),
+                () => Task.WhenAll(source.Select(v => v.GetAvailibleTask()))
                 );
         }
 
@@ -508,7 +493,8 @@ namespace LINQToTreeHelpers.FutureUtils
             {
                 return new DoFutureOperator<TResult>(
                     () => _value.Value as TResult,
-                    () => _value.HasValue
+                    () => _value.HasValue,
+                    () => _value.GetAvailibleTask()
                     );
             }
         }
@@ -536,8 +522,7 @@ namespace LINQToTreeHelpers.FutureUtils
         {
             return new DoFutureOperator<T>(
                 () => { var v = obj.Value; application(v); return v; },
-                () => obj.HasValue
-                );
+                obj);
         }
 
         /// <summary>
@@ -549,10 +534,23 @@ namespace LINQToTreeHelpers.FutureUtils
             /// <summary>
             /// Future operator - will run the getResult guy when it is time to run.
             /// </summary>
-            public DoFutureOperator(Func<T> genValue, Func<bool> hasValue)
+            public DoFutureOperator(Func<T> genValue, Func<bool> hasValue, Func<Task> calculationTask)
             {
                 _getResult = genValue;
                 _hasValue = hasValue;
+                _calcTask = calculationTask;
+            }
+
+            /// <summary>
+            /// Future Operator - run the calculated result, given the list of items we will use as inputs.
+            /// </summary>
+            /// <param name="genValue"></param>
+            /// <param name="values"></param>
+            public DoFutureOperator(Func<T> genValue, params IFutureValue<T>[] values)
+            {
+                _getResult = genValue;
+                _hasValue = () => values.All(v => v.HasValue);
+                _calcTask = () => Task.WhenAll(values.Select(v => v.GetAvailibleTask()).ToArray());
             }
 
             /// <summary>
@@ -561,6 +559,7 @@ namespace LINQToTreeHelpers.FutureUtils
             private Func<T> _getResult;
 
             private Func<bool> _hasValue;
+            private Func<Task> _calcTask;
 
             /// <summary>
             /// Returns true if we have a value.
@@ -574,6 +573,15 @@ namespace LINQToTreeHelpers.FutureUtils
             {
                 get { return _getResult(); }
             }
+
+            /// <summary>
+            /// Return the task that will get us the calculation completion.
+            /// </summary>
+            /// <returns></returns>
+            public Task GetAvailibleTask()
+            {
+                return _calcTask();
+            }
         }
 
         /// <summary>
@@ -584,7 +592,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// <returns></returns>
         public static IFutureValue<T> AsFuture<T> (this T value)
         {
-            return new DoFutureOperator<T>(() => value, () => true);
+            return new DoFutureOperator<T>(() => value);
         }
     }
 }

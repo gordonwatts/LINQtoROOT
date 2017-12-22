@@ -538,6 +538,15 @@ namespace LINQToTTreeLib
                     return _val;
                 }
             }
+
+            /// <summary>
+            /// Return a task that will fire when our inputs are done.
+            /// </summary>
+            /// <returns></returns>
+            public Task GetAvailibleTask()
+            {
+                return Task.WhenAll(_accumulator.GetAvailibleTask(), _o2.GetAvailibleTask());
+            }
         }
 
         /// <summary>
@@ -576,6 +585,15 @@ namespace LINQToTTreeLib
                     }
                     return _val;
                 }
+            }
+
+            /// <summary>
+            /// Return a task that will fire when a value is rendered.
+            /// </summary>
+            /// <returns></returns>
+            public Task GetAvailibleTask()
+            {
+                return _held.GetAvailibleTask();
             }
         }
 
