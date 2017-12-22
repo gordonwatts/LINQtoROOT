@@ -465,7 +465,7 @@ namespace LINQToTTreeLib
                         .FirstOrDefault()
                         .ThrowIfNull(() => new InvalidOperationException($"Unable to find an IAddResult object for type '{typeof(RType).Name}' - so can't add them together! Please provide MEF export."));
 
-                    Future.SetValue(finalResultList.Skip(1).Aggregate(finalResultList[0], (acc, newval) => adder.Update(acc, newval)));
+                    Future.SetValue(finalResultList.Aggregate((acc, newval) => adder.Update(acc, newval)));
                 }
             }
 
