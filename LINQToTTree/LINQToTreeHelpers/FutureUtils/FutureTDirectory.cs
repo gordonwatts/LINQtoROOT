@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTreeHelpers.FutureUtils
@@ -33,6 +34,9 @@ namespace LINQToTreeHelpers.FutureUtils
             Directory = dir;
         }
 
+        /// <summary>
+        /// Hold onto a value
+        /// </summary>
         abstract class FVHolderBase
         {
             public void Save(ROOTNET.Interface.NTDirectory dir)
@@ -41,6 +45,11 @@ namespace LINQToTreeHelpers.FutureUtils
             }
 
             public abstract ROOTNET.Interface.NTObject AsTObject { get; }
+
+            /// <summary>
+            /// Return the task that waits for this value to be rendered.
+            /// </summary>
+            public abstract Task WaiterTask { get; }
         }
 
         class FVHolder<T> : FVHolderBase
@@ -51,6 +60,11 @@ namespace LINQToTreeHelpers.FutureUtils
             public override ROOTNET.Interface.NTObject AsTObject
             {
                 get { return Value.Value; }
+            }
+
+            public override Task WaiterTask
+            {
+                get { return Value.GetAvailibleTask(); }
             }
         }
 
@@ -127,28 +141,27 @@ namespace LINQToTreeHelpers.FutureUtils
         /// Convert everything and save it to the directory! Also write out
         /// all the sub-directories.
         /// </summary>
-        public void Write()
+        /// <param name="calculateEverything">If true, then trigger all calculations here and below. Normally call with false.</param>
+        public void Write(bool calculateEverything = true)
         {
-            //
             // Write everything associated with this directory.
-            //
-
             Directory.Write();
 
-            //
-            // Local values
-            // 
+            // Trigger all the calculatiosn that are needed for these directories.
+            // This drives the ability for parallel calculation of everything.
+            if (calculateEverything)
+            {
+                TriggerResolutions().Wait();
+            }
 
+            // Local values
             foreach (var item in _heldValues)
             {
                 item.Save(Directory);
             }
             _heldValues.Clear();
 
-            //
             // Next, the subdirectories
-            // 
-
             if (_subDirs.IsValueCreated)
             {
                 foreach (var item in _subDirs.Value)
@@ -156,6 +169,19 @@ namespace LINQToTreeHelpers.FutureUtils
                     item.Write();
                 }
             }
+        }
+
+        /// <summary>
+        /// Grab all the tasks and aysync wait on them.
+        /// </summary>
+        private Task TriggerResolutions()
+        {
+            var ourResults = _heldValues.Select(v => v.WaiterTask);
+            var subDirTasks = _subDirs.IsValueCreated
+                ? _subDirs.Value.Select(d => d.TriggerResolutions())
+                : Enumerable.Empty<Task>();
+
+            return Task.WhenAll(ourResults.Concat(subDirTasks));
         }
 
         /// <summary>
