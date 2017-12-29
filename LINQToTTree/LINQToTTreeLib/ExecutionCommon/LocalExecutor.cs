@@ -1,6 +1,7 @@
 ﻿
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Nito.AsyncEx;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -27,6 +28,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
     /// <summary>
     /// Runs single threaded, in the local process, and does all the ntuples we need.
+    /// This is married to the version of root that LINQToTTree is built against.
     /// </summary>
     class LocalExecutor : IQueryExectuor
     {
@@ -42,64 +44,77 @@ namespace LINQToTTreeLib.ExecutionCommon
         public string[] LeafNames { get; set; }
 
         /// <summary>
+        /// Used to make sure that we don't try to run more than one at a time.
+        /// </summary>
+        private AsyncLock _globalLock = new AsyncLock();
+
+        /// <summary>
         /// Given a request, run it. No need to clean up afterwards as we are already there.
         /// </summary>
         /// <returns></returns>
+        /// <remarks>
+        /// We can't run more than one of these at a time as root is not able to
+        /// run more than a thread at a time without significant work. Other
+        /// executors get to take care of this, sadly.
+        /// </remarks>
         public async Task<IDictionary<string, ROOTNET.Interface.NTObject>> Execute(
             Uri[] files,
             FileInfo templateFile,
             DirectoryInfo queryDirectory,
             IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
-            // Remove flag characters in teh source file - parse for clean up subsitutions we can do
-            // only when we know how we are going to do the execution.
-            ReWritePathsInQuery(templateFile);
-
-            // Get the environment setup for this call
-            ExecutionUtilities.Init();
-            PreExecutionInit(Environment.ClassesToDictify);
-
-            TraceHelpers.TraceInfo(12, "ExecuteQueuedQueries: Loading all extra objects");
-            AssembleAndLoadExtraObjects(Environment.ExtraComponentFiles);
-
-            //
-            // Load the query up
-            //
-
-            if (Environment.BreakToDebugger)
-                System.Diagnostics.Debugger.Break();
-            CompileAndLoad(templateFile);
-
-            //
-            // To help with possible debugging and other things, if a pdb was generated, then copy it over and rename it
-            // correctly.
-            //
-
-            if (File.Exists("vc100.pdb"))
+            using (var waiter = await _globalLock.LockAsync())
             {
-                File.Copy("vc100.pdb", Path.Combine(queryDirectory.FullName, Path.GetFileNameWithoutExtension(templateFile.Name) + ".pdb"));
+                // Remove flag characters in teh source file - parse for clean up subsitutions we can do
+                // only when we know how we are going to do the execution.
+                ReWritePathsInQuery(templateFile);
+
+                // Get the environment setup for this call
+                ExecutionUtilities.Init();
+                PreExecutionInit(Environment.ClassesToDictify);
+
+                TraceHelpers.TraceInfo(12, "ExecuteQueuedQueries: Loading all extra objects");
+                AssembleAndLoadExtraObjects(Environment.ExtraComponentFiles);
+
+                //
+                // Load the query up
+                //
+
+                if (Environment.BreakToDebugger)
+                    System.Diagnostics.Debugger.Break();
+                CompileAndLoad(templateFile);
+
+                //
+                // To help with possible debugging and other things, if a pdb was generated, then copy it over and rename it
+                // correctly.
+                //
+
+                if (File.Exists("vc100.pdb"))
+                {
+                    File.Copy("vc100.pdb", Path.Combine(queryDirectory.FullName, Path.GetFileNameWithoutExtension(templateFile.Name) + ".pdb"));
+                }
+
+                //
+                // Get the file name of the selector.
+                //
+
+                TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
+                var localFiles = files.Select(u => new FileInfo(u.LocalPath)).ToArray();
+                var results = RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
+
+                //
+                // And cleanup!
+                //
+
+                TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
+                ExecutionUtilities.UnloadAllModules(_loadedModuleNames);
+                if (Environment.CleanupQuery)
+                {
+                    queryDirectory.Delete(true);
+                }
+
+                return results;
             }
-
-            //
-            // Get the file name of the selector.
-            //
-
-            TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
-            var localFiles = files.Select(u => new FileInfo(u.LocalPath)).ToArray();
-            var results = RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
-
-            //
-            // And cleanup!
-            //
-
-            TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
-            ExecutionUtilities.UnloadAllModules(_loadedModuleNames);
-            if (Environment.CleanupQuery)
-            {
-                queryDirectory.Delete(true);
-            }
-
-            return results;
         }
 
         /// <summary>
@@ -366,51 +381,54 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public async Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
-            // Argument checks
-            if (rootFiles == null || rootFiles.Length == 0)
+            using (var lockWaiter = await _globalLock.LockAsync())
             {
-                throw new ArgumentException("Query must be run on some files - argument to GenerateProxyFile was null or zero length");
-            }
-            if (queryDirectory == null || !queryDirectory.Exists)
-            {
-                throw new ArgumentException("The directory were we should create a TTree proxy file should not be null or non-existant!");
-            }
-
-            // Open the first file and generate the proxy from that.
-            var rootFilePath = rootFiles.First().LocalPath;
-            var tfile = ROOTNET.NTFile.Open(rootFilePath, "READ");
-            try
-            {
-                var tree = tfile.Get(treeName) as ROOTNET.Interface.NTTree;
-                if (tree == null)
+                // Argument checks
+                if (rootFiles == null || rootFiles.Length == 0)
                 {
-                    throw new TreeDoesNotExistException($"Unable to fine tree '{treeName}' in file '{rootFilePath}'");
+                    throw new ArgumentException("Query must be run on some files - argument to GenerateProxyFile was null or zero length");
+                }
+                if (queryDirectory == null || !queryDirectory.Exists)
+                {
+                    throw new ArgumentException("The directory were we should create a TTree proxy file should not be null or non-existant!");
                 }
 
-                // Root does everything local, so...
-                var oldEnv = System.Environment.CurrentDirectory;
+                // Open the first file and generate the proxy from that.
+                var rootFilePath = rootFiles.First().LocalPath;
+                var tfile = ROOTNET.NTFile.Open(rootFilePath, "READ");
                 try
                 {
-                    System.Environment.CurrentDirectory = queryDirectory.FullName;
-
-                    // Write the dummy selection file that is required (WHY!!!???).
-                    using (var w = File.CreateText("junk.C"))
+                    var tree = tfile.Get(treeName) as ROOTNET.Interface.NTTree;
+                    if (tree == null)
                     {
-                        w.Write("int junk() {return 10.0;}");
-                        w.Close();
+                        throw new TreeDoesNotExistException($"Unable to fine tree '{treeName}' in file '{rootFilePath}'");
                     }
 
-                    tree.MakeProxy("runquery", "junk.C", null, "nohist");
-                    return new FileInfo("runquery.h");
+                    // Root does everything local, so...
+                    var oldEnv = System.Environment.CurrentDirectory;
+                    try
+                    {
+                        System.Environment.CurrentDirectory = queryDirectory.FullName;
+
+                        // Write the dummy selection file that is required (WHY!!!???).
+                        using (var w = File.CreateText("junk.C"))
+                        {
+                            w.Write("int junk() {return 10.0;}");
+                            w.Close();
+                        }
+
+                        tree.MakeProxy("runquery", "junk.C", null, "nohist");
+                        return new FileInfo("runquery.h");
+                    }
+                    finally
+                    {
+                        System.Environment.CurrentDirectory = oldEnv;
+                    }
                 }
                 finally
                 {
-                    System.Environment.CurrentDirectory = oldEnv;
+                    tfile.Close();
                 }
-            }
-            finally
-            {
-                tfile.Close();
             }
         }
 

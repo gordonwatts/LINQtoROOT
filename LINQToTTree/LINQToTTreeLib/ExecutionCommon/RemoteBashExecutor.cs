@@ -92,13 +92,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We assume that ROOT is already configured. If the command line execution fails, we will
         /// throw.
         /// </remarks>
-        internal override void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false,
+        internal override async Task ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false,
             IEnumerable<Uri> extraFiles = null,
             IEnumerable<Uri> receiveFiles = null,
             TimeSpan? timeout = null)
         {
             // Run against a temp directory on the remote host
-            ExecuteRemoteWithTemp(prefix, sshConnection => {
+            await ExecuteRemoteWithTemp(prefix, async sshConnection => {
 
                 // Parse for <><> style file replacements. This will call normalize to send over
                 // files, so we need to do this inside the execution environment.
@@ -137,7 +137,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 // Send over all files
                 var logForError = new StringBuilder();
-                SendAllFiles(sshConnection, s => RecordLine(logForError, s, dumpLine));
+                await SendAllFiles(sshConnection, s => RecordLine(logForError, s, dumpLine));
 
                 // Next, lets see if we can't run the file against root.
                 try
@@ -154,7 +154,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 }
 
                 // Finally, if there are any files to bring back, we should!
-                ReceiveAllFiles(sshConnection, dumpLine);
+                await ReceiveAllFiles(sshConnection, dumpLine);
 
                 return (object) null;
             }, dumpLine);
@@ -213,8 +213,9 @@ namespace LINQToTTreeLib.ExecutionCommon
                     throw new RemoteBashCommandFailureException($"Failed to execute bash script: {ReformatLog(logForError)}.", e);
                 }
                 ReceiveAllFiles(connection, dumpLine);
-                return (object)null;
-            }, dumpLine);
+                return Task.FromResult((object)null);
+            }, dumpLine).Wait();
+#warning Fix this async code
         }
 
         /// <summary>
@@ -224,7 +225,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="queryDirectory"></param>
         /// <param name="varsToTransfer"></param>
         /// <returns></returns>
-        public override Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public override async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             Action<string> dumper = l =>
             {
@@ -233,7 +234,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     Console.WriteLine(l);
                 }
             };
-            return ExecuteRemoteWithTemp($"Query", SSHConnection =>
+            return await ExecuteRemoteWithTemp($"Query", async SSHConnection =>
             {
                 // Load up extra files that need to be shipped over.
                 foreach (var f in Environment.ExtraComponentFiles)
@@ -241,7 +242,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = _linuxTempDir });
                 }
 
-                return base.Execute(files, queryFile, queryDirectory, varsToTransfer);
+                return await base.Execute(files, queryFile, queryDirectory, varsToTransfer);
             }, dumper);
         }
 
@@ -251,7 +252,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="tempDir"></param>
         /// <param name="act"></param>
         /// <param name="dumpLine"></param>
-        internal T ExecuteRemoteWithTemp<T>(string phase, Func<SSHRecoveringConnection, T> act, Action<string> dumpLine = null)
+        internal Task<T> ExecuteRemoteWithTemp<T>(string phase, Func<SSHRecoveringConnection, Task<T>> act, Action<string> dumpLine = null)
         {
             if (phase.Contains("/") || phase.Contains(" "))
             {
@@ -298,7 +299,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="dumpLine"></param>
-        private void SendAllFiles(ISSHConnection connection, Action<string> dumpLine)
+        private Task SendAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToCopyOver)
             {
@@ -308,6 +309,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 connection.CopyLocalFileRemotely(f.localFileName, linuxPath);
             }
             _filesToCopyOver.Clear();
+            return Task.FromResult(true);
+#warning fix this async problem
         }
 
         /// <summary>
@@ -315,7 +318,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="sshConnection"></param>
         /// <param name="dumpLine"></param>
-        private void ReceiveAllFiles(ISSHConnection connection, Action<string> dumpLine)
+        private Task ReceiveAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToBringBack)
             {
@@ -329,6 +332,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 connection.CopyRemoteFileLocally(linuxPath, f.localFileName);
             }
             _filesToBringBack.Clear();
+            return Task.FromResult(true);
+#warning Fix this async result
         }
 
 
@@ -548,7 +553,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="dumpLine"></param>
         /// <param name="verbose"></param>
         /// <returns></returns>
-        internal override bool CheckForROOTInstall(Action<string> dumpLine, bool verbose)
+        internal override async Task<bool> CheckForROOTInstall(Action<string> dumpLine, bool verbose)
         {
             // Simple script to execute
             var cmd = new StringBuilder();
@@ -556,8 +561,9 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
-            } catch (RemoteBashCommandFailureException e) when (e.Message.Contains("version for root"))
+                await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+            }
+            catch (RemoteBashCommandFailureException e) when (e.Message.Contains("version for root"))
             {
                 return false;
             }
@@ -625,7 +631,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We aren't installing root because these are often big machines where ROOT is already present.
         /// If we need this, this functionality can be added.
         /// </remarks>
-        internal override void InstallROOT(Action<string> dumpLine, bool verbose)
+        internal override Task InstallROOT(Action<string> dumpLine, bool verbose)
         {
             throw new ROOTCantBeInstalledRemotelyException("Unable to install root on a remote system over ssh");
         }

@@ -20,15 +20,17 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get ROOT installed if it hasn't been already.
             var le = BuildExecutor(verbose);
 
-            if (!le.CheckForROOTInstall(dumpLine, verbose))
+#warning fix this async return
+            if (!le.CheckForROOTInstall(dumpLine, verbose).Result)
             {
                 le.InstallROOT(dumpLine, verbose);
             }
 
             // Run in ROOT.
+#warning fix this async line
             le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose,
                 extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)),
-                timeout: timeout);
+                timeout: timeout).Wait();
         }
 
         /// <summary>

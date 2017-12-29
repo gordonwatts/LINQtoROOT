@@ -149,12 +149,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine("exit(0);");
             cmds.AppendLine("}");
             NormalizeFileForTarget(queryDirectory);
-            Policy
+            await Policy
                 .Handle<CommandLineExecutionException>(ex => ex.Message.Contains("error reading from file"))
                 .Retry(3)
-                .Execute(() =>
+                .ExecuteAsync(async () =>
                 {
-                    ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
+                    await ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
                         fetchFiles: new[] { new Uri(resultsFile.FullName) },
                         timeout: TimeSpan.FromHours(4));
                 });
@@ -266,7 +266,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 : (Action<string>)null;
 
             // Check the environment
-            MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
+            await MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
 
             // Generate the proxy.
             return await GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
@@ -311,7 +311,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Run the commands
             var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
-            ExecuteRootScript("Proxy", cmds.ToString(), queryDirectory, dumpLine,
+            await ExecuteRootScript("Proxy", cmds.ToString(), queryDirectory, dumpLine,
                 extraFiles: new[] { new Uri(fname) },
                 fetchFiles: new[] { new Uri(header.FullName) });
 
@@ -337,12 +337,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Make sure ROOT is installed. If not, attempt to install it.
         /// </summary>
-        private void MakeSureROOTIsInstalled(Action<string> dumpLine = null, bool verbose = false)
+        private async Task MakeSureROOTIsInstalled(Action<string> dumpLine = null, bool verbose = false)
         {
-            if (!CheckForROOTInstall(dumpLine, verbose))
+            if (!(await CheckForROOTInstall(dumpLine, verbose)))
             {
-                InstallROOT(dumpLine, verbose);
-                if (!CheckForROOTInstall(dumpLine, verbose))
+                await InstallROOT(dumpLine, verbose);
+                if (!(await CheckForROOTInstall(dumpLine, verbose)))
                 {
                     throw new CantFindROOTException($"ROOT isn't installed on target machine ({ExecutorName}).");
                 }
@@ -352,7 +352,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Attempt to install ROOT.
         /// </summary>
-        internal abstract void InstallROOT(Action<string> dumpLine, bool verbose);
+        internal abstract Task InstallROOT(Action<string> dumpLine, bool verbose);
 
         /// <summary>
         /// Return the name of the executor - to be used in error messages and the like.
@@ -363,7 +363,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Check to see if ROOT has been installed or not. Return TRUE if it has, FALSE otherwise.
         /// </summary>
         /// <returns></returns>
-        internal abstract bool CheckForROOTInstall(Action<string> dumpLine, bool verbose);
+        internal abstract Task<bool> CheckForROOTInstall(Action<string> dumpLine, bool verbose);
 
         /// <summary>
         /// Sometimes we have to generate some class dictionaries on the fly. This code will do that.
@@ -642,7 +642,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="cmds"></param>
         /// <param name="extraFiles">List of extra files that might be needed.</param>
         /// <param name="fetchFiles">List of files that should be fetched. Assuemd to be written in the local area</param>
-        internal virtual void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null,
+        internal virtual async Task ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null,
             TimeSpan? timeout = null)
         {
             // Parse the commands for replacements
@@ -678,20 +678,28 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
             proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
 
-            proc.Start();
+            var completionTask = proc.StartAsync();
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
 
             // Wait for it to end.
             if (verbose) dumpLine?.Invoke("Waiting for process to exit");
-            proc.WaitForExit(timeout.HasValue ? (int) timeout.Value.TotalMilliseconds : int.MaxValue);
+            var r = await Task.WhenAny(completionTask, Task.Delay(timeout.HasValue ? (int)timeout.Value.TotalMilliseconds : int.MaxValue));
+            if (r != completionTask)
+            {
+                // Timeout occured. Kill it!
+                proc.Kill();
+            }
             if (verbose) dumpLine?.Invoke($"Process result is {proc.ExitCode}.");
             PostProcessExecution(resultData, context, dumpLine);
 
-            // Make sure the result is "good"
+            // Make sure the result is "good"; throw a reasonable error message if not.
             if (proc.ExitCode != 0)
             {
                 throw new CommandLineExecutionException($"Failed to execute step {prefix} - process executed with error code {proc.ExitCode}. Text dump from process: {ReformatLog(resultData)}");
+            } else if (r != completionTask)
+            {
+                throw new TimeoutException($"Failed to execute step { prefix } - process was killed due to timeout ({timeout.Value.TotalSeconds} seconds). Text dump from process: { ReformatLog(resultData)}");
             }
         }
 

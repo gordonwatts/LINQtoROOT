@@ -6,6 +6,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -82,14 +83,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Is ROOT installed on this machine?
         /// </summary>
         /// <returns></returns>
-        internal override bool CheckForROOTInstall(Action<string> dumpLine = null, bool verbose = false)
+        internal override async Task<bool> CheckForROOTInstall(Action<string> dumpLine = null, bool verbose = false)
         {
             var cmd = new StringBuilder();
             cmd.AppendLine("int i = 10;");
 
             try
             {
-                ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+                await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
                 return true;
             }
             catch { }
@@ -116,7 +117,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <remarks>
         /// We are called only if CheckInstall has returned false.
         /// </remarks>
-        internal override void InstallROOT(Action<string> dumpLine, bool verbose)
+        internal override async Task InstallROOT(Action<string> dumpLine, bool verbose)
         {
             var cmds = new StringBuilder();
             cmds.Append($"mkdir -p {ROOTInstallArea}\n");
@@ -130,7 +131,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                ExecuteBashScript("downlaodroot", cmds.ToString(), dumpLine, verbose);
+                await ExecuteBashScript("downlaodroot", cmds.ToString(), dumpLine, verbose);
             } catch (Exception e)
             {
                 throw new FailedToInstallROOTException($"Unable to download and install ROOT version {ROOTVersionNumber}.", e);
@@ -141,7 +142,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Run a short bash script
         /// </summary>
         /// <param name="cmds"></param>
-        internal void ExecuteBashScript(string reason, string cmds, Action<string> dumpLine = null, bool verbose = false)
+        internal async Task ExecuteBashScript(string reason, string cmds, Action<string> dumpLine = null, bool verbose = false)
         {
             // Dump the script
             var tmpDir = new DirectoryInfo(System.IO.Path.GetTempPath());
@@ -170,12 +171,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
             proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
 
-            proc.Start();
-            //proc.BeginOutputReadLine();
-            //proc.BeginErrorReadLine();
-
-            // Wait for it to end.
-            proc.WaitForExit();
+            // Wait for it to finish up.
+            await proc.StartAsync();
 
             // Now, pick up the file
             foreach (var line in logFile.EnumerateTextFile())

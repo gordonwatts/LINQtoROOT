@@ -328,6 +328,7 @@
     <Compile Include="Utils\HashSetUtils.cs" />
     <Compile Include="Utils\IValueUtils.cs" />
     <Compile Include="Utils\ObjectHashCalculator.cs" />
+    <Compile Include="Utils\ProcessUtils.cs" />
     <Compile Include="Utils\QueryModelUtils.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
     <Compile Include="Utils\StatementUtils.cs" />

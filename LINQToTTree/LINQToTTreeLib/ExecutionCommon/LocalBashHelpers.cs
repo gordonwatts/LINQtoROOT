@@ -25,13 +25,15 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Get ROOT installed if it hasn't been already.
             var le = BuildExecutor();
 
-            if (!le.CheckForROOTInstall(dumpLine, verbose))
+#warning Fix this async result.
+            if (!le.CheckForROOTInstall(dumpLine, verbose).Result)
             {
-                le.InstallROOT(dumpLine, verbose);
+                le.InstallROOT(dumpLine, verbose).Wait();
             }
 
             // Run in ROOT.
-            le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose);
+#warning fix this async result
+            le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose).Wait();
         }
 
         /// <summary>
@@ -54,7 +56,8 @@ namespace LINQToTTreeLib.ExecutionCommon
         public static void RunBashCommand(string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
         {
             var le = BuildExecutor();
-            le.ExecuteBashScript(fnameRoot, commands, dumpLine, verbose);
+#warning fix this async result
+            le.ExecuteBashScript(fnameRoot, commands, dumpLine, verbose).Wait();
         }
     }
 }
