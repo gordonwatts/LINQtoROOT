@@ -13,6 +13,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using static LINQToTTreeLib.TTreeQueryExecutor;
 using Remotion.Linq;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
 {
@@ -284,17 +285,17 @@ namespace LINQToTTreeLib
         [TestMethod]
         [Ignore]
         // Seemst o have died having to do with data manager stuff. Need to investigate!
-        public void SimpleResultOperatorWithGridDSLocationLocal()
+        public async Task SimpleResultOperatorWithGridDSLocationLocal()
         {
             // Use a file that is on the GRID. This might change over time,
             // so this may file as files are deleted and need to be updated.
 
             const string dsName = "user.gwatts.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.DAOD_EXOT15.p2711.DiVertAnalysis_v15_C448D50D_22DCBF53_hist";
-            var files = AtlasWorkFlows.DatasetManager.ListOfFilesInDataset(dsName);
+            var files = await AtlasWorkFlows.DatasetManager.ListOfFilesInDatasetAsync(dsName);
             var gfile = files.First();
-            var places = AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFiles(new[] { gfile });
+            var places = await AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFilesAsync(new[] { gfile });
             Assert.IsTrue(places.Contains("Local"));
-            var gfileUri = AtlasWorkFlows.DatasetManager.LocalPathToFile("Local", gfile);
+            var gfileUri = await AtlasWorkFlows.DatasetManager.LocalPathToFileAsync("Local", gfile);
 
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
@@ -310,17 +311,17 @@ namespace LINQToTTreeLib
         [TestMethod]
         [Ignore]
         // Seems to have died due to data manager stuff. Need to investigate!
-        public void SimpleResultOperatorWithGridDSLocationRemote()
+        public async Task SimpleResultOperatorWithGridDSLocationRemote()
         {
             // Use a file that is on the GRID. This might change over time,
             // so this may file as files are deleted and need to be updated.
 
             const string dsName = "user.gwatts.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.DAOD_EXOT15.p2711.DiVertAnalysis_v15_C448D50D_22DCBF53_hist";
-            var files = AtlasWorkFlows.DatasetManager.ListOfFilesInDataset(dsName);
+            var files = await AtlasWorkFlows.DatasetManager.ListOfFilesInDatasetAsync(dsName);
             var gfile = files.First();
-            var places = AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFiles(new[] { gfile });
+            var places = await AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFilesAsync(new[] { gfile });
             Assert.IsTrue(places.Contains("UWTeV-linux"));
-            var gfileUriR = AtlasWorkFlows.DatasetManager.LocalPathToFile("UWTeV-linux", gfile);
+            var gfileUriR = await AtlasWorkFlows.DatasetManager.LocalPathToFileAsync("UWTeV-linux", gfile);
             var gfileUri = new UriBuilder(gfileUriR)
             {
                 Scheme = "remotebash"
