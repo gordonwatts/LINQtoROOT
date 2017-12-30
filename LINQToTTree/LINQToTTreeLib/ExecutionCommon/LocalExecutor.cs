@@ -335,6 +335,20 @@ namespace LINQToTTreeLib.ExecutionCommon
         private List<string> _loadedModuleNames = new List<string>();
 
         /// <summary>
+        /// Thrown when we can't compile a query - this is really bad!
+        /// </summary>
+        [Serializable]
+        public class FailedToCompileException : Exception
+        {
+            public FailedToCompileException() { }
+            public FailedToCompileException(string message) : base(message) { }
+            public FailedToCompileException(string message, Exception inner) : base(message, inner) { }
+            protected FailedToCompileException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
+        /// <summary>
         /// Compile and load a file
         /// </summary>
         /// <param name="templateRunner"></param>
@@ -354,7 +368,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             /// This should never happen - but we are depending on so many different things to go right here!
             if (result != 1)
-                throw new InvalidOperationException("Failed to compile '" + templateRunner.FullName + "' - This is a very bad internal error - inspect the file to see if you can see what went wrong and report!!!");
+                throw new FailedToCompileException("Failed to compile '" + templateRunner.FullName + "' - This is a very bad internal error - inspect the file to see if you can see what went wrong and report!!!");
 
             _loadedModuleNames.Add(templateRunner.Name.Replace(".", "_"));
         }

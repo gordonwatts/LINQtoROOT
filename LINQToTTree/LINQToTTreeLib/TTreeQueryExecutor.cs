@@ -805,8 +805,7 @@ namespace LINQToTTreeLib
                     .Select((sch, index) => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo, index))
                     .ToArray();
 
-                Task.WaitAll(combinedResultsTasks);
-                var combinedResults = combinedResultsTasks.Select(v => v.Result).ToArray();
+                var combinedResults = await Task.WhenAll(combinedResultsTasks);
 
                 // Extract all the variables! And save in the cache, and set the
                 // future value so everyone else can use them!
@@ -833,6 +832,7 @@ namespace LINQToTTreeLib
         private async Task<IDictionary<string, ROOTNET.Interface.NTObject>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
                 CombinedGeneratedCode combinedInfo, int cycle)
         {
+            var queryDirectory = GenerateQueryDirectory();
             try
             {
                 // Keep track of how often we run. Mostly for testing reasons, actually.
@@ -844,13 +844,13 @@ namespace LINQToTTreeLib
                 IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
 
                 // Next, generate and slim the proxy file and the TSelector file
-                var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, GetQueryDirectory());
-                var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile);
+                var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, queryDirectory);
+                var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile, queryDirectory);
                 TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
-                var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo);
+                var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo, queryDirectory);
 
                 // Run the actual query.
-                var r = await local.Execute(files, templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
+                var r = await local.Execute(files, templateRunner, queryDirectory, combinedInfo.VariablesToTransfer);
 
                 // Rename by cycle for those that need it.
                 foreach (var cq in _queuedQueries)
@@ -862,7 +862,7 @@ namespace LINQToTTreeLib
                 return r;
             } finally
             {
-                CleanUpQuery();
+                CleanUpQuery(queryDirectory);
                 TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Finished run on Uri scheme {scheme}.", opt: TraceEventType.Stop);
             }
         }
@@ -945,7 +945,7 @@ namespace LINQToTTreeLib
         /// proxy file so that only those leaves are defined. In a large ntuple (with 100's of items) this can
         /// change compile times from 45 seconds to 8 seconds - so is a big deal during incremental testing, etc.
         /// </summary>
-        private FileInfo SlimProxyFile(string[] leafNames, FileInfo proxyFile)
+        private FileInfo SlimProxyFile(string[] leafNames, FileInfo proxyFile, DirectoryInfo queryDirectory)
         {
             //
             // Create search's for the various proxy names
@@ -958,7 +958,7 @@ namespace LINQToTTreeLib
             // Copy over the file, emitting only the lines we need to emit.
             //
 
-            FileInfo destFile = new FileInfo($"{GetQueryDirectory().FullName}\\slim-{proxyFile.Name}");
+            FileInfo destFile = new FileInfo($"{queryDirectory.FullName}\\slim-{proxyFile.Name}");
             using (var writer = destFile.CreateText())
             {
                 // State variables
@@ -1041,7 +1041,7 @@ namespace LINQToTTreeLib
             // Finally, copy over any included files
             //
 
-            ExecutionUtilities.CopyIncludedFilesToDirectory(proxyFile, GetQueryDirectory());
+            ExecutionUtilities.CopyIncludedFilesToDirectory(proxyFile, queryDirectory);
             return destFile;
         }
 
@@ -1182,7 +1182,8 @@ namespace LINQToTTreeLib
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
         /// <param name="p"></param>
-        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, IExecutableCode code)
+        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, IExecutableCode code,
+            DirectoryInfo queryDirectory)
         {
             ///
             /// Get the template engine all setup
@@ -1234,7 +1235,7 @@ namespace LINQToTTreeLib
             /// Now do it!
             /// 
 
-            var ourSelector = new FileInfo(GetQueryDirectory() + "\\" + queryFileName + ".cxx");
+            var ourSelector = new FileInfo(queryDirectory + "\\" + queryFileName + ".cxx");
             using (var writer = ourSelector.CreateText())
             {
                 eng.Evaluate(context, writer, null, template);
@@ -1273,64 +1274,47 @@ namespace LINQToTTreeLib
         public static DirectoryInfo QueryCreationDirectory = new DirectoryInfo(Path.GetTempPath() + "\\LINQToTTree");
 
         /// <summary>
-        /// Copy a file to a directory that contains files for this query.
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        private FileInfo CopyToQueryDirectory(FileInfo sourceFile)
-        {
-            return ExecutionUtilities.CopyToDirectory(sourceFile, GetQueryDirectory());
-        }
-
-        /// <summary>
-        /// The local query
-        /// </summary>
-        private DirectoryInfo _queryDirectory;
-
-        /// <summary>
         /// When true, we will first attempt to delete all files in our main query directory
         /// scratch space before creating and running everything.
         /// </summary>
         static bool gFirstQuerySetup = true;
 
         /// <summary>
-        /// Get the directory for the current query in progress. If this is the first time
-        /// we attempt to first clean up from old runs.
+        /// Create a new query directory for a query. Also, clean up old queries to keep the
+        /// disk properly pruned.
         /// </summary>
         /// <returns></returns>
         /// <remarks>
         /// Don't kill off recent queires - as we may have multiple copies of this program running on this
         /// machine.
         /// </remarks>
-        private DirectoryInfo GetQueryDirectory()
+        private DirectoryInfo GenerateQueryDirectory()
         {
-            if (_queryDirectory == null)
+            var baseQueryDirectory = new DirectoryInfo(QueryCreationDirectory.FullName + "\\" + Process.GetCurrentProcess().ProcessName);
+            if (gFirstQuerySetup)
             {
-                var baseQueryDirectory = new DirectoryInfo(QueryCreationDirectory.FullName + "\\" + Process.GetCurrentProcess().ProcessName);
-                if (gFirstQuerySetup)
+                gFirstQuerySetup = false;
+                try
                 {
-                    gFirstQuerySetup = false;
-                    try
+                    var removeDirectories = baseQueryDirectory
+                        .EnumerateDirectories()
+                        .Where(d => (DateTime.Now - d.CreationTime) > TimeSpan.FromDays(7));
+                    foreach (var d in removeDirectories)
                     {
-                        var removeDirectories = baseQueryDirectory
-                            .EnumerateDirectories()
-                            .Where(d => (DateTime.Now - d.CreationTime) > TimeSpan.FromDays(7));
-                        foreach (var d in removeDirectories)
-                        {
-                            d.Delete(true);
-                        }
+                        d.Delete(true);
                     }
-                    catch { }
                 }
-                _queryDirectory = new DirectoryInfo(baseQueryDirectory.FullName + "\\" + Path.GetRandomFileName());
-                _queryDirectory.Create();
+                catch { }
             }
-            return _queryDirectory;
+            var queryDirectory = new DirectoryInfo(baseQueryDirectory.FullName + "\\" + Path.GetRandomFileName());
+            queryDirectory.Create();
+            return queryDirectory;
         }
 
         /// <summary>
         /// Clean up the query - keep user's disk clean!
         /// </summary>
-        private void CleanUpQuery()
+        private void CleanUpQuery(DirectoryInfo queryDirectory)
         {
             TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
             if (_exeReq.CleanupQuery)
@@ -1338,12 +1322,11 @@ namespace LINQToTTreeLib
                 // If we can't do the clean up, don't worry about it.
                 try
                 {
-                    _queryDirectory.Delete(true);
+                    queryDirectory.Delete(true);
                 }
                 catch
                 { }
             }
-            _queryDirectory = null;
         }
 
         /// <summary>
