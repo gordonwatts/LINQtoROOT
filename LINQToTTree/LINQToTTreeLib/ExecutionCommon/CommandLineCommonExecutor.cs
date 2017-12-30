@@ -123,16 +123,16 @@ namespace LINQToTTreeLib.ExecutionCommon
             cmds.AppendLine($"gSystem->AddIncludePath(\"-I\\\"{includePath}\\\"\");");
 
             // Load up extra objects & dictionaries
-            LoadExtraCPPFiles(queryDirectory, cmds);
+            await LoadExtraCPPFiles(queryDirectory, cmds);
             LoadExtraDictionaries(Environment.ClassesToDictify, cmds);
 
             // Compile the macro
-            CompileAndLoad(queryFile, cmds);
+            await CompileAndLoad(queryFile, cmds);
 
             // Run the query in a second file.
             var subfileCommands = new StringBuilder();
             var resultsFile = new FileInfo(Path.Combine(queryDirectory.FullName, "selector_results.root"));
-            RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer,
+            await RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer,
                 Environment.TreeName, files);
 
             // Write out the temp file.
@@ -393,7 +393,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// referenced by the query code.
         /// </summary>
         /// <param name="queryDirectory">Location where we move the files to compiling</param>
-        private void LoadExtraCPPFiles(DirectoryInfo queryDirectory, StringBuilder cmds)
+        private async Task LoadExtraCPPFiles(DirectoryInfo queryDirectory, StringBuilder cmds)
         {
             // Move everything over, and then compile!
             if (Environment.ExtraComponentFiles != null)
@@ -403,7 +403,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     var output = ExecutionUtilities.CopyToDirectory(fd, queryDirectory);
                     try
                     {
-                        CompileAndLoad(output, cmds);
+                        await CompileAndLoad(output, cmds);
                     }
                     catch (Exception)
                     {
@@ -421,17 +421,17 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="localFiles"></param>
         /// <returns></returns>
-        private void RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, Uri[] localFiles)
+        private async Task RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, Uri[] localFiles)
         {
             // Init the selector
             cmds.AppendLine($"TSelector *selector = new {selectClass}();");
-            WriteInputVariablesForTransfer(cmds, queryResultsFile, varsToTransfer);
+            await WriteInputVariablesForTransfer(cmds, queryResultsFile, varsToTransfer);
 
             // Get the root files all into a chain
             cmds.AppendLine($"TChain *t = new TChain(\"{treeName}\");");
             foreach (var f in localFiles)
             {
-                var fname = NormalizeFileForTarget(f);
+                var fname = await NormalizeFileForTarget(f);
                 cmds.AppendLine($"t->Add(\"{fname}\");");
             }
 
@@ -455,7 +455,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Get the results and put them into a map for safe keeping!
             // To move them back we need to use a TFile.
-            var resultfileFullName = NormalizeFileForTarget(queryResultsFile);
+            var resultfileFullName = await NormalizeFileForTarget(queryResultsFile);
             cmds.AppendLine($"TFile *rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
             cmds.AppendLine("rf->WriteTObject(selector->GetOutputList(), \"output\");");
             cmds.AppendLine("rf->Close();");
@@ -488,7 +488,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="cmds"></param>
         /// <param name="queryResultsFile"></param>
         /// <param name="varsToTransfer"></param>
-        private void WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        private async Task WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Objects that are headed over need to be stored in a file and then loaded into the selector.
             if (varsToTransfer != null && varsToTransfer.Count() > 0)
@@ -498,7 +498,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
 
                 // Write out the code to load them and stash them remotely if need be.
-                var safeInputFilename = NormalizeFileForTarget(inputFilesFilename);
+                var safeInputFilename = await NormalizeFileForTarget(inputFilesFilename);
                 cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
@@ -565,7 +565,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="templateRunner"></param>
         /// <param name="cmds"></param>
-        private void CompileAndLoad(FileInfo templateRunner, StringBuilder cmds)
+        private async Task CompileAndLoad(FileInfo templateRunner, StringBuilder cmds)
         {
             var gSystem = ROOTNET.NTSystem.gSystem;
 
@@ -579,7 +579,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Code up the call
-            var tmpFName = NormalizeFileForTarget(templateRunner);
+            var tmpFName = await NormalizeFileForTarget(templateRunner);
             cmds.AppendLine($"int r{_result_index} = gSystem->CompileMacro(\"{tmpFName}\", \"{buildFlags}\");");
             cmds.AppendLine($"if (r{_result_index} != 1) {{ exit(1); }}");
             _result_index++;

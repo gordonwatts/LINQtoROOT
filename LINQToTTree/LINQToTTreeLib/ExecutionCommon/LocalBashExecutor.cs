@@ -180,7 +180,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             proc.StartInfo.FileName = FindBash();
-            proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {NormalizeFileForTarget(logFile)}";
+            proc.StartInfo.Arguments = $"-c {await NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {await NormalizeFileForTarget(logFile)}";
 
             // Start it.
             var resultData = new StringBuilder();
