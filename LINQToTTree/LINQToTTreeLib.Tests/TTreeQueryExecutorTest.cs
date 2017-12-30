@@ -376,9 +376,9 @@ namespace LINQToTTreeLib
             /// </summary>
             /// <param name="u"></param>
             /// <returns></returns>
-            public IEnumerable<Uri> ResolveUri(Uri u)
+            public Task<IEnumerable<Uri>> ResolveUri(Uri u)
             {
-                return new[] { new UriBuilder(u) { Scheme = "file" }.Uri };
+                return Task.FromResult(new[] { new UriBuilder(u) { Scheme = "file" }.Uri }.AsEnumerable());
             }
         }
 
@@ -451,9 +451,9 @@ namespace LINQToTTreeLib
             /// </summary>
             /// <param name="u"></param>
             /// <returns></returns>
-            public IEnumerable<Uri> ResolveUri(Uri u)
+            public Task<IEnumerable<Uri>> ResolveUri(Uri u)
             {
-                return new[] { new UriBuilder(u) { Scheme = "file" }.Uri };
+                return Task.FromResult(new[] { new UriBuilder(u) { Scheme = "file" }.Uri }.AsEnumerable());
             }
         }
 
@@ -529,7 +529,7 @@ namespace LINQToTTreeLib
                 return u;
             }
 
-            public IEnumerable<Uri> ResolveUri(Uri u)
+            public Task<IEnumerable<Uri>> ResolveUri(Uri u)
             {
                 var f = new UriBuilder(u) { Scheme = "file" }.Uri;
 
@@ -540,7 +540,7 @@ namespace LINQToTTreeLib
                 var exe = new TTreeQueryExecutor(new[] { f }, "dude", typeof(ntuple), typeof(TestNtupe));
                 int result = exe.ExecuteScalar<int>(query);
                 Assert.AreEqual(10, result);
-                yield return f;
+                return Task.FromResult(new[] { f }.AsEnumerable());
             }
         }
 
@@ -570,12 +570,12 @@ namespace LINQToTTreeLib
             /// </summary>
             /// <param name="u"></param>
             /// <returns></returns>
-            public IEnumerable<Uri> ResolveUri(Uri u)
+            public Task<IEnumerable<Uri>> ResolveUri(Uri u)
             {
-                return new[] {
+                return Task.FromResult(new[] {
                     new UriBuilder(u) { Scheme = "file" }.Uri,
                     new UriBuilder(u) { Scheme = "file" }.Uri,
-                };
+                }.AsEnumerable());
             }
         }
 
@@ -656,9 +656,9 @@ namespace LINQToTTreeLib
                 return new UriBuilder(u) { Query = "" }.Uri;
             }
 
-            public IEnumerable<Uri> ResolveUri(Uri u)
+            public Task<IEnumerable<Uri>> ResolveUri(Uri u)
             {
-                yield return new UriBuilder(u) { Scheme = "file" }.Uri;
+                return Task.FromResult(new[] { new UriBuilder(u) { Scheme = "file" }.Uri }.AsEnumerable());
             }
         }
 

@@ -67,7 +67,7 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="u">Uri to be resolved</param>
         /// <returns>List of Uri's that should be processed.</returns>
-        IEnumerable<Uri> ResolveUri(Uri u);
+        Task<IEnumerable<Uri>> ResolveUri(Uri u);
 
         /// <summary>
         /// Return the last time this Uri was modified - used to help understand

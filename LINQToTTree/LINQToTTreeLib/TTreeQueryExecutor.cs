@@ -251,7 +251,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Resolve the ROOT files from our current Uri's to real ones.
         /// </summary>
-        private void ResolveROOTFiles()
+        private async Task ResolveROOTFiles()
         {
             if (_resolvedRootFiles != null)
             {
@@ -259,8 +259,12 @@ namespace LINQToTTreeLib
             }
 
             // The Uri's that come in may not be the ones we actually need to run over. Resolve them.
-            _resolvedRootFiles = _originalRootFiles
-                .SelectMany(u => ResolveDatasetUri(u))
+            var resolvedRootFilesAll = _originalRootFiles
+                .Select(async u => await ResolveDatasetUri(u))
+                .ToArray();
+
+            _resolvedRootFiles = (await Task.WhenAll(resolvedRootFilesAll))
+                .SelectMany(u => u)
                 .GroupBy(u => u.Scheme)
                 .Select(grp => (grp.Key, grp.ToArray()))
                 .ToArray();
@@ -333,27 +337,28 @@ namespace LINQToTTreeLib
         /// <remarks>
         /// Recursively try to resolve the Uri's until they stop changing their format.
         /// </remarks>
-        private IEnumerable<Uri> ResolveDatasetUri(Uri u)
+        private async Task<IEnumerable<Uri>> ResolveDatasetUri(Uri u)
         {
             var scheme = u.Scheme;
-            var resolved = GetDataHandler(u)
-                .ResolveUri(u)
+            var resolved = (await GetDataHandler(u).ResolveUri(u))
                 .ToArray();
 
             // See if there were any changes. If not, then we just return it.
             if (resolved.Length == 1 && resolved[0].OriginalString == u.OriginalString)
             {
-                yield return resolved[0];
+                return resolved;
             }
             else
             {
+                var lst = new List<Uri>();
                 foreach (var rUri in resolved)
                 {
-                    foreach (var rrUri in ResolveDatasetUri(rUri))
+                    foreach (var rrUri in await ResolveDatasetUri(rUri))
                     {
-                        yield return rrUri;
+                        lst.Add(rrUri);
                     }
                 }
+                return lst;
             }
         }
 
@@ -786,7 +791,7 @@ namespace LINQToTTreeLib
                 LogExecutionStart();
 
                 // We now need the actual root files - so resolve them.
-                ResolveROOTFiles();
+                await ResolveROOTFiles();
 
                 // Get all the queries together, combined, and ready to run.
                 TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
