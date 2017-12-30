@@ -151,7 +151,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             NormalizeFileForTarget(queryDirectory);
             await Policy
                 .Handle<CommandLineExecutionException>(ex => ex.Message.Contains("error reading from file"))
-                .Retry(3)
+                .RetryAsync(3)
                 .ExecuteAsync(async () =>
                 {
                     await ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
