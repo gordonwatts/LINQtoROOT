@@ -119,7 +119,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             ReWritePathsInQuery(queryFile);
 
             // Put our run-directory in the list of includes.
-            var includePath = NormalizeFileForTarget(new DirectoryInfo(System.Environment.CurrentDirectory));
+            var includePath = await NormalizeFileForTarget(new DirectoryInfo(System.Environment.CurrentDirectory));
             cmds.AppendLine($"gSystem->AddIncludePath(\"-I\\\"{includePath}\\\"\");");
 
             // Load up extra objects & dictionaries
@@ -148,7 +148,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Run the root script. Retry if we detect an understood error condition.
             cmds.AppendLine("exit(0);");
             cmds.AppendLine("}");
-            NormalizeFileForTarget(queryDirectory);
+            await NormalizeFileForTarget(queryDirectory);
             await Policy
                 .Handle<CommandLineExecutionException>(ex => ex.Message.Contains("error reading from file"))
                 .RetryAsync(3)
@@ -231,7 +231,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var m = replacement.Match(line);
                 if (m.Success)
                 {
-                    var fixedFile = NormalizeFileForTarget(new Uri(m.Groups[1].Value));
+                    var fixedFile = NormalizeFileForTarget(new Uri(m.Groups[1].Value)).Result;
                     wline = wline.Replace(m.Value, fixedFile);
                 }
                 yield return wline;
@@ -590,14 +590,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected abstract string NormalizeFileForTarget(Uri finfo);
+        protected abstract Task<string> NormalizeFileForTarget(Uri finfo);
 
         /// <summary>
         /// Helper function to speed the conversion.
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected string NormalizeFileForTarget(FileInfo finfo)
+        protected Task<string> NormalizeFileForTarget(FileInfo finfo)
         {
             return NormalizeFileForTarget(new Uri(finfo.FullName));
         }
@@ -607,7 +607,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected abstract string NormalizeFileForTarget(DirectoryInfo finfo);
+        protected abstract Task<string> NormalizeFileForTarget(DirectoryInfo finfo);
 
         /// <summary>
         /// This happens when we can't successfully execute a command

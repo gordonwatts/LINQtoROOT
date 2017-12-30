@@ -280,9 +280,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(Uri finfo)
+        protected override Task<string> NormalizeFileForTarget(Uri finfo)
         {
-            return new FileInfo(finfo.LocalPath).ConvertToBash();
+            return Task.FromResult(new FileInfo(finfo.LocalPath).ConvertToBash());
         }
 
         /// <summary>
@@ -290,9 +290,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(DirectoryInfo finfo)
+        protected override Task<string> NormalizeFileForTarget(DirectoryInfo finfo)
         {
-            return finfo.ConvertToBash();
+            return Task.FromResult(finfo.ConvertToBash());
         }
     }
     static class LocalBashExecutorHelpers
