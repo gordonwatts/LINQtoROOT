@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LinqToTTreeInterfacesLib</RootNamespace>
     <AssemblyName>LinqToTTreeInterfacesLib</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\LINQToTTree\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -66,11 +66,9 @@
   <ItemGroup>
     <Reference Include="libCoreWrapper, Version=13.13.6037.39753, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Dynamic.5.34.36.13\lib\net40\libCoreWrapper.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=640ff7d91e1d07da, processorArchitecture=MSIL">
       <HintPath>..\packages\Remotion.Linq.2.0.3-x-009-160302-230435\lib\net45\Remotion.Linq.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -82,7 +80,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="WrapperPlumbingLibrary, Version=2.6.6037.39599, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Dynamic.5.34.36.13\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
