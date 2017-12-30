@@ -105,11 +105,11 @@ namespace LINQToTTreeLib.ExecutionCommon
                 await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
                 return true;
             }
-            catch (CommandLineExecutionException e)
-                when (e.Message.Contains("loading shared libraries"))
+            catch (CommandLineExecutionException e) when (e.Message.Contains("loading shared libraries"))
             {
-                throw new BashNotConfiguredCorrectlyException("It could be that WSL/bash is not configured properly on this system. Make sure to run apt install libxpm-dev; apt install libatlas-base-dev; apt install build-essential");
+                throw new BashNotConfiguredCorrectlyException("It could be that WSL/bash is not configured properly on this system. Make sure to run apt install libxpm-dev; apt install libatlas-base-dev; apt install build-essential", e);
             }
+            catch { }
             return false;
         }
 
