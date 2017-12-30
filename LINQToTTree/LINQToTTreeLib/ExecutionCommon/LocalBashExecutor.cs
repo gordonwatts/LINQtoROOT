@@ -79,6 +79,18 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         protected override string ExecutorName => "Local bash shell on this machine";
 
+
+        [Serializable]
+        public class BashNotConfiguredCorrectlyException : Exception
+        {
+            public BashNotConfiguredCorrectlyException() { }
+            public BashNotConfiguredCorrectlyException(string message) : base(message) { }
+            public BashNotConfiguredCorrectlyException(string message, Exception inner) : base(message, inner) { }
+            protected BashNotConfiguredCorrectlyException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// Is ROOT installed on this machine?
         /// </summary>
@@ -93,7 +105,11 @@ namespace LINQToTTreeLib.ExecutionCommon
                 await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
                 return true;
             }
-            catch { }
+            catch (CommandLineExecutionException e)
+                when (e.Message.Contains("loading shared libraries"))
+            {
+                throw new BashNotConfiguredCorrectlyException("It could be that WSL/bash is not configured properly on this system. Make sure to run apt install libxpm-dev; apt install libatlas-base-dev; apt install build-essential");
+            }
             return false;
         }
 
