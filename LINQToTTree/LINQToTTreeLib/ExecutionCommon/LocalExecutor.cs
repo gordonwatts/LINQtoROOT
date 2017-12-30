@@ -84,36 +84,31 @@ namespace LINQToTTreeLib.ExecutionCommon
                     System.Diagnostics.Debugger.Break();
                 CompileAndLoad(templateFile);
 
-                //
-                // To help with possible debugging and other things, if a pdb was generated, then copy it over and rename it
-                // correctly.
-                //
-
-                if (File.Exists("vc100.pdb"))
+                try
                 {
-                    File.Copy("vc100.pdb", Path.Combine(queryDirectory.FullName, Path.GetFileNameWithoutExtension(templateFile.Name) + ".pdb"));
+                    // To help with possible debugging and other things, if a pdb was generated, then copy it over and rename it
+                    // correctly.
+                    if (File.Exists("vc100.pdb"))
+                    {
+                        File.Copy("vc100.pdb", Path.Combine(queryDirectory.FullName, Path.GetFileNameWithoutExtension(templateFile.Name) + ".pdb"));
+                    }
+
+                    // Get the file name of the selector.
+                    TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
+                    var localFiles = files.Select(u => new FileInfo(u.LocalPath)).ToArray();
+
+                    return RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
                 }
-
-                //
-                // Get the file name of the selector.
-                //
-
-                TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
-                var localFiles = files.Select(u => new FileInfo(u.LocalPath)).ToArray();
-                var results = RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
-
-                //
-                // And cleanup!
-                //
-
-                TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
-                ExecutionUtilities.UnloadAllModules(_loadedModuleNames);
-                if (Environment.CleanupQuery)
+                finally
                 {
-                    queryDirectory.Delete(true);
+                    // And cleanup (even if something goes wrong during the run).
+                    TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
+                    ExecutionUtilities.UnloadAllModules(_loadedModuleNames);
+                    if (Environment.CleanupQuery)
+                    {
+                        queryDirectory.Delete(true);
+                    }
                 }
-
-                return results;
             }
         }
 
