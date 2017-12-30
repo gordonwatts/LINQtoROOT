@@ -29,20 +29,20 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void LocalBashRunBasicCommand()
+        public async Task LocalBashRunBasicCommand()
         {
             string bashCmds = "ls\n";
 
             List<string> results = new List<string>();
             LocalBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            LocalBashHelpers.RunBashCommand("testmeout", bashCmds, s => Console.WriteLine(s), verbose: true);
+            await LocalBashHelpers.RunBashCommandAsync("testmeout", bashCmds, s => Console.WriteLine(s), verbose: true);
 
             Assert.AreNotEqual(0, results.Count);
         }
 
         [TestMethod]
-        public void LocalBashRunSimpleROOT()
+        public async Task LocalBashRunSimpleROOT()
         {
             var cmds = new StringBuilder();
             cmds.AppendLine("TH1F *h = new TH1F(\"hi\", \"there\", 10, 0.0, 10.0);");
@@ -51,7 +51,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             List<string> results = new List<string>();
             LocalBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            LocalBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()));
+            await LocalBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()));
 
             Assert.AreNotEqual(0, results.Count);
         }

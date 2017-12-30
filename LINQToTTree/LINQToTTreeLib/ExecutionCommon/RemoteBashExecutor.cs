@@ -180,7 +180,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="commands"></param>
         /// <param name="dumpLine"></param>
         /// <param name="verbose"></param>
-        internal void ExecuteBashScript(string fnameRoot, string commands, Action<string> dumpLine, bool verbose)
+        internal async Task ExecuteBashScriptAsync(string fnameRoot, string commands, Action<string> dumpLine, bool verbose)
         {
             // Create the file that will contain the scripts
             var tmpDir = new DirectoryInfo(Path.GetTempPath());
@@ -197,25 +197,23 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Now, run with the remote stuff setup.
-            ExecuteRemoteWithTemp(fnameRoot, connection =>
+            await ExecuteRemoteWithTemp(fnameRoot, async connection =>
             {
                 // Queue up files to send and recv
                 _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = _linuxTempDir });
 
                 // Run, pushing and pulling files we need
-                SendAllFiles(connection, dumpLine);
+                await SendAllFiles(connection, dumpLine);
                 var logForError = new StringBuilder();
                 try
                 {
-                    connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
+                    await connection.ExecuteLinuxCommandAsync($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
                 } catch (Exception e)
                 {
                     throw new RemoteBashCommandFailureException($"Failed to execute bash script: {ReformatLog(logForError)}.", e);
                 }
-                ReceiveAllFiles(connection, dumpLine);
-                return Task.FromResult((object)null);
-            }, dumpLine).Wait();
-#warning Fix this async code
+                await ReceiveAllFiles(connection, dumpLine);
+            }, dumpLine);
         }
 
         /// <summary>
@@ -244,6 +242,23 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 return await base.Execute(files, queryFile, queryDirectory, varsToTransfer);
             }, dumper);
+        }
+
+        /// <summary>
+        /// Run on the remote guy in a temp dir that we clean up.
+        /// </summary>
+        /// <param name="phase"></param>
+        /// <param name="act"></param>
+        /// <param name="dumpLine"></param>
+        /// <returns></returns>
+        internal async Task ExecuteRemoteWithTemp(string phase, Func<SSHRecoveringConnection, Task> act, Action<string> dumpLine = null)
+        {
+            await ExecuteRemoteWithTemp(phase,
+                async c =>
+                {
+                    await act(c);
+                    return 1;
+                }, dumpLine);
         }
 
         /// <summary>
@@ -299,18 +314,16 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="dumpLine"></param>
-        private Task SendAllFiles(ISSHConnection connection, Action<string> dumpLine)
+        private async Task SendAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToCopyOver)
             {
                 string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
                 dumpLine?.Invoke($"Copying {f.localFileName.Name} -> {linuxPath}");
-                connection.ExecuteLinuxCommand($"mkdir -p {f.remoteLinuxDirectory}", dumpLine);
-                connection.CopyLocalFileRemotely(f.localFileName, linuxPath);
+                await connection.ExecuteLinuxCommandAsync($"mkdir -p {f.remoteLinuxDirectory}", dumpLine);
+                await connection.CopyLocalFileRemotelyAsync(f.localFileName, linuxPath);
             }
             _filesToCopyOver.Clear();
-            return Task.FromResult(true);
-#warning fix this async problem
         }
 
         /// <summary>
@@ -318,7 +331,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="sshConnection"></param>
         /// <param name="dumpLine"></param>
-        private Task ReceiveAllFiles(ISSHConnection connection, Action<string> dumpLine)
+        private async Task ReceiveAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToBringBack)
             {
@@ -329,11 +342,9 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     f.localFileName.Directory.Create();
                 }
-                connection.CopyRemoteFileLocally(linuxPath, f.localFileName);
+                await connection.CopyRemoteFileLocallyAsync(linuxPath, f.localFileName);
             }
             _filesToBringBack.Clear();
-            return Task.FromResult(true);
-#warning Fix this async result
         }
 
 

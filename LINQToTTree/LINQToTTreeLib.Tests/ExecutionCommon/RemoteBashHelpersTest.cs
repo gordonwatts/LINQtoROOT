@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.Tests.ExecutionCommon
 {
@@ -31,20 +32,20 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void BashRunBasicCommand()
+        public async Task BashRunBasicCommand()
         {
             string bashCmds = "ls\n";
 
             List<string> results = new List<string>();
             RemoteBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            RemoteBashHelpers.RunBashCommand("testmeout", bashCmds, s => Console.WriteLine(s), verbose: true);
+            await RemoteBashHelpers.RunBashCommandAsync("testmeout", bashCmds, s => Console.WriteLine(s), verbose: true);
 
             Assert.AreNotEqual(0, results.Count);
         }
 
         [TestMethod]
-        public void BashRunSimpleROOT()
+        public async Task BashRunSimpleROOT()
         {
             var cmds = new StringBuilder();
             cmds.AppendLine("{TH1F *h = new TH1F(\"hi\", \"there\", 10, 0.0, 10.0);");
@@ -53,34 +54,34 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             List<string> results = new List<string>();
             RemoteBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()));
+            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()));
 
             Assert.AreNotEqual(0, results.Count);
         }
 
         [TestMethod]
-        public void CheckForNoLoginInfo()
+        public async Task CheckForNoLoginInfo()
         {
             var cmds = new StringBuilder();
             cmds.AppendLine("{TH1F *h = new TH1F(\"hi\", \"there\", 10, 0.0, 10.0);");
             cmds.AppendLine("h->Print();}");
 
             var results = new List<string>();
-            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()), dumpLine: s => results.Add(s));
+            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()), dumpLine: s => results.Add(s));
 
             Assert.AreNotEqual(0, results.Count);
             Assert.IsFalse(results.Where(l => l.Contains(LoginScreenMagicText)).Any());
         }
 
         [TestMethod]
-        public void CheckForLoginInfo()
+        public async Task CheckForLoginInfo()
         {
             var cmds = new StringBuilder();
             cmds.AppendLine("{TH1F *h = new TH1F(\"hi\", \"there\", 10, 0.0, 10.0);");
             cmds.AppendLine("h->Print();}");
 
             var results = new List<string>();
-            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
+            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
                 dumpLine: s => results.Add(s), verbose: true);
 
             Assert.AreNotEqual(0, results.Count);
@@ -88,7 +89,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void BashRunSimpleROOTWithInputFile()
+        public async Task BashRunSimpleROOTWithInputFile()
         {
             var f = ROOTNET.NTFile.Open("junk.root", "RECREATE");
             f.Close();
@@ -98,7 +99,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             List<string> results = new List<string>();
             RemoteBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
+            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
                 filesToSend: new[] { new FileInfo("junk.root") });
 
             // Basically, there should be no crash.
@@ -106,7 +107,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void BashRunSimpleROOTWithRelatuveInputFile()
+        public async Task BashRunSimpleROOTWithRelatuveInputFile()
         {
             var loc = new FileInfo("special/junk.root");
             if (loc.Directory.Exists)
@@ -127,7 +128,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
                 Console.WriteLine(s);
             });
 
-            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new DirectoryInfo("."),
+            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new DirectoryInfo("."),
                 filesToSend: new[] { loc });
 
             // Basically, there should be no crash.
@@ -135,7 +136,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
-        public void BashRunSimpleROOTWithRelatuveOutputFile()
+        public async Task BashRunSimpleROOTWithRelatuveOutputFile()
         {
             var loc = new FileInfo("special/junk.root");
             if (loc.Directory.Exists)
@@ -153,7 +154,7 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
                 Console.WriteLine(s);
             });
 
-            RemoteBashHelpers.RunROOTInBash("test", cmds.ToString(), new DirectoryInfo("."),
+            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new DirectoryInfo("."),
                 filesToReceive: new[] { loc });
 
             // Basically, there should be no crash.
