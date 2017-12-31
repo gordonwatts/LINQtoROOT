@@ -807,7 +807,7 @@ namespace LINQToTTreeLib
 
                 // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
                 var combinedResultsTasks = _resolvedRootFiles
-                    .Select((sch, index) => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo, index))
+                    .SelectMany((sch, index) => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, index))
                     .ToArray();
 
                 var combinedResults = await Task.WhenAll(combinedResultsTasks);
@@ -829,24 +829,60 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Execute on a single scheme for a batch of files. We have the oporitunity to split them up here.
+        /// </summary>
+        /// <param name="scheme"></param>
+        /// <param name="files"></param>
+        /// <param name="combinedInfo"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private IEnumerable<Task<IDictionary<string, ROOTNET.Interface.NTObject>>> ExecuteQueuedQueriesForASchemeFileBatch(string scheme, Uri[] files, CombinedGeneratedCode combinedInfo, int cycle)
+        {
+            // Get the query executor
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
+            var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
+            IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
+
+            // Next, lets see how to split things up. This is a heuristic.
+            int nBatches = local.SuggestedNumberOfSimultaniousProcesses(files);
+            var batchedFiles = files.Length == 1 || nBatches == 1
+                ? new[] { files }
+                : SplitFilesIntoBatches(files, nBatches);
+
+            // Next, we need actually run them!
+            return batchedFiles
+                .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle*100 +index, local, referencedLeafNames));
+        }
+
+        /// <summary>
+        /// Return the file list split into batches.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="nBatches"></param>
+        /// <returns></returns>
+        private Uri[][] SplitFilesIntoBatches(Uri[] files, int nBatches)
+        {
+            var grps = files
+                .Select((u, index) => (u, index))
+                .GroupBy(info => info.Item2 % nBatches)
+                .Select(lst => lst.Select(f => f.Item1).ToArray());
+            return grps.ToArray();
+        }
+
+        /// <summary>
         /// Run a query over a single scheme of Uri's.
         /// </summary>
         /// <param name="scheme"></param>
         /// <param name="files"></param>
         /// <param name="combinedInfo"></param>
         private async Task<IDictionary<string, ROOTNET.Interface.NTObject>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
-                CombinedGeneratedCode combinedInfo, int cycle)
+                CombinedGeneratedCode combinedInfo, int cycle, IQueryExectuor local, string[] referencedLeafNames)
         {
             var queryDirectory = GenerateQueryDirectory();
             try
             {
                 // Keep track of how often we run. Mostly for testing reasons, actually.
                 CountExecutionRuns++;
-
-                // Get the query executor
-                TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
-                var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
-                IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
 
                 // Next, generate and slim the proxy file and the TSelector file
                 var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, queryDirectory);

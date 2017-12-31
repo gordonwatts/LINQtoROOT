@@ -37,5 +37,14 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
         Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory);
+
+        /// <summary>
+        /// Return the suggested number of ways to split up a job. All things being equal, this might
+        /// be the number of processors on a machine, or similar.
+        /// </summary>
+        /// <param name="rootFiles">Files that we will split, incase there is some heuristic that can be gleaned from the list.</param>
+        /// <returns>Number of ways to split</returns>
+        /// <remarks>No single file is split up</remarks>
+        int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles);
     }
 }

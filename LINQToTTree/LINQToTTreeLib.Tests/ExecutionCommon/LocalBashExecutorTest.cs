@@ -4,9 +4,11 @@ using LINQToTTreeLib.Files;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static LINQToTTreeLib.ExecutionCommon.CommandLineCommonExecutor;
 using static LINQToTTreeLib.FutureResultOperatorsTest;
@@ -56,6 +58,28 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             exe.CompileDebug = true;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
+        }
+
+        [TestMethod]
+        public void LocalBashMultiThreaded()
+        {
+            // Create one file of int, but use it 20 times.
+            var rootFile = TestUtils.CreateFileOfInt(20);
+            var files = Enumerable.Range(0, 20).Select(c => rootFile.AsLocalBashUri()).ToArray();
+            const int expectedSize = 20 * 20;
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(expectedSize, result);
+
+            // We should have split this many files into the number of CPU's we have.
+            Assert.AreEqual(Environment.ProcessorCount, exe.CountExecutionRuns);
         }
 
         [TestMethod]

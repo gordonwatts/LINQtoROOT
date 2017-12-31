@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Nito.AsyncEx;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -154,51 +156,59 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Protect initalization for the process and everything else.
+        /// </summary>
+        private static AsyncLock _initLock = new AsyncLock();
+
+        /// <summary>
         /// Global init for an executor that needs to do local compiles on this ROOT machine.
         /// </summary>
-        public static void Init()
+        public static async Task Init()
         {
-            if (gGlobalInit)
-                return;
-            gGlobalInit = true;
-
-            ///
-            /// A directory where we can store all of the temp files we need to create
-            /// 
-
-            TempDirectory = new DirectoryInfo(Path.GetTempPath() + "\\LINQToROOT");
-            if (!TempDirectory.Exists)
+            using (var holder = await _initLock.LockAsync())
             {
-                TempDirectory.Create();
-                TempDirectory.Refresh();
+                if (gGlobalInit)
+                    return;
+                gGlobalInit = true;
+
+                ///
+                /// A directory where we can store all of the temp files we need to create
+                /// 
+
+                TempDirectory = new DirectoryInfo(Path.GetTempPath() + "\\LINQToROOT");
+                if (!TempDirectory.Exists)
+                {
+                    TempDirectory.Create();
+                    TempDirectory.Refresh();
+                }
+
+                if (!DictDirectory.Exists)
+                {
+                    DictDirectory.Create();
+                }
+
+                ///
+                /// Next the common source files. Make sure that the include files passed to the old compiler has
+                /// this common file directory in there!
+                /// 
+
+                var cf = CommonSourceDirectory();
+                if (!cf.Exists)
+                {
+                    cf.Create();
+                }
+
+                if (!ROOTNET.NTSystem.gSystem.IncludePath.Contains(cf.FullName))
+                {
+                    ROOTNET.NTSystem.gSystem.AddIncludePath("-I\"" + cf.FullName + "\"");
+                }
+
+                //
+                // Make sure the environment is setup correctly!
+                //
+
+                ExecutionUtilities.SetupENV();
             }
-
-            if (!DictDirectory.Exists)
-            {
-                DictDirectory.Create();
-            }
-
-            ///
-            /// Next the common source files. Make sure that the include files passed to the old compiler has
-            /// this common file directory in there!
-            /// 
-
-            var cf = CommonSourceDirectory();
-            if (!cf.Exists)
-            {
-                cf.Create();
-            }
-
-            if (!ROOTNET.NTSystem.gSystem.IncludePath.Contains(cf.FullName))
-            {
-                ROOTNET.NTSystem.gSystem.AddIncludePath("-I\"" + cf.FullName + "\"");
-            }
-
-            //
-            // Make sure the environment is setup correctly!
-            //
-
-            ExecutionUtilities.SetupENV();
         }
 
 

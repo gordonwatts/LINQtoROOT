@@ -646,5 +646,15 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             throw new ROOTCantBeInstalledRemotelyException("Unable to install root on a remote system over ssh");
         }
+
+        /// <summary>
+        /// Return the number of processors we can use. This depends on what "local" it will be running on.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <returns></returns>
+        public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

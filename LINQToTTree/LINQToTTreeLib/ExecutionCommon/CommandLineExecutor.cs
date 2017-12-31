@@ -108,5 +108,15 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             throw new InvalidOperationException("ROOT not found in the PATH - but in order to run this code it must have loaded root libraries from the PATH - so this is impossible!");
         }
+
+        /// <summary>
+        /// Return the number of processors.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <returns></returns>
+        public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
+        {
+            return System.Environment.ProcessorCount;
+        }
     }
 }

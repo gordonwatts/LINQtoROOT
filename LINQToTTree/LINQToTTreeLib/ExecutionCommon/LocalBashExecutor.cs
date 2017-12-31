@@ -294,6 +294,16 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             return Task.FromResult(finfo.ConvertToBash());
         }
+
+        /// <summary>
+        /// The number of local processors is how we want to split up this local job.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <returns></returns>
+        public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
+        {
+            return System.Environment.ProcessorCount;
+        }
     }
     static class LocalBashExecutorHelpers
     {

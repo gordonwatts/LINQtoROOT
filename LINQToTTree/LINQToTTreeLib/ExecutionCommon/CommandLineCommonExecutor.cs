@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Nito.AsyncEx;
 using Polly;
 using ROOTNET.Interface;
 using System;
@@ -111,7 +112,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         public virtual async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
-            ExecutionUtilities.Init();
+            await ExecutionUtilities.Init();
             var cmds = new StringBuilder();
             cmds.AppendLine("{");
 
@@ -160,7 +161,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 });
 
             // Get back results
-            var results = LoadSelectorResults(resultsFile);
+            var results = await LoadSelectorResults(resultsFile);
 
             return results;
         }
@@ -526,33 +527,41 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Protect against accessing root multiple times here.
+        /// </summary>
+        private AsyncLock _loadResultsLock = new AsyncLock();
+
+        /// <summary>
         /// Called after running to load the results.
         /// </summary>
         /// <returns></returns>
-        private IDictionary<string, NTObject> LoadSelectorResults(FileInfo queryResultsFile)
+        private async Task<IDictionary<string, NTObject>> LoadSelectorResults(FileInfo queryResultsFile)
         {
-            if (!queryResultsFile.Exists)
+            using (var holder = await _loadResultsLock.LockAsync())
             {
-                throw new FileNotFoundException($"Unable to find the file {queryResultsFile.FullName} - it should contain the results of the query.");
-            }
-
-            // Read the data from the file.
-            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
-            var f = ROOTNET.NTFile.Open(queryResultsFile.FullName);
-            try
-            {
-                var list = f.Get("output") as NTList;
-                foreach (var o in list)
+                if (!queryResultsFile.Exists)
                 {
-                    results[o.Name] = o;
+                    throw new FileNotFoundException($"Unable to find the file {queryResultsFile.FullName} - it should contain the results of the query.");
                 }
-            }
-            finally
-            {
-                f.Close();
-            }
 
-            return results;
+                // Read the data from the file.
+                var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+                var f = ROOTNET.NTFile.Open(queryResultsFile.FullName);
+                try
+                {
+                    var list = f.Get("output") as NTList;
+                    foreach (var o in list)
+                    {
+                        results[o.Name] = o;
+                    }
+                }
+                finally
+                {
+                    f.Close();
+                }
+
+                return results;
+            }
         }
 
         /// <summary>

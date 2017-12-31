@@ -441,6 +441,16 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
         }
 
+        /// <summary>
+        /// We can only deal with one thing at a time - so no need to split up the incoming flies.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <returns></returns>
+        public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
+        {
+            return 1;
+        }
+
         #endregion
     }
 }
