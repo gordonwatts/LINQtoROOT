@@ -70,7 +70,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 ReWritePathsInQuery(templateFile);
 
                 // Get the environment setup for this call
-                ExecutionUtilities.Init();
+                await ExecutionUtilities.Init();
                 PreExecutionInit(Environment.ClassesToDictify);
 
                 TraceHelpers.TraceInfo(12, "ExecuteQueuedQueries: Loading all extra objects");
