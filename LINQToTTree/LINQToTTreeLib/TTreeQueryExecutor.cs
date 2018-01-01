@@ -429,6 +429,18 @@ namespace LINQToTTreeLib
             void CacheResults(IDictionary<string, ROOTNET.Interface.NTObject>[] results);
         }
 
+
+        [Serializable]
+        public class BadResultFromQueryException : InvalidOperationException
+        {
+            public BadResultFromQueryException() { }
+            public BadResultFromQueryException(string message) : base(message) { }
+            public BadResultFromQueryException(string message, Exception inner) : base(message, inner) { }
+            protected BadResultFromQueryException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// Enough info to run a query at a later date.
         /// </summary>
@@ -451,6 +463,14 @@ namespace LINQToTTreeLib
                 var finalResultList = results
                     .Select((indR, index) => Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR, index))
                     .ToArray();
+
+                if (finalResultList.Where(fr => fr == null).Any())
+                {
+                    var names = results
+                        .SelectMany(kv => kv.Keys)
+                        .Aggregate((s_accum, s_new) => s_accum + "," + s_new);
+                    throw new BadResultFromQueryException($"A query has returned a null result. This is an internal error and needs some low level debugging (for type {typeof(RType).FullName} and names {names}).");
+                }
 
                 if (finalResultList.Length == 1)
                 {
