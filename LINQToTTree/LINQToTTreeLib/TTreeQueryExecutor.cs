@@ -895,6 +895,11 @@ namespace LINQToTTreeLib
         /// <param name="scheme"></param>
         /// <param name="files"></param>
         /// <param name="combinedInfo"></param>
+        /// <remarks>
+        /// This is running in its own directory. This is important because there are times when this
+        /// query, split up, might produce the same files. At the end, if that happens, we do a rename
+        /// by cycle number.
+        /// </remarks>
         private async Task<IDictionary<string, ROOTNET.Interface.NTObject>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
                 CombinedGeneratedCode combinedInfo, int cycle, IQueryExectuor local, string[] referencedLeafNames)
         {
