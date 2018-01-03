@@ -829,20 +829,17 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void ConcatAsTTreeByDifferentUris()
         {
-            // We use Uri's from two places. The contact is done
-            // automatically as a result.
-
+            // We use Uri's from two places. Produce something we can't easily combine, like
+            // FileInfo structs.
             const int numberOfIter = 10;
             var rootFileLocal = TestUtils.CreateFileOfInt(numberOfIter);
             var rootFileBashLocal = new UriBuilder(rootFileLocal) { Scheme = "localbash" }.Uri;
 
-            ///
-            /// Get a simple query we can "play" with
-            /// 
-
+            // Do a simple query on the TTree.
             var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFileLocal, rootFileBashLocal }, "dude", typeof(ntuple));
             var dude = q.AsTTree("recoTree", outputROOTFile: new FileInfo("ConcatAsTTreeByDifferentUris.root"));
 
+            // Make sure we got some out for each one.
             Assert.IsNotNull(dude);
             Assert.AreEqual(2, dude.Length);
             Assert.AreNotEqual(dude[0].FullName, dude[1].FullName);
@@ -853,18 +850,20 @@ namespace LINQToTTreeLib
         {
             // We use Uri's from two places. The contact is done
             // automatically as a result.
-
             const int numberOfIter = 10;
             var rootFileLocal = TestUtils.CreateFileOfInt(numberOfIter);
             var rootFileBashLocal = new UriBuilder(rootFileLocal) { Scheme = "localbash" }.Uri;
 
-            // Get a simple query we can "play" with
+            // Create TTree files.
             var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFileLocal, rootFileBashLocal }, "dude", typeof(ntuple));
             var dude1 = q.AsTTree("recoTree", outputROOTFile: new FileInfo("ConcatAsTTreeByDifferentUris.root"));
+            var len = dude1.Length;
 
+            // Now, re-do the same query, and pull from the cache (hopefully). We should get back
+            // exactly the same thing as no combining or other manitpulation is done my the underlying framework.
             var dude2 = q.AsTTree("recoTree", outputROOTFile: new FileInfo("ConcatAsTTreeByDifferentUris.root"));
             Assert.IsNotNull(dude2);
-            Assert.AreEqual(2, dude2.Length);
+            Assert.AreEqual(len, dude2.Length);
             Assert.AreNotEqual(dude2[0].FullName, dude2[1].FullName);
 
             // Check the caching.
