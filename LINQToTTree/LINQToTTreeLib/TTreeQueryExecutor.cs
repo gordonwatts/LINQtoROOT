@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
@@ -413,7 +414,7 @@ namespace LINQToTTreeLib
             /// We have a list of results - add them all together and extract them.
             /// </summary>
             /// <param name="results"></param>
-            void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject>[] results);
+            void ExtractResult(IDictionary<string, RunInfo>[] results);
 
             /// <summary>
             /// Rename an output object if it is a global resource so we don't step on anything else.
@@ -426,7 +427,7 @@ namespace LINQToTTreeLib
             /// Push the results into the cache
             /// </summary>
             /// <param name="results"></param>
-            void CacheResults(IDictionary<string, ROOTNET.Interface.NTObject>[] results);
+            void CacheResults(IDictionary<string, RunInfo>[] results);
         }
 
 
@@ -457,11 +458,11 @@ namespace LINQToTTreeLib
             /// Go through the list and extract the results that are needed
             /// </summary>
             /// <param name="results"></param>
-            public void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject>[] results)
+            public void ExtractResult(IDictionary<string, RunInfo>[] results)
             {
 
                 var finalResultList = results
-                    .Select((indR, index) => Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR, index))
+                    .Select(indR => Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR))
                     .ToArray();
 
                 if (finalResultList.Where(fr => fr == null).Any())
@@ -491,7 +492,7 @@ namespace LINQToTTreeLib
             /// Cache the results for everything.
             /// </summary>
             /// <param name="results"></param>
-            void IQueuedQuery.CacheResults(IDictionary<string, NTObject>[] results)
+            void IQueuedQuery.CacheResults(IDictionary<string, RunInfo>[] results)
             {
                 Future.TreeExecutor.CacheResults(Code.ResultValues.FirstOrDefault(), CacheKey, results);
             }
@@ -826,8 +827,10 @@ namespace LINQToTTreeLib
                     Optimizer.Optimize(combinedInfo);
 
                 // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
+                int cycle = -1;
+                Func<int> cycle_counter = () => Interlocked.Increment(ref cycle);
                 var combinedResultsTasks = _resolvedRootFiles
-                    .SelectMany((sch, index) => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, index))
+                    .SelectMany((sch, index) => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter))
                     .ToArray();
 
                 var combinedResults = await Task.WhenAll(combinedResultsTasks);
@@ -856,7 +859,9 @@ namespace LINQToTTreeLib
         /// <param name="combinedInfo"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        private IEnumerable<Task<IDictionary<string, ROOTNET.Interface.NTObject>>> ExecuteQueuedQueriesForASchemeFileBatch(string scheme, Uri[] files, CombinedGeneratedCode combinedInfo, int cycle)
+        private IEnumerable<Task<IDictionary<string, RunInfo>>> ExecuteQueuedQueriesForASchemeFileBatch(string scheme, Uri[] files,
+            CombinedGeneratedCode combinedInfo, 
+            Func<int> cycle)
         {
             // Get the query executor
             TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
@@ -871,7 +876,7 @@ namespace LINQToTTreeLib
 
             // Next, we need actually run them!
             return batchedFiles
-                .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle*100 +index, local, referencedLeafNames));
+                .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle, local, referencedLeafNames));
         }
 
         /// <summary>
@@ -889,6 +894,7 @@ namespace LINQToTTreeLib
             return grps.ToArray();
         }
 
+
         /// <summary>
         /// Run a query over a single scheme of Uri's.
         /// </summary>
@@ -900,8 +906,8 @@ namespace LINQToTTreeLib
         /// query, split up, might produce the same files. At the end, if that happens, we do a rename
         /// by cycle number.
         /// </remarks>
-        private async Task<IDictionary<string, ROOTNET.Interface.NTObject>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
-                CombinedGeneratedCode combinedInfo, int cycle, IQueryExectuor local, string[] referencedLeafNames)
+        private async Task<IDictionary<string, RunInfo>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
+                CombinedGeneratedCode combinedInfo, Func<int> cycleFetcher, IQueryExectuor local, string[] referencedLeafNames)
         {
             var queryDirectory = GenerateQueryDirectory();
             try
@@ -918,14 +924,17 @@ namespace LINQToTTreeLib
                 // Run the actual query.
                 var r = await local.Execute(files, templateRunner, queryDirectory, combinedInfo.VariablesToTransfer);
 
-                // Rename by cycle for those that need it.
+                // Rename by cycle for those that need it. This allows, for example, file names that are the same in different runs
+                // of the code to be copied back into the same directory.
+                var cycle = cycleFetcher();
                 foreach (var cq in _queuedQueries)
                 {
                     cq.RenameForCycle(r, cycle);
                 }
 
-                // Done - return everything.
-                return r;
+                // Done - return everything, converted to RunInfo
+                return r
+                    .ToDictionary(er => er.Key, er => new RunInfo() { _cycle = cycle, _result = er.Value });
             } finally
             {
                 CleanUpQuery(queryDirectory);
@@ -1155,14 +1164,14 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IDeclaredParameter iVariable, IDictionary<string, ROOTNET.Interface.NTObject> results, int cycle)
+        private T ExtractResult<T>(IDeclaredParameter iVariable, IDictionary<string, RunInfo> results)
         {
             // Load the object and try to extract whatever info we need to from it
             var s = _varSaver.Get(iVariable);
-            NTObject[] objs = ExtractQueryReturnedObjectsForVariable(iVariable, results, s);
+            var objs = ExtractQueryReturnedObjectsForVariable(iVariable, results, s);
 
             // Return the result in a form that the code wants.
-            return s.LoadResult<T>(iVariable, objs, cycle);
+            return s.LoadResult<T>(iVariable, objs);
         }
 
         /// <summary>
@@ -1171,12 +1180,13 @@ namespace LINQToTTreeLib
         /// <param name="iVariable"></param>
         /// <param name="key"></param>
         /// <param name="results"></param>
-        private void CacheResults(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject>[] results)
+        private void CacheResults(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, RunInfo>[] results)
         {
             // Get the results all out.
             var s = _varSaver.Get(iVariable);
             var objs = results
                 .Select(r => ExtractQueryReturnedObjectsForVariable(iVariable, r, s))
+                .Select(r => r.Select(ri => ri.ToTMap()).ToArray())
                 .ToArray();
             _cache.CacheItem(key, objs);
         }
@@ -1188,7 +1198,7 @@ namespace LINQToTTreeLib
         /// <param name="results"></param>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static NTObject[] ExtractQueryReturnedObjectsForVariable(IDeclaredParameter iVariable, IDictionary<string, NTObject> results, IVariableSaver s)
+        private static RunInfo[] ExtractQueryReturnedObjectsForVariable(IDeclaredParameter iVariable, IDictionary<string, RunInfo> results, IVariableSaver s)
         {
             var allNames = s.GetCachedNames(iVariable);
 
@@ -1199,6 +1209,17 @@ namespace LINQToTTreeLib
             return objs;
         }
 
+        private static NTObject[] ExtractQueryReturnedObjectsForVariable(IDeclaredParameter iVariable, IDictionary<string, NTObject> results, IVariableSaver s)
+        {
+            var allNames = s.GetCachedNames(iVariable);
+
+            if (allNames.Where(n => !results.Keys.Contains(n)).Any())
+                throw new InvalidOperationException(string.Format("The result list from the query did not contains an object named '{0}'.", iVariable.RawValue));
+
+            var objs = allNames.Select(n => results[n]).ToArray();
+            return objs;
+        }
+        
         /// <summary>
         /// Get the saver to rename the variable coming back to match the cycle.
         /// </summary>
@@ -1206,10 +1227,10 @@ namespace LINQToTTreeLib
         /// <param name="iVariable"></param>
         /// <param name="result"></param>
         /// <param name="cycle"></param>
-        private void RenameForCycle<T>(IDeclaredParameter iVariable, IDictionary<string, ROOTNET.Interface.NTObject> result, int cycle)
+        private void RenameForCycle<T>(IDeclaredParameter iVariable, IDictionary<string, NTObject> result, int cycle)
         {
             var s = _varSaver.Get(iVariable);
-            NTObject[] objs = ExtractQueryReturnedObjectsForVariable(iVariable, result, s);
+            var objs = ExtractQueryReturnedObjectsForVariable(iVariable, result, s);
 
             s.RenameForQueryCycle(iVariable, objs, cycle);
         }

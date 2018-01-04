@@ -1,7 +1,36 @@
 ﻿
+using ROOTNET.Interface;
+using System;
 using System.Collections.Generic;
 namespace LinqToTTreeInterfacesLib
 {
+
+    /// <summary>
+    /// Store the result for a particular query name.
+    /// This gives unique access to a sub-query's results in the cache.
+    /// </summary>
+    public struct RunInfo
+    {
+        /// <summary>
+        /// The cycle number that was run here
+        /// </summary>
+        public int _cycle;
+
+        /// <summary>
+        /// The result for that cycle number.
+        /// </summary>
+        public NTObject _result;
+
+        /// <summary>
+        /// Convert a RUnInfo object into a TMap object which can then be cached in a ROOT file.
+        /// </summary>
+        /// <returns></returns>
+        public NTMap ToTMap()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
     /// <summary>
     /// Manages sending data back and forth over (the wire, the file system, memory) for data from the query to
     /// what is used by the TSelector.
@@ -39,7 +68,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="cycle">Which cycle number of query is this?</param>
         /// <param name="obj">The returned object from the code</param>
         /// <returns>The object itself - the integer, the double, the histogram, the FileInfo, etc.</returns>
-        T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle);
+        T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj);
 
         /// <summary>
         /// Returns a list of names that should be stored together in a cache
