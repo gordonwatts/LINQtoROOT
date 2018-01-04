@@ -82,11 +82,11 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle)
+        public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
         {
-            var h = obj[0] as ROOTNET.NTH1;
+            var h = obj[0]._result as ROOTNET.NTH1;
             if (h == null)
-                throw new InvalidOperationException("Object of type '" + obj[0].ClassName() + "' is not an integer histogram, which is what we were expecting for this result!");
+                throw new InvalidOperationException("Object of type '" + h.ClassName() + "' is not an integer histogram, which is what we were expecting for this result!");
 
             object result = _types[iVariable.Type]._converter(h);
             return (T)result;

@@ -67,12 +67,12 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle)
+        public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
         {
             if (obj == null)
                 throw new ArgumentNullException("Obj cannot be null");
 
-            var named = obj[0] as ROOTNET.Interface.NTNamed;
+            var named = obj[0]._result as ROOTNET.Interface.NTNamed;
             if (named == null)
                 throw new ArgumentException("Object isn't named");
 

@@ -357,6 +357,7 @@
     <Compile Include="Utils\ProcessUtils.cs" />
     <Compile Include="Utils\QueryModelUtils.cs" />
     <Compile Include="Utils\QVResultOperators.cs" />
+    <Compile Include="Utils\RunInfoUtil.cs" />
     <Compile Include="Utils\StatementUtils.cs" />
     <Compile Include="Utils\StringUtils.cs" />
     <Compile Include="Utils\TypeUtils.cs" />

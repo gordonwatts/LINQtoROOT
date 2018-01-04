@@ -20,15 +20,6 @@ namespace LinqToTTreeInterfacesLib
         /// The result for that cycle number.
         /// </summary>
         public NTObject _result;
-
-        /// <summary>
-        /// Convert a RUnInfo object into a TMap object which can then be cached in a ROOT file.
-        /// </summary>
-        /// <returns></returns>
-        public NTMap ToTMap()
-        {
-            throw new NotImplementedException();
-        }
     }
     
     /// <summary>

@@ -60,13 +60,13 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_rootFile"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        void CacheItem(IQueryResultCacheKey key, ROOTNET.Interface.NTObject[] o);
+        void CacheItem(IQueryResultCacheKey key, RunInfo[] o);
 
         /// <summary>
         /// A single item has a few results that go into it. Cache them all.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="cycleOfItems"></param>
-        void CacheItem(IQueryResultCacheKey key, IEnumerable<ROOTNET.Interface.NTObject[]> cycleOfItems);
+        void CacheItem(IQueryResultCacheKey key, IEnumerable<RunInfo[]> cycleOfItems);
     }
 }

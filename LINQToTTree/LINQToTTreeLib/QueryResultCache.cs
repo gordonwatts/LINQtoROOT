@@ -301,13 +301,13 @@ namespace LINQToTTreeLib
                 if (keys.Size == 0)
                     return (false, default(T));
 
-                var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj()).ToArray();
+                var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj()).Select(vl => vl.ToRunInfo()).ToArray();
 
                 // Now do the pick up. Make sure we are in the root directory when we do it, however!
                 // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
                 // it will be deleted when the file is closed on the way out of this routine.
                 ROOTNET.NTROOT.gROOT.cd();
-                var t = svr.LoadResult<T>(prm, cachedObjects, index);
+                var t = svr.LoadResult<T>(prm, cachedObjects);
                 return (t != null, t);
             }
             finally
@@ -381,7 +381,7 @@ namespace LINQToTTreeLib
         /// <param name="sourceFiles"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        public void CacheItem(IQueryResultCacheKey akey, ROOTNET.Interface.NTObject[] objs)
+        public void CacheItem(IQueryResultCacheKey akey, RunInfo[] objs)
         {
             CacheItem(akey, new[] { objs });
         }
@@ -391,7 +391,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="key"></param>
         /// <param name="cycleOfItems"></param>
-        public void CacheItem(IQueryResultCacheKey akey, IEnumerable<NTObject[]> cycleOfItems)
+        public void CacheItem(IQueryResultCacheKey akey, IEnumerable<RunInfo[]> cycleOfItems)
         {
             // Fail if we can't get a key of our own type.
             var key = (akey as KeyInfo)
@@ -429,15 +429,15 @@ namespace LINQToTTreeLib
             }
 
             // Next, write out the cache files themselves. We do one for each cycle.
-            foreach (var cycleItems in cycleOfItems.Zip(Enumerable.Range(0,1000), (c, idx) => (items: c, index:idx)))
+            foreach (var cycleItems in cycleOfItems)
             {
-                if (cycleItems.items.Length == 0)
+                if (cycleItems.Length == 0)
                 {
                     throw new InvalidOperationException("Can't deal with caching zero objects!");
                 }
 
-                var clones = cycleItems.items.Select(o => o.Clone()).ToArray();
-                var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.index), "RECREATE");
+                var clones = cycleItems.Select(o => o.ToTMap()).ToArray();
+                var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
                 try
                 {
                     foreach (var obj in clones)

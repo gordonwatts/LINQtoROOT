@@ -1186,7 +1186,6 @@ namespace LINQToTTreeLib
             var s = _varSaver.Get(iVariable);
             var objs = results
                 .Select(r => ExtractQueryReturnedObjectsForVariable(iVariable, r, s))
-                .Select(r => r.Select(ri => ri.ToTMap()).ToArray())
                 .ToArray();
             _cache.CacheItem(key, objs);
         }

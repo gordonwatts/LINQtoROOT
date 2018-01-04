@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Tests
                 return Enumerable.Empty<string>();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle)
+            public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
             {
                 throw new NotImplementedException();
             }
