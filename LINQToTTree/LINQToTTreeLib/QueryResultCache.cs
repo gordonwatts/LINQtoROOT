@@ -301,7 +301,11 @@ namespace LINQToTTreeLib
                 if (keys.Size == 0)
                     return (false, default(T));
 
-                var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj()).Select(vl => vl.ToRunInfo()).ToArray();
+                var cachedObjects = keys
+                    .Cast<ROOTNET.Interface.NTKey>()
+                    .Select(k => (n: k.Name, o: k.ReadObj()))
+                    .Select(vl => vl.o.ToRunInfo(vl.n))
+                    .ToArray();
 
                 // Now do the pick up. Make sure we are in the root directory when we do it, however!
                 // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
@@ -447,13 +451,14 @@ namespace LINQToTTreeLib
                     throw new InvalidOperationException("Can't deal with caching zero objects!");
                 }
 
-                var clones = cycleItems.Select(o => o.ToTMap()).ToArray();
+                //var clones = cycleItems.Select(o => o.ToTMap()).ToArray();
                 var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
                 try
                 {
-                    foreach (var obj in clones)
+                    foreach (var riObject in cycleItems)
                     {
-                        obj.Write();
+                        var name = riObject.ROOTFileKey();
+                        riObject._result.Clone(name).Write(name);
                     }
                 }
                 finally
