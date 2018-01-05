@@ -106,8 +106,9 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 // First, create the file for ROOT command lines. This has to be done in Linux line endings (as we assume we are
                 // going to a linux machine for this). Use a random filename b.c. we can run in a multi-threaded environment.
-                var name = Path.GetTempFileName();
-                var scriptFile = new FileInfo($"{name}-{prefix}.C");
+                var directoryName = Path.GetFileName(Path.GetTempFileName()).Replace(".","_");
+                var scriptFile = new FileInfo($"{Path.GetTempPath()}\\{directoryName}\\{prefix}.C");
+                scriptFile.Directory.Create();
                 using (var rdr = new StringReader(tcommands))
                 {
                     using (var wtr = scriptFile.CreateText())
