@@ -866,9 +866,10 @@ namespace LINQToTTreeLib
             // Get the query executor
             TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
             var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
-            IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
+            var localMaker = CreateQueryExecutor(scheme, referencedLeafNames);
 
             // Next, lets see how to split things up. This is a heuristic.
+            var local = localMaker();
             int nBatches = local.SuggestedNumberOfSimultaniousProcesses(files);
             var batchedFiles = files.Length == 1 || nBatches == 1
                 ? new[] { files }
@@ -876,7 +877,7 @@ namespace LINQToTTreeLib
 
             // Next, we need actually run them!
             return batchedFiles
-                .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle, local, referencedLeafNames));
+                .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle, localMaker(), referencedLeafNames));
         }
 
         /// <summary>
@@ -1005,14 +1006,14 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="referencedLeafNames">List of leaves that are referenced by the query</param>
         /// <returns></returns>
-        private IQueryExectuor CreateQueryExecutor(string scheme, string[] referencedLeafNames)
+        private Func<IQueryExectuor> CreateQueryExecutor(string scheme, string[] referencedLeafNames)
         {
             // Now find a query executor.
             var qefactory = _queryExecutorList
                 .Where(qex => qex.Scheme == scheme).FirstOrDefault()
                 .ThrowIfNull(() => new UnsupportedUriSchemeException($"Unable to process files of scheme '{scheme}' - no supported executor"));
 
-            return qefactory.Create(_exeReq, referencedLeafNames);
+            return () => qefactory.Create(_exeReq, referencedLeafNames);
         }
 
         /// <summary>

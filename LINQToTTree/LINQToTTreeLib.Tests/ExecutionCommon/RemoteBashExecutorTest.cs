@@ -3,6 +3,7 @@ using LINQToTTreeLib.CodeAttributes;
 using LINQToTTreeLib.ExecutionCommon;
 using LINQToTTreeLib.Files;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Remotion.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
     /// (which aren't part of the git repo).
     /// </summary>
     [TestClass]
+    [DeploymentItem("testmachine.txt")]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public class RemoteBashExecutorTest
     {
         [TestInitialize]
@@ -50,6 +53,111 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             exe.CompileDebug = true;
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(20, result);
+        }
+
+        [TestMethod]
+        public void RemoteBashCmdSplitExecution()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20).AsRemoteBashUri(2);
+
+            // Get a simple query we can "play" with
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            // Ok, now we can actually see if we can make it "go".
+            var exe = new TTreeQueryExecutor(new[] { rootFile, rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
+            int result = exe.ExecuteScalar<int>(query);
+            Assert.AreEqual(40, result);
+
+            Assert.AreEqual(2, exe.CountExecutionRuns);
+        }
+
+        [TestMethod]
+        public void RemoteBashCmdLineCacheRepeatedRequest()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Run the query the first & second times.
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple));
+            var dude1 = q.Count();
+            var dude2 = q.Count();
+
+            // Make sure we got a good hit on the cache and that we actually executed query once.
+            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(1, t.CountCacheHits);
+            Assert.AreEqual(1, t.CountExecutionRuns);
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine2.txt")]
+        public void RemoteBashCmdLineCacheRequestToDifferentMachines()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Run the query the first & second times.
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple));
+            var dude1 = q.Count();
+
+            // Second, but cache should be the same.
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile.AsRemoteBashUri(machine:"testmachine2.txt") }, "dude", typeof(ntuple));
+            var dude2 = q2.Count();
+
+            // Make sure we got a good hit on the cache and that we actually executed query once.
+            var t = ((DefaultQueryProvider)q2.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(1, t.CountCacheHits);
+            Assert.AreEqual(0, t.CountExecutionRuns);
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine2.txt")]
+        public void RemoteBashCmdLineCacheRequestToDifferentSplits()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Run the query the first & second times.
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple));
+            var dude1 = q.Count();
+
+            // Second, but cache should be the same.
+            var q2 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile.AsRemoteBashUri(workers:2) }, "dude", typeof(ntuple));
+            var dude2 = q2.Count();
+
+            // Make sure we got a good hit on the cache and that we actually executed query once.
+            var t = ((DefaultQueryProvider)q2.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(1, t.CountCacheHits);
+            Assert.AreEqual(0, t.CountExecutionRuns);
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine2.txt")]
+        public void RemoteBashCmdLineExecuteDifferentPlaces()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Run the query the first & second times.
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile.AsRemoteBashUri(), rootFile.AsRemoteBashUri(machine:"testmachine2.txt") }, "dude", typeof(ntuple));
+            var dude1 = q.Count();
+
+            // Make sure we got a good hit on the cache and that we actually executed query once.
+            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(2, t.CountExecutionRuns);
+        }
+
+        [TestMethod]
+        public void RemoteBashCmdLineCacheRepeatedSplitRequest()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+
+            // Run the query the first & second times.
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { rootFile.AsRemoteBashUri(workers:2), rootFile.AsRemoteBashUri(workers: 2) }, "dude", typeof(ntuple));
+            var dude1 = q.Count();
+            var dude2 = q.Count();
+
+            // Make sure we got a good hit on the cache and that we actually executed query once (but on two machines).
+            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(1, t.CountCacheHits);
+            Assert.AreEqual(2, t.CountExecutionRuns);
         }
 
         /// <summary>
@@ -344,10 +452,15 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         /// Return a new uri that is the same as the old uri, but using the localwin guy specifier
         /// </summary>
         /// <param name="source"></param>
+        /// <param name="workers">Number of possible connections we can make</param>
         /// <returns></returns>
-        public static Uri AsRemoteBashUri(this Uri source)
+        public static Uri AsRemoteBashUri(this Uri source, int workers = 1, string machine = "testmachine.txt")
         {
-            return new Uri($"remotebash://tev.machines/{source.LocalPath}");
+            var options = workers > 1
+                ? $"?connections={workers}"
+                : "";
+            var machineName = File.ReadLines(machine).First();
+            return new Uri($"remotebash://{machineName}/{source.LocalPath}{options}");
         }
 
     }

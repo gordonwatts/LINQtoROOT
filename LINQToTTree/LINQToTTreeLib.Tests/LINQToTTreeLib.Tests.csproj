@@ -592,6 +592,9 @@
     <Content Include="testmachine.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="testmachine2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="unc_location.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

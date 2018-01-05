@@ -201,3 +201,5 @@ DemosAndTests/SimpleNugetPackageDependencyTest/ROOTLINQ/junk_macro_parsettree_Co
 *.opendb
 /LINQToTTree/LINQToTTree.VC.db
 /LINQToTTree/LINQToTTreeLib.Tests/unc_location.txt
+/LINQToTTree/LINQToTTreeLib.Tests/testmachine2.txt
+/LINQToTTree/LINQToTTreeLib.Tests/testmachine.txt

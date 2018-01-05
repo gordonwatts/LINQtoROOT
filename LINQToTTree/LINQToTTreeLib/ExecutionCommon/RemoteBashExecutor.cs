@@ -104,9 +104,10 @@ namespace LINQToTTreeLib.ExecutionCommon
                 // files, so we need to do this inside the execution environment.
                 var tcommands = this.ReWritePathsInQuery(cmds);
 
-                // First, create the file for output. This has to be done in Linux line endings (as we assume we are
-                // going to a linux machine for this).
-                var scriptFile = new FileInfo(Path.Combine(tmpDir.FullName, $"{prefix}.C"));
+                // First, create the file for ROOT command lines. This has to be done in Linux line endings (as we assume we are
+                // going to a linux machine for this). Use a random filename b.c. we can run in a multi-threaded environment.
+                var name = Path.GetTempFileName();
+                var scriptFile = new FileInfo($"{name}-{prefix}.C");
                 using (var rdr = new StringReader(tcommands))
                 {
                     using (var wtr = scriptFile.CreateText())
@@ -654,7 +655,15 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
         {
-            throw new NotImplementedException();
+            // Loop through the URI's and find all mentions of number of connections.
+            var minConnSpecified = rootFiles
+                .Select(u => u.Query)
+                .Select(q => System.Web.HttpUtility.ParseQueryString(q))
+                .Select(dt => dt.AllKeys.Contains("connections")
+                    ? (int.TryParse(dt.Get("connections"), out int nconn) ? nconn : 1)
+                    : 1)
+                .Min();
+            return minConnSpecified;
         }
     }
 }
