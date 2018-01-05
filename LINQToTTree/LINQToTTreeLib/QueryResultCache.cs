@@ -397,6 +397,17 @@ namespace LINQToTTreeLib
             var key = (akey as KeyInfo)
                 .ThrowIfNull(() => new ArgumentNullException("The key must be valid to cache an item"));
 
+            // Fail if the cycle information in the RunInfo isn't consistent
+            // TODO: Get rid of cycle info - we should be caching only final results! Argh!
+            if (cycleOfItems.Where(clst => clst.Select(c => c._cycle).Distinct().Count() != 1).Any())
+            {
+                throw new InvalidOperationException("Unable to cache result: internal error - more than one cycle inside a single array list!");
+            }
+            if (cycleOfItems.Select(clst => clst.First()._cycle).Distinct().Count() != cycleOfItems.Count())
+            {
+                throw new InvalidOperationException("Unable to cache result: internal error - more than one cycle has the same cycle identifier!");
+            }
+
             // Now, write out the text file that tells everyone what files are here. Do that only
             // if the thing isn't there already. If the contents of the file change, then th key has
             // changed - we are assuming no hash collisions!

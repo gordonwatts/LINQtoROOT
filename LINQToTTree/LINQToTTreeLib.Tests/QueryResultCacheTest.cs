@@ -341,6 +341,63 @@ namespace LINQToTTreeLib
             Assert.AreEqual(7, r.Item2, "incorrect return value");
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CacheCycleDuplicateCycles()
+        {
+            // We cannot give a list of items to cache that have the same
+            // cycle number.
+
+            // A simple query
+            var query = MakeQuery(0);
+            var f = new Uri("http://www.nytimes.com");
+
+            // Cache an integer
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h1.Directory = null;
+            h1.SetBinContent(1, 5.0);
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h2.Directory = null;
+            h2.SetBinContent(1, 2.0);
+
+            var cacheCycles = new RunInfo[][] {
+                new [] {new RunInfo() { _cycle = 0, _result = h1} },
+                new [] {new RunInfo() { _cycle = 0, _result = h2} }
+            };
+
+            var q = new QueryResultCache();
+            var date = DateTime.Now;
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CacheCycleCyclesChangeInOneCycle()
+        {
+            // We cannot give a list of items to cache that have the same
+            // cycle number.
+
+            // A simple query
+            var query = MakeQuery(0);
+            var f = new Uri("http://www.nytimes.com");
+
+            // Cache an integer
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h1.Directory = null;
+            h1.SetBinContent(1, 5.0);
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h2.Directory = null;
+            h2.SetBinContent(1, 2.0);
+
+            var cacheCycles = new RunInfo[][] {
+                new [] {new RunInfo() { _cycle = 0, _result = h1}, new RunInfo() { _cycle = 1, _result = h2 } }
+            };
+
+            var q = new QueryResultCache();
+            var date = DateTime.Now;
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
+        }
+
         class DummyIntAdder : IAddResult
         {
             public bool CanHandle(Type t)
@@ -493,7 +550,7 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup gets back the same object!
 
-            var r = Lookup<ROOTNET.Interface.NTLorentzVector>(q, f, "test", null, null, query, new DummyHistoSaver());
+            var r = Lookup<NTLorentzVector>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "SHould get back the same object");
             Assert.IsNotNull(r.Item2, "tlz should not be null");
             Assert.AreEqual(1.0, r.Item2.X(), "x value");
