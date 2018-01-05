@@ -830,7 +830,7 @@ namespace LINQToTTreeLib
                 int cycle = -1;
                 Func<int> cycle_counter = () => Interlocked.Increment(ref cycle);
                 var combinedResultsTasks = _resolvedRootFiles
-                    .SelectMany((sch, index) => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter))
+                    .SelectMany(sch => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter))
                     .ToArray();
 
                 var combinedResults = await Task.WhenAll(combinedResultsTasks);
