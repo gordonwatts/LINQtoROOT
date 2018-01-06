@@ -172,17 +172,18 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             int nfiles = 10;
             var finfo = new FileInfo(rootFile.LocalPath);
             var files = Enumerable.Range(0, nfiles)
-                .Select(index => finfo.CopyTo($"{finfo.DirectoryName}\\{Path.GetFileNameWithoutExtension(finfo.Name)}_{index}{finfo.Extension}"))
+                .Select(index => finfo.CopyTo($"{finfo.DirectoryName}\\{Path.GetFileNameWithoutExtension(finfo.Name)}_{index}{finfo.Extension}", true))
                 .Select(u => new Uri(u.FullName).AsRemoteBashUri(workers: nfiles))
                 .ToArray();
 
             // Run the query the first & second times.
             var q = new SimpleTTreeExecutorQueriable<TestNtupe>(files, "dude", typeof(ntuple));
+            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
+            t.Verbose = true;
             var dude1 = q.Count();
             Assert.AreEqual(20 * nfiles, dude1);
 
             // Make sure we got a good hit on the cache and that we actually executed query once.
-            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
             Assert.AreEqual(nfiles, t.CountExecutionRuns);
         }
 

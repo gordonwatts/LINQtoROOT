@@ -75,20 +75,6 @@ namespace LINQToTTreeLib.Utils
         }
 
         /// <summary>
-        /// Convert a RUnInfo object into a TMap object which can then be cached in a ROOT file.
-        /// </summary>
-        /// <param name="source">The RunInfo object be translated into a TMap</param>
-        /// <param name="clone">If ture then the result is cloned before being put in the map object</param>
-        /// <returns>A TMap object that holds the same info as the source parameter</returns>
-        /// <remarks>Sadly, there is no native and non-template way to store an integer for teh cycle number in ROOT. So we have to
-        /// fall back to using a TH1I. Bummer.</remarks>
-        public static NTObject ToTMap(this RunInfo source)
-        {
-            var cobj = source._result.Clone();
-            return cobj;
-        }
-
-        /// <summary>
         /// Given a RunInfo return the name that we should be writing this out to
         /// </summary>
         /// <param name="source"></param>
