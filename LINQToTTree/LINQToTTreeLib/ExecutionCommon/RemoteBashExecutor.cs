@@ -57,6 +57,47 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Set an explicit connection string
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public void SetConnectionString(string connectionString)
+        {
+            _machine = GetMachineInfo(connectionString);
+        }
+
+        public void SetConnectionString(Uri[] uris)
+        {
+            SetConnectionString(uris[0]);
+        }
+
+        public void SetConnectionString(Uri i)
+        {
+            SetConnectionString($"{i.UserInfo}@{i.Host}");
+        }
+
+        /// <summary>
+        /// Initialize with the end point we are heading to.
+        /// </summary>
+        /// <param name="connectionString">A connection string (myname@machine1.com -> myname@machine2.com)</param>
+        public RemoteBashExecutor()
+        {
+            _machine = null;
+        }
+
+        /// <summary>
+        /// Generate a proxy file. Capture the item first.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <param name="treeName"></param>
+        /// <param name="queryDirectory"></param>
+        /// <returns></returns>
+        public override Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        {
+            SetConnectionString(rootFiles);
+            return base.GenerateProxyFile(rootFiles, treeName, queryDirectory);
+        }
+
+        /// <summary>
         /// Place holder for a temp directory
         /// </summary>
         private string _linuxTempDir = null;
@@ -165,15 +206,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Return the machine config
         /// </summary>
-        private MachineConfig Machine
-        {
-            get
-            {
-                // This will use the URI's to determine what machine config (once) and then cache it.
-                // Not implemented yet.
-                return GetMachineInfo("bogus");
-            }
-        }
+        private MachineConfig _machine;
 
         /// <summary>
         /// Run a bash script on the remote node
@@ -227,6 +260,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public override async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
+            // Fetch out a connection string to setup the state.
+            SetConnectionString(files);
+
+            // Get the directory created.
             Action<string> dumper = l =>
             {
                 if (Environment.CompileDebug)
@@ -448,9 +485,9 @@ namespace LINQToTTreeLib.ExecutionCommon
                     .ExecuteAsync(async () =>
                     {
 
-                        _connection = CreateSSHConnectionTo(Machine.RemoteSSHConnectionString);
+                        _connection = CreateSSHConnectionTo(_machine.RemoteSSHConnectionString);
 
-                        if (Machine.ConfigureLines != null)
+                        if (_machine.ConfigureLines != null)
                         {
                             var logForError = new StringBuilder();
                             try
@@ -460,7 +497,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                                     ? dumpLine
                                     : (Action<string>)null;
 
-                                foreach (var line in Machine.ConfigureLines)
+                                foreach (var line in _machine.ConfigureLines)
                                 {
                                     var rep = line.Replace("ROOTVersionNumber", ROOTVersionNumber);
                                     await _connection.ExecuteLinuxCommandAsync(rep, processLine: s => RecordLine(logForError, s, localdumper));
@@ -606,13 +643,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Find the config for a particular machine.
         /// </summary>
         /// <returns></returns>
-        public static MachineConfig GetMachineInfo(string clusterName)
+        public static MachineConfig GetMachineInfo(string connectionString)
         {
             if (_s_global_config == null)
             {
                 _s_global_config = new MachineConfig()
                 {
-                    RemoteSSHConnectionString = "gwatts@tev01.phys.washington.edu",
+                    RemoteSSHConnectionString = connectionString,
                     ConfigureLines = new[] { "setupATLAS", $"lsetup \"root ROOTVersionNumber\"" }
                 };
             }

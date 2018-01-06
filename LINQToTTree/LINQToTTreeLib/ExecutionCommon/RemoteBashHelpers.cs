@@ -15,11 +15,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="commands"></param>
         /// <param name="tempDirectory"></param>
         /// <param name="dumpLine">Called with each output line</param>
-        public static async Task RunROOTInBashAsync(string prefix, string commands, DirectoryInfo tempDirectory, Action<string> dumpLine = null, bool verbose = false,
+        public static async Task RunROOTInBashAsync(string connectionString, string prefix, string commands, DirectoryInfo tempDirectory, Action<string> dumpLine = null, bool verbose = false,
             IEnumerable<FileInfo> filesToSend = null, IEnumerable<FileInfo> filesToReceive = null, TimeSpan? timeout = null)
         {
             // Get ROOT installed if it hasn't been already.
-            var le = BuildExecutor(verbose);
+            var le = BuildExecutor(connectionString, verbose);
 
             if (!(await le.CheckForROOTInstall(dumpLine, verbose)))
             {
@@ -36,12 +36,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Build a local executor
         /// </summary>
         /// <returns></returns>
-        private static RemoteBashExecutor BuildExecutor(bool verbose)
+        private static RemoteBashExecutor BuildExecutor(string connectionString, bool verbose)
         {
-            return new RemoteBashExecutor
+            var re = new RemoteBashExecutor ()
             {
                 Environment = new ExecutionEnvironment() { CompileDebug = false, Verbose = verbose }
             };
+            re.SetConnectionString(connectionString);
+            return re;
         }
 
         /// <summary>
@@ -49,9 +51,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="fnameRoot">Root of the script filename we should use (prebuild, or install, etc.)</param>
         /// <param name="commands">Bash script, using \n as the seperator</param>
-        public static async Task RunBashCommandAsync(string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
+        public static async Task RunBashCommandAsync(string connectionString, string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
         {
-            var le = BuildExecutor(verbose);
+            var le = BuildExecutor(connectionString, verbose: verbose);
             await le.ExecuteBashScriptAsync(fnameRoot, commands, dumpLine, verbose);
         }
     }

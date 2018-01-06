@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace LINQToTTreeLib.Tests.ExecutionCommon
 {
     [TestClass]
+    [DeploymentItem("testmachine.txt")]
     public class RemoteBashHelpersTest
     {
         /// <summary>
@@ -39,7 +40,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             List<string> results = new List<string>();
             RemoteBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            await RemoteBashHelpers.RunBashCommandAsync("testmeout", bashCmds, s => Console.WriteLine(s), verbose: true);
+            await RemoteBashHelpers.RunBashCommandAsync(File.ReadAllLines("testmachine.txt").First(), 
+                "testmeout", bashCmds, s => Console.WriteLine(s), verbose: true);
 
             Assert.AreNotEqual(0, results.Count);
         }
@@ -54,7 +56,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             List<string> results = new List<string>();
             RemoteBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()));
+            await RemoteBashHelpers.RunROOTInBashAsync(File.ReadAllLines("testmachine.txt").First(),
+                "test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()));
 
             Assert.AreNotEqual(0, results.Count);
         }
@@ -67,7 +70,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             cmds.AppendLine("h->Print();}");
 
             var results = new List<string>();
-            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()), dumpLine: s => results.Add(s));
+            await RemoteBashHelpers.RunROOTInBashAsync(File.ReadAllLines("testmachine.txt").First(),
+                "test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()), dumpLine: s => results.Add(s));
 
             Assert.AreNotEqual(0, results.Count);
             Assert.IsFalse(results.Where(l => l.Contains(LoginScreenMagicText)).Any());
@@ -81,7 +85,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             cmds.AppendLine("h->Print();}");
 
             var results = new List<string>();
-            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
+            await RemoteBashHelpers.RunROOTInBashAsync(File.ReadAllLines("testmachine.txt").First(),
+                "test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
                 dumpLine: s => results.Add(s), verbose: true);
 
             Assert.AreNotEqual(0, results.Count);
@@ -99,7 +104,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             List<string> results = new List<string>();
             RemoteBashExecutor.AddLogEndpoint(s => results.Add(s));
 
-            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
+            await RemoteBashHelpers.RunROOTInBashAsync(File.ReadAllLines("testmachine.txt").First(),
+                "test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
                 filesToSend: new[] { new FileInfo("junk.root") });
 
             // Basically, there should be no crash.
@@ -128,7 +134,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
                 Console.WriteLine(s);
             });
 
-            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new DirectoryInfo("."),
+            await RemoteBashHelpers.RunROOTInBashAsync(File.ReadAllLines("testmachine.txt").First(),
+                "test", cmds.ToString(), new DirectoryInfo("."),
                 filesToSend: new[] { loc });
 
             // Basically, there should be no crash.
@@ -154,7 +161,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
                 Console.WriteLine(s);
             });
 
-            await RemoteBashHelpers.RunROOTInBashAsync("test", cmds.ToString(), new DirectoryInfo("."),
+            await RemoteBashHelpers.RunROOTInBashAsync(File.ReadAllLines("testmachine.txt").First(),
+                "test", cmds.ToString(), new DirectoryInfo("."),
                 filesToReceive: new[] { loc });
 
             // Basically, there should be no crash.
