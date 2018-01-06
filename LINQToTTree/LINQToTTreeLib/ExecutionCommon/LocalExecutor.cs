@@ -451,6 +451,16 @@ namespace LINQToTTreeLib.ExecutionCommon
             return 1;
         }
 
+        /// <summary>
+        /// We do not need to split things up, so we return the full thing.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
+        {
+            return new[] { files };
+        }
+
         #endregion
     }
 }

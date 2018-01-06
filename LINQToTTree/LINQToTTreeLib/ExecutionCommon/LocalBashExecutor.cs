@@ -2,6 +2,7 @@
 using LINQToTTreeLib.Utils;
 using Polly;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -303,6 +304,16 @@ namespace LINQToTTreeLib.ExecutionCommon
         public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
         {
             return System.Environment.ProcessorCount;
+        }
+
+        /// <summary>
+        /// We do not need to further split things up - everything is run locally.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
+        {
+            return new[] { files };
         }
     }
     static class LocalBashExecutorHelpers

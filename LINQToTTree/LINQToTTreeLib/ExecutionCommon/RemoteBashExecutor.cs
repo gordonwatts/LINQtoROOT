@@ -666,5 +666,17 @@ namespace LINQToTTreeLib.ExecutionCommon
                 .Min();
             return minConnSpecified;
         }
+
+        /// <summary>
+        /// Split up input files if they are meant to run on different machines.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
+        {
+            return files
+                .GroupBy(u => $"{u.Host}{u.UserInfo}")
+                .Select(ul => ul.Select(u => u).ToArray());
+        }
     }
 }

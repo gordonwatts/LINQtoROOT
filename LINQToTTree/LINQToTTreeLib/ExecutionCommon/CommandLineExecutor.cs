@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -117,6 +118,16 @@ namespace LINQToTTreeLib.ExecutionCommon
         public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
         {
             return System.Environment.ProcessorCount;
+        }
+
+        /// <summary>
+        /// We need no batching - so everything is returned as one.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
+        {
+            return new[] { files };
         }
     }
 }

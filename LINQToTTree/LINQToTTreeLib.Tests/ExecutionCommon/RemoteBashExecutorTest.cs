@@ -145,6 +145,48 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
         }
 
         [TestMethod]
+        public void RemoteBashCmdLineStressTestSingle()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+            int nfiles = 10;
+            var finfo = new FileInfo(rootFile.LocalPath);
+            var files = Enumerable.Range(0, nfiles)
+                .Select(index => finfo.CopyTo($"{finfo.DirectoryName}\\{Path.GetFileNameWithoutExtension(finfo.Name)}_{index}{finfo.Extension}"))
+                .Select(u => new Uri(u.FullName).AsRemoteBashUri())
+                .ToArray();
+
+            // Run the query the first & second times.
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(files, "dude", typeof(ntuple));
+            var dude1 = q.Count();
+            Assert.AreEqual(20 * nfiles, dude1);
+
+            // Make sure we got a good hit on the cache and that we actually executed query once.
+            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(1, t.CountExecutionRuns);
+        }
+
+        [TestMethod]
+        public void RemoteBashCmdLineStressTestGoNuts()
+        {
+            var rootFile = TestUtils.CreateFileOfInt(20);
+            int nfiles = 10;
+            var finfo = new FileInfo(rootFile.LocalPath);
+            var files = Enumerable.Range(0, nfiles)
+                .Select(index => finfo.CopyTo($"{finfo.DirectoryName}\\{Path.GetFileNameWithoutExtension(finfo.Name)}_{index}{finfo.Extension}"))
+                .Select(u => new Uri(u.FullName).AsRemoteBashUri(workers: nfiles))
+                .ToArray();
+
+            // Run the query the first & second times.
+            var q = new SimpleTTreeExecutorQueriable<TestNtupe>(files, "dude", typeof(ntuple));
+            var dude1 = q.Count();
+            Assert.AreEqual(20 * nfiles, dude1);
+
+            // Make sure we got a good hit on the cache and that we actually executed query once.
+            var t = ((DefaultQueryProvider)q.Provider).Executor as TTreeQueryExecutor;
+            Assert.AreEqual(nfiles, t.CountExecutionRuns);
+        }
+
+        [TestMethod]
         public void RemoteBashCmdLineCacheRepeatedSplitRequest()
         {
             var rootFile = TestUtils.CreateFileOfInt(20);

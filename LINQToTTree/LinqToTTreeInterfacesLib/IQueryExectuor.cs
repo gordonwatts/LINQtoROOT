@@ -46,5 +46,12 @@ namespace LinqToTTreeInterfacesLib
         /// <returns>Number of ways to split</returns>
         /// <remarks>No single file is split up</remarks>
         int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles);
+
+        /// <summary>
+        /// Split the Uri's into batches that have to be executed in seperate versions of the local executor.
+        /// </summary>
+        /// <returns>A list of batches. Each one will be executed with a new IQueryExecutor instance. And may be run at the same time.</returns>
+        /// <remarks></remarks>
+        IEnumerable<Uri[]> BatchInputUris(Uri[] files);
     }
 }

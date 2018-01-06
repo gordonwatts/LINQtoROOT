@@ -868,12 +868,22 @@ namespace LINQToTTreeLib
             var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
             var localMaker = CreateQueryExecutor(scheme, referencedLeafNames);
 
-            // Next, lets see how to split things up. This is a heuristic.
+            // First, we let the executor tell us if it needs to split things up. Most executors will not split things up at all,
+            // as everything looks the same. But you could imagine that a machine name is encoded and you want to send things to one machine, or
+            // to another.
             var local = localMaker();
-            int nBatches = local.SuggestedNumberOfSimultaniousProcesses(files);
-            var batchedFiles = files.Length == 1 || nBatches == 1
-                ? new[] { files }
-                : SplitFilesIntoBatches(files, nBatches);
+            var batchedByExecutor = local.BatchInputUris(files);
+
+            // Next, lets see how to split things up inside each of these batches.
+            var batchedFiles = batchedByExecutor
+                .SelectMany(bf =>
+                {
+                    int nBatches = local.SuggestedNumberOfSimultaniousProcesses(bf);
+                    var subBatchFiles = files.Length == 1 || nBatches == 1
+                        ? new[] { files }
+                        : SplitFilesIntoBatches(files, nBatches);
+                    return subBatchFiles;
+                });
 
             // Next, we need actually run them!
             return batchedFiles
