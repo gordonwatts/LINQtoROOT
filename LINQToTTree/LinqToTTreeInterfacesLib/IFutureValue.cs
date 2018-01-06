@@ -1,4 +1,6 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace LinqToTTreeInterfacesLib
 {
     public interface IFutureValue<T>
@@ -13,5 +15,12 @@ namespace LinqToTTreeInterfacesLib
         /// Returns true if the value has already been rendered
         /// </summary>
         bool HasValue { get; }
+
+        /// <summary>
+        /// Returns a Task that, when it completes, means HasValue will be true
+        /// and a value will be ready for use w/out blocking.
+        /// </summary>
+        /// <returns></returns>
+        Task GetAvailibleTask();
     }
 }

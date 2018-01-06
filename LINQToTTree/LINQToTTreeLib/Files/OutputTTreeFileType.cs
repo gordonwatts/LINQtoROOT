@@ -106,9 +106,9 @@ namespace LINQToTTreeLib.Files
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] objs, int cycle)
+        public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] objs)
         {
-            var f = GetFileInfo(iVariable, objs, cycle);
+            var f = GetFileInfo(iVariable, objs.Select(fi => fi._result).ToArray(), objs.First()._cycle);
             return f == null
                 ? (T)(object)null
                 : (T)(object)(new FileInfo[] { f });
@@ -191,7 +191,6 @@ namespace LINQToTTreeLib.Files
                 var pname = hPath == null ? "<noname>" : hPath.Title;
                 var length = hSize == null ? 0 : (long) hSize.GetBinContent(1);
                 throw new InvalidOperationException($"Unable to find the output file to rename (was looking for '{pname}' with no cycle and legnth {length}).");
-                return;
             }
             var newFile = GetFileInfo(iVariable, obj, cycle, doChecks: false);
 

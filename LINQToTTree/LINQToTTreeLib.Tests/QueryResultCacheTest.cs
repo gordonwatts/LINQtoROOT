@@ -82,9 +82,9 @@ namespace LINQToTTreeLib
             /// <param name="iVariable"></param>
             /// <param name="obj"></param>
             /// <returns></returns>
-            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+            public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
             {
-                var h = obj[0] as ROOTNET.Interface.NTH1F;
+                var h = obj[0]._result as ROOTNET.Interface.NTH1F;
                 if (h == null)
                     throw new InvalidOperationException("must be a histogram that is passed");
 
@@ -128,9 +128,9 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+            public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
             {
-                var h = obj[0].Clone();
+                var h = obj[0]._result.Clone();
                 return (T)h;
             }
             public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
@@ -265,7 +265,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
@@ -285,7 +285,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h }.AsRunInfoArray());
 
             // Now, do the lookup.
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
@@ -306,7 +306,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h }.AsRunInfoArray());
 
             // Now, do the lookup.
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
@@ -333,12 +333,69 @@ namespace LINQToTTreeLib
 
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles.AsRunInfoArray2D());
 
             // Now, do the lookup.
             var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), generateAdder: () => new DummyIntAdder());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(7, r.Item2, "incorrect return value");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CacheCycleDuplicateCycles()
+        {
+            // We cannot give a list of items to cache that have the same
+            // cycle number.
+
+            // A simple query
+            var query = MakeQuery(0);
+            var f = new Uri("http://www.nytimes.com");
+
+            // Cache an integer
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h1.Directory = null;
+            h1.SetBinContent(1, 5.0);
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h2.Directory = null;
+            h2.SetBinContent(1, 2.0);
+
+            var cacheCycles = new RunInfo[][] {
+                new [] {new RunInfo() { _cycle = 0, _result = h1} },
+                new [] {new RunInfo() { _cycle = 0, _result = h2} }
+            };
+
+            var q = new QueryResultCache();
+            var date = DateTime.Now;
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CacheCycleCyclesChangeInOneCycle()
+        {
+            // We cannot give a list of items to cache that have the same
+            // cycle number.
+
+            // A simple query
+            var query = MakeQuery(0);
+            var f = new Uri("http://www.nytimes.com");
+
+            // Cache an integer
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h1.Directory = null;
+            h1.SetBinContent(1, 5.0);
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
+            h2.Directory = null;
+            h2.SetBinContent(1, 2.0);
+
+            var cacheCycles = new RunInfo[][] {
+                new [] {new RunInfo() { _cycle = 0, _result = h1}, new RunInfo() { _cycle = 1, _result = h2 } }
+            };
+
+            var q = new QueryResultCache();
+            var date = DateTime.Now;
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
         }
 
         class DummyIntAdder : IAddResult
@@ -403,7 +460,7 @@ namespace LINQToTTreeLib
             var q = new QueryResultCache();
             var k1 = q.GetKey(new Uri[] { f1, f2 }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath));
             var k2 = q.GetKey(new Uri[] { f2, f1 }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath));
-            q.CacheItem(k1, new NTObject[] { h });
+            q.CacheItem(k1, new NTObject[] { h }.AsRunInfoArray());
 
             //
             // Now, do the lookup, but with files in a different order.
@@ -428,7 +485,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// Modify the file
 
@@ -446,7 +503,7 @@ namespace LINQToTTreeLib
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
 
             // Next, update the cache and look to make sure that the cache returns a hit this time!
-            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
             r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsTrue(r.Item1, "altered file should have made this fail");
         }
@@ -463,7 +520,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// Modify the file
 
@@ -489,11 +546,11 @@ namespace LINQToTTreeLib
 
             var h = new ROOTNET.NTLorentzVector(1.0, 2.0, 3.0, 4.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup gets back the same object!
 
-            var r = Lookup<ROOTNET.Interface.NTLorentzVector>(q, f, "test", null, null, query, new DummyHistoSaver());
+            var r = Lookup<NTLorentzVector>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "SHould get back the same object");
             Assert.IsNotNull(r.Item2, "tlz should not be null");
             Assert.AreEqual(1.0, r.Item2.X(), "x value");
@@ -513,7 +570,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup fails now!
 
@@ -542,7 +599,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now!
 
@@ -576,7 +633,7 @@ namespace LINQToTTreeLib
                 h.Directory = null;
                 h.SetBinContent(1, 5.0);
 
-                q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+                q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
             }
 
             /// And make sure the lookup works now!
@@ -610,7 +667,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now!
 
@@ -637,7 +694,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
@@ -662,7 +719,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
@@ -684,13 +741,36 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h });
+            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             // Do the lookup.
             var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual("hi", r.Item2.Name, "improper histogram came back");
 
+        }
+    }
+
+    static class RunInfoConverters
+    {
+        public static RunInfo[] AsRunInfoArray(this NTObject[] items, int cycle = 0)
+        {
+            return items
+                .Select(i => new RunInfo() { _cycle = cycle, _result = i })
+                .ToArray();
+        }
+        public static RunInfo[][] AsRunInfoArray2D(this NTObject[][] items)
+        {
+            int cycle = 0;
+            Func<int> getCycle = () =>
+            {
+                var r = cycle;
+                cycle++;
+                return r;
+            };
+            return items
+                .Select(i => i.AsRunInfoArray(getCycle()))
+                .ToArray();
         }
     }
 }

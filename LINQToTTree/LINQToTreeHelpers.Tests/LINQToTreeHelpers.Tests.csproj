@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LINQToTreeHelpers.Tests</RootNamespace>
     <AssemblyName>LINQToTreeHelpers.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\LINQToTTree\</SolutionDir>
@@ -62,36 +62,38 @@
   <ItemGroup>
     <Reference Include="libCoreWrapper, Version=13.13.6037.39753, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Dynamic.5.34.36.13\lib\net40\libCoreWrapper.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="libHistWrapper, Version=13.13.6037.39881, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.36.13\lib\net40\libHistWrapper.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="libMathCoreWrapper, Version=13.13.6037.39803, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.36.13\lib\net40\libMathCoreWrapper.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="libPhysicsWrapper, Version=13.13.6037.39836, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.36.13\lib\net40\libPhysicsWrapper.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="libRIOWrapper, Version=13.13.6037.39797, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.36.13\lib\net40\libRIOWrapper.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="libThreadWrapper, Version=13.13.6037.39767, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Core.5.34.36.13\lib\net40\libThreadWrapper.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="NVelocity, Version=1.0.3.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\NVelocity.1.0.3\lib\NVelocity.dll</HintPath>
     </Reference>
     <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=640ff7d91e1d07da, processorArchitecture=MSIL">
       <HintPath>..\packages\Remotion.Linq.2.0.3-x-009-160302-230435\lib\net45\Remotion.Linq.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -100,11 +102,11 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WrapperPlumbingLibrary, Version=2.6.6037.39599, Culture=neutral, processorArchitecture=x86">
       <HintPath>..\packages\ROOT.NET.Dynamic.5.34.36.13\lib\net40\WrapperPlumbingLibrary.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -143,22 +145,24 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="dataset-list.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.36.13\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.36.13\build\net40\ROOT.NET.Dynamic.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
     <Error Condition="!Exists('..\packages\ROOT.NET.Dynamic.5.34.36.13\build\net40\ROOT.NET.Dynamic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ROOT.NET.Dynamic.5.34.36.13\build\net40\ROOT.NET.Dynamic.targets'))" />
   </Target>
+  <Import Project="..\packages\ROOT.NET.Dynamic.5.34.36.13\build\net40\ROOT.NET.Dynamic.targets" Condition="Exists('..\packages\ROOT.NET.Dynamic.5.34.36.13\build\net40\ROOT.NET.Dynamic.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

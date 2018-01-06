@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using LinqToTTreeInterfacesLib;
 namespace LINQToTTreeLib
 {
@@ -55,7 +57,8 @@ namespace LINQToTTreeLib
             {
                 if (!HasValue)
                 {
-                    TreeExecutor.ExecuteQueuedQueries();
+                    // We are running just one value - so wait.
+                    FireOffQueryTask().Wait();
                     if (!HasValue)
                         throw new InvalidOperationException("Queued query was not executed when all queued queries were run! Can't do this query now!");
                 }
@@ -65,6 +68,29 @@ namespace LINQToTTreeLib
             {
                 _value = value;
             }
+        }
+
+        /// <summary>
+        /// Return the task that will run when everything is done.
+        /// </summary>
+        /// <returns></returns>
+        public Task GetAvailibleTask()
+        {
+            return FireOffQueryTask();
+        }
+
+        private Task _queryExecutionTask = null;
+
+        /// <summary>
+        /// Fire off a query execution task
+        /// </summary>
+        private Task FireOffQueryTask()
+        {
+            if (_queryExecutionTask == null)
+            {
+                _queryExecutionTask = TreeExecutor.ExecuteQueuedQueries();
+            }
+            return _queryExecutionTask;
         }
 
         /// <summary>
@@ -81,5 +107,40 @@ namespace LINQToTTreeLib
         /// A way of checking to see if we already know about the query.
         /// </summary>
         public bool HasValue { get; private set; }
+    }
+
+    public static class IFutureValueUtils
+    {
+        public class IFutureValueAwaiter<T> : INotifyCompletion
+        {
+            private readonly IFutureValue<T> _ifv;
+
+            public IFutureValueAwaiter (IFutureValue<T> fv)
+            {
+                _ifv = fv;
+            }
+
+            public bool IsCompleted => _ifv.HasValue;
+
+            public void OnCompleted(Action continuation)
+            {
+                _ifv.GetAvailibleTask().ContinueWith(t => continuation());
+            }
+
+            public T GetResult()
+            {
+                return _ifv.Value;
+            }
+        }
+
+        /// <summary>
+        /// Return a task awaiter.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static IFutureValueAwaiter<T> GetAwaiter<T> (this IFutureValue<T> v)
+        {
+            return new IFutureValueAwaiter<T>(v);
+        }
     }
 }

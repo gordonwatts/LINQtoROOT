@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -14,19 +15,19 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="commands"></param>
         /// <param name="tempDirectory"></param>
         /// <param name="dumpLine">Called with each output line</param>
-        public static void RunROOTInBash(string prefix, string commands, DirectoryInfo tempDirectory, Action<string> dumpLine = null, bool verbose = false,
+        public static async Task RunROOTInBashAsync(string connectionString, string prefix, string commands, DirectoryInfo tempDirectory, Action<string> dumpLine = null, bool verbose = false,
             IEnumerable<FileInfo> filesToSend = null, IEnumerable<FileInfo> filesToReceive = null, TimeSpan? timeout = null)
         {
             // Get ROOT installed if it hasn't been already.
-            var le = BuildExecutor(verbose);
+            var le = BuildExecutor(connectionString, verbose);
 
-            if (!le.CheckForROOTInstall(dumpLine, verbose))
+            if (!(await le.CheckForROOTInstall(dumpLine, verbose)))
             {
-                le.InstallROOT(dumpLine, verbose);
+                await le.InstallROOT(dumpLine, verbose);
             }
 
             // Run in ROOT.
-            le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose,
+            await le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose,
                 extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)),
                 timeout: timeout);
         }
@@ -35,12 +36,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Build a local executor
         /// </summary>
         /// <returns></returns>
-        private static RemoteBashExecutor BuildExecutor(bool verbose)
+        private static RemoteBashExecutor BuildExecutor(string connectionString, bool verbose)
         {
-            return new RemoteBashExecutor
+            var re = new RemoteBashExecutor ()
             {
                 Environment = new ExecutionEnvironment() { CompileDebug = false, Verbose = verbose }
             };
+            re.SetConnectionString(connectionString);
+            return re;
         }
 
         /// <summary>
@@ -48,10 +51,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="fnameRoot">Root of the script filename we should use (prebuild, or install, etc.)</param>
         /// <param name="commands">Bash script, using \n as the seperator</param>
-        public static void RunBashCommand(string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
+        public static async Task RunBashCommandAsync(string connectionString, string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
         {
-            var le = BuildExecutor(verbose);
-            le.ExecuteBashScript(fnameRoot, commands, dumpLine, verbose);
+            var le = BuildExecutor(connectionString, verbose: verbose);
+            await le.ExecuteBashScriptAsync(fnameRoot, commands, dumpLine, verbose);
         }
     }
 }

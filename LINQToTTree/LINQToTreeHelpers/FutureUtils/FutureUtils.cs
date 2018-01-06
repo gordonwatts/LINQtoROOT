@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using LinqToTTreeInterfacesLib;
 
 namespace LINQToTreeHelpers.FutureUtils
@@ -57,6 +58,11 @@ namespace LINQToTreeHelpers.FutureUtils
             public bool HasValue { get { return true; } }
 
             public T Value { get; set; }
+
+            public Task GetAvailibleTask()
+            {
+                return Task.FromResult(false);
+            }
         }
 
         /// <summary>

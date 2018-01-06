@@ -52,9 +52,9 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         /// </summary>
         /// <param name="u"></param>
         /// <returns></returns>
-        public IEnumerable<Uri> ResolveUri(Uri u)
+        public Task<IEnumerable<Uri>> ResolveUri(Uri u)
         {
-            return new[] { u };
+            return Task.FromResult(new[] { u }.AsEnumerable());
         }
     }
 }

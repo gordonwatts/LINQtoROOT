@@ -37,13 +37,17 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         }
 
         /// <summary>
-        /// We are unique when it comes to files and locations - so return the Uri pushed in.
+        /// We need to be agnostic of the location we are running on and options. It doesn't really matter, for example,
+        /// how many connections we are running against. Nor does it matter that we used machine A vs B.
         /// </summary>
         /// <param name="u"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// One side effect of this is we are assuming a global name space for file naming.
+        /// </remarks>
         public Uri Normalize(Uri u)
         {
-            return u;
+            return new UriBuilder(u) { Host = "machine", UserName = "dude", Password = "other", Query = "" }.Uri;
         }
 
         /// <summary>
@@ -51,9 +55,9 @@ namespace LINQToTTreeLib.DataSchemeHandlers
         /// </summary>
         /// <param name="u"></param>
         /// <returns></returns>
-        public IEnumerable<Uri> ResolveUri(Uri u)
+        public Task<IEnumerable<Uri>> ResolveUri(Uri u)
         {
-            return new[] { u };
+            return Task.FromResult(new[] { u }.AsEnumerable());
         }
     }
 }

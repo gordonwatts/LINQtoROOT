@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Nito.AsyncEx;
 using Polly;
 using ROOTNET.Interface;
 using System;
@@ -9,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -107,10 +109,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         ///     file. This happens often when things are over shares. We will retry three time if we detect root is having trouble with
         ///     bad data.
         /// </remarks>
-        public virtual IDictionary<string, NTObject> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public virtual async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Setup for building a command
-            ExecutionUtilities.Init();
+            await ExecutionUtilities.Init();
             var cmds = new StringBuilder();
             cmds.AppendLine("{");
 
@@ -118,20 +120,20 @@ namespace LINQToTTreeLib.ExecutionCommon
             ReWritePathsInQuery(queryFile);
 
             // Put our run-directory in the list of includes.
-            var includePath = NormalizeFileForTarget(new DirectoryInfo(System.Environment.CurrentDirectory));
+            var includePath = await NormalizeFileForTarget(new DirectoryInfo(System.Environment.CurrentDirectory));
             cmds.AppendLine($"gSystem->AddIncludePath(\"-I\\\"{includePath}\\\"\");");
 
             // Load up extra objects & dictionaries
-            LoadExtraCPPFiles(queryDirectory, cmds);
+            await LoadExtraCPPFiles(queryDirectory, cmds);
             LoadExtraDictionaries(Environment.ClassesToDictify, cmds);
 
             // Compile the macro
-            CompileAndLoad(queryFile, cmds);
+            await CompileAndLoad(queryFile, cmds);
 
             // Run the query in a second file.
             var subfileCommands = new StringBuilder();
             var resultsFile = new FileInfo(Path.Combine(queryDirectory.FullName, "selector_results.root"));
-            RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer,
+            await RunNtupleQuery(subfileCommands, resultsFile, Path.GetFileNameWithoutExtension(queryFile.Name), varsToTransfer,
                 Environment.TreeName, files);
 
             // Write out the temp file.
@@ -147,19 +149,19 @@ namespace LINQToTTreeLib.ExecutionCommon
             // Run the root script. Retry if we detect an understood error condition.
             cmds.AppendLine("exit(0);");
             cmds.AppendLine("}");
-            NormalizeFileForTarget(queryDirectory);
-            Policy
+            await NormalizeFileForTarget(queryDirectory);
+            await Policy
                 .Handle<CommandLineExecutionException>(ex => ex.Message.Contains("error reading from file"))
-                .Retry(3)
-                .Execute(() =>
+                .RetryAsync(3)
+                .ExecuteAsync(async () =>
                 {
-                    ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
+                    await ExecuteRootScript("Query", cmds.ToString(), queryDirectory,
                         fetchFiles: new[] { new Uri(resultsFile.FullName) },
                         timeout: TimeSpan.FromHours(4));
                 });
 
             // Get back results
-            var results = LoadSelectorResults(resultsFile);
+            var results = await LoadSelectorResults(resultsFile);
 
             return results;
         }
@@ -230,7 +232,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var m = replacement.Match(line);
                 if (m.Success)
                 {
-                    var fixedFile = NormalizeFileForTarget(new Uri(m.Groups[1].Value));
+                    var fixedFile = NormalizeFileForTarget(new Uri(m.Groups[1].Value)).Result;
                     wline = wline.Replace(m.Value, fixedFile);
                 }
                 yield return wline;
@@ -258,17 +260,17 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="queryDirectory"></param>
         /// <returns></returns>
-        public FileInfo GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        public virtual async Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             Action<string> dumpLine = Environment.Verbose
                 ? l => Console.WriteLine(l)
                 : (Action<string>)null;
 
             // Check the environment
-            MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
+            await MakeSureROOTIsInstalled(dumpLine, Environment.Verbose);
 
             // Generate the proxy.
-            return GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
+            return await GenerateProxyFileInternal(rootFiles, treeName, queryDirectory, dumpLine);
         }
 
         /// <summary>
@@ -279,7 +281,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="queryDirectory"></param>
         /// <param name="dumpLine"></param>
         /// <returns></returns>
-        protected virtual FileInfo GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine)
+        protected virtual async Task<FileInfo> GenerateProxyFileInternal(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory, Action<string> dumpLine)
         {
             // Simple argument checks
             if (rootFiles == null || rootFiles.Length == 0)
@@ -310,7 +312,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Run the commands
             var header = new FileInfo(Path.Combine(queryDirectory.FullName, "runquery.h"));
-            ExecuteRootScript("Proxy", cmds.ToString(), queryDirectory, dumpLine,
+            await ExecuteRootScript("Proxy", cmds.ToString(), queryDirectory, dumpLine,
                 extraFiles: new[] { new Uri(fname) },
                 fetchFiles: new[] { new Uri(header.FullName) });
 
@@ -336,12 +338,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Make sure ROOT is installed. If not, attempt to install it.
         /// </summary>
-        private void MakeSureROOTIsInstalled(Action<string> dumpLine = null, bool verbose = false)
+        private async Task MakeSureROOTIsInstalled(Action<string> dumpLine = null, bool verbose = false)
         {
-            if (!CheckForROOTInstall(dumpLine, verbose))
+            if (!(await CheckForROOTInstall(dumpLine, verbose)))
             {
-                InstallROOT(dumpLine, verbose);
-                if (!CheckForROOTInstall(dumpLine, verbose))
+                await InstallROOT(dumpLine, verbose);
+                if (!(await CheckForROOTInstall(dumpLine, verbose)))
                 {
                     throw new CantFindROOTException($"ROOT isn't installed on target machine ({ExecutorName}).");
                 }
@@ -351,7 +353,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Attempt to install ROOT.
         /// </summary>
-        internal abstract void InstallROOT(Action<string> dumpLine, bool verbose);
+        internal abstract Task InstallROOT(Action<string> dumpLine, bool verbose);
 
         /// <summary>
         /// Return the name of the executor - to be used in error messages and the like.
@@ -362,7 +364,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Check to see if ROOT has been installed or not. Return TRUE if it has, FALSE otherwise.
         /// </summary>
         /// <returns></returns>
-        internal abstract bool CheckForROOTInstall(Action<string> dumpLine, bool verbose);
+        internal abstract Task<bool> CheckForROOTInstall(Action<string> dumpLine, bool verbose);
 
         /// <summary>
         /// Sometimes we have to generate some class dictionaries on the fly. This code will do that.
@@ -392,7 +394,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// referenced by the query code.
         /// </summary>
         /// <param name="queryDirectory">Location where we move the files to compiling</param>
-        private void LoadExtraCPPFiles(DirectoryInfo queryDirectory, StringBuilder cmds)
+        private async Task LoadExtraCPPFiles(DirectoryInfo queryDirectory, StringBuilder cmds)
         {
             // Move everything over, and then compile!
             if (Environment.ExtraComponentFiles != null)
@@ -402,7 +404,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     var output = ExecutionUtilities.CopyToDirectory(fd, queryDirectory);
                     try
                     {
-                        CompileAndLoad(output, cmds);
+                        await CompileAndLoad(output, cmds);
                     }
                     catch (Exception)
                     {
@@ -420,17 +422,17 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="treeName"></param>
         /// <param name="localFiles"></param>
         /// <returns></returns>
-        private void RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, Uri[] localFiles)
+        private async Task RunNtupleQuery(StringBuilder cmds, FileInfo queryResultsFile, string selectClass, IEnumerable<KeyValuePair<string, object>> varsToTransfer, string treeName, Uri[] localFiles)
         {
             // Init the selector
             cmds.AppendLine($"TSelector *selector = new {selectClass}();");
-            WriteInputVariablesForTransfer(cmds, queryResultsFile, varsToTransfer);
+            await WriteInputVariablesForTransfer(cmds, queryResultsFile, varsToTransfer);
 
             // Get the root files all into a chain
             cmds.AppendLine($"TChain *t = new TChain(\"{treeName}\");");
             foreach (var f in localFiles)
             {
-                var fname = NormalizeFileForTarget(f);
+                var fname = await NormalizeFileForTarget(f);
                 cmds.AppendLine($"t->Add(\"{fname}\");");
             }
 
@@ -454,7 +456,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             // Get the results and put them into a map for safe keeping!
             // To move them back we need to use a TFile.
-            var resultfileFullName = NormalizeFileForTarget(queryResultsFile);
+            var resultfileFullName = await NormalizeFileForTarget(queryResultsFile);
             cmds.AppendLine($"TFile *rf = TFile::Open(\"{resultfileFullName}\", \"RECREATE\");");
             cmds.AppendLine("rf->WriteTObject(selector->GetOutputList(), \"output\");");
             cmds.AppendLine("rf->Close();");
@@ -487,7 +489,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="cmds"></param>
         /// <param name="queryResultsFile"></param>
         /// <param name="varsToTransfer"></param>
-        private void WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        private async Task WriteInputVariablesForTransfer(StringBuilder cmds, FileInfo queryResultsFile, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
             // Objects that are headed over need to be stored in a file and then loaded into the selector.
             if (varsToTransfer != null && varsToTransfer.Count() > 0)
@@ -497,7 +499,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
 
                 // Write out the code to load them and stash them remotely if need be.
-                var safeInputFilename = NormalizeFileForTarget(inputFilesFilename);
+                var safeInputFilename = await NormalizeFileForTarget(inputFilesFilename);
                 cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
@@ -525,33 +527,41 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Protect against accessing root multiple times here.
+        /// </summary>
+        private AsyncLock _loadResultsLock = new AsyncLock();
+
+        /// <summary>
         /// Called after running to load the results.
         /// </summary>
         /// <returns></returns>
-        private IDictionary<string, NTObject> LoadSelectorResults(FileInfo queryResultsFile)
+        private async Task<IDictionary<string, NTObject>> LoadSelectorResults(FileInfo queryResultsFile)
         {
-            if (!queryResultsFile.Exists)
+            using (var holder = await _loadResultsLock.LockAsync())
             {
-                throw new FileNotFoundException($"Unable to find the file {queryResultsFile.FullName} - it should contain the results of the query.");
-            }
-
-            // Read the data from the file.
-            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
-            var f = ROOTNET.NTFile.Open(queryResultsFile.FullName);
-            try
-            {
-                var list = f.Get("output") as NTList;
-                foreach (var o in list)
+                if (!queryResultsFile.Exists)
                 {
-                    results[o.Name] = o;
+                    throw new FileNotFoundException($"Unable to find the file {queryResultsFile.FullName} - it should contain the results of the query.");
                 }
-            }
-            finally
-            {
-                f.Close();
-            }
 
-            return results;
+                // Read the data from the file.
+                var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+                var f = ROOTNET.NTFile.Open(queryResultsFile.FullName);
+                try
+                {
+                    var list = f.Get("output") as NTList;
+                    foreach (var o in list)
+                    {
+                        results[o.Name] = o;
+                    }
+                }
+                finally
+                {
+                    f.Close();
+                }
+
+                return results;
+            }
         }
 
         /// <summary>
@@ -564,7 +574,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="templateRunner"></param>
         /// <param name="cmds"></param>
-        private void CompileAndLoad(FileInfo templateRunner, StringBuilder cmds)
+        private async Task CompileAndLoad(FileInfo templateRunner, StringBuilder cmds)
         {
             var gSystem = ROOTNET.NTSystem.gSystem;
 
@@ -578,7 +588,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Code up the call
-            var tmpFName = NormalizeFileForTarget(templateRunner);
+            var tmpFName = await NormalizeFileForTarget(templateRunner);
             cmds.AppendLine($"int r{_result_index} = gSystem->CompileMacro(\"{tmpFName}\", \"{buildFlags}\");");
             cmds.AppendLine($"if (r{_result_index} != 1) {{ exit(1); }}");
             _result_index++;
@@ -589,14 +599,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected abstract string NormalizeFileForTarget(Uri finfo);
+        protected abstract Task<string> NormalizeFileForTarget(Uri finfo);
 
         /// <summary>
         /// Helper function to speed the conversion.
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected string NormalizeFileForTarget(FileInfo finfo)
+        protected Task<string> NormalizeFileForTarget(FileInfo finfo)
         {
             return NormalizeFileForTarget(new Uri(finfo.FullName));
         }
@@ -606,7 +616,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected abstract string NormalizeFileForTarget(DirectoryInfo finfo);
+        protected abstract Task<string> NormalizeFileForTarget(DirectoryInfo finfo);
 
         /// <summary>
         /// This happens when we can't successfully execute a command
@@ -641,7 +651,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="cmds"></param>
         /// <param name="extraFiles">List of extra files that might be needed.</param>
         /// <param name="fetchFiles">List of files that should be fetched. Assuemd to be written in the local area</param>
-        internal virtual void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null,
+        internal virtual async Task ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false, IEnumerable<Uri> extraFiles = null, IEnumerable<Uri> fetchFiles = null,
             TimeSpan? timeout = null)
         {
             // Parse the commands for replacements
@@ -677,20 +687,28 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
             proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
 
-            proc.Start();
+            var completionTask = proc.StartAsync();
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
 
             // Wait for it to end.
             if (verbose) dumpLine?.Invoke("Waiting for process to exit");
-            proc.WaitForExit(timeout.HasValue ? (int) timeout.Value.TotalMilliseconds : int.MaxValue);
+            var r = await Task.WhenAny(completionTask, Task.Delay(timeout.HasValue ? (int)timeout.Value.TotalMilliseconds : int.MaxValue));
+            if (r != completionTask)
+            {
+                // Timeout occured. Kill it!
+                proc.Kill();
+            }
             if (verbose) dumpLine?.Invoke($"Process result is {proc.ExitCode}.");
             PostProcessExecution(resultData, context, dumpLine);
 
-            // Make sure the result is "good"
+            // Make sure the result is "good"; throw a reasonable error message if not.
             if (proc.ExitCode != 0)
             {
                 throw new CommandLineExecutionException($"Failed to execute step {prefix} - process executed with error code {proc.ExitCode}. Text dump from process: {ReformatLog(resultData)}");
+            } else if (r != completionTask)
+            {
+                throw new TimeoutException($"Failed to execute step { prefix } - process was killed due to timeout ({timeout.Value.TotalSeconds} seconds). Text dump from process: { ReformatLog(resultData)}");
             }
         }
 

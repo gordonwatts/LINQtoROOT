@@ -2,10 +2,12 @@
 using LINQToTTreeLib.Utils;
 using Polly;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -78,19 +80,35 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         protected override string ExecutorName => "Local bash shell on this machine";
 
+
+        [Serializable]
+        public class BashNotConfiguredCorrectlyException : Exception
+        {
+            public BashNotConfiguredCorrectlyException() { }
+            public BashNotConfiguredCorrectlyException(string message) : base(message) { }
+            public BashNotConfiguredCorrectlyException(string message, Exception inner) : base(message, inner) { }
+            protected BashNotConfiguredCorrectlyException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        }
+
         /// <summary>
         /// Is ROOT installed on this machine?
         /// </summary>
         /// <returns></returns>
-        internal override bool CheckForROOTInstall(Action<string> dumpLine = null, bool verbose = false)
+        internal override async Task<bool> CheckForROOTInstall(Action<string> dumpLine = null, bool verbose = false)
         {
             var cmd = new StringBuilder();
             cmd.AppendLine("int i = 10;");
 
             try
             {
-                ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+                await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
                 return true;
+            }
+            catch (CommandLineExecutionException e) when (e.Message.Contains("loading shared libraries"))
+            {
+                throw new BashNotConfiguredCorrectlyException("It could be that WSL/bash is not configured properly on this system. Make sure to run apt install libxpm-dev; apt install libatlas-base-dev; apt install build-essential", e);
             }
             catch { }
             return false;
@@ -116,7 +134,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <remarks>
         /// We are called only if CheckInstall has returned false.
         /// </remarks>
-        internal override void InstallROOT(Action<string> dumpLine, bool verbose)
+        internal override async Task InstallROOT(Action<string> dumpLine, bool verbose)
         {
             var cmds = new StringBuilder();
             cmds.Append($"mkdir -p {ROOTInstallArea}\n");
@@ -130,7 +148,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                ExecuteBashScript("downlaodroot", cmds.ToString(), dumpLine, verbose);
+                await ExecuteBashScript("downlaodroot", cmds.ToString(), dumpLine, verbose);
             } catch (Exception e)
             {
                 throw new FailedToInstallROOTException($"Unable to download and install ROOT version {ROOTVersionNumber}.", e);
@@ -141,7 +159,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Run a short bash script
         /// </summary>
         /// <param name="cmds"></param>
-        internal void ExecuteBashScript(string reason, string cmds, Action<string> dumpLine = null, bool verbose = false)
+        internal async Task ExecuteBashScript(string reason, string cmds, Action<string> dumpLine = null, bool verbose = false)
         {
             // Dump the script
             var tmpDir = new DirectoryInfo(System.IO.Path.GetTempPath());
@@ -163,19 +181,15 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             proc.StartInfo.FileName = FindBash();
-            proc.StartInfo.Arguments = $"-c {NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {NormalizeFileForTarget(logFile)}";
+            proc.StartInfo.Arguments = $"-c {await NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {await NormalizeFileForTarget(logFile)}";
 
             // Start it.
             var resultData = new StringBuilder();
             proc.ErrorDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
             proc.OutputDataReceived += (sender, e) => RecordLine(resultData, e.Data, dumpLine);
 
-            proc.Start();
-            //proc.BeginOutputReadLine();
-            //proc.BeginErrorReadLine();
-
-            // Wait for it to end.
-            proc.WaitForExit();
+            // Wait for it to finish up.
+            await proc.StartAsync();
 
             // Now, pick up the file
             foreach (var line in logFile.EnumerateTextFile())
@@ -267,9 +281,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(Uri finfo)
+        protected override Task<string> NormalizeFileForTarget(Uri finfo)
         {
-            return new FileInfo(finfo.LocalPath).ConvertToBash();
+            return Task.FromResult(new FileInfo(finfo.LocalPath).ConvertToBash());
         }
 
         /// <summary>
@@ -277,9 +291,29 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(DirectoryInfo finfo)
+        protected override Task<string> NormalizeFileForTarget(DirectoryInfo finfo)
         {
-            return finfo.ConvertToBash();
+            return Task.FromResult(finfo.ConvertToBash());
+        }
+
+        /// <summary>
+        /// The number of local processors is how we want to split up this local job.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <returns></returns>
+        public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
+        {
+            return System.Environment.ProcessorCount;
+        }
+
+        /// <summary>
+        /// We do not need to further split things up - everything is run locally.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
+        {
+            return new[] { files };
         }
     }
     static class LocalBashExecutorHelpers

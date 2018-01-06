@@ -3,6 +3,7 @@ using LINQToTTreeLib.ExecutionCommon;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.QueryVisitors;
 using LINQToTTreeLib.Utils;
+using Nito.AsyncEx;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Linq;
@@ -17,6 +18,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
 {
@@ -249,7 +252,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// Resolve the ROOT files from our current Uri's to real ones.
         /// </summary>
-        private void ResolveROOTFiles()
+        private async Task ResolveROOTFiles()
         {
             if (_resolvedRootFiles != null)
             {
@@ -257,8 +260,12 @@ namespace LINQToTTreeLib
             }
 
             // The Uri's that come in may not be the ones we actually need to run over. Resolve them.
-            _resolvedRootFiles = _originalRootFiles
-                .SelectMany(u => ResolveDatasetUri(u))
+            var resolvedRootFilesAll = _originalRootFiles
+                .Select(async u => await ResolveDatasetUri(u))
+                .ToArray();
+
+            _resolvedRootFiles = (await Task.WhenAll(resolvedRootFilesAll))
+                .SelectMany(u => u)
                 .GroupBy(u => u.Scheme)
                 .Select(grp => (grp.Key, grp.ToArray()))
                 .ToArray();
@@ -331,27 +338,28 @@ namespace LINQToTTreeLib
         /// <remarks>
         /// Recursively try to resolve the Uri's until they stop changing their format.
         /// </remarks>
-        private IEnumerable<Uri> ResolveDatasetUri(Uri u)
+        private async Task<IEnumerable<Uri>> ResolveDatasetUri(Uri u)
         {
             var scheme = u.Scheme;
-            var resolved = GetDataHandler(u)
-                .ResolveUri(u)
+            var resolved = (await GetDataHandler(u).ResolveUri(u))
                 .ToArray();
 
             // See if there were any changes. If not, then we just return it.
             if (resolved.Length == 1 && resolved[0].OriginalString == u.OriginalString)
             {
-                yield return resolved[0];
+                return resolved;
             }
             else
             {
+                var lst = new List<Uri>();
                 foreach (var rUri in resolved)
                 {
-                    foreach (var rrUri in ResolveDatasetUri(rUri))
+                    foreach (var rrUri in await ResolveDatasetUri(rUri))
                     {
-                        yield return rrUri;
+                        lst.Add(rrUri);
                     }
                 }
+                return lst;
             }
         }
 
@@ -400,16 +408,13 @@ namespace LINQToTTreeLib
         /// </summary>
         interface IQueuedQuery
         {
-
-            void ExecuteQuery();
-
             IExecutableCode Code { get; set; }
 
             /// <summary>
             /// We have a list of results - add them all together and extract them.
             /// </summary>
             /// <param name="results"></param>
-            void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject>[] results);
+            void ExtractResult(IDictionary<string, RunInfo>[] results);
 
             /// <summary>
             /// Rename an output object if it is a global resource so we don't step on anything else.
@@ -422,7 +427,19 @@ namespace LINQToTTreeLib
             /// Push the results into the cache
             /// </summary>
             /// <param name="results"></param>
-            void CacheResults(IDictionary<string, ROOTNET.Interface.NTObject>[] results);
+            void CacheResults(IDictionary<string, RunInfo>[] results);
+        }
+
+
+        [Serializable]
+        public class BadResultFromQueryException : InvalidOperationException
+        {
+            public BadResultFromQueryException() { }
+            public BadResultFromQueryException(string message) : base(message) { }
+            public BadResultFromQueryException(string message, Exception inner) : base(message, inner) { }
+            protected BadResultFromQueryException(
+              System.Runtime.Serialization.SerializationInfo info,
+              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         }
 
         /// <summary>
@@ -437,21 +454,24 @@ namespace LINQToTTreeLib
 
             public FutureValue<RType> Future { get; set; }
 
-            public void ExecuteQuery()
-            {
-                Future.TreeExecutor.ExecuteQueuedQueries();
-            }
-
             /// <summary>
             /// Go through the list and extract the results that are needed
             /// </summary>
             /// <param name="results"></param>
-            public void ExtractResult(IDictionary<string, ROOTNET.Interface.NTObject>[] results)
+            public void ExtractResult(IDictionary<string, RunInfo>[] results)
             {
 
                 var finalResultList = results
-                    .Select((indR, index) => Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR, index))
+                    .Select(indR => Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR))
                     .ToArray();
+
+                if (finalResultList.Where(fr => fr == null).Any())
+                {
+                    var names = results
+                        .SelectMany(kv => kv.Keys)
+                        .Aggregate((s_accum, s_new) => s_accum + "," + s_new);
+                    throw new BadResultFromQueryException($"A query has returned a null result. This is an internal error and needs some low level debugging (for type {typeof(RType).FullName} and names {names}).");
+                }
 
                 if (finalResultList.Length == 1)
                 {
@@ -464,7 +484,7 @@ namespace LINQToTTreeLib
                         .FirstOrDefault()
                         .ThrowIfNull(() => new InvalidOperationException($"Unable to find an IAddResult object for type '{typeof(RType).Name}' - so can't add them together! Please provide MEF export."));
 
-                    Future.SetValue(finalResultList.Skip(1).Aggregate(finalResultList[0], (acc, newval) => adder.Update(acc, newval)));
+                    Future.SetValue(finalResultList.Aggregate((acc, newval) => adder.Update(acc, newval)));
                 }
             }
 
@@ -472,7 +492,7 @@ namespace LINQToTTreeLib
             /// Cache the results for everything.
             /// </summary>
             /// <param name="results"></param>
-            void IQueuedQuery.CacheResults(IDictionary<string, NTObject>[] results)
+            void IQueuedQuery.CacheResults(IDictionary<string, RunInfo>[] results)
             {
                 Future.TreeExecutor.CacheResults(Code.ResultValues.FirstOrDefault(), CacheKey, results);
             }
@@ -544,6 +564,15 @@ namespace LINQToTTreeLib
                     return _val;
                 }
             }
+
+            /// <summary>
+            /// Return a task that will fire when our inputs are done.
+            /// </summary>
+            /// <returns></returns>
+            public Task GetAvailibleTask()
+            {
+                return Task.WhenAll(_accumulator.GetAvailibleTask(), _o2.GetAvailibleTask());
+            }
         }
 
         /// <summary>
@@ -582,6 +611,15 @@ namespace LINQToTTreeLib
                     }
                     return _val;
                 }
+            }
+
+            /// <summary>
+            /// Return a task that will fire when a value is rendered.
+            /// </summary>
+            /// <returns></returns>
+            public Task GetAvailibleTask()
+            {
+                return _held.GetAvailibleTask();
             }
         }
 
@@ -748,45 +786,125 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
+        /// Lock to prevent executing multiple times.
+        /// </summary>
+        private AsyncLock _queryExecuteLock = new AsyncLock();
+
+        /// <summary>
         /// Called when it is time to execute all the queries queued against this executor.
         /// </summary>
-        internal void ExecuteQueuedQueries()
+        /// <remarks>
+        /// All queued queries will be finished when this task completes.
+        /// </remarks>
+        internal async Task ExecuteQueuedQueries()
         {
-            LogExecutionStart();
-            // We now need the actual root files - so resolve them.
-            ResolveROOTFiles();
-
-            // Get all the queries together, combined, and ready to run.
-            TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
-            var combinedInfo = new CombinedGeneratedCode();
-            foreach (var cq in _queuedQueries)
+            // Because we can do many resultes, we might get asked from many places to actually run the queried results. So
+            // we need a way to make sure that we don't try to run multiple times. We do that here.
+            using (var exeLockWaiter = await _queryExecuteLock.LockAsync())
             {
-                combinedInfo.AddGeneratedCode(cq.Code);
+                // Make sure no one else has cleaned up the queue for us.
+                if (_queuedQueries.Count < 0)
+                {
+                    return;
+                }
+
+                // Log where we are.
+                LogExecutionStart();
+
+                // We now need the actual root files - so resolve them.
+                await ResolveROOTFiles();
+
+                // Get all the queries together, combined, and ready to run.
+                TraceHelpers.TraceInfo(11, "ExecuteQueuedQueries: Startup - combining all code");
+                var combinedInfo = new CombinedGeneratedCode();
+                foreach (var cq in _queuedQueries)
+                {
+                    combinedInfo.AddGeneratedCode(cq.Code);
+                }
+
+                // Optimize the whole thing...
+                if (UseStatementOptimizer)
+                    Optimizer.Optimize(combinedInfo);
+
+                // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
+                int cycle = -1;
+                Func<int> cycle_counter = () => Interlocked.Increment(ref cycle);
+                var combinedResultsTasks = _resolvedRootFiles
+                    .SelectMany(sch => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter))
+                    .ToArray();
+
+                var combinedResults = await Task.WhenAll(combinedResultsTasks);
+
+                // Extract all the variables! And save in the cache, and set the
+                // future value so everyone else can use them!
+                TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
+                foreach (var cq in _queuedQueries)
+                {
+                    cq.ExtractResult(combinedResults);
+                    cq.CacheResults(combinedResults);
+                }
+                _queuedQueries.Clear();
+
+                // Ok, we are all done. Delete the directory that we were just using
+                // after unloading all the modules
+                LogExecutionFinish();
             }
-
-            // Optimize the whole thing...
-            if (UseStatementOptimizer)
-                Optimizer.Optimize(combinedInfo);
-
-            // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
-            var combinedResults = _resolvedRootFiles
-                .Select((sch, index) => ExecuteQueuedQueriesForAScheme(sch.scheme, sch.files, combinedInfo, index))
-                .ToArray();
-
-            // Extract all the variables! And save in the cache, and set the
-            // future value so everyone else can use them!
-            TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
-            foreach (var cq in _queuedQueries)
-            {
-                cq.ExtractResult(combinedResults);
-                cq.CacheResults(combinedResults);
-            }
-            _queuedQueries.Clear();
-
-            // Ok, we are all done. Delete the directory that we were just using
-            // after unloading all the modules
-            LogExecutionFinish();
         }
+
+        /// <summary>
+        /// Execute on a single scheme for a batch of files. We have the oporitunity to split them up here.
+        /// </summary>
+        /// <param name="scheme"></param>
+        /// <param name="files"></param>
+        /// <param name="combinedInfo"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private IEnumerable<Task<IDictionary<string, RunInfo>>> ExecuteQueuedQueriesForASchemeFileBatch(string scheme, Uri[] files,
+            CombinedGeneratedCode combinedInfo, 
+            Func<int> cycle)
+        {
+            // Get the query executor
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
+            var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
+            var localMaker = CreateQueryExecutor(scheme, referencedLeafNames);
+
+            // First, we let the executor tell us if it needs to split things up. Most executors will not split things up at all,
+            // as everything looks the same. But you could imagine that a machine name is encoded and you want to send things to one machine, or
+            // to another.
+            var local = localMaker();
+            var batchedByExecutor = local.BatchInputUris(files);
+
+            // Next, lets see how to split things up inside each of these batches.
+            var batchedFiles = batchedByExecutor
+                .SelectMany(bf =>
+                {
+                    int nBatches = local.SuggestedNumberOfSimultaniousProcesses(bf);
+                    var subBatchFiles = files.Length == 1 || nBatches == 1
+                        ? new[] { files }
+                        : SplitFilesIntoBatches(files, nBatches);
+                    return subBatchFiles;
+                });
+
+            // Next, we need actually run them!
+            return batchedFiles
+                .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle, localMaker(), referencedLeafNames));
+        }
+
+        /// <summary>
+        /// Return the file list split into batches.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="nBatches"></param>
+        /// <returns></returns>
+        private Uri[][] SplitFilesIntoBatches(Uri[] files, int nBatches)
+        {
+            var grps = files
+                .Select((u, index) => (u, index))
+                .GroupBy(info => info.Item2 % nBatches)
+                .Select(lst => lst.Select(f => f.Item1).ToArray());
+            return grps.ToArray();
+        }
+
 
         /// <summary>
         /// Run a query over a single scheme of Uri's.
@@ -794,39 +912,43 @@ namespace LINQToTTreeLib
         /// <param name="scheme"></param>
         /// <param name="files"></param>
         /// <param name="combinedInfo"></param>
-        private IDictionary<string, ROOTNET.Interface.NTObject> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
-                CombinedGeneratedCode combinedInfo, int cycle)
+        /// <remarks>
+        /// This is running in its own directory. This is important because there are times when this
+        /// query, split up, might produce the same files. At the end, if that happens, we do a rename
+        /// by cycle number.
+        /// </remarks>
+        private async Task<IDictionary<string, RunInfo>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
+                CombinedGeneratedCode combinedInfo, Func<int> cycleFetcher, IQueryExectuor local, string[] referencedLeafNames)
         {
+            var queryDirectory = GenerateQueryDirectory();
             try
             {
                 // Keep track of how often we run. Mostly for testing reasons, actually.
                 CountExecutionRuns++;
 
-                // Get the query executor
-                TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
-                var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
-                IQueryExectuor local = CreateQueryExecutor(scheme, referencedLeafNames);
-
                 // Next, generate and slim the proxy file and the TSelector file
-                var proxyFile = local.GenerateProxyFile(files, _exeReq.TreeName, GetQueryDirectory());
-                var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile);
+                var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, queryDirectory);
+                var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile, queryDirectory);
                 TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
-                var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo);
+                var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo, queryDirectory);
 
                 // Run the actual query.
-                var r = local.Execute(files, templateRunner, GetQueryDirectory(), combinedInfo.VariablesToTransfer);
+                var r = await local.Execute(files, templateRunner, queryDirectory, combinedInfo.VariablesToTransfer);
 
-                // Rename by cycle for those that need it.
+                // Rename by cycle for those that need it. This allows, for example, file names that are the same in different runs
+                // of the code to be copied back into the same directory.
+                var cycle = cycleFetcher();
                 foreach (var cq in _queuedQueries)
                 {
                     cq.RenameForCycle(r, cycle);
                 }
 
-                // Done - return everything.
-                return r;
+                // Done - return everything, converted to RunInfo
+                return r
+                    .ToDictionary(er => er.Key, er => new RunInfo() { _cycle = cycle, _result = er.Value });
             } finally
             {
-                CleanUpQuery();
+                CleanUpQuery(queryDirectory);
                 TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Finished run on Uri scheme {scheme}.", opt: TraceEventType.Stop);
             }
         }
@@ -894,14 +1016,14 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="referencedLeafNames">List of leaves that are referenced by the query</param>
         /// <returns></returns>
-        private IQueryExectuor CreateQueryExecutor(string scheme, string[] referencedLeafNames)
+        private Func<IQueryExectuor> CreateQueryExecutor(string scheme, string[] referencedLeafNames)
         {
             // Now find a query executor.
             var qefactory = _queryExecutorList
                 .Where(qex => qex.Scheme == scheme).FirstOrDefault()
                 .ThrowIfNull(() => new UnsupportedUriSchemeException($"Unable to process files of scheme '{scheme}' - no supported executor"));
 
-            return qefactory.Create(_exeReq, referencedLeafNames);
+            return () => qefactory.Create(_exeReq, referencedLeafNames);
         }
 
         /// <summary>
@@ -909,7 +1031,7 @@ namespace LINQToTTreeLib
         /// proxy file so that only those leaves are defined. In a large ntuple (with 100's of items) this can
         /// change compile times from 45 seconds to 8 seconds - so is a big deal during incremental testing, etc.
         /// </summary>
-        private FileInfo SlimProxyFile(string[] leafNames, FileInfo proxyFile)
+        private FileInfo SlimProxyFile(string[] leafNames, FileInfo proxyFile, DirectoryInfo queryDirectory)
         {
             //
             // Create search's for the various proxy names
@@ -922,7 +1044,7 @@ namespace LINQToTTreeLib
             // Copy over the file, emitting only the lines we need to emit.
             //
 
-            FileInfo destFile = new FileInfo($"{GetQueryDirectory().FullName}\\slim-{proxyFile.Name}");
+            FileInfo destFile = new FileInfo($"{queryDirectory.FullName}\\slim-{proxyFile.Name}");
             using (var writer = destFile.CreateText())
             {
                 // State variables
@@ -1005,7 +1127,7 @@ namespace LINQToTTreeLib
             // Finally, copy over any included files
             //
 
-            ExecutionUtilities.CopyIncludedFilesToDirectory(proxyFile, GetQueryDirectory());
+            ExecutionUtilities.CopyIncludedFilesToDirectory(proxyFile, queryDirectory);
             return destFile;
         }
 
@@ -1053,14 +1175,14 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IDeclaredParameter iVariable, IDictionary<string, ROOTNET.Interface.NTObject> results, int cycle)
+        private T ExtractResult<T>(IDeclaredParameter iVariable, IDictionary<string, RunInfo> results)
         {
             // Load the object and try to extract whatever info we need to from it
             var s = _varSaver.Get(iVariable);
-            NTObject[] objs = ExtractQueryReturnedObjectsForVariable(iVariable, results, s);
+            var objs = ExtractQueryReturnedObjectsForVariable(iVariable, results, s);
 
             // Return the result in a form that the code wants.
-            return s.LoadResult<T>(iVariable, objs, cycle);
+            return s.LoadResult<T>(iVariable, objs);
         }
 
         /// <summary>
@@ -1069,7 +1191,7 @@ namespace LINQToTTreeLib
         /// <param name="iVariable"></param>
         /// <param name="key"></param>
         /// <param name="results"></param>
-        private void CacheResults(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, ROOTNET.Interface.NTObject>[] results)
+        private void CacheResults(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, RunInfo>[] results)
         {
             // Get the results all out.
             var s = _varSaver.Get(iVariable);
@@ -1086,7 +1208,7 @@ namespace LINQToTTreeLib
         /// <param name="results"></param>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static NTObject[] ExtractQueryReturnedObjectsForVariable(IDeclaredParameter iVariable, IDictionary<string, NTObject> results, IVariableSaver s)
+        private static RunInfo[] ExtractQueryReturnedObjectsForVariable(IDeclaredParameter iVariable, IDictionary<string, RunInfo> results, IVariableSaver s)
         {
             var allNames = s.GetCachedNames(iVariable);
 
@@ -1097,6 +1219,17 @@ namespace LINQToTTreeLib
             return objs;
         }
 
+        private static NTObject[] ExtractQueryReturnedObjectsForVariable(IDeclaredParameter iVariable, IDictionary<string, NTObject> results, IVariableSaver s)
+        {
+            var allNames = s.GetCachedNames(iVariable);
+
+            if (allNames.Where(n => !results.Keys.Contains(n)).Any())
+                throw new InvalidOperationException(string.Format("The result list from the query did not contains an object named '{0}'.", iVariable.RawValue));
+
+            var objs = allNames.Select(n => results[n]).ToArray();
+            return objs;
+        }
+        
         /// <summary>
         /// Get the saver to rename the variable coming back to match the cycle.
         /// </summary>
@@ -1104,10 +1237,10 @@ namespace LINQToTTreeLib
         /// <param name="iVariable"></param>
         /// <param name="result"></param>
         /// <param name="cycle"></param>
-        private void RenameForCycle<T>(IDeclaredParameter iVariable, IDictionary<string, ROOTNET.Interface.NTObject> result, int cycle)
+        private void RenameForCycle<T>(IDeclaredParameter iVariable, IDictionary<string, NTObject> result, int cycle)
         {
             var s = _varSaver.Get(iVariable);
-            NTObject[] objs = ExtractQueryReturnedObjectsForVariable(iVariable, result, s);
+            var objs = ExtractQueryReturnedObjectsForVariable(iVariable, result, s);
 
             s.RenameForQueryCycle(iVariable, objs, cycle);
         }
@@ -1146,7 +1279,8 @@ namespace LINQToTTreeLib
         /// in order to actually run the thing! Use the template to do it.
         /// </summary>
         /// <param name="p"></param>
-        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, IExecutableCode code)
+        private FileInfo WriteTSelector(string proxyFileName, string proxyObjectName, IExecutableCode code,
+            DirectoryInfo queryDirectory)
         {
             ///
             /// Get the template engine all setup
@@ -1198,7 +1332,7 @@ namespace LINQToTTreeLib
             /// Now do it!
             /// 
 
-            var ourSelector = new FileInfo(GetQueryDirectory() + "\\" + queryFileName + ".cxx");
+            var ourSelector = new FileInfo(queryDirectory + "\\" + queryFileName + ".cxx");
             using (var writer = ourSelector.CreateText())
             {
                 eng.Evaluate(context, writer, null, template);
@@ -1237,64 +1371,47 @@ namespace LINQToTTreeLib
         public static DirectoryInfo QueryCreationDirectory = new DirectoryInfo(Path.GetTempPath() + "\\LINQToTTree");
 
         /// <summary>
-        /// Copy a file to a directory that contains files for this query.
-        /// </summary>
-        /// <param name="sourceFile"></param>
-        private FileInfo CopyToQueryDirectory(FileInfo sourceFile)
-        {
-            return ExecutionUtilities.CopyToDirectory(sourceFile, GetQueryDirectory());
-        }
-
-        /// <summary>
-        /// The local query
-        /// </summary>
-        private DirectoryInfo _queryDirectory;
-
-        /// <summary>
         /// When true, we will first attempt to delete all files in our main query directory
         /// scratch space before creating and running everything.
         /// </summary>
         static bool gFirstQuerySetup = true;
 
         /// <summary>
-        /// Get the directory for the current query in progress. If this is the first time
-        /// we attempt to first clean up from old runs.
+        /// Create a new query directory for a query. Also, clean up old queries to keep the
+        /// disk properly pruned.
         /// </summary>
         /// <returns></returns>
         /// <remarks>
         /// Don't kill off recent queires - as we may have multiple copies of this program running on this
         /// machine.
         /// </remarks>
-        private DirectoryInfo GetQueryDirectory()
+        private DirectoryInfo GenerateQueryDirectory()
         {
-            if (_queryDirectory == null)
+            var baseQueryDirectory = new DirectoryInfo(QueryCreationDirectory.FullName + "\\" + Process.GetCurrentProcess().ProcessName);
+            if (gFirstQuerySetup)
             {
-                var baseQueryDirectory = new DirectoryInfo(QueryCreationDirectory.FullName + "\\" + Process.GetCurrentProcess().ProcessName);
-                if (gFirstQuerySetup)
+                gFirstQuerySetup = false;
+                try
                 {
-                    gFirstQuerySetup = false;
-                    try
+                    var removeDirectories = baseQueryDirectory
+                        .EnumerateDirectories()
+                        .Where(d => (DateTime.Now - d.CreationTime) > TimeSpan.FromDays(7));
+                    foreach (var d in removeDirectories)
                     {
-                        var removeDirectories = baseQueryDirectory
-                            .EnumerateDirectories()
-                            .Where(d => (DateTime.Now - d.CreationTime) > TimeSpan.FromDays(7));
-                        foreach (var d in removeDirectories)
-                        {
-                            d.Delete(true);
-                        }
+                        d.Delete(true);
                     }
-                    catch { }
                 }
-                _queryDirectory = new DirectoryInfo(baseQueryDirectory.FullName + "\\" + Path.GetRandomFileName());
-                _queryDirectory.Create();
+                catch { }
             }
-            return _queryDirectory;
+            var queryDirectory = new DirectoryInfo(baseQueryDirectory.FullName + "\\" + Path.GetRandomFileName());
+            queryDirectory.Create();
+            return queryDirectory;
         }
 
         /// <summary>
         /// Clean up the query - keep user's disk clean!
         /// </summary>
-        private void CleanUpQuery()
+        private void CleanUpQuery(DirectoryInfo queryDirectory)
         {
             TraceHelpers.TraceInfo(16, "ExecuteQueuedQueries: unloading all results");
             if (_exeReq.CleanupQuery)
@@ -1302,12 +1419,11 @@ namespace LINQToTTreeLib
                 // If we can't do the clean up, don't worry about it.
                 try
                 {
-                    _queryDirectory.Delete(true);
+                    queryDirectory.Delete(true);
                 }
                 catch
                 { }
             }
-            _queryDirectory = null;
         }
 
         /// <summary>

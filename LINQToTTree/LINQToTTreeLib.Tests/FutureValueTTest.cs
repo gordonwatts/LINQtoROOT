@@ -1,4 +1,7 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using LinqToTTreeInterfacesLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LINQToTTreeLib
@@ -7,47 +10,60 @@ namespace LINQToTTreeLib
     [TestClass]
     public partial class FutureValueTTest
     {
-#if false
-        /// <summary>Test stub for .ctor(!0)</summary>
-        [PexGenericArguments(typeof(int))]
-        [PexMethod]
-        internal FutureValue<T> Constructor<T>(T result)
+        private class SimpleFutureValue : IFutureValue<int>
         {
-            FutureValue<T> target = new FutureValue<T>(result);
-            Assert.AreEqual(result, target.Value, "value incorrect");
-            Assert.IsTrue(target.HasValue, "it should be marked as having a value!!");
-            return target;
+            public int Value => 10;
+
+            public bool HasValue => true;
+
+            public Task GetAvailibleTask()
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        /// <summary>Test stub for .ctor(TTreeQueryExecutor)</summary>
-        [PexGenericArguments(typeof(int))]
-        [PexMethod]
-        internal FutureValue<T> Constructor01<T>(TTreeQueryExecutor tTreeQueryExecutor)
+        [TestMethod]
+        public async Task FutureValueAwait()
         {
-            FutureValue<T> target = new FutureValue<T>(tTreeQueryExecutor);
-            Assert.IsFalse(target.HasValue, "has value is not right!!");
-            return target;
+            var fb = new SimpleFutureValue();
+            var v = await fb;
+            Assert.AreEqual(10, v);
         }
 
-        /// <summary>Test stub for SetValue(!0)</summary>
-        [PexGenericArguments(typeof(int))]
-        [PexMethod]
-        internal void SetValue<T>([PexAssumeUnderTest]FutureValue<T> target, T val)
+        [TestMethod]
+        public async Task FutureValueAwaitALittle()
         {
-            target.SetValue(val);
-            Assert.IsTrue(target.HasValue, "shoudl be marked as having a value now!");
-            Assert.AreEqual(val, target.Value, "Value shoudl have been set");
+            var fb = new SimpleFutureValueWait();
+            var v = await fb;
+            Assert.AreEqual(5, v);
         }
 
-        /// <summary>Test stub for get_Value()</summary>
-        [PexGenericArguments(typeof(int))]
-        [PexMethod]
-        internal T ValueGet<T>([PexAssumeUnderTest]FutureValue<T> target)
+        private class SimpleFutureValueWait : IFutureValue<int>
         {
-            T result = target.Value;
-            Assert.IsTrue(target.HasValue, "Value must be set in order to get the value here");
-            return result;
+            readonly Task _t;
+
+            public SimpleFutureValueWait()
+            {
+                var delay = Task.Delay(200);
+                _t = delay.ContinueWith(t => CallBack());
+                
+            }
+
+            public int Value { get; private set; } = 10;
+
+            public bool HasValue { get; private set; } = false;
+
+            public Task GetAvailibleTask()
+            {
+                return _t;
+            }
+
+            private void CallBack()
+            {
+                Value = 5;
+                HasValue = true;
+            }
+
         }
-#endif
     }
 }

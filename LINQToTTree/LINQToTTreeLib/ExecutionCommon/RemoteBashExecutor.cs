@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {    /// <summary>
@@ -56,6 +57,47 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Set an explicit connection string
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public void SetConnectionString(string connectionString)
+        {
+            _machine = GetMachineInfo(connectionString);
+        }
+
+        public void SetConnectionString(Uri[] uris)
+        {
+            SetConnectionString(uris[0]);
+        }
+
+        public void SetConnectionString(Uri i)
+        {
+            SetConnectionString($"{i.UserInfo}@{i.Host}");
+        }
+
+        /// <summary>
+        /// Initialize with the end point we are heading to.
+        /// </summary>
+        /// <param name="connectionString">A connection string (myname@machine1.com -> myname@machine2.com)</param>
+        public RemoteBashExecutor()
+        {
+            _machine = null;
+        }
+
+        /// <summary>
+        /// Generate a proxy file. Capture the item first.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <param name="treeName"></param>
+        /// <param name="queryDirectory"></param>
+        /// <returns></returns>
+        public override Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
+        {
+            SetConnectionString(rootFiles);
+            return base.GenerateProxyFile(rootFiles, treeName, queryDirectory);
+        }
+
+        /// <summary>
         /// Place holder for a temp directory
         /// </summary>
         private string _linuxTempDir = null;
@@ -91,21 +133,23 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We assume that ROOT is already configured. If the command line execution fails, we will
         /// throw.
         /// </remarks>
-        internal override void ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false,
+        internal override async Task ExecuteRootScript(string prefix, string cmds, DirectoryInfo tmpDir, Action<string> dumpLine = null, bool verbose = false,
             IEnumerable<Uri> extraFiles = null,
             IEnumerable<Uri> receiveFiles = null,
             TimeSpan? timeout = null)
         {
             // Run against a temp directory on the remote host
-            ExecuteRemoteWithTemp(prefix, sshConnection => {
+            await ExecuteRemoteWithTemp(prefix, async sshConnection => {
 
                 // Parse for <><> style file replacements. This will call normalize to send over
                 // files, so we need to do this inside the execution environment.
                 var tcommands = this.ReWritePathsInQuery(cmds);
 
-                // First, create the file for output. This has to be done in Linux line endings (as we assume we are
-                // going to a linux machine for this).
-                var scriptFile = new FileInfo(Path.Combine(tmpDir.FullName, $"{prefix}.C"));
+                // First, create the file for ROOT command lines. This has to be done in Linux line endings (as we assume we are
+                // going to a linux machine for this). Use a random filename b.c. we can run in a multi-threaded environment.
+                var directoryName = Path.GetFileName(Path.GetTempFileName()).Replace(".","_");
+                var scriptFile = new FileInfo($"{Path.GetTempPath()}\\{directoryName}\\{prefix}.C");
+                scriptFile.Directory.Create();
                 using (var rdr = new StringReader(tcommands))
                 {
                     using (var wtr = scriptFile.CreateText())
@@ -136,15 +180,15 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 // Send over all files
                 var logForError = new StringBuilder();
-                SendAllFiles(sshConnection, s => RecordLine(logForError, s, dumpLine));
+                await SendAllFiles(sshConnection, s => RecordLine(logForError, s, dumpLine));
 
                 // Next, lets see if we can't run the file against root.
                 try
                 {
-                    sshConnection.ExecuteLinuxCommand($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
+                    await sshConnection.ExecuteLinuxCommandAsync($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
                     using (var lck = sshConnection.EnterNoRecoverRegion())
                     {
-                        sshConnection.ExecuteLinuxCommand($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
+                        await sshConnection.ExecuteLinuxCommandAsync($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
                             secondsTimeout: timeout.HasValue ? (int)timeout.Value.TotalSeconds : 60 * 60);
                     }
                 } catch (Exception e)
@@ -153,7 +197,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 }
 
                 // Finally, if there are any files to bring back, we should!
-                ReceiveAllFiles(sshConnection, dumpLine);
+                await ReceiveAllFiles(sshConnection, dumpLine);
 
                 return (object) null;
             }, dumpLine);
@@ -162,15 +206,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Return the machine config
         /// </summary>
-        private MachineConfig Machine
-        {
-            get
-            {
-                // This will use the URI's to determine what machine config (once) and then cache it.
-                // Not implemented yet.
-                return GetMachineInfo("bogus");
-            }
-        }
+        private MachineConfig _machine;
 
         /// <summary>
         /// Run a bash script on the remote node
@@ -179,7 +215,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="commands"></param>
         /// <param name="dumpLine"></param>
         /// <param name="verbose"></param>
-        internal void ExecuteBashScript(string fnameRoot, string commands, Action<string> dumpLine, bool verbose)
+        internal async Task ExecuteBashScriptAsync(string fnameRoot, string commands, Action<string> dumpLine, bool verbose)
         {
             // Create the file that will contain the scripts
             var tmpDir = new DirectoryInfo(Path.GetTempPath());
@@ -196,23 +232,22 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // Now, run with the remote stuff setup.
-            ExecuteRemoteWithTemp(fnameRoot, connection =>
+            await ExecuteRemoteWithTemp(fnameRoot, async connection =>
             {
                 // Queue up files to send and recv
                 _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = scriptFile, remoteLinuxDirectory = _linuxTempDir });
 
                 // Run, pushing and pulling files we need
-                SendAllFiles(connection, dumpLine);
+                await SendAllFiles(connection, dumpLine);
                 var logForError = new StringBuilder();
                 try
                 {
-                    connection.ExecuteLinuxCommand($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
+                    await connection.ExecuteLinuxCommandAsync($"bash {_linuxTempDir}/{scriptFile.Name} | cat", s => RecordLine(logForError, s, dumpLine));
                 } catch (Exception e)
                 {
                     throw new RemoteBashCommandFailureException($"Failed to execute bash script: {ReformatLog(logForError)}.", e);
                 }
-                ReceiveAllFiles(connection, dumpLine);
-                return (object)null;
+                await ReceiveAllFiles(connection, dumpLine);
             }, dumpLine);
         }
 
@@ -223,8 +258,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="queryDirectory"></param>
         /// <param name="varsToTransfer"></param>
         /// <returns></returns>
-        public override IDictionary<string, NTObject> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
+        public override async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
+            // Fetch out a connection string to setup the state.
+            SetConnectionString(files);
+
+            // Get the directory created.
             Action<string> dumper = l =>
             {
                 if (Environment.CompileDebug)
@@ -232,7 +271,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     Console.WriteLine(l);
                 }
             };
-            return ExecuteRemoteWithTemp($"Query", SSHConnection =>
+            return await ExecuteRemoteWithTemp($"Query", async SSHConnection =>
             {
                 // Load up extra files that need to be shipped over.
                 foreach (var f in Environment.ExtraComponentFiles)
@@ -240,8 +279,25 @@ namespace LINQToTTreeLib.ExecutionCommon
                     _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = _linuxTempDir });
                 }
 
-                return base.Execute(files, queryFile, queryDirectory, varsToTransfer);
+                return await base.Execute(files, queryFile, queryDirectory, varsToTransfer);
             }, dumper);
+        }
+
+        /// <summary>
+        /// Run on the remote guy in a temp dir that we clean up.
+        /// </summary>
+        /// <param name="phase"></param>
+        /// <param name="act"></param>
+        /// <param name="dumpLine"></param>
+        /// <returns></returns>
+        internal async Task ExecuteRemoteWithTemp(string phase, Func<SSHRecoveringConnection, Task> act, Action<string> dumpLine = null)
+        {
+            await ExecuteRemoteWithTemp(phase,
+                async c =>
+                {
+                    await act(c);
+                    return 1;
+                }, dumpLine);
         }
 
         /// <summary>
@@ -250,7 +306,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="tempDir"></param>
         /// <param name="act"></param>
         /// <param name="dumpLine"></param>
-        internal T ExecuteRemoteWithTemp<T>(string phase, Func<SSHRecoveringConnection, T> act, Action<string> dumpLine = null)
+        internal async Task<T> ExecuteRemoteWithTemp<T>(string phase, Func<SSHRecoveringConnection, Task<T>> act, Action<string> dumpLine = null)
         {
             if (phase.Contains("/") || phase.Contains(" "))
             {
@@ -261,7 +317,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             var remoteDirectory = $"/tmp/{System.Environment.MachineName}/{phase}.{Guid.NewGuid().ToString()}";
 
             // Make the connection, and create the directory.
-            var sshConnection = MakeSSHConnection(dumpLine);
+            var sshConnection = await MakeSSHConnection(dumpLine);
             var oldLinuxTempDir = _linuxTempDir;
             var oldLinuxPhase = _currentLinuxPhase;
             _currentLinuxPhase = phase;
@@ -272,20 +328,20 @@ namespace LINQToTTreeLib.ExecutionCommon
                 if (_currentLinuxPhase != oldLinuxPhase)
                 {
                     _linuxTempDir = remoteDirectory;
-                    sshConnection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
-                    sshConnection.ExecuteLinuxCommand($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    await sshConnection.ExecuteLinuxCommandAsync($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                     lck = sshConnection.EnterNoRecoverRegion();
                 }
                 dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir}");
 
-                return act(sshConnection);
+                return await act(sshConnection);
             }
             finally
             {
                 lck?.Dispose();
                 if (_currentLinuxPhase != oldLinuxPhase)
                 {
-                    sshConnection.ExecuteLinuxCommand($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                     _linuxTempDir = oldLinuxTempDir;
                     _currentLinuxPhase = oldLinuxPhase;
                 }
@@ -297,14 +353,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="dumpLine"></param>
-        private void SendAllFiles(ISSHConnection connection, Action<string> dumpLine)
+        private async Task SendAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToCopyOver)
             {
                 string linuxPath = $"{f.remoteLinuxDirectory}/{f.localFileName.Name}";
                 dumpLine?.Invoke($"Copying {f.localFileName.Name} -> {linuxPath}");
-                connection.ExecuteLinuxCommand($"mkdir -p {f.remoteLinuxDirectory}", dumpLine);
-                connection.CopyLocalFileRemotely(f.localFileName, linuxPath);
+                await connection.ExecuteLinuxCommandAsync($"mkdir -p {f.remoteLinuxDirectory}", dumpLine);
+                await connection.CopyLocalFileRemotelyAsync(f.localFileName, linuxPath);
             }
             _filesToCopyOver.Clear();
         }
@@ -314,7 +370,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="sshConnection"></param>
         /// <param name="dumpLine"></param>
-        private void ReceiveAllFiles(ISSHConnection connection, Action<string> dumpLine)
+        private async Task ReceiveAllFiles(ISSHConnection connection, Action<string> dumpLine)
         {
             foreach (var f in _filesToBringBack)
             {
@@ -325,7 +381,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     f.localFileName.Directory.Create();
                 }
-                connection.CopyRemoteFileLocally(linuxPath, f.localFileName);
+                await connection.CopyRemoteFileLocallyAsync(linuxPath, f.localFileName);
             }
             _filesToBringBack.Clear();
         }
@@ -419,19 +475,19 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="dumpLine">Dump output from running various setup lines</param>
         /// <returns></returns>
-        private SSHRecoveringConnection MakeSSHConnection(Action<string> dumpLine = null)
+        private async Task<SSHRecoveringConnection> MakeSSHConnection(Action<string> dumpLine = null)
         {
             if (_connection == null)
             {
-                Policy
+                await Policy
                     .Handle<SSHConnection.SSHConnectFailureException>()
-                    .WaitAndRetry(new[] { TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(60) })
-                    .Execute(() =>
+                    .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(60) })
+                    .ExecuteAsync(async () =>
                     {
 
-                        _connection = CreateSSHConnectionTo(Machine.RemoteSSHConnectionString);
+                        _connection = CreateSSHConnectionTo(_machine.RemoteSSHConnectionString);
 
-                        if (Machine.ConfigureLines != null)
+                        if (_machine.ConfigureLines != null)
                         {
                             var logForError = new StringBuilder();
                             try
@@ -441,10 +497,10 @@ namespace LINQToTTreeLib.ExecutionCommon
                                     ? dumpLine
                                     : (Action<string>)null;
 
-                                foreach (var line in Machine.ConfigureLines)
+                                foreach (var line in _machine.ConfigureLines)
                                 {
                                     var rep = line.Replace("ROOTVersionNumber", ROOTVersionNumber);
-                                    _connection.ExecuteLinuxCommand(rep, processLine: s => RecordLine(logForError, s, localdumper));
+                                    await _connection.ExecuteLinuxCommandAsync(rep, processLine: s => RecordLine(logForError, s, localdumper));
                                 }
                             }
                             catch (Exception e)
@@ -491,14 +547,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(Uri finfo)
+        protected override Task<string> NormalizeFileForTarget(Uri finfo)
         {
             // See if this file has already been setup as file that is remote
             if (finfo.Scheme == "remotebash")
             {
                 if (!finfo.AbsolutePath.Contains(":"))
                 {
-                    return finfo.AbsolutePath;
+                    return Task.FromResult(finfo.AbsolutePath);
                 }
             }
 
@@ -519,7 +575,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             }
 
             // It will just be in the local directory where we live.
-            return $"{_linuxTempDir}/{f.Name}";
+            return Task.FromResult($"{_linuxTempDir}/{f.Name}");
         }
 
         /// <summary>
@@ -527,12 +583,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(DirectoryInfo finfo)
+        protected override async Task<string> NormalizeFileForTarget(DirectoryInfo finfo)
         {
             if (finfo.Exists)
             {
                 var goodExtensiosn = new[] { ".h", ".hpp", ".c", ".cxx" };
-                var c = MakeSSHConnection();
+                await MakeSSHConnection();
                 foreach (var f in finfo.EnumerateFiles().Where(sf => goodExtensiosn.Contains(sf.Extension.ToLower())))
                 {
                     _filesToCopyOver.Add(new RemoteFileCopyInfo() { localFileName = f, remoteLinuxDirectory = _linuxTempDir });
@@ -547,7 +603,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="dumpLine"></param>
         /// <param name="verbose"></param>
         /// <returns></returns>
-        internal override bool CheckForROOTInstall(Action<string> dumpLine, bool verbose)
+        internal override async Task<bool> CheckForROOTInstall(Action<string> dumpLine, bool verbose)
         {
             // Simple script to execute
             var cmd = new StringBuilder();
@@ -555,8 +611,9 @@ namespace LINQToTTreeLib.ExecutionCommon
 
             try
             {
-                ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
-            } catch (RemoteBashCommandFailureException e) when (e.Message.Contains("version for root"))
+                await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+            }
+            catch (RemoteBashCommandFailureException e) when (e.Message.Contains("version for root"))
             {
                 return false;
             }
@@ -586,13 +643,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Find the config for a particular machine.
         /// </summary>
         /// <returns></returns>
-        public static MachineConfig GetMachineInfo(string clusterName)
+        public static MachineConfig GetMachineInfo(string connectionString)
         {
             if (_s_global_config == null)
             {
                 _s_global_config = new MachineConfig()
                 {
-                    RemoteSSHConnectionString = "gwatts@tev01.phys.washington.edu",
+                    RemoteSSHConnectionString = connectionString,
                     ConfigureLines = new[] { "setupATLAS", $"lsetup \"root ROOTVersionNumber\"" }
                 };
             }
@@ -624,9 +681,39 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// We aren't installing root because these are often big machines where ROOT is already present.
         /// If we need this, this functionality can be added.
         /// </remarks>
-        internal override void InstallROOT(Action<string> dumpLine, bool verbose)
+        internal override Task InstallROOT(Action<string> dumpLine, bool verbose)
         {
             throw new ROOTCantBeInstalledRemotelyException("Unable to install root on a remote system over ssh");
+        }
+
+        /// <summary>
+        /// Return the number of processors we can use. This depends on what "local" it will be running on.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <returns></returns>
+        public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
+        {
+            // Loop through the URI's and find all mentions of number of connections.
+            var minConnSpecified = rootFiles
+                .Select(u => u.Query)
+                .Select(q => System.Web.HttpUtility.ParseQueryString(q))
+                .Select(dt => dt.AllKeys.Contains("connections")
+                    ? (int.TryParse(dt.Get("connections"), out int nconn) ? nconn : 1)
+                    : 1)
+                .Min();
+            return minConnSpecified;
+        }
+
+        /// <summary>
+        /// Split up input files if they are meant to run on different machines.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
+        {
+            return files
+                .GroupBy(u => $"{u.Host}{u.UserInfo}")
+                .Select(ul => ul.Select(u => u).ToArray());
         }
     }
 }

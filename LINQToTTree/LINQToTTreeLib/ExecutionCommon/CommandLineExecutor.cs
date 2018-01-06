@@ -1,9 +1,11 @@
 ﻿using LinqToTTreeInterfacesLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
@@ -22,7 +24,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     }
 
     /// <summary>
-    /// Execute via the command line ROOT locally.
+    /// Execute via the command line ROOT locally (on windows, in the CMD environment).
     /// 1. Move files to a set of locally known placeses
     /// 2. Write a .C script
     /// 3. Run Root and execute that .C script in a sub-process.
@@ -39,10 +41,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// Can we locate ROOT?
         /// </summary>
         /// <returns></returns>
-        internal override bool CheckForROOTInstall(Action<string> dumpLine, bool verbose)
+        internal override Task<bool> CheckForROOTInstall(Action<string> dumpLine, bool verbose)
         {
             if (verbose) { dumpLine?.Invoke($"Looking for root to exist at {GetROOTPath()}."); }
-            return File.Exists(GetROOTPath());
+            return Task<bool>.Factory.StartNew(() => File.Exists(GetROOTPath()));
         }
 
         /// <summary>
@@ -80,14 +82,14 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(Uri finfo)
+        protected override Task<string> NormalizeFileForTarget(Uri finfo)
         {
             // Make sure the Uri is in the file scheme. This is b.c. otherwise
             // a UNC path (in particlar) isn't rendered the same way.
             var u = finfo.Scheme == "file"
                 ? finfo
                 : new UriBuilder(finfo) { Scheme = "file" }.Uri;
-            return u.LocalPath.Replace("\\", "\\\\");
+            return Task.FromResult(u.LocalPath.Replace("\\", "\\\\"));
         }
 
         /// <summary>
@@ -95,17 +97,37 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override string NormalizeFileForTarget(DirectoryInfo finfo)
+        protected override Task<string> NormalizeFileForTarget(DirectoryInfo finfo)
         {
-            return finfo.FullName.Replace("\\", "\\\\");
+            return Task.FromResult(finfo.FullName.Replace("\\", "\\\\"));
         }
 
         /// <summary>
         /// We are being asked to install ROOT. This is impossible.
         /// </summary>
-        internal override void InstallROOT(Action<string> dumpLine, bool verbose = false)
+        internal override Task InstallROOT(Action<string> dumpLine, bool verbose = false)
         {
             throw new InvalidOperationException("ROOT not found in the PATH - but in order to run this code it must have loaded root libraries from the PATH - so this is impossible!");
+        }
+
+        /// <summary>
+        /// Return the number of processors.
+        /// </summary>
+        /// <param name="rootFiles"></param>
+        /// <returns></returns>
+        public int SuggestedNumberOfSimultaniousProcesses(Uri[] rootFiles)
+        {
+            return System.Environment.ProcessorCount;
+        }
+
+        /// <summary>
+        /// We need no batching - so everything is returned as one.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns></returns>
+        public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
+        {
+            return new[] { files };
         }
     }
 }

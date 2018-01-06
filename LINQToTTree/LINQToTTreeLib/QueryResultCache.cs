@@ -301,13 +301,17 @@ namespace LINQToTTreeLib
                 if (keys.Size == 0)
                     return (false, default(T));
 
-                var cachedObjects = keys.Cast<ROOTNET.Interface.NTKey>().Select(k => k.ReadObj()).ToArray();
+                var cachedObjects = keys
+                    .Cast<ROOTNET.Interface.NTKey>()
+                    .Select(k => (n: k.Name, o: k.ReadObj()))
+                    .Select(vl => vl.o.ToRunInfo(vl.n))
+                    .ToArray();
 
                 // Now do the pick up. Make sure we are in the root directory when we do it, however!
                 // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
                 // it will be deleted when the file is closed on the way out of this routine.
                 ROOTNET.NTROOT.gROOT.cd();
-                var t = svr.LoadResult<T>(prm, cachedObjects, index);
+                var t = svr.LoadResult<T>(prm, cachedObjects);
                 return (t != null, t);
             }
             finally
@@ -381,7 +385,7 @@ namespace LINQToTTreeLib
         /// <param name="sourceFiles"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        public void CacheItem(IQueryResultCacheKey akey, ROOTNET.Interface.NTObject[] objs)
+        public void CacheItem(IQueryResultCacheKey akey, RunInfo[] objs)
         {
             CacheItem(akey, new[] { objs });
         }
@@ -391,11 +395,22 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="key"></param>
         /// <param name="cycleOfItems"></param>
-        public void CacheItem(IQueryResultCacheKey akey, IEnumerable<NTObject[]> cycleOfItems)
+        public void CacheItem(IQueryResultCacheKey akey, IEnumerable<RunInfo[]> cycleOfItems)
         {
             // Fail if we can't get a key of our own type.
             var key = (akey as KeyInfo)
                 .ThrowIfNull(() => new ArgumentNullException("The key must be valid to cache an item"));
+
+            // Fail if the cycle information in the RunInfo isn't consistent
+            // TODO: Get rid of cycle info - we should be caching only final results! Argh!
+            if (cycleOfItems.Where(clst => clst.Select(c => c._cycle).Distinct().Count() != 1).Any())
+            {
+                throw new InvalidOperationException("Unable to cache result: internal error - more than one cycle inside a single array list!");
+            }
+            if (cycleOfItems.Select(clst => clst.First()._cycle).Distinct().Count() != cycleOfItems.Count())
+            {
+                throw new InvalidOperationException("Unable to cache result: internal error - more than one cycle has the same cycle identifier!");
+            }
 
             // Now, write out the text file that tells everyone what files are here. Do that only
             // if the thing isn't there already. If the contents of the file change, then th key has
@@ -429,20 +444,21 @@ namespace LINQToTTreeLib
             }
 
             // Next, write out the cache files themselves. We do one for each cycle.
-            foreach (var cycleItems in cycleOfItems.Zip(Enumerable.Range(0,1000), (c, idx) => (items: c, index:idx)))
+            foreach (var cycleItems in cycleOfItems)
             {
-                if (cycleItems.items.Length == 0)
+                if (cycleItems.Length == 0)
                 {
                     throw new InvalidOperationException("Can't deal with caching zero objects!");
                 }
 
-                var clones = cycleItems.items.Select(o => o.Clone()).ToArray();
-                var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.index), "RECREATE");
+                //var clones = cycleItems.Select(o => o.ToTMap()).ToArray();
+                var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
                 try
                 {
-                    foreach (var obj in clones)
+                    foreach (var riObject in cycleItems)
                     {
-                        obj.Write();
+                        var name = riObject.ROOTFileKey();
+                        riObject._result.Clone(name).Write(name);
                     }
                 }
                 finally
