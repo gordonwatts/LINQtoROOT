@@ -299,7 +299,7 @@ namespace LINQToTTreeLib
             {
                 var keys = tf.ListOfKeys;
                 if (keys.Size == 0)
-                    return (false, default);
+                    return (false, default(T));
 
                 var cachedObjects = keys
                     .Cast<ROOTNET.Interface.NTKey>()
@@ -317,7 +317,7 @@ namespace LINQToTTreeLib
             {
                 // There has been an error - log it, and move on.
                 Trace.WriteLine($"Cache load failed due to an exception: {e.Message} at {e.StackTrace}");
-                return (false, default);
+                return (false, default(T));
             }
             finally
             {
