@@ -299,7 +299,7 @@ namespace LINQToTTreeLib
             {
                 var keys = tf.ListOfKeys;
                 if (keys.Size == 0)
-                    return (false, default(T));
+                    return (false, default);
 
                 var cachedObjects = keys
                     .Cast<ROOTNET.Interface.NTKey>()
@@ -313,6 +313,11 @@ namespace LINQToTTreeLib
                 ROOTNET.NTROOT.gROOT.cd();
                 var t = svr.LoadResult<T>(prm, cachedObjects);
                 return (t != null, t);
+            } catch (Exception e)
+            {
+                // There has been an error - log it, and move on.
+                Trace.WriteLine($"Cache load failed due to an exception: {e.Message} at {e.StackTrace}");
+                return (false, default);
             }
             finally
             {
