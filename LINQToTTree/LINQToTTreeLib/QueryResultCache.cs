@@ -10,6 +10,8 @@ using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using System.Diagnostics;
 using ROOTNET.Interface;
+using Nito.AsyncEx;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
 {
@@ -56,6 +58,14 @@ namespace LINQToTTreeLib
                 return UniqueHashString;
             }
         }
+
+        /// <summary>
+        /// Make sure we are trying to access ROOT only single threaded.
+        /// </summary>
+        /// <remarks>
+        /// ROOT's file system and other items are just not built to deal with mulit-threaded access. Protect cache access with this
+        /// </remarks>
+        private AsyncLock _rootLock = new AsyncLock();
 
         /// <summary>
         /// Return the key object
@@ -231,7 +241,7 @@ namespace LINQToTTreeLib
         /// <param name="varSaver"></param>
         /// <param name="akey"></param>
         /// <returns></returns>
-        public Tuple<bool, T> Lookup<T>(IQueryResultCacheKey akey, IVariableSaver varSaver, IDeclaredParameter theVar,
+        public async Task<Tuple<bool, T>> Lookup<T>(IQueryResultCacheKey akey, IVariableSaver varSaver, IDeclaredParameter theVar,
             Func<IAddResult> generateAdder = null)
         {
             if (akey == null || (akey as KeyInfo) == null)
@@ -245,22 +255,30 @@ namespace LINQToTTreeLib
 
             // Next, read in as many of the cycles of cache files as there are, 
             // grabbing all the objects we need.
-            var cycleObjects =
-                Enumerable.Range(0, 1000)
-                .Select(index => LoadCacheData<T>(key, index, varSaver, theVar))
-                .TakeWhile(objs => objs.found)
-                .ToArray();
+            var cycleObjects = new List<T>();
+            int index = 0;
+            bool keepgoing = true;
+            while (keepgoing)
+            {
+                var cd = await LoadCacheData<T>(key, index, varSaver, theVar);
+                keepgoing = cd.found;
+                if (keepgoing)
+                {
+                    cycleObjects.Add(cd.val);
+                }
+                index++;
+            }
 
-            if (cycleObjects.Length == 0 && cycleObjects.All(cval => cval.found == true && cval.val != null))
+            if (cycleObjects.Count == 0 && cycleObjects.All(cval => cval != null))
             {
                 return new Tuple<bool, T>(false, default(T));
             }
 
             // Special case for where this a single cycle. We just read them in and push them through the saver
             // and return them.
-            if (cycleObjects.Length == 1)
+            if (cycleObjects.Count == 1)
             {
-                return new Tuple<bool, T>(true, cycleObjects[0].val);
+                return new Tuple<bool, T>(true, cycleObjects[0]);
             }
             else
             {
@@ -272,7 +290,7 @@ namespace LINQToTTreeLib
 
                 var adder = generateAdder();
                 var addedValue = cycleObjects.Skip(1)
-                    .Aggregate(adder.Clone(cycleObjects[0].val), (acc, newv) => adder.Update(acc, newv.val));
+                    .Aggregate(adder.Clone(cycleObjects[0]), (acc, newv) => adder.Update(acc, newv));
                 return new Tuple<bool, T>(true, addedValue);
             }
         }
@@ -284,7 +302,7 @@ namespace LINQToTTreeLib
         /// <param name="key"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        private (bool found, T val) LoadCacheData<T>(KeyInfo key, int index, IVariableSaver svr, IDeclaredParameter prm)
+        private async Task<(bool found, T val)> LoadCacheData<T>(KeyInfo key, int index, IVariableSaver svr, IDeclaredParameter prm)
         {
             // Get the file name for this cycle and see if it exists.
             var cycleFilename = FileForCycle(key, index);
@@ -294,35 +312,39 @@ namespace LINQToTTreeLib
             }
 
             // Load all the objects in this file.
-            var tf = NTFile.Open(cycleFilename, "READ");
-            try
+            using (var holder = await _rootLock.LockAsync())
             {
-                var keys = tf.ListOfKeys;
-                if (keys.Size == 0)
+                var tf = NTFile.Open(cycleFilename, "READ");
+                try
+                {
+                    var keys = tf.ListOfKeys;
+                    if (keys.Size == 0)
+                        return (false, default(T));
+
+                    var cachedObjects = keys
+                        .Cast<ROOTNET.Interface.NTKey>()
+                        .Select(k => (n: k.Name, o: k.ReadObj()))
+                        .Select(vl => vl.o.ToRunInfo(vl.n))
+                        .ToArray();
+
+                    // Now do the pick up. Make sure we are in the root directory when we do it, however!
+                    // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
+                    // it will be deleted when the file is closed on the way out of this routine.
+                    ROOTNET.NTROOT.gROOT.cd();
+                    var t = svr.LoadResult<T>(prm, cachedObjects);
+                    return (t != null, t);
+                }
+                catch (Exception e)
+                {
+                    // There has been an error - log it, and move on.
+                    Trace.WriteLine($"Cache load failed due to an exception: {e.Message} at {e.StackTrace}");
                     return (false, default(T));
-
-                var cachedObjects = keys
-                    .Cast<ROOTNET.Interface.NTKey>()
-                    .Select(k => (n: k.Name, o: k.ReadObj()))
-                    .Select(vl => vl.o.ToRunInfo(vl.n))
-                    .ToArray();
-
-                // Now do the pick up. Make sure we are in the root directory when we do it, however!
-                // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
-                // it will be deleted when the file is closed on the way out of this routine.
-                ROOTNET.NTROOT.gROOT.cd();
-                var t = svr.LoadResult<T>(prm, cachedObjects);
-                return (t != null, t);
-            } catch (Exception e)
-            {
-                // There has been an error - log it, and move on.
-                Trace.WriteLine($"Cache load failed due to an exception: {e.Message} at {e.StackTrace}");
-                return (false, default(T));
-            }
-            finally
-            {
-                // In case bad things happened, try not to leave anything behind.
-                tf.Close();
+                }
+                finally
+                {
+                    // In case bad things happened, try not to leave anything behind.
+                    tf.Close();
+                }
             }
         }
 
@@ -390,9 +412,9 @@ namespace LINQToTTreeLib
         /// <param name="sourceFiles"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        public void CacheItem(IQueryResultCacheKey akey, RunInfo[] objs)
+        public Task CacheItem(IQueryResultCacheKey akey, RunInfo[] objs)
         {
-            CacheItem(akey, new[] { objs });
+            return CacheItem(akey, new[] { objs });
         }
 
         /// <summary>
@@ -400,7 +422,11 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="key"></param>
         /// <param name="cycleOfItems"></param>
-        public void CacheItem(IQueryResultCacheKey akey, IEnumerable<RunInfo[]> cycleOfItems)
+        /// <remarks>
+        /// We assume that under no circumstances can this be called at the same time for the same key. It is supported begin called
+        /// at the same time for different keys!
+        /// </remarks>
+        public async Task CacheItem(IQueryResultCacheKey akey, IEnumerable<RunInfo[]> cycleOfItems)
         {
             // Fail if we can't get a key of our own type.
             var key = (akey as KeyInfo)
@@ -456,20 +482,22 @@ namespace LINQToTTreeLib
                     throw new InvalidOperationException("Can't deal with caching zero objects!");
                 }
 
-                //var clones = cycleItems.Select(o => o.ToTMap()).ToArray();
-                var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
-                try
+                using (var holder = await _rootLock.LockAsync())
                 {
-                    foreach (var riObject in cycleItems)
+                    var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
+                    try
                     {
-                        var name = riObject.ROOTFileKey();
-                        riObject._result.Clone(name).Write(name);
+                        foreach (var riObject in cycleItems)
+                        {
+                            var name = riObject.ROOTFileKey();
+                            riObject._result.Clone(name).Write(name);
+                        }
                     }
-                }
-                finally
-                {
-                    trf.Write();
-                    trf.Close();
+                    finally
+                    {
+                        trf.Write();
+                        trf.Close();
+                    }
                 }
             }
         }

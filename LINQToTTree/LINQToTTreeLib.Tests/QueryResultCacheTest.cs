@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
 {
@@ -28,7 +29,7 @@ namespace LINQToTTreeLib
             MEFUtilities.MyClassDone();
         }
 
-        internal Tuple<bool, T> Lookup<T>(
+        internal async Task<Tuple<bool, T>> Lookup<T>(
             QueryResultCache target,
             Uri _rootFile,
             string treeName,
@@ -40,7 +41,7 @@ namespace LINQToTTreeLib
             Func<IAddResult> generateAdder = null
         )
         {
-            var result = target.Lookup<T>(target.GetKey(new Uri[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), varSaver, null, generateAdder);
+            var result = await target.Lookup<T>(target.GetKey(new Uri[] { _rootFile }, treeName, inputObjects, cacheStrings, queryModel, recheckDates: checkDates, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), varSaver, null, generateAdder);
             Assert.IsNotNull(result, "Should never return a null lookup");
             return result;
         }
@@ -139,12 +140,12 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestNoHit()
+        public async Task TestNoHit()
         {
             var f = MakeRootFile("TestNoHit");
             var query = MakeQuery(0);
 
-            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", null, null, query, new DummySaver()).Item1, "cache should be empty for this guy!");
+            Assert.IsFalse((await Lookup<int>(new QueryResultCache(), f, "test", null, null, query, new DummySaver())).Item1, "cache should be empty for this guy!");
         }
 
         /// <summary>
@@ -233,21 +234,21 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestHit0()
+        public async Task TestHit0()
         {
-            TestHitDriver(0);
+            await TestHitDriver(0);
         }
 
         [TestMethod]
-        public void TestHit1()
+        public async Task TestHit1()
         {
-            TestHitDriver(1);
+            await TestHitDriver(1);
         }
 
-        private void TestHitDriver(int queryIndex)
+        private async Task TestHitDriver(int queryIndex)
         {
             var f = MakeRootFile("TestHitDriver");
-            TestForCachingOnUri(queryIndex, f);
+            await TestForCachingOnUri(queryIndex, f);
         }
 
         /// <summary>
@@ -255,7 +256,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="queryIndex"></param>
         /// <param name="f"></param>
-        private void TestForCachingOnUri(int queryIndex, Uri f)
+        private async Task TestForCachingOnUri(int queryIndex, Uri f)
         {
             var query = MakeQuery(queryIndex);
 
@@ -265,15 +266,16 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            var k = q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath));
+            await q.CacheItem(k, (new NTObject[] { h }).AsRunInfoArray());
 
-            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
         }
 
         [TestMethod]
-        public void CacheSingleInteger()
+        public async Task CacheSingleInteger()
         {
             // A simple query
             var query = MakeQuery(0);
@@ -285,16 +287,16 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h }.AsRunInfoArray());
 
             // Now, do the lookup.
-            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
         }
 
         [TestMethod]
-        public void CacheWithVeryLongSourceFilename()
+        public async Task CacheWithVeryLongSourceFilename()
         {
             // A simple query
             var query = MakeQuery(0);
@@ -306,16 +308,16 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), new NTObject[] { h }.AsRunInfoArray());
 
             // Now, do the lookup.
-            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(5, r.Item2, "incorrect return value");
         }
 
         [TestMethod]
-        public void CacheCycledInteger()
+        public async Task CacheCycledInteger()
         {
             // A simple query
             var query = MakeQuery(0);
@@ -333,17 +335,17 @@ namespace LINQToTTreeLib
 
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles.AsRunInfoArray2D());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles.AsRunInfoArray2D());
 
             // Now, do the lookup.
-            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver(), generateAdder: () => new DummyIntAdder());
+            var r = await Lookup<int>(q, f, "test", null, null, query, new DummySaver(), generateAdder: () => new DummyIntAdder());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual(7, r.Item2, "incorrect return value");
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void CacheCycleDuplicateCycles()
+        public async Task CacheCycleDuplicateCycles()
         {
             // We cannot give a list of items to cache that have the same
             // cycle number.
@@ -367,12 +369,12 @@ namespace LINQToTTreeLib
 
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void CacheCycleCyclesChangeInOneCycle()
+        public async Task CacheCycleCyclesChangeInOneCycle()
         {
             // We cannot give a list of items to cache that have the same
             // cycle number.
@@ -395,7 +397,7 @@ namespace LINQToTTreeLib
 
             var q = new QueryResultCache();
             var date = DateTime.Now;
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => date), cacheCycles);
         }
 
         class DummyIntAdder : IAddResult
@@ -429,24 +431,24 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestNoProofHit()
+        public async Task TestNoProofHit()
         {
             // Make sure that a new proof dataset works just fine.
             var f = new Uri("proof://tev03.phys.washington.edu/JetBackToBack_v006_PeriodA");
             var query = MakeQuery(0);
 
-            Assert.IsFalse(Lookup<int>(new QueryResultCache(), f, "test", null, null, query, new DummySaver()).Item1, "cache should be empty for this proof guy!");
+            Assert.IsFalse((await Lookup<int>(new QueryResultCache(), f, "test", null, null, query, new DummySaver())).Item1, "cache should be empty for this proof guy!");
         }
 
         [TestMethod]
-        public void TestHitForProofDataset()
+        public async Task TestHitForProofDataset()
         {
             var f = new Uri("proof://tev03.phys.washington.edu/JetBackToBack_v006_PeriodA");
-            TestForCachingOnUri(0, f);
+            await TestForCachingOnUri(0, f);
         }
 
         [TestMethod]
-        public void TestForFilesInDifferentOrders()
+        public async Task TestForFilesInDifferentOrders()
         {
             var f1 = MakeRootFile("TestHitDriver1");
             var f2 = MakeRootFile("TestHitDriver2");
@@ -460,20 +462,20 @@ namespace LINQToTTreeLib
             var q = new QueryResultCache();
             var k1 = q.GetKey(new Uri[] { f1, f2 }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath));
             var k2 = q.GetKey(new Uri[] { f2, f1 }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath));
-            q.CacheItem(k1, new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(k1, new NTObject[] { h }.AsRunInfoArray());
 
             //
             // Now, do the lookup, but with files in a different order.
             //
 
-            var r1 = q.Lookup<int>(k1, new DummySaver(), null);
-            var r2 = q.Lookup<int>(k2, new DummySaver(), null);
+            var r1 = await q.Lookup<int>(k1, new DummySaver(), null);
+            var r2 = await q.Lookup<int>(k2, new DummySaver(), null);
             Assert.IsTrue(r1.Item1, "expected hit for same key");
             Assert.IsTrue(r2.Item1, "expected hit for second key with different files");
         }
 
         [TestMethod]
-        public void TestForFileOutOfDate()
+        public async Task TestForFileOutOfDate()
         {
             var u = MakeRootFile("TestForFileOutOfDate");
             var f = new FileInfo(u.LocalPath);
@@ -485,7 +487,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// Modify the file
 
@@ -495,21 +497,21 @@ namespace LINQToTTreeLib
                 w.Close();
             }
             f.Refresh();
-            System.Threading.Thread.Sleep(250);
+            await Task.Delay(250);
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
+            var r = await Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsFalse(r.Item1, "altered file should have made this fail");
 
             // Next, update the cache and look to make sure that the cache returns a hit this time!
-            q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
-            r = Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
+            await q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            r = await Lookup<int>(q, u, "test", null, null, query, new DummySaver(), checkDates: true);
             Assert.IsTrue(r.Item1, "altered file should have made this fail");
         }
 
         [TestMethod]
-        public void TestForFileOutOfDateNoCheck()
+        public async Task TestForFileOutOfDateNoCheck()
         {
             var f = MakeRootFile("TestForFileOutOfDate");
             var query = MakeQuery(0);
@@ -520,7 +522,7 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// Modify the file
 
@@ -532,12 +534,12 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test", null, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", null, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "altered file should not have triggered the re-check");
         }
 
         [TestMethod]
-        public void TestForNonTObjectCaching()
+        public async Task TestForNonTObjectCaching()
         {
             var f = MakeRootFile("TestForNonTObjectCaching");
             var query = MakeQuery(0);
@@ -546,11 +548,11 @@ namespace LINQToTTreeLib
 
             var h = new ROOTNET.NTLorentzVector(1.0, 2.0, 3.0, 4.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup gets back the same object!
 
-            var r = Lookup<NTLorentzVector>(q, f, "test", null, null, query, new DummyHistoSaver());
+            var r = await Lookup<NTLorentzVector>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "SHould get back the same object");
             Assert.IsNotNull(r.Item2, "tlz should not be null");
             Assert.AreEqual(1.0, r.Item2.X(), "x value");
@@ -559,7 +561,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void TestForTreeNameChanges()
+        public async Task TestForTreeNameChanges()
         {
             var f = MakeRootFile("TestForTreeNameChanges");
             var query = MakeQuery(0);
@@ -570,16 +572,16 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup fails now!
 
-            var r = Lookup<int>(q, f, "test1", null, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test1", null, null, query, new DummySaver());
             Assert.IsFalse(r.Item1, "different tree should have made this fail");
         }
 
         [TestMethod]
-        public void TestForSameHistos()
+        public async Task TestForSameHistos()
         {
             var f = MakeRootFile("TestForTreeNameChanges");
             var query = MakeQuery(0);
@@ -599,7 +601,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now!
 
@@ -607,13 +609,13 @@ namespace LINQToTTreeLib
             hInputLookup.Directory = null;
             hInputLookup.SetBinContent(2, 5.0);
 
-            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "Cache should have been there");
 
         }
 
         [TestMethod]
-        public void TestForSameHistosEmpty()
+        public async Task TestForSameHistosEmpty()
         {
             var f = MakeRootFile("TestForTreeNameChanges");
             var query = MakeQuery(0);
@@ -633,7 +635,7 @@ namespace LINQToTTreeLib
                 h.Directory = null;
                 h.SetBinContent(1, 5.0);
 
-                q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+                await q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
             }
 
             /// And make sure the lookup works now!
@@ -641,13 +643,13 @@ namespace LINQToTTreeLib
             var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
             hInputLookup.Directory = null;
 
-            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "Cache should have been there");
 
         }
 
         [TestMethod]
-        public void TestForDiffHistos()
+        public async Task TestForDiffHistos()
         {
             var f = MakeRootFile("TestForTreeNameChanges");
             var query = MakeQuery(0);
@@ -667,7 +669,7 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now!
 
@@ -675,12 +677,12 @@ namespace LINQToTTreeLib
             hInputLookup.Directory = null;
             hInputLookup.SetBinContent(2, 5.5);
 
-            var r = Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsFalse(r.Item1, "Cache should have been there");
         }
 
         [TestMethod]
-        public void TestForDiffResultHistos()
+        public async Task TestForDiffResultHistos()
         {
             var f = MakeRootFile("TestForDiifResultHistos");
             var query = MakeQuery(2);
@@ -694,18 +696,18 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
 
             var query1 = MakeQuery(3);
-            var r = Lookup<int>(q, f, "test", new object[0], null, query1, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", new object[0], null, query1, new DummySaver());
             Assert.IsFalse(r.Item1, "Unexpected cache hit");
         }
 
         [TestMethod]
-        public void TestForSameResultHistosDiffNameTitle()
+        public async Task TestForSameResultHistosDiffNameTitle()
         {
             var f = MakeRootFile("TestForSameResultHistosDiffNameTitle");
             var query = MakeQuery(2);
@@ -719,18 +721,18 @@ namespace LINQToTTreeLib
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             /// And make sure the lookup works now - make a different query, which is the same
             /// but with a slightly different query guy.
 
             var query1 = MakeQuery(4);
-            var r = Lookup<int>(q, f, "test", new object[0], null, query1, new DummySaver());
+            var r = await Lookup<int>(q, f, "test", new object[0], null, query1, new DummySaver());
             Assert.IsTrue(r.Item1, "Expected a cache hit");
         }
 
         [TestMethod]
-        public void TestNoStuckInOpenFile()
+        public async Task TestNoStuckInOpenFile()
         {
             // When we load up and return a cache, we are storing a histogram in the file - make sure it comes back w/out errors.
             var f = MakeRootFile("TestHitDriver");
@@ -741,10 +743,10 @@ namespace LINQToTTreeLib
             h.Directory = null;
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
-            q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
+            await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
 
             // Do the lookup.
-            var r = Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
+            var r = await Lookup<ROOTNET.Interface.NTH1F>(q, f, "test", null, null, query, new DummyHistoSaver());
             Assert.IsTrue(r.Item1, "expected hit");
             Assert.AreEqual("hi", r.Item2.Name, "improper histogram came back");
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Remotion.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -51,7 +52,7 @@ namespace LinqToTTreeInterfacesLib
         /// 
         /// Further, several results may have gone into this value - this will use the Adder framework to do the combination.
         /// </remarks>
-        Tuple<bool, T> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IDeclaredParameter theVar,
+        Task<Tuple<bool, T>> Lookup<T>(IQueryResultCacheKey key, IVariableSaver varSaver, IDeclaredParameter theVar,
             Func<IAddResult> generateAdder = null);
 
         /// <summary>
@@ -60,13 +61,13 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="_rootFile"></param>
         /// <param name="qm"></param>
         /// <param name="o"></param>
-        void CacheItem(IQueryResultCacheKey key, RunInfo[] o);
+        Task CacheItem(IQueryResultCacheKey key, RunInfo[] o);
 
         /// <summary>
         /// A single item has a few results that go into it. Cache them all.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="cycleOfItems"></param>
-        void CacheItem(IQueryResultCacheKey key, IEnumerable<RunInfo[]> cycleOfItems);
+        Task CacheItem(IQueryResultCacheKey key, IEnumerable<RunInfo[]> cycleOfItems);
     }
 }

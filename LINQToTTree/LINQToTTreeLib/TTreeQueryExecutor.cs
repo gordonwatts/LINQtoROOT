@@ -427,7 +427,7 @@ namespace LINQToTTreeLib
             /// Push the results into the cache
             /// </summary>
             /// <param name="results"></param>
-            void CacheResults(IDictionary<string, RunInfo>[] results);
+            Task CacheResults(IDictionary<string, RunInfo>[] results);
         }
 
 
@@ -492,9 +492,9 @@ namespace LINQToTTreeLib
             /// Cache the results for everything.
             /// </summary>
             /// <param name="results"></param>
-            void IQueuedQuery.CacheResults(IDictionary<string, RunInfo>[] results)
+            Task IQueuedQuery.CacheResults(IDictionary<string, RunInfo>[] results)
             {
-                Future.TreeExecutor.CacheResults(Code.ResultValues.FirstOrDefault(), CacheKey, results);
+                return Future.TreeExecutor.CacheResults(Code.ResultValues.FirstOrDefault(), CacheKey, results);
             }
 
             /// <summary>
@@ -701,7 +701,7 @@ namespace LINQToTTreeLib
                 var cacheHit = _cache.Lookup<TResult>(key,
                     _varSaver.Get(result.ResultValueAsVaraible),
                     result.ResultValueAsVaraible,
-                    () => _resultAdders.Where(a => a.CanHandle(typeof(TResult))).FirstOrDefault());
+                    () => _resultAdders.Where(a => a.CanHandle(typeof(TResult))).FirstOrDefault()).Result;
                 if (cacheHit.Item1)
                 {
                     CountCacheHits++;
@@ -841,7 +841,7 @@ namespace LINQToTTreeLib
                 foreach (var cq in _queuedQueries)
                 {
                     cq.ExtractResult(combinedResults);
-                    cq.CacheResults(combinedResults);
+                    await cq.CacheResults(combinedResults);
                 }
                 _queuedQueries.Clear();
 
@@ -1191,14 +1191,14 @@ namespace LINQToTTreeLib
         /// <param name="iVariable"></param>
         /// <param name="key"></param>
         /// <param name="results"></param>
-        private void CacheResults(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, RunInfo>[] results)
+        private Task CacheResults(IDeclaredParameter iVariable, IQueryResultCacheKey key, IDictionary<string, RunInfo>[] results)
         {
             // Get the results all out.
             var s = _varSaver.Get(iVariable);
             var objs = results
                 .Select(r => ExtractQueryReturnedObjectsForVariable(iVariable, r, s))
                 .ToArray();
-            _cache.CacheItem(key, objs);
+            return _cache.CacheItem(key, objs);
         }
 
         /// <summary>
