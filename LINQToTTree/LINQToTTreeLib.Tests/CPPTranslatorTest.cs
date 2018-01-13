@@ -93,9 +93,9 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, codeBlocks.Count(), "Wrong number of code blocks");
         }
 
-        class tooManyStatemnets : IExecutableCode
+        class TooManyStatemnets : IExecutableCode
         {
-            public tooManyStatemnets()
+            public TooManyStatemnets()
             {
                 var vInt = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
                 vInt.SetInitialValue("2");
@@ -154,7 +154,7 @@ namespace LINQToTTreeLib
             CPPTranslator target = new CPPTranslator();
             MEFUtilities.Compose(target);
 
-            var toomany = new tooManyStatemnets();
+            var toomany = new TooManyStatemnets();
 
             var result = target.TranslateGeneratedCode(toomany);
 

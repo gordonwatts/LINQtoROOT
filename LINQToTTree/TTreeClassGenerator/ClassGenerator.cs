@@ -265,7 +265,7 @@ namespace TTreeClassGenerator
                         /// This is a kludge until we do more work to fix things with attributes, etc.
                         /// 
 
-                        Action writeOutExtra = () =>
+                        void writeOutExtra()
                         {
                             if (cls.IsTopLevelClass)
                             {
@@ -306,7 +306,7 @@ namespace TTreeClassGenerator
                                 }
                                 output.WriteLine("    };");
                             }
-                        };
+                        }
 
                         ///
                         /// First, if there is a translated object model, write it out.

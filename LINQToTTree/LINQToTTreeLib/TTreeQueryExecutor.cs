@@ -828,7 +828,7 @@ namespace LINQToTTreeLib
 
                 // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
                 int cycle = -1;
-                Func<int> cycle_counter = () => Interlocked.Increment(ref cycle);
+                int cycle_counter() => Interlocked.Increment(ref cycle);
                 var combinedResultsTasks = _resolvedRootFiles
                     .SelectMany(sch => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter))
                     .ToArray();
@@ -900,8 +900,8 @@ namespace LINQToTTreeLib
         {
             var grps = files
                 .Select((u, index) => (u, index))
-                .GroupBy(info => info.Item2 % nBatches)
-                .Select(lst => lst.Select(f => f.Item1).ToArray());
+                .GroupBy(info => info.index % nBatches)
+                .Select(lst => lst.Select(f => f.u).ToArray());
             return grps.ToArray();
         }
 

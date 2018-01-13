@@ -134,8 +134,10 @@ namespace CmdTFileParser
                 /// And now process the root files!
                 /// 
 
-                var converter = new TTreeParser.ParseTFile();
-                converter.ProxyGenerationLocation = outputDir;
+                var converter = new TTreeParser.ParseTFile
+                {
+                    ProxyGenerationLocation = outputDir
+                };
 
                 var rootClassList = from f in rootFiles
                                     from c in converter.ParseFile(f)

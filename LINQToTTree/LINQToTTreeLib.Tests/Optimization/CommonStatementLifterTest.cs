@@ -1688,8 +1688,10 @@ namespace LINQToTTreeLib.Tests.Optimization
         public void DontLiftEmbededIfWithDifferentOutcome()
         {
             // Generate the two close, but not identical calls.
-            var q = new QueriableDummy<TestNtupeArr>();
-            q.DOQueryFunctions = false;
+            var q = new QueriableDummy<TestNtupeArr>
+            {
+                DOQueryFunctions = false
+            };
 
             var dudeQ1 = from evt in q
                          where (evt.myvectorofint.First() > 0)

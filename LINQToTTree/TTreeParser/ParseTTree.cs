@@ -403,8 +403,10 @@ namespace TTreeParser
             var c = new ROOTClassShell(cls.Name.SanitizedName()) { IsTopLevelClass = false };
             if (container != null)
                 container.Add(new ItemROOTClass() { Name = itemName, ItemType = cls.Name.SanitizedName(), NotAPointer = false });
-            var clist = new List<ROOTClassShell>();
-            clist.Add(c);
+            var clist = new List<ROOTClassShell>
+            {
+                c
+            };
 
             foreach (var item in sInfo.Elements.Cast<ROOTNET.Interface.NTStreamerElement>())
             {

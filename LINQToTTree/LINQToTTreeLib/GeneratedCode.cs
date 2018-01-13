@@ -74,10 +74,7 @@ namespace LINQToTTreeLib
 
         public void SetResult(Expression r)
         {
-            if (r == null)
-                throw new ArgumentNullException("Cannot set the result to be null");
-
-            ResultValue = r;
+            ResultValue = r ?? throw new ArgumentNullException("Cannot set the result to be null");
             Debug.WriteLine("SetResult: {0}{1}", r.ToString(), "");
 
             if (r is IDeclaredParameter)

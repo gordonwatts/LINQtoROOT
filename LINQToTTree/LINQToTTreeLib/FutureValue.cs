@@ -35,7 +35,7 @@ namespace LINQToTTreeLib
         /// </summary>
         public FutureValue(TTreeQueryExecutor tTreeQueryExecutor)
         {
-            Value = default(T);
+            Value = default;
             HasValue = false;
             TreeExecutor = tTreeQueryExecutor ?? throw new ArgumentException("tree executor must not be null!");
         }

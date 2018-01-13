@@ -64,6 +64,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AtlasSSH, Version=4.0.2.0, Culture=neutral, processorArchitecture=MSIL">
