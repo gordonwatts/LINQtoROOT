@@ -35,12 +35,9 @@ namespace LINQToTTreeLib
         /// </summary>
         public FutureValue(TTreeQueryExecutor tTreeQueryExecutor)
         {
-            if (tTreeQueryExecutor == null)
-                throw new ArgumentException("tree executor must not be null!");
-
             Value = default(T);
             HasValue = false;
-            TreeExecutor = tTreeQueryExecutor;
+            TreeExecutor = tTreeQueryExecutor ?? throw new ArgumentException("tree executor must not be null!");
         }
 
         /// <summary>
@@ -88,7 +85,8 @@ namespace LINQToTTreeLib
         {
             if (_queryExecutionTask == null)
             {
-                _queryExecutionTask = TreeExecutor.ExecuteQueuedQueries();
+                _queryExecutionTask = (TreeExecutor ?? throw new ArgumentNullException($"TreeExecutor for type {typeof(T).Name} for FutureValue has a null value!"))
+                    .ExecuteQueuedQueries();
             }
             return _queryExecutionTask;
         }
