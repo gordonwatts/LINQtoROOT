@@ -46,7 +46,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Used to make sure that we don't try to run more than one at a time.
         /// </summary>
-        private AsyncLock _globalLock = new AsyncLock();
+        private static AsyncLock _globalLock = new AsyncLock();
 
         /// <summary>
         /// Given a request, run it. No need to clean up afterwards as we are already there.

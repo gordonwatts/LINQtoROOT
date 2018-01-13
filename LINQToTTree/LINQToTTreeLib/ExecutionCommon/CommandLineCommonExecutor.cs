@@ -529,7 +529,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Protect against accessing root multiple times here.
         /// </summary>
-        private AsyncLock _loadResultsLock = new AsyncLock();
+        private static AsyncLock _loadResultsLock = new AsyncLock();
 
         /// <summary>
         /// Called after running to load the results.
