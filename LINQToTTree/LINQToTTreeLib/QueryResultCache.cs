@@ -65,7 +65,7 @@ namespace LINQToTTreeLib
         /// <remarks>
         /// ROOT's file system and other items are just not built to deal with mulit-threaded access. Protect cache access with this
         /// </remarks>
-        private AsyncLock _rootLock = new AsyncLock();
+        private static AsyncLock _rootLock = new AsyncLock();
 
         /// <summary>
         /// Return the key object
