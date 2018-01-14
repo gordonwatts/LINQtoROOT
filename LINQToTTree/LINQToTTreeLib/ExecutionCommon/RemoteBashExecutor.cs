@@ -264,13 +264,13 @@ namespace LINQToTTreeLib.ExecutionCommon
             SetConnectionString(files);
 
             // Get the directory created.
-            Action<string> dumper = l =>
+            void dumper(string l)
             {
                 if (Environment.CompileDebug)
                 {
                     Console.WriteLine(l);
                 }
-            };
+            }
             return await ExecuteRemoteWithTemp($"Query", async SSHConnection =>
             {
                 // Load up extra files that need to be shipped over.
