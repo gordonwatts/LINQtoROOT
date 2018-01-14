@@ -83,6 +83,10 @@ namespace LINQToTTreeLib
         /// </summary>
         private Task FireOffQueryTask()
         {
+            if (HasValue)
+            {
+                throw new InvalidOperationException("FutureValue should not be asked to generate a value if it already has a value!");
+            }
             if (_queryExecutionTask == null)
             {
                 _queryExecutionTask = (TreeExecutor ?? throw new ArgumentNullException($"TreeExecutor for type {typeof(T).Name} for FutureValue has a null value!"))

@@ -123,10 +123,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         internal static QueriableTTree<TSource> CheckSource<TSource>(IQueryable<TSource> query)
         {
-            ///
-            /// Really - we can deal with only *one* type of querable!!
-            /// 
-
+            // Really - we can deal with only *one* type of querable!!
             var q = query as QueriableTTree<TSource>;
             if (q == null)
                 throw new ArgumentException("Query must be on a TTree in order to use futures!");

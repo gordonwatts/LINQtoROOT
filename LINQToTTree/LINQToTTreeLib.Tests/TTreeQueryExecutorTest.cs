@@ -282,6 +282,65 @@ namespace LINQToTTreeLib
             Assert.AreEqual(numberOfIter, result);
         }
 
+        // Bogus Test Files
+        public class TestNtupeFull
+        {
+#pragma warning disable 0169
+            public int run;
+#pragma warning restore 0169
+
+            public static string[] _gObjectFiles = null;
+            public static string[] _gCINTLines = null;
+        }
+
+        [TestMethod]
+        public async Task CachedValueCanBeAWaited()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var q1 = new QueriableTTree<TestNtupeFull>(rootFile1, "dude");
+
+            // This should wait while we execute
+            var dude1 = await q1.FutureCount();
+
+            // This should fetch the value from the cache, and so return right away.
+            var dude2 = await q1.FutureCount();
+
+            Assert.AreEqual(dude1, dude2);
+        }
+
+        [TestMethod]
+        public async Task CachedValueCanBeAWaitedFromTwoSources()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var q1 = new QueriableTTree<TestNtupeFull>(rootFile1, "dude");
+            var q2 = new QueriableTTree<TestNtupeFull>(rootFile1, "dude");
+
+            // This should wait while we execute
+            var dude1 = await q1.FutureCount();
+
+            // This should fetch the value from the cache, and so return right away.
+            var dude2 = await q2.FutureCount();
+
+            Assert.AreEqual(dude1, dude2);
+        }
+
+        [TestMethod]
+        public async Task WaitTwiceOnValue()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var q1 = new QueriableTTree<TestNtupeFull>(rootFile1, "dude");
+
+            // This should wait while we execute
+            var tsk = q1.FutureCount();
+            var dude1 = await tsk;
+            var dude2 = await tsk;
+
+            Assert.AreEqual(dude1, dude2);
+        }
+
         [TestMethod]
         [Ignore]
         // Seemst o have died having to do with data manager stuff. Need to investigate!
