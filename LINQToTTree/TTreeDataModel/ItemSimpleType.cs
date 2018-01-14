@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 namespace TTreeDataModel
 {
-    public class ItemSimpleType : IClassItem
+    public sealed class ItemSimpleType : IClassItem
     {
         public ItemSimpleType(string name, string itemtype)
         {

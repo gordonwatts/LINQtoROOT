@@ -7,7 +7,7 @@ namespace TTreeDataModel
     /// This is important because you can do things like ask for the "size()" of the thing, how we deal
     /// with those things have to be kept seperate!
     /// </summary>
-    public class ItemVector : IClassItem
+    public sealed class ItemVector : IClassItem
     {
         private string _vectorType;
 
@@ -35,7 +35,7 @@ namespace TTreeDataModel
         public override string Name { get; set; }
 
         /// <summary>
-        /// Get/Set this not being a ponter.
+        /// Get/Set this not being a pointer.
         /// </summary>
         [XmlAttribute]
         public override bool NotAPointer { get; set; }

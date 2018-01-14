@@ -46,7 +46,7 @@ namespace TTreeParser.Tests
             Assert.AreEqual(0, results[0].Length, "found an array!?");
         }
 
-        class classitem : IClassItem
+        class Classitem : IClassItem
         {
             public override string ItemType { get; set; }
             public override string Name { get; set; }
@@ -71,7 +71,7 @@ namespace TTreeParser.Tests
 
             var aa = new ArrayAnalyzer();
             ROOTClassShell sh = new ROOTClassShell();
-            sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
+            sh.Add(new Classitem() { ItemType = "int[]", Name = "myvectorofint" });
             var result = aa.DetermineAllArrayLengths(sh, tree1, 10);
             Assert.AreEqual(10, result.Length, "# of events");
             Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
@@ -98,7 +98,7 @@ namespace TTreeParser.Tests
             var tree1 = f1.Get("dude") as ROOTNET.NTTree;
 
             ROOTClassShell sh = new ROOTClassShell();
-            sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
+            sh.Add(new Classitem() { ItemType = "int[]", Name = "myvectorofint" });
             var result = aa.DetermineAllArrayLengths(sh, tree1, 10);
             Assert.AreEqual(10, result.Length, "# of events");
             Assert.IsTrue(result.All(x => x.Length == 1), "incorrect individual variable list length list");
@@ -119,7 +119,7 @@ namespace TTreeParser.Tests
             Trace.WriteLine("The size is: " + tree.Entries.ToString());
 
             ROOTClassShell sh = new ROOTClassShell();
-            sh.Add(new classitem() { ItemType = "int[]", Name = "arr" });
+            sh.Add(new Classitem() { ItemType = "int[]", Name = "arr" });
             var result = aa.DetermineAllArrayLengths(sh, tree, 10);
 
             Console.WriteLine("result.length = {0}", result.Length);
@@ -142,7 +142,7 @@ namespace TTreeParser.Tests
             f.Write();
 
             ROOTClassShell sh = new ROOTClassShell();
-            sh.Add(new classitem() { ItemType = "int[]", Name = "arr" });
+            sh.Add(new Classitem() { ItemType = "int[]", Name = "arr" });
             var result = aa.DetermineAllArrayLengths(sh, tree, 10);
 
             Assert.AreEqual(10, result.Length, "# of events");
@@ -171,8 +171,8 @@ namespace TTreeParser.Tests
 
             var aa = new ArrayAnalyzer();
             ROOTClassShell sh = new ROOTClassShell();
-            sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint" });
-            sh.Add(new classitem() { ItemType = "int[]", Name = "myvectorofint1" });
+            sh.Add(new Classitem() { ItemType = "int[]", Name = "myvectorofint" });
+            sh.Add(new Classitem() { ItemType = "int[]", Name = "myvectorofint1" });
             var result = aa.DetermineAllArrayLengths(sh, tree1, 10);
             Assert.AreEqual(10, result.Length, "# of events");
             Assert.IsTrue(result.All(x => x.Length == 2), "incorrect individual variable list length list");

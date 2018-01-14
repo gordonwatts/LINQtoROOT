@@ -6,7 +6,7 @@ namespace TTreeDataModel
     /// <summary>
     /// Represents a C style array of some other item type.
     /// </summary>
-    public class ItemCStyleArray : IClassItem, IClassItemExtraAttributes
+    public sealed class ItemCStyleArray : IClassItem, IClassItemExtraAttributes
     {
         /// <summary>
         /// Craete an item for output that contains a C style array.

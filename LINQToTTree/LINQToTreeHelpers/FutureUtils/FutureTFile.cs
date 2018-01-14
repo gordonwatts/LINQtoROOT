@@ -6,7 +6,7 @@ namespace LINQToTreeHelpers.FutureUtils
     /// <summary>
     /// Future TFile - really just a normal TFile, but gets written out in the future...
     /// </summary>
-    public class FutureTFile : FutureTDirectory, IDisposable
+    public sealed class FutureTFile : FutureTDirectory, IDisposable
     {
         private static ROOTNET.Interface.NTFile CreateOpenFile(string name)
         {

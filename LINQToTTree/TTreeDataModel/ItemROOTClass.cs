@@ -2,7 +2,7 @@
 
 namespace TTreeDataModel
 {
-    public class ItemROOTClass : IClassItem
+    public sealed class ItemROOTClass : IClassItem
     {
         public ItemROOTClass(string p, string className)
         {
