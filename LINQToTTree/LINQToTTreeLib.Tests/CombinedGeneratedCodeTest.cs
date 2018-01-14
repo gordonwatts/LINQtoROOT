@@ -232,7 +232,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void CombineSameQueries()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     let j1 = evt.var1.First()
@@ -275,7 +275,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void CombineSameQueriesWithDifferentPredonditions()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     let j1 = evt.var1.Skip(1).First()
@@ -315,7 +315,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void CombineSlightlyQueries()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     let j1 = evt.var1.First()

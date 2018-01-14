@@ -243,7 +243,7 @@ namespace LINQToTTreeLib
             // Check to make sure none of the source root files have actually be altered since
             // the cache line was written (if there is a cache line, indeed!).
             if (!ROOTFileDatesOK(key))
-                return new Tuple<bool, T>(false, default(T));
+                return new Tuple<bool, T>(false, default);
 
             // Next, read in as many of the cycles of cache files as there are, 
             // grabbing all the objects we need.
@@ -252,18 +252,18 @@ namespace LINQToTTreeLib
             bool keepgoing = true;
             while (keepgoing)
             {
-                var cd = await LoadCacheData<T>(key, index, varSaver, theVar);
-                keepgoing = cd.found;
+                var (found, val) = await LoadCacheData<T>(key, index, varSaver, theVar);
+                keepgoing = found;
                 if (keepgoing)
                 {
-                    cycleObjects.Add(cd.val);
+                    cycleObjects.Add(val);
                 }
                 index++;
             }
 
             if (cycleObjects.Count == 0 && cycleObjects.All(cval => cval != null))
             {
-                return new Tuple<bool, T>(false, default(T));
+                return new Tuple<bool, T>(false, default);
             }
 
             // Special case for where this a single cycle. We just read them in and push them through the saver

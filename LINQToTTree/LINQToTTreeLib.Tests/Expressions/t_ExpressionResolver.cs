@@ -37,7 +37,7 @@ namespace LINQToTTreeLib.Tests
         [TestMethod]
         public void TestResolveSubExpression()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.ntupWithObjects>();
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.NtupWithObjects>();
             var result1 = from evt in q
                           where (from jet in evt.jets where jet.var1 > 1.0 select jet).Count() == 1
                           select evt;

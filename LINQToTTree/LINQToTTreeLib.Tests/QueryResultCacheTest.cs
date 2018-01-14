@@ -262,8 +262,10 @@ namespace LINQToTTreeLib
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var k = q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath));
@@ -282,8 +284,10 @@ namespace LINQToTTreeLib
             var f = new Uri("http://www.nytimes.com");
 
             // Cache an integer
-            var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var date = DateTime.Now;
@@ -303,8 +307,10 @@ namespace LINQToTTreeLib
             var f = new Uri("http://www.nytimes.com/mc15_1111111111111111111111111111111111111111111111111111111111111111111111111113TeV_304810_MadGraphPythia8EvtGen_A14NNPDF23LO_HSS_LLP_mH400_mS50_lt5m_merge_DAOD_EXOT15_e5102_s2698_r7772_r7676_p2877?nFiles=1");
 
             // Cache an integer
-            var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var date = DateTime.Now;
@@ -324,11 +330,15 @@ namespace LINQToTTreeLib
             var f = new Uri("http://www.nytimes.com");
 
             // Cache an integer
-            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h1.Directory = null;
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h1.SetBinContent(1, 5.0);
-            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h2.Directory = null;
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h2.SetBinContent(1, 2.0);
 
             var cacheCycles = new NTObject[][] { new NTObject[] { h1 }, new NTObject[] { h2 } };
@@ -355,11 +365,15 @@ namespace LINQToTTreeLib
             var f = new Uri("http://www.nytimes.com");
 
             // Cache an integer
-            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h1.Directory = null;
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h1.SetBinContent(1, 5.0);
-            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h2.Directory = null;
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h2.SetBinContent(1, 2.0);
 
             var cacheCycles = new RunInfo[][] {
@@ -384,11 +398,15 @@ namespace LINQToTTreeLib
             var f = new Uri("http://www.nytimes.com");
 
             // Cache an integer
-            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h1.Directory = null;
+            var h1 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h1.SetBinContent(1, 5.0);
-            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0);
-            h2.Directory = null;
+            var h2 = new ROOTNET.NTH1F("hi", "there", 1, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h2.SetBinContent(1, 2.0);
 
             var cacheCycles = new RunInfo[][] {
@@ -456,8 +474,10 @@ namespace LINQToTTreeLib
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             var k1 = q.GetKey(new Uri[] { f1, f2 }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath));
@@ -483,8 +503,10 @@ namespace LINQToTTreeLib
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             await q.CacheItem(q.GetKey(new Uri[] { u }, "test", null, null, query, dateChecker: uf => File.GetLastWriteTime(uf.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
@@ -518,8 +540,10 @@ namespace LINQToTTreeLib
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
@@ -568,8 +592,10 @@ namespace LINQToTTreeLib
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
@@ -588,16 +614,20 @@ namespace LINQToTTreeLib
 
             /// Histogram that is feed as input
 
-            var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
-            hInput.Directory = null;
+            var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0)
+            {
+                Directory = null
+            };
             hInput.SetBinContent(2, 5.0);
 
             var inputs = new object[] { hInput };
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -605,8 +635,10 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup works now!
 
-            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
-            hInputLookup.Directory = null;
+            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0)
+            {
+                Directory = null
+            };
             hInputLookup.SetBinContent(2, 5.0);
 
             var r = await Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
@@ -624,15 +656,19 @@ namespace LINQToTTreeLib
             /// Histogram that is feed as input
 
             {
-                var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
-                hInput.Directory = null;
+                var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0)
+                {
+                    Directory = null
+                };
 
                 var inputs = new object[] { hInput };
 
                 /// Cache a result
 
-                var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-                h.Directory = null;
+                var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+                {
+                    Directory = null
+                };
                 h.SetBinContent(1, 5.0);
 
                 await q.CacheItem(q.GetKey(new Uri[] { f }, "test", inputs, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
@@ -640,8 +676,10 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup works now!
 
-            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
-            hInputLookup.Directory = null;
+            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0)
+            {
+                Directory = null
+            };
 
             var r = await Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
             Assert.IsTrue(r.Item1, "Cache should have been there");
@@ -656,16 +694,20 @@ namespace LINQToTTreeLib
 
             /// Histogram that is feed as input
 
-            var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
-            hInput.Directory = null;
+            var hInput = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0)
+            {
+                Directory = null
+            };
             hInput.SetBinContent(2, 5.0);
 
             var inputs = new object[] { hInput };
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -673,8 +715,10 @@ namespace LINQToTTreeLib
 
             /// And make sure the lookup works now!
 
-            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0);
-            hInputLookup.Directory = null;
+            var hInputLookup = new ROOTNET.NTH1F("ops", "notthere", 10, 0.0, 30.0)
+            {
+                Directory = null
+            };
             hInputLookup.SetBinContent(2, 5.5);
 
             var r = await Lookup<int>(q, f, "test", new object[] { hInputLookup }, null, query, new DummySaver());
@@ -691,8 +735,10 @@ namespace LINQToTTreeLib
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -716,8 +762,10 @@ namespace LINQToTTreeLib
 
             /// Cache a result
 
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
 
             var q = new QueryResultCache();
@@ -739,8 +787,10 @@ namespace LINQToTTreeLib
             var query = MakeQuery(0);
 
             // Cache a result
-            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0);
-            h.Directory = null;
+            var h = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 10.0)
+            {
+                Directory = null
+            };
             h.SetBinContent(1, 5.0);
             var q = new QueryResultCache();
             await q.CacheItem(q.GetKey(new Uri[] { f }, "test", null, null, query, dateChecker: u => File.GetLastWriteTime(u.LocalPath)), new NTObject[] { h }.AsRunInfoArray());
@@ -764,12 +814,12 @@ namespace LINQToTTreeLib
         public static RunInfo[][] AsRunInfoArray2D(this NTObject[][] items)
         {
             int cycle = 0;
-            Func<int> getCycle = () =>
+            int getCycle()
             {
                 var r = cycle;
                 cycle++;
                 return r;
-            };
+            }
             return items
                 .Select(i => i.AsRunInfoArray(getCycle()))
                 .ToArray();

@@ -158,7 +158,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestCountOnArray()
         {
-            var q = new QueriableDummy<ntupArray>();
+            var q = new QueriableDummy<NtupArray>();
 
             var r1 = from evt in q
                      select evt.run.Count();
@@ -173,7 +173,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestConditionalEvaluationInBranch()
         {
-            var q = new QueriableDummy<ntupArray>();
+            var q = new QueriableDummy<NtupArray>();
 
             var r1 = from evt in q
                      select evt.run.Count() > 5 
@@ -239,7 +239,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestConditionalEvaluationInBranchWithComplexSubQuery()
         {
-            var q = new QueriableDummy<ntupArray>();
+            var q = new QueriableDummy<NtupArray>();
 
             var r1 = from evt in q
                      from r in evt.run
@@ -282,7 +282,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestCountOnArrayWithIf()
         {
-            var q = new QueriableDummy<ntupArray>();
+            var q = new QueriableDummy<NtupArray>();
 
             var r1 = from evt in q
                      select evt.run.Count(i => i > 1);
@@ -533,7 +533,7 @@ namespace LINQToTTreeLib
             Assert.IsInstanceOfType(ifcountStatement.Statements.First(), typeof(Statements.StatementAggregate), "Assign statement not there");
         }
 
-        public class subNtupleObjects1
+        public class SubNtupleObjects1
         {
             [TTreeVariableGrouping]
             public int var1;
@@ -545,11 +545,11 @@ namespace LINQToTTreeLib
 
             public double v4;
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-            public static Expression<Func<subNtupleObjects1, double>> v4Expression = n => n.var1 * 5.0; 
+            public static Expression<Func<SubNtupleObjects1, double>> v4Expression = n => n.var1 * 5.0; 
 
         }
 
-        public class subNtupleObjects2
+        public class SubNtupleObjects2
         {
             [TTreeVariableGrouping]
             public int var4;
@@ -560,18 +560,18 @@ namespace LINQToTTreeLib
             public double v6;
         }
 
-        [TranslateToClass(typeof(ntupWithObjectsDest))]
-        public class ntupWithObjects
+        [TranslateToClass(typeof(NtupWithObjectsDest))]
+        public class NtupWithObjects
         {
             [TTreeVariableGrouping]
-            public subNtupleObjects1[] jets;
+            public SubNtupleObjects1[] jets;
             [TTreeVariableGrouping]
-            public subNtupleObjects2[] tracks;
+            public SubNtupleObjects2[] tracks;
         }
 
-        public class ntupWithObjectsDest : IExpressionHolder
+        public class NtupWithObjectsDest : IExpressionHolder
         {
-            public ntupWithObjectsDest(Expression expr)
+            public NtupWithObjectsDest(Expression expr)
             {
                 HeldExpression = expr;
             }
@@ -589,7 +589,7 @@ namespace LINQToTTreeLib
         // To help with the TranslateTupleWithLambda test.
         public class JetInfoExtra
         {
-            public subNtupleObjects1 Jet;
+            public SubNtupleObjects1 Jet;
         }
 
         [TestMethod]
@@ -598,7 +598,7 @@ namespace LINQToTTreeLib
             // This was seen in the wild - a rather complex expression that failed to translate.
             // A combination of Tuple, lambda, and calls to FuturePlot.
 
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var alljets = q.SelectMany(x => x.jets)
                 .Select(j => new JetInfoExtra() { Jet = j });
@@ -621,7 +621,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortSimple()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     select (from v in evt.var1
@@ -644,7 +644,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestNestedFilterSort()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     let ns = evt.var1.Where(x => x > 1).OrderBy(x => x)
@@ -666,7 +666,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestNestedSorts()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     let ns = evt.var1.Where(x => x > 1).OrderBy(x => x)
@@ -679,7 +679,7 @@ namespace LINQToTTreeLib
             var r0 = from lst in r
                      select new
                      {
-                         NS = lst.NS,
+                         lst.NS,
                          V = lst.V.Where(v => v > 1.0).OrderBy(x => x)
                      };
 
@@ -713,7 +713,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortSimpleCombine()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     select (from v in evt.var1
@@ -770,7 +770,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortTranslatedObjects()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var r = from evt in q
                     select (from j in evt.jets
                             orderby j.var1
@@ -784,7 +784,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestGroupSimple()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     select from v in evt.var1 group v by v;
@@ -803,7 +803,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestGroupTranslatedGroup()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r = from evt in q
                     select from v in evt.jets group v by v.var1;
@@ -820,7 +820,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestGroupSimpleCombine()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r1 = from evt in q
                      select from v in evt.var1 group v by v;
@@ -856,7 +856,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestGroupLongRangeCombine()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
             var dudeQ1 = from evt in q
                          from v in evt.var1
                          group v by v into lists
@@ -888,7 +888,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestGroupLongRange()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
             var dudeQ = from evt in q
                         from v in evt.var1
                         group v by v into lists
@@ -904,7 +904,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestGroupAndCount()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     select from v in evt.var1 group v by v;
@@ -923,7 +923,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestGroupAndCutAndCount()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     select from v in evt.var1 group v by v;
@@ -942,7 +942,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortGroupByKey()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
             var dudeQ = from evt in q
                         select (from v in evt.var1
                                 group v by v);
@@ -965,7 +965,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortGroupByItems()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
             var dudeQ = from evt in q
                         select (from v in evt.var1
                                 group v by v);
@@ -988,7 +988,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortGroupByItemsWithFilter()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
             var dudeQ = from evt in q
                         select (from v in evt.var1.Where(l => l > 2)
                                 group v by v);
@@ -1017,7 +1017,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortReverseSimple()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r = from evt in q
                     select (from v in evt.var1
@@ -1041,7 +1041,7 @@ namespace LINQToTTreeLib
         public void TestTranslatedAggregate()
         {
             var model = GetModel(() => (
-                from q in new QueriableDummy<ntupWithObjects>()
+                from q in new QueriableDummy<NtupWithObjects>()
                 select q).Aggregate(0, (acc, va) => acc + va.jets.Sum(j => j.var1)));
 
             MEFUtilities.AddPart(new QVResultOperators());
@@ -1055,7 +1055,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(NtupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -1069,7 +1069,7 @@ namespace LINQToTTreeLib
         public void TestTranslatedUsesRightSizeIndex()
         {
             var model = GetModel(() => (
-                from q in new QueriableDummy<ntupWithObjects>()
+                from q in new QueriableDummy<NtupWithObjects>()
                 select q).Aggregate(0, (acc, va) => acc + va.jets.Sum(j => j.var1)));
 
             MEFUtilities.AddPart(new QVResultOperators());
@@ -1083,7 +1083,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(NtupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -1097,7 +1097,7 @@ namespace LINQToTTreeLib
         public void TestTranslatedUsesRightSizeIndex2()
         {
             var model = GetModel(() => (
-                from q in new QueriableDummy<ntupWithObjects>()
+                from q in new QueriableDummy<NtupWithObjects>()
                 select q).Aggregate(0.0, (acc, va) => acc + va.jets.Sum(j => j.var2)));
 
             MEFUtilities.AddPart(new QVResultOperators());
@@ -1111,7 +1111,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(NtupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -1125,7 +1125,7 @@ namespace LINQToTTreeLib
         public void TestTranslatedUsesRightSizeIndex3()
         {
             var model = GetModel(() => (
-                from q in new QueriableDummy<ntupWithObjects>()
+                from q in new QueriableDummy<NtupWithObjects>()
                 select q).Aggregate(0.0, (acc, va) => acc + va.jets.Sum(j => j.v3)));
 
             MEFUtilities.AddPart(new QVResultOperators());
@@ -1139,7 +1139,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(NtupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -1152,7 +1152,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestTranslatedAggregateWhereSingle()
         {
-            var model = GetModel(() => (new QueriableDummy<ntupWithObjects>()).Where(evt => evt.jets.Aggregate(0, (acc, va) => acc + va.var1) > 5).Count());
+            var model = GetModel(() => (new QueriableDummy<NtupWithObjects>()).Where(evt => evt.jets.Aggregate(0, (acc, va) => acc + va.var1) > 5).Count());
 
             MEFUtilities.AddPart(new QVResultOperators());
             MEFUtilities.AddPart(new ROFirstLast());
@@ -1166,7 +1166,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(NtupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
             qv.VisitQueryModel(model);
@@ -1180,7 +1180,7 @@ namespace LINQToTTreeLib
         public void TestTranslatedNestedLoop()
         {
             var model = GetModel(() => (
-                from q in new QueriableDummy<ntupWithObjects>()
+                from q in new QueriableDummy<NtupWithObjects>()
                 from j in q.jets
                 select j.var1).Aggregate(0, (acc, va) => acc + va));
 
@@ -1196,7 +1196,7 @@ namespace LINQToTTreeLib
             MEFUtilities.AddPart(myth);
             MEFUtilities.AddPart(new TypeHandlerTranslationClass());
             GeneratedCode gc = new GeneratedCode();
-            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(ntupWithObjects) };
+            CodeContext cc = new CodeContext() { BaseNtupleObjectType = typeof(NtupWithObjects) };
             var qv = new QueryVisitor(gc, cc, MEFUtilities.MEFContainer);
             MEFUtilities.Compose(qv);
 
@@ -1279,9 +1279,9 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestLambdaExpressionLookup()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
-            Expression<Func<subNtupleObjects1, bool>> checker = s => s.var1 == 0;
+            Expression<Func<SubNtupleObjects1, bool>> checker = s => s.var1 == 0;
 
             var result = q.SelectMany(evt => evt.jets).Where(checker).Count();
 
@@ -1295,7 +1295,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestTranslatedObjectCompareNE()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var together = from evt in q
                            from j1 in evt.jets
                            from j2 in evt.jets
@@ -1315,7 +1315,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestTranslatedObjectCompareEQ()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var together = from evt in q
                            from j1 in evt.jets
                            from j2 in evt.jets
@@ -1335,7 +1335,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void SumAtTopLevel()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var result = q.Select(evt => 10).Sum();
 
             var code = DummyQueryExectuor.FinalResult;
@@ -1350,7 +1350,7 @@ namespace LINQToTTreeLib
         public void AverageInSubQuery()
         {
             // Make sure we can process it!
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var together = from evt in q
                            select evt.jets.Average(j => j.var1);
             var result = together.Sum();
@@ -1377,7 +1377,7 @@ namespace LINQToTTreeLib
         public void AverageInSubQueryWithFilter()
         {
             // Make sure we can process it!
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var together = from evt in q
                            select evt.jets.Where(j => j.var1 > 1).Average(j => j.var1);
             var result = together.Sum();
@@ -1397,7 +1397,7 @@ namespace LINQToTTreeLib
         public void AverageInSubQueryWithLoopFilter()
         {
             // Make sure we can process it!
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var together = from evt in q
                            select evt.jets.Where(j => j.var1 > evt.jets.Sum(p => p.var1)).Average(j => j.var1);
             var result = together.Sum();
@@ -1416,7 +1416,7 @@ namespace LINQToTTreeLib
         [ExpectedException(typeof(AverageNotAllowedAtTopLevelException))]
         public void AverageAtTopLevel()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var result = q.Select(evt => 10).Average();
 
             var code = DummyQueryExectuor.FinalResult;
@@ -1605,9 +1605,9 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSubQueryWithTranslationOutside()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
-            Expression<Func<subNtupleObjects1, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
+            Expression<Func<SubNtupleObjects1, bool>> checker = j => CPPHelperFunctions.Calc(j.var1) > 1;
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets.AsQueryable().Where(checker)
@@ -1639,7 +1639,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSubQueryWithTranslationOutsideSimpler()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -1665,7 +1665,7 @@ namespace LINQToTTreeLib
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestAnonObjectCompare()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -1690,9 +1690,9 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSubQueryWithTranslationOutsideRenameBug()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
-            Expression<Func<subNtupleObjects1, bool>> checker = jr => CPPHelperFunctions.Calc(jr.var1) > 1;
+            Expression<Func<SubNtupleObjects1, bool>> checker = jr => CPPHelperFunctions.Calc(jr.var1) > 1;
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -1729,7 +1729,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAnonymousObjectOneLevelDown()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -1767,7 +1767,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAnonymousObjectTwoLevelsDown()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var all = from evt in q
                       select new
@@ -1793,7 +1793,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAnonymousObjectWithSameIndexNames()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var tracksNearJetPerEvent = from evt in q
                                         select from j in evt.jets
@@ -1812,7 +1812,7 @@ namespace LINQToTTreeLib
                                 from j in evt
                                 select new
                                 {
-                                    Jet = j.Jet,
+                                    j.Jet,
                                     Tracks = from t in j.Tracks where t.var2 < 2.2 select t
                                 };
 
@@ -1848,7 +1848,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestQueryWithTwoRangeVariablesNamedSameThingTranslating()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var result1 = from evt in q
                           from jet in evt.jets
                           select jet;
@@ -1869,7 +1869,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestQueryWithTwoRangeVariablesNamedSameThingTranslatingMainVar()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var result1 = from evt in q
                           where (from jet in evt.jets where jet.var1 > 1.0 select jet).Count() > 1
                           select evt;
@@ -1890,7 +1890,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestDoubleFunctionCall()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var r1 = from evt in q
                      select from j in evt.jets
                             select Math.Abs(ROOTNET.NTVector2.Phi_0_2pi(j.var1) - 3.0);
@@ -1912,7 +1912,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestATan2Call()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var r1 = from evt in q
                      select from j in evt.jets
                             select Math.Atan2((double)j.var1, (double)j.var2);
@@ -1945,7 +1945,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAggregateAsResultCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1 = q.SelectMany(r => r.jets).Aggregate(0, (f, s) => s.var1 + f);
             var query1 = DummyQueryExectuor.FinalResult;
@@ -1965,7 +1965,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAggregateInternalCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1 = q.Select(v => v.jets.Aggregate(0, (s, f) => s + f.var1)).Where(j => j > 5).Count();
             var query1 = DummyQueryExectuor.FinalResult;
@@ -1991,7 +1991,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAggregateInternalResultCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1 = q.Where(evt => evt.jets.Aggregate(0, (s, f) => s + f.var1) > 5).Count();
             var query1 = DummyQueryExectuor.FinalResult;
@@ -2014,7 +2014,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAnyAllDeepInSelectSubQuery()
         {
-            var q = new QueriableDummy<ntupWithObjectsDest>();
+            var q = new QueriableDummy<NtupWithObjectsDest>();
 
             var r1 = from e in q
                      select new
@@ -2055,7 +2055,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAnyCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1 = q.Where(evt => evt.jets.Any(j => j.var1 > 5)).Count();
             var query1 = DummyQueryExectuor.FinalResult;
@@ -2074,7 +2074,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestAllCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1 = q.Where(evt => evt.jets.All(j => j.var1 > 5)).Count();
             var query1 = DummyQueryExectuor.FinalResult;
@@ -2093,7 +2093,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void AllInSubExpression()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var seq1 = from evt in q
                        from j in evt.jets
@@ -2110,7 +2110,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestInternalCountCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1 = q.Where(evt => evt.jets.Count() > 3).Count();
             var query1 = DummyQueryExectuor.FinalResult;
@@ -2184,7 +2184,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestMinMaxStatement()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var dudeQ1 = from evt in q
                          where (evt.jets.Max(j => j.var1) > 5)
                          select evt;
@@ -2208,7 +2208,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestPairWiseCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var r1p = from evt in q
                       select evt.jets.PairWiseAll((j1, j2) => j1.var1 != j2.var1).Count();
             var r1 = r1p.Where(c => c > 2).Count();
@@ -2231,7 +2231,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSumCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var r1 = q.Where(evt => evt.jets.Sum(j => j.var1) > 10).Count();
             var query1 = DummyQueryExectuor.FinalResult;
             var r2 = q.Where(evt => evt.jets.Sum(j => j.var1) > 10).Count();
@@ -2250,7 +2250,7 @@ namespace LINQToTTreeLib
         public void TestAverageCombine()
         {
             // Make sure we can process it!
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
             var r1 = q.Where(evt => evt.jets.Average(j => j.var1) > 10).Count();
             var query1 = DummyQueryExectuor.FinalResult;
             var r2 = q.Where(evt => evt.jets.Average(j => j.var1) > 10).Count();
@@ -2268,7 +2268,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestTakeSkipCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1p = from evt in q
                       let v = evt.jets.Skip(1).Count()
@@ -2295,7 +2295,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestUnqiueCombineStatements()
         {
-            var q = new QueriableDummy<ntupArray>();
+            var q = new QueriableDummy<NtupArray>();
 
             // Query #1
 
@@ -2587,7 +2587,7 @@ namespace LINQToTTreeLib
         /// <summary>
         /// A C++ array test.
         /// </summary>
-        public class dummyntupCPP
+        public class DummyntupCPP
         {
             public int nSize;
 
@@ -2598,7 +2598,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSimpleLoopCPPArray()
         {
-            var q = new QueriableDummy<dummyntupCPP>();
+            var q = new QueriableDummy<DummyntupCPP>();
             var r1 = from evt in q
                      select evt.vals.Where(s => s > 5).Count();
             var r = r1.Where(v => v > 5).Count();
@@ -2613,7 +2613,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestVectorLoopAnyCombine()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r1 = q.SelectMany(t => t.jets).Count();
             var query1 = DummyQueryExectuor.FinalResult;
@@ -2787,7 +2787,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(2, query.QueryCode().First().Statements.Count(), "# of statements");
         }
 
-        class ntupArray
+        class NtupArray
         {
 #pragma warning disable 0649
             public int[] run;
@@ -2797,7 +2797,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestCountTranslated()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r = q.Where(evt => evt.jets.Count() > 0).Count();
             var query = DummyQueryExectuor.FinalResult;
@@ -2810,14 +2810,14 @@ namespace LINQToTTreeLib
 
         class SelectionObject
         {
-            public Expression<Func<ntupWithObjects, bool>> Selection
+            public Expression<Func<NtupWithObjects, bool>> Selection
             {
                 get
                 {
                     return evt => evt.jets.Count() > 0;
                 }
             }
-            public Expression<Func<subNtupleObjects1, bool>> SelectionJet
+            public Expression<Func<SubNtupleObjects1, bool>> SelectionJet
             {
                 get
                 {
@@ -2832,7 +2832,7 @@ namespace LINQToTTreeLib
             // In the wild there is a case where a property which returns a function can't be used
             // in a Where call. Looking for a crash.
 
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var obj = new SelectionObject();
             var r = q.Where(obj.Selection).Count();
@@ -2846,10 +2846,10 @@ namespace LINQToTTreeLib
             // In the wild there is a case where a property which returns a function can't be used
             // in a Where call. Looking for a crash.
 
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var obj = new SelectionObject();
-            Expression<Func<ntupWithObjects, subNtupleObjects1>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
+            Expression<Func<NtupWithObjects, SubNtupleObjects1>> test = evt => evt.jets.AsQueryable().Where(obj.SelectionJet).First();
             var r = q.Where(evt => test.Invoke(evt).var1 > 0).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
@@ -2861,14 +2861,14 @@ namespace LINQToTTreeLib
             // Look for a property translation. v4 below can only be translated if
             // the expression is one that is mapped to something that actually exists.
 
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             var r = q.Where(evt => evt.jets.Any(j => j.v4 > 10.0)).Count();
             var query = DummyQueryExectuor.FinalResult;
             query.DumpCodeToConsole();
         }
 
-        public class ntup3
+        public class Ntup3
         {
             public int[] run1;
             public int[] run2;
@@ -2882,7 +2882,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestQuerySourceCacheHit()
         {
-            var q = new QueriableDummy<ntup3>();
+            var q = new QueriableDummy<Ntup3>();
 
             var resultA = from evt in q
                           select new
@@ -2937,7 +2937,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestQuerySourceCacheMiss()
         {
-            var q = new QueriableDummy<ntup3>();
+            var q = new QueriableDummy<Ntup3>();
 
             var resultA = from evt in q
                           select new
@@ -2988,7 +2988,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestSortCombineNoFunctionMissRename()
         {
-            var q = new QueriableDummy<ntup3>();
+            var q = new QueriableDummy<Ntup3>();
 
             var resultA = from evt in q
                           select new
@@ -3155,9 +3155,9 @@ namespace LINQToTTreeLib
 
         public class TestTranslatedNestedCompareAndSortHolder
         {
-            public subNtupleObjects1 jet { get; set; }
-            public subNtupleObjects2 track { get; set; }
-            public double delta { get; set; }
+            public SubNtupleObjects1 Jet { get; set; }
+            public SubNtupleObjects2 Track { get; set; }
+            public double Delta { get; set; }
         }
 
         public class TestTranslatedNestedCompareAndSortHolderEvent
@@ -3174,7 +3174,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TranslateNestedDuplicateOrderings()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             // Create a dual object. Avoid anonymous objects just for the sake of it.
             var matched = from evt in q
@@ -3185,8 +3185,8 @@ namespace LINQToTTreeLib
                                                   select t).First()
                                         select new TestTranslatedNestedCompareAndSortHolder()
                                         {
-                                            jet = j,
-                                            track = mt
+                                            Jet = j,
+                                            Track = mt
                                         }
                           };
 
@@ -3194,15 +3194,15 @@ namespace LINQToTTreeLib
                                select new TestTranslatedNestedCompareAndSortHolderEvent()
                                {
                                    matches = from mj in m.matches
-                                             orderby mj.track.v6
+                                             orderby mj.Track.v6
                                              select mj
                                };
 
-            var evtgood = trackOrdered.Where(m => m.matches.Where(mj => mj.jet.v3 > 60.0).Any());
+            var evtgood = trackOrdered.Where(m => m.matches.Where(mj => mj.Jet.v3 > 60.0).Any());
 
             // Do something with the second one now
             var otherTrack = from evt in evtgood
-                             select evt.matches.Sum(m => m.track.v6);
+                             select evt.matches.Sum(m => m.Track.v6);
 
             //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
             var r = otherTrack.Sum();
@@ -3234,7 +3234,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void LookForExtraDictDefsInOrdering()
         {
-            var q = new QueriableDummy<ntupWithObjects>();
+            var q = new QueriableDummy<NtupWithObjects>();
 
             // Create a dual object. Avoid anonymous objects just for the sake of it.
             var matched = from evt in q
@@ -3245,8 +3245,8 @@ namespace LINQToTTreeLib
                                                   select t).First()
                                         select new TestTranslatedNestedCompareAndSortHolder()
                                         {
-                                            jet = j,
-                                            track = mt
+                                            Jet = j,
+                                            Track = mt
                                         }
                           };
 
@@ -3254,15 +3254,15 @@ namespace LINQToTTreeLib
                                select new TestTranslatedNestedCompareAndSortHolderEvent()
                                {
                                    matches = from mj in m.matches
-                                             orderby mj.track.v6
+                                             orderby mj.Track.v6
                                              select mj
                                };
 
-            var evtgood = trackOrdered.Where(m => m.matches.Where(mj => mj.jet.v3 > 60.0).Any());
+            var evtgood = trackOrdered.Where(m => m.matches.Where(mj => mj.Jet.v3 > 60.0).Any());
 
             // Do something with the second one now
             var otherTrack = from evt in evtgood
-                             select evt.matches.Sum(m => m.track.v6);
+                             select evt.matches.Sum(m => m.Track.v6);
 
             //var r = matched.Where(evt => evt.matches.Where(m => m.track.v6 > 2.0).Count() > 5).Count();
             var r = otherTrack.Sum();

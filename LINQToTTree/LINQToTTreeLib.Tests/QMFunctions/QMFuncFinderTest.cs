@@ -144,7 +144,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestGroupByFunction()
         {
-            var q = new QueriableDummyNoExe<LINQToTTreeLib.QueryVisitorTest.ntupWithObjectsDest>();
+            var q = new QueriableDummyNoExe<LINQToTTreeLib.QueryVisitorTest.NtupWithObjectsDest>();
 
             var r = from evt in q
                     select from v in evt.var1 group v by v;
@@ -165,7 +165,7 @@ namespace LINQToTTreeLib.Tests.QMFunctions
         [TestMethod]
         public void TestAnonymousFunctionResults()
         {
-            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.ntup3>();
+            var q = new QueriableDummy<LINQToTTreeLib.QueryVisitorTest.Ntup3>();
 
             var resultA = from evt in q
                           select new
