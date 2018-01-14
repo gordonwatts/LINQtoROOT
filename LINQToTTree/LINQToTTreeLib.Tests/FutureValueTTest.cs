@@ -65,5 +65,24 @@ namespace LINQToTTreeLib
             }
 
         }
+
+        [TestMethod]
+        public async Task GetAwaiterWhenWeHaveValue()
+        {
+            var fv = new FutureValue<int>(10);
+            Assert.AreEqual(10, await fv);
+        }
+
+        [TestMethod]
+        public async Task GetFVAwaiter()
+        {
+            var fv1 = new FutureValue<int>(10);
+            var ta = fv1.GetAwaiter();
+            var value = 0;
+            ta.OnCompleted(() => { value = fv1.Value; });
+
+            await Task.Delay(10);
+            Assert.AreEqual(10, value);
+        }
     }
 }

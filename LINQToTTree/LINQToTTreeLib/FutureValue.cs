@@ -85,7 +85,7 @@ namespace LINQToTTreeLib
         {
             if (HasValue)
             {
-                throw new InvalidOperationException("FutureValue should not be asked to generate a value if it already has a value!");
+                return Task.FromResult(Value);
             }
             if (_queryExecutionTask == null)
             {
