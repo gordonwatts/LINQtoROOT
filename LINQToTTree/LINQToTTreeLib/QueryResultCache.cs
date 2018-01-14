@@ -60,14 +60,6 @@ namespace LINQToTTreeLib
         }
 
         /// <summary>
-        /// Make sure we are trying to access ROOT only single threaded.
-        /// </summary>
-        /// <remarks>
-        /// ROOT's file system and other items are just not built to deal with mulit-threaded access. Protect cache access with this
-        /// </remarks>
-        private static AsyncLock _rootLock = new AsyncLock();
-
-        /// <summary>
         /// Return the key object
         /// </summary>
         /// <param name="rootfiles"></param>
@@ -312,7 +304,7 @@ namespace LINQToTTreeLib
             }
 
             // Load all the objects in this file.
-            using (var holder = await _rootLock.LockAsync())
+            using (var holder = await ROOTLock.Lock.LockAsync())
             {
                 var tf = NTFile.Open(cycleFilename, "READ");
                 try
@@ -482,7 +474,7 @@ namespace LINQToTTreeLib
                     throw new InvalidOperationException("Can't deal with caching zero objects!");
                 }
 
-                using (var holder = await _rootLock.LockAsync())
+                using (var holder = await ROOTLock.Lock.LockAsync())
                 {
                     var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
                     try

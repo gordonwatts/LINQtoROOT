@@ -158,14 +158,7 @@ namespace CmdTFileParser
                 using (var output = outputFile.CreateText())
                 {
                     xmlout.Serialize(output, results);
-                    output.Close();
                 }
-
-                ///
-                /// Make sure the log file gets it done
-                /// 
-
-                logFile.Close();
             }
         }
     }

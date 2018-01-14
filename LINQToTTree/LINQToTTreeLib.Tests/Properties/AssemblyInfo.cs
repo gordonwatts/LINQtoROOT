@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Security;
 
 // System.Security
-[assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityRules(SecurityRuleSet.Level1)]
 
 // System.Reflection
@@ -18,3 +17,5 @@ using System.Security;
 
 // System
 [assembly: CLSCompliant(false)]
+[assembly: AssemblyVersion("0.51.0.0")]
+[assembly: AssemblyFileVersion("0.51.0.0")]

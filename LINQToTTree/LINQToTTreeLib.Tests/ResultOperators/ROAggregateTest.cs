@@ -10,6 +10,7 @@ using LINQToTTreeLib.Expressions;
 using LINQToTTreeLib.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Remotion.Linq;
+using Remotion.Linq.Clauses;
 using Remotion.Linq.Clauses.ResultOperators;
 
 namespace LINQToTTreeLib.ResultOperators
@@ -46,7 +47,7 @@ namespace LINQToTTreeLib.ResultOperators
         ///[PexMethod]
         public Expression ProcessResultOperator(
             ROAggregate target,
-            AggregateFromSeedResultOperator resultOperator,
+            ResultOperatorBase resultOperator,
             QueryModel queryModel,
             IGeneratedQueryCode _codeEnv
         )

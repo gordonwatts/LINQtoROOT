@@ -15,6 +15,7 @@ using Remotion.Linq.Clauses.Expressions;
 using Remotion.Linq.Parsing.Structure;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
@@ -48,14 +49,14 @@ namespace LINQToTTreeLib
             return result;
         }
 
-        public class ConstantTestTemplate
+        private class ConstantTestTemplate
         {
             public ConstantExpression expr;
             public Type ExpectedType;
             public string ExpectedValue;
         }
 
-        public void TestConstantExpression(ConstantTestTemplate myTest)
+        private void TestConstantExpression(ConstantTestTemplate myTest)
         {
             GeneratedCode g = new GeneratedCode();
             var r = GetExpression(myTest.expr, g);
@@ -66,7 +67,7 @@ namespace LINQToTTreeLib
             Assert.IsTrue(m.Success, "Raw value is incorrect (expected:" + myTest.ExpectedValue + " actual:" + r.RawValue + ")");
         }
 
-        public static List<ConstantTestTemplate> ConstantExpressionTestCases = new List<ConstantTestTemplate>()
+        private static ReadOnlyCollection<ConstantTestTemplate> ConstantExpressionTestCases = new ReadOnlyCollection<ConstantTestTemplate>(new []
         {
             new ConstantTestTemplate(){ ExpectedType=typeof(int), ExpectedValue="10", expr = Expression.Constant(10)},
             new ConstantTestTemplate(){ ExpectedType=typeof(int), ExpectedValue="-10", expr = Expression.Constant(-10)},
@@ -78,7 +79,7 @@ namespace LINQToTTreeLib
             new ConstantTestTemplate(){ ExpectedType=typeof(bool), ExpectedValue="false", expr = Expression.Constant(false)},
             new ConstantTestTemplate(){ ExpectedType=typeof(string), ExpectedValue="\"dude\"", expr = Expression.Constant("dude")},
             new ConstantTestTemplate(){ ExpectedType=typeof(ROOTNET.NTH1F), ExpectedValue="0", expr = Expression.Constant(null, typeof(ROOTNET.NTH1F))} // Generates code now. :(
-        };
+        });
 
         [TestMethod]
         public void TestAllConstantExpressions()
@@ -127,7 +128,7 @@ namespace LINQToTTreeLib
             Console.WriteLine(r.RawValue);
         }
 
-        public class BinaryExpressionTestCase
+        private class BinaryExpressionTestCase
         {
             public ExpressionType BinaryType;
             public Expression LHS;
@@ -160,7 +161,7 @@ namespace LINQToTTreeLib
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Modulo, LHS=Expression.Constant(10), RHS=Expression.Constant(2), ExpectedType=typeof(int), ExpectedValue="10%2"},
         };
 
-        public void TestBinaryExpressionCase(BinaryExpressionTestCase c)
+        private void TestBinaryExpressionCase(BinaryExpressionTestCase c)
         {
             var e = Expression.MakeBinary(c.BinaryType, c.LHS, c.RHS);
             GeneratedCode g = new GeneratedCode();
@@ -267,7 +268,7 @@ namespace LINQToTTreeLib
             Assert.AreEqual(d1.RawValue, r.Dependants.First().RawValue);
         }
 
-        public class DummyQueryReference : IQuerySource
+        private class DummyQueryReference : IQuerySource
         {
             public string ItemName { get; set; }
             public Type ItemType { get; set; }
@@ -446,20 +447,20 @@ namespace LINQToTTreeLib
         }
 
         [TranslateToClass(typeof(transToNtup))]
-        public class toTransNtupe
+        private class toTransNtupe
         {
             [RenameVariable("rVal")]
-            public int[] val;
+            public int[] val = null;
 
         }
 
-        public class transToNtup : IExpressionHolder
+        private class transToNtup : IExpressionHolder
         {
             public transToNtup(Expression holder)
             {
                 HeldExpression = holder;
             }
-            public int[] rVal;
+            public int[] rVal = null;
 
             public Expression HeldExpression { get; set; }
         }
@@ -484,10 +485,10 @@ namespace LINQToTTreeLib
             Assert.AreEqual(typeof(int), result.Type, "bad type for return");
         }
 
-        public class dummyntup
+        private class dummyntup
         {
-            public int run;
-            public int[] vals;
+            public int run = 0;
+            public int[] vals = null;
         }
 
         private QueryModel GetModel<T>(Expression<Func<T>> expr)

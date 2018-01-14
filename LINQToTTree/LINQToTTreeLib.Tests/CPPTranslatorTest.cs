@@ -40,7 +40,7 @@ namespace LINQToTTreeLib
 #endif
 
         /// <summary>Test stub for TranslateGeneratedCode(GeneratedCode)</summary>
-        public Dictionary<string, object> TranslateGeneratedCode(CPPTranslator target, GeneratedCode code)
+        public Dictionary<string, object> TranslateGeneratedCode(CPPTranslator target, IExecutableCode code)
         {
             MEFUtilities.Compose(target);
             Dictionary<string, object> result = target.TranslateGeneratedCode(code);

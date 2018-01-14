@@ -109,13 +109,6 @@ namespace LINQToTTreeLib.Utils
                             writer.Write(contentsOfFile);
                         }
                     }
-
-                    ///
-                    /// Ok - now close off everything!
-                    ///
-
-                    base.Close();
-
                 }
                 finally
                 {

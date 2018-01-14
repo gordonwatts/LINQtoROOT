@@ -555,7 +555,6 @@ namespace LINQToTTreeLib
                 {
                     writer.WriteLine(l);
                 }
-                writer.Close();
             }
         }
 

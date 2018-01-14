@@ -35,7 +35,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        public void CombinedGeneratedDifferentInitalizationStatements()
+        public void CombinedGeneratedDifferentInitializationStatements()
         {
             var q1 = new GeneratedCode();
             var q2 = new GeneratedCode();

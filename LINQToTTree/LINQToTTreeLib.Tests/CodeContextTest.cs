@@ -85,7 +85,7 @@ namespace LINQToTTreeLib
 
 
         [TestMethod]
-        public void TestAddQueryRefereceSource()
+        public void TestAddQueryReferenceSource()
         {
             var c = new CodeContext();
             var qs = new DummyQueryReference();

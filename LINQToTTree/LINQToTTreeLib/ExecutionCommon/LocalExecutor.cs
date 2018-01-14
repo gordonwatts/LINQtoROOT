@@ -133,7 +133,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                     }
                     writer.WriteLine(wline);
                 }
-                writer.Close();
             }
             queryFile.Delete();
             tmpFile.MoveTo(queryFile.FullName);

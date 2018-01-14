@@ -146,11 +146,7 @@ namespace TTreeParser
             /// Now, replace the proxy file
             /// 
 
-            using (var writer = f.CreateText())
-            {
-                writer.Write(fixedFile.ToString());
-                writer.Close();
-            }
+            File.WriteAllText(f.FullName, fixedFile.ToString());
 
             ///
             /// And return everything needed
@@ -233,7 +229,6 @@ namespace TTreeParser
                 XmlSerializer output = new XmlSerializer(typeof(TTreeUserInfo));
                 var userInfo = new TTreeUserInfo() { Groups = groupInfo.ToArray() };
                 output.Serialize(writer, userInfo);
-                writer.Close();
             }
 
             return userInfoFile;
@@ -275,7 +270,6 @@ namespace TTreeParser
                 using (var writer = macroFile.CreateText())
                 {
                     writer.WriteLine("void {0} () {{}}", Path.GetFileNameWithoutExtension(macroFile.Name));
-                    writer.Close();
                 }
 
                 result = new FileInfo("ntuple_" + tree.SanitizedName() + ".h");

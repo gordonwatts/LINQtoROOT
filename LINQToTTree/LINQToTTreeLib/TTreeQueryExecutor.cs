@@ -1120,7 +1120,6 @@ namespace LINQToTTreeLib
                         writer.WriteLine(line);
 
                 }
-                writer.Close();
             }
 
             //
@@ -1293,7 +1292,6 @@ namespace LINQToTTreeLib
             using (var reader = File.OpenText(TemplateDirectory("TSelectorTemplate.cxx")))
             {
                 template = reader.ReadToEnd();
-                reader.Close();
             }
 
             var context = new VelocityContext();
@@ -1336,7 +1334,6 @@ namespace LINQToTTreeLib
             using (var writer = ourSelector.CreateText())
             {
                 eng.Evaluate(context, writer, null, template);
-                writer.Close();
             }
 
             return ourSelector;
@@ -1362,7 +1359,7 @@ namespace LINQToTTreeLib
             if (File.Exists(guess))
                 return guess;
 
-            throw new FileNotFoundException(string.Format("Unable to locatoin LINQToTTree template file '{0}' in any standard location (tried '{1}' and '{2}' and '{2}'.", templateName, assGuess, assGuess1, guess));
+            throw new FileNotFoundException($"Unable to locatoin LINQToTTree template file '{templateName}' in any standard location (tried '{assGuess}' and '{assGuess1}' and '{guess}'.");
         }
 
         /// <summary>

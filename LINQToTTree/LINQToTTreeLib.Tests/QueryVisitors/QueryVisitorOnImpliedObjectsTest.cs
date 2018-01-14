@@ -525,6 +525,7 @@ namespace LINQToTTreeLib.Tests
             public bool vtxInitOK { get; set; }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public static Expression<Func<CollectionTree, int, int>> FindVertexFromBC = (evt, vtxBC) =>
             (from vtxIdx in Enumerable.Range(0, evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode.Length)
              where vtxBC == evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_barcode[vtxIdx]
@@ -533,6 +534,7 @@ namespace LINQToTTreeLib.Tests
         /// <summary>
         /// Given a vertex index, return the 3D vector for the position.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public static Expression<Func<CollectionTree, int, ROOTNET.Interface.NTVector3>> VertexVector = (evt, index) =>
             new ROOTNET.NTVector3(evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
                 evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_y[index],
@@ -632,6 +634,7 @@ namespace LINQToTTreeLib.Tests
         /// <summary>
         /// Given a vertex index, return the 3D vector for the position. Null if the index is -1.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public static Expression<Func<CollectionTree, int, ROOTNET.Interface.NTVector3>> VertexVectorQ = (evt, index) =>
             new ROOTNET.NTVector3(evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],
                 evt.McEventCollection_p4_GEN_EVENT.m_genVertices.m_x[index],

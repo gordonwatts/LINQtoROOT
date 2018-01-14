@@ -705,7 +705,6 @@ namespace TTreeClassGenerator
             using (var reader = inputXMLFile.OpenText())
             {
                 var result = x.Deserialize(reader) as NtupleTreeInfo;
-                reader.Close();
                 return result;
             }
         }
@@ -721,7 +720,6 @@ namespace TTreeClassGenerator
             using (var reader = inputFile.OpenText())
             {
                 var result = x.Deserialize(reader) as TTreeUserInfo;
-                reader.Close();
                 return result;
             }
         }

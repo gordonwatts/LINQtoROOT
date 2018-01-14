@@ -161,7 +161,7 @@ namespace LINQToTTreeLib.Tests
                 .FinalResult;
         }
 
-        public static IEnumerable<string> DumpCode(this IBookingStatementBlock block)
+        internal static IEnumerable<string> DumpCode(this IStatement block)
         {
             return block.CodeItUp();
         }
@@ -454,6 +454,7 @@ namespace LINQToTTreeLib.Tests
         /// <param name="highBin"></param>
         /// <param name="getter"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public static ROOTNET.NTH1F Plot<TSource>
             (
             this IQueryable<TSource> source,

@@ -179,7 +179,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                 {
                     writer.WriteLine(line);
                 }
-                writer.Close();
             }
             queryFile.Delete();
             tmpFile.MoveTo(queryFile.FullName);
@@ -527,17 +526,12 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
-        /// Protect against accessing root multiple times here.
-        /// </summary>
-        private static AsyncLock _loadResultsLock = new AsyncLock();
-
-        /// <summary>
         /// Called after running to load the results.
         /// </summary>
         /// <returns></returns>
         private async Task<IDictionary<string, NTObject>> LoadSelectorResults(FileInfo queryResultsFile)
         {
-            using (var holder = await _loadResultsLock.LockAsync())
+            using (var holder = await ROOTLock.Lock.LockAsync())
             {
                 if (!queryResultsFile.Exists)
                 {

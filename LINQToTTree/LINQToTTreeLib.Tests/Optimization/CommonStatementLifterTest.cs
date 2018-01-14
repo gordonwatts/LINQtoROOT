@@ -461,8 +461,8 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// an internor if statement.
         /// </summary>
         /// <param name="gc"></param>
-        /// <param name="statementFilter"></param>
-        public static IDeclaredParameter AddLocalInteriorIfAndElse(GeneratedCode gc, StatementFilter statementFilter, IDeclaredParameter finalSetVar = null)
+        /// <param name="statementFilter">If statement</param>
+        public static IDeclaredParameter AddLocalInteriorIfAndElse(GeneratedCode gc, StatementInlineBlockBase statementFilter, IDeclaredParameter finalSetVar = null)
         {
             // Add at top level the variable we will set down one.
             var v = finalSetVar;
