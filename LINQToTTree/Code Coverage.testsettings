@@ -11,18 +11,10 @@
     </TestTypeSpecific>
     <AgentRule name="LocalMachineDefaultRole">
       <DataCollectors>
-        <DataCollector uri="datacollector://microsoft/CodeCoverage/1.0" assemblyQualifiedName="Microsoft.VisualStudio.TestTools.CodeCoverage.CoveragePlugIn, Microsoft.VisualStudio.QualityTools.Plugins.CodeCoverage, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" friendlyName="Code Coverage">
-          <Configuration>
-            <CodeCoverage xmlns="">
-              <Regular>
-                <CodeCoverageItem binaryFile="LINQToTTreeLib\bin\Debug\LINQToTTreeLib.dll" pdbFile="LINQToTTreeLib\bin\Debug\LINQToTTreeLib.pdb" />
-                <CodeCoverageItem binaryFile="TTreeClassGenerator\bin\Debug\TTreeClassGenerator.dll" pdbFile="TTreeClassGenerator\bin\Debug\TTreeClassGenerator.pdb" />
-                <CodeCoverageItem binaryFile="TTreeParser\bin\Debug\TTreeParser.dll" pdbFile="TTreeParser\bin\Debug\TTreeParser.pdb" />
-              </Regular>
-            </CodeCoverage>
-          </Configuration>
+        <DataCollector uri="datacollector://microsoft/TestImpact/1.0" assemblyQualifiedName="Microsoft.VisualStudio.TraceCollector.TestImpactDataCollector, Microsoft.VisualStudio.TraceCollector, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" friendlyName="Test Impact">
         </DataCollector>
       </DataCollectors>
     </AgentRule>
   </Execution>
+  <Properties />
 </TestSettings>
