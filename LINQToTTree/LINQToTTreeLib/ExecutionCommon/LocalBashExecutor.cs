@@ -1,5 +1,6 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Nito.AsyncEx;
 using Polly;
 using System;
 using System.Collections.Generic;
@@ -93,25 +94,51 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// If true, then we have ROOT!
+        /// </summary>
+        private static bool _hasROOT = false;
+
+        /// <summary>
+        /// When we do a check for root, we need to aquire this lock to make sure no one else does!
+        /// </summary>
+        private static AsyncLock _checkForROOTLocallyLock = new AsyncLock();
+
+        /// <summary>
         /// Is ROOT installed on this machine?
         /// </summary>
         /// <returns></returns>
         internal override async Task<bool> CheckForROOTInstall(Action<string> dumpLine = null, bool verbose = false)
         {
-            var cmd = new StringBuilder();
-            cmd.AppendLine("int i = 10;");
-
-            try
+            // Simple check
+            if (_hasROOT)
             {
-                await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
                 return true;
             }
-            catch (CommandLineExecutionException e) when (e.Message.Contains("loading shared libraries"))
+
+            // Aquire lock, check again, If still false, then it is up to us to check now
+            using (var holder = await _checkForROOTLocallyLock.LockAsync())
             {
-                throw new BashNotConfiguredCorrectlyException("It could be that WSL/bash is not configured properly on this system. Make sure to run apt install libxpm-dev; apt install libatlas-base-dev; apt install build-essential", e);
+                if (_hasROOT)
+                {
+                    return true;
+                }
+
+                var cmd = new StringBuilder();
+                cmd.AppendLine("int i = 10;");
+
+                try
+                {
+                    await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+                    _hasROOT = true;
+                    return true;
+                }
+                catch (CommandLineExecutionException e) when (e.Message.Contains("loading shared libraries"))
+                {
+                    throw new BashNotConfiguredCorrectlyException("It could be that WSL/bash is not configured properly on this system. Make sure to run apt install libxpm-dev; apt install libatlas-base-dev; apt install build-essential", e);
+                }
+                catch { }
+                return false;
             }
-            catch { }
-            return false;
         }
 
         /// <summary>

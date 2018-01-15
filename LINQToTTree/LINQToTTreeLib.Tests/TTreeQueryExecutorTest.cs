@@ -931,6 +931,79 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public async Task StressMultipleQueriesOnFile1()
+        {
+            await StressMultipleRuns(1, "file");
+        }
+
+        [TestMethod]
+        public async Task StressMultipleQueriesOnLocalBash1()
+        {
+            await StressMultipleRuns(1, "localbash");
+        }
+
+        [TestMethod]
+        public async Task StressMultipleQueriesOnLocalBash10()
+        {
+            await StressMultipleRuns(10, "localbash");
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        public async Task StressMultipleQueriesOnRemoteBash1()
+        {
+            await StressMultipleRuns(1, "remotebash");
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        public async Task StressMultipleQueriesOnRemoteBash10()
+        {
+            await StressMultipleRuns(10, "remotebash");
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        public async Task StressMultipleQueriesOnRemoteBash100()
+        {
+            await StressMultipleRuns(100, "remotebash");
+        }
+
+        private async Task StressMultipleRuns (int numberOfRuns, string scheme)
+        {
+            var returns = Enumerable.Range(10, numberOfRuns)
+                .Select(cnt => GetCount(cnt, scheme))
+                .ToArray();
+
+            var results = await Task.WhenAll(returns);
+
+            var tocompare = results.Zip(Enumerable.Range(10, numberOfRuns), (r, correct) => (res: r, shouldbe: correct));
+            foreach (var c in tocompare)
+            {
+                Assert.AreEqual(c.shouldbe, c.res);
+            }
+        }
+
+        private async Task<int> GetCount(int countNumber, string scheme)
+        {
+            var rootFile = TestUtils.CreateFileOfInt(countNumber);
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var info = scheme == "remotebash" ? File.ReadAllLines("testmachine.txt").First().Split('@') : null;
+
+            var u = scheme != "remotebash"
+                ? new UriBuilder(rootFile) { Scheme = scheme }.Uri
+                : new UriBuilder(rootFile) { Scheme = scheme, UserName = info[0], Host = info[1] }.Uri;
+
+            var exe = new TTreeQueryExecutor(new Uri[] { u }, "dude", typeof(ntuple), typeof(TestNtupe));
+
+            var result = exe.ExecuteScalarAsFuture<int>(query);
+            return await result;
+        }
+
+        [TestMethod]
         public void TestSimpleResultDebugCompile()
         {
             var rootFile = TestUtils.CreateFileOfInt(10);

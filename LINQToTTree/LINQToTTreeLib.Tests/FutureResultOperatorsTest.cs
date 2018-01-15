@@ -49,18 +49,6 @@ namespace LINQToTTreeLib
             }
         }
 
-#if false
-        /// <summary>Test stub for FutureCount(IQueryable`1&lt;!!0&gt;)</summary>
-        [PexGenericArguments(typeof(int))]
-        [PexMethod]
-        public IFutureValue<int> FutureCount<TSource>(IQueryable<TSource> source)
-        {
-            IFutureValue<int> result = FutureResultOperators.FutureCount<TSource>(source);
-            return result;
-            // TODO: add assertions to method FutureResultOperatorsTest.FutureCount(IQueryable`1<!!0>)
-        }
-#endif
-
         class SimpleEventNtup
         {
 #pragma warning disable 0649
