@@ -124,7 +124,7 @@ namespace LINQToTTreeLib.Expressions
             // the cached value.
             if (ce != null)
             {
-                var v = ce.LookupSubExpression(expr);
+                var v = ce.LookupSubexpression(expr);
                 if (v != null)
                     return v;
             }
@@ -150,7 +150,7 @@ namespace LINQToTTreeLib.Expressions
             // Cache the result.
             if (ce != null)
             {
-                ce.RememberSubExpression(expr, visitor.Result);
+                ce.RememberSubexpression(expr, visitor.Result);
             }
 
             return visitor.Result;

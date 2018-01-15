@@ -120,6 +120,7 @@ namespace LinqToTTreeInterfacesLib
         /// Keep track of cookies that should be taken into account when
         /// calculating the cache.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         List<string> CacheCookies { get; }
 
         /// <summary>

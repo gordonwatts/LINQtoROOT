@@ -448,7 +448,7 @@ namespace LINQToTTreeLib
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="r"></param>
-        public void RememberSubExpression(Expression expr, IValue r)
+        public void RememberSubexpression(Expression expr, IValue r)
         {
             var key = GetSubExpressionKey(expr);
             if (key == null)
@@ -475,7 +475,7 @@ namespace LINQToTTreeLib
         /// <returns>A value if the expression was cached, or null if not</returns>
         /// <remarks>This gets tricky if this is a constant expression. In that case, we use the Hash as the
         /// key to doing the lookup (GetHash).</remarks>
-        public IValue LookupSubExpression(Expression expr)
+        public IValue LookupSubexpression(Expression expr)
         {
             string key = GetSubExpressionKey(expr);
             if (key == null)

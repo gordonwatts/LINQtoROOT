@@ -109,7 +109,7 @@ namespace LinqToTTreeInterfacesLib
         /// Adds an include file to be included for this query's C++ file.
         /// </summary>
         /// <param name="filename"></param>
-        void AddIncludeFile(string filename);
+        void AddIncludeFile(string fileName);
 
         /// <summary>
         /// Set the result of the current code contex.
@@ -173,14 +173,14 @@ namespace LinqToTTreeInterfacesLib
         /// </summary>
         /// <param name="expr"></param>
         /// <param name="r"></param>
-        void RememberSubExpression(Expression expr, IValue r);
+        void RememberSubexpression(Expression expr, IValue r);
 
         /// <summary>
         /// Look up a sub-expression. Return null if it isn't there.
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
-        IValue LookupSubExpression(Expression expr);
+        IValue LookupSubexpression(Expression expr);
 
         /// <summary>
         /// Pop the stack up to the results level.

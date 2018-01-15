@@ -518,9 +518,9 @@ namespace LINQToTTreeLib
             var expr = Expression.Constant(10);
             var r = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
 
-            gc.RememberSubExpression(expr, r);
+            gc.RememberSubexpression(expr, r);
 
-            Assert.AreEqual(r, gc.LookupSubExpression(expr), "Could not find expression");
+            Assert.AreEqual(r, gc.LookupSubexpression(expr), "Could not find expression");
         }
 
         [TestMethod]
@@ -530,9 +530,9 @@ namespace LINQToTTreeLib
             var expr = Expression.Constant(10);
             var r = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
 
-            gc.RememberSubExpression(expr, r);
+            gc.RememberSubexpression(expr, r);
 
-            Assert.AreEqual(r, gc.LookupSubExpression(Expression.Constant(10)), "Could not find expression");
+            Assert.AreEqual(r, gc.LookupSubexpression(Expression.Constant(10)), "Could not find expression");
         }
 
         [TestMethod]
@@ -544,11 +544,11 @@ namespace LINQToTTreeLib
 
             var expr = Expression.Constant(10);
             var r = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
-            gc.RememberSubExpression(expr, r);
+            gc.RememberSubexpression(expr, r);
 
             gc.CurrentScope = initialScope;
 
-            Assert.IsNull(gc.LookupSubExpression(Expression.Constant(10)), "Expression after popping");
+            Assert.IsNull(gc.LookupSubexpression(Expression.Constant(10)), "Expression after popping");
         }
 
         [TestMethod]
@@ -557,17 +557,17 @@ namespace LINQToTTreeLib
             var gc = new GeneratedCode();
             var expr = Expression.Constant(5);
             var r1 = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
-            gc.RememberSubExpression(expr, r1);
+            gc.RememberSubexpression(expr, r1);
 
             var initialScope = gc.CurrentScope;
             gc.Add(new StatementInlineBlock());
 
             var r2 = new LINQToTTreeLib.Variables.ValSimple("11", typeof(int));
-            gc.RememberSubExpression(expr, r2);
+            gc.RememberSubexpression(expr, r2);
 
-            Assert.AreEqual(r2, gc.LookupSubExpression(expr), "Is hidden one done right?");
+            Assert.AreEqual(r2, gc.LookupSubexpression(expr), "Is hidden one done right?");
             gc.Pop();
-            Assert.AreEqual(r1, gc.LookupSubExpression(expr), "Is revealed one done right?");
+            Assert.AreEqual(r1, gc.LookupSubexpression(expr), "Is revealed one done right?");
         }
 
         /// <summary>
@@ -579,9 +579,9 @@ namespace LINQToTTreeLib
             var gc = new GeneratedCode();
             var expr = Expression.Constant(new ROOTNET.NTH1F());
             var r1 = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
-            gc.RememberSubExpression(expr, r1);
+            gc.RememberSubexpression(expr, r1);
 
-            Assert.AreEqual(r1, gc.LookupSubExpression(expr), "Constant Expressions of arbitrary objects can't be looked up");
+            Assert.AreEqual(r1, gc.LookupSubexpression(expr), "Constant Expressions of arbitrary objects can't be looked up");
         }
 
         /// <summary>
@@ -601,11 +601,11 @@ namespace LINQToTTreeLib
             var r1 = new ValSimple("1", typeof(int));
             var r2 = new ValSimple("2", typeof(int));
 
-            gc.RememberSubExpression(n1, r1);
-            gc.RememberSubExpression(n2, r2);
+            gc.RememberSubexpression(n1, r1);
+            gc.RememberSubexpression(n2, r2);
 
-            Assert.AreEqual(r1, gc.LookupSubExpression(n1), "lookup n1");
-            Assert.AreEqual(r2, gc.LookupSubExpression(n2), "lookup n2");
+            Assert.AreEqual(r1, gc.LookupSubexpression(n1), "lookup n1");
+            Assert.AreEqual(r2, gc.LookupSubexpression(n2), "lookup n2");
         }
 
         /// <summary>
@@ -620,11 +620,11 @@ namespace LINQToTTreeLib
             var expr2 = Expression.Constant(new ROOTNET.NTH1F());
             var r1 = new LINQToTTreeLib.Variables.ValSimple("10", typeof(int));
             var r2 = new LINQToTTreeLib.Variables.ValSimple("11", typeof(int));
-            gc.RememberSubExpression(expr1, r1);
-            gc.RememberSubExpression(expr2, r2);
+            gc.RememberSubexpression(expr1, r1);
+            gc.RememberSubexpression(expr2, r2);
 
-            Assert.AreEqual(r1, gc.LookupSubExpression(expr1), "expr1 failure");
-            Assert.AreEqual(r2, gc.LookupSubExpression(expr2), "expr2 failure");
+            Assert.AreEqual(r1, gc.LookupSubexpression(expr1), "expr1 failure");
+            Assert.AreEqual(r2, gc.LookupSubexpression(expr2), "expr2 failure");
         }
 
         [TestMethod]

@@ -14,12 +14,12 @@ namespace LinqToTTreeInterfacesLib
         /// <summary>
         /// The cycle number that was run here
         /// </summary>
-        public int _cycle;
+        public int _cycle { get; set; }
 
         /// <summary>
         /// The result for that cycle number.
         /// </summary>
-        public NTObject _result;
+        public NTObject _result { get; set; }
     }
     
     /// <summary>
