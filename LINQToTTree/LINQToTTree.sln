@@ -42,7 +42,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2EB381E3-ABE4-4408-88D9-4FC45E636A73}"
 	ProjectSection(SolutionItems) = preProject
 		AllProjectAnalysisRules.ruleset = AllProjectAnalysisRules.ruleset
-		Code Coverage.testsettings = Code Coverage.testsettings
 		ExtendedDesignRules.ruleset = ExtendedDesignRules.ruleset
 		LINQToTTree.vsmdi = LINQToTTree.vsmdi
 		Local.testsettings = Local.testsettings

@@ -480,7 +480,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             if (_connection == null)
             {
                 await Policy
-                    .Handle<SSHConnection.SSHConnectFailureException>()
+                    .Handle<SSHConnectFailureException>()
                     .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(60) })
                     .ExecuteAsync(async () =>
                     {

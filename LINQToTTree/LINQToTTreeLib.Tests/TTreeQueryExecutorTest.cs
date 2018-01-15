@@ -350,11 +350,11 @@ namespace LINQToTTreeLib
             // so this may file as files are deleted and need to be updated.
 
             const string dsName = "user.gwatts.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.DAOD_EXOT15.p2711.DiVertAnalysis_v15_C448D50D_22DCBF53_hist";
-            var files = await AtlasWorkFlows.DatasetManager.ListOfFilesInDatasetAsync(dsName);
+            var files = await AtlasWorkFlows.DataSetManager.ListOfFilesInDataSetAsync(dsName);
             var gfile = files.First();
-            var places = await AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFilesAsync(new[] { gfile });
+            var places = await AtlasWorkFlows.DataSetManager.ListOfPlacesHoldingAllFilesAsync(new[] { gfile });
             Assert.IsTrue(places.Contains("Local"));
-            var gfileUri = await AtlasWorkFlows.DatasetManager.LocalPathToFileAsync("Local", gfile);
+            var gfileUri = await AtlasWorkFlows.DataSetManager.LocalPathToFileAsync("Local", gfile);
 
             // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
@@ -376,11 +376,11 @@ namespace LINQToTTreeLib
             // so this may file as files are deleted and need to be updated.
 
             const string dsName = "user.gwatts.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.DAOD_EXOT15.p2711.DiVertAnalysis_v15_C448D50D_22DCBF53_hist";
-            var files = await AtlasWorkFlows.DatasetManager.ListOfFilesInDatasetAsync(dsName);
+            var files = await AtlasWorkFlows.DataSetManager.ListOfFilesInDataSetAsync(dsName);
             var gfile = files.First();
-            var places = await AtlasWorkFlows.DatasetManager.ListOfPlacesHoldingAllFilesAsync(new[] { gfile });
+            var places = await AtlasWorkFlows.DataSetManager.ListOfPlacesHoldingAllFilesAsync(new[] { gfile });
             Assert.IsTrue(places.Contains("UWTeV-linux"));
-            var gfileUriR = await AtlasWorkFlows.DatasetManager.LocalPathToFileAsync("UWTeV-linux", gfile);
+            var gfileUriR = await AtlasWorkFlows.DataSetManager.LocalPathToFileAsync("UWTeV-linux", gfile);
             var gfileUri = new UriBuilder(gfileUriR)
             {
                 Scheme = "remotebash"
