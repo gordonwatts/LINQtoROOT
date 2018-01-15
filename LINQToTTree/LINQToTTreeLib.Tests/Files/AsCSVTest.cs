@@ -14,6 +14,7 @@ namespace LINQToTTreeLib.Tests.Files
     /// Test various AsCSV extensions to make sure they work OK.
     /// </summary>
     [TestClass]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public class AsCSVTest
     {
         [TestInitialize]

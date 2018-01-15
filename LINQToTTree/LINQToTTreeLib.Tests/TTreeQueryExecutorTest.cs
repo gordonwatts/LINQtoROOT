@@ -717,7 +717,7 @@ namespace LINQToTTreeLib
 
             public Task<IEnumerable<Uri>> ResolveUri(Uri u)
             {
-                return Task.FromResult(new[] { new UriBuilder(u) { Scheme = "file" }.Uri }.AsEnumerable());
+                return Task.FromResult(new[] { new UriBuilder(u) { Scheme = "file", Query="" }.Uri }.AsEnumerable());
             }
         }
 

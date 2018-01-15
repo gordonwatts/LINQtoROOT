@@ -103,13 +103,15 @@ namespace LINQToTTreeLib.Utils
                 throw new ArgumentNullException("The argument to InternalAccumulateHash was null - not allowed.");
 
             // Write it to a ROOT buffer
-            var buffer = new ROOTNET.NTBufferFile(ROOTNET.Interface.NTBuffer.EMode.kWrite);
-            buffer.WriteObject(nTObject);
-            //var result = buffer.Buffer().as_array(buffer.Length());
-            var result = BufferAsBytes(buffer);
+            using (var buffer = new ROOTNET.NTBufferFile(ROOTNET.Interface.NTBuffer.EMode.kWrite))
+            {
+                buffer.WriteObject(nTObject);
+                //var result = buffer.Buffer().as_array(buffer.Length());
+                var result = BufferAsBytes(buffer);
 
-            // And update the hash value we are holding onto.
-            ComputeHash(result);
+                // And update the hash value we are holding onto.
+                ComputeHash(result);
+            }
         }
 
         /// <summary>

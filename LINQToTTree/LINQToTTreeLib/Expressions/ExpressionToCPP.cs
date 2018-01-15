@@ -414,7 +414,7 @@ namespace LINQToTTreeLib.Expressions
                     break;
             }
 
-            if (op == "")
+            if (string.IsNullOrWhiteSpace(op))
             {
                 return base.VisitBinary(expression);
             }

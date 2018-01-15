@@ -93,7 +93,7 @@ namespace LINQToTTreeLib.TypeHandlers
         /// <param name="context"></param>
         /// <param name="container"></param>
         /// <returns></returns>
-        private IValue ProcessToDouble(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
+        private static IValue ProcessToDouble(MethodCallExpression expr, IGeneratedQueryCode gc, CompositionContainer container)
         {
             var srcExpr = expr.Arguments[0];
             if (srcExpr.NodeType != ExpressionType.Convert)

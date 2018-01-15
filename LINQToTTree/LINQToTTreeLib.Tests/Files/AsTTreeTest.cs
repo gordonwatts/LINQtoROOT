@@ -21,6 +21,7 @@ namespace LINQToTTreeLib.Tests.Files
     /// have that much to test here!
     /// </summary>
     [TestClass]
+    [DeploymentItem(@"Templates\TSelectorTemplate.cxx")]
     public class AsTTreeTest
     {
         [TestInitialize]

@@ -491,7 +491,6 @@
     <Compile Include="Files\AsCSVTest.cs" />
     <Compile Include="Files\AsTTreeTest.cs" />
     <Compile Include="Files\FileUtilsForTesting.cs" />
-    <Compile Include="FileUtilsTest.cs" />
     <Compile Include="FutureResultOperatorsTest.cs" />
     <Compile Include="FutureValueTTest.cs" />
     <Compile Include="GeneratedCodeTest.cs" />

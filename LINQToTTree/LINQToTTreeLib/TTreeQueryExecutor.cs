@@ -1427,6 +1427,11 @@ namespace LINQToTTreeLib
         /// We compose ourselves out of this
         /// </summary>
         static CompositionContainer _gContainer = null;
+        
+        /// <summary>
+        /// Hold onto the assembly catalog
+        /// </summary>
+        static AggregateCatalog _gAggCat = null;
 
         /// <summary>
         /// Track assemblies that need to be added to this guy for composition.
@@ -1456,7 +1461,10 @@ namespace LINQToTTreeLib
         /// </summary>
         internal static void Reset()
         {
+            _gContainer?.Dispose();
+            _gAggCat?.Dispose();
             _gContainer = null;
+            _gAggCat = null;
         }
 
         /// <summary>
@@ -1468,16 +1476,21 @@ namespace LINQToTTreeLib
                 return;
 
             // Get MEF setup with everything in our assembly.
-            AggregateCatalog aggCat = new AggregateCatalog();
-            aggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
-            if (_gAssembliesToCompose.IsValueCreated)
+            if (_gAggCat == null)
             {
-                foreach (var a in _gAssembliesToCompose.Value)
+                _gAggCat = new AggregateCatalog();
+                _gAggCat.Catalogs.Add(new AssemblyCatalog(Assembly.GetCallingAssembly()));
+                if (_gAssembliesToCompose.IsValueCreated)
                 {
-                    aggCat.Catalogs.Add(new AssemblyCatalog(a));
+                    foreach (var a in _gAssembliesToCompose.Value)
+                    {
+                        _gAggCat.Catalogs.Add(new AssemblyCatalog(a));
+                    }
                 }
             }
-            _gContainer = new CompositionContainer(aggCat);
+
+            // Build the container now
+            _gContainer = new CompositionContainer(_gAggCat);
             CompositionBatch b = new CompositionBatch();
             b.AddPart(new TypeHandlers.TypeHandlerCache());
             _gContainer.Compose(b);

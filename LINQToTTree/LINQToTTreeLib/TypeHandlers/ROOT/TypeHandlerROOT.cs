@@ -245,7 +245,7 @@ namespace LINQToTTreeLib.TypeHandlers.ROOT
         /// <param name="container"></param>
         /// <param name="builtArgs"></param>
         /// <returns>List of dependent variables used in the arguments</returns>
-        private IEnumerable<IDeclaredParameter> AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, CompositionContainer container, StringBuilder builtArgs)
+        private static IEnumerable<IDeclaredParameter> AddMethodArguments(System.Collections.ObjectModel.ReadOnlyCollection<Expression> args, IGeneratedQueryCode gc, CompositionContainer container, StringBuilder builtArgs)
         {
             builtArgs.Append("(");
             bool first = true;

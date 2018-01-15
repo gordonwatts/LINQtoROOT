@@ -53,6 +53,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <LangVersion>latest</LangVersion>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\AllProjectAnalysisRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -264,6 +265,7 @@
     <Compile Include="FutureResultOperators.cs" />
     <Compile Include="FutureValue.cs" />
     <Compile Include="GeneratedCode.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IAddResults\AdderDouble.cs" />
     <Compile Include="IAddResults\AdderFileInfoArray.cs" />

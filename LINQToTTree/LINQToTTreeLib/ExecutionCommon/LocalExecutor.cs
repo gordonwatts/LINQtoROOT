@@ -162,86 +162,88 @@ namespace LINQToTTreeLib.ExecutionCommon
             /// 
 
             TraceHelpers.TraceInfo(19, "RunNtupleQuery: Creating the TChain");
-            var tree = new ROOTNET.NTChain(treeName);
-            foreach (var f in rootFiles)
+            using (var tree = new ROOTNET.NTChain(treeName))
             {
-                tree.Add(f.FullName);
-            }
-
-            ///
-            /// If there are any objects we need to send to the selector, then send them on now
-            /// 
-
-            TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
-            var objInputList = new ROOTNET.NTList();
-            selector.InputList = objInputList;
-
-            var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
-            ROOTNET.NTH1.AddDirectory(false);
-            foreach (var item in variablesToLoad)
-            {
-                var obj = item.Value as ROOTNET.Interface.NTNamed;
-                if (obj == null)
-                    throw new InvalidOperationException("Can only deal with named objects");
-                var cloned = obj.Clone(item.Key);
-                objInputList.Add(cloned);
-            }
-            ROOTNET.NTH1.AddDirectory(oldHSet);
-
-            //
-            // Setup the cache for more efficient reading. We assume we are on a machine with plenty of memory
-            // for this.
-            //
-
-            tree.CacheSize = 1024 * 1024 * 100; // 100 MB cache
-            if (LeafNames == null)
-            {
-                tree.AddBranchToCache("*", true);
-            }
-            else
-            {
-                foreach (var leaf in LeafNames)
+                foreach (var f in rootFiles)
                 {
-                    tree.AddBranchToCache(leaf, true);
+                    tree.Add(f.FullName);
                 }
+
+                ///
+                /// If there are any objects we need to send to the selector, then send them on now
+                /// 
+
+                TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
+                var objInputList = new ROOTNET.NTList();
+                selector.InputList = objInputList;
+
+                var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+                ROOTNET.NTH1.AddDirectory(false);
+                foreach (var item in variablesToLoad)
+                {
+                    var obj = item.Value as ROOTNET.Interface.NTNamed;
+                    if (obj == null)
+                        throw new InvalidOperationException("Can only deal with named objects");
+                    var cloned = obj.Clone(item.Key);
+                    objInputList.Add(cloned);
+                }
+                ROOTNET.NTH1.AddDirectory(oldHSet);
+
+                //
+                // Setup the cache for more efficient reading. We assume we are on a machine with plenty of memory
+                // for this.
+                //
+
+                tree.CacheSize = 1024 * 1024 * 100; // 100 MB cache
+                if (LeafNames == null)
+                {
+                    tree.AddBranchToCache("*", true);
+                }
+                else
+                {
+                    foreach (var leaf in LeafNames)
+                    {
+                        tree.AddBranchToCache(leaf, true);
+                    }
+                }
+                tree.StopCacheLearningPhase();
+
+                // Always Do the async prefetching (this is off by default for some reason, but...).
+
+                ROOTNET.Globals.gEnv.Value.SetValue("TFile.AsynchPrefetching", 1);
+
+                ///
+                /// Finally, run the whole thing
+                /// 
+
+                TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
+                if (Environment.BreakToDebugger)
+                    System.Diagnostics.Debugger.Break();
+                tree.Process(selector);
+                TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
+
+                // If debug, dump some stats...
+
+                if (Environment.CompileDebug)
+                {
+                    tree.PrintCacheStats();
+                }
+
+                //
+                // Get the results and put them into a map for safe keeping!
+                // Also, since we want the results to live beyond this guy, make sure that when
+                // the selector is deleted the objects don't go away!
+                //
+
+                var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
+                foreach (var o in selector.OutputList)
+                {
+                    results[o.Name] = o;
+                }
+                selector.OutputList.SetOwner(false);
+
+                return results;
             }
-            tree.StopCacheLearningPhase();
-
-            // Always Do the async prefetching (this is off by default for some reason, but...).
-
-            ROOTNET.Globals.gEnv.Value.SetValue("TFile.AsynchPrefetching", 1);
-
-            ///
-            /// Finally, run the whole thing
-            /// 
-
-            TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
-            if (Environment.BreakToDebugger)
-                System.Diagnostics.Debugger.Break();
-            tree.Process(selector);
-            TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
-
-            // If debug, dump some stats...
-
-            if (Environment.CompileDebug)
-            {
-                tree.PrintCacheStats();
-            }
-
-            //
-            // Get the results and put them into a map for safe keeping!
-            // Also, since we want the results to live beyond this guy, make sure that when
-            // the selector is deleted the objects don't go away!
-            //
-
-            var results = new Dictionary<string, ROOTNET.Interface.NTObject>();
-            foreach (var o in selector.OutputList)
-            {
-                results[o.Name] = o;
-            }
-            selector.OutputList.SetOwner(false);
-
-            return results;
         }
 
         #region Support Routines
