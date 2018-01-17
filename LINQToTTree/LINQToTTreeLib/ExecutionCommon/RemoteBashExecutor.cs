@@ -20,6 +20,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     {
         public string Scheme => "remotebash";
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
         {
             return new RemoteBashExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
@@ -30,7 +31,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// <summary>
     /// Used to execute remotely (via an ssh connection)
     /// </summary>
-    public class RemoteBashExecutor : CommandLineCommonExecutor, IQueryExectuor
+    public sealed class RemoteBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
         /// <summary>
         /// Return the executor name to help with error messages.
@@ -714,6 +715,17 @@ namespace LINQToTTreeLib.ExecutionCommon
             return files
                 .GroupBy(u => $"{u.Host}{u.UserInfo}")
                 .Select(ul => ul.Select(u => u).ToArray());
+        }
+
+        /// <summary>
+        /// Make sure our connection is gone!
+        /// </summary>
+        public void Dispose()
+        {
+            if (_connection != null)
+            {
+                _connection.Dispose();
+            }
         }
     }
 }

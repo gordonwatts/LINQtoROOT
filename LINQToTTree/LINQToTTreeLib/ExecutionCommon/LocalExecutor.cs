@@ -20,6 +20,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     {
         public string Scheme => "file";
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
         {
             return new LocalExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
@@ -30,7 +31,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// Runs single threaded, in the local process, and does all the ntuples we need.
     /// This is married to the version of root that LINQToTTree is built against.
     /// </summary>
-    class LocalExecutor : IQueryExectuor
+    sealed class LocalExecutor : IQueryExectuor
     {
         /// <summary>
         /// The execution environment
@@ -460,6 +461,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
         {
             return new[] { files };
+        }
+
+        /// <summary>
+        /// We are holding onto no resources.
+        /// </summary>
+        public void Dispose()
+        {
         }
 
         #endregion

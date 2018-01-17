@@ -23,21 +23,24 @@ namespace LINQToTTreeLib.ExecutionCommon
         public static async Task RunROOTInBashAsync (string prefix, string commands, DirectoryInfo tempDirectory, Action<string> dumpLine = null, bool verbose = false)
         {
             // Get ROOT installed if it hasn't been already.
-            var le = BuildExecutor();
-
-            if (!(await le.CheckForROOTInstall(dumpLine, verbose)))
+            using (var le = BuildExecutor())
             {
-                await le.InstallROOT(dumpLine, verbose);
-            }
 
-            // Run in ROOT.
-            await le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose);
+                if (!(await le.CheckForROOTInstall(dumpLine, verbose)))
+                {
+                    await le.InstallROOT(dumpLine, verbose);
+                }
+
+                // Run in ROOT.
+                await le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose);
+            }
         }
 
         /// <summary>
         /// Build a local executor
         /// </summary>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private static LocalBashExecutor BuildExecutor()
         {
             return new LocalBashExecutor
@@ -53,8 +56,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="commands">Bash script, using \n as the seperator</param>
         public static async Task RunBashCommandAsync(string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
         {
-            var le = BuildExecutor();
-            await le.ExecuteBashScript(fnameRoot, commands, dumpLine, verbose);
+            using (var le = BuildExecutor())
+            {
+                await le.ExecuteBashScript(fnameRoot, commands, dumpLine, verbose);
+            }
         }
     }
 }

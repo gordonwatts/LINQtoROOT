@@ -17,6 +17,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     {
         public string Scheme => "localwin";
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
         {
             return new CommandLineExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
@@ -30,7 +31,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     /// 3. Run Root and execute that .C script in a sub-process.
     /// 4. Grab the return file and load up the objects and return them.
     /// </summary>
-    public class CommandLineExecutor : CommandLineCommonExecutor, IQueryExectuor
+    public sealed class CommandLineExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
         /// <summary>
         /// Return a string so that error messages know what kind of executor this is.
@@ -128,6 +129,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
         {
             return new[] { files };
+        }
+
+        /// <summary>
+        /// We are holding onto no local resources.
+        /// </summary>
+        public void Dispose()
+        {
         }
     }
 }

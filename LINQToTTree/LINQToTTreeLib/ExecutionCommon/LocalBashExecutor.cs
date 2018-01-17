@@ -20,6 +20,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     {
         public string Scheme => "localbash";
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public IQueryExectuor Create(IExecutionEnvironment exeReq, string[] referencedLeafNames)
         {
             return new LocalBashExecutor() { Environment = exeReq, LeafNames = referencedLeafNames };
@@ -35,7 +36,7 @@ namespace LINQToTTreeLib.ExecutionCommon
     ///   apt install libatlas-base-dev
     ///   apt install build-essential
     /// </remarks>
-    public class LocalBashExecutor : CommandLineCommonExecutor, IQueryExectuor
+    public sealed class LocalBashExecutor : CommandLineCommonExecutor, IQueryExectuor
     {
 
         /// <summary>
@@ -341,6 +342,13 @@ namespace LINQToTTreeLib.ExecutionCommon
         public IEnumerable<Uri[]> BatchInputUris(Uri[] files)
         {
             return new[] { files };
+        }
+
+        /// <summary>
+        /// We hold onto no resources!
+        /// </summary>
+        public void Dispose()
+        {
         }
     }
     static class LocalBashExecutorHelpers

@@ -1,4 +1,6 @@
-﻿namespace LinqToTTreeInterfacesLib
+﻿using System;
+
+namespace LinqToTTreeInterfacesLib
 {
     public interface IQueryExecutorFactory
     {

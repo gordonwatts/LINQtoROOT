@@ -953,6 +953,9 @@ namespace LINQToTTreeLib
         public async Task StressMultipleQueriesOnRemoteBash1()
         {
             await StressMultipleRuns(1, "remotebash");
+            GC.Collect();
+            GC.WaitForFullGCComplete();
+            GC.WaitForPendingFinalizers();
         }
 
         [TestMethod]

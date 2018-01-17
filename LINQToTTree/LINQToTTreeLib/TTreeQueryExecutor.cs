@@ -871,23 +871,25 @@ namespace LINQToTTreeLib
             // First, we let the executor tell us if it needs to split things up. Most executors will not split things up at all,
             // as everything looks the same. But you could imagine that a machine name is encoded and you want to send things to one machine, or
             // to another.
-            var local = localMaker();
-            var batchedByExecutor = local.BatchInputUris(files);
+            using (var local = localMaker())
+            {
+                var batchedByExecutor = local.BatchInputUris(files);
 
-            // Next, lets see how to split things up inside each of these batches.
-            var batchedFiles = batchedByExecutor
-                .SelectMany(bf =>
-                {
-                    int nBatches = local.SuggestedNumberOfSimultaniousProcesses(bf);
-                    var subBatchFiles = files.Length == 1 || nBatches == 1
-                        ? new[] { files }
-                        : SplitFilesIntoBatches(files, nBatches);
-                    return subBatchFiles;
-                });
+                // Next, lets see how to split things up inside each of these batches.
+                var batchedFiles = batchedByExecutor
+                    .SelectMany(bf =>
+                    {
+                        int nBatches = local.SuggestedNumberOfSimultaniousProcesses(bf);
+                        var subBatchFiles = files.Length == 1 || nBatches == 1
+                            ? new[] { files }
+                            : SplitFilesIntoBatches(files, nBatches);
+                        return subBatchFiles;
+                    });
 
-            // Next, we need actually run them!
-            return batchedFiles
-                .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle, localMaker(), referencedLeafNames));
+                // Next, we need actually run them!
+                return batchedFiles
+                    .Select((bf, index) => ExecuteQueuedQueriesForAScheme(scheme, bf, combinedInfo, cycle, localMaker, referencedLeafNames));
+            }
         }
 
         /// <summary>
@@ -918,7 +920,7 @@ namespace LINQToTTreeLib
         /// by cycle number.
         /// </remarks>
         private async Task<IDictionary<string, RunInfo>> ExecuteQueuedQueriesForAScheme(string scheme, Uri[] files,
-                CombinedGeneratedCode combinedInfo, Func<int> cycleFetcher, IQueryExectuor local, string[] referencedLeafNames)
+                CombinedGeneratedCode combinedInfo, Func<int> cycleFetcher, Func<IQueryExectuor> localMaker, string[] referencedLeafNames)
         {
             var queryDirectory = GenerateQueryDirectory();
             try
@@ -926,26 +928,29 @@ namespace LINQToTTreeLib
                 // Keep track of how often we run. Mostly for testing reasons, actually.
                 CountExecutionRuns++;
 
-                // Next, generate and slim the proxy file and the TSelector file
-                var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, queryDirectory);
-                var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile, queryDirectory);
-                TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
-                var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo, queryDirectory);
-
-                // Run the actual query.
-                var r = await local.Execute(files, templateRunner, queryDirectory, combinedInfo.VariablesToTransfer);
-
-                // Rename by cycle for those that need it. This allows, for example, file names that are the same in different runs
-                // of the code to be copied back into the same directory.
-                var cycle = cycleFetcher();
-                foreach (var cq in _queuedQueries)
+                using (var local = localMaker())
                 {
-                    cq.RenameForCycle(r, cycle);
-                }
+                    // Next, generate and slim the proxy file and the TSelector file
+                    var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, queryDirectory);
+                    var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile, queryDirectory);
+                    TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - building the TSelector");
+                    var templateRunner = WriteTSelector(slimedProxyFile.Name, Path.GetFileNameWithoutExtension(proxyFile.Name), combinedInfo, queryDirectory);
 
-                // Done - return everything, converted to RunInfo
-                return r
-                    .ToDictionary(er => er.Key, er => new RunInfo() { _cycle = cycle, _result = er.Value });
+                    // Run the actual query.
+                    var r = await local.Execute(files, templateRunner, queryDirectory, combinedInfo.VariablesToTransfer);
+
+                    // Rename by cycle for those that need it. This allows, for example, file names that are the same in different runs
+                    // of the code to be copied back into the same directory.
+                    var cycle = cycleFetcher();
+                    foreach (var cq in _queuedQueries)
+                    {
+                        cq.RenameForCycle(r, cycle);
+                    }
+
+                    // Done - return everything, converted to RunInfo
+                    return r
+                        .ToDictionary(er => er.Key, er => new RunInfo() { _cycle = cycle, _result = er.Value });
+                }
             } finally
             {
                 CleanUpQuery(queryDirectory);

@@ -19,23 +19,25 @@ namespace LINQToTTreeLib.ExecutionCommon
             IEnumerable<FileInfo> filesToSend = null, IEnumerable<FileInfo> filesToReceive = null, TimeSpan? timeout = null)
         {
             // Get ROOT installed if it hasn't been already.
-            var le = BuildExecutor(connectionString, verbose);
-
-            if (!(await le.CheckForROOTInstall(dumpLine, verbose)))
+            using (var le = BuildExecutor(connectionString, verbose))
             {
-                await le.InstallROOT(dumpLine, verbose);
-            }
+                if (!(await le.CheckForROOTInstall(dumpLine, verbose)))
+                {
+                    await le.InstallROOT(dumpLine, verbose);
+                }
 
-            // Run in ROOT.
-            await le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose,
-                extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)),
-                timeout: timeout);
+                // Run in ROOT.
+                await le.ExecuteRootScript(prefix, commands, tempDirectory, dumpLine, verbose,
+                    extraFiles: filesToSend?.Select(f => new Uri(f.FullName)), receiveFiles: filesToReceive?.Select(f => new Uri(f.FullName)),
+                    timeout: timeout);
+            }
         }
 
         /// <summary>
         /// Build a local executor
         /// </summary>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private static RemoteBashExecutor BuildExecutor(string connectionString, bool verbose)
         {
             var re = new RemoteBashExecutor ()
@@ -53,8 +55,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="commands">Bash script, using \n as the seperator</param>
         public static async Task RunBashCommandAsync(string connectionString, string fnameRoot, string commands, Action<string> dumpLine = null, bool verbose = false)
         {
-            var le = BuildExecutor(connectionString, verbose: verbose);
-            await le.ExecuteBashScriptAsync(fnameRoot, commands, dumpLine, verbose);
+            using (var le = BuildExecutor(connectionString, verbose: verbose))
+            {
+                await le.ExecuteBashScriptAsync(fnameRoot, commands, dumpLine, verbose);
+            }
         }
     }
 }

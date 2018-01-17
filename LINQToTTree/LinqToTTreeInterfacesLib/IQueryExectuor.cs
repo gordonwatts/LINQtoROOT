@@ -9,7 +9,7 @@ namespace LinqToTTreeInterfacesLib
     /// <summary>
     /// Runs an execution request
     /// </summary>
-    public interface IQueryExectuor
+    public interface IQueryExectuor : IDisposable
     {
         /// <summary>
         /// Run request, and return the results
