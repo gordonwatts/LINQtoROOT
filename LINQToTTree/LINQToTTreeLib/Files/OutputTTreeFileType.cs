@@ -194,7 +194,7 @@ namespace LINQToTTreeLib.Files
         /// <param name="cycle"></param>
         public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle, DirectoryInfo queryDirectory)
         {
-            var currentFile = GetFileInfo(iVariable, obj);
+            var currentFile = GetFileInfo(iVariable, obj, alternatDirectory: queryDirectory);
             if (currentFile == null)
             {
                 // If there is no current file - that manes that we are being asked to rename something that doesn't exist!
