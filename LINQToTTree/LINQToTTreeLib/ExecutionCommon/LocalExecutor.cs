@@ -1,5 +1,4 @@
-﻿
-using LinqToTTreeInterfacesLib;
+﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
 using Nito.AsyncEx;
 using System;
@@ -98,7 +97,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     TraceHelpers.TraceInfo(14, "ExecuteQueuedQueries: Startup - Running the code");
                     var localFiles = files.Select(u => new FileInfo(u.LocalPath)).ToArray();
 
-                    return RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
+                    return await RunNtupleQuery(Path.GetFileNameWithoutExtension(templateFile.Name), varsToTransfer, Environment.TreeName, localFiles);
                 }
                 finally
                 {
@@ -144,7 +143,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="tSelectorClassName">Name of the TSelector object</param>
         /// <param name="outputFileInfo">Where the output results should be written for eventual reading</param>
-        private Dictionary<string, ROOTNET.Interface.NTObject> RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad,
+        private async Task<Dictionary<string, ROOTNET.Interface.NTObject>> RunNtupleQuery(string tSelectorClassName, IEnumerable<KeyValuePair<string, object>> variablesToLoad,
             string treeName, FileInfo[] rootFiles)
         {
             ///
@@ -178,17 +177,20 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var objInputList = new ROOTNET.NTList();
                 selector.InputList = objInputList;
 
-                var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
-                ROOTNET.NTH1.AddDirectory(false);
-                foreach (var item in variablesToLoad)
+                using (var holder = await ROOTLock.Lock.LockAsync())
                 {
-                    var obj = item.Value as ROOTNET.Interface.NTNamed;
-                    if (obj == null)
-                        throw new InvalidOperationException("Can only deal with named objects");
-                    var cloned = obj.Clone(item.Key);
-                    objInputList.Add(cloned);
+                    var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+                    ROOTNET.NTH1.AddDirectory(false);
+                    foreach (var item in variablesToLoad)
+                    {
+                        var obj = item.Value as ROOTNET.Interface.NTNamed;
+                        if (obj == null)
+                            throw new InvalidOperationException("Can only deal with named objects");
+                        var cloned = obj.Clone(item.Key);
+                        objInputList.Add(cloned);
+                    }
+                    ROOTNET.NTH1.AddDirectory(oldHSet);
                 }
-                ROOTNET.NTH1.AddDirectory(oldHSet);
 
                 //
                 // Setup the cache for more efficient reading. We assume we are on a machine with plenty of memory

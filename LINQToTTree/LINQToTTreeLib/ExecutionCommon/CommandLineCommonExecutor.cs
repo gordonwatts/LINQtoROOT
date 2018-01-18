@@ -503,23 +503,26 @@ namespace LINQToTTreeLib.ExecutionCommon
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
                 // Next, move through and actually write everything out.
-                var objInputList = new ROOTNET.NTList();
-                var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
-                try
+                using (var holder = await ROOTLock.Lock.LockAsync())
                 {
-                    ROOTNET.NTH1.AddDirectory(false);
-                    foreach (var item in varsToTransfer)
+                    var objInputList = new ROOTNET.NTList();
+                    var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+                    try
                     {
-                        var obj = item.Value as ROOTNET.Interface.NTObject;
-                        var cloned = obj.Clone(item.Key);
-                        outgoingVariables.WriteTObject(cloned);
-                        cmds.AppendLine($"selector->GetInputList()->Add(varsInFile->Get(\"{item.Key}\"));");
+                        ROOTNET.NTH1.AddDirectory(false);
+                        foreach (var item in varsToTransfer)
+                        {
+                            var obj = item.Value as ROOTNET.Interface.NTObject;
+                            var cloned = obj.Clone(item.Key);
+                            outgoingVariables.WriteTObject(cloned);
+                            cmds.AppendLine($"selector->GetInputList()->Add(varsInFile->Get(\"{item.Key}\"));");
+                        }
                     }
-                }
-                finally
-                {
-                    ROOTNET.NTH1.AddDirectory(oldHSet);
-                    outgoingVariables.Close();
+                    finally
+                    {
+                        ROOTNET.NTH1.AddDirectory(oldHSet);
+                        outgoingVariables.Close();
+                    }
                 }
 
             }

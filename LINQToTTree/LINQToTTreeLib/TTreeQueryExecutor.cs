@@ -864,9 +864,9 @@ namespace LINQToTTreeLib
             Func<int> cycle)
         {
             // Get the query executor
-            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
             var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
             var localMaker = CreateQueryExecutor(scheme, referencedLeafNames);
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
 
             // First, we let the executor tell us if it needs to split things up. Most executors will not split things up at all,
             // as everything looks the same. But you could imagine that a machine name is encoded and you want to send things to one machine, or
