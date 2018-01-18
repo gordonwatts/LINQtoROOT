@@ -822,7 +822,7 @@ namespace LINQToTTreeLib
                     combinedInfo.AddGeneratedCode(cq.Code);
                 }
 
-                // Optimize the whole thing...
+                // Optimize the whole thing (this can be a rather expensive operation)
                 if (UseStatementOptimizer)
                     Optimizer.Optimize(combinedInfo);
 
@@ -1304,12 +1304,9 @@ namespace LINQToTTreeLib
             context.Put("baseClassName", proxyObjectName);
             context.Put("CINTLines", _cintLines);
 
-            ///
             /// In order to avoid conflicts having to do with root map files pointing to DLL's and some other weird bookeeping things
             /// that root does, we will name the query to be something different each time. This isn't a problem unless something goes
             /// wrong, but it can make whatever went wrong pretty confusing!
-            /// 
-
             context.Put("QueryIndex", _gQueryCounter);
             string queryFileName = "query" + _gQueryCounter.ToString();
             _gQueryCounter++;
