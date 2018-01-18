@@ -1,6 +1,7 @@
 ﻿using AtlasSSH;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Utils;
+using Nito.AsyncEx;
 using Polly;
 using ROOTNET.Interface;
 using System;
@@ -55,6 +56,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         internal static void ResetRemoteBashExecutor()
         {
             ROOTVersionNumber = DefaultROOTVersionString;
+            _installInfo = new Dictionary<string, RootInstallInfo>();
         }
 
         /// <summary>
@@ -598,33 +600,86 @@ namespace LINQToTTreeLib.ExecutionCommon
             return _linuxTempDir;
         }
 
+        #region Root Install Code
+
+        /// <summary>
+        /// Track info about a root install so we don't have to re-ask about the same machine over and over again.
+        /// </summary>
+        private class RootInstallInfo
+        {
+            public bool _isInstalled = false;
+            public bool _isChecked = false;
+            public AsyncLock _installCheck = new AsyncLock();
+        }
+
+        /// <summary>
+        /// Keep a dictionary of all root installs that have been done already
+        /// </summary>
+        private static Dictionary<string, RootInstallInfo> _installInfo = new Dictionary<string, RootInstallInfo>();
+
+        /// <summary>
+        /// Lock access to the install info
+        /// </summary>
+        private static AsyncLock _installInfoLock = new AsyncLock();
+
         /// <summary>
         /// Need to see if the remote machine has ROOT installed.
         /// </summary>
-        /// <param name="dumpLine"></param>
-        /// <param name="verbose"></param>
-        /// <returns></returns>
+        /// <param name="dumpLine">Where to dump lines from our check</param>
+        /// <param name="verbose">Be very verbose about running commands and looking at results</param>
+        /// <returns>True if root is accessible on the remote machine attached to this executor, false otherwise</returns>
+        /// <remarks>
+        /// Will only check one time per connection string.
+        /// </remarks>
         internal override async Task<bool> CheckForROOTInstall(Action<string> dumpLine, bool verbose)
         {
-            // Simple script to execute
-            var cmd = new StringBuilder();
-            cmd.AppendLine("void testForRoot() {int i = 10;}");
+            // See if we have done this before or not.
+            RootInstallInfo installInfo = null;
+            using (var holder = await _installInfoLock.LockAsync())
+            {
+                if (!_installInfo.TryGetValue(_machine.RemoteSSHConnectionString, out installInfo))
+                {
+                    installInfo = new RootInstallInfo();
+                    _installInfo[_machine.RemoteSSHConnectionString] = installInfo;
+                }
+                if (installInfo._isChecked)
+                {
+                    return installInfo._isInstalled;
+                }
+            }
 
-            try
+            // Aquire lock so only one of any threads running does the check.
+            using (var holder = await installInfo._installCheck.LockAsync())
             {
-                await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+                // While waiting for the lock, someone else could have done the update.
+                if (installInfo._isChecked)
+                {
+                    return installInfo._isInstalled;
+                }
+
+                // Simple script to execute to do the check.
+                var cmd = new StringBuilder();
+                cmd.AppendLine("void testForRoot() {int i = 10;}");
+
+                try
+                {
+                    await ExecuteRootScript("testForRoot", cmd.ToString(), new DirectoryInfo(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), dumpLine, verbose);
+                    installInfo._isInstalled = true;
+                }
+                catch (RemoteBashCommandFailureException e) when (e.Message.Contains("version for root"))
+                {
+                    installInfo._isInstalled = false;
+                }
+                installInfo._isChecked = true;
+                return installInfo._isInstalled;
             }
-            catch (RemoteBashCommandFailureException e) when (e.Message.Contains("version for root"))
-            {
-                return false;
-            }
-            return true;
         }
+        #endregion
 
         /// <summary>
         /// The config for a machine. We load it and hold it in memory.
         /// </summary>
-        public class MachineConfig
+        private class MachineConfig
         {
             /// <summary>
             /// Contains the connection string that we will use to "dial" up the other location
@@ -639,12 +694,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             public string[] ConfigureLines;
         }
 
-        static MachineConfig _s_global_config = null;
+        static private MachineConfig _s_global_config = null;
         /// <summary>
         /// Find the config for a particular machine.
         /// </summary>
         /// <returns></returns>
-        public static MachineConfig GetMachineInfo(string connectionString)
+        private static MachineConfig GetMachineInfo(string connectionString)
         {
             if (_s_global_config == null)
             {
