@@ -866,7 +866,7 @@ namespace LINQToTTreeLib
             // Get the query executor
             var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
             var localMaker = CreateQueryExecutor(scheme, referencedLeafNames);
-            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Will part out {files.Length} Uri's to run on {scheme}.", opt: TraceEventType.Start);
 
             // First, we let the executor tell us if it needs to split things up. Most executors will not split things up at all,
             // as everything looks the same. But you could imagine that a machine name is encoded and you want to send things to one machine, or
@@ -880,7 +880,7 @@ namespace LINQToTTreeLib
                     .SelectMany(bf =>
                     {
                         int nBatches = local.SuggestedNumberOfSimultaniousProcesses(bf);
-                        var subBatchFiles = files.Length == 1 || nBatches == 1
+                        var subBatchFiles = (files.Length == 1 || nBatches == 1)
                             ? new[] { files }
                             : SplitFilesIntoBatches(files, nBatches);
                         return subBatchFiles;
@@ -930,6 +930,7 @@ namespace LINQToTTreeLib
 
                 using (var local = localMaker())
                 {
+                    TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
                     // Next, generate and slim the proxy file and the TSelector file
                     var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, queryDirectory);
                     var slimedProxyFile = SlimProxyFile(referencedLeafNames, proxyFile, queryDirectory);
