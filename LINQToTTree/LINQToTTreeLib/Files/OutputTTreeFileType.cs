@@ -121,30 +121,41 @@ namespace LINQToTTreeLib.Files
         /// <param name="obj"></param>
         /// <param name="cycle">The cycle number for this file. If null, then the raw file as written by the code.</param>
         /// <returns></returns>
-        private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int? cycle = null, bool doChecks = true)
+        private FileInfo GetFileInfo(IDeclaredParameter iVariable, NTObject[] obj, int? cycle = null, bool doChecks = true, DirectoryInfo alternatDirectory = null)
         {
             // Fetch out the path and the size in bytes of the file.
             GetFilePathFromObjects(obj, out NTH1 hPath, out NTH1 hSize);
 
+            if (hPath == null || hSize == null)
+            {
+                throw new InvalidOperationException("Internal error - cache is missing either the path for a CSV file or its size");
+            }
+
             // Deal with the cycle - we just add an index onto the filename.
-            var name = hPath.Title;
+            var filename = Path.GetFileName(hPath.Title);
+            var directory = Path.GetDirectoryName(hPath.Title);
             if (cycle.HasValue)
             {
-                name = $"{Path.GetDirectoryName(name)}\\{Path.GetFileNameWithoutExtension(name)}_{cycle.Value}{Path.GetExtension(name)}";
+                filename = $"{Path.GetFileNameWithoutExtension(filename)}_{cycle.Value}{Path.GetExtension(filename)}";
             }
 
-            // See if the file is there, and make sure its size is the same.
-            // That will have to do for the cache lookup.
-            // Funny conversion are b.c. we are in the middle of a crazy generic here.
-            var f = new FileInfo(name);
-            if (doChecks
-                && (!f.Exists || (f.Length != (long)hSize.GetBinContent(1))))
+            // If no checks are required, return the ideal location of the file.
+            if (!doChecks)
             {
-                return null;
+                return new FileInfo(Path.Combine(directory, filename));
             }
 
-            // Return the file
-            return f;
+            // Since we are doing checks, look in both places for the file.
+            var directoriesToSearch = new[] { new DirectoryInfo(directory), alternatDirectory };
+            var bestFile = directoriesToSearch
+                .Where(d => d != null)
+                .Select(d => new FileInfo(Path.Combine(d.FullName, filename)))
+                .Where(f => f.Exists)
+                .Where(f => f.Length == (long)hSize.GetBinContent(1))
+                .OrderByDescending(f => f.LastWriteTime)
+                .FirstOrDefault();
+
+            return bestFile;
         }
 
         /// <summary>
