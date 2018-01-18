@@ -146,7 +146,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 // Parse for <><> style file replacements. This will call normalize to send over
                 // files, so we need to do this inside the execution environment.
-                var tcommands = this.ReWritePathsInQuery(cmds);
+                var tcommands = this.ReWritePathsInQuery(cmds, tmpDir);
 
                 // First, create the file for ROOT command lines. This has to be done in Linux line endings (as we assume we are
                 // going to a linux machine for this). Use a random filename b.c. we can run in a multi-threaded environment.
@@ -550,7 +550,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override Task<string> NormalizeFileForTarget(Uri finfo)
+        protected override Task<string> NormalizeFileForTarget(Uri finfo, DirectoryInfo queryDirectory)
         {
             // See if this file has already been setup as file that is remote
             if (finfo.Scheme == "remotebash")
@@ -574,7 +574,8 @@ namespace LINQToTTreeLib.ExecutionCommon
             } else
             {
                 // Perhaps it doesn't exist because we want to copy it back here?
-                _filesToBringBack.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(finfo.LocalPath), remoteLinuxDirectory = _linuxTempDir});
+                var destPath = Path.Combine(queryDirectory.FullName, Path.GetFileName(finfo.LocalPath));
+                _filesToBringBack.Add(new RemoteFileCopyInfo() { localFileName = new FileInfo(destPath), remoteLinuxDirectory = _linuxTempDir});
             }
 
             // It will just be in the local directory where we live.
@@ -586,7 +587,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override async Task<string> NormalizeFileForTarget(DirectoryInfo finfo)
+        protected override async Task<string> NormalizeFileForTarget(DirectoryInfo finfo, DirectoryInfo queryDirectory)
         {
             if (finfo.Exists)
             {

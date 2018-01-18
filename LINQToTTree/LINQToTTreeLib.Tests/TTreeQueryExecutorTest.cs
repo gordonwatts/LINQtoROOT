@@ -835,6 +835,21 @@ namespace LINQToTTreeLib
             Assert.AreNotEqual(dude[0].Name, dude[1].Name);
         }
 
+        [TestMethod]
+        public void RunRemoteAsCSV()
+        {
+            const int numberOfIter = 10;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
+            var remoteUri1 = new UriBuilder(rootFile1) { Scheme = "remotebash", Host = "tev01.phys.washington.edu", UserName = "gwatts" }.Uri;
+
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { remoteUri1 }, "dude", typeof(ntuple));
+
+            var dude = q1.Where(q => q.run > 10000).AsCSV(new FileInfo("RunSimpleConcatTwoSourceAsCSVFile.csv"));
+            Assert.IsNotNull(dude);
+            Assert.AreEqual(1, dude.Length);
+            Assert.IsTrue(dude[0].Exists);
+        }
+
 #if false
         This isn't working b.c. the SelectMany contains the Concat, and we don't have code yet that lifts that out.
 

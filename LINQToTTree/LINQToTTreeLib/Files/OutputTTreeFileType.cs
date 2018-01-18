@@ -181,7 +181,7 @@ namespace LINQToTTreeLib.Files
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <param name="cycle"></param>
-        public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+        public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle, DirectoryInfo queryDirectory)
         {
             var currentFile = GetFileInfo(iVariable, obj);
             if (currentFile == null)

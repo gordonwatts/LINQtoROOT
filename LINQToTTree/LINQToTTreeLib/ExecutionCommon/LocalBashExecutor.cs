@@ -209,7 +209,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             proc.StartInfo.FileName = FindBash();
-            proc.StartInfo.Arguments = $"-c {await NormalizeFileForTarget(tmpDir)}/{reason}.sh &> {await NormalizeFileForTarget(logFile)}";
+            proc.StartInfo.Arguments = $"-c {await NormalizeFileForTarget(tmpDir, tmpDir)}/{reason}.sh &> {await NormalizeFileForTarget(logFile, tmpDir)}";
 
             // Start it.
             var resultData = new StringBuilder();
@@ -309,7 +309,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override Task<string> NormalizeFileForTarget(Uri finfo)
+        protected override Task<string> NormalizeFileForTarget(Uri finfo, DirectoryInfo queryDirectory)
         {
             return Task.FromResult(new FileInfo(finfo.LocalPath).ConvertToBash());
         }
@@ -319,7 +319,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override Task<string> NormalizeFileForTarget(DirectoryInfo finfo)
+        protected override Task<string> NormalizeFileForTarget(DirectoryInfo finfo, DirectoryInfo queryDirectory)
         {
             return Task.FromResult(finfo.ConvertToBash());
         }

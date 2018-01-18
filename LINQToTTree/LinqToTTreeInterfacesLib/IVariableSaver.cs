@@ -2,6 +2,8 @@
 using ROOTNET.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
+
 namespace LinqToTTreeInterfacesLib
 {
 
@@ -72,7 +74,10 @@ namespace LinqToTTreeInterfacesLib
         /// Called after query is done - make a global resource unique in name. No need to do this
         /// if resource is in memory.
         /// </summary>
-        /// <param name="cycle"></param>
+        /// <param name="cycle">The cycle of this item - so it can be appended to a filename</param>
+        /// <param name="alternateDirectory">An alternate directory where this file might exist</param>
+        /// <param name="iVariable">The declared variable we are using against this storage</param>
+        /// <param name="obj">The result objects that contains info about the variable</param>
         /// <remarks>
         /// There are cases where the identical code is to be produced for multiple runs. In most cases,
         /// nothing extra needs to be done. But if something global is modified - say a file is written out rather than
@@ -80,6 +85,6 @@ namespace LinqToTTreeInterfacesLib
         /// step on each other. In short - bad. So once the query is done, this method provides an oportunity to rename the
         /// file (or object, or whatever). For in memory items that are sent via the TSelect input list, there is no need.
         /// </remarks>
-        void RenameForQueryCycle(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle);
+        void RenameForQueryCycle(IDeclaredParameter iVariable, ROOTNET.Interface.NTObject[] obj, int cycle, DirectoryInfo alternateDirectory);
     }
 }

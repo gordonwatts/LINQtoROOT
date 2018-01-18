@@ -421,7 +421,7 @@ namespace LINQToTTreeLib
             /// </summary>
             /// <param name="result"></param>
             /// <param name="cycle"></param>
-            void RenameForCycle(IDictionary<string, ROOTNET.Interface.NTObject> result, int cycle);
+            void RenameForCycle(IDictionary<string, ROOTNET.Interface.NTObject> result, int cycle, DirectoryInfo queryDirectory);
 
             /// <summary>
             /// Push the results into the cache
@@ -502,9 +502,9 @@ namespace LINQToTTreeLib
             /// </summary>
             /// <param name="result"></param>
             /// <param name="cycle"></param>
-            public void RenameForCycle(IDictionary<string, NTObject> result, int cycle)
+            public void RenameForCycle(IDictionary<string, NTObject> result, int cycle, DirectoryInfo queryDirectory)
             {
-                Future.TreeExecutor.RenameForCycle<RType>(Code.ResultValues.FirstOrDefault(), result, cycle);
+                Future.TreeExecutor.RenameForCycle<RType>(Code.ResultValues.FirstOrDefault(), result, cycle, queryDirectory);
             }
         }
 
@@ -945,7 +945,7 @@ namespace LINQToTTreeLib
                     var cycle = cycleFetcher();
                     foreach (var cq in _queuedQueries)
                     {
-                        cq.RenameForCycle(r, cycle);
+                        cq.RenameForCycle(r, cycle, queryDirectory);
                     }
 
                     // Done - return everything, converted to RunInfo
@@ -1242,12 +1242,12 @@ namespace LINQToTTreeLib
         /// <param name="iVariable"></param>
         /// <param name="result"></param>
         /// <param name="cycle"></param>
-        private void RenameForCycle<T>(IDeclaredParameter iVariable, IDictionary<string, NTObject> result, int cycle)
+        private void RenameForCycle<T>(IDeclaredParameter iVariable, IDictionary<string, NTObject> result, int cycle, DirectoryInfo queryDirectory)
         {
             var s = _varSaver.Get(iVariable);
             var objs = ExtractQueryReturnedObjectsForVariable(iVariable, result, s);
 
-            s.RenameForQueryCycle(iVariable, objs, cycle);
+            s.RenameForQueryCycle(iVariable, objs, cycle, queryDirectory);
         }
 
         /// <summary>

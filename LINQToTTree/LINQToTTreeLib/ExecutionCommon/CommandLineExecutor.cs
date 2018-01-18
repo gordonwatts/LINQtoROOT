@@ -83,7 +83,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override Task<string> NormalizeFileForTarget(Uri finfo)
+        protected override Task<string> NormalizeFileForTarget(Uri finfo, DirectoryInfo queryDirectory)
         {
             // Make sure the Uri is in the file scheme. This is b.c. otherwise
             // a UNC path (in particlar) isn't rendered the same way.
@@ -98,7 +98,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         /// <param name="finfo"></param>
         /// <returns></returns>
-        protected override Task<string> NormalizeFileForTarget(DirectoryInfo finfo)
+        protected override Task<string> NormalizeFileForTarget(DirectoryInfo finfo, DirectoryInfo queryDirectory)
         {
             return Task.FromResult(finfo.FullName.Replace("\\", "\\\\"));
         }

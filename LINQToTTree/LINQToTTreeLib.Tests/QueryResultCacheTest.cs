@@ -94,7 +94,7 @@ namespace LINQToTTreeLib
                 return (T)i;
             }
 
-            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle, DirectoryInfo queryDirectory)
             {
             }
         }
@@ -134,7 +134,7 @@ namespace LINQToTTreeLib
                 var h = obj[0]._result.Clone();
                 return (T)h;
             }
-            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle, DirectoryInfo queryDirectory)
             {
             }
         }

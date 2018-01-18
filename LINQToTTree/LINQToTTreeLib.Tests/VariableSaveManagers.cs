@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Linq;
 using LinqToTTreeInterfacesLib;
 using ROOTNET.Interface;
@@ -47,7 +48,7 @@ namespace LINQToTTreeLib.Tests
                 throw new NotImplementedException();
             }
 
-            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle)
+            public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle, DirectoryInfo queryDirectory)
             {
                 throw new NotImplementedException();
             }
