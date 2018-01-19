@@ -1,11 +1,13 @@
 ﻿using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.Expressions;
+using LINQToTTreeLib.Files;
 using LINQToTTreeLib.Optimization;
 using LINQToTTreeLib.Statements;
 using LINQToTTreeLib.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using static LINQToTTreeLib.Tests.TestUtils;
 
@@ -280,6 +282,43 @@ namespace LINQToTTreeLib.Tests.Optimization
 
             // Do optimization and dump
             var cc = DoOptimizationAndConsoleDump(query1, query2);
+
+            CheckForAndOrVariablesDeclared(cc);
+            // We shoudl see two variables, instead of one as in the previous test.
+            var assignments = CheckNoDoubleAssingments(cc);
+            Assert.AreEqual(2, assignments.Where(kv => kv.Value == 2).Count());
+        }
+
+        public class DataToCSV
+        {
+            public double v1;
+            public double v2;
+        }
+
+        [TestMethod]
+        public void DoNotCombineDifferenceThingsForCSVStruct()
+        {
+            // Generate the two close, but not identical calls.
+            var q = new QueriableDummy<SourceType3>
+            {
+                DOQueryFunctions = false
+            };
+
+            var dudeQ1 = from evt in q
+                         from j in evt.jets
+                         let valid = j.specialIndex.IsGoodIndex()
+                         select new DataToCSV()
+                         {
+                             v1 = valid ? j.specialIndex.val : 0.0,
+                             v2 = valid ? j.specialIndex.val * 2 : 0.0
+                         };
+
+            var dude1 = dudeQ1.AsCSV(new FileInfo("bogus.csv"));
+            var query1 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query1);
+
+            // Do optimization and dump
+            var cc = DoOptimizationAndConsoleDump(query1);
 
             CheckForAndOrVariablesDeclared(cc);
             // We shoudl see two variables, instead of one as in the previous test.
