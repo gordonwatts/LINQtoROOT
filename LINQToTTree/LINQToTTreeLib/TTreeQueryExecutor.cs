@@ -880,9 +880,9 @@ namespace LINQToTTreeLib
                     .SelectMany(bf =>
                     {
                         int nBatches = local.SuggestedNumberOfSimultaniousProcesses(bf);
-                        var subBatchFiles = (files.Length == 1 || nBatches == 1)
-                            ? new[] { files }
-                            : SplitFilesIntoBatches(files, nBatches);
+                        var subBatchFiles = (bf.Length == 1 || nBatches == 1)
+                            ? new[] { bf }
+                            : SplitFilesIntoBatches(bf, nBatches);
                         return subBatchFiles;
                     });
 
