@@ -106,7 +106,7 @@ namespace LINQToTTreeLib.Expressions
             }
 
             // Create and evaluate bool 1.
-            var resultBool2 = AssignExpreaaionToEvaluationIfNeededBool(ce, cc, container, binaryExpression.Right);
+            var resultBool2 = AssignExpreaaionToEvaluationIfNeededBool(ce, cc, container, binaryExpression.Right, outterScope);
             ce.CurrentScope = outterScope;
 
             // Finally, evaluate bool3.
@@ -127,18 +127,44 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="container"></param>
         /// <param name="exprToHandIn"></param>
         /// <returns></returns>
-        private static DeclarableParameter AssignExpreaaionToEvaluationIfNeededBool(IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container, Expression exprToHandIn)
+        private static DeclarableParameter AssignExpreaaionToEvaluationIfNeededBool(IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container, Expression exprToHandIn, IScopeInfo whereToDeclare = null)
         {
             IValue exprEvaluation = GetExpression(exprToHandIn, ce, cc, container);
             if (exprEvaluation is DeclarableParameter p)
             {
-                return p;
+                // We can only return this if the variable is declared at the place we want it to be!
+                var currentScope = ce.CurrentScope;
+                try
+                {
+                    if (whereToDeclare != null)
+                    {
+                        ce.CurrentScope = whereToDeclare;
+                    }
+                    if (ce.CodeBody.AllDeclaredVariables.Where(dp => dp == p).Any())
+                    {
+                        return p;
+                    }
+                } finally
+                {
+                    ce.CurrentScope = currentScope;
+                }
             }
 
             // Create and assign an expression.
             var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
             result.InitialValue = new ValSimple("false", typeof(bool));
-            ce.Add(result);
+
+            if (whereToDeclare == null)
+            {
+                ce.Add(result);
+            }
+            else
+            {
+                var currentScope = ce.CurrentScope;
+                ce.CurrentScope = whereToDeclare;
+                ce.Add(result);
+                ce.CurrentScope = currentScope;
+            }
             ce.Add(new Statements.StatementAssign(result, exprEvaluation));
             return result;
         }
