@@ -472,11 +472,13 @@ namespace LINQToTTreeLib.Expressions
 
                 // Run the code for the test, and then create the if/then/else that will support it.
                 var testExpression = base.Visit(expression.Test);
-                var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-                GeneratedCode.Add(testBoolInCode);
-                GeneratedCode.Add(new Statements.StatementAssign(testBoolInCode,
-                    ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer)
-                    ));
+                var testExpressionEvaluation = ExpressionToCPP.GetExpression(testExpression, GeneratedCode, CodeContext, MEFContainer);
+                var testBoolInCode = testExpressionEvaluation is DeclarableParameter p ? p : DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+                if (testBoolInCode != testExpressionEvaluation)
+                {
+                    GeneratedCode.Add(testBoolInCode);
+                    GeneratedCode.Add(new Statements.StatementAssign(testBoolInCode, testExpressionEvaluation));
+                }
 
                 // The result
                 var conditionalResult = DeclarableParameter.CreateDeclarableParameterExpression(expression.Type);
