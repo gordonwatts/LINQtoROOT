@@ -119,39 +119,160 @@ namespace LINQToTTreeLib.Tests.Optimization
             gc.Add(if1s2);
             gc.Pop();
 
-            // Next, we want an inline block. We will push everything down into it.
-            //var blockWithModified = new StatementInlineBlock();
-            //gc.Add(blockWithModified);
-
-            //blockWithModified.Add(if1s1);
-            //blockWithModified.Add(if2s1);
             gc.Add(if1s1);
             gc.Pop();
             gc.Add(if2s1);
             gc.Pop();
 
             // Have the modified if statement contain the modification now.
-
             var varToBeModified = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var statementModifier = new StatementAssign(varToBeModified, new ValSimple("1", typeof(int)));
-            //blockWithModified.Add(varToBeModified);
             gc.Add(varToBeModified);
             if1s1.Add(statementModifier);
 
             // Next, we need to use the variable in the second if statement. Which, since it is like the first, should be pushed back up there.
             var finalVar = DeclarableParameter.CreateDeclarableParameterExpression(typeof(int));
             var assignment = new StatementAssign(finalVar, varToBeModified);
-            //blockWithModified.Add(finalVar);
             gc.Add(finalVar);
             if2s1.Add(assignment);
 
             // Optimize.
-
             DoOptimizationAndConsoleDump(gc);
 
             var firstMention = gc.DumpCode().TakeWhile(l => !l.Contains("aInt32_4=1")).Count();
             var secondMetnion = gc.DumpCode().SkipWhile(l => !l.Contains("aInt32_4=1")).Skip(1).Where(l => l.Contains("aInt32_4")).Count();
             Assert.AreEqual(1, secondMetnion, "Mention of ainte32 4 after the first one");
+        }
+
+        /// <summary>
+        /// The way the lifter optimizes and combines looks like it might miss things. So this is
+        /// just another check to keep it in line.
+        /// </summary>
+        [TestMethod]
+        public void IfStatementsSeperatedByCodeShouldBeCombined()
+        {
+            // Generate the two close, but not identical calls.
+            var q = new QueriableDummy<TestNtupeArr>
+            {
+                DOQueryFunctions = false
+            };
+
+            var dudeQ1 = from evt in q
+                         where (evt.myvectorofint.First() > 0)
+                         select evt.myvectorofint[0];
+            var dude1 = dudeQ1.Sum();
+            var query1 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query1);
+
+            var dudeQ2 = from evt in q
+                         where (evt.myvectorofint.First() > 0)
+                         select evt.myvectorofint[0]*2;
+            var dude2 = dudeQ2.Sum();
+            var query2 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query2);
+
+            var dudeQ3 = from evt in q
+                         where (evt.myvectorofint.First() > 10)
+                         select evt.myvectorofint[0];
+            var dude3 = dudeQ3.Sum();
+            var query3 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query3);
+
+            // Do optimization and dump
+            var cc = DoOptimizationAndConsoleDump(query1, query3, query2);
+
+            // Look for duplicate runtime_error. There should be only one.
+            Assert.AreEqual(1, cc.DumpCode().Where(l => l.Contains("runtime_error")).Count());
+        }
+
+        public class TestNtupeWithLinks
+        {
+#pragma warning disable 0169
+            public int[] myvectorofint;
+#pragma warning restore 0169
+        }
+
+        /// <summary>
+        /// Found in the wild: two calculations protected by similar if statements got their result
+        /// variables renamed as being the same.
+        /// </summary>
+        [TestMethod]
+        public void DontCombineDifferentVariables()
+        {
+            // Generate the two close, but not identical calls.
+            var q = new QueriableDummy<SourceType3>
+            {
+                DOQueryFunctions = false
+            };
+
+            var dudeQ1 = from evt in q
+                         from j in evt.jets
+                         let valid = j.specialIndex.IsGoodIndex()
+                         select valid ? j.specialIndex.val : 0.0;
+
+            var dude1 = dudeQ1.Where(v => v > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query1);
+
+            var dudeQ2 = from evt in q
+                         from j in evt.jets
+                         let valid = j.specialIndex.IsGoodIndex()
+                         select valid ? j.specialIndex.val : 0.0;
+
+            var dude2 = dudeQ2.Where(v => v > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query2);
+
+            // Do optimization and dump
+            var cc = DoOptimizationAndConsoleDump(query1, query2);
+
+            // Make sure all variables used in the && statements are properly declared.
+            var varsUsed = cc.DumpCode()
+                .Where(l => l.Contains("&&"))
+                .Select(l => l.Split('='))
+                .Where(sl => sl.Length == 2)
+                .SelectMany(sl => sl[1].Split(new[] { "&&" }, StringSplitOptions.RemoveEmptyEntries))
+                .Select(v => v.Trim(';'))
+                .ToArray();
+            var varsNotDeclared = varsUsed
+                .Where(v => !IsDeclared(cc, v))
+                .ToArray();
+
+            Console.WriteLine("VariablesUsed");
+            foreach (var v in varsUsed)
+            {
+                Console.WriteLine($" -> {v}");
+            }
+            var msg = varsNotDeclared.Count() == 0 ? "" : varsNotDeclared.Aggregate((a, n) => a + " " + n);
+            Assert.AreEqual(0, varsNotDeclared.Count(), $"Not declared: {msg}");
+        }
+
+        /// <summary>
+        /// Look to see if a variable is declared or not.
+        /// </summary>
+        /// <param name="cc"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        private static bool IsDeclared(CombinedGeneratedCode cc, string v)
+        {
+            return cc.QueryCode()
+                .Where(c => IsDeclared(c, v))
+                .Any();
+        }
+
+        private static bool IsDeclared(IStatementCompound c, string v)
+        {
+            if (c is IBookingStatementBlock b)
+            {
+                if (b.DeclaredVariables.Where(dv => dv.RawValue == v).Any())
+                {
+                    return true;
+                }
+            }
+            return c.Statements
+                .Where(cb => cb is IStatementCompound)
+                .Where(cb => IsDeclared(cb as IStatementCompound, v))
+                .Any();
         }
 
         /// <summary>

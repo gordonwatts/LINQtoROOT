@@ -18,6 +18,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using static LINQToTTreeLib.Tests.TestUtils;
 
 namespace LINQToTTreeLib
 {
@@ -197,7 +198,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void ConditionalAndAlsoGuard()
         {
-            var q = new QueriableDummy<TestTranslatingExpressionVisitor.SourceType3>();
+            var q = new QueriableDummy<SourceType3>();
 
             var r1 = (from evt in q
                       from j in evt.jets
@@ -218,7 +219,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void ConditionalOrElseGuard()
         {
-            var q = new QueriableDummy<TestTranslatingExpressionVisitor.SourceType3>();
+            var q = new QueriableDummy<SourceType3>();
 
             var r1 = (from evt in q
                       from j in evt.jets
@@ -265,7 +266,7 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void IsIndexGoodRemotePointer()
         {
-            var q = new QueriableDummy<TestTranslatingExpressionVisitor.SourceType3>();
+            var q = new QueriableDummy<SourceType3>();
 
             var r1 = from evt in q
                      from j in evt.jets

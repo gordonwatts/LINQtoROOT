@@ -6,6 +6,7 @@ using LINQToTTreeLib.CodeAttributes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LINQToTTreeLib.Expressions;
 using LinqToTTreeInterfacesLib;
+using static LINQToTTreeLib.Tests.TestUtils;
 
 namespace LINQToTTreeLib.Tests
 {
@@ -635,56 +636,6 @@ namespace LINQToTTreeLib.Tests
             Assert.AreEqual(typeof(ResultType2), translatedMemberAccess.Expression.Type, "bad return type - not translated");
         }
 
-        public class SourceType3Container1
-        {
-            [TTreeVariableGrouping]
-            [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
-            public SourceType3Container2 specialIndex;
-
-            [TTreeVariableGrouping]
-            [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
-            public SourceType3Container2 specialIndexSecond;
-
-            [TTreeVariableGrouping]
-            [IndexToOtherObjectArray(typeof(SourceType3), "muons")]
-            public SourceType3Container2[] specialIndicies;
-
-            [TTreeVariableGrouping]
-            public int val;
-        }
-
-        public class SourceType3Container2
-        {
-            [TTreeVariableGrouping]
-            public int val;
-        }
-
-        [TranslateToClass(typeof(ResultType3))]
-        public class SourceType3
-        {
-            [TTreeVariableGrouping]
-            public SourceType3Container1[] jets;
-
-            [TTreeVariableGrouping]
-            public SourceType3Container2[] muons;
-        }
-
-        public class ResultType3 : IExpressionHolder
-        {
-            public ResultType3(Expression holder)
-            {
-                HeldExpression = holder;
-            }
-            public int[] val;
-            public int[] specialIndex;
-            public int[] specialIndexSecond;
-            public int[][] specialIndicies;
-
-            public Expression HeldExpression
-            {
-                get; private set;
-            }
-        }
 
         [TestMethod]
         public void TestArrayIndex()
