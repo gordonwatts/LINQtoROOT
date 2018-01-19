@@ -836,11 +836,13 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        [DeploymentItem("testmachine.txt")]
         public void RunRemoteAsCSV()
         {
             const int numberOfIter = 10;
             var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter);
-            var remoteUri1 = new UriBuilder(rootFile1) { Scheme = "remotebash", Host = "tev01.phys.washington.edu", UserName = "gwatts" }.Uri;
+            var info = File.ReadAllLines("testmachine.txt").First().Split('@');
+            var remoteUri1 = new UriBuilder(rootFile1) { Scheme = "remotebash", Host = info[1], UserName = info[0] }.Uri;
 
             var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { remoteUri1 }, "dude", typeof(ntuple));
 
