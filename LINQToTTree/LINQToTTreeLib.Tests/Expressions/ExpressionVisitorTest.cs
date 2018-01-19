@@ -149,7 +149,7 @@ namespace LINQToTTreeLib
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.LessThan, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10<10"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.LessThanOrEqual, LHS=Expression.Constant(10), RHS=Expression.Constant(10), ExpectedType=typeof(bool), ExpectedValue="10<=10"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.OrElse, LHS=Expression.Constant(false), RHS=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="aBoolean_1"},
-            new BinaryExpressionTestCase() { BinaryType= ExpressionType.AndAlso, LHS=Expression.Constant(false), RHS=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="aBoolean_2"},
+            new BinaryExpressionTestCase() { BinaryType= ExpressionType.AndAlso, LHS=Expression.Constant(false), RHS=Expression.Constant(true), ExpectedType=typeof(bool), ExpectedValue="aBoolean_4"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Add, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10+20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Subtract, LHS=Expression.Constant(10), RHS=Expression.Constant(20), ExpectedType=typeof(int), ExpectedValue="10-20"},
             new BinaryExpressionTestCase() { BinaryType= ExpressionType.Subtract, LHS=Expression.Constant(10), RHS=Expression.Constant(-20), ExpectedType=typeof(int), ExpectedValue="10-(-20)"},
@@ -166,7 +166,7 @@ namespace LINQToTTreeLib
             var e = Expression.MakeBinary(c.BinaryType, c.LHS, c.RHS);
             GeneratedCode g = new GeneratedCode();
             var r = ExpressionToCPP.GetExpression(e, g, null, MEFUtilities.MEFContainer);
-            CheckGeneratedCodeEmpty(g, c.BinaryType ==  ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 1 : 0, c.BinaryType == ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 2 : 0);
+            CheckGeneratedCodeEmpty(g, c.BinaryType ==  ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 2 : 0, c.BinaryType == ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 3 : 0);
             Assert.AreEqual(c.ExpectedType, r.Type, "Expected type is incorrect");
             Assert.AreEqual(c.ExpectedValue, r.RawValue, "value is incorrect");
             Assert.AreEqual(c.BinaryType == ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 1 : 0, r.Dependants.Count());
@@ -305,8 +305,8 @@ namespace LINQToTTreeLib
         /// <param name="g"></param>
         private void CheckGeneratedCodeEmpty(GeneratedCode g, int expectedNumberDeclared = 0, int expectedStatements = 0)
         {
-            Assert.AreEqual(expectedNumberDeclared, g.CodeBody.DeclaredVariables.Count(), "There should be no declared variables");
-            Assert.AreEqual(expectedStatements, g.CodeBody.Statements.Count(), "There should be no statements");
+            Assert.AreEqual(expectedNumberDeclared, g.CodeBody.DeclaredVariables.Count(), "# of declared variables");
+            Assert.AreEqual(expectedStatements, g.CodeBody.Statements.Count(), "# of statements");
         }
 
         class ntup

@@ -73,33 +73,73 @@ namespace LINQToTTreeLib.Expressions
         /// <param name="cc"></param>
         /// <param name="container"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// To prevent us from updating variables (which makes optmization harder), we will implement the code as follows for a&&b:
+        /// bool_1 = false; bool_2 = false; bool_3 = false;
+        /// bool_1 = a
+        /// if (bool_1) bool_2 = b
+        /// bool_3 = bool_1 && bool_2
+        ///</remarks>
         private static IValue GetExpressionForBoolAndOr(Expression expr, IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container)
         {
             // Svae to make sure we can get back.
             var outterScope = ce.CurrentScope;
 
             // Create a variable to hold the result of this test
-            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            result.InitialValue = new ValSimple("false", typeof(bool));
-            ce.Add(result);
+            var resultBool3 = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            resultBool3.InitialValue = new ValSimple("false", typeof(bool));
+            ce.Add(resultBool3);
 
-            // Set its value equal to the lefthand operand.
+            // Create and evaluate bool_1
             var binaryExpression = expr as BinaryExpression;
-            ce.Add(new Statements.StatementAssign(result, GetExpression(binaryExpression.Left, ce, cc, container)));
+            DeclarableParameter resultBool1 = AssignExpreaaionToEvaluationIfNeededBool(ce, cc, container, binaryExpression.Left);
 
             // Now, see if we need to evalute the right hand operand.
             if (expr.NodeType == ExpressionType.AndAlso)
             {
-                ce.Add(new Statements.StatementFilter(result));
-            } else
+                ce.Add(new Statements.StatementFilter(resultBool1));
+            }
+            else
             {
-                var notYet = new ValSimple($"!{result.RawValue}", typeof(bool), new IDeclaredParameter[] { result });
+                var notYet = new ValSimple($"!{resultBool1.RawValue}", typeof(bool), new IDeclaredParameter[] { resultBool1 });
                 ce.Add(new Statements.StatementFilter(notYet));
             }
-            ce.Add(new Statements.StatementAssign(result, GetExpression(binaryExpression.Right, ce, cc, container)));
+
+            // Create and evaluate bool 1.
+            var resultBool2 = AssignExpreaaionToEvaluationIfNeededBool(ce, cc, container, binaryExpression.Right);
             ce.CurrentScope = outterScope;
 
+            // Finally, evaluate bool3.
+            var termEvaluation = expr.NodeType == ExpressionType.AndAlso
+                ? $"{resultBool1.RawValue}&&{resultBool2.RawValue}"
+                : $"{resultBool1.RawValue}||{resultBool2.RawValue}";
+            ce.Add(new Statements.StatementAssign(resultBool3, new ValSimple(termEvaluation, typeof(bool), new[] { resultBool1, resultBool2 })));
+
             // Return the value we've now filled.
+            return resultBool3;
+        }
+
+        /// <summary>
+        /// Evaluate an expression. If the result is just DeclareableParameter, return that, otherwise make an assignment.
+        /// </summary>
+        /// <param name="ce"></param>
+        /// <param name="cc"></param>
+        /// <param name="container"></param>
+        /// <param name="exprToHandIn"></param>
+        /// <returns></returns>
+        private static DeclarableParameter AssignExpreaaionToEvaluationIfNeededBool(IGeneratedQueryCode ce, ICodeContext cc, CompositionContainer container, Expression exprToHandIn)
+        {
+            IValue exprEvaluation = GetExpression(exprToHandIn, ce, cc, container);
+            if (exprEvaluation is DeclarableParameter p)
+            {
+                return p;
+            }
+
+            // Create and assign an expression.
+            var result = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            result.InitialValue = new ValSimple("false", typeof(bool));
+            ce.Add(result);
+            ce.Add(new Statements.StatementAssign(result, exprEvaluation));
             return result;
         }
 
@@ -213,6 +253,8 @@ namespace LINQToTTreeLib.Expressions
         /// </remarks>
         protected override Expression VisitConditional(ConditionalExpression expression)
         {
+            // Is this called under any circumstance?
+            throw new NotImplementedException();
             var testExpression = expression.Test;
             var trueExpression = expression.IfTrue;
             var falseExpression = expression.IfFalse;
