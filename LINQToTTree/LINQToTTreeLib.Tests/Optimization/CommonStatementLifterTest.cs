@@ -197,7 +197,7 @@ namespace LINQToTTreeLib.Tests.Optimization
         /// variables renamed as being the same.
         /// </summary>
         [TestMethod]
-        public void DontCombineDifferentVariables()
+        public void CombineIdenticalBurriedStatementsWhenCondPresent()
         {
             // Generate the two close, but not identical calls.
             var q = new QueriableDummy<SourceType3>
@@ -226,6 +226,69 @@ namespace LINQToTTreeLib.Tests.Optimization
             // Do optimization and dump
             var cc = DoOptimizationAndConsoleDump(query1, query2);
 
+            CheckForAndOrVariablesDeclared(cc);
+            var assigments = CheckNoDoubleAssingments(cc);
+            Assert.AreEqual(1, assigments.Where(kv => kv.Value == 2).Count());
+        }
+
+        /// <summary>
+        /// Return the number of times each variable is assigned
+        /// </summary>
+        /// <param name="cc"></param>
+        /// <returns></returns>
+        private static IDictionary<string, int> CheckNoDoubleAssingments(CombinedGeneratedCode cc)
+        {
+            var assignmeents = cc.DumpCode()
+                .Where(l => l.Contains("="))
+                .Select(l => l.Trim().Split('='))
+                .Where(sl => sl.Length == 2)
+                .Where(sl => !sl[0].Contains(' '))
+                .Select(sl => sl[0]);
+            var counting = assignmeents
+                .GroupBy(l => l)
+                .Select(kv => (kv.Key, kv.Count()))
+                .ToDictionary(kv => kv.Item1, kv => kv.Item2);
+            return counting;
+        }
+
+        [TestMethod]
+        public void DoNotCombineDiffBurriedStatementsWhenCondPresent()
+        {
+            // Generate the two close, but not identical calls.
+            var q = new QueriableDummy<SourceType3>
+            {
+                DOQueryFunctions = false
+            };
+
+            var dudeQ1 = from evt in q
+                         from j in evt.jets
+                         let valid = j.specialIndex.IsGoodIndex()
+                         select valid ? j.specialIndex.val : 0.0;
+
+            var dude1 = dudeQ1.Where(v => v > 5).Count();
+            var query1 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query1);
+
+            var dudeQ2 = from evt in q
+                         from j in evt.jets
+                         let valid = j.specialIndex.IsGoodIndex()
+                         select valid ? j.specialIndex.val*2 : 0.0;
+
+            var dude2 = dudeQ2.Where(v => v > 5).Count();
+            var query2 = DummyQueryExectuor.FinalResult;
+            Optimizer.Optimize(query2);
+
+            // Do optimization and dump
+            var cc = DoOptimizationAndConsoleDump(query1, query2);
+
+            CheckForAndOrVariablesDeclared(cc);
+            // We shoudl see two variables, instead of one as in the previous test.
+            var assignments = CheckNoDoubleAssingments(cc);
+            Assert.AreEqual(2, assignments.Where(kv => kv.Value == 2).Count());
+        }
+
+        private static void CheckForAndOrVariablesDeclared(CombinedGeneratedCode cc)
+        {
             // Make sure all variables used in the && statements are properly declared.
             var varsUsed = cc.DumpCode()
                 .Where(l => l.Contains("&&"))
