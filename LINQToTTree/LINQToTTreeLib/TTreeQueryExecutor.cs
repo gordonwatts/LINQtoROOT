@@ -933,7 +933,7 @@ namespace LINQToTTreeLib
                     TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme: Start run on Uri scheme {scheme}, {files.Length} files.", opt: TraceEventType.Start);
                     foreach (var u in files)
                     {
-                        TraceHelpers.TraceInfo(13, $"  -> {u.OriginalString}");
+                        TraceHelpers.TraceInfo(13, $"  -> {u.OriginalString}", opt:TraceEventType.Start);
                     }
                     // Next, generate and slim the proxy file and the TSelector file
                     var proxyFile = await local.GenerateProxyFile(files, _exeReq.TreeName, queryDirectory);

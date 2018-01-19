@@ -852,6 +852,73 @@ namespace LINQToTTreeLib
             Assert.IsTrue(dude[0].Exists);
         }
 
+        [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        public void RunRemote2FilesAsCSV1Connection()
+        {
+            const int numberOfIter1 = 10;
+            const int numberOfIter2 = 20;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter1);
+            var rootFile2 = TestUtils.CreateFileOfInt(numberOfIter2);
+
+            var info = File.ReadAllLines("testmachine.txt").First().Split('@');
+            var remoteUri1 = new UriBuilder(rootFile1) { Scheme = "remotebash", Host = info[1], UserName = info[0], Query="connections=1" }.Uri;
+            var remoteUri2 = new UriBuilder(rootFile2) { Scheme = "remotebash", Host = info[1], UserName = info[0], Query = "connections=1" }.Uri;
+
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { remoteUri1, remoteUri2 }, "dude", typeof(ntuple));
+
+            var dude = q1.Where(q => q.run > 10000).AsCSV(new FileInfo("RunSimpleConcatTwoSourceAsCSVFile.csv"));
+            Assert.IsNotNull(dude);
+            Assert.AreEqual(1, dude.Length);
+            Assert.IsTrue(dude[0].Exists);
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        public void RunRemote2FilesAsCSV10Connection()
+        {
+            const int numberOfIter1 = 10;
+            const int numberOfIter2 = 20;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter1);
+            var rootFile2 = TestUtils.CreateFileOfInt(numberOfIter2);
+
+            var info = File.ReadAllLines("testmachine.txt").First().Split('@');
+            var remoteUri1 = new UriBuilder(rootFile1) { Scheme = "remotebash", Host = info[1], UserName = info[0], Query = "connections=10" }.Uri;
+            var remoteUri2 = new UriBuilder(rootFile2) { Scheme = "remotebash", Host = info[1], UserName = info[0], Query = "connections=10" }.Uri;
+
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { remoteUri1, remoteUri2 }, "dude", typeof(ntuple));
+
+            var dude = q1.Where(q => q.run > 10000).AsCSV(new FileInfo("RunSimpleConcatTwoSourceAsCSVFile.csv"));
+            Assert.IsNotNull(dude);
+            Assert.AreEqual(2, dude.Length);
+            Assert.IsTrue(dude[0].Exists);
+            Assert.IsTrue(dude[1].Exists);
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        [DeploymentItem("testmachine2.txt")]
+        public void RunRemote2FilesAsCSV10Connection2Machines()
+        {
+            const int numberOfIter1 = 10;
+            const int numberOfIter2 = 20;
+            var rootFile1 = TestUtils.CreateFileOfInt(numberOfIter1);
+            var rootFile2 = TestUtils.CreateFileOfInt(numberOfIter2);
+
+            var info1 = File.ReadAllLines("testmachine.txt").First().Split('@');
+            var remoteUri1 = new UriBuilder(rootFile1) { Scheme = "remotebash", Host = info1[1], UserName = info1[0], Query = "connections=10" }.Uri;
+            var info2 = File.ReadAllLines("testmachine2.txt").First().Split('@');
+            var remoteUri2 = new UriBuilder(rootFile2) { Scheme = "remotebash", Host = info2[1], UserName = info2[0], Query = "connections=10" }.Uri;
+
+            var q1 = new SimpleTTreeExecutorQueriable<TestNtupe>(new[] { remoteUri1, remoteUri2 }, "dude", typeof(ntuple));
+
+            var dude = q1.Where(q => q.run > 10000).AsCSV(new FileInfo("RunSimpleConcatTwoSourceAsCSVFile.csv"));
+            Assert.IsNotNull(dude);
+            Assert.AreEqual(2, dude.Length);
+            Assert.IsTrue(dude[0].Exists);
+            Assert.IsTrue(dude[1].Exists);
+        }
+
 #if false
         This isn't working b.c. the SelectMany contains the Concat, and we don't have code yet that lifts that out.
 
