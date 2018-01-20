@@ -76,13 +76,15 @@ namespace LINQToTTreeLib.Optimization
                 .Statements
                 .SelectMany(s => s is IStatementCompound ? (s as IStatementCompound).Statements : new IStatement[] { s })
                 .Where(s => s is ICMStatementInfo)
-                .Where(s => (s as ICMStatementInfo).ResultVariables.Where(v => v == newParam.ParameterName).Any());
+                .Where(s => (s as ICMStatementInfo).ResultVariables.Where(v => v == newParam.ParameterName).Any())
+                .ToArray();
 
             var oldModified = vr.Item2
                 .Statements
                 .SelectMany(s => s is IStatementCompound ? (s as IStatementCompound).Statements : new IStatement[] { s })
                 .Where(s => s is ICMStatementInfo)
-                .Where(s => (s as ICMStatementInfo).ResultVariables.Where(v => v == oldName).Any());
+                .Where(s => (s as ICMStatementInfo).ResultVariables.Where(v => v == oldName).Any())
+                .ToArray();
 
             if (newModified.Count() != oldModified.Count())
                 return false;
@@ -91,18 +93,26 @@ namespace LINQToTTreeLib.Optimization
             if (pairedStatements.Where(sp => sp.Item1.GetType() != sp.Item2.GetType()).Any())
                 return false;
 
-            // Rename the variable - we need to do this to do the next level of checks.
-            vr.Item2.RenameVariable(oldName, newParam.ParameterName);
-
-            var nonMatchingAssignments = pairedStatements
-                .Where(sp => !sp.Item2.TryCombineStatement(sp.Item1, this));
-            if (nonMatchingAssignments.Any())
+            // Next, we have to make sure that the statements really are the same. Do this by runnign the renamer on them.
+            var renameStatus = pairedStatements
+                .Select(spair => ((spair.Item1 as ICMStatementInfo), (spair.Item2 as ICMStatementInfo)))
+                .Select(spair => spair.Item1 == null || spair.Item2 == null
+                                ? false
+                                : spair.Item1.RequiredForEquivalence(spair.Item2, new[] { Tuple.Create(oldName, newParam.ParameterName) }).Item1);
+            if (renameStatus.Any(s => !s))
             {
-                // Replace the renaming.
-                vr.Item2.RenameVariable(newParam.ParameterName, oldName);
                 return false;
             }
 
+            // Rename the variable - we need to do this to do the next level of checks.
+            vr.Item2.RenameVariable(oldName, newParam.ParameterName);
+
+            // Finally, combine the statements so we can get rid of them as they are now duplicates.
+            foreach (var spair in pairedStatements)
+            {
+                // Due to checking, there is no need to look at the result of teh try combine.
+                spair.Item2.TryCombineStatement(spair.Item1, this);
+            }
             return true;
         }
 
