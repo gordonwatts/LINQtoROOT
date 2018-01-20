@@ -286,11 +286,6 @@ namespace LINQToTTreeLib.Expressions
 
             // Run the test.
             var testBoolInCode = AssignExpreaaionToEvaluationIfNeededBool(_codeEnv, _codeContext, MEFContainer, testExpression);
-            //var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            //_codeEnv.Add(testBoolInCode);
-            //_codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
-            //    GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer)
-            //    ));
 
             // Next, do the result cache.
             var resultInCode = DeclarableParameter.CreateDeclarableParameterExpression(expression.Type);
