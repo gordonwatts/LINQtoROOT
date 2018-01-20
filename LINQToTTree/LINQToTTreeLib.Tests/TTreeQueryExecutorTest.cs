@@ -1050,6 +1050,7 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        [Ignore] // THis works fine, but takes too long during normal runs.
         [DeploymentItem("testmachine.txt")]
         public async Task StressMultipleQueriesOnRemoteBash100()
         {
