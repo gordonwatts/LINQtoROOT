@@ -166,7 +166,7 @@ namespace LINQToTTreeLib
             var e = Expression.MakeBinary(c.BinaryType, c.LHS, c.RHS);
             GeneratedCode g = new GeneratedCode();
             var r = ExpressionToCPP.GetExpression(e, g, null, MEFUtilities.MEFContainer);
-            CheckGeneratedCodeEmpty(g, c.BinaryType ==  ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 2 : 0, c.BinaryType == ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 3 : 0);
+            CheckGeneratedCodeEmpty(g, c.BinaryType ==  ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 3 : 0, c.BinaryType == ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 3 : 0);
             Assert.AreEqual(c.ExpectedType, r.Type, "Expected type is incorrect");
             Assert.AreEqual(c.ExpectedValue, r.RawValue, "value is incorrect");
             Assert.AreEqual(c.BinaryType == ExpressionType.AndAlso || c.BinaryType == ExpressionType.OrElse ? 1 : 0, r.Dependants.Count());

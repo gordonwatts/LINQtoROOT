@@ -276,37 +276,28 @@ namespace LINQToTTreeLib.Expressions
         /// <remarks>
         /// We turn this into a real if statement, rather than a fake if statement. This is to try to keep any code
         /// associated with the side that won't be executed, not being executed.
+        /// Note that Resolver has some good code already to special case handle a bool result.
         /// </remarks>
         protected override Expression VisitConditional(ConditionalExpression expression)
         {
-            // Is this called under any circumstance?
-            throw new NotImplementedException();
             var testExpression = expression.Test;
             var trueExpression = expression.IfTrue;
             var falseExpression = expression.IfFalse;
 
-            //
             // Run the test.
-            //
+            var testBoolInCode = AssignExpreaaionToEvaluationIfNeededBool(_codeEnv, _codeContext, MEFContainer, testExpression);
+            //var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
+            //_codeEnv.Add(testBoolInCode);
+            //_codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
+            //    GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer)
+            //    ));
 
-            var testBoolInCode = DeclarableParameter.CreateDeclarableParameterExpression(typeof(bool));
-            _codeEnv.Add(testBoolInCode);
-            _codeEnv.Add(new Statements.StatementAssign(testBoolInCode,
-                GetExpression(testExpression, _codeEnv, _codeContext, MEFContainer)
-                ));
-
-            //
             // Next, do the result cache.
-            //
-
             var resultInCode = DeclarableParameter.CreateDeclarableParameterExpression(expression.Type);
             _codeEnv.Add(resultInCode);
             _result = resultInCode;
 
-            //
-            // If true, if false...
-            //
-
+            // Get the result if the test is true.
             var topScope = _codeEnv.CurrentScope;
             _codeEnv.Add(new Statements.StatementFilter(testBoolInCode));
             _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(trueExpression, _codeEnv, _codeContext, MEFContainer)));
@@ -316,10 +307,7 @@ namespace LINQToTTreeLib.Expressions
             _codeEnv.Add(new Statements.StatementAssign(resultInCode, GetExpression(falseExpression, _codeEnv, _codeContext, MEFContainer)));
             _codeEnv.CurrentScope = topScope;
 
-            //
-            // Result is set. back we go!
-            //
-
+            // Result is set. Continue to process other items in the tree.
             return expression;
         }
 
