@@ -329,6 +329,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             var oldLinuxPhase = _currentLinuxPhase;
             _currentLinuxPhase = phase;
             IDisposable lck = null;
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> {_machine.RemoteSSHConnectionString} -> {remoteDirectory}", opt: TraceEventType.Start);
             try
             {
                 // Get the temp directory setup and going
