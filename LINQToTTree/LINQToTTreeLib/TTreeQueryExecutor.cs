@@ -803,7 +803,7 @@ namespace LINQToTTreeLib
             using (var exeLockWaiter = await _queryExecuteLock.LockAsync())
             {
                 // Make sure no one else has cleaned up the queue for us.
-                if (_queuedQueries.Count < 0)
+                if (_queuedQueries.Count <= 0)
                 {
                     return;
                 }
