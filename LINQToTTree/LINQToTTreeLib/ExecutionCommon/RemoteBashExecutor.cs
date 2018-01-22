@@ -7,6 +7,7 @@ using ROOTNET.Interface;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -263,6 +264,8 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public override async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> {files[0].Host}", opt: TraceEventType.Start);
+
             // Fetch out a connection string to setup the state.
             SetConnectionString(files);
 
