@@ -98,6 +98,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         public override Task<FileInfo> GenerateProxyFile(Uri[] rootFiles, string treeName, DirectoryInfo queryDirectory)
         {
             SetConnectionString(rootFiles);
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> Proxy: {rootFiles[0].Host}", opt: TraceEventType.Start);
             return base.GenerateProxyFile(rootFiles, treeName, queryDirectory);
         }
 
@@ -264,7 +265,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         public override async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
-            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> {files[0].Host}", opt: TraceEventType.Start);
+            TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> Execute: {files[0].Host}", opt: TraceEventType.Start);
 
             // Fetch out a connection string to setup the state.
             SetConnectionString(files);
@@ -661,6 +662,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     return installInfo._isInstalled;
                 }
 
+                TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> CheckRoot: {_machine.RemoteSSHConnectionString}", opt: TraceEventType.Start);
                 // Simple script to execute to do the check.
                 var cmd = new StringBuilder();
                 cmd.AppendLine("void testForRoot() {int i = 10;}");
