@@ -14,6 +14,7 @@ using System.Diagnostics;
 using static LINQToTTreeLib.TTreeQueryExecutor;
 using Remotion.Linq;
 using System.Threading.Tasks;
+using LINQToTTreeLib.ExecutionCommon;
 
 namespace LINQToTTreeLib
 {
@@ -1037,6 +1038,9 @@ namespace LINQToTTreeLib
         public async Task StressMultipleQueriesOnRemoteBash1()
         {
             await StressMultipleRuns(1, "remotebash");
+            Console.WriteLine($"Number of tunnels: {RemoteBashExecutor.NumberOfRecoveringConnections}");
+            Console.WriteLine($"Number of connections: {RemoteBashExecutor.NumberOfSSHTunnels}");
+            Console.WriteLine($"Number of disposes: {RemoteBashExecutor.NumberOfSSHRecoverDisposes}");
         }
 
         [TestMethod]
@@ -1052,6 +1056,19 @@ namespace LINQToTTreeLib
         public async Task StressMultipleQueriesOnRemoteBash20On2Machines()
         {
             await StressMultipleRuns(20, "remotebash", machine_names: new[] { "testmachine.txt", "testmachine2.txt" });
+            Console.WriteLine($"Number of tunnels: {RemoteBashExecutor.NumberOfRecoveringConnections}");
+            Console.WriteLine($"Number of connections: {RemoteBashExecutor.NumberOfSSHTunnels}");
+            Console.WriteLine($"Number of disposes: {RemoteBashExecutor.NumberOfSSHRecoverDisposes}");
+        }
+
+        [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        public async Task StressMultipleQueriesOnRemoteBash100With50Connections()
+        {
+            await StressMultipleRuns(100, "remotebash", connections: 50);
+            Console.WriteLine($"Number of tunnels: {RemoteBashExecutor.NumberOfRecoveringConnections}");
+            Console.WriteLine($"Number of connections: {RemoteBashExecutor.NumberOfSSHTunnels}");
+            Console.WriteLine($"Number of disposes: {RemoteBashExecutor.NumberOfSSHRecoverDisposes}");
         }
 
         [TestMethod]
@@ -1062,10 +1079,10 @@ namespace LINQToTTreeLib
             await StressMultipleRuns(100, "remotebash");
         }
 
-        private async Task StressMultipleRuns(int numberOfRuns, string scheme, string[] machine_names = null)
+        private async Task StressMultipleRuns(int numberOfRuns, string scheme, string[] machine_names = null, int connections = 1)
         {
             var returns = Enumerable.Range(10, numberOfRuns)
-                .Select(cnt => GetCount(cnt, scheme, machine_names))
+                .Select(cnt => GetCount(cnt, scheme, machine_names, connections))
                 .ToArray();
 
             var results = await Task.WhenAll(returns);
@@ -1077,7 +1094,7 @@ namespace LINQToTTreeLib
             }
         }
 
-        private async Task<int> GetCount(int countNumber, string scheme, string [] machine_names = null)
+        private async Task<int> GetCount(int countNumber, string scheme, string [] machine_names = null, int connections = 1)
         {
             // The posibility of reading more than one file to run on more than one machine at a time.
             var mnameList = machine_names ?? new[] { "testmachine.txt" };
@@ -1092,7 +1109,7 @@ namespace LINQToTTreeLib
 
             var u = scheme != "remotebash"
                 ? new UriBuilder(rootFile) { Scheme = scheme }.Uri
-                : new UriBuilder(rootFile) { Scheme = scheme, UserName = info[0], Host = info[1] }.Uri;
+                : new UriBuilder(rootFile) { Scheme = scheme, UserName = info[0], Host = info[1], Query=$"connections={connections}" }.Uri;
 
             var exe = new TTreeQueryExecutor(new Uri[] { u }, "dude", typeof(ntuple), typeof(TestNtupe));
             exe.Verbose = true;

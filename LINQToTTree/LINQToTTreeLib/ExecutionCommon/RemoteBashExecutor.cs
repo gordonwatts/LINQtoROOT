@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
@@ -58,6 +59,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             ROOTVersionNumber = DefaultROOTVersionString;
             _installInfo = new Dictionary<string, RootInstallInfo>();
+            NumberOfSSHRecoverDisposes = 0;
+            NumberOfSSHTunnels = 0;
+            NumberOfRecoveringConnections = 0;
         }
 
         /// <summary>
@@ -86,6 +90,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         public RemoteBashExecutor()
         {
             _machine = null;
+            _connection = new Lazy<SSHRecoveringConnection>(() => CreateSSHConnectionTo());
         }
 
         /// <summary>
@@ -409,11 +414,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             connection.CopyRemoteFileLocally(linuxPath, fileToGet, statusUpdate);
         }
 
-        /// <summary>
-        /// Cache the connection
-        /// </summary>
-        private SSHRecoveringConnection _connection = null;
-
         class RemoteFileCopyInfo
         {
             public FileInfo localFileName;
@@ -480,21 +480,45 @@ namespace LINQToTTreeLib.ExecutionCommon
         private HashSet<RemoteFileCopyInfo> _filesToBringBack = new HashSet<RemoteFileCopyInfo>();
 
         /// <summary>
+        /// Cache the connection
+        /// </summary>
+        private Lazy<SSHRecoveringConnection> _connection;
+
+        /// <summary>
         /// Create an SSH connection.
         /// </summary>
         /// <param name="dumpLine">Dump output from running various setup lines</param>
         /// <returns></returns>
         private async Task<SSHRecoveringConnection> MakeSSHConnection(Action<string> dumpLine = null)
         {
-            if (_connection == null)
+            return _connection.Value;
+        }
+
+        static public int NumberOfRecoveringConnections = 0;
+        static public int NumberOfSSHTunnels = 0;
+
+        /// <summary>
+        /// Create an SSH connection to a remote machine.
+        /// </summary>
+        /// <param name="remoteSSHConnectionString"></param>
+        /// <returns></returns>
+        /// <remarks>Should only get called by the _connection initalizer</remarks>
+        private SSHRecoveringConnection CreateSSHConnectionTo(string remoteSSHConnectionString = null, Action<string> dumpLine = null)
+        {
+            // Use the default
+            remoteSSHConnectionString = remoteSSHConnectionString ?? _machine.RemoteSSHConnectionString;
+            Interlocked.Increment(ref NumberOfRecoveringConnections);
+
+            // Create a recovering connection
+            return new SSHRecoveringConnection(async () =>
             {
-                await Policy
+                return await Policy
                     .Handle<SSHConnectFailureException>()
                     .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(60) })
                     .ExecuteAsync(async () =>
                     {
-
-                        _connection = CreateSSHConnectionTo(_machine.RemoteSSHConnectionString);
+                        var c = new SSHConnectionTunnel(remoteSSHConnectionString);
+                        Interlocked.Increment(ref NumberOfSSHTunnels);
 
                         if (_machine.ConfigureLines != null)
                         {
@@ -509,30 +533,17 @@ namespace LINQToTTreeLib.ExecutionCommon
                                 foreach (var line in _machine.ConfigureLines)
                                 {
                                     var rep = line.Replace("ROOTVersionNumber", ROOTVersionNumber);
-                                    await _connection.ExecuteLinuxCommandAsync(rep, processLine: s => RecordLine(logForError, s, localdumper));
+                                    await c.ExecuteLinuxCommandAsync(rep, processLine: s => RecordLine(logForError, s, localdumper));
                                 }
                             }
                             catch (Exception e)
                             {
                                 throw new RemoteBashCommandFailureException($"Error making a SSH connection: {ReformatLog(logForError)}", e);
                             }
-
                         }
-                    });
-            }
-            return _connection;
-        }
 
-        /// <summary>
-        /// Create an SSH connection to a remote machine.
-        /// </summary>
-        /// <param name="remoteSSHConnectionString"></param>
-        /// <returns></returns>
-        private SSHRecoveringConnection CreateSSHConnectionTo(string remoteSSHConnectionString)
-        {
-            return new SSHRecoveringConnection(() =>
-            {
-                return new SSHConnectionTunnel(remoteSSHConnectionString);
+                        return c;
+                    });
             });
         }
 
@@ -718,7 +729,6 @@ namespace LINQToTTreeLib.ExecutionCommon
             };
         }
 
-
         /// <summary>
         /// Thrown when we try to install root remotely.
         /// </summary>
@@ -778,14 +788,17 @@ namespace LINQToTTreeLib.ExecutionCommon
                 .Select(ul => ul.Select(u => u).ToArray());
         }
 
+        public static int NumberOfSSHRecoverDisposes = 0;
+
         /// <summary>
         /// Make sure our connection is gone!
         /// </summary>
         public void Dispose()
         {
-            if (_connection != null)
+            if (_connection != null && _connection.IsValueCreated)
             {
-                _connection.Dispose();
+                Interlocked.Increment(ref NumberOfSSHRecoverDisposes);
+                _connection.Value.Dispose();
             }
         }
     }
