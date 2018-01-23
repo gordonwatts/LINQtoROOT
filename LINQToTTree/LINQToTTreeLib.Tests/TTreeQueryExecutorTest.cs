@@ -1037,9 +1037,6 @@ namespace LINQToTTreeLib
         public async Task StressMultipleQueriesOnRemoteBash1()
         {
             await StressMultipleRuns(1, "remotebash");
-            GC.Collect();
-            GC.WaitForFullGCComplete();
-            GC.WaitForPendingFinalizers();
         }
 
         [TestMethod]
@@ -1050,6 +1047,14 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        [DeploymentItem("testmachine.txt")]
+        [DeploymentItem("testmachine2.txt")]
+        public async Task StressMultipleQueriesOnRemoteBash20On2Machines()
+        {
+            await StressMultipleRuns(20, "remotebash", machine_names: new[] { "testmachine.txt", "testmachine2.txt" });
+        }
+
+        [TestMethod]
         [Ignore] // THis works fine, but takes too long during normal runs.
         [DeploymentItem("testmachine.txt")]
         public async Task StressMultipleQueriesOnRemoteBash100()
@@ -1057,10 +1062,10 @@ namespace LINQToTTreeLib
             await StressMultipleRuns(100, "remotebash");
         }
 
-        private async Task StressMultipleRuns (int numberOfRuns, string scheme)
+        private async Task StressMultipleRuns(int numberOfRuns, string scheme, string[] machine_names = null)
         {
             var returns = Enumerable.Range(10, numberOfRuns)
-                .Select(cnt => GetCount(cnt, scheme))
+                .Select(cnt => GetCount(cnt, scheme, machine_names))
                 .ToArray();
 
             var results = await Task.WhenAll(returns);
@@ -1072,20 +1077,25 @@ namespace LINQToTTreeLib
             }
         }
 
-        private async Task<int> GetCount(int countNumber, string scheme)
+        private async Task<int> GetCount(int countNumber, string scheme, string [] machine_names = null)
         {
+            // The posibility of reading more than one file to run on more than one machine at a time.
+            var mnameList = machine_names ?? new[] { "testmachine.txt" };
+            var mnameFile = mnameList[countNumber % mnameList.Length];
+
             var rootFile = TestUtils.CreateFileOfInt(countNumber);
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Count();
             var query = DummyQueryExectuor.LastQueryModel;
 
-            var info = scheme == "remotebash" ? File.ReadAllLines("testmachine.txt").First().Split('@') : null;
+            var info = scheme == "remotebash" ? File.ReadAllLines(mnameFile).First().Split('@') : null;
 
             var u = scheme != "remotebash"
                 ? new UriBuilder(rootFile) { Scheme = scheme }.Uri
                 : new UriBuilder(rootFile) { Scheme = scheme, UserName = info[0], Host = info[1] }.Uri;
 
             var exe = new TTreeQueryExecutor(new Uri[] { u }, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.Verbose = true;
 
             var result = exe.ExecuteScalarAsFuture<int>(query);
             return await result;

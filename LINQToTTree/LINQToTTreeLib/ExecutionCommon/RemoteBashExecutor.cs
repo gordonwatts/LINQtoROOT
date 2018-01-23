@@ -330,6 +330,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             _currentLinuxPhase = phase;
             IDisposable lck = null;
             TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> {_machine.RemoteSSHConnectionString} -> {remoteDirectory}", opt: TraceEventType.Start);
+            Debug.WriteLine($"ExecuteQueuedQueriesForAScheme:  --> {_machine.RemoteSSHConnectionString} -> {remoteDirectory}");
             try
             {
                 // Get the temp directory setup and going
@@ -340,7 +341,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                     await sshConnection.ExecuteLinuxCommandAsync($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
                     lck = sshConnection.EnterNoRecoverRegion();
                 }
-                dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir}");
+                dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir} on {_machine.RemoteSSHConnectionString}.");
 
                 return await act(sshConnection);
             }
@@ -701,22 +702,20 @@ namespace LINQToTTreeLib.ExecutionCommon
             public string[] ConfigureLines;
         }
 
-        static private MachineConfig _s_global_config = null;
         /// <summary>
         /// Find the config for a particular machine.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns the global config for this machine that can be used to access and setup the machine</returns>
+        /// <remarks>
+        /// TODO: This config should be read from a file somewhere. And some intelligence should be added to cluster configs can be setup.
+        /// </remarks>
         private static MachineConfig GetMachineInfo(string connectionString)
         {
-            if (_s_global_config == null)
+            return new MachineConfig()
             {
-                _s_global_config = new MachineConfig()
-                {
-                    RemoteSSHConnectionString = connectionString,
-                    ConfigureLines = new[] { "setupATLAS", $"lsetup \"root ROOTVersionNumber\"" }
-                };
-            }
-            return _s_global_config;
+                RemoteSSHConnectionString = connectionString,
+                ConfigureLines = new[] { "setupATLAS", $"lsetup \"root ROOTVersionNumber\"" }
+            };
         }
 
 
