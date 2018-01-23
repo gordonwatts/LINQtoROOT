@@ -995,7 +995,7 @@ namespace LINQToTTreeLib
                         m.Append(", ");
                     m.Append($"{f.OriginalString}");
                 }
-                TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: finishnig query on {m.ToString()}", TraceEventType.Stop);
+                TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: finishing query on {m.ToString()}", TraceEventType.Stop);
             }
         }
 
