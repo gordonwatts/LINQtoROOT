@@ -538,7 +538,10 @@ namespace LINQToTTreeLib.ExecutionCommon
                             }
                             catch (Exception e)
                             {
-                                throw new RemoteBashCommandFailureException($"Error making a SSH connection: {ReformatLog(logForError)}", e);
+                                c.Dispose();
+                                string errMsg = ReformatLog(logForError);
+                                Trace.WriteLine($"Error making a SSH connection: {errMsg}");
+                                throw new RemoteBashCommandFailureException($"Error making a SSH connection: {errMsg}", e);
                             }
                         }
 
