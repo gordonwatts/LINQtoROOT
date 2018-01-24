@@ -62,6 +62,7 @@ namespace LINQToTTreeLib.ExecutionCommon
             NumberOfSSHRecoverDisposes = 0;
             NumberOfSSHTunnels = 0;
             NumberOfRecoveringConnections = 0;
+            _gConnectionInterlockLimiter = new AsyncSemaphore(MaxRemoteConnectionsAtOnce);
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         public RemoteBashExecutor()
         {
             _machine = null;
-            _connection = new Lazy<SSHRecoveringConnection>(() => CreateSSHConnectionTo());
+            _connection = new AsyncLazy<SSHRecoveringConnection>(() => CreateSSHConnectionTo());
         }
 
         /// <summary>
@@ -482,7 +483,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <summary>
         /// Cache the connection
         /// </summary>
-        private Lazy<SSHRecoveringConnection> _connection;
+        private AsyncLazy<SSHRecoveringConnection> _connection;
 
         /// <summary>
         /// Create an SSH connection.
@@ -491,11 +492,23 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         private async Task<SSHRecoveringConnection> MakeSSHConnection(Action<string> dumpLine = null)
         {
-            return _connection.Value;
+            return await _connection;
         }
 
         static public int NumberOfRecoveringConnections = 0;
         static public int NumberOfSSHTunnels = 0;
+
+        private const int MaxRemoteConnectionsAtOnce = 20;
+
+        /// <summary>
+        /// Make sure we don't run too many connections at once.
+        /// </summary>
+        private static AsyncSemaphore _gConnectionInterlockLimiter = new AsyncSemaphore(MaxRemoteConnectionsAtOnce);
+
+        /// <summary>
+        /// Keep the lock we grab in order to create a new connection.
+        /// </summary>
+        private IDisposable _connectionLock = null;
 
         /// <summary>
         /// Create an SSH connection to a remote machine.
@@ -503,18 +516,20 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <param name="remoteSSHConnectionString"></param>
         /// <returns></returns>
         /// <remarks>Should only get called by the _connection initalizer</remarks>
-        private SSHRecoveringConnection CreateSSHConnectionTo(string remoteSSHConnectionString = null, Action<string> dumpLine = null)
+        private async Task<SSHRecoveringConnection> CreateSSHConnectionTo(string remoteSSHConnectionString = null, Action<string> dumpLine = null)
         {
             // Use the default
             remoteSSHConnectionString = remoteSSHConnectionString ?? _machine.RemoteSSHConnectionString;
             Interlocked.Increment(ref NumberOfRecoveringConnections);
+
+            _connectionLock = await _gConnectionInterlockLimiter.LockAsync();
 
             // Create a recovering connection
             return new SSHRecoveringConnection(async () =>
             {
                 return await Policy
                     .Handle<SSHConnectFailureException>()
-                    .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(60) })
+                    .WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(60) })
                     .ExecuteAsync(async () =>
                     {
                         var c = new SSHConnectionTunnel(remoteSSHConnectionString);
@@ -798,10 +813,11 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </summary>
         public void Dispose()
         {
-            if (_connection != null && _connection.IsValueCreated)
+            if (_connection != null && _connectionLock != null)
             {
+                _connectionLock.Dispose();
                 Interlocked.Increment(ref NumberOfSSHRecoverDisposes);
-                _connection.Value.Dispose();
+                _connection.Task.Result.Dispose();
             }
         }
     }
