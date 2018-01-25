@@ -343,8 +343,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                 if (_currentLinuxPhase != oldLinuxPhase)
                 {
                     _linuxTempDir = remoteDirectory;
-                    await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
-                    await sshConnection.ExecuteLinuxCommandAsync($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), secondsTimeout: 60);
+                    await sshConnection.ExecuteLinuxCommandAsync($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), , secondsTimeout: 60);
                     lck = sshConnection.EnterNoRecoverRegion();
                 }
                 dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir} on {_machine.RemoteSSHConnectionString}.");
@@ -356,7 +356,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 lck?.Dispose();
                 if (_currentLinuxPhase != oldLinuxPhase)
                 {
-                    await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine));
+                    await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), secondsTimeout: 60);
                     _linuxTempDir = oldLinuxTempDir;
                     _currentLinuxPhase = oldLinuxPhase;
                 }
