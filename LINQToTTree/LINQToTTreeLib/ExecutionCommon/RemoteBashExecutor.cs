@@ -158,7 +158,7 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                 // First, create the file for ROOT command lines. This has to be done in Linux line endings (as we assume we are
                 // going to a linux machine for this). Use a random filename b.c. we can run in a multi-threaded environment.
-                var directoryName = Path.GetFileName(Path.GetTempFileName()).Replace(".","_");
+                var directoryName = Path.GetFileName(Path.GetTempFileName()).Replace(".", "_");
                 var scriptFile = new FileInfo($"{Path.GetTempPath()}\\{directoryName}\\{prefix}.C");
                 scriptFile.Directory.Create();
                 using (var rdr = new StringReader(tcommands))
@@ -196,7 +196,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 // Next, lets see if we can't run the file against root.
                 try
                 {
-                    await sshConnection.ExecuteLinuxCommandAsync($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine));
+                    await sshConnection.ExecuteLinuxCommandAsync($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine), secondsTimeout: 10);
                     using (var lck = sshConnection.EnterNoRecoverRegion())
                     {
                         await sshConnection.ExecuteLinuxCommandAsync($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
@@ -210,7 +210,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 // Finally, if there are any files to bring back, we should!
                 await ReceiveAllFiles(sshConnection, dumpLine);
 
-                return (object) null;
+                return (object)null;
             }, dumpLine);
         }
 
@@ -337,30 +337,40 @@ namespace LINQToTTreeLib.ExecutionCommon
             IDisposable lck = null;
             TraceHelpers.TraceInfo(13, $"ExecuteQueuedQueriesForAScheme:  --> {_machine.RemoteSSHConnectionString} -> {remoteDirectory}", opt: TraceEventType.Start);
             Debug.WriteLine($"ExecuteQueuedQueriesForAScheme:  --> {_machine.RemoteSSHConnectionString} -> {remoteDirectory}");
-            try
-            {
-                // Get the temp directory setup and going
-                if (_currentLinuxPhase != oldLinuxPhase)
-                {
-                    _linuxTempDir = remoteDirectory;
-                    await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), secondsTimeout: 60);
-                    await sshConnection.ExecuteLinuxCommandAsync($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), , secondsTimeout: 60);
-                    lck = sshConnection.EnterNoRecoverRegion();
-                }
-                dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir} on {_machine.RemoteSSHConnectionString}.");
 
+            // If we don't have a new linux phase, then we are already executing under one of these, so running is pretty simple.
+            if (_currentLinuxPhase == oldLinuxPhase)
+            {
+                dumpLine?.Invoke($"Executing commands in old directory {_linuxTempDir} on {_machine.RemoteSSHConnectionString} (no catching errors).");
                 return await act(sshConnection);
             }
-            finally
-            {
-                lck?.Dispose();
-                if (_currentLinuxPhase != oldLinuxPhase)
+
+            // If we are here, then need to create a new directory to run against.
+            _linuxTempDir = remoteDirectory;
+            return await Policy
+                .Handle<SSHConnectionDroppedException>()
+                .Or<SSHConnectFailureException>()
+                .Or<TimeoutException>()
+                .WaitAndRetryForeverAsync(idx => TimeSpan.FromSeconds(30))
+                .ExecuteAsync(async () =>
                 {
                     await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), secondsTimeout: 60);
-                    _linuxTempDir = oldLinuxTempDir;
-                    _currentLinuxPhase = oldLinuxPhase;
-                }
-            }
+                    await sshConnection.ExecuteLinuxCommandAsync($"mkdir -p {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), secondsTimeout: 60);
+                    using (sshConnection.EnterNoRecoverRegion())
+                    {
+                        try
+                        {
+                            dumpLine?.Invoke($"Executing commands in new directory {_linuxTempDir} on {_machine.RemoteSSHConnectionString}.");
+                            return await act(sshConnection);
+                        }
+                        finally
+                        {
+                            await sshConnection.ExecuteLinuxCommandAsync($"rm -rf {_linuxTempDir}", processLine: l => RecordLine(null, l, dumpLine), secondsTimeout: 60);
+                            _linuxTempDir = oldLinuxTempDir;
+                            _currentLinuxPhase = oldLinuxPhase;
+                        }
+                    }
+                });
         }
 
         /// <summary>
