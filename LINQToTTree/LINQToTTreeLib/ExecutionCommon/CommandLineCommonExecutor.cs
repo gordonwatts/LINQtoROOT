@@ -514,6 +514,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
                 // Should always be the case, but lets make sure. We want to be explicit about what we do when saving objects.
+                // Note: this is a global variable, and we are in a multithreaded environment.
                 ROOTNET.NTH1.AddDirectory(false);
 
                 // Next, move through and actually write everything out.

@@ -169,17 +169,13 @@ namespace LINQToTTreeLib.ExecutionCommon
                     tree.Add(f.FullName);
                 }
 
-                ///
-                /// If there are any objects we need to send to the selector, then send them on now
-                /// 
-
+                // If there are any objects we need to send to the selector, then send them on now
                 TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
                 var objInputList = new ROOTNET.NTList();
                 selector.InputList = objInputList;
 
-                using (var holder = await ROOTLock.Lock.LockAsync())
+                using (await ROOTLock.Lock.LockAsync())
                 {
-                    var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
                     ROOTNET.NTH1.AddDirectory(false);
                     foreach (var item in variablesToLoad)
                     {
@@ -189,14 +185,10 @@ namespace LINQToTTreeLib.ExecutionCommon
                         var cloned = obj.Clone(item.Key);
                         objInputList.Add(cloned);
                     }
-                    ROOTNET.NTH1.AddDirectory(oldHSet);
                 }
 
-                //
                 // Setup the cache for more efficient reading. We assume we are on a machine with plenty of memory
                 // for this.
-                //
-
                 tree.CacheSize = 1024 * 1024 * 100; // 100 MB cache
                 if (LeafNames == null)
                 {
@@ -212,13 +204,9 @@ namespace LINQToTTreeLib.ExecutionCommon
                 tree.StopCacheLearningPhase();
 
                 // Always Do the async prefetching (this is off by default for some reason, but...).
-
                 ROOTNET.Globals.gEnv.Value.SetValue("TFile.AsynchPrefetching", 1);
 
-                ///
-                /// Finally, run the whole thing
-                /// 
-
+                // Finally, run the whole thing
                 TraceHelpers.TraceInfo(21, "RunNtupleQuery: Running TSelector");
                 if (Environment.BreakToDebugger)
                     System.Diagnostics.Debugger.Break();
@@ -226,7 +214,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                 TraceHelpers.TraceInfo(22, "RunNtupleQuery: Done");
 
                 // If debug, dump some stats...
-
                 if (Environment.CompileDebug)
                 {
                     tree.PrintCacheStats();
