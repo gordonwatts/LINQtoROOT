@@ -14,6 +14,18 @@ using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
 {
+
+    [Serializable]
+    public class UnableToWriteOutVariablesForQueryException : Exception
+    {
+        public UnableToWriteOutVariablesForQueryException() { }
+        public UnableToWriteOutVariablesForQueryException(string message) : base(message) { }
+        public UnableToWriteOutVariablesForQueryException(string message, Exception inner) : base(message, inner) { }
+        protected UnableToWriteOutVariablesForQueryException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+
     /// <summary>
     /// Base class to help with implementing code that needs to be run for a
     /// executor that is based on writing macro files and executing them by
@@ -495,21 +507,27 @@ namespace LINQToTTreeLib.ExecutionCommon
             {
                 TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
                 var inputFilesFilename = new FileInfo(Path.Combine(queryResultsFile.DirectoryName, "TSelectorInputFiles.root"));
-                var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
 
                 // Write out the code to load them and stash them remotely if need be.
                 var safeInputFilename = await NormalizeFileForTarget(inputFilesFilename, queryDirectory);
                 cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
                 cmds.AppendLine("selector->SetInputList(new TList());");
 
+                // Should always be the case, but lets make sure. We want to be explicit about what we do when saving objects.
+                ROOTNET.NTH1.AddDirectory(false);
+
                 // Next, move through and actually write everything out.
-                using (var holder = await ROOTLock.Lock.LockAsync())
+                using (await ROOTLock.Lock.LockAsync())
                 {
                     var objInputList = new ROOTNET.NTList();
-                    var oldHSet = ROOTNET.NTH1.AddDirectoryStatus();
+                    var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
+                    if (!outgoingVariables.IsOpen())
+                    {
+                        Trace.WriteLine($"Unable to open {inputFilesFilename.FullName} for writing TSelector input variables!");
+                        throw new UnableToWriteOutVariablesForQueryException($"Unable to open {inputFilesFilename.FullName} for writing TSelector input variables!");
+                    }
                     try
                     {
-                        ROOTNET.NTH1.AddDirectory(false);
                         foreach (var item in varsToTransfer)
                         {
                             var obj = item.Value as ROOTNET.Interface.NTObject;
@@ -520,7 +538,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                     }
                     finally
                     {
-                        ROOTNET.NTH1.AddDirectory(oldHSet);
                         outgoingVariables.Close();
                     }
                 }
