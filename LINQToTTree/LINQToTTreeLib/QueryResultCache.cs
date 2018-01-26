@@ -15,6 +15,18 @@ using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
 {
+
+    [Serializable]
+    public class UnableToOpenCacheDataFileException : Exception
+    {
+        public UnableToOpenCacheDataFileException() { }
+        public UnableToOpenCacheDataFileException(string message) : base(message) { }
+        public UnableToOpenCacheDataFileException(string message, Exception inner) : base(message, inner) { }
+        protected UnableToOpenCacheDataFileException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+
     /// <summary>
     /// Implement the caching algorithm for queries. This cache works by using hash's of strings. And we will keep text files around
     /// so that you can search the directory for results. Default cache location is the users data directory.
@@ -307,11 +319,15 @@ namespace LINQToTTreeLib
             }
 
             // Load all the objects in this file.
-            using (var holder = await ROOTLock.Lock.LockAsync())
+            using (await ROOTLock.Lock.LockAsync())
             {
                 var tf = NTFile.Open(cycleFilename, "READ");
                 try
                 {
+                    if (!tf.IsOpen())
+                    {
+                        throw new UnableToOpenCacheDataFileException($"Unable to open cache filename {cycleFilename}. This should never occur.");
+                    }
                     var keys = tf.ListOfKeys;
                     if (keys.Size == 0)
                         return (false, default(T));
@@ -326,6 +342,7 @@ namespace LINQToTTreeLib
                     // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
                     // it will be deleted when the file is closed on the way out of this routine.
                     ROOTNET.NTROOT.gROOT.cd();
+                    ROOTNET.NTH1.AddDirectory(false);
                     var t = svr.LoadResult<T>(prm, cachedObjects);
                     return (t != null, t);
                 }
@@ -338,7 +355,8 @@ namespace LINQToTTreeLib
                 finally
                 {
                     // In case bad things happened, try not to leave anything behind.
-                    tf.Close();
+                    if (tf.IsOpen())
+                        tf.Close();
                 }
             }
         }

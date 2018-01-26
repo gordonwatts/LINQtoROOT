@@ -508,33 +508,40 @@ namespace LINQToTTreeLib.ExecutionCommon
                 TraceHelpers.TraceInfo(20, "RunNtupleQuery: Saving the objects we are going to ship over");
                 var inputFilesFilename = new FileInfo(Path.Combine(queryResultsFile.DirectoryName, "TSelectorInputFiles.root"));
 
-                // Write out the code to load them and stash them remotely if need be.
-                var safeInputFilename = await NormalizeFileForTarget(inputFilesFilename, queryDirectory);
-                cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
-                cmds.AppendLine("selector->SetInputList(new TList());");
-
-                // Should always be the case, but lets make sure. We want to be explicit about what we do when saving objects.
-                // Note: this is a global variable, and we are in a multithreaded environment.
-                ROOTNET.NTH1.AddDirectory(false);
-
                 // Next, move through and actually write everything out.
                 using (await ROOTLock.Lock.LockAsync())
                 {
-                    var objInputList = new ROOTNET.NTList();
+                    // Clone the objects. Do it outside of writing so we can make sure that we do not
+                    // accidentally clone them or assign them in the wrong place (we are in a multithreaded environment).
+                    ROOTNET.NTH1.AddDirectory(false);
+                    ROOTNET.NTROOT.gROOT.cd();
+                    var clonedObjects = varsToTransfer
+                        .Select(i => (v: i.Value as ROOTNET.Interface.NTObject, k: i.Key))
+                        .Select(i => i.v.Clone(i.k))
+                        .ToArray();
+
+                    // Now, write them out to a file, and code up the stuff that reads them and puts them into the TSelector input list.
                     var outgoingVariables = ROOTNET.NTFile.Open(inputFilesFilename.FullName, "RECREATE");
                     if (!outgoingVariables.IsOpen())
                     {
                         Trace.WriteLine($"Unable to open {inputFilesFilename.FullName} for writing TSelector input variables!");
                         throw new UnableToWriteOutVariablesForQueryException($"Unable to open {inputFilesFilename.FullName} for writing TSelector input variables!");
                     }
+
+                    // Write out the code to load them and stash them remotely if need be.
+                    // It is important to do this after the file is created, or the assumption logic in NormalizeFileForTarget will fail.
+                    var safeInputFilename = await NormalizeFileForTarget(inputFilesFilename, queryDirectory);
+                    cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
+                    cmds.AppendLine("selector->SetInputList(new TList());");
+
+                    // Write out the files now
                     try
                     {
-                        foreach (var item in varsToTransfer)
+                        foreach (var item in clonedObjects)
                         {
-                            var obj = item.Value as ROOTNET.Interface.NTObject;
-                            var cloned = obj.Clone(item.Key);
-                            outgoingVariables.WriteTObject(cloned);
-                            cmds.AppendLine($"selector->GetInputList()->Add(varsInFile->Get(\"{item.Key}\"));");
+                            outgoingVariables.WriteTObject(item);
+                            cmds.AppendLine($"selector->GetInputList()->Add(varsInFile->Get(\"{item.Name}\"));");
+                            item.SetNull(); // Make sure we aren't tracking this any more.
                         }
                     }
                     finally
@@ -542,7 +549,6 @@ namespace LINQToTTreeLib.ExecutionCommon
                         outgoingVariables.Close();
                     }
                 }
-
             }
         }
 
