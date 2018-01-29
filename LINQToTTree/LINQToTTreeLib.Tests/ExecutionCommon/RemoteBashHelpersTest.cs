@@ -71,7 +71,8 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
 
             var results = new List<string>();
             await RemoteBashHelpers.RunROOTInBashAsync(File.ReadAllLines("testmachine.txt").First(),
-                "test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()), dumpLine: s => results.Add(s));
+                "test", cmds.ToString(), new System.IO.DirectoryInfo(System.IO.Path.GetTempPath()),
+                dumpLine: s => results.Add(s));
 
             Assert.AreNotEqual(0, results.Count);
             Assert.IsFalse(results.Where(l => l.Contains(LoginScreenMagicText)).Any());

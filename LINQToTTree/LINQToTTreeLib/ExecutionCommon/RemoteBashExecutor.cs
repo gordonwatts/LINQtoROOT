@@ -532,7 +532,12 @@ namespace LINQToTTreeLib.ExecutionCommon
             remoteSSHConnectionString = remoteSSHConnectionString ?? _machine.RemoteSSHConnectionString;
             Interlocked.Increment(ref NumberOfRecoveringConnections);
 
+            if (_connectionLock != null)
+            {
+                throw new InvalidOperationException("Connection lock has already been aquired. Interal error");
+            }
             _connectionLock = await _gConnectionInterlockLimiter.LockAsync();
+            TraceHelpers.TraceInfo(25, $"CreateSSHConnectionTo: Aquired RemoteSSH Lock (free: {_gConnectionInterlockLimiter.CurrentCount})", opt: TraceEventType.Start);
 
             // Create a recovering connection
             return new SSHRecoveringConnection(async () =>
@@ -825,9 +830,10 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             if (_connection != null && _connectionLock != null)
             {
-                _connectionLock.Dispose();
-                Interlocked.Increment(ref NumberOfSSHRecoverDisposes);
                 _connection.Task.Result.Dispose();
+                _connectionLock.Dispose();
+                TraceHelpers.TraceInfo(25, $"RemoteBashExecutor: Aquired RemoteSSH Lock Released (free: {_gConnectionInterlockLimiter.CurrentCount})", opt: TraceEventType.Stop);
+                Interlocked.Increment(ref NumberOfSSHRecoverDisposes);
             }
         }
     }
