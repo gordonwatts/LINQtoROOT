@@ -516,6 +516,19 @@ namespace LINQToTTreeLib.ExecutionCommon
         private static AsyncSemaphore _gConnectionInterlockLimiter = new AsyncSemaphore(MaxRemoteConnectionsAtOnce);
 
         /// <summary>
+        /// Reset the number of connections we allow to remote machines at once.
+        /// </summary>
+        /// <param name="numberOfConnections"></param>
+        /// <remarks>
+        /// This doesn't wait to drain current connections. It just opens up new slots - the old connections will
+        /// eventually terminate and the system will drift towards the proper number of active connections.
+        /// </remarks>
+        public static void ResetAllowedSimultaniousConnections(uint numberOfConnections)
+        {
+            _gConnectionInterlockLimiter = new AsyncSemaphore(numberOfConnections);
+        }
+
+        /// <summary>
         /// Keep the lock we grab in order to create a new connection.
         /// </summary>
         private IDisposable _connectionLock = null;
