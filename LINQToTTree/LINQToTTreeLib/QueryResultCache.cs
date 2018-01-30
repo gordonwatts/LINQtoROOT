@@ -293,12 +293,10 @@ namespace LINQToTTreeLib
                 }
 
                 var adder = generateAdder();
-                using (var holder = await ROOTLock.Lock.LockAsync())
-                {
-                    var addedValue = cycleObjects.Skip(1)
-                        .Aggregate(adder.Clone(cycleObjects[0]), (acc, newv) => adder.Update(acc, newv));
-                    return new Tuple<bool, T>(true, addedValue);
-                }
+                var firstObj = await adder.Clone(cycleObjects[0]);
+                var addedValue = cycleObjects.Skip(1)
+                    .Aggregate(firstObj, (acc, newv) => adder.Update(acc, newv));
+                return new Tuple<bool, T>(true, addedValue);
             }
         }
 
@@ -319,6 +317,33 @@ namespace LINQToTTreeLib
             }
 
             // Load all the objects in this file.
+            ROOTNET.NTH1.AddDirectory(false);
+            try
+            {
+                var cachedObjects = await LoadCachedRunInfoObjects(cycleFilename);
+
+                // Now do the pick up. Make sure we are in the root directory when we do it, however!
+                // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
+                // it will be deleted when the file is closed on the way out of this routine.
+                ROOTNET.NTROOT.gROOT.cd();
+                var t = await svr.LoadResult<T>(prm, cachedObjects);
+                return (t != null, t);
+            }
+            catch (Exception e)
+            {
+                // There has been an error - log it, and move on.
+                Trace.WriteLine($"Cache load failed due to an exception: {e.Message} at {e.StackTrace}");
+                return (false, default(T));
+            }
+        }
+
+        /// <summary>
+        /// Load the cached run info object. Local routine to help with organizing how we run the using statements.
+        /// </summary>
+        /// <param name="cycleFilename"></param>
+        /// <returns></returns>
+        private async Task<RunInfo[]> LoadCachedRunInfoObjects(string cycleFilename)
+        {
             using (await ROOTLock.Lock.LockAsync())
             {
                 var tf = NTFile.Open(cycleFilename, "READ");
@@ -330,7 +355,7 @@ namespace LINQToTTreeLib
                     }
                     var keys = tf.ListOfKeys;
                     if (keys.Size == 0)
-                        return (false, default(T));
+                        return null;
 
                     var cachedObjects = keys
                         .Cast<ROOTNET.Interface.NTKey>()
@@ -338,19 +363,7 @@ namespace LINQToTTreeLib
                         .Select(vl => vl.o.ToRunInfo(vl.n))
                         .ToArray();
 
-                    // Now do the pick up. Make sure we are in the root directory when we do it, however!
-                    // We do this b.c. sometimes the saver will Clone an object, and if it becomes attached to a file,
-                    // it will be deleted when the file is closed on the way out of this routine.
-                    ROOTNET.NTROOT.gROOT.cd();
-                    ROOTNET.NTH1.AddDirectory(false);
-                    var t = svr.LoadResult<T>(prm, cachedObjects);
-                    return (t != null, t);
-                }
-                catch (Exception e)
-                {
-                    // There has been an error - log it, and move on.
-                    Trace.WriteLine($"Cache load failed due to an exception: {e.Message} at {e.StackTrace}");
-                    return (false, default(T));
+                    return cachedObjects;
                 }
                 finally
                 {

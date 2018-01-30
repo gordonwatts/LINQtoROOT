@@ -1,6 +1,7 @@
 ﻿using LinqToTTreeInterfacesLib;
 using System;
 using System.ComponentModel.Composition;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.IAddResults
 {
@@ -19,9 +20,9 @@ namespace LINQToTTreeLib.IAddResults
         /// <typeparam name="T"></typeparam>
         /// <param name="o"></param>
         /// <returns></returns>
-        public T Clone<T>(T o)
+        public Task<T> Clone<T>(T o)
         {
-            return o;
+            return Task.FromResult(o);
         }
 
         /// <summary>

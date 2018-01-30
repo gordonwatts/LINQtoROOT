@@ -36,6 +36,6 @@ namespace LinqToTTreeInterfacesLib
         /// <typeparam name="T"></typeparam>
         /// <param name="o"></param>
         /// <returns></returns>
-        T Clone<T>(T o);
+        Task<T> Clone<T>(T o);
     }
 }

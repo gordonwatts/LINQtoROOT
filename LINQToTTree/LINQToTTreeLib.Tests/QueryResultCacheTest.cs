@@ -83,7 +83,7 @@ namespace LINQToTTreeLib
             /// <param name="iVariable"></param>
             /// <param name="obj"></param>
             /// <returns></returns>
-            public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
+            public Task<T> LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
             {
                 var h = obj[0]._result as ROOTNET.Interface.NTH1F;
                 if (h == null)
@@ -91,7 +91,7 @@ namespace LINQToTTreeLib
 
                 int result = (int)h.GetBinContent(1);
                 object i = result;
-                return (T)i;
+                return Task.FromResult((T)i);
             }
 
             public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle, DirectoryInfo queryDirectory)
@@ -129,10 +129,10 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
+            public Task<T> LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
             {
                 var h = obj[0]._result.Clone();
-                return (T)h;
+                return Task.FromResult((T)h);
             }
             public void RenameForQueryCycle(IDeclaredParameter iVariable, NTObject[] obj, int cycle, DirectoryInfo queryDirectory)
             {
@@ -425,9 +425,9 @@ namespace LINQToTTreeLib
                 throw new NotImplementedException();
             }
 
-            public T Clone<T>(T o)
+            public Task<T> Clone<T>(T o)
             {
-                return o;
+                return Task.FromResult(o);
             }
 
             public T Update<T>(T accumulator, T o2)

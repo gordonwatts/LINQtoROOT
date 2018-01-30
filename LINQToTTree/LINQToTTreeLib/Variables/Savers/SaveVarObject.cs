@@ -4,8 +4,10 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib.TypeHandlers.ROOT;
+using LINQToTTreeLib.Utils;
 using ROOTNET.Interface;
 
 namespace LINQToTTreeLib.Variables.Savers
@@ -68,7 +70,10 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
+        /// <remarks>
+        /// WARNING: this must be protected by the ROOT lock!
+        /// </remarks>
+        public async Task<T> LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
         {
             if (obj == null)
                 throw new ArgumentNullException("Obj cannot be null");
@@ -84,18 +89,18 @@ namespace LINQToTTreeLib.Variables.Savers
             if (rootObjInfo == null)
                 throw new InvalidOperationException("iVariable must be a ROOTObjectCopiedValue!");
 
-            ROOTNET.NTH1.AddDirectory(false);
-            var result = named.Clone() as ROOTNET.Interface.NTNamed;
+            using (await ROOTLock.Lock.LockAsync())
+            {
+                ROOTNET.NTH1.AddDirectory(false);
+                var result = named.Clone() as ROOTNET.Interface.NTNamed;
 
-            ///
-            /// Restore name and title - which might be different since our cache is blind
-            /// to those things.
-            /// 
+                // Restore name and title - which might be different since our cache is blind
+                // to those things.
+                result.Name = rootObjInfo.OriginalName;
+                result.Title = rootObjInfo.OriginalTitle;
 
-            result.Name = rootObjInfo.OriginalName;
-            result.Title = rootObjInfo.OriginalTitle;
-
-            return (T)result;
+                return (T)result;
+            }
         }
 
         /// <summary>

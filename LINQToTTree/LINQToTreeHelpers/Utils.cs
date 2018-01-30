@@ -1,8 +1,8 @@
 ﻿
+using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Linq;
 namespace LINQToTreeHelpers
 {
     /// <summary>
@@ -28,9 +28,12 @@ namespace LINQToTreeHelpers
             var h = obj as ROOTNET.Interface.NTH1;
             if (h != null)
             {
-                var copy = h.Clone();
-                dir.WriteTObject(copy); // Ugly from a memory pov, but...
-                copy.SetNull();
+                using (ROOTLock.Lock.Lock())
+                {
+                    var copy = h.Clone();
+                    dir.WriteTObject(copy); // Ugly from a memory pov, but...
+                    copy.SetNull();
+                }
             }
             else
             {

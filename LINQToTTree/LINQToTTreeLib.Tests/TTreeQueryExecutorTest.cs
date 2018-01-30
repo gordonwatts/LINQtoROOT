@@ -1332,23 +1332,16 @@ namespace LINQToTTreeLib
         [TestMethod]
         public void TestCachingOfSimpleHisto()
         {
-            /// Do two identical queries. Make sure only one causes an actual run!
-
+            // Do two identical queries. Make sure only one causes an actual run!
             var rootFile = TestUtils.CreateFileOfInt(5);
 
-            ///
-            /// Ok, now we can actually see if we can make it "go".
-            /// 
-
+            // Ok, now we can actually see if we can make it "go".
             var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
 
             Assert.AreEqual(0, exe.CountExecutionRuns, "exe runs initialization");
             Assert.AreEqual(0, exe.CountCacheHits, "cache hits initialization");
 
-            ///
-            /// Get a simple query we can "play" with
-            /// 
-
+            // Get a simple query we can "play" with
             var q = new QueriableDummy<TestNtupe>();
             var dude = q.Plot("hi", "there", 10, 0.0, 20.0, d => d.run);
             var query = DummyQueryExectuor.LastQueryModel;
@@ -1359,11 +1352,8 @@ namespace LINQToTTreeLib
             Assert.AreEqual(1, exe.CountExecutionRuns, "exe after exe run");
             Assert.AreEqual(0, exe.CountCacheHits, "cache after exe run");
 
-            ///
-            /// Re-run the idential query. We have to remake the query b/c the histogram
-            /// stored internally will have now counts in it!! Ops!! :-)
-            /// 
-
+            // Re-run the idential query. We have to remake the query b/c the histogram
+            // stored internally will have now counts in it!! Ops!! :-)
             var dude2 = q.Plot("hi", "there", 10, 0.0, 20.0, d => d.run);
             var query2 = DummyQueryExectuor.LastQueryModel;
 

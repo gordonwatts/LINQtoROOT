@@ -414,7 +414,7 @@ namespace LINQToTTreeLib
             /// We have a list of results - add them all together and extract them.
             /// </summary>
             /// <param name="results"></param>
-            void ExtractResult(IDictionary<string, RunInfo>[] results);
+            Task ExtractResult(IDictionary<string, RunInfo>[] results);
 
             /// <summary>
             /// Rename an output object if it is a global resource so we don't step on anything else.
@@ -458,12 +458,11 @@ namespace LINQToTTreeLib
             /// Go through the list and extract the results that are needed
             /// </summary>
             /// <param name="results"></param>
-            public void ExtractResult(IDictionary<string, RunInfo>[] results)
+            public async Task ExtractResult(IDictionary<string, RunInfo>[] results)
             {
 
-                var finalResultList = results
-                    .Select(indR => Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR))
-                    .ToArray();
+                var finalResultList = await Task.WhenAll(results
+                    .Select(async indR => await Future.TreeExecutor.ExtractResult<RType>(Code.ResultValues.FirstOrDefault(), indR)));
 
                 if (finalResultList.Where(fr => fr == null).Any())
                 {
@@ -528,7 +527,7 @@ namespace LINQToTTreeLib
             private IFutureValue<T> _accumulator;
             private IAddResult _adder;
             private IFutureValue<T> _o2;
-            private bool added = false;
+            private bool _added = false;
             private T _val;
 
             public AddedFutureValue(IFutureValue<T> accumulator, IFutureValue<T> o2, IAddResult adder)
@@ -556,10 +555,10 @@ namespace LINQToTTreeLib
             {
                 get
                 {
-                    if (!added)
+                    if (!_added)
                     {
                         _val = _adder.Update(_accumulator.Value, _o2.Value);
-                        added = true;
+                        _added = true;
                     }
                     return _val;
                 }
@@ -604,12 +603,17 @@ namespace LINQToTTreeLib
             {
                 get
                 {
-                    if (!_cloned)
-                    {
-                        _val = _adder.Clone(_held.Value);
-                        _cloned = true;
-                    }
+                    CloneValue().Wait();
                     return _val;
+                }
+            }
+
+            private async Task CloneValue()
+            {
+                if (!_cloned)
+                {
+                    _val = await _adder.Clone(_held.Value);
+                    _cloned = true;
                 }
             }
 
@@ -619,7 +623,12 @@ namespace LINQToTTreeLib
             /// <returns></returns>
             public Task GetAvailibleTask()
             {
-                return _held.GetAvailibleTask();
+                async Task WaitTillDone()
+                {
+                    await _held;
+                    await CloneValue();
+                }
+                return WaitTillDone();
             }
         }
 
@@ -840,7 +849,7 @@ namespace LINQToTTreeLib
                 TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
                 foreach (var cq in _queuedQueries)
                 {
-                    cq.ExtractResult(combinedResults);
+                    await cq.ExtractResult(combinedResults);
                     await cq.CacheResults(combinedResults);
                 }
                 _queuedQueries.Clear();
@@ -1184,14 +1193,14 @@ namespace LINQToTTreeLib
         /// <typeparam name="T1"></typeparam>
         /// <param name="iVariable"></param>
         /// <returns></returns>
-        private T ExtractResult<T>(IDeclaredParameter iVariable, IDictionary<string, RunInfo> results)
+        private async Task<T> ExtractResult<T>(IDeclaredParameter iVariable, IDictionary<string, RunInfo> results)
         {
             // Load the object and try to extract whatever info we need to from it
             var s = _varSaver.Get(iVariable);
             var objs = ExtractQueryReturnedObjectsForVariable(iVariable, results, s);
 
             // Return the result in a form that the code wants.
-            return s.LoadResult<T>(iVariable, objs);
+            return await s.LoadResult<T>(iVariable, objs);
         }
 
         /// <summary>

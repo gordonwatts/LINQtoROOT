@@ -1,4 +1,5 @@
 ﻿using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -26,10 +27,13 @@ namespace LINQToTTreeLib.IAddResults
         /// <typeparam name="T"></typeparam>
         /// <param name="o"></param>
         /// <returns></returns>
-        public T Clone<T>(T o)
+        public async Task<T> Clone<T>(T o)
         {
             var h = o as ROOTNET.Interface.NTH1;
-            return (T) h.Clone();
+            using (await ROOTLock.Lock.LockAsync())
+            {
+                return (T)h.Clone();
+            }
         }
 
         /// <summary>

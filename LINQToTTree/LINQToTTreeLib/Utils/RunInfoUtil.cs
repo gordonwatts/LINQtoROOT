@@ -31,12 +31,14 @@ namespace LINQToTTreeLib.Utils
         /// </summary>
         private static Regex _parseRunInfoName = new Regex(@"^__(\d+)_(\w+)$");
 
+#if false
+        // Comment out to make sure this isn't needed.
         /// <summary>
         /// See if we can't get this object back.
         /// </summary>
         /// <param name="source">The TMap object to be translated into a RunInfo object.</param>
         /// <returns></returns>
-        public static RunInfo ToRunInfo(this ROOTNET.Interface.NTObject source)
+        public static async Task<RunInfo> ToRunInfo(this ROOTNET.Interface.NTObject source)
         {
             var r = _parseRunInfoName.Match(source.Name);
             if (!r.Success)
@@ -44,16 +46,20 @@ namespace LINQToTTreeLib.Utils
                 throw new InvalidCachedObjectException($"Cached returned an object with a name {source.Name} - but it isn't in the format __NNN_NAME. Boom!");
             }
 
-            return new RunInfo()
+            using (await ROOTLock.Lock.LockAsync())
             {
-                _cycle = int.Parse(r.Groups[1].Value),
-                _result = source.Clone(r.Groups[2].Value)
-            };
-
+                return new RunInfo()
+                {
+                    _cycle = int.Parse(r.Groups[1].Value),
+                    _result = source.Clone(r.Groups[2].Value)
+                };
+            }
         }
+#endif
 
         /// <summary>
         /// Convert from a object and a name to a RunInfo with the cycle, etc., parsed.
+        /// WARNING: this must be called inside a ROOTLock!
         /// </summary>
         /// <param name="source"></param>
         /// <param name="name"></param>
@@ -71,7 +77,6 @@ namespace LINQToTTreeLib.Utils
                 _cycle = int.Parse(r.Groups[1].Value),
                 _result = source.Clone(r.Groups[2].Value)
             };
-
         }
 
         /// <summary>

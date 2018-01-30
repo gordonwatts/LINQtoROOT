@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using LinqToTTreeInterfacesLib;
 using ROOTNET.Interface;
 
@@ -38,7 +39,7 @@ namespace LINQToTTreeLib.Tests
                 return Enumerable.Empty<string>();
             }
 
-            public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
+            public Task<T> LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
             {
                 throw new NotImplementedException();
             }

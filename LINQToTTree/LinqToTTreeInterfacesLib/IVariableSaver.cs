@@ -3,6 +3,7 @@ using ROOTNET.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace LinqToTTreeInterfacesLib
 {
@@ -61,7 +62,7 @@ namespace LinqToTTreeInterfacesLib
         /// <param name="cycle">Which cycle number of query is this?</param>
         /// <param name="obj">The returned object from the code</param>
         /// <returns>The object itself - the integer, the double, the histogram, the FileInfo, etc.</returns>
-        T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj);
+        Task<T> LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj);
 
         /// <summary>
         /// Returns a list of names that should be stored together in a cache

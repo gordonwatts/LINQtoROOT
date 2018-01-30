@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using ROOTNET.Interface;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.Variables.Savers
 {
@@ -83,14 +84,14 @@ namespace LINQToTTreeLib.Variables.Savers
         /// <param name="iVariable"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public T LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
+        public Task<T> LoadResult<T>(IDeclaredParameter iVariable, RunInfo[] obj)
         {
             var h = obj[0]._result as ROOTNET.NTH1;
             if (h == null)
                 throw new InvalidOperationException("Object of type '" + h.ClassName() + "' is not an integer histogram, which is what we were expecting for this result!");
 
             object result = _types[iVariable.Type]._converter(h);
-            return (T)result;
+            return Task.FromResult((T)result);
         }
 
         /// <summary>
