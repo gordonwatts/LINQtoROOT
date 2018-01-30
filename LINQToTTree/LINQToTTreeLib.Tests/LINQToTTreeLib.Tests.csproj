@@ -567,6 +567,7 @@
     <Compile Include="Statements\StatementRecordPairValuesTest.cs" />
     <Compile Include="Statements\StatementLoopOverSortedPairValueTest.cs" />
     <Compile Include="QueryVisitors\ExpressionVariableInvokeExpressionTransformerTest.cs" />
+    <Compile Include="Utils\t_QueryModelUtils.cs" />
     <Compile Include="Utils\t_TypeUtils.cs" />
     <Compile Include="Utils\t_ExpressionUtilities.cs" />
     <Compile Include="t_TypeDefTranslator.cs" />

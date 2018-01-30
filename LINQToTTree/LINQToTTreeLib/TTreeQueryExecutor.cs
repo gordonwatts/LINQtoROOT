@@ -7,6 +7,7 @@ using Nito.AsyncEx;
 using NVelocity;
 using NVelocity.App;
 using Remotion.Linq;
+using Remotion.Linq.Clauses.ResultOperators;
 using ROOTNET.Interface;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,21 @@ using System.Threading.Tasks;
 
 namespace LINQToTTreeLib
 {
+    /// <summary>
+    /// Thrown when we are forced to split into multiple runs, but there is somethign about the query
+    /// that forces us to do it all as one run (or in order of some sort).
+    /// </summary>
+    [Serializable]
+    public class CannotUseMultipleSchemesForFileListException : Exception
+    {
+        public CannotUseMultipleSchemesForFileListException() { }
+        public CannotUseMultipleSchemesForFileListException(string message) : base(message) { }
+        public CannotUseMultipleSchemesForFileListException(string message, Exception inner) : base(message, inner) { }
+        protected CannotUseMultipleSchemesForFileListException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+
     /// <summary>
     /// Executes the query.
     /// </summary>
@@ -428,6 +444,12 @@ namespace LINQToTTreeLib
             /// </summary>
             /// <param name="results"></param>
             Task CacheResults(IDictionary<string, RunInfo>[] results);
+
+            /// <summary>
+            /// If true, then it is ok to run this in as many little jobs as we like. Things like a "Take" at the top level
+            /// will ruin this.
+            /// </summary>
+            bool CanBeSplit { get; }
         }
 
 
@@ -453,6 +475,9 @@ namespace LINQToTTreeLib
             public IQueryResultCacheKey CacheKey { get; set; }
 
             public FutureValue<RType> Future { get; set; }
+
+            // If true, then we can split up and run on multiple files
+            public bool CanBeSplit { get; internal set; }
 
             /// <summary>
             /// Go through the list and extract the results that are needed
@@ -730,10 +755,11 @@ namespace LINQToTTreeLib
             if (UseStatementOptimizer)
                 Optimizer.Optimize(result);
             TraceHelpers.TraceInfo(10, "ExecuteScalarAsFuture: Queuing scalar execution");
-            var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this) };
+            var cq = new QueuedQuery<TResult>() { Code = result, CacheKey = key, Future = new FutureValue<TResult>(this), CanBeSplit = !queryModel.HasStatefulOperator() };
             _queuedQueries.Add(cq);
             return cq.Future;
         }
+
 
         /// <summary>
         /// Evaluate the QM if it has Concat result operators in it. This can mean that we are dealing with multiple
@@ -809,7 +835,7 @@ namespace LINQToTTreeLib
         {
             // Because we can do many resultes, we might get asked from many places to actually run the queried results. So
             // we need a way to make sure that we don't try to run multiple times. We do that here.
-            using (var exeLockWaiter = await _queryExecuteLock.LockAsync())
+            using (await _queryExecuteLock.LockAsync())
             {
                 // Make sure no one else has cleaned up the queue for us.
                 if (_queuedQueries.Count <= 0)
@@ -831,6 +857,13 @@ namespace LINQToTTreeLib
                     combinedInfo.AddGeneratedCode(cq.Code);
                 }
 
+                // Make sure that splitting can occur, or fail if not.
+                bool canSplit = _queuedQueries.All(q => q.CanBeSplit);
+                if (!canSplit && _resolvedRootFiles.Length > 1)
+                {
+                    throw new CannotUseMultipleSchemesForFileListException("Query contains a Take/Skip operator, which means it must be run as one, but file list contains files from different schemes which have to be run seperatly!");
+                }
+
                 // Optimize the whole thing (this can be a rather expensive operation)
                 if (UseStatementOptimizer)
                     Optimizer.Optimize(combinedInfo);
@@ -839,7 +872,7 @@ namespace LINQToTTreeLib
                 int cycle = -1;
                 int cycle_counter() => Interlocked.Increment(ref cycle);
                 var combinedResultsTasks = _resolvedRootFiles
-                    .SelectMany(sch => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter))
+                    .SelectMany(sch => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter, canSplit))
                     .ToArray();
 
                 var combinedResults = await Task.WhenAll(combinedResultsTasks);
@@ -870,7 +903,8 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private IEnumerable<Task<IDictionary<string, RunInfo>>> ExecuteQueuedQueriesForASchemeFileBatch(string scheme, Uri[] files,
             CombinedGeneratedCode combinedInfo, 
-            Func<int> cycle)
+            Func<int> cycle,
+            bool canSplit)
         {
             // Get the query executor
             var referencedLeafNames = combinedInfo.ReferencedLeafNames.ToArray();
@@ -882,14 +916,16 @@ namespace LINQToTTreeLib
             // to another.
             using (var local = localMaker())
             {
-                var batchedByExecutor = local.BatchInputUris(files);
+                var batchedByExecutor = canSplit
+                    ? local.BatchInputUris(files)
+                    : new[] { files };
 
                 // Next, lets see how to split things up inside each of these batches.
                 var batchedFiles = batchedByExecutor
                     .SelectMany(bf =>
                     {
                         int nBatches = local.SuggestedNumberOfSimultaniousProcesses(bf);
-                        var subBatchFiles = (bf.Length == 1 || nBatches == 1)
+                        var subBatchFiles = (bf.Length == 1 || nBatches == 1 || !canSplit)
                             ? new[] { bf }
                             : SplitFilesIntoBatches(bf, nBatches);
                         return subBatchFiles;

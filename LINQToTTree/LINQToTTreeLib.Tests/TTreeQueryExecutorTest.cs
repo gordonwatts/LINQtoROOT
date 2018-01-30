@@ -1063,6 +1063,7 @@ namespace LINQToTTreeLib
 
         [TestMethod]
         [DeploymentItem("testmachine.txt")]
+        [Ignore]
         public async Task StressMultipleQueriesOnRemoteBash100With50Connections()
         {
             await StressMultipleRuns(100, "remotebash", connections: 50);
@@ -1116,6 +1117,56 @@ namespace LINQToTTreeLib
 
             var result = exe.ExecuteScalarAsFuture<int>(query);
             return await result;
+        }
+
+        [TestMethod]
+        public async Task TopLevelTakeCantBeSplit()
+        {
+            // Seen in the wild. We can't partition this guy out to multiple runs because the Take can't be split
+            // without some user-level intelligence. So, just don't split it so even though it will run slower,
+            // the result will be "correct".
+            var rootFile1 = TestUtils.CreateFileOfInt(10);
+            var rootFile2 = TestUtils.CreateFileOfInt(20);
+
+            // A query that should come back with 10 items.
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Take(10).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var files = new[] { rootFile1, rootFile2 }
+                .Select(u => new UriBuilder(u) { Scheme = "localbash" }.Uri)
+                .ToArray();
+
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.Verbose = true;
+
+            var result = await exe.ExecuteScalarAsFuture<int>(query);
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public async Task TopLevelHiddenTakeCantBeSplit()
+        {
+            // Seen in the wild. We can't partition this guy out to multiple runs because the Take can't be split
+            // without some user-level intelligence. So, just don't split it so even though it will run slower,
+            // the result will be "correct".
+            var rootFile1 = TestUtils.CreateFileOfInt(10);
+            var rootFile2 = TestUtils.CreateFileOfInt(20);
+
+            // A query that should come back with 10 items.
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Take(10).Where(i => i.run > 0).Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var files = new[] { rootFile1, rootFile2 }
+                .Select(u => new UriBuilder(u) { Scheme = "localbash" }.Uri)
+                .ToArray();
+
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.Verbose = true;
+
+            var result = await exe.ExecuteScalarAsFuture<int>(query);
+            Assert.AreEqual(10, result);
         }
 
         [TestMethod]
@@ -1267,8 +1318,10 @@ namespace LINQToTTreeLib
             var query = DummyQueryExectuor.LastQueryModel;
 
             // Run the execution environment.
-            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe));
-            exe.CleanupQuery = false;
+            var exe = new TTreeQueryExecutor(new[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupe))
+            {
+                CleanupQuery = false
+            };
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }

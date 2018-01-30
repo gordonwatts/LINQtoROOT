@@ -1,6 +1,7 @@
 ﻿using LINQToTTreeLib.Utils;
 using Remotion.Linq;
 using Remotion.Linq.Clauses.Expressions;
+using Remotion.Linq.Clauses.ResultOperators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,5 +45,66 @@ namespace LINQToTTreeLib.Utils
                 q = (q.MainFromClause.FromExpression as SubQueryExpression)?.QueryModel;
             }
         }
+
+        /// <summary>
+        /// See if the QM has a stateful operator or not (like Take/Skip).
+        /// Used to determine if this QM can be run on multiple files, or not.
+        /// </summary>
+        /// <param name="q"></param>
+        /// <returns></returns>
+        public static bool HasStatefulOperator(this QueryModel q)
+        {
+            // Look to see if there is a take burried in the from expression
+            if (IsStatefulSequence(q.MainFromClause.FromExpression))
+            {
+                return true;
+            }
+
+            // If this top level QM has a take/skip, then done.
+            return QMHasStatefulResultOperator(q);
+        }
+
+        /// <summary>
+        /// Is this sequence stateful?
+        /// </summary>
+        /// <param name="fromExpression"></param>
+        /// <returns></returns>
+        private static bool IsStatefulSequence(Expression fromExpression)
+        {
+            if (fromExpression is SubQueryExpression sq)
+            {
+                if (IsStatefulSequence(sq.QueryModel.MainFromClause.FromExpression))
+                {
+                    return true;
+                }
+                return QMHasStatefulResultOperator(sq.QueryModel);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check to see if there is a stateful query operator.
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <returns></returns>
+        private static bool QMHasStatefulResultOperator(QueryModel queryModel)
+        {
+            return HasResultOperator(queryModel, typeof(TakeResultOperator))
+                || HasResultOperator(queryModel, typeof(SkipResultOperator));
+        }
+
+        /// <summary>
+        /// Look to see if the result operators contain a particular type
+        /// </summary>
+        /// <param name="queryModel"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static bool HasResultOperator(QueryModel queryModel, Type type)
+        {
+            return queryModel.ResultOperators
+                .Where(ro => ro.GetType() == type)
+                .Any();
+        }
+
     }
 }
