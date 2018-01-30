@@ -65,6 +65,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         {
             ROOTVersionNumber = "v6.10.02";
             ROOTInstallArea = "~/root-binaries";
+            _hasROOT = false;
         }
 
         /// <summary>
