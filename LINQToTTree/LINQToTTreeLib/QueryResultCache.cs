@@ -293,13 +293,10 @@ namespace LINQToTTreeLib
                 }
 
                 var adder = generateAdder();
-                using (await ROOTLock.Lock.LockAsync())
-                {
-                    var firstObj = await adder.Clone(cycleObjects[0]);
-                    var addedValue = cycleObjects.Skip(1)
-                        .Aggregate(firstObj, (acc, newv) => adder.Update(acc, newv));
-                    return new Tuple<bool, T>(true, addedValue);
-                }
+                var firstObj = await adder.Clone(cycleObjects[0]);
+                var addedValue = cycleObjects.Skip(1)
+                    .Aggregate(firstObj, (acc, newv) => adder.Update(acc, newv));
+                return new Tuple<bool, T>(true, addedValue);
             }
         }
 
@@ -511,7 +508,7 @@ namespace LINQToTTreeLib
                     throw new InvalidOperationException("Can't deal with caching zero objects!");
                 }
 
-                using (var holder = await ROOTLock.Lock.LockAsync())
+                using (await ROOTLock.Lock.LockAsync())
                 {
                     var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
                     try
