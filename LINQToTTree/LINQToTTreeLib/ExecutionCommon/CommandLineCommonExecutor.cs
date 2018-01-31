@@ -530,13 +530,13 @@ namespace LINQToTTreeLib.ExecutionCommon
 
                     // Write out the code to load them and stash them remotely if need be.
                     // It is important to do this after the file is created, or the assumption logic in NormalizeFileForTarget will fail.
-                    var safeInputFilename = await NormalizeFileForTarget(inputFilesFilename, queryDirectory);
-                    cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
-                    cmds.AppendLine("selector->SetInputList(new TList());");
-
-                    // Write out the files now
                     try
                     {
+                        var safeInputFilename = await NormalizeFileForTarget(inputFilesFilename, queryDirectory);
+                        cmds.AppendLine($"TFile *varsInFile = TFile::Open(\"{safeInputFilename}\", \"READ\");");
+                        cmds.AppendLine("selector->SetInputList(new TList());");
+
+                        // Write out the files now
                         foreach (var item in clonedObjects)
                         {
                             outgoingVariables.WriteTObject(item);

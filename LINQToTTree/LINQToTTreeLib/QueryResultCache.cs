@@ -293,10 +293,13 @@ namespace LINQToTTreeLib
                 }
 
                 var adder = generateAdder();
-                var firstObj = await adder.Clone(cycleObjects[0]);
-                var addedValue = cycleObjects.Skip(1)
-                    .Aggregate(firstObj, (acc, newv) => adder.Update(acc, newv));
-                return new Tuple<bool, T>(true, addedValue);
+                using (await ROOTLock.Lock.LockAsync())
+                {
+                    var firstObj = await adder.Clone(cycleObjects[0]);
+                    var addedValue = cycleObjects.Skip(1)
+                        .Aggregate(firstObj, (acc, newv) => adder.Update(acc, newv));
+                    return new Tuple<bool, T>(true, addedValue);
+                }
             }
         }
 
