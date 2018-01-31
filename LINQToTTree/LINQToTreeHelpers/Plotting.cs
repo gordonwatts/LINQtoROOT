@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using LinqToTTreeInterfacesLib;
 using LINQToTTreeLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTreeHelpers
 {
@@ -32,27 +33,30 @@ namespace LINQToTreeHelpers
             Expression<Func<TSource, double>> xValue,
             Expression<Func<TSource, double>> weight = null)
         {
-            if (weight == null)
+            using (ROOTLock.Lock.Lock())
             {
-                Expression<Func<TSource, double>> constWeight = s => 1.0;
-                weight = constWeight;
+                if (weight == null)
+                {
+                    Expression<Func<TSource, double>> constWeight = s => 1.0;
+                    weight = constWeight;
+                }
+
+                var hParameter = Expression.Parameter(typeof(ROOTNET.NTH1F), "h");
+                var vParameter = Expression.Parameter(typeof(TSource), "v");
+
+                // h.Fill(getter(v), weight(v)) is what we want to code up
+
+                var callGetter = Expression.Invoke(xValue, vParameter);
+                var callWeight = Expression.Invoke(weight, vParameter);
+
+                var fillMethod = typeof(ROOTNET.NTH1F).GetMethod("Fill", new[] { typeof(double), typeof(double) });
+                var callFill = Expression.Call(hParameter, fillMethod, callGetter, callWeight);
+
+                var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
+                var h = new ROOTNET.NTH1F(plotName, plotTitle.ReplaceLatexStrings(), nbins, lowBin, highBin);
+                ConfigureHisto(h);
+                return source.ApplyToObject(h, lambda);
             }
-
-            var hParameter = Expression.Parameter(typeof(ROOTNET.NTH1F), "h");
-            var vParameter = Expression.Parameter(typeof(TSource), "v");
-
-            // h.Fill(getter(v), weight(v)) is what we want to code up
-
-            var callGetter = Expression.Invoke(xValue, vParameter);
-            var callWeight = Expression.Invoke(weight, vParameter);
-
-            var fillMethod = typeof(ROOTNET.NTH1F).GetMethod("Fill", new[] { typeof(double), typeof(double) });
-            var callFill = Expression.Call(hParameter, fillMethod, callGetter, callWeight);
-
-            var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            var h = new ROOTNET.NTH1F(plotName, plotTitle.ReplaceLatexStrings(), nbins, lowBin, highBin);
-            ConfigureHisto(h);
-            return source.ApplyToObject(h, lambda);
         }
 
         /// <summary>
@@ -92,27 +96,30 @@ namespace LINQToTreeHelpers
             Expression<Func<TSource, double>> xValue,
             Expression<Func<TSource, double>> weight = null)
         {
-            if (weight == null)
+            using (ROOTLock.Lock.Lock())
             {
-                Expression<Func<TSource, double>> constWeight = s => 1.0;
-                weight = constWeight;
+                if (weight == null)
+                {
+                    Expression<Func<TSource, double>> constWeight = s => 1.0;
+                    weight = constWeight;
+                }
+
+                var hParameter = Expression.Parameter(typeof(ROOTNET.NTH1F), "h");
+                var vParameter = Expression.Parameter(typeof(TSource), "v");
+
+                // h.Fill(getter(v), weight(v)) is what we want to code up
+
+                var callGetter = Expression.Invoke(xValue, vParameter);
+                var callWeight = Expression.Invoke(weight, vParameter);
+
+                var fillMethod = typeof(ROOTNET.NTH1F).GetMethod("Fill", new[] { typeof(double), typeof(double) });
+                var callFill = Expression.Call(hParameter, fillMethod, callGetter, callWeight);
+
+                var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
+                var h = new ROOTNET.NTH1F(plotName, plotTitle.ReplaceLatexStrings(), nbins, lowBin, highBin);
+                ConfigureHisto(h);
+                return source.FutureApplyToObject(h, lambda);
             }
-
-            var hParameter = Expression.Parameter(typeof(ROOTNET.NTH1F), "h");
-            var vParameter = Expression.Parameter(typeof(TSource), "v");
-
-            // h.Fill(getter(v), weight(v)) is what we want to code up
-
-            var callGetter = Expression.Invoke(xValue, vParameter);
-            var callWeight = Expression.Invoke(weight, vParameter);
-
-            var fillMethod = typeof(ROOTNET.NTH1F).GetMethod("Fill", new[] { typeof(double), typeof(double) });
-            var callFill = Expression.Call(hParameter, fillMethod, callGetter, callWeight);
-
-            var lambda = Expression.Lambda<Action<ROOTNET.NTH1F, TSource>>(callFill, hParameter, vParameter);
-            var h = new ROOTNET.NTH1F(plotName, plotTitle.ReplaceLatexStrings(), nbins, lowBin, highBin);
-            ConfigureHisto(h);
-            return source.FutureApplyToObject(h, lambda);
         }
 
         /// <summary>
