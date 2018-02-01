@@ -25,7 +25,7 @@ namespace LINQToTreeHelpers
                 return;
             }
 
-            using (ROOTLock.Lock.Lock())
+            using (ROOTLock.Lock())
             {
                 if (obj is ROOTNET.Interface.NTH1 h)
                 {

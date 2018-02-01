@@ -33,7 +33,7 @@ namespace LINQToTreeHelpers
             Expression<Func<TSource, double>> xValue,
             Expression<Func<TSource, double>> weight = null)
         {
-            using (ROOTLock.Lock.Lock())
+            using (ROOTLock.Lock())
             {
                 if (weight == null)
                 {
@@ -96,7 +96,7 @@ namespace LINQToTreeHelpers
             Expression<Func<TSource, double>> xValue,
             Expression<Func<TSource, double>> weight = null)
         {
-            using (ROOTLock.Lock.Lock())
+            using (ROOTLock.Lock())
             {
                 if (weight == null)
                 {

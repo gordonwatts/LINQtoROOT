@@ -30,7 +30,7 @@ namespace LINQToTTreeLib.IAddResults
         public async Task<T> Clone<T>(T o)
         {
             var h = o as ROOTNET.Interface.NTH1;
-            using (await ROOTLock.Lock.LockAsync())
+            using (await ROOTLock.LockAsync())
             {
                 return (T)h.Clone();
             }

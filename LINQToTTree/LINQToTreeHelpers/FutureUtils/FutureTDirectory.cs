@@ -146,7 +146,7 @@ namespace LINQToTreeHelpers.FutureUtils
         public void Write(bool calculateEverything = true)
         {
             // Write everything associated with this directory.
-            using (ROOTLock.Lock.Lock())
+            using (ROOTLock.Lock())
             {
                 Directory.Write();
             }

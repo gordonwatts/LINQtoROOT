@@ -35,7 +35,7 @@ namespace LINQToTreeHelpers
 
             // Always build a clone... because that way if the histogram is modified after we look at it, the plot will be what
             // the user intended.
-            using (ROOTLock.Lock.Lock())
+            using (ROOTLock.Lock())
             {
                 var hToPlot = (from h in histos where (h as ROOTNET.Interface.NTH1) != null select h.Clone(string.Format("{0}{1}", h.Name, canvasName)) as ROOTNET.Interface.NTH1).ToArray();
                 if (hToPlot.Length == 0)

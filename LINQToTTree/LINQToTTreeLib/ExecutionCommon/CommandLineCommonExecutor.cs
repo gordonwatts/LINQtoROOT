@@ -519,8 +519,9 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var inputFilesFilename = new FileInfo(Path.Combine(queryResultsFile.DirectoryName, "TSelectorInputFiles.root"));
 
                 // Next, move through and actually write everything out.
-                using (await ROOTLock.Lock.LockAsync())
+                using (await ROOTLock.LockAsync())
                 {
+                    Debug.WriteLine($"Aquired ROOTLOCK WriteInputVariablesForTransfer");
                     // Clone the objects. Do it outside of writing so we can make sure that we do not
                     // accidentally clone them or assign them in the wrong place (we are in a multithreaded environment).
                     ROOTNET.NTH1.AddDirectory(false);
@@ -568,7 +569,7 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// <returns></returns>
         private async Task<IDictionary<string, NTObject>> LoadSelectorResults(FileInfo queryResultsFile)
         {
-            using (var holder = await ROOTLock.Lock.LockAsync())
+            using (var holder = await ROOTLock.LockAsync())
             {
                 if (!queryResultsFile.Exists)
                 {

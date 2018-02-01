@@ -89,7 +89,7 @@ namespace LINQToTTreeLib.Variables.Savers
             if (rootObjInfo == null)
                 throw new InvalidOperationException("iVariable must be a ROOTObjectCopiedValue!");
 
-            using (await ROOTLock.Lock.LockAsync())
+            using (await ROOTLock.LockAsync())
             {
                 ROOTNET.NTH1.AddDirectory(false);
                 var result = named.Clone() as ROOTNET.Interface.NTNamed;

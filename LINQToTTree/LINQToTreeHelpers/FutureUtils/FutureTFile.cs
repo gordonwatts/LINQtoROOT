@@ -13,7 +13,7 @@ namespace LINQToTreeHelpers.FutureUtils
         private static async Task<ROOTNET.Interface.NTFile> CreateOpenFile(string name)
         {
             var oldDir = ROOTNET.NTDirectory.CurrentDirectory();
-            using (await ROOTLock.Lock.LockAsync())
+            using (await ROOTLock.LockAsync())
             {
                 try
                 {

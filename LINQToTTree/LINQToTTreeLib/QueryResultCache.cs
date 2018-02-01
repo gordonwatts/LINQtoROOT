@@ -344,7 +344,7 @@ namespace LINQToTTreeLib
         /// <returns></returns>
         private async Task<RunInfo[]> LoadCachedRunInfoObjects(string cycleFilename)
         {
-            using (await ROOTLock.Lock.LockAsync())
+            using (await ROOTLock.LockAsync())
             {
                 var tf = NTFile.Open(cycleFilename, "READ");
                 try
@@ -508,7 +508,7 @@ namespace LINQToTTreeLib
                     throw new InvalidOperationException("Can't deal with caching zero objects!");
                 }
 
-                using (await ROOTLock.Lock.LockAsync())
+                using (await ROOTLock.LockAsync())
                 {
                     var trf = new ROOTNET.NTFile(FileForCycle(key, cycleItems.First()._cycle), "RECREATE");
                     try

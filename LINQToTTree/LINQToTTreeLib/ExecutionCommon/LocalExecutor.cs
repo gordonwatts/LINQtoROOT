@@ -174,7 +174,7 @@ namespace LINQToTTreeLib.ExecutionCommon
                 var objInputList = new ROOTNET.NTList();
                 selector.InputList = objInputList;
 
-                using (await ROOTLock.Lock.LockAsync())
+                using (await ROOTLock.LockAsync())
                 {
                     ROOTNET.NTH1.AddDirectory(false);
                     foreach (var item in variablesToLoad)

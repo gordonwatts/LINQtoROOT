@@ -113,7 +113,7 @@ namespace LINQToTreeHelpers.Tests
 
             async Task GenerateValue()
             {
-                using (await ROOTLock.Lock.LockAsync())
+                using (await ROOTLock.LockAsync())
                 {
                     _histo = new ROOTNET.NTH1F("hi", "there", 10, 0.0, 100.0);
                     _histo.Fill(5.0);
