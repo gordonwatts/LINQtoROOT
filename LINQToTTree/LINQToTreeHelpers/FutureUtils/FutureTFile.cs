@@ -1,5 +1,7 @@
-﻿using System;
+﻿using LINQToTTreeLib.Utils;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace LINQToTreeHelpers.FutureUtils
 {
@@ -8,21 +10,24 @@ namespace LINQToTreeHelpers.FutureUtils
     /// </summary>
     public sealed class FutureTFile : FutureTDirectory, IDisposable
     {
-        private static ROOTNET.Interface.NTFile CreateOpenFile(string name)
+        private static async Task<ROOTNET.Interface.NTFile> CreateOpenFile(string name)
         {
             var oldDir = ROOTNET.NTDirectory.CurrentDirectory();
-            try
+            using (await ROOTLock.Lock.LockAsync())
             {
-                var f = ROOTNET.NTFile.Open(name, "RECREATE");
-                if (!f.IsOpen())
+                try
                 {
-                    throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
+                    var f = ROOTNET.NTFile.Open(name, "RECREATE");
+                    if (!f.IsOpen())
+                    {
+                        throw new InvalidOperationException(string.Format("Unable to create file '{0}'. It could be the file is locked by another process (like ROOT!!??)", name));
+                    }
+                    return f;
                 }
-                return f;
-            }
-            finally
-            {
-                oldDir.cd();
+                finally
+                {
+                    oldDir.cd();
+                }
             }
         }
 
@@ -36,7 +41,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// </remarks>
         /// <param name="outputRootFile"></param>
         public FutureTFile(FileInfo outputRootFile)
-            : base(CreateOpenFile(outputRootFile.FullName))
+            : base(CreateOpenFile(outputRootFile.FullName).Result)
         {
         }
 
@@ -46,7 +51,7 @@ namespace LINQToTreeHelpers.FutureUtils
         /// </summary>
         /// <param name="outputRootFile"></param>
         public FutureTFile(string outputRootFile)
-            : base(CreateOpenFile(outputRootFile))
+            : base(CreateOpenFile(outputRootFile).Result)
         {
         }
 

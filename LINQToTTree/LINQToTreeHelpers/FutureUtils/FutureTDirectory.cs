@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LinqToTTreeInterfacesLib;
+using LINQToTTreeLib.Utils;
 
 namespace LINQToTreeHelpers.FutureUtils
 {
@@ -145,7 +146,10 @@ namespace LINQToTreeHelpers.FutureUtils
         public void Write(bool calculateEverything = true)
         {
             // Write everything associated with this directory.
-            Directory.Write();
+            using (ROOTLock.Lock.Lock())
+            {
+                Directory.Write();
+            }
 
             // Trigger all the calculatiosn that are needed for these directories.
             // This drives the ability for parallel calculation of everything.

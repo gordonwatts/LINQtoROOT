@@ -25,20 +25,20 @@ namespace LINQToTreeHelpers
                 return;
             }
 
-            var h = obj as ROOTNET.Interface.NTH1;
-            if (h != null)
+            using (ROOTLock.Lock.Lock())
             {
-                using (ROOTLock.Lock.Lock())
+                if (obj is ROOTNET.Interface.NTH1 h)
                 {
                     var copy = h.Clone();
                     dir.WriteTObject(copy); // Ugly from a memory pov, but...
                     copy.SetNull();
                 }
-            }
-            else
-            {
-                dir.WriteTObject(obj);
-                obj.SetNull();
+
+                else
+                {
+                    dir.WriteTObject(obj);
+                    obj.SetNull();
+                }
             }
         }
 
