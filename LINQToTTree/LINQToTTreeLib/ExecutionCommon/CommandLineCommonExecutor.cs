@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LINQToTTreeLib.ExecutionCommon
@@ -59,11 +60,17 @@ namespace LINQToTTreeLib.ExecutionCommon
         }
 
         /// <summary>
+        /// Track the number of times execute is called.
+        /// </summary>
+        public static int NumberOfExecutesCalled = 0;
+
+        /// <summary>
         /// Reset the executor to its initial state.
         /// </summary>
         public static void ResetCommandLineExecutor()
         {
             _logDumpers = new List<Action<string>>();
+            NumberOfExecutesCalled = 0;
         }
 
         /// <summary>
@@ -123,6 +130,9 @@ namespace LINQToTTreeLib.ExecutionCommon
         /// </remarks>
         public virtual async Task<IDictionary<string, NTObject>> Execute(Uri[] files, FileInfo queryFile, DirectoryInfo queryDirectory, IEnumerable<KeyValuePair<string, object>> varsToTransfer)
         {
+            // Record our passing for testing, etc.
+            Interlocked.Increment(ref NumberOfExecutesCalled);
+
             // Setup for building a command
             await ExecutionUtilities.Init();
             var cmds = new StringBuilder();

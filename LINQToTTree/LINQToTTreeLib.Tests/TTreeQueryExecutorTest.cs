@@ -1145,6 +1145,80 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
+        public async Task TopLevelTakeAreBeSplit()
+        {
+            // When we do something like a count, make sure the split actually happens.
+            var rootFile1 = TestUtils.CreateFileOfInt(10);
+            var rootFile2 = TestUtils.CreateFileOfInt(20);
+
+            // A query that should come back with 10 items.
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var files = new[] { rootFile1, rootFile2 }
+                .Select(u => new UriBuilder(u) { Scheme = "localbash" }.Uri)
+                .ToArray();
+
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.Verbose = true;
+
+            var result = await exe.ExecuteScalarAsFuture<int>(query);
+            Assert.AreEqual(30, result);
+            Assert.AreEqual(2, CommandLineCommonExecutor.NumberOfExecutesCalled);
+        }
+
+        [TestMethod]
+        public async Task SplitQueryIsCachedCorrectly()
+        {
+            // When we do something like a count, make sure the split actually happens.
+            var rootFile1 = TestUtils.CreateFileOfInt(10);
+            var rootFile2 = TestUtils.CreateFileOfInt(20);
+
+            // A query that should come back with 10 items.
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Count();
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var files = new[] { rootFile1, rootFile2 }
+                .Select(u => new UriBuilder(u) { Scheme = "localbash" }.Uri)
+                .ToArray();
+
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.Verbose = true;
+
+            var result1 = await exe.ExecuteScalarAsFuture<int>(query);
+            Assert.AreEqual(30, result1);
+            var result2 = await exe.ExecuteScalarAsFuture<int>(query);
+            Assert.AreEqual(30, result2);
+        }
+
+        [TestMethod]
+        public async Task SplitQueryIsCachedCorrectlyWithHist()
+        {
+            // When we do something like a count, make sure the split actually happens.
+            var rootFile1 = TestUtils.CreateFileOfInt(10);
+            var rootFile2 = TestUtils.CreateFileOfInt(20);
+
+            // A query that should come back with 10 items.
+            var q = new QueriableDummy<TestNtupe>();
+            var dude = q.Select(e => e.run).Plot("hi", "there", 10, 0.0, 100.0);
+            var query = DummyQueryExectuor.LastQueryModel;
+
+            var files = new[] { rootFile1, rootFile2 }
+                .Select(u => new UriBuilder(u) { Scheme = "localbash" }.Uri)
+                .ToArray();
+
+            var exe = new TTreeQueryExecutor(files, "dude", typeof(ntuple), typeof(TestNtupe));
+            exe.Verbose = true;
+
+            var result1 = await exe.ExecuteScalarAsFuture<ROOTNET.Interface.NTH1F>(query);
+            Assert.AreEqual(30, (int) result1.GetEntries());
+            var result2 = await exe.ExecuteScalarAsFuture<ROOTNET.Interface.NTH1F>(query);
+            Assert.AreEqual(30, (int) result2.GetEntries());
+        }
+
+        [TestMethod]
         public async Task TopLevelHiddenTakeCantBeSplit()
         {
             // Seen in the wild. We can't partition this guy out to multiple runs because the Take can't be split
