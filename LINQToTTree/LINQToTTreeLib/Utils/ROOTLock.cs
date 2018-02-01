@@ -16,6 +16,24 @@ namespace LINQToTTreeLib.Utils
     {
         private static AsyncLock _lock = new AsyncLock();
 
+        public class LockUnlockNotifier : IDisposable
+        {
+            private IDisposable _objectToDispose;
+            private string _message;
+
+            public LockUnlockNotifier(IDisposable obj, string message)
+            {
+                _objectToDispose = obj;
+                _message = message;
+            }
+
+            public void Dispose()
+            {
+                Debug.WriteLine(_message);
+                _objectToDispose.Dispose();
+            }
+        }
+
         /// <summary>
         /// Grab the lock
         /// </summary>
