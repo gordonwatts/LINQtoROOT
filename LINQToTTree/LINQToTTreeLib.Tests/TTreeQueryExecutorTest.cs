@@ -30,6 +30,7 @@ namespace LINQToTTreeLib
             ntuple.Reset();
             ntuple._gCINTLines = null;
             ntuple._gObjectFiles = null;
+            CommandLineCommonExecutor.ResetCommandLineExecutor();
         }
 
         [TestCleanup]
