@@ -39,6 +39,21 @@ namespace LINQToTTreeLib
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 
+
+    /// <summary>
+    /// An error occured while executing a query on a dataset.
+    /// </summary>
+    [Serializable]
+    public class DatasetProcessingFailedException : Exception
+    {
+        public DatasetProcessingFailedException() { }
+        public DatasetProcessingFailedException(string message) : base(message) { }
+        public DatasetProcessingFailedException(string message, Exception inner) : base(message, inner) { }
+        protected DatasetProcessingFailedException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+
     /// <summary>
     /// Executes the query.
     /// </summary>
@@ -868,28 +883,48 @@ namespace LINQToTTreeLib
                 if (UseStatementOptimizer)
                     Optimizer.Optimize(combinedInfo);
 
-                // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
-                int cycle = -1;
-                int cycle_counter() => Interlocked.Increment(ref cycle);
-                var combinedResultsTasks = _resolvedRootFiles
-                    .SelectMany(sch => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter, canSplit))
-                    .ToArray();
-
-                var combinedResults = await Task.WhenAll(combinedResultsTasks);
-
-                // Extract all the variables! And save in the cache, and set the
-                // future value so everyone else can use them!
-                TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
-                foreach (var cq in _queuedQueries)
+                // When an error occurs, it often comes from inside one of the various await'd methods, which makes it
+                // very hard to tell what dataset from the user-point of view caused the difficulty. So, capture and let them know.
+                try
                 {
-                    await cq.ExtractResult(combinedResults);
-                    await cq.CacheResults(combinedResults);
-                }
-                _queuedQueries.Clear();
 
-                // Ok, we are all done. Delete the directory that we were just using
-                // after unloading all the modules
-                LogExecutionFinish();
+                    // Execute the queries over all the schemes, and sort their results by value, and then combine them into a single dictionary.
+                    int cycle = -1;
+                    int cycle_counter() => Interlocked.Increment(ref cycle);
+                    var combinedResultsTasks = _resolvedRootFiles
+                        .SelectMany(sch => ExecuteQueuedQueriesForASchemeFileBatch(sch.scheme, sch.files, combinedInfo, cycle_counter, canSplit))
+                        .ToArray();
+
+                    var combinedResults = await Task.WhenAll(combinedResultsTasks);
+
+                    // Extract all the variables! And save in the cache, and set the
+                    // future value so everyone else can use them!
+                    TraceHelpers.TraceInfo(15, $"ExecuteQueuedQueries: Extracting the query results from {_resolvedRootFiles.Length} runs.");
+                    foreach (var cq in _queuedQueries)
+                    {
+                        await cq.ExtractResult(combinedResults);
+                        await cq.CacheResults(combinedResults);
+                    }
+
+                } catch (Exception e)
+                {
+                    // Send up an error that contains the names of all the datasets so the user can figure out what happened.
+                    // Assemble the names
+                    var filelist = this._originalRootFiles
+                        .Select(u => u.OriginalString)
+                        .Aggregate((l, r) => $"{l}, {r}");
+
+                    // And a nice version of the error
+                    throw new DatasetProcessingFailedException($"Dataset failed to execute (${e.Message}): ${filelist}", e);
+                } finally
+                {
+                    // Nothing can be done - get rid of all queires!
+                    _queuedQueries.Clear();
+
+                    // Ok, we are all done. Delete the directory that we were just using
+                    // after unloading all the modules
+                    LogExecutionFinish();
+                }
             }
         }
 
