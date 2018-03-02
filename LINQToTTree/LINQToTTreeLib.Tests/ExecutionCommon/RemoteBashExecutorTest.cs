@@ -467,6 +467,73 @@ namespace LINQToTTreeLib.Tests.ExecutionCommon
             int result = exe.ExecuteScalar<int>(query);
             Assert.AreEqual(10, result);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(DatasetProcessingFailedException))]
+        public void RemoteBashExceptionGeneratedByGeneratedCode()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            // Look beyond the edge of our array. This should cause an exception while running.
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (evt.myvectorofint.Skip(50).First() == 0)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            // Ok, now we can actually see if we can make it "go".
+            try
+            {
+                var exe = new TTreeQueryExecutor(new Uri[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+                var result = exe.ExecuteScalar<int>(query);
+            }
+            catch (AggregateException exp)
+            {
+                var exception = exp.UnrollAggregateExceptions();
+                Console.WriteLine($"Caught error with message: {exception.Message}");
+                Assert.IsTrue(exception.Message.Contains("Error caught in"), "Error message from running of root");
+                // We should catch a data processing exception when this occurs.
+                throw exception;
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DatasetProcessingFailedException))]
+        public void RemoteBashExceptionGeneratedBySTDLIB()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            // Attempt to access something that is way out beyond the edge. This should cause an exception
+            // in our vector code.
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (evt.myvectorofint[50] == 0)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            // Ok, now we can actually see if we can make it "go".
+            try
+            {
+                var exe = new TTreeQueryExecutor(new Uri[] { rootFile.AsRemoteBashUri() }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+                var result = exe.ExecuteScalar<int>(query);
+            }
+            catch (AggregateException exp)
+            {
+                var exception = exp.UnrollAggregateExceptions();
+                Console.WriteLine($"Caught error with message: {exception.Message}");
+                Assert.IsTrue(exception.Message.Contains("Error caught in"), "Error message from running of root");
+                // We should catch a data processing exception when this occurs.
+                throw exception;
+            }
+        }
     }
 
     static class RemoteBashExecutorHelpers
