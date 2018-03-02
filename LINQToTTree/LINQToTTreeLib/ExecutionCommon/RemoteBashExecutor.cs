@@ -199,7 +199,8 @@ namespace LINQToTTreeLib.ExecutionCommon
                     await sshConnection.ExecuteLinuxCommandAsync($"cd {_linuxTempDir}", processLine: s => RecordLine(logForError, s, dumpLine), secondsTimeout: 10);
                     using (var lck = sshConnection.EnterNoRecoverRegion())
                     {
-                        await sshConnection.ExecuteLinuxCommandAsync($"root -l -b -q {scriptFile.Name} | cat", processLine: s => RecordLine(logForError, s, dumpLine),
+                        // Warning - to not pipe through cat this next command - it causes an error while running root to be swallowed.
+                        await sshConnection.ExecuteLinuxCommandAsync($"root -l -b -q {scriptFile.Name}", processLine: s => RecordLine(logForError, s, dumpLine),
                             secondsTimeout: timeout.HasValue ? (int)timeout.Value.TotalSeconds : 60 * 60);
                     }
                 } catch (Exception e)
