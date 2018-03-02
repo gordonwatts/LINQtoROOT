@@ -906,7 +906,10 @@ namespace LINQToTTreeLib
                         await cq.CacheResults(combinedResults);
                     }
 
-                } catch (Exception e)
+                    // Nothing can be done - get rid of all queires!
+                    _queuedQueries.Clear();
+                }
+                catch (Exception e)
                 {
                     // Send up an error that contains the names of all the datasets so the user can figure out what happened.
                     // Assemble the names
@@ -915,13 +918,10 @@ namespace LINQToTTreeLib
                         .Aggregate((l, r) => $"{l}, {r}");
 
                     // And a nice version of the error
-                    TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: failed query (${e.Message}): ${filelist}", TraceEventType.Stop);
+                    TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: failed query ('{e.Message}'): {filelist}", TraceEventType.Stop);
                     throw new DatasetProcessingFailedException($"Dataset failed to execute (${e.Message}): ${filelist}", e);
                 } finally
                 {
-                    // Nothing can be done - get rid of all queires!
-                    _queuedQueries.Clear();
-
                     // Ok, we are all done. Delete the directory that we were just using
                     // after unloading all the modules
                     LogExecutionFinish();
