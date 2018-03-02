@@ -1956,18 +1956,13 @@ namespace LINQToTTreeLib
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.Runtime.InteropServices.SEHException))]
-        public void TestFirstButNothing()
+        [ExpectedException(typeof(DatasetProcessingFailedException))]
+        public void ExceptionGeneratedByGeneratedCode()
         {
             const int numberOfIter = 25;
             var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
 
-            ///
-            /// Get a simple query we can "play" with. That this works
-            /// depends on each event having 10 entries in the array, which contains
-            /// the numbers 0-10.
-            /// 
-
+            // Look beyond the edge of our array. This should cause an exception while running.
             var q = new QueriableDummy<TestNtupeArr>();
             var dudeQ = from evt in q
                         where (evt.myvectorofint.Skip(50).First() == 0)
@@ -1977,16 +1972,45 @@ namespace LINQToTTreeLib
             var query = DummyQueryExectuor.LastQueryModel;
             DummyQueryExectuor.FinalResult.DumpCodeToConsole();
 
-            ///
-            /// Ok, now we can actually see if we can make it "go".
-            /// 
-
+            // Ok, now we can actually see if we can make it "go".
             try
             {
                 var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
                 var result = exe.ExecuteScalar<int>(query);
             } catch (AggregateException exp)
             {
+                // We should catch a data processing exception when this occurs.
+                throw exp.UnrollAggregateExceptions();
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DatasetProcessingFailedException))]
+        public void ExceptionGeneratedBySTDLIB()
+        {
+            const int numberOfIter = 25;
+            var rootFile = TestUtils.CreateFileOfVectorInt(numberOfIter);
+
+            // Attempt to access something that is way out beyond the edge. This should cause an exception
+            // in our vector code.
+            var q = new QueriableDummy<TestNtupeArr>();
+            var dudeQ = from evt in q
+                        where (evt.myvectorofint[50] == 0)
+                        select evt;
+            var dude = dudeQ.Count();
+
+            var query = DummyQueryExectuor.LastQueryModel;
+            DummyQueryExectuor.FinalResult.DumpCodeToConsole();
+
+            // Ok, now we can actually see if we can make it "go".
+            try
+            {
+                var exe = new TTreeQueryExecutor(new Uri[] { rootFile }, "dude", typeof(ntuple), typeof(TestNtupeArr));
+                var result = exe.ExecuteScalar<int>(query);
+            }
+            catch (AggregateException exp)
+            {
+                // We should catch a data processing exception when this occurs.
                 throw exp.UnrollAggregateExceptions();
             }
         }
