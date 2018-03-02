@@ -915,6 +915,7 @@ namespace LINQToTTreeLib
                         .Aggregate((l, r) => $"{l}, {r}");
 
                     // And a nice version of the error
+                    TraceHelpers.TraceInfo(30, $"LINQToTTree Executor: failed query (${e.Message}): ${filelist}", TraceEventType.Stop);
                     throw new DatasetProcessingFailedException($"Dataset failed to execute (${e.Message}): ${filelist}", e);
                 } finally
                 {
