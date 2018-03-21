@@ -91,7 +91,10 @@ namespace LINQToTTreeLib.Utils
             return v == typeof(int)
                 || v == typeof(short)
                 || v == typeof(double)
-                || v == typeof(float);
+                || v == typeof(float)
+                || v == typeof(uint)
+                || v == typeof(ushort)
+                || v == typeof(ulong);
         }
 
         /// <summary>

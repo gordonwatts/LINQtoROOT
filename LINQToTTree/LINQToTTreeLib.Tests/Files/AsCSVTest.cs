@@ -99,6 +99,13 @@ namespace LINQToTTreeLib.Tests.Files
         }
 
         [TestMethod]
+        public void AsCSVUnsignedInts()
+        {
+            var gc = RunQueryForSingleColumnTTree(QueryUnsignedINTS);
+            Assert.IsNotNull(gc);
+        }
+
+        [TestMethod]
         public void AsCSVUniqueFileComesBack()
         {
             // Each file has to include a query hash so we can be sure that it is unique. This
@@ -295,6 +302,14 @@ namespace LINQToTTreeLib.Tests.Files
             public double run;
         }
 
+        public class unsignedInts
+        {
+            public UInt32 run;
+            public uint run2;
+            public UInt64 run3;
+            public UInt16 run4;
+        }
+
         /// <summary>
         /// Get the generated code for a simple single run query
         /// </summary>
@@ -375,6 +390,17 @@ namespace LINQToTTreeLib.Tests.Files
                 .Select(e => Tuple.Create(e.run, e.run, e.run, e.run))
                 .AsCSV(new FileInfo("hi.csv"), "firstCol", "second Col", "col3", "col4");
 
+        }
+
+        /// <summary>
+        /// Build a simple query to make sure unsigned ints work.
+        /// </summary>
+        private static void QueryUnsignedINTS()
+        {
+            var Q = new QueriableDummy<singleIntNtuple>();
+            Q
+                .Select(e => new unsignedInts() { run = (uint) e.run, run2 = (uint) e.run, run3 = (ulong) e.run, run4 = (ushort) e.run })
+                .AsCSV(new FileInfo("hi.csv"));
         }
 
         /// <summary>
